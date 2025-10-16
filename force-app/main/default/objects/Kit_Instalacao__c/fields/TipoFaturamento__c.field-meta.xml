@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TipoFaturamento__c</fullName>
+    <description>Tipo do faturamento para o Pedido de Compra/Venda</description>
+    <label>Tipo de Faturamento</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Nenhum</fullName>
+                <default>false</default>
+                <label>Nenhum</label>
+            </value>
+            <value>
+                <fullName>Medição</fullName>
+                <default>false</default>
+                <label>Medição</label>
+            </value>
+            <value>
+                <fullName>Parcelado</fullName>
+                <default>false</default>
+                <label>Parcelado</label>
+            </value>
+            <value>
+                <fullName>Recorrente</fullName>
+                <default>false</default>
+                <label>Recorrente</label>
+            </value>
+            <value>
+                <fullName>Calculado</fullName>
+                <default>false</default>
+                <label>Calculado</label>
+            </value>
+            <value>
+                <fullName>Parcelado Medido</fullName>
+                <default>false</default>
+                <label>Parcelado Medido</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

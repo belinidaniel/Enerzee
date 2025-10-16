@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BusinessProcess xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Jornada do Cliente</fullName>
+    <isActive>true</isActive>
+    <values>
+        <fullName>Closed</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Informações Iniciais</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Instalação - Materiais</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Instalação - Montagem</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Instalação - Vistoria</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Ligação Concluída</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Novo</fullName>
+        <default>true</default>
+    </values>
+    <values>
+        <fullName>Onboarding</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Projeto Aprovado</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Start</fullName>
+        <default>false</default>
+    </values>
+</BusinessProcess>

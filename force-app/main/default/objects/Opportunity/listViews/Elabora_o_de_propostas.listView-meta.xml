@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Elabora_o_de_propostas</fullName>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ConsultorOportunidade__c</columns>
+    <columns>OPPORTUNITY.RECORDTYPE</columns>
+    <columns>SubTipo__c</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <columns>OPPORTUNITY.LAST_STAGE_CHANGE</columns>
+    <columns>PotenciaPicoSistema__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.OutrasOportunidades,Opportunity.Solar</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>equals</operation>
+        <value>Elaboração de proposta,Proposta Gerada</value>
+    </filters>
+    <filters>
+        <field>SubTipo__c</field>
+        <operation>equals</operation>
+        <value>Contrato Micro</value>
+    </filters>
+    <label>Elaboração de propostas (Micro)</label>
+</ListView>

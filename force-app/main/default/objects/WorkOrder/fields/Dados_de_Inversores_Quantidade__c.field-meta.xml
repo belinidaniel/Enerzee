@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Dados_de_Inversores_Quantidade__c</fullName>
+    <description>Campo para coletar a quantidade de dados de Inversores.</description>
+    <externalId>false</externalId>
+    <label>Dados de Inversores Quantidade:</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

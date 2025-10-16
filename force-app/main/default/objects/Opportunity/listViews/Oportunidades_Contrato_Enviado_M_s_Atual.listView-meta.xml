@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Oportunidades_Contrato_Enviado_M_s_Atual</fullName>
+    <columns>Numeroproposta__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>OPPORTUNITY.RECORDTYPE</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.LAST_UPDATE</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>ValorTotalProposta__c</columns>
+    <columns>ConsultorOportunidade__c</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>PotenciaPicoSistema__c</columns>
+    <columns>CORE.USERS.FULL_NAME</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>equals</operation>
+        <value>Contrato enviado,Contrato firmado / Assinado,Assinatura de Contrato com o Parceiro,Aguardando Pagamento,Pagamento Confirmado,Aguard.Assinatura (AXS),Aguard. Assinatura (PLIN),Aguard.Assinatura(2W)</value>
+    </filters>
+    <label>Oportunidades Contrato Enviado Mês Atual</label>
+</ListView>

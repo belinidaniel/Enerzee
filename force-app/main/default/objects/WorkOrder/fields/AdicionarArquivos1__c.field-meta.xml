@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AdicionarArquivos1__c</fullName>
+    <description>Campo para auxiliar o técnico quais imagens/vídeos adicionar em arquivos, viabilidade.</description>
+    <externalId>false</externalId>
+    <formula>&quot; Foto do quadro de distribuição sem a tampa, &quot; &amp;
+&quot; foto do disjuntor geral do quadro, &quot; &amp;
+&quot; vídeo do caminho QDG ao inversor e &quot; &amp;
+&quot; foto do gerador e das suas conexões a rede.&quot;</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Adicionar em arquivos</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

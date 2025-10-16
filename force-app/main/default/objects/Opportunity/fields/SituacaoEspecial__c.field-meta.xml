@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SituacaoEspecial__c</fullName>
+    <label>Situação Especial</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Cliente já em mercado livre</fullName>
+                <default>false</default>
+                <label>Cliente já em mercado livre</label>
+            </value>
+            <value>
+                <fullName>Cooperativa</fullName>
+                <default>false</default>
+                <label>Cooperativa</label>
+            </value>
+            <value>
+                <fullName>Cliente com menos de 12 meses de vida</fullName>
+                <default>false</default>
+                <label>Cliente com menos de 12 meses de vida</label>
+            </value>
+            <value>
+                <fullName>Em construção</fullName>
+                <default>false</default>
+                <label>Em construção</label>
+            </value>
+            <value>
+                <fullName>Cliente com geração distribuída</fullName>
+                <default>false</default>
+                <label>Cliente com geração distribuída</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

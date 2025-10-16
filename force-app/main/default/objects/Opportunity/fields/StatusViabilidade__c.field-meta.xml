@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>StatusViabilidade__c</fullName>
+    <label>Status da Viabilidade</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Viável</fullName>
+                <default>false</default>
+                <label>Viável</label>
+            </value>
+            <value>
+                <fullName>Inviável</fullName>
+                <default>false</default>
+                <label>Inviável</label>
+            </value>
+            <value>
+                <fullName>Parcialmente Viável</fullName>
+                <default>false</default>
+                <label>Parcialmente Viável</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Aterramento_dentro_da_base_concretada__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Campo para definir se &quot;Aterramento dentro da base concretada?&quot; sim ou não.</description>
+    <label>Aterramento dentro da base concretada?</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

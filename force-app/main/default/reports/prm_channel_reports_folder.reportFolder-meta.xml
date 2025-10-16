@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportFolder xmlns="http://soap.sforce.com/2006/04/metadata">
+    <folderShares>
+        <accessLevel>Manage</accessLevel>
+        <sharedTo>dev@jfox.com.br.enerzee</sharedTo>
+        <sharedToType>User</sharedToType>
+    </folderShares>
+    <folderShares>
+        <accessLevel>Manage</accessLevel>
+        <sharedTo>kaique.mathias@lab065.com.br.enrz</sharedTo>
+        <sharedToType>User</sharedToType>
+    </folderShares>
+    <name>Relatórios do PRM</name>
+</ReportFolder>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Somente_Adiministrador_pode_criar</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+				ISNEW() ,
+				NOT($Profile.Name = &apos;Administrador do sistema&apos;)
+				)</errorConditionFormula>
+    <errorMessage>Seu perfil não tem acesso a esse objeto!</errorMessage>
+</ValidationRule>

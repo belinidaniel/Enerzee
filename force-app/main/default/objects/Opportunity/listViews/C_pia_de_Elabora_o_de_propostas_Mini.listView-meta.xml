@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>C_pia_de_Elabora_o_de_propostas_Mini</fullName>
+    <columns>Numeroproposta__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ConsultorOportunidade__c</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>OPPORTUNITY.LAST_STAGE_CHANGE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>GrupoTarifario__c</field>
+        <operation>equals</operation>
+        <value>Grupo A</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.Solar</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>equals</operation>
+        <value>Elaboração de proposta,Readequação de Proposta</value>
+    </filters>
+    <label>Elaboração de propostas (Mini)</label>
+</ListView>

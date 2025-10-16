@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Campos_obrigatorios_ganha</fullName>
+    <active>false</active>
+    <description>Controla os campos obrigatórios para ganhar uma Oportunidade.</description>
+    <errorConditionFormula>ISCHANGED(StageName) &amp;&amp;
+TEXT(StageName) = &apos;Ganho fechado&apos; &amp;&amp;
+OR(
+   ISBLANK(DataEntrega__c),
+   ISBLANK(TEXT(CondicoesPagamento__c))
+) &amp;&amp;
+OR(
+RecordType.DeveloperName = &quot;ContratoMini&quot;,
+RecordType.DeveloperName = &quot;ContratoMicro&quot;,
+RecordType.DeveloperName = &quot;OutrasOportunidades&quot;
+)</errorConditionFormula>
+    <errorMessage>Para ganhar uma Oportunidade é necessário preencher a data de entrega e a condição de pagamento.</errorMessage>
+</ValidationRule>

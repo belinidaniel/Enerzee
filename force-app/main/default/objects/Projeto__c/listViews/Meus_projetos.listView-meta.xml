@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Meus_projetos</fullName>
+    <booleanFilter>1 OR 2</booleanFilter>
+    <columns>NAME</columns>
+    <columns>RECORDTYPE</columns>
+    <columns>Status__c</columns>
+    <columns>GestorObra__c</columns>
+    <columns>Projetista__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>GestorObra__c</field>
+        <operation>equals</operation>
+        <value>$USER</value>
+    </filters>
+    <filters>
+        <field>Projetista__c</field>
+        <operation>equals</operation>
+        <value>$USER</value>
+    </filters>
+    <label>Meus projetos</label>
+</ListView>

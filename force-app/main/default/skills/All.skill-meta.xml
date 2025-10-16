@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Skill xmlns="http://soap.sforce.com/2006/04/metadata">
+    <assignments>
+        <profiles>
+            <profile>admin</profile>
+            <profile>standard</profile>
+            <profile>solutionmanager</profile>
+            <profile>marketingprofile</profile>
+            <profile>contractmanager</profile>
+            <profile>administrador</profile>
+            <profile>administrador api</profile>
+            <profile>agente de serviço</profile>
+            <profile>analista</profile>
+            <profile>analytics cloud integration user</profile>
+            <profile>analytics cloud security user</profile>
+            <profile>c-level</profile>
+            <profile>cpq integration user</profile>
+            <profile>contratos</profile>
+            <profile>coordenador</profile>
+            <profile>coordenação</profile>
+            <profile>diretoria</profile>
+            <profile>fsl mobile</profile>
+            <profile>identity user</profile>
+            <profile>integração</profile>
+            <profile>minimum access - api only integrations</profile>
+            <profile>minimum access - salesforce</profile>
+            <profile>orçamentistas</profile>
+            <profile>read only</profile>
+            <profile>sales insights integration user</profile>
+            <profile>salesforce api only system integrations</profile>
+            <profile>supervisor de serviço</profile>
+        </profiles>
+        <users>
+            <user>dayane.silva@enerzee.com.br</user>
+            <user>diogo.boas@enerzee.com.br</user>
+            <user>elenara.rodrigues@enerzee.com.br</user>
+            <user>felipe.ramos@enerzee.com.br</user>
+            <user>jonatha@enerzee.com.br</user>
+            <user>thiago.closs@enerzee.com.br</user>
+            <user>thiago.dias@enerzee.com.br</user>
+        </users>
+    </assignments>
+    <label>All</label>
+</Skill>

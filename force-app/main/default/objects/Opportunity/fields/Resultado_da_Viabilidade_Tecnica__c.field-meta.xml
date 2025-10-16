@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Resultado_da_Viabilidade_Tecnica__c</fullName>
+    <label>Resultado da Viabilidade Técnica</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Positiva</fullName>
+                <default>false</default>
+                <label>Positiva</label>
+            </value>
+            <value>
+                <fullName>Parcial</fullName>
+                <default>false</default>
+                <label>Parcial</label>
+            </value>
+            <value>
+                <fullName>Negativa</fullName>
+                <default>false</default>
+                <label>Negativa</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

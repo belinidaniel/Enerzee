@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Valida_Id_Cliente</fullName>
+    <active>false</active>
+    <description>Valida se o cliente da oportunidade possui id do virtual office, em seu cadastro</description>
+    <errorConditionFormula>AND(
+    NOT(ISBLANK(AccountId)),
+    DATEVALUE(CreatedDate) &gt;= DATE(2025, 4, 2),
+    OR(
+        ISPICKVAL(StageName, &quot;Ganho Fechado&quot;),
+        ISPICKVAL(StageName, &quot;Contrato&quot;)
+    ),
+    ISBLANK(Account.IdVirtualOffice2__c)
+)</errorConditionFormula>
+    <errorMessage>O cliente vinculado à oportunidade não possui o ID do Virtual Office preenchido em seu cadastro. Atualize o cadastro do cliente antes de continuar.</errorMessage>
+</ValidationRule>

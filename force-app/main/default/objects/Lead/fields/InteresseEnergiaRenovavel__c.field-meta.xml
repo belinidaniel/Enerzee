@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>InteresseEnergiaRenovavel__c</fullName>
+    <label>Interesse em outras soluções de energia</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Armazenamento de energia (baterias)</fullName>
+                <default>false</default>
+                <label>Armazenamento de energia (baterias)</label>
+            </value>
+            <value>
+                <fullName>Carregadores para carros elétricos</fullName>
+                <default>false</default>
+                <label>Carregadores para carros elétricos</label>
+            </value>
+            <value>
+                <fullName>Automação residencial (casa inteligente)</fullName>
+                <default>false</default>
+                <label>Automação residencial (casa inteligente)</label>
+            </value>
+            <value>
+                <fullName>Todas as opções</fullName>
+                <default>false</default>
+                <label>Todas as opções</label>
+            </value>
+            <value>
+                <fullName>Por enquanto, não!</fullName>
+                <default>false</default>
+                <label>Por enquanto, não!</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

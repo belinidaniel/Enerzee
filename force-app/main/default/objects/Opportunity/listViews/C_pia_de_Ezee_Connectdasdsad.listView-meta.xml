@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>C_pia_de_Ezee_Connectdasdsad</fullName>
+    <columns>Numeroproposta__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ConsultorOportunidade__c</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.RECORDTYPE</columns>
+    <columns>CORE.USERS.FULL_NAME</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>ValorTotalProdutos__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.BowE,Opportunity.EzeeConnect,Opportunity.Nextron,Opportunity.Plin,Opportunity.Raizen,Opportunity.Ultragaz,Opportunity.Origo</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.NAME</field>
+        <operation>contains</operation>
+        <value>toledo</value>
+    </filters>
+    <label>Ezee Connect Toledo</label>
+</ListView>

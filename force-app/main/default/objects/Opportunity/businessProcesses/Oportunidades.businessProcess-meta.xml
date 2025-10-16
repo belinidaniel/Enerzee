@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BusinessProcess xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Oportunidades</fullName>
+    <description>Processo de Vendas de Oportunidade.</description>
+    <isActive>true</isActive>
+    <values>
+        <fullName>Análise de viabilidade</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Contrato enviado</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Contrato firmado %2F Assinado</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Elaboração de proposta</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Fechado Perdido</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Ganho fechado</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Geração de contrato</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Método de pagamento</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Proposta enviada %2F Aguardando Aceite</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Prospecção</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Readequação de Proposta</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Validação do método de pagamento</fullName>
+        <default>false</default>
+    </values>
+</BusinessProcess>

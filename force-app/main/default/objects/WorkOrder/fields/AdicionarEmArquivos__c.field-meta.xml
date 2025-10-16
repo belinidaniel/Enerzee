@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AdicionarEmArquivos__c</fullName>
+    <description>Campo informativo, para auxiliar técnico sobre fotos necessárias para dados do padrão de entrada, viabilidade.</description>
+    <externalId>false</externalId>
+    <formula>&quot;Foto do padrão de entrada, &quot; &amp; 
+&quot;foto da fachada da residência (UC), &quot; &amp; 
+&quot;foto do quadro do padrão de entrada, &quot; &amp; 
+&quot;foto da ligação de aterramento do quadro do padrão de entrada, &quot; &amp; 
+&quot;foto da aterramento do padrão de entrada existente, &quot; &amp; 
+&quot;foto do disjuntor do padrão de entrada, &quot; &amp; 
+&quot;vídeo do caminho do padrão de entrada ao inversor, &quot; &amp; 
+&quot;foto do transformador e &quot; &amp; 
+&quot;foto da placa do transformador.&quot;</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Adicionar em arquivos</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

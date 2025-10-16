@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Viabilidade_T_cnica_Ezee_Solar</fullName>
+    <columns>Numeroproposta__c</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ConsultorOportunidade__c</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <columns>OPPORTUNITY.LAST_STAGE_CHANGE</columns>
+    <columns>PotenciaPicoSistema__c</columns>
+    <columns>MunicipioInstalacao__c</columns>
+    <columns>EstadoInstalacao__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.Ezee_Solar</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>equals</operation>
+        <value>Análise de viabilidade,viabilidade técnica</value>
+    </filters>
+    <label>Viabilidade Técnica (Ezee Solar)</label>
+</ListView>

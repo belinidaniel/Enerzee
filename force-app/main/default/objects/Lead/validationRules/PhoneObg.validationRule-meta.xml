@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PhoneObg</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+				ISBLANK(Phone),
+				ISBLANK(MobilePhone),
+				ISPICKVAL(Status, &apos;Distribuído&apos;),
+				ISCHANGED(Status)
+)</errorConditionFormula>
+    <errorMessage>Campo Telefone precisa ser preenchido antes de mudar a fase do Lead.</errorMessage>
+</ValidationRule>

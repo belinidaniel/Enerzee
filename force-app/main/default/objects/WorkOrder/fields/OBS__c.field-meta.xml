@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OBS__c</fullName>
+    <description>Campo para observação auxiliar ao técnico da ficha de inspeção.</description>
+    <externalId>false</externalId>
+    <formula>&quot; Mandar localização no whatsapp: (65) 99698 - 7669 e informar que é visita técnica junto com nome e sobrenome do cliente.&quot;</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>OBS.:</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

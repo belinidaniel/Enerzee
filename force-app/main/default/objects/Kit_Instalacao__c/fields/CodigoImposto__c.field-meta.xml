@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CodigoImposto__c</fullName>
+    <label>Código de Imposto</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Industrialização</fullName>
+                <default>false</default>
+                <label>Industrialização</label>
+            </value>
+            <value>
+                <fullName>Compra Comercial</fullName>
+                <default>false</default>
+                <label>Compra Comercial</label>
+            </value>
+            <value>
+                <fullName>Transferência</fullName>
+                <default>false</default>
+                <label>Transferência</label>
+            </value>
+            <value>
+                <fullName>Conserto ou reparo</fullName>
+                <default>false</default>
+                <label>Conserto ou reparo</label>
+            </value>
+            <value>
+                <fullName>Compra KIT Weg</fullName>
+                <default>false</default>
+                <label>Compra KIT Weg</label>
+            </value>
+            <value>
+                <fullName>Compra Ativo Fixo</fullName>
+                <default>false</default>
+                <label>Compra Ativo Fixo</label>
+            </value>
+            <value>
+                <fullName>Venda Prod. Própria</fullName>
+                <default>false</default>
+                <label>Venda Prod. Própria</label>
+            </value>
+            <value>
+                <fullName>Venda Adquirida Terc</fullName>
+                <default>false</default>
+                <label>Venda Adquirida Terc</label>
+            </value>
+            <value>
+                <fullName>Demonstração</fullName>
+                <default>false</default>
+                <label>Demonstração</label>
+            </value>
+            <value>
+                <fullName>Compra Consumo</fullName>
+                <default>false</default>
+                <label>Compra Consumo</label>
+            </value>
+            <value>
+                <fullName>Serv. Prestado/Venda</fullName>
+                <default>false</default>
+                <label>Serv. Prestado/Venda</label>
+            </value>
+            <value>
+                <fullName>Agua e Esgoto</fullName>
+                <default>false</default>
+                <label>Agua e Esgoto</label>
+            </value>
+            <value>
+                <fullName>Aluguel de Imoveis</fullName>
+                <default>false</default>
+                <label>Aluguel de Imoveis</label>
+            </value>
+            <value>
+                <fullName>Comissao Consultores</fullName>
+                <default>false</default>
+                <label>Comissao Consultores</label>
+            </value>
+            <value>
+                <fullName>Compra Comercial ST</fullName>
+                <default>false</default>
+                <label>Compra Comercial ST</label>
+            </value>
+            <value>
+                <fullName>Compra NF Fut. Remes</fullName>
+                <default>false</default>
+                <label>Compra NF Fut. Remes</label>
+            </value>
+            <value>
+                <fullName>Compra NF Futura</fullName>
+                <default>false</default>
+                <label>Compra NF Futura</label>
+            </value>
+            <value>
+                <fullName>Compra de Brindes</fullName>
+                <default>false</default>
+                <label>Compra de Brindes</label>
+            </value>
+            <value>
+                <fullName>Copa e Cozinha</fullName>
+                <default>false</default>
+                <label>Copa e Cozinha</label>
+            </value>
+            <value>
+                <fullName>Cursos e Treinamento</fullName>
+                <default>false</default>
+                <label>Cursos e Treinamento</label>
+            </value>
+            <value>
+                <fullName>Desp Aprendiz/Estagi</fullName>
+                <default>false</default>
+                <label>Desp Aprendiz/Estagi</label>
+            </value>
+            <value>
+                <fullName>Desp. Contratuais</fullName>
+                <default>false</default>
+                <label>Desp. Contratuais</label>
+            </value>
+            <value>
+                <fullName>Desp. c/ Sistemas</fullName>
+                <default>false</default>
+                <label>Desp. c/ Sistemas</label>
+            </value>
+            <value>
+                <fullName>Desp. c/ Viagem</fullName>
+                <default>false</default>
+                <label>Desp. c/ Viagem</label>
+            </value>
+            <value>
+                <fullName>Energia Eletrica</fullName>
+                <default>false</default>
+                <label>Energia Eletrica</label>
+            </value>
+            <value>
+                <fullName>Eventos e Confratern</fullName>
+                <default>false</default>
+                <label>Eventos e Confratern</label>
+            </value>
+            <value>
+                <fullName>Feiras e Exposicoes</fullName>
+                <default>false</default>
+                <label>Feiras e Exposicoes</label>
+            </value>
+            <value>
+                <fullName>Ferramentas</fullName>
+                <default>false</default>
+                <label>Ferramentas</label>
+            </value>
+            <value>
+                <fullName>Fretes s/ Vendas</fullName>
+                <default>false</default>
+                <label>Fretes s/ Vendas</label>
+            </value>
+            <value>
+                <fullName>Impostos Estaduais</fullName>
+                <default>false</default>
+                <label>Impostos Estaduais</label>
+            </value>
+            <value>
+                <fullName>Internet e Telefone</fullName>
+                <default>false</default>
+                <label>Internet e Telefone</label>
+            </value>
+            <value>
+                <fullName>Locacao Maq e Equip</fullName>
+                <default>false</default>
+                <label>Locacao Maq e Equip</label>
+            </value>
+            <value>
+                <fullName>Lanches e Bebidas</fullName>
+                <default>false</default>
+                <label>Lanches e Bebidas</label>
+            </value>
+            <value>
+                <fullName>Locacao de Veiculo</fullName>
+                <default>false</default>
+                <label>Locacao de Veiculo</label>
+            </value>
+            <value>
+                <fullName>Outras Saidas</fullName>
+                <default>false</default>
+                <label>Outras Saidas</label>
+            </value>
+            <value>
+                <fullName>Publi. e Marketing</fullName>
+                <default>false</default>
+                <label>Publi. e Marketing</label>
+            </value>
+            <value>
+                <fullName>Rem Merc p conserto</fullName>
+                <default>false</default>
+                <label>Rem Merc p conserto</label>
+            </value>
+            <value>
+                <fullName>Doação ou brinde</fullName>
+                <default>false</default>
+                <label>Doação ou brinde</label>
+            </value>
+            <value>
+                <fullName>Serv. Inst Sist Foto</fullName>
+                <default>false</default>
+                <label>Serv. Inst Sist Foto</label>
+            </value>
+            <value>
+                <fullName>Outras Entradas</fullName>
+                <default>false</default>
+                <label>Outras Entradas</label>
+            </value>
+            <value>
+                <fullName>Saida Unifor e Acess</fullName>
+                <default>false</default>
+                <label>Saida Unifor e Acess</label>
+            </value>
+            <value>
+                <fullName>Saida de Mat. Elétri</fullName>
+                <default>false</default>
+                <label>Saida de Mat. Elétri</label>
+            </value>
+            <value>
+                <fullName>Serviços Gerais</fullName>
+                <default>false</default>
+                <label>Serviços Gerais</label>
+            </value>
+            <value>
+                <fullName>Serviços Prestados</fullName>
+                <default>false</default>
+                <label>Serviços Prestados</label>
+            </value>
+            <value>
+                <fullName>Serviços de Obra</fullName>
+                <default>false</default>
+                <label>Serviços de Obra</label>
+            </value>
+            <value>
+                <fullName>Taxa ART</fullName>
+                <default>false</default>
+                <label>Taxa ART</label>
+            </value>
+            <value>
+                <fullName>Transf. Filiais</fullName>
+                <default>false</default>
+                <label>Transf. Filiais</label>
+            </value>
+            <value>
+                <fullName>Transf. Filiais - ST</fullName>
+                <default>false</default>
+                <label>Transf. Filiais - ST</label>
+            </value>
+            <value>
+                <fullName>Venda NF Futura</fullName>
+                <default>false</default>
+                <label>Venda NF Futura</label>
+            </value>
+            <value>
+                <fullName>Venda de Imobilizado</fullName>
+                <default>false</default>
+                <label>Venda de Imobilizado</label>
+            </value>
+            <value>
+                <fullName>Visita Tecnica</fullName>
+                <default>false</default>
+                <label>Visita Tecnica</label>
+            </value>
+            <value>
+                <fullName>Servico de Topografi</fullName>
+                <default>false</default>
+                <label>Servico de Topografi</label>
+            </value>
+            <value>
+                <fullName>Venda de Materiais</fullName>
+                <default>false</default>
+                <label>Venda de Materiais</label>
+            </value>
+            <value>
+                <fullName>Material Extra Aplic</fullName>
+                <default>false</default>
+                <label>Material Extra Aplic</label>
+            </value>
+            <value>
+                <fullName>Compra Triangulação</fullName>
+                <default>false</default>
+                <label>Compra Triangulação</label>
+            </value>
+            <value>
+                <fullName>Venda Triangulacao</fullName>
+                <default>false</default>
+                <label>Venda Triangulacao</label>
+            </value>
+            <value>
+                <fullName>Farmacia</fullName>
+                <default>false</default>
+                <label>Farmacia</label>
+            </value>
+            <value>
+                <fullName>Uniformes e Acessori</fullName>
+                <default>false</default>
+                <label>Uniformes e Acessori</label>
+            </value>
+            <value>
+                <fullName>Serv. Manut. Usina</fullName>
+                <default>false</default>
+                <label>Serv. Manut. Usina</label>
+            </value>
+            <value>
+                <fullName>Dev. Compra</fullName>
+                <default>false</default>
+                <label>Dev. Compra</label>
+            </value>
+            <value>
+                <fullName>Retorno de Obra</fullName>
+                <default>false</default>
+                <label>Retorno de Obra</label>
+            </value>
+            <value>
+                <fullName>Comodato</fullName>
+                <default>false</default>
+                <label>Comodato</label>
+            </value>
+            <value>
+                <fullName>Venda Merc V. Ordem</fullName>
+                <default>false</default>
+                <label>Venda Merc V. Ordem</label>
+            </value>
+            <value>
+                <fullName>Remessa Merc C. Orde</fullName>
+                <default>false</default>
+                <label>Remessa Merc C. Orde</label>
+            </value>
+            <value>
+                <fullName>Serv Proteção Veicul</fullName>
+                <default>false</default>
+                <label>Serv Proteção Veicul</label>
+            </value>
+            <value>
+                <fullName>Dev. Comodato</fullName>
+                <default>false</default>
+                <label>Dev. Comodato</label>
+            </value>
+            <value>
+                <fullName>Multa Trans Desc Sal</fullName>
+                <default>false</default>
+                <label>Multa Trans Desc Sal</label>
+            </value>
+            <value>
+                <fullName>Dev. Venda</fullName>
+                <default>false</default>
+                <label>Dev. Venda</label>
+            </value>
+            <value>
+                <fullName>Compra Com5405/04/03</fullName>
+                <default>false</default>
+                <label>Compra Com5405/04/03</label>
+            </value>
+            <value>
+                <fullName>Compra Com6405/04/03</fullName>
+                <default>false</default>
+                <label>Compra Com6405/04/03</label>
+            </value>
+            <value>
+                <fullName>Manut Veiculos</fullName>
+                <default>false</default>
+                <label>Manut Veiculos</label>
+            </value>
+            <value>
+                <fullName>Retorno Rem Conserto</fullName>
+                <default>false</default>
+                <label>Retorno Rem Conserto</label>
+            </value>
+            <value>
+                <fullName>Manut. Predial</fullName>
+                <default>false</default>
+                <label>Manut. Predial</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

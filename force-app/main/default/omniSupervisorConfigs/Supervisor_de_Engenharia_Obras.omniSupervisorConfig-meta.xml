@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OmniSupervisorConfig xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isTimelineHidden>false</isTimelineHidden>
+    <masterLabel>Supervisor de Engenharia - Obras</masterLabel>
+    <omniSupervisorConfigGroup>
+        <group>Omni_Agentes_Obras</group>
+    </omniSupervisorConfigGroup>
+    <omniSupervisorConfigProfile>
+        <profile>coordenação</profile>
+    </omniSupervisorConfigProfile>
+    <omniSupervisorConfigTab>
+        <displayOrder>0</displayOrder>
+        <tabType>Wallboard</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>1</displayOrder>
+        <tabType>Agents</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>2</displayOrder>
+        <tabType>QueuesBacklog</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>3</displayOrder>
+        <tabType>AssignedWork</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>4</displayOrder>
+        <tabType>SkillsBacklog</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>5</displayOrder>
+        <tabType>AIAgents</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>6</displayOrder>
+        <flexiPage>Chatter</flexiPage>
+        <tabType>FlexipageType</tabType>
+    </omniSupervisorConfigTab>
+    <skillVisibility>AllSkills</skillVisibility>
+</OmniSupervisorConfig>

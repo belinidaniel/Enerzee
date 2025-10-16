@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Elaboracao_Proposta_Altera_por_Processo</fullName>
+    <active>false</active>
+    <description>A fase elaboração de proposta só poderá ser alterada se o contrato mini ou outras oportunidades estiverem enviados para aprovação.</description>
+    <errorConditionFormula>AND(
+			ISCHANGED(StageName),
+   ISPICKVAL(PRIORVALUE(StageName),&quot;Elaboração de proposta&quot;),
+			FaseAlterada__c = false,
+			RecordType.Name  &lt;&gt; &apos;Contrato Micro&apos;,
+			RecordType.Name  &lt;&gt; &apos;Micro Grupo A - Elaboração&apos;,
+			RecordType.Name  &lt;&gt; &apos;Micro Grupo B - Elaboração&apos;
+		)</errorConditionFormula>
+    <errorMessage>A fase elaboração de proposta só poderá ser alterada se o contrato mini ou outras oportunidades estiverem enviados para aprovação.</errorMessage>
+</ValidationRule>

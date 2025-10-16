@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Notificacao7DiasEnviada__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Campo para controlar se já foi enviada para esta oportunidade a notificação de aviso de 7 dias úteis na fase de Contrato enviado</description>
+    <label>Notificação de 7 dias enviada</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

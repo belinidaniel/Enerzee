@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Prospecção</fullName>
+        <default>false</default>
+        <label>Prospecção</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Solicitação de Proposta</fullName>
+        <default>false</default>
+        <label>Solicitação de Proposta</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>5</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Aguardando Parceiro</fullName>
+        <default>false</default>
+        <label>Aguardando Parceiro</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Análise de Target</fullName>
+        <default>false</default>
+        <label>Análise de Target</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>15</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Elaboração de proposta</fullName>
+        <default>false</default>
+        <label>Elaboração de proposta</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Simulação de Proposta</fullName>
+        <default>false</default>
+        <label>Simulação de Proposta</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Aguardando Aprovação</fullName>
+        <default>false</default>
+        <label>Aguardando Aprovação</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>25</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Proposta Gerada</fullName>
+        <default>false</default>
+        <label>Proposta Gerada</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Proposta enviada</fullName>
+        <default>false</default>
+        <label>Proposta enviada</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>30</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Proposta enviada / Aguardando Aceite</fullName>
+        <default>false</default>
+        <label>Proposta enviada / Aguardando Aceite</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>30</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Confirmação de pagamento sinal</fullName>
+        <default>false</default>
+        <label>Confirmação de pagamento sinal</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>45</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Método de pagamento</fullName>
+        <default>false</default>
+        <label>Método de pagamento</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>55</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Validação do método de pagamento</fullName>
+        <default>false</default>
+        <label>Validação do método de pagamento</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>60</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Elaboração de Minuta</fullName>
+        <default>false</default>
+        <label>Elaboração de Minuta</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>25</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Apresentação Comercial</fullName>
+        <default>false</default>
+        <label>Apresentação Comercial</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>30</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Aguardando Assinatura</fullName>
+        <default>false</default>
+        <label>Aguardando Assinatura</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>30</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Lead</fullName>
+        <default>false</default>
+        <label>Lead</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>30</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Análise de Crédito</fullName>
+        <default>false</default>
+        <label>Análise de Crédito</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>40</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Informações adicionais</fullName>
+        <default>false</default>
+        <label>Informações adicionais</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>65</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Agendamento da Visita Técnica</fullName>
+        <default>false</default>
+        <label>Agendamento da Visita Técnica</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>35</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Análise de viabilidade</fullName>
+        <default>false</default>
+        <label>Análise de viabilidade</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>45</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Viabilidade Técnica</fullName>
+        <default>false</default>
+        <label>Viabilidade Técnica</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>55</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Readequação de Proposta</fullName>
+        <default>false</default>
+        <label>Readequação de Proposta</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Aguardando aceite</fullName>
+        <default>false</default>
+        <label>Aguardando aceite</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>65</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Negociação</fullName>
+        <default>false</default>
+        <label>Negociação</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>30</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Contrato</fullName>
+        <default>false</default>
+        <label>Contrato</label>
+        <closed>false</closed>
+        <forecastCategory>Omitted</forecastCategory>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Validação</fullName>
+        <default>false</default>
+        <label>Validação</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>30</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Viabilidade Tecnica</fullName>
+        <default>false</default>
+        <label>Viabilidade Tecnica</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>75</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Aguardando dados da visita</fullName>
+        <default>false</default>
+        <label>Aguardando dados da visita</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>40</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Geração de contrato</fullName>
+        <default>false</default>
+        <label>Geração de contrato</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>70</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Contrato enviado</fullName>
+        <default>false</default>
+        <label>Contrato enviado</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>80</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Contrato firmado / Assinado</fullName>
+        <default>false</default>
+        <label>Contrato firmado / Assinado</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Envio das Alterações Comerciais ao Parceiro</fullName>
+        <default>false</default>
+        <label>Envio das Alterações Comerciais ao Parceiro</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Aguardando Reanálise do Parceiro</fullName>
+        <default>false</default>
+        <label>Aguardando Reanálise do Parceiro</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>55</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Renegociação Comercial</fullName>
+        <default>false</default>
+        <label>Renegociação Comercial</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>60</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Elaboração de Aditivo</fullName>
+        <default>false</default>
+        <label>Elaboração de Aditivo</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>70</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Aguardando Assinatura de Aditivo</fullName>
+        <default>false</default>
+        <label>Aguardando Assinatura de Aditivo</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>80</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Revisão Contratual</fullName>
+        <default>false</default>
+        <label>Revisão Contratual</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>85</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Assinatura de Contrato com o Parceiro</fullName>
+        <default>false</default>
+        <label>Assinatura de Contrato com o Parceiro</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Aguardando Informação</fullName>
+        <default>false</default>
+        <label>Aguardando Informação</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Elaboração de Estudo</fullName>
+        <default>false</default>
+        <label>Elaboração de Estudo</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>15</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Agendamento Pendente</fullName>
+        <default>false</default>
+        <label>Agendamento Pendente</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Reunião Agendada</fullName>
+        <default>false</default>
+        <label>Reunião Agendada</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>25</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Minuta Gerada</fullName>
+        <default>false</default>
+        <label>Minuta Gerada</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>40</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Finalizado (Aguard. NF)</fullName>
+        <default>false</default>
+        <label>Finalizado (Aguard. NF)</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>45</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Aguardando Pagamento</fullName>
+        <default>false</default>
+        <label>Aguardando Pagamento</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>70</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Pagamento Confirmado</fullName>
+        <default>false</default>
+        <label>Pagamento Confirmado</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Aguard.Assinatura (AXS)</fullName>
+        <default>false</default>
+        <label>Aguard.Assinatura (AXS)</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Negociação (PLIN)</fullName>
+        <default>false</default>
+        <label>Negociação (PLIN)</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>15</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Aguard. Assinatura (PLIN)</fullName>
+        <default>false</default>
+        <label>Aguard. Assinatura (PLIN)</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>70</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Negociação (2W)</fullName>
+        <default>false</default>
+        <label>Negociação (2W)</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>35</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Aguard.Assinatura(2W)</fullName>
+        <default>false</default>
+        <label>Aguard.Assinatura(2W)</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>40</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Finalizado (Aguard.NF)</fullName>
+        <default>false</default>
+        <label>Finalizado (Aguard.NF)</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>40</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Parecer de acesso</fullName>
+        <default>false</default>
+        <label>Parecer de acesso</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>70</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Equipamento</fullName>
+        <default>false</default>
+        <label>Equipamento</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>70</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Instalação</fullName>
+        <default>false</default>
+        <label>Instalação</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Fase de obra</fullName>
+        <default>false</default>
+        <description>Fase de obra</description>
+        <label>Fase de obra</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>80</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Confirmação de pagamento</fullName>
+        <default>false</default>
+        <label>Confirmação de pagamento</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>95</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Confirmação de pagamento contrato</fullName>
+        <default>false</default>
+        <label>Confirmação de pagamento contrato</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>95</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Contrato Finalizado</fullName>
+        <default>false</default>
+        <label>Contrato Finalizado</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>70</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Finalizado</fullName>
+        <default>false</default>
+        <label>Finalizado</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>80</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Ganho fechado</fullName>
+        <default>false</default>
+        <label>Ganho fechado</label>
+        <closed>true</closed>
+        <forecastCategory>Closed</forecastCategory>
+        <probability>100</probability>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Fechado Perdido</fullName>
+        <default>false</default>
+        <label>Fechado Perdido</label>
+        <closed>true</closed>
+        <forecastCategory>Omitted</forecastCategory>
+        <probability>0</probability>
+        <won>false</won>
+    </standardValue>
+</StandardValueSet>

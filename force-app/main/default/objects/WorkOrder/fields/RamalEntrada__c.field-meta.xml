@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RamalEntrada__c</fullName>
+    <description>Campo para definir o tipo de ramal de entrada.</description>
+    <label>Ramal de entrada:</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Subterrâneo</fullName>
+                <default>false</default>
+                <label>Subterrâneo</label>
+            </value>
+            <value>
+                <fullName>Aéreo</fullName>
+                <default>false</default>
+                <label>Aéreo</label>
+            </value>
+            <value>
+                <fullName>CP-Rede</fullName>
+                <default>false</default>
+                <label>CP-Rede</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

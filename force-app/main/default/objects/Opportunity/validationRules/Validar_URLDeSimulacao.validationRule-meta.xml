@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Validar_URLDeSimulacao</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+   ISCHANGED(StageName),
+   ISPICKVAL(PRIORVALUE(StageName), &apos;Validação&apos;),
+   ISBLANK(UrlSimulation__c),
+   RecordType.DeveloperName == &apos;EzeeConnect&apos;
+)</errorConditionFormula>
+    <errorMessage>O campo &quot;URL de simulação&quot; deve ser preenchido na fase de Validação.</errorMessage>
+</ValidationRule>

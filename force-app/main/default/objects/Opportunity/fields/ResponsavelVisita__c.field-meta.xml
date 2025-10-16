@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ResponsavelVisita__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Campo para associar o responsável pela visita técnica a oportunidade.</description>
+    <label>Responsável pela Visita</label>
+    <referenceTo>ServiceResource</referenceTo>
+    <relationshipLabel>Oportunidades</relationshipLabel>
+    <relationshipName>Oportunidades</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

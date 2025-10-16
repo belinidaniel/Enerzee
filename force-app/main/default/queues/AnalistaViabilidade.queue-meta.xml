@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Usado para atribuição de tasks - Owner</description>
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Analistas de Viabilidade</name>
+    <queueMembers>
+        <roles>
+            <role>Analista_de_Engenharia_Viabilidade</role>
+            <role>Assistente_Comercial_Viabilidade</role>
+            <role>Estagiario_de_Engenharia_Viabilidade</role>
+        </roles>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Task</sobjectType>
+    </queueSobject>
+</Queue>

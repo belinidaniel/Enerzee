@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSetGroup xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Grupo de permissões contendo os conjuntos de permissões necessários para um despachante.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Permissões para Despachante</label>
+    <permissionSets>FSL_Bundle_License</permissionSets>
+    <permissionSets>FSL_Bundle_Permissions</permissionSets>
+    <permissionSets>FSL_Community_Dispatcher_License</permissionSets>
+    <permissionSets>FSL_Community_Dispatcher_Permissions</permissionSets>
+    <permissionSets>FSL_Dispatcher_License</permissionSets>
+    <permissionSets>FSL_Dispatcher_Permissions</permissionSets>
+    <status>Updated</status>
+</PermissionSetGroup>

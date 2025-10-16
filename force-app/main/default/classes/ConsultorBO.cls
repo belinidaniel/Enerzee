@@ -1,0 +1,110 @@
+public class ConsultorBO {
+    public static Id consultorRT = Schema.SObjectType.Consultor__c.getRecordTypeInfosByDeveloperName().get('Consultor').getRecordTypeId();
+
+    public static void assignCPFCNPJToIdentificationNumber(List<Consultor__c> newRecordList){
+        for(Consultor__c consultor : newRecordList){
+            if(consultor.NumeroIdentificacao__c == null){
+                consultor.NumeroIdentificacao__c = consultor.SeCPFouCNPJ__c;
+            }
+        }
+    }
+
+    public static void sendFornecedorRepresentanteRecordToSAP(List<Consultor__c> newRecordList){
+        // Representante (SAP) = Consultor = Vendedor
+        // Fornecedor (SAP) = Franqueado =  Integrador (DESCONTINUADA)
+
+        User runningUser = [
+            SELECT  Id, Name, Profile.Name
+            FROM    User
+            WHERE   Id =: UserInfo.getUserId()
+        ];
+
+        if(!runningUser.Name.equalsIgnoreCase('Integrador SAP')){
+            
+            Set<Id> representanteIds = new Set<Id>();
+            Set<Id> fornecedorIds = new Set<Id>();
+            for(Consultor__c consultor : newRecordList){
+                if(consultor.RecordTypeID == consultorRT){
+                    representanteIds.add(consultor.Id);
+                    fornecedorIds.add(consultor.Id);
+                }
+
+            }
+            
+            if(!representanteIds.isEmpty()){
+                IntegracaoSAPRepresentante.sendRepresentante(representanteIds);
+            }
+
+            if(!fornecedorIds.isEmpty()){
+                IntegracaoSAPFornecedor.sendFornecedor(fornecedorIds);
+            }
+        }
+    }
+
+    public static void createMessagingUser(List<Consultor__c> consultores, Map<Id, Consultor__c> oldMap){
+
+        try{
+
+            List<MessagingEndUser> messagingUsers = new List<MessagingEndUser>();
+            Map<String, MessagingEndUser> endUserByKey = new Map<String, MessagingEndUser>();
+            Map<String, Consultor__c> consultantByPhone = new Map<String, Consultor__c>();
+
+            List<MessagingChannel> channelPartner = [SELECT Id, masterlabel from MessagingChannel WHERE MasterLabel = '+55 11 4003-8852'];
+
+            for(Consultor__c consultant : consultores){
+
+                if(String.isBlank(consultant.Telefone__c)){
+                    continue;
+                }
+
+                Consultor__c oldConsultant = oldMap.get(consultant.Id);
+
+                if(oldConsultant != null && (oldConsultant.Telefone__c == consultant.Telefone__c)) continue;
+
+                consultantByPhone.put(consultant.Telefone_Formatado__c, consultant);
+            }
+
+            List<MessagingEndUser> endUsers = [
+                SELECT Id, Name, MessagingPlatformKey, Telefone_Formatado__c, ContactId, AccountId, Consultor__c
+                FROM MessagingEndUser
+                WHERE Consultor__c = null
+                AND Telefone_Formatado__c IN :consultantByPhone.keySet()
+            ];
+
+            if(endUsers != null){
+                for(MessagingEndUser endUser : endUsers){
+                    endUserByKey.put(endUser.Telefone_Formatado__c, endUser);
+                }
+            }
+
+            for(Consultor__c consultant : consultantByPhone.values()){
+
+                MessagingEndUser endUser = endUserByKey.get(consultant.Telefone_Formatado__c);
+
+                if(endUser == null){
+
+                    endUser = new MessagingEndUser(
+                        MessageType = 'WhatsApp',
+                        MessagingConsentStatus = 'ImplicitlyOptedIn',
+                        MessagingPlatformKey = consultant.Telefone_Formatado__c,
+                        Name = consultant.Name,
+                        MessagingChannelId = Test.isRunningTest() ? '0MjU50000011EhtKAE' : channelPartner[0].Id,
+                        Consultor__c = consultant.Id
+                    );
+
+                }else{
+                    endUser.Consultor__c = consultant.Id;
+                }
+                messagingUsers.add(endUser);
+            }
+
+            Database.upsert(messagingUsers, false);
+
+        }catch(Exception ex){
+            System.debug('##Erro ao criar messaging user: ' + ex.getMessage());
+            System.debug('##Stack: ' + ex.getStackTraceString());
+            System.debug('##Line: ' + ex.getLineNumber());
+        }
+        
+    }
+}

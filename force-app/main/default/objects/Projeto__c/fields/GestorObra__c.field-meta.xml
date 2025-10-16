@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GestorObra__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Campo para definir Gestor da Obra.</description>
+    <label>Gestor da Obra</label>
+    <referenceTo>User</referenceTo>
+    <relationshipName>ProjetosGestor</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

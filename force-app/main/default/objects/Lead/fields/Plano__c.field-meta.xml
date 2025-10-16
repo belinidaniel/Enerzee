@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Plano__c</fullName>
+    <label>Plano</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Transition</fullName>
+                <default>false</default>
+                <label>Transition</label>
+            </value>
+            <value>
+                <fullName>Ezee Solar</fullName>
+                <default>false</default>
+                <label>Ezee Solar</label>
+            </value>
+            <value>
+                <fullName>Integrador</fullName>
+                <default>false</default>
+                <label>Integrador</label>
+            </value>
+            <value>
+                <fullName>Ezee Connect</fullName>
+                <default>false</default>
+                <label>Ezee Connect</label>
+            </value>
+            <value>
+                <fullName>Ezee Livre</fullName>
+                <default>false</default>
+                <label>Ezee Livre</label>
+            </value>
+            <value>
+                <fullName>Direct</fullName>
+                <default>false</default>
+                <label>Direct</label>
+            </value>
+            <value>
+                <fullName>BusinessPlus</fullName>
+                <default>false</default>
+                <label>BusinessPlus</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

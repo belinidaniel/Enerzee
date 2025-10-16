@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Fases_definidas_para_status</fullName>
+    <active>true</active>
+    <description>O status da ordem de trabalho tem uma definição especifica de alteração de fase, após o compromisso de serviço relacionado ser despachado, o status &apos;novo&apos;  só poderá ser alterado para &apos;em andamento&apos; e de &apos;em andamento&apos; para quaisquer a seguir.</description>
+    <errorConditionFormula>AND(
+				 ISCHANGED(Status),
+					ISPICKVAL(PRIORVALUE(Status), &quot;Novo&quot;),
+     NOT(ISPICKVAL(Status, &quot;Em andamento&quot;))
+				 )</errorConditionFormula>
+    <errorDisplayField>Status</errorDisplayField>
+    <errorMessage>O status da ordem de trabalho tem uma definição especifica de alteração de fase, após o compromisso de serviço relacionado ser despachado, o status novo só poderá ser alterado para em andamento e de em andamento para quaisquer a seguir.</errorMessage>
+</ValidationRule>

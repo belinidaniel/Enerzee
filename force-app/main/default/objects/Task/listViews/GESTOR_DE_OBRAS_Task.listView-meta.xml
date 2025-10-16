@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GESTOR_DE_OBRAS_Task</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Gestor de Obras</label>
+    <queue>GESTOR_DE_OBRAS</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

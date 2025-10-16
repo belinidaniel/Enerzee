@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ValorTotalProposto__c</fullName>
+    <formula>if(TEXT(StatusAprovacaoDesconto__c) == &apos;Aprovado&apos;, ValorTotalProposta__c, ValorTotalProposta__c - DescontoUFV__c)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Campo do valor da proposta após ser aprovado</inlineHelpText>
+    <label>Valor Total Proposto</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

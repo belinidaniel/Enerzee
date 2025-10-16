@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Micro Contrato</fullName>
+        <default>false</default>
+        <label>Micro Contrato</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Mini Contrato</fullName>
+        <default>false</default>
+        <label>Mini Contrato</label>
+    </standardValue>
+</StandardValueSet>

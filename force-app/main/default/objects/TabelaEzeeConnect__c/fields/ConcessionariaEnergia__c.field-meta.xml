@@ -1,0 +1,1284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ConcessionariaEnergia__c</fullName>
+    <label>Concessionária de Energia</label>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Estado__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Energisa Acre - Distribuidora De Energia S.A - Eletroacre</fullName>
+                <default>false</default>
+                <label>Energisa Acre - Distribuidora De Energia S.A - Eletroacre</label>
+            </value>
+            <value>
+                <fullName>Equatorial Alagoas Distribuidora De Energia S.A. - Equatorial Al</fullName>
+                <default>false</default>
+                <label>Equatorial Alagoas Distribuidora De Energia S.A. - Equatorial Al</label>
+            </value>
+            <value>
+                <fullName>Amazonas Energia S.A - Ame</fullName>
+                <default>false</default>
+                <label>Amazonas Energia S.A - Ame</label>
+            </value>
+            <value>
+                <fullName>Companhia De Eletricidade Do Amapá - Cea</fullName>
+                <default>false</default>
+                <label>Companhia De Eletricidade Do Amapá - Cea</label>
+            </value>
+            <value>
+                <fullName>Companhia De Eletricidade Do Estado Da Bahia - Coelba</fullName>
+                <default>false</default>
+                <label>Companhia De Eletricidade Do Estado Da Bahia - Coelba</label>
+            </value>
+            <value>
+                <fullName>Companhia Energética Do Ceará - Enel Ce</fullName>
+                <default>false</default>
+                <label>Companhia Energética Do Ceará - Enel Ce</label>
+            </value>
+            <value>
+                <fullName>Ceb Distribuição S.A. - Cebdis</fullName>
+                <default>false</default>
+                <label>Ceb Distribuição S.A. - Cebdis</label>
+            </value>
+            <value>
+                <fullName>Energisa Borborema - Distribuidora De Energia S.A - Ebo</fullName>
+                <default>false</default>
+                <label>Energisa Borborema - Distribuidora De Energia S.A - Ebo</label>
+            </value>
+            <value>
+                <fullName>Energisa Mato Grosso - Distribuidora De Energia S.A. - Emt</fullName>
+                <default>false</default>
+                <label>Energisa Mato Grosso - Distribuidora De Energia S.A. - Emt</label>
+            </value>
+            <value>
+                <fullName>Energisa Mato Grosso Do Sul - Distribuidora De Energia S.A. - Ems</fullName>
+                <default>false</default>
+                <label>Energisa Mato Grosso Do Sul - Distribuidora De Energia S.A. - Ems</label>
+            </value>
+            <value>
+                <fullName>Energisa Paraíba - Distribuidora De Energia S.A - Epb</fullName>
+                <default>false</default>
+                <label>Energisa Paraíba - Distribuidora De Energia S.A - Epb</label>
+            </value>
+            <value>
+                <fullName>Energisa Rondônia - Distribuidora De Energia S.A - Ceron</fullName>
+                <default>false</default>
+                <label>Energisa Rondônia - Distribuidora De Energia S.A - Ceron</label>
+            </value>
+            <value>
+                <fullName>Energisa Sul-Sudeste - Distribuidora De Energia S.A. - Ess</fullName>
+                <default>false</default>
+                <label>Energisa Sul-Sudeste - Distribuidora De Energia S.A. - Ess</label>
+            </value>
+            <value>
+                <fullName>Empresa Luz E Força Santa Maria S/A - Elfsm</fullName>
+                <default>false</default>
+                <label>Empresa Luz E Força Santa Maria S/A - Elfsm</label>
+            </value>
+            <value>
+                <fullName>Espírito Santo Distribuição De Energia S.A. - Edp Es</fullName>
+                <default>false</default>
+                <label>Espírito Santo Distribuição De Energia S.A. - Edp Es</label>
+            </value>
+            <value>
+                <fullName>Celg Distribuição S.A. - Celg-D</fullName>
+                <default>false</default>
+                <label>Celg Distribuição S.A. - Celg-D</label>
+            </value>
+            <value>
+                <fullName>Companhia Hidroelétrica São Patrício - Chesp - Chesp</fullName>
+                <default>false</default>
+                <label>Companhia Hidroelétrica São Patrício - Chesp - Chesp</label>
+            </value>
+            <value>
+                <fullName>Companhia Energética Do Maranhão - Cemar</fullName>
+                <default>false</default>
+                <label>Companhia Energética Do Maranhão - Cemar</label>
+            </value>
+            <value>
+                <fullName>Cemig Distribuição S.A - Cemig-D</fullName>
+                <default>false</default>
+                <label>Cemig Distribuição S.A - Cemig-D</label>
+            </value>
+            <value>
+                <fullName>Dme Distribuição S.A. - Dmed - Dmed</fullName>
+                <default>false</default>
+                <label>Dme Distribuição S.A. - Dmed - Dmed</label>
+            </value>
+            <value>
+                <fullName>Energisa Minas Gerais - Distribuidora De Energia S.A. - Emg</fullName>
+                <default>false</default>
+                <label>Energisa Minas Gerais - Distribuidora De Energia S.A. - Emg</label>
+            </value>
+            <value>
+                <fullName>Equatorial Pará Distribuidora De Energia S.A. - Equatorial Pa</fullName>
+                <default>false</default>
+                <label>Equatorial Pará Distribuidora De Energia S.A. - Equatorial Pa</label>
+            </value>
+            <value>
+                <fullName>Companhia Energética De Pernambuco - Celpe</fullName>
+                <default>false</default>
+                <label>Companhia Energética De Pernambuco - Celpe</label>
+            </value>
+            <value>
+                <fullName>Equatorial Piauí Distribuidora De Energia S.A - Equatorial Pi</fullName>
+                <default>false</default>
+                <label>Equatorial Piauí Distribuidora De Energia S.A - Equatorial Pi</label>
+            </value>
+            <value>
+                <fullName>Companhia Campolarguense De Energia - Cocel</fullName>
+                <default>false</default>
+                <label>Companhia Campolarguense De Energia - Cocel</label>
+            </value>
+            <value>
+                <fullName>Companhia Força E Luz Do Oeste - Cflo</fullName>
+                <default>false</default>
+                <label>Companhia Força E Luz Do Oeste - Cflo</label>
+            </value>
+            <value>
+                <fullName>Copel Distribuição S.A. - Copel-Dis</fullName>
+                <default>false</default>
+                <label>Copel Distribuição S.A. - Copel-Dis</label>
+            </value>
+            <value>
+                <fullName>Força E Luz Coronel Vivida Ltda - Forcel</fullName>
+                <default>false</default>
+                <label>Força E Luz Coronel Vivida Ltda - Forcel</label>
+            </value>
+            <value>
+                <fullName>Ampla Energia E Serviços S.A. - Enel Rj</fullName>
+                <default>false</default>
+                <label>Ampla Energia E Serviços S.A. - Enel Rj</label>
+            </value>
+            <value>
+                <fullName>Energisa Nova Friburgo - Distribuidora De Energia S.A. - Enf</fullName>
+                <default>false</default>
+                <label>Energisa Nova Friburgo - Distribuidora De Energia S.A. - Enf</label>
+            </value>
+            <value>
+                <fullName>Light Serviços De Eletricidade S A - Light</fullName>
+                <default>false</default>
+                <label>Light Serviços De Eletricidade S A - Light</label>
+            </value>
+            <value>
+                <fullName>Companhia Energética Do Rio Grande Do Norte Cosern - Cosern</fullName>
+                <default>false</default>
+                <label>Companhia Energética Do Rio Grande Do Norte Cosern - Cosern</label>
+            </value>
+            <value>
+                <fullName>Companhia Energética De Roraima - Cerr</fullName>
+                <default>false</default>
+                <label>Companhia Energética De Roraima - Cerr</label>
+            </value>
+            <value>
+                <fullName>Roraima Energia S.A - Boa Vista</fullName>
+                <default>false</default>
+                <label>Roraima Energia S.A - Boa Vista</label>
+            </value>
+            <value>
+                <fullName>Centrais Elétricas De Carazinho Sa - Eletrocar</fullName>
+                <default>false</default>
+                <label>Centrais Elétricas De Carazinho Sa - Eletrocar</label>
+            </value>
+            <value>
+                <fullName>Companhia Estadual De Distribuição De Energia Elétrica - Ceee-D - Ceee-D</fullName>
+                <default>false</default>
+                <label>Companhia Estadual De Distribuição De Energia Elétrica - Ceee-D - Ceee-D</label>
+            </value>
+            <value>
+                <fullName>Departamento Municipal De Energia De Ijuí - Demei</fullName>
+                <default>false</default>
+                <label>Departamento Municipal De Energia De Ijuí - Demei</label>
+            </value>
+            <value>
+                <fullName>Hidropan Distribuição De Energia S.A. - Hidropan</fullName>
+                <default>false</default>
+                <label>Hidropan Distribuição De Energia S.A. - Hidropan</label>
+            </value>
+            <value>
+                <fullName>Muxfeldt Marin E Cia Ltda - Muxenergia</fullName>
+                <default>false</default>
+                <label>Muxfeldt Marin E Cia Ltda - Muxenergia</label>
+            </value>
+            <value>
+                <fullName>Nova Palma Energia Ltda - Uhenpal</fullName>
+                <default>false</default>
+                <label>Nova Palma Energia Ltda - Uhenpal</label>
+            </value>
+            <value>
+                <fullName>Rge Sul Distribuidora De Energia S.A. - Rge Sul</fullName>
+                <default>false</default>
+                <label>Rge Sul Distribuidora De Energia S.A. - Rge Sul</label>
+            </value>
+            <value>
+                <fullName>Rio Grande Energia Sa - Rge</fullName>
+                <default>false</default>
+                <label>Rio Grande Energia Sa - Rge</label>
+            </value>
+            <value>
+                <fullName>Celesc Distribuição S.A - Celesc-Dis</fullName>
+                <default>false</default>
+                <label>Celesc Distribuição S.A - Celesc-Dis</label>
+            </value>
+            <value>
+                <fullName>Cooperativa Aliança - Cooperaliança</fullName>
+                <default>false</default>
+                <label>Cooperativa Aliança - Cooperaliança</label>
+            </value>
+            <value>
+                <fullName>Empresa Força E Luz De Urussanga Ltda - Eflul</fullName>
+                <default>false</default>
+                <label>Empresa Força E Luz De Urussanga Ltda - Eflul</label>
+            </value>
+            <value>
+                <fullName>Empresa Força E Luz João Cesa Ltda - Efljc</fullName>
+                <default>false</default>
+                <label>Empresa Força E Luz João Cesa Ltda - Efljc</label>
+            </value>
+            <value>
+                <fullName>Iguaçu Distribuidora De Energia Elétrica Ltda. - Ienergia</fullName>
+                <default>false</default>
+                <label>Iguaçu Distribuidora De Energia Elétrica Ltda. - Ienergia</label>
+            </value>
+            <value>
+                <fullName>Companhia Sul Sergipana De Eletricidade - Sulgipe</fullName>
+                <default>false</default>
+                <label>Companhia Sul Sergipana De Eletricidade - Sulgipe</label>
+            </value>
+            <value>
+                <fullName>Energisa Sergipe - Distribuidora De Energia S.A - Ese</fullName>
+                <default>false</default>
+                <label>Energisa Sergipe - Distribuidora De Energia S.A - Ese</label>
+            </value>
+            <value>
+                <fullName>Companhia Jaguari De Energia - Cpfl Jaguari</fullName>
+                <default>false</default>
+                <label>Companhia Jaguari De Energia - Cpfl Jaguari</label>
+            </value>
+            <value>
+                <fullName>Companhia Leste Paulista De Energia - Cpfl Leste Paulista</fullName>
+                <default>false</default>
+                <label>Companhia Leste Paulista De Energia - Cpfl Leste Paulista</label>
+            </value>
+            <value>
+                <fullName>Companhia Luz E Força De Mococa - Cpfl Mococa</fullName>
+                <default>false</default>
+                <label>Companhia Luz E Força De Mococa - Cpfl Mococa</label>
+            </value>
+            <value>
+                <fullName>Companhia Luz E Força Santa Cruz - Cpfl Santa Cruz</fullName>
+                <default>false</default>
+                <label>Companhia Luz E Força Santa Cruz - Cpfl Santa Cruz</label>
+            </value>
+            <value>
+                <fullName>Companhia Nacional De Energia Elétrica - Cnee</fullName>
+                <default>false</default>
+                <label>Companhia Nacional De Energia Elétrica - Cnee</label>
+            </value>
+            <value>
+                <fullName>Companhia Paulista De Força E Luz - Cpfl-Paulista</fullName>
+                <default>false</default>
+                <label>Companhia Paulista De Força E Luz - Cpfl-Paulista</label>
+            </value>
+            <value>
+                <fullName>Companhia Piratininga De Força E Luz - Cpfl- Piratininga</fullName>
+                <default>false</default>
+                <label>Companhia Piratininga De Força E Luz - Cpfl- Piratininga</label>
+            </value>
+            <value>
+                <fullName>Companhia Sul Paulista De Energia - Cpfl Sul Paulista</fullName>
+                <default>false</default>
+                <label>Companhia Sul Paulista De Energia - Cpfl Sul Paulista</label>
+            </value>
+            <value>
+                <fullName>Edp São Paulo Distribuição De Energia S.A. - Edp Sp</fullName>
+                <default>false</default>
+                <label>Edp São Paulo Distribuição De Energia S.A. - Edp Sp</label>
+            </value>
+            <value>
+                <fullName>Elektro Redes S.A. - Elektro</fullName>
+                <default>false</default>
+                <label>Elektro Redes S.A. - Elektro</label>
+            </value>
+            <value>
+                <fullName>Eletropaulo Metropolitana Eletricidade De São Paulo S.A. - Eletropaulo</fullName>
+                <default>false</default>
+                <label>Eletropaulo Metropolitana Eletricidade De São Paulo S.A. - Eletropaulo</label>
+            </value>
+            <value>
+                <fullName>Empresa De Distribuicao De Energia Vale Paranapanema S.A. - Edevp</fullName>
+                <default>false</default>
+                <label>Empresa De Distribuicao De Energia Vale Paranapanema S.A. - Edevp</label>
+            </value>
+            <value>
+                <fullName>Empresa Elétrica Bragantina S.A. - Eeb</fullName>
+                <default>false</default>
+                <label>Empresa Elétrica Bragantina S.A. - Eeb</label>
+            </value>
+            <value>
+                <fullName>Energisa Tocantins Distribuidora De Energia S.A. - Eto</fullName>
+                <default>false</default>
+                <label>Energisa Tocantins Distribuidora De Energia S.A. - Eto</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Energização E Desenvolvimento Rural Da Grande Dourados Ltda. - Cergrand</fullName>
+                <default>false</default>
+                <label>Cooperativa De Energização E Desenvolvimento Rural Da Grande Dourados Ltda. - Cergrand</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Energização E Desenvolvimento Rural Do Sudoeste Sulmatogrossense Ltda. - Coeso</fullName>
+                <default>false</default>
+                <label>Cooperativa De Energização E Desenvolvimento Rural Do Sudoeste Sulmatogrossense Ltda. - Coeso</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Distribuição De Energia Elétrica De Arapoti - Ceral Dis</fullName>
+                <default>false</default>
+                <label>Cooperativa De Distribuição De Energia Elétrica De Arapoti - Ceral Dis</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Rural De Arapoti Ltda - Ceral</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Rural De Arapoti Ltda - Ceral</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Infraestrutura Castrolanda - Eletrorural</fullName>
+                <default>false</default>
+                <label>Cooperativa De Infraestrutura Castrolanda - Eletrorural</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Rural Cachoeiras Itaboraí Ltda - Cerci</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Rural Cachoeiras Itaboraí Ltda - Cerci</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Rural De Araruama Ltda - Ceral Araruama</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Rural De Araruama Ltda - Ceral Araruama</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Rural De Resende Ltda - Ceres</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Rural De Resende Ltda - Ceres</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Distribuição De Energia Entre Rios Ltda - Certhil</fullName>
+                <default>false</default>
+                <label>Cooperativa De Distribuição De Energia Entre Rios Ltda - Certhil</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Distribuição De Energia Fontoura Xavier - Cerfox</fullName>
+                <default>false</default>
+                <label>Cooperativa De Distribuição De Energia Fontoura Xavier - Cerfox</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Distribuição E Geração De Energia Das Missões - Cermissões</fullName>
+                <default>false</default>
+                <label>Cooperativa De Distribuição E Geração De Energia Das Missões - Cermissões</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Centro Jacuí Ltda - Celetro</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Centro Jacuí Ltda - Celetro</label>
+            </value>
+            <value>
+                <fullName>Cooperativa Regional De Distribuição De Energia Do Litoral Norte - Coopernorte - Coopernorte</fullName>
+                <default>false</default>
+                <label>Cooperativa Regional De Distribuição De Energia Do Litoral Norte - Coopernorte - Coopernorte</label>
+            </value>
+            <value>
+                <fullName>Cooperativa Regional De Eletrificação Rural Do Alto Uruguai - Creral</fullName>
+                <default>false</default>
+                <label>Cooperativa Regional De Eletrificação Rural Do Alto Uruguai - Creral</label>
+            </value>
+            <value>
+                <fullName>Cooperativa Regional De Eletrificação Rural Fronteira Sul Ltda - Coopersul</fullName>
+                <default>false</default>
+                <label>Cooperativa Regional De Eletrificação Rural Fronteira Sul Ltda - Coopersul</label>
+            </value>
+            <value>
+                <fullName>Cooperativa Regional De Energia E Desenvolvimento Ijuí Ltda - Ceriluz</fullName>
+                <default>false</default>
+                <label>Cooperativa Regional De Energia E Desenvolvimento Ijuí Ltda - Ceriluz</label>
+            </value>
+            <value>
+                <fullName>Cooperativa Regional De Energia Taquari Jacuí - Certaja</fullName>
+                <default>false</default>
+                <label>Cooperativa Regional De Energia Taquari Jacuí - Certaja</label>
+            </value>
+            <value>
+                <fullName>Coprel Cooperativa De Energia - Coprel</fullName>
+                <default>false</default>
+                <label>Coprel Cooperativa De Energia - Coprel</label>
+            </value>
+            <value>
+                <fullName>Creluz - Cooperativa De Distribuição De Energia - Creluz-D</fullName>
+                <default>false</default>
+                <label>Creluz - Cooperativa De Distribuição De Energia - Creluz-D</label>
+            </value>
+            <value>
+                <fullName>Cersul - Cooperativa De Distribuição De Energia - Cersul</fullName>
+                <default>false</default>
+                <label>Cersul - Cooperativa De Distribuição De Energia - Cersul</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Distribuição De Energia Elétrica De Anitápolis - Ceral - Ceral</fullName>
+                <default>false</default>
+                <label>Cooperativa De Distribuição De Energia Elétrica De Anitápolis - Ceral - Ceral</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletricidade De Gravatal - Cergral</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletricidade De Gravatal - Cergral</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletricidade De São Ludgero - Cegero</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletricidade De São Ludgero - Cegero</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletricidade Grão Pará - Cergapa</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletricidade Grão Pará - Cergapa</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletricidade Jacinto Machado - Cejama</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletricidade Jacinto Machado - Cejama</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletricidade Praia Grande - Ceprag</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletricidade Praia Grande - Ceprag</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Anita Garibaldi Ltda - Cergal</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Anita Garibaldi Ltda - Cergal</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação De Braço Do Norte - Cerbranorte</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação De Braço Do Norte - Cerbranorte</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Lauro Muller - Coopermila</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Lauro Muller - Coopermila</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Energia Treviso - Certrel</fullName>
+                <default>false</default>
+                <label>Cooperativa De Energia Treviso - Certrel</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Prestação De Serviços Públicos De Distribuição De Energia Elétrica Senador Esteves Júnior - Cerej</fullName>
+                <default>false</default>
+                <label>Cooperativa De Prestação De Serviços Públicos De Distribuição De Energia Elétrica Senador Esteves Júnior - Cerej</label>
+            </value>
+            <value>
+                <fullName>Cooperativa Distribuidora De Energia Vale Do Araçá - Ceraçá</fullName>
+                <default>false</default>
+                <label>Cooperativa Distribuidora De Energia Vale Do Araçá - Ceraçá</label>
+            </value>
+            <value>
+                <fullName>Cooperativa Energética Cocal - Coopercocal</fullName>
+                <default>false</default>
+                <label>Cooperativa Energética Cocal - Coopercocal</label>
+            </value>
+            <value>
+                <fullName>Cooperativa Fumacense De Eletricidade - Cermoful</fullName>
+                <default>false</default>
+                <label>Cooperativa Fumacense De Eletricidade - Cermoful</label>
+            </value>
+            <value>
+                <fullName>Cooperativa Pioneira De Eletrificação - Coopera - Coopera</fullName>
+                <default>false</default>
+                <label>Cooperativa Pioneira De Eletrificação - Coopera - Coopera</label>
+            </value>
+            <value>
+                <fullName>Cooperativa Regional Sul De Eletrificação Rural - Coorsel</fullName>
+                <default>false</default>
+                <label>Cooperativa Regional Sul De Eletrificação Rural - Coorsel</label>
+            </value>
+            <value>
+                <fullName>Cooperzem Cooperativa De Distribuição De Energia Elétrica - Cooperzem</fullName>
+                <default>false</default>
+                <label>Cooperzem Cooperativa De Distribuição De Energia Elétrica - Cooperzem</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação E Desenvolvimento Rural Centro Sul De Sergipe Ltda - Cercos</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação E Desenvolvimento Rural Centro Sul De Sergipe Ltda - Cercos</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Da Região De Itapecerica Da Serra - Ceris</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Da Região De Itapecerica Da Serra - Ceris</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Da Região Do Alto Paraíba - Cedrap</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Da Região Do Alto Paraíba - Cedrap</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação De Ibiúna E Região - Cetril</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação De Ibiúna E Região - Cetril</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação E Desenvolvimento Da Região De Mogi Mirim - Cemirim</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação E Desenvolvimento Da Região De Mogi Mirim - Cemirim</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação E Desenvolvimento Da Região De São José Do Rio Preto-Cerrp - Cerrp</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação E Desenvolvimento Da Região De São José Do Rio Preto-Cerrp - Cerrp</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação E Distribuição Da Região De Itariri - Cedri</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação E Distribuição Da Região De Itariri - Cedri</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Rural Da Média Sorocabana - Cermeso</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Rural Da Média Sorocabana - Cermeso</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Rural Da Região De Osvaldo Cruz - Ceroc</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Rural Da Região De Osvaldo Cruz - Ceroc</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Rural Da Região De Palmital &apos;Cerpal&apos; - Cerpal</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Rural Da Região De Palmital &apos;Cerpal&apos; - Cerpal</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Rural Da Região De Promissão - Cerpro</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Rural Da Região De Promissão - Cerpro</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Rural De Itaí-Paranapanema-Avaré Ltda - Ceripa</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Rural De Itaí-Paranapanema-Avaré Ltda - Ceripa</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Eletrificação Rural Itu-Mairinque - Cerim</fullName>
+                <default>false</default>
+                <label>Cooperativa De Eletrificação Rural Itu-Mairinque - Cerim</label>
+            </value>
+            <value>
+                <fullName>Cooperativa De Energização E De Desenvolvimento Do Vale Do Mogi - Cervam</fullName>
+                <default>false</default>
+                <label>Cooperativa De Energização E De Desenvolvimento Do Vale Do Mogi - Cervam</label>
+            </value>
+            <value>
+                <fullName>Eletropaulo - Enel SP - SP</fullName>
+                <default>false</default>
+                <label>Eletropaulo - Enel SP - SP</label>
+            </value>
+            <value>
+                <fullName>ENERGISA MT - DISTRIBUIDORA DE ENERGIA S.A.</fullName>
+                <default>false</default>
+                <label>ENERGISA MT - DISTRIBUIDORA DE ENERGIA S.A.</label>
+            </value>
+            <value>
+                <fullName>CEEE D - COMPANHIA ESTADUAL DE DISTRIBUIÇÃO DE ENERGIA ELÉTRICA</fullName>
+                <default>false</default>
+                <label>CEEE D - COMPANHIA ESTADUAL DE DISTRIBUIÇÃO DE ENERGIA ELÉTRICA</label>
+            </value>
+            <value>
+                <fullName>CELESC - DISTRIBUIÇÃO S.A</fullName>
+                <default>false</default>
+                <label>CELESC - DISTRIBUIÇÃO S.A</label>
+            </value>
+            <value>
+                <fullName>CEMIG D - CEMIG DISTRIBUIÇÃO S.A</fullName>
+                <default>false</default>
+                <label>CEMIG D - CEMIG DISTRIBUIÇÃO S.A</label>
+            </value>
+            <value>
+                <fullName>COPEL PR - DISTRIBUIÇÃO S.A.</fullName>
+                <default>false</default>
+                <label>COPEL PR - DISTRIBUIÇÃO S.A.</label>
+            </value>
+            <value>
+                <fullName>COSERN RN - COMPANHIA ENERGÉTICA DO RIO GRANDE DO NORTE</fullName>
+                <default>false</default>
+                <label>COSERN RN - COMPANHIA ENERGÉTICA DO RIO GRANDE DO NORTE</label>
+            </value>
+            <value>
+                <fullName>CPFL PAULISTA - COMPANHIA PAULISTA DE FORÇA E LUZ</fullName>
+                <default>false</default>
+                <label>CPFL PAULISTA - COMPANHIA PAULISTA DE FORÇA E LUZ</label>
+            </value>
+            <value>
+                <fullName>CPFL SANTA CRUZ - COMPANHIA LUZ E FORÇA SANTA CRUZ</fullName>
+                <default>false</default>
+                <label>CPFL SANTA CRUZ - COMPANHIA LUZ E FORÇA SANTA CRUZ</label>
+            </value>
+            <value>
+                <fullName>EDP ES - ESPÍRITO SANTO DISTRIBUIÇÃO DE ENERGIA S.A.</fullName>
+                <default>false</default>
+                <label>EDP ES - ESPÍRITO SANTO DISTRIBUIÇÃO DE ENERGIA S.A.</label>
+            </value>
+            <value>
+                <fullName>ELEKTRO SP - ELEKTRO REDES S.A.</fullName>
+                <default>false</default>
+                <label>ELEKTRO SP - ELEKTRO REDES S.A.</label>
+            </value>
+            <value>
+                <fullName>ENEL CE - COMPANHIA ENERGÉTICA DO CEARÁ</fullName>
+                <default>false</default>
+                <label>ENEL CE - COMPANHIA ENERGÉTICA DO CEARÁ</label>
+            </value>
+            <value>
+                <fullName>ENEL RJ - AMPLA ENERGIA E SERVIÇOS S.A.</fullName>
+                <default>false</default>
+                <label>ENEL RJ - AMPLA ENERGIA E SERVIÇOS S.A.</label>
+            </value>
+            <value>
+                <fullName>ENERGISA MS - DISTRIBUIDORA DE ENERGIA S.A.</fullName>
+                <default>false</default>
+                <label>ENERGISA MS - DISTRIBUIDORA DE ENERGIA S.A.</label>
+            </value>
+            <value>
+                <fullName>ENERGISA SE - DISTRIBUIDORA DE ENERGIA S.A</fullName>
+                <default>false</default>
+                <label>ENERGISA SE - DISTRIBUIDORA DE ENERGIA S.A</label>
+            </value>
+            <value>
+                <fullName>ENERGISA TO - DISTRIBUIDORA DE ENERGIA S.A.</fullName>
+                <default>false</default>
+                <label>ENERGISA TO - DISTRIBUIDORA DE ENERGIA S.A.</label>
+            </value>
+            <value>
+                <fullName>EQUATORIAL AL - EQUATORIAL ALAGOAS DISTRIBUIDORA DE ENERGIA S.A.</fullName>
+                <default>false</default>
+                <label>EQUATORIAL AL - EQUATORIAL ALAGOAS DISTRIBUIDORA DE ENERGIA S.A.</label>
+            </value>
+            <value>
+                <fullName>EQUATORIAL GO - EQUATORIAL GOIÁS DISTRIBUIDORA DE ENERGIA S.A.</fullName>
+                <default>false</default>
+                <label>EQUATORIAL GO - EQUATORIAL GOIÁS DISTRIBUIDORA DE ENERGIA S.A.</label>
+            </value>
+            <value>
+                <fullName>EQUATORIAL MA - EQUATORIAL MARANHÃO DISTRIBUIDORA DE ENERGIA S.A.</fullName>
+                <default>false</default>
+                <label>EQUATORIAL MA - EQUATORIAL MARANHÃO DISTRIBUIDORA DE ENERGIA S.A.</label>
+            </value>
+            <value>
+                <fullName>EQUATORIAL PARÁ - DISTRIBUIDORA DE ENERGIA S.A.</fullName>
+                <default>false</default>
+                <label>EQUATORIAL PARÁ - DISTRIBUIDORA DE ENERGIA S.A.</label>
+            </value>
+            <value>
+                <fullName>EQUATORIAL PIAUÍ - DISTRIBUIDORA DE ENERGIA S.A</fullName>
+                <default>false</default>
+                <label>EQUATORIAL PIAUÍ - DISTRIBUIDORA DE ENERGIA S.A</label>
+            </value>
+            <value>
+                <fullName>NEOENERGIA BA - NEOENERGIA BA</fullName>
+                <default>false</default>
+                <label>NEOENERGIA BA - NEOENERGIA BA</label>
+            </value>
+            <value>
+                <fullName>NEOENERGIA DF - NEOENERGIA DF</fullName>
+                <default>false</default>
+                <label>NEOENERGIA DF - NEOENERGIA DF</label>
+            </value>
+            <value>
+                <fullName>RGE SUL - DISTRIBUIDORA DE ENERGIA S.A.</fullName>
+                <default>false</default>
+                <label>RGE SUL - DISTRIBUIDORA DE ENERGIA S.A.</label>
+            </value>
+            <value>
+                <fullName>NEOENERGIA PE - NEOENERGIA PE</fullName>
+                <default>false</default>
+                <label>NEOENERGIA PE - NEOENERGIA PE</label>
+            </value>
+            <value>
+                <fullName>CPFL PIRATININGA - COMPANHIA PIRATININGA DE FORÇA E LUZ</fullName>
+                <default>false</default>
+                <label>CPFL PIRATININGA - COMPANHIA PIRATININGA DE FORÇA E LUZ</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>RO</controllingFieldValue>
+            <controllingFieldValue>DF</controllingFieldValue>
+            <valueName>Energisa Rondônia - Distribuidora De Energia S.A - Ceron</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RR</controllingFieldValue>
+            <valueName>Companhia Energética De Roraima - Cerr</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RR</controllingFieldValue>
+            <valueName>Roraima Energia S.A - Boa Vista</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Celesc Distribuição S.A - Celesc-Dis</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa Aliança - Cooperaliança</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Empresa Força E Luz De Urussanga Ltda - Eflul</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Empresa Força E Luz João Cesa Ltda - Efljc</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Iguaçu Distribuidora De Energia Elétrica Ltda. - Ienergia</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cersul - Cooperativa De Distribuição De Energia - Cersul</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa De Distribuição De Energia Elétrica De Anitápolis - Ceral - Ceral</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa De Eletricidade De Gravatal - Cergral</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa De Eletricidade De São Ludgero - Cegero</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa De Eletricidade Grão Pará - Cergapa</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa De Eletricidade Jacinto Machado - Cejama</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa De Eletricidade Praia Grande - Ceprag</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Anita Garibaldi Ltda - Cergal</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação De Braço Do Norte - Cerbranorte</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Lauro Muller - Coopermila</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa De Energia Treviso - Certrel</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa De Prestação De Serviços Públicos De Distribuição De Energia Elétrica Senador Esteves Júnior - Cerej</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa Distribuidora De Energia Vale Do Araçá - Ceraçá</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa Energética Cocal - Coopercocal</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa Fumacense De Eletricidade - Cermoful</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa Pioneira De Eletrificação - Coopera - Coopera</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperativa Regional Sul De Eletrificação Rural - Coorsel</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>Cooperzem Cooperativa De Distribuição De Energia Elétrica - Cooperzem</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SC</controllingFieldValue>
+            <valueName>CELESC - DISTRIBUIÇÃO S.A</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <controllingFieldValue>DF</controllingFieldValue>
+            <valueName>Energisa Sul-Sudeste - Distribuidora De Energia S.A. - Ess</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <controllingFieldValue>PA</controllingFieldValue>
+            <valueName>Equatorial Pará Distribuidora De Energia S.A. - Equatorial Pa</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Companhia Jaguari De Energia - Cpfl Jaguari</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Companhia Leste Paulista De Energia - Cpfl Leste Paulista</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Companhia Luz E Força De Mococa - Cpfl Mococa</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Companhia Luz E Força Santa Cruz - Cpfl Santa Cruz</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Companhia Nacional De Energia Elétrica - Cnee</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Companhia Paulista De Força E Luz - Cpfl-Paulista</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Companhia Piratininga De Força E Luz - Cpfl- Piratininga</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Companhia Sul Paulista De Energia - Cpfl Sul Paulista</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Edp São Paulo Distribuição De Energia S.A. - Edp Sp</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Elektro Redes S.A. - Elektro</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Eletropaulo Metropolitana Eletricidade De São Paulo S.A. - Eletropaulo</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Empresa De Distribuicao De Energia Vale Paranapanema S.A. - Edevp</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Empresa Elétrica Bragantina S.A. - Eeb</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Da Região De Itapecerica Da Serra - Ceris</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Da Região Do Alto Paraíba - Cedrap</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação De Ibiúna E Região - Cetril</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação E Desenvolvimento Da Região De Mogi Mirim - Cemirim</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação E Desenvolvimento Da Região De São José Do Rio Preto-Cerrp - Cerrp</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação E Distribuição Da Região De Itariri - Cedri</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Rural Da Média Sorocabana - Cermeso</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Rural Da Região De Osvaldo Cruz - Ceroc</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Rural Da Região De Palmital &apos;Cerpal&apos; - Cerpal</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Rural Da Região De Promissão - Cerpro</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Rural De Itaí-Paranapanema-Avaré Ltda - Ceripa</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Rural Itu-Mairinque - Cerim</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Cooperativa De Energização E De Desenvolvimento Do Vale Do Mogi - Cervam</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>Eletropaulo - Enel SP - SP</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>CPFL PAULISTA - COMPANHIA PAULISTA DE FORÇA E LUZ</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>CPFL SANTA CRUZ - COMPANHIA LUZ E FORÇA SANTA CRUZ</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>ELEKTRO SP - ELEKTRO REDES S.A.</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SP</controllingFieldValue>
+            <valueName>CPFL PIRATININGA - COMPANHIA PIRATININGA DE FORÇA E LUZ</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SE</controllingFieldValue>
+            <valueName>Companhia Sul Sergipana De Eletricidade - Sulgipe</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SE</controllingFieldValue>
+            <valueName>Energisa Sergipe - Distribuidora De Energia S.A - Ese</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SE</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação E Desenvolvimento Rural Centro Sul De Sergipe Ltda - Cercos</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>SE</controllingFieldValue>
+            <valueName>ENERGISA SE - DISTRIBUIDORA DE ENERGIA S.A</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>TO</controllingFieldValue>
+            <valueName>Energisa Tocantins Distribuidora De Energia S.A. - Eto</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>TO</controllingFieldValue>
+            <valueName>ENERGISA TO - DISTRIBUIDORA DE ENERGIA S.A.</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>MA</controllingFieldValue>
+            <valueName>Companhia Energética Do Maranhão - Cemar</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>MA</controllingFieldValue>
+            <valueName>EQUATORIAL MA - EQUATORIAL MARANHÃO DISTRIBUIDORA DE ENERGIA S.A.</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>MT</controllingFieldValue>
+            <controllingFieldValue>DF</controllingFieldValue>
+            <valueName>Energisa Mato Grosso - Distribuidora De Energia S.A. - Emt</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>MT</controllingFieldValue>
+            <valueName>ENERGISA MT - DISTRIBUIDORA DE ENERGIA S.A.</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>MS</controllingFieldValue>
+            <controllingFieldValue>DF</controllingFieldValue>
+            <valueName>Energisa Mato Grosso Do Sul - Distribuidora De Energia S.A. - Ems</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>MS</controllingFieldValue>
+            <valueName>Cooperativa De Energização E Desenvolvimento Rural Da Grande Dourados Ltda. - Cergrand</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>MS</controllingFieldValue>
+            <valueName>Cooperativa De Energização E Desenvolvimento Rural Do Sudoeste Sulmatogrossense Ltda. - Coeso</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>MS</controllingFieldValue>
+            <valueName>ENERGISA MS - DISTRIBUIDORA DE ENERGIA S.A.</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>MG</controllingFieldValue>
+            <valueName>Cemig Distribuição S.A - Cemig-D</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>MG</controllingFieldValue>
+            <valueName>Dme Distribuição S.A. - Dmed - Dmed</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>MG</controllingFieldValue>
+            <valueName>Energisa Minas Gerais - Distribuidora De Energia S.A. - Emg</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>MG</controllingFieldValue>
+            <valueName>CEMIG D - CEMIG DISTRIBUIÇÃO S.A</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PA</controllingFieldValue>
+            <valueName>EQUATORIAL PARÁ - DISTRIBUIDORA DE ENERGIA S.A.</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PB</controllingFieldValue>
+            <controllingFieldValue>DF</controllingFieldValue>
+            <valueName>Energisa Borborema - Distribuidora De Energia S.A - Ebo</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PB</controllingFieldValue>
+            <controllingFieldValue>DF</controllingFieldValue>
+            <valueName>Energisa Paraíba - Distribuidora De Energia S.A - Epb</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PR</controllingFieldValue>
+            <valueName>Companhia Campolarguense De Energia - Cocel</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PR</controllingFieldValue>
+            <valueName>Companhia Força E Luz Do Oeste - Cflo</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PR</controllingFieldValue>
+            <valueName>Copel Distribuição S.A. - Copel-Dis</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PR</controllingFieldValue>
+            <valueName>Força E Luz Coronel Vivida Ltda - Forcel</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PR</controllingFieldValue>
+            <valueName>Cooperativa De Distribuição De Energia Elétrica De Arapoti - Ceral Dis</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PR</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Rural De Arapoti Ltda - Ceral</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PR</controllingFieldValue>
+            <valueName>Cooperativa De Infraestrutura Castrolanda - Eletrorural</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PR</controllingFieldValue>
+            <valueName>COPEL PR - DISTRIBUIÇÃO S.A.</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PE</controllingFieldValue>
+            <valueName>Companhia Energética De Pernambuco - Celpe</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PE</controllingFieldValue>
+            <valueName>NEOENERGIA PE - NEOENERGIA PE</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PI</controllingFieldValue>
+            <valueName>Equatorial Piauí Distribuidora De Energia S.A - Equatorial Pi</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>PI</controllingFieldValue>
+            <valueName>EQUATORIAL PIAUÍ - DISTRIBUIDORA DE ENERGIA S.A</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RJ</controllingFieldValue>
+            <valueName>Ampla Energia E Serviços S.A. - Enel Rj</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RJ</controllingFieldValue>
+            <valueName>Energisa Nova Friburgo - Distribuidora De Energia S.A. - Enf</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RJ</controllingFieldValue>
+            <valueName>Light Serviços De Eletricidade S A - Light</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RJ</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Rural Cachoeiras Itaboraí Ltda - Cerci</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RJ</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Rural De Araruama Ltda - Ceral Araruama</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RJ</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Rural De Resende Ltda - Ceres</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RJ</controllingFieldValue>
+            <valueName>ENEL RJ - AMPLA ENERGIA E SERVIÇOS S.A.</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AC</controllingFieldValue>
+            <controllingFieldValue>DF</controllingFieldValue>
+            <valueName>Energisa Acre - Distribuidora De Energia S.A - Eletroacre</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AL</controllingFieldValue>
+            <valueName>Equatorial Alagoas Distribuidora De Energia S.A. - Equatorial Al</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AL</controllingFieldValue>
+            <valueName>EQUATORIAL AL - EQUATORIAL ALAGOAS DISTRIBUIDORA DE ENERGIA S.A.</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AP</controllingFieldValue>
+            <valueName>Companhia De Eletricidade Do Amapá - Cea</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>AM</controllingFieldValue>
+            <valueName>Amazonas Energia S.A - Ame</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>BA</controllingFieldValue>
+            <valueName>Companhia De Eletricidade Do Estado Da Bahia - Coelba</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>BA</controllingFieldValue>
+            <valueName>NEOENERGIA BA - NEOENERGIA BA</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>CE</controllingFieldValue>
+            <valueName>Companhia Energética Do Ceará - Enel Ce</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>CE</controllingFieldValue>
+            <valueName>ENEL CE - COMPANHIA ENERGÉTICA DO CEARÁ</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DF</controllingFieldValue>
+            <valueName>Ceb Distribuição S.A. - Cebdis</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>DF</controllingFieldValue>
+            <valueName>NEOENERGIA DF - NEOENERGIA DF</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ES</controllingFieldValue>
+            <valueName>Empresa Luz E Força Santa Maria S/A - Elfsm</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ES</controllingFieldValue>
+            <valueName>Espírito Santo Distribuição De Energia S.A. - Edp Es</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>ES</controllingFieldValue>
+            <valueName>EDP ES - ESPÍRITO SANTO DISTRIBUIÇÃO DE ENERGIA S.A.</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>GO</controllingFieldValue>
+            <valueName>Celg Distribuição S.A. - Celg-D</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>GO</controllingFieldValue>
+            <valueName>Companhia Hidroelétrica São Patrício - Chesp - Chesp</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>GO</controllingFieldValue>
+            <valueName>EQUATORIAL GO - EQUATORIAL GOIÁS DISTRIBUIDORA DE ENERGIA S.A.</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RN</controllingFieldValue>
+            <valueName>Companhia Energética Do Rio Grande Do Norte Cosern - Cosern</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RN</controllingFieldValue>
+            <valueName>COSERN RN - COMPANHIA ENERGÉTICA DO RIO GRANDE DO NORTE</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Centrais Elétricas De Carazinho Sa - Eletrocar</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Companhia Estadual De Distribuição De Energia Elétrica - Ceee-D - Ceee-D</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Departamento Municipal De Energia De Ijuí - Demei</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Hidropan Distribuição De Energia S.A. - Hidropan</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Muxfeldt Marin E Cia Ltda - Muxenergia</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Nova Palma Energia Ltda - Uhenpal</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Rge Sul Distribuidora De Energia S.A. - Rge Sul</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Rio Grande Energia Sa - Rge</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Cooperativa De Distribuição De Energia Entre Rios Ltda - Certhil</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Cooperativa De Distribuição De Energia Fontoura Xavier - Cerfox</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Cooperativa De Distribuição E Geração De Energia Das Missões - Cermissões</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Cooperativa De Eletrificação Centro Jacuí Ltda - Celetro</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Cooperativa Regional De Distribuição De Energia Do Litoral Norte - Coopernorte - Coopernorte</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Cooperativa Regional De Eletrificação Rural Do Alto Uruguai - Creral</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Cooperativa Regional De Eletrificação Rural Fronteira Sul Ltda - Coopersul</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Cooperativa Regional De Energia E Desenvolvimento Ijuí Ltda - Ceriluz</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Cooperativa Regional De Energia Taquari Jacuí - Certaja</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Coprel Cooperativa De Energia - Coprel</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>Creluz - Cooperativa De Distribuição De Energia - Creluz-D</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>CEEE D - COMPANHIA ESTADUAL DE DISTRIBUIÇÃO DE ENERGIA ELÉTRICA</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>RS</controllingFieldValue>
+            <valueName>RGE SUL - DISTRIBUIDORA DE ENERGIA S.A.</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

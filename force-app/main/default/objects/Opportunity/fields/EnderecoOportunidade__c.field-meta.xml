@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EnderecoOportunidade__c</fullName>
+    <description>campo para concatenar o endereço de Opp.</description>
+    <externalId>false</externalId>
+    <formula>Logradouro__c +&quot;, &quot;+ Complemento__c+&quot;, &quot;+ Bairro__c +&quot;, &quot;+ CEP__c +&quot;, &quot;+ MunicipioInstalacao__c +&quot;. &quot;</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Endereço de Oportunidade</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

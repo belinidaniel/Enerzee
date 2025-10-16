@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TodosKitsInstalacoes</fullName>
+    <columns>NAME</columns>
+    <filterScope>Everything</filterScope>
+    <label>Todos os Kits de Instalações</label>
+</ListView>

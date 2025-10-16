@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Campos_obrigatorios_trabalhando</fullName>
+    <active>true</active>
+    <description>Para qualificar um lead do tipo de registro qualificação do consultor é necessário preencher o consultor regional.</description>
+    <errorConditionFormula>AND(
+    CONTAINS(RecordType.DeveloperName, &quot;Consultor&quot;),
+    ISCHANGED(Status),
+    ISPICKVAL(Status, &quot;Aguardando Pagamento&quot;),
+    ISBLANK(ConsultorRegional__c)
+)</errorConditionFormula>
+    <errorDisplayField>ConsultorRegional__c</errorDisplayField>
+    <errorMessage>O campo consultor regional não foi preenchido!</errorMessage>
+</ValidationRule>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Rascunho</fullName>
+        <default>true</default>
+        <label>Rascunho</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Em processo de aprovação</fullName>
+        <default>false</default>
+        <label>Em processo de aprovação</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Ativado</fullName>
+        <default>false</default>
+        <label>Ativado</label>
+    </standardValue>
+</StandardValueSet>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EnquadramentoGD__c</fullName>
+    <description>Campo para definir o enquadramento da GD.</description>
+    <label>Enquadramento da GD</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Microgeração</fullName>
+                <default>false</default>
+                <label>Microgeração</label>
+            </value>
+            <value>
+                <fullName>Minigeração</fullName>
+                <default>false</default>
+                <label>Minigeração</label>
+            </value>
+            <value>
+                <fullName>Off-Grid</fullName>
+                <default>false</default>
+                <label>Off-Grid</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

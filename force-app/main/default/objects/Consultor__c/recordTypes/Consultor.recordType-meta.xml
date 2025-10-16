@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Consultor</fullName>
+    <active>true</active>
+    <label>Consultor</label>
+    <picklistValues>
+        <picklist>EstadoCobranca__c</picklist>
+        <values>
+            <fullName>AC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AM</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DF</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ES</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MG</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RJ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TO</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>EstadoEntrega__c</picklist>
+        <values>
+            <fullName>AC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AM</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DF</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ES</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MG</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RJ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TO</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Estado__c</picklist>
+        <values>
+            <fullName>Acre AC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Alagoas AL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Amapá AP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Amazonas AM</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bahia BA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ceará CE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Distrito Federal DF</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Espírito Santo ES</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Goiás GO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Maranhão MA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mato Grosso MT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mato Grosso do Sul MS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Minas Gerais MG</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Paraná PR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Paraíba PB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pará PA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pernambuco PE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Piauí PI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rio Grande do Norte RN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rio Grande do Sul RS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rio de Janeiro RJ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rondônia RO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Roraima RR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Santa Catarina SC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sergipe SE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>São Paulo SP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tocantins TO</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Estado_da_Unidade__c</picklist>
+        <values>
+            <fullName>Acre %28AC%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Alagoas %28AL%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Amapá %28AP%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Amazonas %28AM%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bahia %28BA%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ceará %28CE%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Distrito Federal %28DF%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Espírito Santo %28ES%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Goiás %28GO%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Maranhão %28MA%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mato Grosso %28MT%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mato Grosso do Sul %28MS%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Minas Gerais %28MG%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Paraná %28PR%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Paraíba %28PB%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pará %28PA%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pernambuco %28PE%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Piauí %28PI%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rio Grande do Norte %28RN%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rio Grande do Sul %28RS%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rio de Janeiro %28RJ%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rondônia %28RO%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Roraima %28RR%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Santa Catarina %28SC%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sergipe %28SE%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>São Paulo %28SP%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tocantins %28TO%29</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>paymentMethod__c</picklist>
+        <values>
+            <fullName>Aguardando Pagamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Boleto</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cartão Crédito</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>E-cash</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Financiamento Bancário</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manual</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PIX</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Parcial E-cash e Saldo Virtual</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PayPal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pix e Saldo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SALDO %2B E-CASH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Transferência Bancária</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

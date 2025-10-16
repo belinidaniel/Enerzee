@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parceiro03__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>Parceiro3</label>
+    <referenceTo>Parceiro__c</referenceTo>
+    <relationshipLabel>Tabelas Ezee Connect (Parceiro03)</relationshipLabel>
+    <relationshipName>Tabelas_Ezee_Connect2</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MascaraCEPCobranca</fullName>
+    <active>false</active>
+    <description>Para inserir o CEP é necessário digita-lo no seguinte formato xxxxx-xxx.</description>
+    <errorConditionFormula>!REGEX( BillingPostalCode ,&quot;^(\\d{5}(\\-\\d{3})?)?$&quot;)</errorConditionFormula>
+    <errorDisplayField>BillingPostalCode</errorDisplayField>
+    <errorMessage>Para inserir o CEP é necessário digita-lo no seguinte formato xxxxx-xxx.</errorMessage>
+</ValidationRule>

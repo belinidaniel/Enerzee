@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Mudar_Status_apenas_pelo_botao</fullName>
+    <active>false</active>
+    <errorConditionFormula>ISCHANGED(StageName) &amp;&amp; ISPICKVAL(StageName, &apos;Proposta enviada / Aguardando Aceite&apos;) 
+&amp;&amp; PropostaGerada__c = false
+&amp;&amp; RecordType.DeveloperName !=&apos;Plin&apos;
+&amp;&amp; RecordType.DeveloperName !=&apos;Raizen&apos;
+&amp;&amp; RecordType.DeveloperName !=&apos;BowE&apos;</errorConditionFormula>
+    <errorMessage>Para alterar o status e avançar de fase, clique no botão &apos;Gerar Proposta&apos;</errorMessage>
+</ValidationRule>

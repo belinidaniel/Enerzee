@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <label>Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>StageName</controllingField>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Em Agendamento</fullName>
+                <default>false</default>
+                <label>Em Agendamento</label>
+            </value>
+            <value>
+                <fullName>Agendado</fullName>
+                <default>false</default>
+                <label>Agendado</label>
+            </value>
+            <value>
+                <fullName>Aguardando Pagamento</fullName>
+                <default>false</default>
+                <label>Aguardando Pagamento</label>
+            </value>
+            <value>
+                <fullName>Pago</fullName>
+                <default>false</default>
+                <label>Pago</label>
+            </value>
+            <value>
+                <fullName>Agendamento de Visita</fullName>
+                <default>false</default>
+                <label>Agendamento de Visita</label>
+            </value>
+            <value>
+                <fullName>Estudo de Viabilidade</fullName>
+                <default>false</default>
+                <label>Estudo de Viabilidade</label>
+            </value>
+            <value>
+                <fullName>Aguardando Documentos</fullName>
+                <default>false</default>
+                <label>Aguardando Documentos</label>
+            </value>
+            <value>
+                <fullName>Geração do Contrato</fullName>
+                <default>false</default>
+                <label>Geração do Contrato</label>
+            </value>
+            <value>
+                <fullName>Contrato Enviado</fullName>
+                <default>false</default>
+                <label>Contrato Enviado</label>
+            </value>
+            <value>
+                <fullName>Contrato Assinado</fullName>
+                <default>false</default>
+                <label>Contrato Assinado</label>
+            </value>
+            <value>
+                <fullName>Em Andamento</fullName>
+                <default>false</default>
+                <label>Em Andamento</label>
+            </value>
+            <value>
+                <fullName>Pendência</fullName>
+                <default>false</default>
+                <label>Pendência</label>
+            </value>
+            <value>
+                <fullName>Em Análise</fullName>
+                <default>false</default>
+                <label>Em Análise</label>
+            </value>
+            <value>
+                <fullName>Aprovado</fullName>
+                <default>false</default>
+                <label>Aprovado</label>
+            </value>
+            <value>
+                <fullName>Entrega de materiais</fullName>
+                <default>false</default>
+                <label>Entrega de materiais</label>
+            </value>
+            <value>
+                <fullName>Em instalação</fullName>
+                <default>false</default>
+                <label>Em instalação</label>
+            </value>
+            <value>
+                <fullName>Validando Bonificação</fullName>
+                <default>false</default>
+                <label>Validando Bonificação</label>
+            </value>
+            <value>
+                <fullName>Ganho</fullName>
+                <default>false</default>
+                <label>Ganho</label>
+            </value>
+            <value>
+                <fullName>Perdido</fullName>
+                <default>false</default>
+                <label>Perdido</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Contrato</controllingFieldValue>
+            <valueName>Aguardando Documentos</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Contrato</controllingFieldValue>
+            <valueName>Geração do Contrato</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Contrato</controllingFieldValue>
+            <valueName>Contrato Enviado</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Contrato</controllingFieldValue>
+            <valueName>Contrato Assinado</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Validação</controllingFieldValue>
+            <valueName>Em Andamento</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Validação</controllingFieldValue>
+            <valueName>Pendência</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
+            <valueName>Aguardando Pagamento</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
+            <valueName>Agendamento de Visita</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
+            <valueName>Estudo de Viabilidade</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Parecer de acesso</controllingFieldValue>
+            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <valueName>Em Análise</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Parecer de acesso</controllingFieldValue>
+            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <valueName>Aprovado</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Equipamento</controllingFieldValue>
+            <valueName>Entrega de materiais</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Finalizado</controllingFieldValue>
+            <valueName>Validando Bonificação</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Ganho fechado</controllingFieldValue>
+            <valueName>Ganho</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Fechado Perdido</controllingFieldValue>
+            <valueName>Perdido</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <valueName>Em Agendamento</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <valueName>Agendado</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
+            <valueName>Pago</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Instalação</controllingFieldValue>
+            <valueName>Em instalação</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

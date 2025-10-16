@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PresenceUserConfig xmlns="http://soap.sforce.com/2006/04/metadata">
+    <assignments>
+        <profiles>
+            <profile>admin</profile>
+            <profile>standard</profile>
+            <profile>solutionmanager</profile>
+            <profile>marketingprofile</profile>
+            <profile>contractmanager</profile>
+            <profile>administrador</profile>
+            <profile>administrador api</profile>
+            <profile>agente de serviço</profile>
+            <profile>analista</profile>
+            <profile>analytics cloud integration user</profile>
+            <profile>analytics cloud security user</profile>
+            <profile>c-level</profile>
+            <profile>cpq integration user</profile>
+            <profile>contratos</profile>
+            <profile>coordenador</profile>
+            <profile>coordenação</profile>
+            <profile>diretoria</profile>
+            <profile>fsl mobile</profile>
+            <profile>identity user</profile>
+            <profile>integração</profile>
+            <profile>minimum access - api only integrations</profile>
+            <profile>minimum access - salesforce</profile>
+            <profile>orçamentistas</profile>
+            <profile>read only</profile>
+            <profile>sales insights integration user</profile>
+            <profile>salesforce api only system integrations</profile>
+            <profile>supervisor de serviço</profile>
+        </profiles>
+        <users>
+            <user>adrilino.silvestre@enerzee.com.br</user>
+            <user>sperafico@enerzee.com.br</user>
+            <user>beatriz.albuquerque@enerzee.com.br</user>
+            <user>beatriz.santana@enerzee.com.br</user>
+            <user>dayane.silva@enerzee.com.br</user>
+            <user>diogo.boas@enerzee.com.br</user>
+            <user>elenara.rodrigues@enerzee.com.br</user>
+            <user>etiara@enerzee.com.br</user>
+            <user>felipe.ramos@enerzee.com.br</user>
+            <user>fernanda.mendonca@enerzee.com.br</user>
+            <user>contabilidade@enerzee.com.br</user>
+            <user>contrato@enerzee.com.br</user>
+            <user>integradorsap@alfaerp.com.br</user>
+            <user>jonatha@enerzee.com.br</user>
+            <user>kaique.mathias@lab065.com.br.enrz</user>
+            <user>lariani.yuki@enerzee.com.br</user>
+            <user>logistica@enerzee.com.br</user>
+            <user>mauro.paula@enerzee.com.br</user>
+            <user>millena.fernandes@enerzee.com.br</user>
+            <user>natally.andrade@enerzee.com.br</user>
+            <user>thais.souza@enerzee.com.br</user>
+            <user>thiago.closs@enerzee.com.br</user>
+            <user>thiago.dias@enerzee.com.br</user>
+            <user>yuri@enerzee.com.br</user>
+            <user>financeiro@enerzee.com.br</user>
+            <user>integracao@lab065.com</user>
+        </users>
+    </assignments>
+    <capacity>20</capacity>
+    <enableAutoAccept>false</enableAutoAccept>
+    <enableDecline>false</enableDecline>
+    <enableDeclineReason>false</enableDeclineReason>
+    <enableDisconnectSound>true</enableDisconnectSound>
+    <enableRequestSound>true</enableRequestSound>
+    <label>Roteamento Enerzee</label>
+</PresenceUserConfig>

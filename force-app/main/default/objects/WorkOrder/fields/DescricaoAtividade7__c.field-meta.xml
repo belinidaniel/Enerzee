@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DescricaoAtividade7__c</fullName>
+    <description>Campo para exibir a descrição da atividade de &quot;INSPEÇÃO BATERIA&quot;.</description>
+    <externalId>false</externalId>
+    <formula>&quot; INSPEÇÃO BATERIA : &quot; &amp;
+&quot; Verifique periodicamente se não há obstáculos nem poeira nos dissipadores de calor, &quot; &amp;
+&quot; verifique se a bateria não está danificada ou deformada, &quot; &amp;
+&quot; verifique se a bateria não gera um som anormal quando está em funcionamento, &quot;  &amp;
+&quot; verifique se os parâmetros da bateria estão definidos corretamente quando a bateria está funcionando, &quot;  &amp;
+&quot; verifique se os cabos estão presos (bem apertados), &quot;  &amp;
+&quot; verifique se os cabos estão intactos, em particular, se as peças em contato com a superfície metálica não estão. arranhadas, &quot;&amp;
+&quot; verifique se os terminais de entrada CC, os terminais da bateria e as portas de comunicação não utilizadas estão bloqueados por tampas estanques e &quot;  &amp;
+&quot; verifique se os cabos do terra estão conectados firmemente.&quot;</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Descrição da Atividade</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

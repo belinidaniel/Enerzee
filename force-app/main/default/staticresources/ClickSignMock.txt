@@ -1,0 +1,36 @@
+{
+    "envelope": {
+        "data": {
+            "id": "envelope123",
+            "attributes": {
+                "name": "Test Envelope",
+                "status": "draft"
+            },
+            "links": {
+                "self": "https://api.clicksign.com/v1/envelopes/envelope123"
+            }
+        }
+    },
+    "document": {
+        "data": {
+            "id": "document123",
+            "attributes": {
+                "filename": "Test Document"
+            },
+            "links": {
+                "files": {
+                    "original": "https://api.clicksign.com/v1/documents/document123/files/original"
+                }
+            }
+        }
+    },
+    "signer": {
+        "data": {
+            "id": "signer123",
+            "attributes": {
+                "name": "Test Signer",
+                "email": "test@example.com"
+            }
+        }
+    }
+}

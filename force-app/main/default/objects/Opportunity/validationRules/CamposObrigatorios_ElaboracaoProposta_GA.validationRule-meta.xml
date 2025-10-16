@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CamposObrigatorios_ElaboracaoProposta_GA</fullName>
+    <active>false</active>
+    <description>Verifica se os campos necessários são fornecidos se uma oportunidade passar da fase de elaboração de proposta (Grupo A)</description>
+    <errorConditionFormula>AND( 
+	OR(
+		AND(
+			ISCHANGED(StageName),
+			ISPICKVAL(PRIORVALUE(StageName), &apos;Elaboração de proposta&apos;),
+			NOT(ISPICKVAL(StageName, &apos;Prospecção&apos;))
+		),
+		AND(
+			ISCHANGED(VerificarCamposElaboracao__c),
+			VerificarCamposElaboracao__c
+		)
+	),
+	ISPICKVAL(GrupoTarifario__c , &apos;Grupo A&apos;),
+	OR (
+		ISPICKVAL(ModalidadeVenda__c, &apos;&apos;),
+		ISPICKVAL(TipoVenda__c , &apos;&apos;),
+		ISPICKVAL(EnquadramentoGD__c , &apos;&apos;),
+		ISBLANK(SubGrupoTarifario__c),
+		ISPICKVAL(TipoTelhadoEstrutura__c , &apos;&apos;),
+		ISBLANK(Logradouro__c),
+		ISBLANK(MunicipioInstalacao__c),
+		ISBLANK(ConsumoAnual__c),
+		ISBLANK(CustoMedioEnergia__c),
+		ISBLANK(PrazoEntregaDias__c),
+		ISBLANK(ValidadeProposta__c),
+		ISPICKVAL(TensaoAlimentacao__c ,&apos;&apos;),
+		ISBLANK(DemandaContratadaForaPonta__c),
+		ISBLANK(TarifaDemandaForaPonta__c),
+		ISBLANK(ConsumoMedioForaPonta__c),
+		ISBLANK(TarifaForaPonta__c),
+		ISBLANK(ConsumoMedioPonta__c),
+		ISBLANK(TarifaPonta__c),
+		ISBLANK(PotenciaPicoSistema__c),
+		ISBLANK(GeracaoMensalEstimada__c),
+		ISBLANK(GeracaoAnualEstimada__c),
+		ISBLANK(NumeroModulos__c),
+		ISBLANK(PotenciaNominalWp__c),
+		ISBLANK(FabricanteModulos__c),
+		ISBLANK(Modelo__c),
+		ISBLANK(NumeroInversores__c),
+		ISBLANK(FabricanteInversor__c),
+		ISBLANK(PotenciaNominalSistema__c),
+        ISBLANK(Acrescimo__c),
+        ISBLANK(AjusteAnualTarifa__c),
+        ISBLANK(RendimentoMedio__c)
+	)
+)</errorConditionFormula>
+    <errorMessage>Todos os campos descritos na tarefa &quot;Informe os dados da proposta - Grupo A&quot; devem estar preenchidos antes de uma proposta ser gerada!</errorMessage>
+</ValidationRule>

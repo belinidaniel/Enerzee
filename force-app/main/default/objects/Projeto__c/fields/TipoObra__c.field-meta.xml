@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TipoObra__c</fullName>
+    <description>Campo para definir Tipo de Obra.</description>
+    <label>Tipo de Obra</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>UFVMicro</fullName>
+                <default>false</default>
+                <label>UFV Micro</label>
+            </value>
+            <value>
+                <fullName>UFV Mini Até 300</fullName>
+                <default>false</default>
+                <label>UFV Mini Até 300</label>
+            </value>
+            <value>
+                <fullName>UFV Mini acima de 300</fullName>
+                <default>false</default>
+                <label>UFV Mini acima de 300</label>
+            </value>
+            <value>
+                <fullName>Bombeamento</fullName>
+                <default>false</default>
+                <label>Bombeamento</label>
+            </value>
+            <value>
+                <fullName>Estação de Recarga</fullName>
+                <default>false</default>
+                <label>Estação de Recarga</label>
+            </value>
+            <value>
+                <fullName>Posto de transformação</fullName>
+                <default>false</default>
+                <label>Posto de transformação</label>
+            </value>
+            <value>
+                <fullName>Subestação</fullName>
+                <default>false</default>
+                <label>Subestação</label>
+            </value>
+            <value>
+                <fullName>Padrão de Entrada</fullName>
+                <default>false</default>
+                <label>Padrão de Entrada</label>
+            </value>
+            <value>
+                <fullName>UVF Micro</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>UVF Micro</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>5</visibleLines>
+</CustomField>

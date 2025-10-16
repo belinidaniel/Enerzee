@@ -1,0 +1,1536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Nextron</fullName>
+    <active>false</active>
+    <businessProcess>Processo de vendas Nextron</businessProcess>
+    <label>Nextron</label>
+    <picklistValues>
+        <picklist>AumentarDemandaContratadaFP__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Aumento_da_potencia_nominal_do_sistema__c</picklist>
+        <values>
+            <fullName>Nâo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Categoria_Fase__c</picklist>
+        <values>
+            <fullName>Bifásico</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Monofásico</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Trifásico</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Categoria__c</picklist>
+        <values>
+            <fullName>Fast Track</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SCEE</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Classificacao__c</picklist>
+        <values>
+            <fullName>Arrendamento de área rural</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Compras de equipamentos e materiais</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Contratos de Licenciamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Contratos de Locação</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Contratos de Serviços</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Prestação de Serviços %28v%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Venda de equipamentos e materiais</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>ConcessionariaEnergia__c</picklist>
+        <values>
+            <fullName>Amazonas Energia S%2EA - Ame</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ampla Energia E Serviços S%2EA%2E - Enel Rj</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ceb Distribuição S%2EA%2E - Cebdis</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Celesc Distribuição S%2EA - Celesc-Dis</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Celg Distribuição S%2EA%2E - Celg-D</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cemig Distribuição S%2EA - Cemig-D</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Centrais Elétricas De Carazinho Sa - Eletrocar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cersul - Cooperativa De Distribuição De Energia - Cersul</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Campolarguense De Energia - Cocel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia De Eletricidade Do Amapá - Cea</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia De Eletricidade Do Estado Da Bahia - Coelba</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Energética De Pernambuco - Celpe</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Energética De Roraima - Cerr</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Energética Do Ceará - Enel Ce</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Energética Do Maranhão - Cemar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Energética Do Rio Grande Do Norte Cosern - Cosern</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Estadual De Distribuição De Energia Elétrica - Ceee-D - Ceee-D</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Força E Luz Do Oeste - Cflo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Hidroelétrica São Patrício - Chesp - Chesp</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Jaguari De Energia - Cpfl Jaguari</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Leste Paulista De Energia - Cpfl Leste Paulista</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Luz E Força De Mococa - Cpfl Mococa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Luz E Força Santa Cruz - Cpfl Santa Cruz</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Nacional De Energia Elétrica - Cnee</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Paulista De Força E Luz - Cpfl-Paulista</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Piratininga De Força E Luz - Cpfl- Piratininga</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Sul Paulista De Energia - Cpfl Sul Paulista</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Sul Sergipana De Eletricidade - Sulgipe</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Aliança - Cooperaliança</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Distribuição De Energia Elétrica De Anitápolis - Ceral - Ceral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Distribuição De Energia Elétrica De Arapoti - Ceral Dis</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Distribuição De Energia Entre Rios Ltda - Certhil</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Distribuição De Energia Fontoura Xavier - Cerfox</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Distribuição E Geração De Energia Das Missões - Cermissões</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletricidade De Gravatal - Cergral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletricidade De São Ludgero - Cegero</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletricidade Grão Pará - Cergapa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletricidade Jacinto Machado - Cejama</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletricidade Praia Grande - Ceprag</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Anita Garibaldi Ltda - Cergal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Centro Jacuí Ltda - Celetro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Da Região De Itapecerica Da Serra - Ceris</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Da Região Do Alto Paraíba - Cedrap</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação De Braço Do Norte - Cerbranorte</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação De Ibiúna E Região - Cetril</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação E Desenvolvimento Da Região De Mogi Mirim - Cemirim</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação E Desenvolvimento Da Região De São José Do Rio Preto-Cerrp - Cerrp</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação E Desenvolvimento Rural Centro Sul De Sergipe Ltda - Cercos</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação E Distribuição Da Região De Itariri - Cedri</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Lauro Muller - Coopermila</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural Cachoeiras Itaboraí Ltda - Cerci</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural Da Média Sorocabana - Cermeso</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural Da Região De Osvaldo Cruz - Ceroc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural Da Região De Palmital %27Cerpal%27 - Cerpal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural Da Região De Promissão - Cerpro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural De Arapoti Ltda - Ceral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural De Araruama Ltda - Ceral Araruama</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural De Itaí-Paranapanema-Avaré Ltda - Ceripa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural De Resende Ltda - Ceres</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural Itu-Mairinque - Cerim</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Energia Treviso - Certrel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Energização E De Desenvolvimento Do Vale Do Mogi - Cervam</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Energização E Desenvolvimento Rural Da Grande Dourados Ltda%2E - Cergrand</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Energização E Desenvolvimento Rural Do Sudoeste Sulmatogrossense Ltda%2E - Coeso</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Infraestrutura Castrolanda - Eletrorural</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Prestação De Serviços Públicos De Distribuição De Energia Elétrica Senador Esteves Júnior - Cerej</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Distribuidora De Energia Vale Do Araçá - Ceraçá</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Energética Cocal - Coopercocal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Fumacense De Eletricidade - Cermoful</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Pioneira De Eletrificação - Coopera - Coopera</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Regional De Distribuição De Energia Do Litoral Norte - Coopernorte - Coopernorte</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Regional De Eletrificação Rural Do Alto Uruguai - Creral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Regional De Eletrificação Rural Fronteira Sul Ltda - Coopersul</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Regional De Energia E Desenvolvimento Ijuí Ltda - Ceriluz</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Regional De Energia Taquari Jacuí - Certaja</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Regional Sul De Eletrificação Rural - Coorsel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperzem Cooperativa De Distribuição De Energia Elétrica - Cooperzem</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Copel Distribuição S%2EA%2E - Copel-Dis</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Coprel Cooperativa De Energia - Coprel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Creluz - Cooperativa De Distribuição De Energia - Creluz-D</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Departamento Municipal De Energia De Ijuí - Demei</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Dme Distribuição S%2EA%2E - Dmed - Dmed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Edp São Paulo Distribuição De Energia S%2EA%2E - Edp Sp</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Elektro Redes S%2EA%2E - Elektro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Eletropaulo - Enel SP - SP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Eletropaulo Metropolitana Eletricidade De São Paulo S%2EA%2E - Eletropaulo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Empresa De Distribuicao De Energia Vale Paranapanema S%2EA%2E - Edevp</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Empresa Elétrica Bragantina S%2EA%2E - Eeb</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Empresa Força E Luz De Urussanga Ltda - Eflul</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Empresa Força E Luz João Cesa Ltda - Efljc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Empresa Luz E Força Santa Maria S%2FA - Elfsm</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Acre - Distribuidora De Energia S%2EA - Eletroacre</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Borborema - Distribuidora De Energia S%2EA - Ebo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Mato Grosso - Distribuidora De Energia S%2EA%2E - Emt</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Mato Grosso Do Sul - Distribuidora De Energia S%2EA%2E - Ems</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Minas Gerais - Distribuidora De Energia S%2EA%2E - Emg</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Nova Friburgo - Distribuidora De Energia S%2EA%2E - Enf</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Paraíba - Distribuidora De Energia S%2EA - Epb</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Rondônia - Distribuidora De Energia S%2EA - Ceron</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Sergipe - Distribuidora De Energia S%2EA - Ese</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Sul-Sudeste - Distribuidora De Energia S%2EA%2E - Ess</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Tocantins Distribuidora De Energia S%2EA%2E - Eto</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Equatorial Alagoas Distribuidora De Energia S%2EA%2E - Equatorial Al</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Equatorial Pará Distribuidora De Energia S%2EA%2E - Equatorial Pa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Equatorial Piauí Distribuidora De Energia S%2EA - Equatorial Pi</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Espírito Santo Distribuição De Energia S%2EA%2E - Edp Es</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Força E Luz Coronel Vivida Ltda - Forcel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hidropan Distribuição De Energia S%2EA%2E - Hidropan</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Iguaçu Distribuidora De Energia Elétrica Ltda%2E - Ienergia</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Light Serviços De Eletricidade S A - Light</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Muxfeldt Marin E Cia Ltda - Muxenergia</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Nova Palma Energia Ltda - Uhenpal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rge Sul Distribuidora De Energia S%2EA%2E - Rge Sul</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rio Grande Energia Sa - Rge</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Roraima Energia S%2EA - Boa Vista</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>CondicaoPagamento2__c</picklist>
+        <values>
+            <fullName>30 dias</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>CondicoesPagamento__c</picklist>
+        <values>
+            <fullName>Cartão de Crédito</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Financiamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Negociação</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Recursos Próprios</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>EnquadramentoGD__c</picklist>
+        <values>
+            <fullName>Microgeração</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Minigeração</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Off-Grid</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Equipe_Propria_ou_Terceira__c</picklist>
+        <values>
+            <fullName>Enerzee</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Integrador</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>EstadoCivil__c</picklist>
+        <values>
+            <fullName>Casado%28a%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Divorciado%28a%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Separado%28a%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Solteiro%28a%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Viúvo%28a%29</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>EstadoInstalacao__c</picklist>
+        <values>
+            <fullName>Acre</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Alagoas</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Amapá</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Amazonas</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Bahia</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ceará</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Distrito Federal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Espírito Santo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Goiás</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Maranhão</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mato Grosso</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mato Grosso do Sul</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Minas Gerais</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Paraná</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Paraíba</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pará</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pernambuco</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Piauí</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rio Grande do Norte</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rio Grande do Sul</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rio de Janeiro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rondônia</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Roraima</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Santa Catarina</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sergipe</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>São Paulo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tocantins</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Estudo_de_estrutura__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>EtapaViabilidade__c</picklist>
+        <values>
+            <fullName>Agendamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Estudo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Visita</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>ForecastCategoryName</picklist>
+        <values>
+            <fullName>Best Case</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Commit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Omitted</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pipeline</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>FormaPagamento__c</picklist>
+        <values>
+            <fullName>Negociação</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>R0002</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>R001</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>REC CARTAO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>REC FINANCIAMEN</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>GrupoTarifario__c</picklist>
+        <values>
+            <fullName>Grupo A</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Grupo B</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Haver_aumento_de_carga__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>LeadSource</picklist>
+        <values>
+            <fullName>Advertisement</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer Event</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Employee Referral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Google AdWords</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Nivello</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Partner</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Purchased List</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Quero Ser Enerzee</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Trade Show</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Webinar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Website</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Loss_Reason__c</picklist>
+        <values>
+            <fullName>Cliente desistiu</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cliente fechou com outra empresa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cliente prosseguiu com outra proposta%2C duplicata</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cliente retomará a negociação em outra data</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Consultor%2FCliente recusou a proposta</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inviabilidade Financeira</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inviabilidade Técnica</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Outro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Parado por 30 dias</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sem contato com o cliente ou consultor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sem área para instalação</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>ModalidadeTarifaria__c</picklist>
+        <values>
+            <fullName>Comercial</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Residencial</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>ModalidadeVenda__c</picklist>
+        <values>
+            <fullName>Venda Direta - Enerzee</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Nascionalidade__c</picklist>
+        <values>
+            <fullName>Brasileiro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Estrangeiro</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>O_padr_o_ser_readequado__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Origem__c</picklist>
+        <values>
+            <fullName>Escritório Virtual</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Nivello</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SAP</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>ParceiroRegistroOportunidade__c</picklist>
+        <values>
+            <fullName>Greenyellow</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Revo</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Posto_de_transforma_o_ou_disponibilidad__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Refor_o_na_estrutura_necess_rio__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Resultado_da_Viabilidade_Tecnica__c</picklist>
+        <values>
+            <fullName>Negativa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Parcial</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Positiva</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>RevisaoFinanceira__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>SituacaoEspecial__c</picklist>
+        <values>
+            <fullName>Cliente com geração distribuída</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cliente com menos de 12 meses de vida</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cliente já em mercado livre</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Em construção</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>StatusAprovacaoDesconto__c</picklist>
+        <values>
+            <fullName>Aprovado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Não iniciado</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Pendente</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rejeitado</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>StatusEnvioContrato__c</picklist>
+        <values>
+            <fullName>Enviado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Erro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Não enviado</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>StatusEnvioPedidoCompraVenda__c</picklist>
+        <values>
+            <fullName>Enviado com sucesso</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Erro no envio</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Não enviado</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>StatusViabilidade__c</picklist>
+        <values>
+            <fullName>Inviável</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Parcialmente Viável</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Viável</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Status__c</picklist>
+        <values>
+            <fullName>Agendamento de Visita</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aguardando Pagamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aprovado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Contrato Assinado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Contrato Enviado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Em Andamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Em Análise</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Estudo de Viabilidade</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Geração do Contrato</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pendência</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Validando Bonificação</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>SubTipo__c</picklist>
+        <values>
+            <fullName>Contrato Micro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Contrato Mini</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>TensaoAlimentacao__c</picklist>
+        <values>
+            <fullName>220-127V</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>254-127V</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>380-220V</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>TipoConexao__c</picklist>
+        <values>
+            <fullName>Bifásico</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Monofásico</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Trifásico</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>TipoImovel__c</picklist>
+        <values>
+            <fullName>Casa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Condomínio</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Igreja</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Indústria</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Loja</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Outro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rural</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>TipoKitPromocional__c</picklist>
+        <values>
+            <fullName>1</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>3</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>4</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>5</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>6</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>TipoObraProjeto__c</picklist>
+        <values>
+            <fullName>Bombeamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Estação de Recarga</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Financiamento com obrigatoriedade de projeto</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Padrão de Entrada</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Posto de transformação</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Subestação</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>UFV Micro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>UFV Mini acima de 300</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>UFV Mini até 300</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>TipoTelhadoEstrutura__c</picklist>
+        <values>
+            <fullName>Ao Solo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Carport</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cerâmico</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fibrocimento %28Madeira%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fibrocimento %28Metálico%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Laje</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Metálico</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Shingle</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Zipado</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>TipoVenda__c</picklist>
+        <values>
+            <fullName>Normal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Transition</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type</picklist>
+        <values>
+            <fullName>Micro Contrato</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mini Contrato</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>UF_Concessionaria__c</picklist>
+        <values>
+            <fullName>AC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AM</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DF</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ES</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MG</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RJ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TO</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>paymentMethod__c</picklist>
+        <values>
+            <fullName>Aguardando Pagamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Boleto</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cartão Crédito</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>E-cash</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Financiamento Bancário</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manual</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PIX</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Parcial E-cash e Saldo Virtual</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PayPal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pix e Saldo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SALDO %2B E-CASH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Transferência Bancária</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

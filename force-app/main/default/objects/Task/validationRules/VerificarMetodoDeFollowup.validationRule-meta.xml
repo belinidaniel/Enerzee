@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>VerificarMetodoDeFollowup</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+    CONTAINS(LOWER(Subject), &quot;ligação de follow-up&quot;),
+    CONTAINS(Owner:User.UserRole.DeveloperName, &quot;Closer_Fechado&quot;),
+    ISPICKVAL(Status, &quot;Completed&quot;),
+    ISCHANGED(Status),
+    ISBLANK(TEXT(MetodoDeFollowup__c))
+)</errorConditionFormula>
+    <errorMessage>Defina qual foi o método de follow-up utilizado!</errorMessage>
+</ValidationRule>

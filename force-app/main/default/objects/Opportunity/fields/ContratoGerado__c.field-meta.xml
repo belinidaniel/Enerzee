@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ContratoGerado__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Campo para indicar se o contrato foi gerado a partir do botão da Oportunidade.</description>
+    <label>Contrato foi gerado?</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BotVersion xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>v1</fullName>
+    <articleAnswersGPTEnabled>false</articleAnswersGPTEnabled>
+    <botDialogs>
+        <botSteps>
+            <botMessages>
+                <message>Olá! Eu sou a Ezee, a assistente virtual da Enerzee. Estou aqui para te ajudar a entender melhor nossas soluções em energia solar e tirar todas as suas dúvidas. Como posso te ajudar hoje?</message>
+                <messageIdentifier>e6de5af4-10ef-4529-ad9c-795e47648e20</messageIdentifier>
+            </botMessages>
+            <stepIdentifier>58ba9a4d-24fb-4d5b-a3e8-3ad7597f1afd</stepIdentifier>
+            <type>Message</type>
+        </botSteps>
+        <botSteps>
+            <stepIdentifier>6ec827f0-89de-4954-877d-267febbf7313</stepIdentifier>
+            <type>Wait</type>
+        </botSteps>
+        <developerName>Welcome</developerName>
+        <isPlaceholderDialog>false</isPlaceholderDialog>
+        <label>Olá! Eu sou um bot útil.</label>
+        <showInFooterMenu>false</showInFooterMenu>
+    </botDialogs>
+    <botDialogs>
+        <botSteps>
+            <botMessages>
+                <message>Ops! Parece que algo deu errado aqui 😕 Vamos tentar novamente. Caso o problema continue, um consultor humano poderá te ajudar.</message>
+                <messageIdentifier>c9c0f965-864b-4a28-af9a-b1387e51f394</messageIdentifier>
+            </botMessages>
+            <stepIdentifier>ee2aeb56-c22b-4f0f-9fb3-44a9328c1597</stepIdentifier>
+            <type>Message</type>
+        </botSteps>
+        <botSteps>
+            <stepIdentifier>c6458950-ec46-4fec-898f-e0b4b0796404</stepIdentifier>
+            <type>Wait</type>
+        </botSteps>
+        <developerName>Error_Handling</developerName>
+        <isPlaceholderDialog>false</isPlaceholderDialog>
+        <label>Infelizmente, ocorreu um erro do sistema. Vamos começar novamente.</label>
+        <showInFooterMenu>false</showInFooterMenu>
+    </botDialogs>
+    <citationsEnabled>false</citationsEnabled>
+    <company>A Enerzee é uma empresa de energia renovável que oferece soluções como Ezee Connect e Ezee Solar. Com apoio de consultores, leva energia solar para casas e empresas, com ou sem investimento inicial, promovendo economia na conta de luz e sustentabilidade.</company>
+    <conversationDefinitionPlanners>
+        <genAiPlannerName>Agentforce_Sales_Development_Rep</genAiPlannerName>
+    </conversationDefinitionPlanners>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>This variable may also be referred to as VerifiedCustomerId</description>
+        <developerName>VerifiedCustomerId</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>VerifiedCustomerId</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <copilotPrimaryLanguage>pt_BR</copilotPrimaryLanguage>
+    <entryDialog>Welcome</entryDialog>
+    <intentDisambiguationEnabled>false</intentDisambiguationEnabled>
+    <intentV3Enabled>false</intentV3Enabled>
+    <knowledgeActionEnabled>false</knowledgeActionEnabled>
+    <knowledgeFallbackEnabled>false</knowledgeFallbackEnabled>
+    <role>Você é a Ezee, assistente virtual da Enerzee. Seu papel é engajar leads, entender suas necessidades e qualificá-los para um consultor.</role>
+    <smallTalkEnabled>false</smallTalkEnabled>
+    <stopRecPrompts>false</stopRecPrompts>
+    <stopWelcomePrompts>false</stopWelcomePrompts>
+    <surfacesEnabled>false</surfacesEnabled>
+    <toneType>Casual</toneType>
+</BotVersion>

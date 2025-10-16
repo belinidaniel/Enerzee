@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OmniSupervisorConfig xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isTimelineHidden>false</isTimelineHidden>
+    <masterLabel>Supervisor - Viabilidade</masterLabel>
+    <omniSupervisorConfigGroup>
+        <group>Omni_Agentes_Viabilidade</group>
+    </omniSupervisorConfigGroup>
+    <omniSupervisorConfigProfile>
+        <profile>coordenador</profile>
+    </omniSupervisorConfigProfile>
+    <omniSupervisorConfigQueue>
+        <queue>Viabilidade</queue>
+    </omniSupervisorConfigQueue>
+    <omniSupervisorConfigTab>
+        <displayOrder>0</displayOrder>
+        <tabType>Wallboard</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>1</displayOrder>
+        <tabType>Agents</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>2</displayOrder>
+        <tabType>QueuesBacklog</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>3</displayOrder>
+        <tabType>AssignedWork</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>4</displayOrder>
+        <tabType>SkillsBacklog</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>5</displayOrder>
+        <tabType>AIAgents</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>6</displayOrder>
+        <flexiPage>Chatter</flexiPage>
+        <tabType>FlexipageType</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigUser>
+        <user>adrilino.silvestre@enerzee.com.br</user>
+    </omniSupervisorConfigUser>
+    <skillVisibility>AllSkills</skillVisibility>
+</OmniSupervisorConfig>

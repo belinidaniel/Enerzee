@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TipoTelhadoEstrutura__c</fullName>
+    <description>Campo para definir o tipo do telhado ou estrutura de fixação.</description>
+    <label>Tipo do telhado - Estrutura de fixação</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Ao Solo</fullName>
+                <default>false</default>
+                <label>Ao Solo</label>
+            </value>
+            <value>
+                <fullName>Cerâmico</fullName>
+                <default>false</default>
+                <label>Cerâmico</label>
+            </value>
+            <value>
+                <fullName>Carport</fullName>
+                <default>false</default>
+                <label>Carport</label>
+            </value>
+            <value>
+                <fullName>Fibrocimento (Metálico)</fullName>
+                <default>false</default>
+                <label>Fibrocimento (Metálico)</label>
+            </value>
+            <value>
+                <fullName>Fibrocimento (Madeira)</fullName>
+                <default>false</default>
+                <label>Fibrocimento (Madeira)</label>
+            </value>
+            <value>
+                <fullName>Metálico</fullName>
+                <default>false</default>
+                <label>Metálico</label>
+            </value>
+            <value>
+                <fullName>Laje</fullName>
+                <default>false</default>
+                <label>Laje</label>
+            </value>
+            <value>
+                <fullName>Zipado</fullName>
+                <default>false</default>
+                <label>Zipado</label>
+            </value>
+            <value>
+                <fullName>Shingle</fullName>
+                <default>false</default>
+                <label>Shingle</label>
+            </value>
+            <value>
+                <fullName>Car Port</fullName>
+                <default>false</default>
+                <label>Car Port</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

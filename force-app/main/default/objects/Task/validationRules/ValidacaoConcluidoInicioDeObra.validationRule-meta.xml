@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ValidacaoConcluidoInicioDeObra</fullName>
+    <active>true</active>
+    <description>Validar a alteração de Status para Complete sem preencher os campos obrigatórios.</description>
+    <errorConditionFormula>AND (
+RecordType.DeveloperName = &quot;Jornada_do_Cliente&quot;,
+Subject=&quot;Início da Obra&quot;,
+OR(ISNULL(MonitoringApplication__c), ISNULL(Login__c), ISNULL(Password__c)),
+TEXT(Status) = &quot;Complete&quot;
+)</errorConditionFormula>
+    <errorMessage>Preecha os campos &quot;Aplicativo de Monitoramento, Login e Senha&quot;. A tarefa será concluída automaticamente e será enviada a notificação ao cliente ao preencher o campo.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>NotificarDelegadoGestorDeProjetos</fullName>
+        <description>Notificar Delegado - Gestor de Projetos</description>
+        <protected>false</protected>
+        <recipients>
+            <field>GestorObra__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderAddress>support@enerzee.com.br</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>unfiled$public/NotificacaoDelegadoGestorDeProjetos</template>
+    </alerts>
+    <alerts>
+        <fullName>NotificarDelegadoProjetista</fullName>
+        <description>Notificar Delegado - Projetista</description>
+        <protected>false</protected>
+        <recipients>
+            <field>Projetista__c</field>
+            <type>userLookup</type>
+        </recipients>
+        <senderAddress>support@enerzee.com.br</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>unfiled$public/NotificacaoDelegadoProjetista</template>
+    </alerts>
+</Workflow>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssignmentRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <assignmentRule>
+        <fullName>Leads</fullName>
+        <active>true</active>
+        <ruleEntry>
+            <assignedTo>Consultor</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Qualificação de Consultores</value>
+            </criteriaItems>
+            <template>unfiled$public/NotificacaoNovoLead</template>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>QualificacaodeClientes</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Lead.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Qualificação de Clientes</value>
+            </criteriaItems>
+            <template>unfiled$public/NotificacaoNovoLead</template>
+        </ruleEntry>
+    </assignmentRule>
+</AssignmentRules>

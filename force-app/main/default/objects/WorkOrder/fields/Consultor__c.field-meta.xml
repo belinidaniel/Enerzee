@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Consultor__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Campo para associar ordens de trabalhos ao consultor.</description>
+    <label>Consultor</label>
+    <referenceTo>Consultor__c</referenceTo>
+    <relationshipLabel>Ordens de trabalho</relationshipLabel>
+    <relationshipName>Ordens_de_trabalho</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Lookup</type>
+</CustomField>

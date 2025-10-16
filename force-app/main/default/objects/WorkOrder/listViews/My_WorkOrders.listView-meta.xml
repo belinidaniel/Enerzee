@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_WorkOrders</fullName>
+    <columns>Name</columns>
+    <columns>Subject</columns>
+    <columns>Account</columns>
+    <columns>Priority</columns>
+    <columns>Status</columns>
+    <filterScope>Mine</filterScope>
+    <label>My Work Orders</label>
+    <sharedTo>
+        <group>Usuarios_de_vendas_e_pos_vendas</group>
+    </sharedTo>
+</ListView>

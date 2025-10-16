@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tampa_da_Eletrocalha_instalada__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Campo para definir se &quot;Tampa da Eletrocalha instalada?&quot; sim ou não</description>
+    <label>Tampa da Eletrocalha instalada?</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

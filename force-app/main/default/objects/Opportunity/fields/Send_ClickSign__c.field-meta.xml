@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Send_ClickSign__c</fullName>
+    <formula>IF(
+				OR(
+				text(StageName) ==&apos;Análise de viabilidade&apos;,
+text(StageName) ==&apos;Contrato&apos;,
+text(StageName) ==&apos;Aguardando dados da visita&apos;,
+text(StageName) ==&apos;Readequação de Proposta&apos;,
+text(StageName) ==&apos;Geração de contrato&apos;,
+text(StageName) ==&apos;Contrato enviado&apos;,
+text(StageName) ==&apos;Envio das Alterações Comerciais ao Parceiro&apos;,
+text(StageName) ==&apos;Aguardando Reanálise do Parceiro&apos;,
+text(StageName) ==&apos;Renegociação Comercial&apos;,
+text(StageName) ==&apos;Elaboração de Aditivo&apos;,
+text(StageName) ==&apos;Revisão Contratual&apos;,
+text(StageName) ==&apos;Aguardando Informação&apos;,
+text(StageName) ==&apos;Elaboração de Estudo&apos;,
+text(StageName) ==&apos;Agendamento Pendente&apos;,
+text(StageName) ==&apos;Reunião Agendada&apos;,
+text(StageName) ==&apos;Negociação&apos;,
+text(StageName) ==&apos;Minuta Gerada&apos;,
+text(StageName) ==&apos;Finalizado (Aguard. NF)&apos;,
+text(StageName) ==&apos;Aguard.Assinatura (AXS)&apos;,
+text(StageName) ==&apos;Negociação (PLIN)&apos;,
+text(StageName) ==&apos;Negociação (2W)&apos;,
+text(StageName) ==&apos;Aguard.Assinatura(2W)&apos;,
+text(StageName) ==&apos;viabilidade técnica&apos;,
+text(StageName) ==&apos;Parecer de acesso&apos;,
+text(StageName) ==&apos;Equipamento&apos;,
+text(StageName) ==&apos;Fase de obra&apos;),TRUE,FALSE)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Send ClickSign</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

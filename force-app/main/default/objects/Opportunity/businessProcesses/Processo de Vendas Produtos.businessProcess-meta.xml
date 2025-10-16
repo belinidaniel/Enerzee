@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BusinessProcess xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Processo de Vendas Produtos</fullName>
+    <isActive>true</isActive>
+    <values>
+        <fullName>Aguardando aceite</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Confirmação de pagamento contrato</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Confirmação de pagamento sinal</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Contrato</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Elaboração de proposta</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Fechado Perdido</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Ganho fechado</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Parecer de acesso</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Proposta enviada</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Readequação de Proposta</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Viabilidade Técnica</fullName>
+        <default>false</default>
+    </values>
+</BusinessProcess>

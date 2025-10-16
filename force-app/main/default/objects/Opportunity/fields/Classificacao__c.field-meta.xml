@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Classificacao__c</fullName>
+    <description>Classificação do Pedido de Compra/Venda</description>
+    <label>Classificação</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Contratos de Locação</fullName>
+                <default>false</default>
+                <label>Contratos de Locação</label>
+            </value>
+            <value>
+                <fullName>Contratos de Serviços</fullName>
+                <default>false</default>
+                <label>Contratos de Serviços</label>
+            </value>
+            <value>
+                <fullName>Contratos de Licenciamento</fullName>
+                <default>false</default>
+                <label>Contratos de Licenciamento</label>
+            </value>
+            <value>
+                <fullName>Compras de equipamentos e materiais</fullName>
+                <default>false</default>
+                <label>Compras de equipamentos e materiais</label>
+            </value>
+            <value>
+                <fullName>Arrendamento de área rural</fullName>
+                <default>false</default>
+                <label>Arrendamento de área rural</label>
+            </value>
+            <value>
+                <fullName>Prestação de Serviços (v)</fullName>
+                <default>false</default>
+                <label>Prestação de Serviços (v)</label>
+            </value>
+            <value>
+                <fullName>Venda de equipamentos e materiais</fullName>
+                <default>false</default>
+                <label>Venda de equipamentos e materiais</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

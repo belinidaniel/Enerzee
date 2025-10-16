@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject></baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <description>Que script de chamada resulta no melhor engajamento de destino?</description>
+    <label>Relatório de engajamento do script de chamada</label>
+    <sections>
+        <masterLabel>Scripts de chamada</masterLabel>
+    </sections>
+</ReportType>

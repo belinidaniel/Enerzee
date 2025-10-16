@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Caso_expirado</fullName>
+        <description>Caso expirado!</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>luiz.hernando@jfox.com.br.developer</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>matheus.martins@enerzee.com.br</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>thiago.tavares@enerzee.com.br</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>unfiled$public/Caso_Expirado</template>
+    </alerts>
+    <alerts>
+        <fullName>Caso_sem_atendimento</fullName>
+        <description>Caso sem atendimento</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>luiz.hernando@jfox.com.br.developer</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>matheus.martins@enerzee.com.br</recipient>
+            <type>user</type>
+        </recipients>
+        <recipients>
+            <recipient>thiago.tavares@enerzee.com.br</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>unfiled$public/Atendimento_46_horas</template>
+    </alerts>
+    <alerts>
+        <fullName>Jornada_do_Cliente</fullName>
+        <description>Jornada do Cliente - Boas vindas</description>
+        <protected>false</protected>
+        <recipients>
+            <field>ContactId</field>
+            <type>contactLookup</type>
+        </recipients>
+        <senderAddress>support@enerzee.com.br</senderAddress>
+        <senderType>OrgWideEmailAddress</senderType>
+        <template>unfiled$public/Jornada_do_Cliente_Primeiro_Contato</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>ChangePriorityToHigh</fullName>
+        <field>Priority</field>
+        <literalValue>High</literalValue>
+        <name>Altera a prioridade do caso para alta.</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+</Workflow>

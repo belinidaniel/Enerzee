@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>C_pia_de_Elabora_o_de_propostas_Micro</fullName>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>ConsultorOportunidade__c</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>ValorTotalProposta__c</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
+    <columns>OPPORTUNITY.LAST_STAGE_CHANGE</columns>
+    <columns>PotenciaPicoSistema__c</columns>
+    <columns>GrupoTarifario__c</columns>
+    <columns>OPPORTUNITY.RECORDTYPE</columns>
+    <columns>SubTipo__c</columns>
+    <columns>PartnerName__c</columns>
+    <columns>TipoKitPromocional__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.Solar</value>
+    </filters>
+    <label>1 - Solar</label>
+</ListView>

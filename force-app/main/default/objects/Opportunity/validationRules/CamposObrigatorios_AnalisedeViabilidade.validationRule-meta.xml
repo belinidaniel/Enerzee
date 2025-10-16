@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CamposObrigatorios_AnalisedeViabilidade</fullName>
+    <active>false</active>
+    <description>Verifica se os campos necessários são fornecidos se uma oportunidade passar da fase de Analise de Viabilidade</description>
+    <errorConditionFormula>AND(
+    ISCHANGED(StageName),
+    NOT(ISPICKVAL(StageName, &apos;Fechado Perdido&apos;)),
+    ISPICKVAL(PRIORVALUE(StageName), &apos;Análise de viabilidade&apos;),
+    NOT(ISPICKVAL(StageName, &apos;Agendamento da Visita Técnica&apos;)),
+    OR(
+        ISPICKVAL(Categoria_Fase__c, &apos;&apos;),
+        ISPICKVAL(O_padr_o_ser_readequado__c, &apos;&apos;),
+        ISPICKVAL(Haver_aumento_de_carga__c, &apos;&apos;),
+        ISPICKVAL(Refor_o_na_estrutura_necess_rio__c, &apos;&apos;),
+        ISPICKVAL(Posto_de_transforma_o_ou_disponibilidad__c, &apos;&apos;),
+        ISPICKVAL(Estudo_de_estrutura__c, &apos;&apos;),
+        ISPICKVAL(Aumento_da_potencia_nominal_do_sistema__c, &apos;&apos;),
+        ISPICKVAL(StatusViabilidade__c, &apos;&apos;),
+        ISBLANK(Corrente_nominal_do_disjuntor_de_entrada__c),
+        ISBLANK(Secao_Nominal_Bitola_do_cabo__c),
+        ISBLANK(Estrutura_de_fixacao_verificado_in_loco__c),
+        ISBLANK(GeracaoAnualEstimada__c),
+        ISBLANK(Observacoes_pos_sombreamento__c),
+        ISBLANK(Observacoes_pos_visita__c),
+        ISBLANK(TipoObraProjeto__c),
+        ISPICKVAL(TensaoAlimentacao__c, &apos;&apos;),
+        ISBLANK(Custos_adicionais_levantados__c),
+        ISBLANK(TextoEstudo__c),
+        AND(
+            ISPICKVAL(StatusViabilidade__c, &apos;Inviável&apos;),
+            ISBLANK(TextoMotivo__c)
+        )
+    )
+)</errorConditionFormula>
+    <errorMessage>Todos os campos descritos na tarefa &quot;Inserir dados da viabilidade&quot; devem estar preenchidos antes de a Oportunidade sair do status atual!</errorMessage>
+</ValidationRule>

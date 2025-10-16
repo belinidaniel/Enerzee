@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Salesforce PRD</label>
+    <protected>false</protected>
+    <values>
+        <field>Client_Id__c</field>
+        <value xsi:type="xsd:string">1CD651866AA3D3299B4C3F86DA6FA958FE6602CA4180349E3FEDBF6C864ABFAF</value>
+    </values>
+    <values>
+        <field>Client_Secret__c</field>
+        <value xsi:type="xsd:string">3MVG9cHH2bfKACZZoq5bSUel0gcEetgmGVBYkmaqyjEpOeShE45iDDKhsnijfLQWxnimITJtmFw</value>
+    </values>
+    <values>
+        <field>ContentType__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>LastToken__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Method__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>URL__c</field>
+        <value xsi:type="xsd:string">https://login.salesforce.com/services/oauth2/token</value>
+    </values>
+    <values>
+        <field>Validade_token__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>login__c</field>
+        <value xsi:type="xsd:string">daniel.belini@enerzee.com.br</value>
+    </values>
+    <values>
+        <field>senha__c</field>
+        <value xsi:type="xsd:string">Da@@2009</value>
+    </values>
+</CustomMetadata>

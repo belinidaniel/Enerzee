@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>ClickSign Get Template</label>
+    <protected>false</protected>
+    <values>
+        <field>Client_Id__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Client_Secret__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>ContentType__c</field>
+        <value xsi:type="xsd:string">application/vnd.api+json</value>
+    </values>
+    <values>
+        <field>LastToken__c</field>
+        <value xsi:type="xsd:string">428dd635-2665-473f-a176-56fa8d2cb6c2</value>
+    </values>
+    <values>
+        <field>Method__c</field>
+        <value xsi:type="xsd:string">GET</value>
+    </values>
+    <values>
+        <field>URL__c</field>
+        <value xsi:type="xsd:string">https://app.clicksign.com/api/v3/envelopes/envelope_id</value>
+    </values>
+    <values>
+        <field>Validade_token__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>login__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>senha__c</field>
+        <value xsi:nil="true"/>
+    </values>
+</CustomMetadata>

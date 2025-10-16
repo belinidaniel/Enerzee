@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ConversationStatus__c</fullName>
+    <label>Conversation Status</label>
+    <required>false</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Waiting Customer</fullName>
+                <default>false</default>
+                <label>Waiting Customer</label>
+            </value>
+            <value>
+                <fullName>Waiting Agent</fullName>
+                <default>false</default>
+                <label>Waiting Agent</label>
+            </value>
+            <value>
+                <fullName>Waiting Agent - Manager Notified</fullName>
+                <default>false</default>
+                <label>Waiting Agent - Manager Notified</label>
+            </value>
+            <value>
+                <fullName>Waiting Agent - Transfered</fullName>
+                <default>false</default>
+                <label>Waiting Agent - Transfered</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

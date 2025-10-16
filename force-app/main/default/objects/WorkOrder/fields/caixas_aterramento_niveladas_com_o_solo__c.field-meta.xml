@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>caixas_aterramento_niveladas_com_o_solo__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Campo para definir se &quot;Caixas de aterramento niveladas com o solo?&quot;, sim ou não.</description>
+    <label>Caixas aterramento niveladas com o solo?</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,108 @@
+<!--
+  @description       : Modelo de Proposta Bow-e com valores formatados em padrão BR (R$ 1.234,56)
+  @author            : Daniel Belini
+  @last modified on  : 10-06-2025
+  @last modified by  : Daniel Belini
+-->
+<apex:page standardController="Opportunity" applyBodyTag="false" extensions="PDFControllerExtension,OpportunityDataController"  action="{!salvarPDF}"  standardStylesheets="false" showHeader="false"  sidebar="false" renderAs="PDF" cache="false">
+
+    <head>
+        <!-- configuração da página -->
+        <style type="text/css" media="print">
+            @page {
+                size: A4 portrait;
+                margin-top: -8px;
+                margin-bottom: 0px;
+                margin-left: -8px;
+                margin-right: 0px;
+            }
+        </style>
+    </head>
+
+    <apex:pageMessages ></apex:pageMessages>
+
+    <!-- PAGINA 1 ------------------------------------->
+    <!-- imagem de fundo -->
+    <div style="height:1035px;">
+        <apex:image url="{!pdfUrls[0]}" height="1122px" />
+    </div>
+    <!-- CLIENTE -->
+    <div  style="position:absolute; display: flex; align-items: center; justify-content: flex-start; top:235px; left: 110px; width: 645px; height: 30px; line-height: 30px; font-size: 16px">
+        {!IF(ISBLANK(Opportunity.Account.Name), 'AAAA-', Opportunity.Account.Name)}
+    </div>
+    <!-- CPF/CNPJ -->
+    <div style="position:absolute; display: flex; align-items: center; justify-content: flex-start; top:272px; left: 135px; width: 630px; height: 30px; line-height: 30px; font-size: 16px">
+        {!IF(!ISBLANK(Opportunity.Account.CPF__c), Opportunity.Account.CPF__c, Opportunity.Account.CNPJ__c)}
+    </div>
+    <!-- ENDEREÇO -->
+    <div style="position:absolute; display: flex; align-items: center; justify-content: flex-start; top:308px; left: 142px; width: 620px; height: 30px; line-height: 30px; font-size: 13px">
+        {!IF(ISBLANK(Opportunity.EnderecoOportunidade__c), '', Opportunity.EnderecoOportunidade__c)}
+    </div>
+    
+    <!-- DISTRIBUIDORA -->
+    <div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:681px; left: 40px; width: 103px; height: 15px; line-height: 15px; font-size: 10px">
+        {!IF(ISBLANK(Opportunity.Distribuidora__c), '-', UPPER(Opportunity.Distribuidora__c))}
+    </div>
+    <!-- TARIFA -->
+    <div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:681px; left: 145px; width: 106px; height: 15px; line-height: 15px; font-size: 10px">
+        R$ {!IF(ISBLANK(Opportunity.TarifaEnergia__c), '-', Opportunity.TarifaEnergia__c)}
+    </div>
+    <!-- DESCONTO PROMOCIONAL -->
+    <div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:681px; left: 253px; width: 107px; height: 15px; line-height: 15px; font-size: 10px">
+        {!IF(ISBLANK(Opportunity.DescontoPromocional__c), '-', Opportunity.DescontoPromocional__c)}%
+    </div>
+    <!-- DESCONTO FIXO -->
+    <div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:681px; left: 362px; width: 103px; height: 15px; line-height: 15px; font-size: 10px">
+        {!IF(ISBLANK(Opportunity.DescontoFixoBowE__c), '-', Opportunity.DescontoFixoBowE__c)}%
+    </div> 
+    <!-- CONSUMO MENSAL KWH -->
+    <div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:681px; left: 465px; width: 97px; height: 15px; line-height: 15px; font-size: 10px">
+        {!IF(ISBLANK(Opportunity.Kwh__c), '-', FLOOR(Opportunity.Kwh__c))}
+    </div>
+    <!-- CLASSE -->
+    <div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:681px; left: 564px; width: 95px; height: 15px; line-height: 15px; font-size: 10px">
+        {!IF(ISBLANK(Opportunity.TipoConexao__c), '-', Opportunity.TipoConexao__c)}
+    </div>
+
+    <!-- CUSTO MENSAL ATUAL -->
+    <div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:681px; left: 660px; width: 111px; height: 15px; line-height: 15px; font-size: 10px">
+        {!CustoMensalFormatado}
+    </div>
+
+    <!-- ECONOMIA DESCONTO PROMOCIONAL -->
+    <div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:790px; left: 40px; width: 103px; height: 19px; line-height: 19px; font-size: 10px">
+        {!EconomiaPromocionalFormatada}
+    </div>
+
+    <!-- ECONOMIA DESCONTO FIXO -->
+    <div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:790px; left: 145px; width: 106px; height: 19px; line-height: 19px; font-size: 10px">
+        {!EconomiaFixaFormatada}
+    </div>
+    <!-- FATURA BOW-E DESCONTO PROMOCIONAL -->
+    <div style="position:absolute; top:790px; left:253px; width:107px; text-align:center; font-size:10px;">
+        {!FaturaPromocionalFormatada}
+    </div>
+    <!-- FATURA BOW-E DESCONTO FIXO -->
+    <div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:790px; left: 362px; width: 103px; height: 19px; line-height: 19px; font-size: 10px">
+        {!FaturaFixaFormatada}
+    </div>
+    <!-- ECONOMIA X MESES PROMOCIONAL -->
+    <div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:790px; left: 465px; width: 97px; height: 19px; line-height: 19px; font-size: 10px">
+        {!EconomiaXMesesPromocionalFormatada}
+    </div>
+    <!-- ECONOMIA X MESES FIXA -->
+    <div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:790px; left: 564px; width: 95px; height: 19px; line-height: 19px; font-size: 10px">
+        {!EconomiaXMesesFixaFormatada}
+    </div>
+
+    <!-- ECONOMIA ANUAL -->
+    <div style="position:absolute; top:790px; left:660px; width:111px; text-align:center; font-size:10px;">
+        {!EconomiaAnualFormatada}
+    </div>
+    <!-- PRAZO DE CONTRATO -->
+    <div style="position:absolute; display: flex; align-items: center; justify-content: flex-start; top:831.5px; left: 40px; width: 600px; height: 15px; line-height: 19px; font-size: 10px">
+        <span style="color:#003414;">PRAZO DE CONTRATO:</span>&nbsp;
+        {!IF(ISBLANK(Opportunity.PrazoContratoParceiro__c), '', Opportunity.PrazoContratoParceiro__c)}
+    </div>
+
+</apex:page>

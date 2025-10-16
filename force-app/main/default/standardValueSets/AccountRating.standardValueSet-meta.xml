@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Hot</fullName>
+        <default>false</default>
+        <label>Muito importante</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Warm</fullName>
+        <default>false</default>
+        <label>Importante</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Cold</fullName>
+        <default>false</default>
+        <label>Pouco importante</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Prioritário</fullName>
+        <default>false</default>
+        <label>Prioritário</label>
+    </standardValue>
+</StandardValueSet>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DataHoraEnvioPedidoCompraVenda__c</fullName>
+    <description>É preenchido pela integração com o SAP, criação de pedido de compra e de venda.</description>
+    <inlineHelpText>É preenchido pela integração com o SAP, gravando o momento em que houve o envio dos pedidos de compra e de venda.</inlineHelpText>
+    <label>Data/Hora envio pedido de compra/venda</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

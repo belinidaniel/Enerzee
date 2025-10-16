@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Question</fullName>
+        <default>false</default>
+        <label>Pergunta</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Manutenções e Garantias</fullName>
+        <default>false</default>
+        <label>Manutenções e Garantias</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Gestão de faturas e concessionárias</fullName>
+        <default>false</default>
+        <label>Gestão de faturas e concessionárias</label>
+    </standardValue>
+</StandardValueSet>

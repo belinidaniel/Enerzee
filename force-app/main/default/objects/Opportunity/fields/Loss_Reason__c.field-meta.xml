@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Loss_Reason__c</fullName>
+    <label>Motivo da perda</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Inviabilidade Financeira</fullName>
+                <default>false</default>
+                <label>Inviabilidade Financeira</label>
+            </value>
+            <value>
+                <fullName>Inviabilidade Técnica</fullName>
+                <default>false</default>
+                <label>Inviabilidade Técnica</label>
+            </value>
+            <value>
+                <fullName>Sem área para instalação</fullName>
+                <default>false</default>
+                <label>Sem área para instalação</label>
+            </value>
+            <value>
+                <fullName>Parado por 30 dias</fullName>
+                <default>false</default>
+                <label>Parado por 30 dias</label>
+            </value>
+            <value>
+                <fullName>Sem contato com o cliente ou consultor</fullName>
+                <default>false</default>
+                <label>Sem contato com o cliente ou consultor</label>
+            </value>
+            <value>
+                <fullName>Cliente fechou com outra empresa</fullName>
+                <default>false</default>
+                <label>Cliente fechou com outra empresa</label>
+            </value>
+            <value>
+                <fullName>Consultor/Cliente recusou a proposta</fullName>
+                <default>false</default>
+                <label>Consultor/Cliente recusou a proposta</label>
+            </value>
+            <value>
+                <fullName>Cliente desistiu</fullName>
+                <default>false</default>
+                <label>Cliente desistiu</label>
+            </value>
+            <value>
+                <fullName>Cliente retomará a negociação em outra data</fullName>
+                <default>false</default>
+                <label>Cliente retomará a negociação em outra data</label>
+            </value>
+            <value>
+                <fullName>Cliente prosseguiu com outra proposta, duplicata</fullName>
+                <default>false</default>
+                <label>Cliente prosseguiu com outra proposta, duplicata</label>
+            </value>
+            <value>
+                <fullName>Outro</fullName>
+                <default>false</default>
+                <label>Outro</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

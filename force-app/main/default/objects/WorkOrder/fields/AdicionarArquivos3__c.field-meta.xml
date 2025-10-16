@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AdicionarArquivos3__c</fullName>
+    <description>Campo para auxilio do técnico sobre inserção de imagens e desenhos necessários, viabilidade.</description>
+    <externalId>false</externalId>
+    <formula>&quot; Desenhar a localização dos equipamentos: inversor, padrão de entrada e QDG, &quot; &amp;
+&quot; desenhar planta de cobertura com medidas, &quot; &amp;
+&quot; desenhar obstáculos de sombreamento. &quot; &amp;
+&quot; Observação: Inserir as imagens dos desenhos em arquivos.&quot;</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Adicionar em arquivos</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

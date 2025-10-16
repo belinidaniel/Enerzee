@@ -1,0 +1,107 @@
+<!--
+  @description       : 
+  @author            : Daniel Belini
+  @group             : 
+  @last modified on  : 10-06-2025
+  @last modified by  : Daniel Belini
+-->
+<apex:page standardController="Opportunity" applyBodyTag="false" extensions="PDFControllerExtension,OpportunityDataController"   standardStylesheets="false" showHeader="false"  action="{!salvarPDF}" sidebar="false" renderAs="PDF" cache="false">
+
+    <head>
+        <!-- configuração da página -->
+        <style type="text/css" media="print">
+            @page {
+                size: A4 portrait;
+                margin-top: -8px;
+                margin-bottom: 0px;
+                margin-left: -8px;
+                margin-right: 0px;
+            }
+        </style>
+    </head>
+
+    <apex:pageMessages ></apex:pageMessages>
+
+    <!-- PAGINA 1 ------------------------------------->
+    <!-- imagem de fundo -->
+    <div style="height:1035px;">
+        <apex:image url="{!pdfUrls[0]}" height="1122px" />
+    </div>
+    <!-- CLIENTE -->
+    <div style="position:absolute; top:235px; left:110px; width:645px; height:30px; line-height:30px; font-size:16px;">
+        {!IF(ISBLANK(Opportunity.Account.Name), 'AAAA-', Opportunity.Account.Name)}
+    </div>
+    <!-- CPF/CNPJ -->
+    <div style="position:absolute; display: flex; align-items: center; justify-content: flex-start; top:272px; left: 135px; width: 630px; height: 30px; line-height: 30px; font-size: 16px">
+        {!IF(!ISBLANK(Opportunity.Account.CPF__c), Opportunity.Account.CPF__c, Opportunity.Account.CNPJ__c)}
+    </div>
+    <!-- ENDEREÇO -->
+    <div style="position:absolute; display: flex; align-items: center; justify-content: flex-start; top:308px; left: 142px; width: 620px; height: 30px; line-height: 30px; font-size: 13px">
+        {!IF(ISBLANK(Opportunity.EnderecoOportunidade__c), '', Opportunity.EnderecoOportunidade__c)}
+    </div>
+    
+    <!-- DISTRIBUIDORA -->
+	<div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:715px; left: 42px; width: 87px; height: 29px; font-size: 9px;">
+    	{!IF(ISBLANK(Opportunity.Distribuidora__c), '-', UPPER(Opportunity.Distribuidora__c))}
+	</div>
+	<!-- TARIFA -->
+	<div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:715px; left: 135px; width: 72px; height: 29px; font-size: 10px;">
+    	R$ {!IF(ISBLANK(Opportunity.TarifaEnergia__c), '-', Opportunity.TarifaEnergia__c)}
+	</div>
+	<!-- DESCONTO FIXO -->
+	<div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:715px; left: 214px; width: 72px; height: 29px; font-size: 10px;">
+    	{!IF(ISBLANK(Opportunity.DescontoFixoBowE__c), '-', Opportunity.DescontoFixoBowE__c)}%
+	</div>
+	<!-- CONSUMO MENSAL KWH -->
+	<div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:715px; left: 294px; width: 72px; height: 29px; font-size: 10px;">
+    	{!IF(ISBLANK(Opportunity.Kwh__c), '-', FLOOR(Opportunity.Kwh__c))}
+	</div> 
+	<!-- CLASSE -->
+	<div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:715px; left: 374px; width: 72px; height: 29px; font-size: 10px;">
+    	{!IF(ISBLANK(Opportunity.TipoConexao__c), '-', Opportunity.TipoConexao__c)}
+	</div>
+	<!-- CUSTO MENSAL ATUAL -->
+	<div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:715px; left: 454px; width: 72px; height: 29px; font-size: 10px;">
+    	{!CustoMensalFormatado}
+	</div>
+	<!-- ECONOMIA DESCONTO FIXO -->
+	<div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:715px; left: 533px; width: 72px; height: 29px; font-size: 10px;">
+    	{!EconomiaFixaFormatada}
+	</div>
+
+	<!-- FATURA BOW-E DESCONTO FIXO -->
+	<div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:715px; left: 613px; width: 72px; height: 29px; font-size: 10px;">
+    	{!FaturaFixaFormatada}
+	</div>
+
+	<!-- ECONOMIA ANUAL -->
+	<div style="position:absolute; display: flex; text-align: center; justify-content: flex-start; top:715px; left: 693px; width: 74px; height: 29px; font-size: 10px;">
+    	{!EconomiaAnualFormatada}
+	</div>   
+    
+    <!-- PRAZO DE CONTRATO -->
+    <div style="position:absolute; display: flex; align-items: center; justify-content: flex-start; top:786.5px; left: 176px; width: 600px; height: 15px; font-size: 10px;">
+        {!IF(
+  			NOT(ISBLANK(Opportunity.PrazoContratoParceiro__c)),
+  			UPPER(Opportunity.PrazoContratoParceiro__c),
+  			IF(
+    			Opportunity.RecordType.DeveloperName = "Origo",
+    			IF(
+      				OR(
+        				Opportunity.Distribuidora__c = "ENERGISA MT",
+        				Opportunity.Distribuidora__c = "ENERGISA MS"
+      				),
+      				"FIDELIDADE DE 12 MESES COM AVISO PRÉVIO DE 180 DIAS. DESCONTO DE 50% VALIDO ATÉ DESEMBRO/25. A PARTIR DE JANEIRO/26 O DESCONTO SERÁ DE 10%.",
+      				"FIDELIDADE DE 12 MESES PARA PF COM AVISO PRÉVIO DE 90 DIAS E 36 MESES PARA PJ"
+    			),
+    			"SEM FIDELIDADE"
+  			)
+		)}
+    </div>
+    
+    <!-- Logo da empresa -->
+	<div style="position:absolute; top:1065px; left:680px;">
+    	<apex:image url="{!LogoUrl}" width="100px"/>
+	</div>
+
+</apex:page>

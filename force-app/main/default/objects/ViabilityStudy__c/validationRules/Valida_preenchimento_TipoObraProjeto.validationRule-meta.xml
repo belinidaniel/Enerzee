@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Valida_preenchimento_TipoObraProjeto</fullName>
+    <active>true</active>
+    <description>Valida o preenchimento do campo Tipo de Obra/Projeto para criação do projeto.</description>
+    <errorConditionFormula>AND(
+ISCHANGED( StatusFeasibility__c ),
+ISPICKVAL( StatusFeasibility__c, &apos;Viabilidade Finalizada&apos; ),
+ISBLANK( TypeWorkProjectFeasibility__c )
+)</errorConditionFormula>
+    <errorMessage>Campo Tipo de Obra/Projeto deve ser preenchido antes de finalizar a Análise de viabilidade</errorMessage>
+</ValidationRule>

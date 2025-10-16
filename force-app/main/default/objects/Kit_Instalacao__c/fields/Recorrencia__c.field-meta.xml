@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Recorrencia__c</fullName>
+    <description>Recorrência para o Pedido de Compra/Venda</description>
+    <label>Recorrência</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Indefinida</fullName>
+                <default>false</default>
+                <label>Indefinida</label>
+            </value>
+            <value>
+                <fullName>Não se aplica</fullName>
+                <default>false</default>
+                <label>Não se aplica</label>
+            </value>
+            <value>
+                <fullName>Mensal</fullName>
+                <default>false</default>
+                <label>Mensal</label>
+            </value>
+            <value>
+                <fullName>Anual</fullName>
+                <default>false</default>
+                <label>Anual</label>
+            </value>
+            <value>
+                <fullName>Bimestral</fullName>
+                <default>false</default>
+                <label>Bimestral</label>
+            </value>
+            <value>
+                <fullName>Trimestral</fullName>
+                <default>false</default>
+                <label>Trimestral</label>
+            </value>
+            <value>
+                <fullName>Semestral</fullName>
+                <default>false</default>
+                <label>Semestral</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

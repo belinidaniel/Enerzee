@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BusinessProcess xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Assistência Técnica - Gestão de Faturas e Concessionárias</fullName>
+    <isActive>true</isActive>
+    <values>
+        <fullName>Aguardando Aprovação</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Aguardando Pagamento</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Aguardando Peças%2FEquipamentos</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Aguardando Trâmites da Concessionária</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Aprovação do Ressarcimento</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Consultor Aprovado</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Consultor Rejeitado</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Elaboração da Proposta</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Em Análise</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Em Execução</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Em Finalização</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Em andamento</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Finalizado</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Integrador Aprovado</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Integrador Rejeitado</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Novo</fullName>
+        <default>true</default>
+    </values>
+    <values>
+        <fullName>Pagamento</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Pagamento Agendado</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Validação</fullName>
+        <default>false</default>
+    </values>
+</BusinessProcess>

@@ -1,0 +1,49 @@
+<apex:page >
+    <apex:includeScript value="/support/console/62.0/integration.js"/>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            monitorPresenceStatus();
+            setInterval(monitorPresenceStatus, 5000); // Verifica a cada 10 segundos
+        });
+
+        function monitorPresenceStatus() {
+            
+            const availableStatusId = '0N55e0000008c2c';
+
+            try {
+                sforce.console.presence.getServicePresenceStatusId(function (result) {
+                    if (result.success) {
+                        console.log('Status atual: ', result.statusName);
+
+                        if (result.statusId !== availableStatusId) {
+                            console.log('Alterando status para Available...');
+                            setServicePresenceStatus(availableStatusId);
+                        }
+                    } else {
+                        console.error('Falha ao obter o status atual do agente.');
+                        setServicePresenceStatus(availableStatusId);
+                    }
+                });
+            } catch (error) {
+                console.error('Erro ao monitorar o status do agente: ', error);
+                window.location.reload();
+            }
+        }
+
+        function setServicePresenceStatus(statusId) {
+            
+            try {
+                sforce.console.presence.setServicePresenceStatus(statusId, function (result) {
+                    if (result.success) {
+                        console.log('Status alterado com sucesso para: ' + result.statusName);
+                    } else {
+                        console.error('Erro ao alterar o status: ', result);
+                    }
+                });
+            catch (error) {
+                console.error('Erro ao alterar o status do agente: ', error);
+                window.location.reload();
+            }
+        }
+    </script>
+</apex:page>

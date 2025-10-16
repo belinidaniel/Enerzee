@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Todas_as_Marcas_da_conta</fullName>
+    <filterScope>Everything</filterScope>
+    <label>Todas as Marcas da conta</label>
+</ListView>

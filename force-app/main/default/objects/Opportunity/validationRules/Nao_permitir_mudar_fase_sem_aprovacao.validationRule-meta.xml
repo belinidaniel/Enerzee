@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Nao_permitir_mudar_fase_sem_aprovacao</fullName>
+    <active>false</active>
+    <errorConditionFormula>AND(
+    OR(
+        ISPICKVAL(PRIORVALUE(StageName), &apos;Elaboração de proposta&apos;),
+        ISPICKVAL(PRIORVALUE(StageName), &apos;Readequação de Proposta&apos;)
+    ),
+    ISPICKVAL(StatusAprovacaoDesconto__c, &apos;Pendente&apos;),
+    NOT(ISCHANGED(StatusAprovacaoDesconto__c)),
+    ISCHANGED(StageName)
+)</errorConditionFormula>
+    <errorMessage>Você não pode mudar a fase da Oportunidade enquanto o status de aprovação estiver como &apos;Pendente&apos;. Por favor, complete o processo de aprovação antes de prosseguir.</errorMessage>
+</ValidationRule>

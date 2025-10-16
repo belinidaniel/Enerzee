@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Se_Motivo_da_perda_for_igual_a_Outro</fullName>
+    <active>false</active>
+    <description>Se motivo da perda for igual a outro, será obrigatório preencher a descrição do motivo da perda.</description>
+    <errorConditionFormula>AND(
+ ISCHANGED( StageName ),
+ ISPICKVAL( StageName , &quot;Fechado Perdido&quot;),
+ ISPICKVAL( Loss_Reason__c , &quot;Outro&quot;),
+ ISBLANK( DescricaoMotivoPerda__c )    
+
+)</errorConditionFormula>
+    <errorMessage>Se motivo da perda for igual a outro, será obrigatório preencher a descrição do motivo da perda.</errorMessage>
+</ValidationRule>

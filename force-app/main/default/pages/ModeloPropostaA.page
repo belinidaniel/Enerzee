@@ -1,0 +1,573 @@
+<!--
+  @description       : 
+  @author            : Daniel Belini
+  @group             : 
+  @last modified on  : 09-09-2025
+  @last modified by  : Daniel Belini
+-->
+<apex:page standardController="Opportunity" applyBodyTag="false" extensions="PDFControllerExtension,OpportunityDataController"  standardStylesheets="false" showHeader="false"  sidebar="false" renderAs="PDF"  action="{!salvarPDF}" cache="false">
+
+    <head>
+        <!-- configuração da página -->
+        <style type="text/css" media="print">
+            @page {
+                size: A4 portrait;
+                margin-top: -8px;
+                margin-bottom: 0px;
+                margin-left: -8px;
+                margin-right: 0px;
+            }
+
+            body {
+                font-family: 'Arial Unicode MS', Arial, sans-serif;
+                font-size: 14px;
+            }
+
+            div {
+                font-family: 'Arial Unicode MS', Arial, sans-serif;
+                font-size: 14px; 
+            }
+        </style>
+    </head>
+
+    <apex:pageMessages ></apex:pageMessages>
+    
+    <!-- PAGINA 1 ------------------------------------->
+    <!-- imagem de fundo -->
+    <div style="height:1022px;" >
+        <apex:image url="{!pdfUrls[0]}" height="1122px" />
+    </div>
+    
+    <!-- CLIENTE -->
+    <div  style="position:relative; bottom:346px; left:374px; right:120px;" >
+        {!IF(ISBLANK(Opportunity.Account.Name), '-', Opportunity.Account.Name)}
+    </div>
+    
+    <!-- PROPOSTA No -->
+    <div style="position:relative; bottom:330px; left:405px; right:100px;" >    
+        {!IF(ISBLANK(Opportunity.Numeroproposta__c), '-', Opportunity.Numeroproposta__c)}
+    </div>
+
+    <!-- POTÊNCIA -->
+    <div  style="position:relative; bottom:315px; left:383px; right:120px;">
+        <apex:outputtext rendered="{!IF(Opportunity.PotenciaPicoSistema__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.PotenciaPicoSistema__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.PotenciaPicoSistema__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.PotenciaPicoSistema__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.PotenciaPicoSistema__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.PotenciaPicoSistema__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.PotenciaPicoSistema__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.PotenciaPicoSistema__c))), 3) & "," & IF(MOD(ABS(Opportunity.PotenciaPicoSistema__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.PotenciaPicoSistema__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.PotenciaPicoSistema__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        KWp
+    </div>
+
+	<!-- DATA -->
+    <div  style="position:relative; bottom:300px; left:354px; right:120px;">
+        {!IF(ISBLANK(Opportunity.DataDia__c), '-', Opportunity.DataDia__c)}
+    </div>
+
+    <!-- PROPOSTA VÁLIDA POR -->
+    <div  style="position:relative; bottom:283px; left: 468px; right:120px;">
+        {!IF(ISBLANK(Opportunity.ValidadeProposta__c), '-', Opportunity.ValidadeProposta__c)}
+    </div>
+
+    <!-- PAGINA 2 ------------------------------------->
+    <!-- imagem de fundo -->
+    <div style="height:1115px;" >
+        <apex:image url="{!pdfUrls[1]}" height="1131px" />
+    </div>
+
+    <!-- PAGINA 3 ------------------------------------->
+    <!-- imagem de fundo -->
+    <div style="height:1108px;" >
+        <apex:image url="{!pdfUrls[2]}" height="1131px" />
+    </div>
+
+    <div style="height:670px;" >
+        <apex:image url="{!pdfUrls[3]}" height="1131px" />
+    </div>
+
+    <!-- DADOS DO CLIENTE -->
+    <!-- NOME -->
+    <div  style="position:relative; bottom:511px; left: 117px; right:120px;">
+        {!IF(ISBLANK(Opportunity.Account.Name), '-', Opportunity.Account.Name)}
+    </div>
+    <!-- CPF/CNPJ -->
+    <div style="position:relative; bottom:492px; left: 140px; right:120px; color:black;">
+        {!IF(!ISBLANK(Opportunity.Account.CPF__c), Opportunity.Account.CPF__c, Opportunity.Account.CNPJ__c)}
+    </div>
+    <!-- ENDEREÇO -->
+    <div style="position:relative; bottom:473px; left: 150px; right:100px; font-size:11px !important;">
+        {!IF(ISBLANK(Opportunity.EnderecoOportunidade__c), '-', Opportunity.EnderecoOportunidade__c)}
+    </div>
+    <!-- CONSUMO ANUAL CONSIDERADO -->
+    <div style="position:relative; bottom:453px; left:287px; right:120px;">
+        <apex:outputtext rendered="{!IF(Opportunity.ConsumoAnual__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.ConsumoAnual__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.ConsumoAnual__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.ConsumoAnual__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.ConsumoAnual__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.ConsumoAnual__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.ConsumoAnual__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.ConsumoAnual__c))), 3) & "," & IF(MOD(ABS(Opportunity.ConsumoAnual__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.ConsumoAnual__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.ConsumoAnual__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        KWh
+    </div>
+    <!-- DEMANDA CONTRATADA -->
+    <div style="position:relative; bottom:435px; left:245px; right:120px;">
+        <apex:outputtext rendered="{!IF(Opportunity.DemandaContratadaForaPonta__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.DemandaContratadaForaPonta__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.DemandaContratadaForaPonta__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.DemandaContratadaForaPonta__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.DemandaContratadaForaPonta__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.DemandaContratadaForaPonta__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.DemandaContratadaForaPonta__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.DemandaContratadaForaPonta__c))), 3) & "," & IF(MOD(ABS(Opportunity.DemandaContratadaForaPonta__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.DemandaContratadaForaPonta__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.DemandaContratadaForaPonta__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        KW
+    </div>
+    <!-- TARIFA PONTA -->
+    <div style="position:relative; bottom:417px; left:173px; right:120px;">
+        R$     
+        <apex:outputtext rendered="{!IF(Opportunity.TarifaPonta__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.TarifaPonta__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.TarifaPonta__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.TarifaPonta__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.TarifaPonta__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.TarifaPonta__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.TarifaPonta__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.TarifaPonta__c))), 3) & "," & IF(MOD(ABS(Opportunity.TarifaPonta__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.TarifaPonta__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.TarifaPonta__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+    </div>
+    <!-- TARIFA FORA PONTA -->
+    <div style="position:relative; bottom:401px; left:205px; right:120px;">
+        R$    
+        <apex:outputtext rendered="{!IF(Opportunity.TarifaForaPonta__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.TarifaForaPonta__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.TarifaForaPonta__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.TarifaForaPonta__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.TarifaForaPonta__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.TarifaForaPonta__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.TarifaForaPonta__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.TarifaForaPonta__c))), 3) & "," & IF(MOD(ABS(Opportunity.TarifaForaPonta__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.TarifaForaPonta__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.TarifaForaPonta__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+    </div>
+    <!-- TARIFA DEMANDA -->
+    <div style="position:relative; bottom:382px; left:188px; right:120px;">
+        R$    
+        <apex:outputtext rendered="{!IF(Opportunity.TarifaDemandaForaPonta__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.TarifaDemandaForaPonta__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.TarifaDemandaForaPonta__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.TarifaDemandaForaPonta__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.TarifaDemandaForaPonta__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.TarifaDemandaForaPonta__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.TarifaDemandaForaPonta__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.TarifaDemandaForaPonta__c))), 3) & "," & IF(MOD(ABS(Opportunity.TarifaDemandaForaPonta__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.TarifaDemandaForaPonta__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.TarifaDemandaForaPonta__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+    </div>
+    <!-- GRUPO TARIFÁRICO -->
+    <div style="position:relative; bottom:363px; left:205px; right:120px;">
+        {!IF(ISBLANK(Opportunity.GrupoTarifario__c), '-', Opportunity.GrupoTarifario__c)}
+    </div>
+    <!-- CUSTO MÉDIO MENSAL DE ENERGIA -->
+    <div style="position:relative; bottom:346px; left:305px; right:120px;">
+        R$    
+        <apex:outputtext rendered="{!IF(Opportunity.CustoMedioEnergia__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.CustoMedioEnergia__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.CustoMedioEnergia__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.CustoMedioEnergia__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.CustoMedioEnergia__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.CustoMedioEnergia__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.CustoMedioEnergia__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.CustoMedioEnergia__c))), 3) & "," & IF(MOD(ABS(Opportunity.CustoMedioEnergia__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.CustoMedioEnergia__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.CustoMedioEnergia__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+    </div>
+
+    <!-- MODULOS -->
+    <div style="position:relative; bottom:250px; left:203px; right:120px; font-weight: bold;">
+        <apex:outputText value="{0, number, #0}">
+            <apex:param value="{!IF(ISBLANK(Opportunity.NumeroModulos__c), 0, Opportunity.NumeroModulos__c)}" />
+        </apex:outputText> 
+        Modulos
+    </div>
+    <!-- Detalhes dos módulos -->
+    <div style="position:relative; bottom:244px; left:170px; right:120px; font-size:11px;">
+        Fabricante: {!IF(ISBLANK(Opportunity.FabricanteModulos__c), '-', Opportunity.FabricanteModulos__c)}
+    </div>
+    <div style="position:relative; bottom:241px; left:170px; right:120px; font-size:11px;">
+        Modelo: {!IF(ISBLANK(Opportunity.Modelo__c), '-', LEFT(Opportunity.Modelo__c, 25))}
+    </div>
+    <div style="position:relative; bottom:238px; left:170px; right:120px; font-size:11px;">
+        Potência Nominal:   
+        <apex:outputtext rendered="{!IF(Opportunity.PotenciaNominalWp__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.PotenciaNominalWp__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.PotenciaNominalWp__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.PotenciaNominalWp__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.PotenciaNominalWp__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.PotenciaNominalWp__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.PotenciaNominalWp__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.PotenciaNominalWp__c))), 3) & "," & IF(MOD(ABS(Opportunity.PotenciaNominalWp__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.PotenciaNominalWp__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.PotenciaNominalWp__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        W
+    </div>
+    <div style="position:relative; bottom:236px; left:170px; right:120px; font-size:11px;">
+        Peso:    
+        <apex:outputtext rendered="{!IF(Opportunity.Pesokg__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.Pesokg__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.Pesokg__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.Pesokg__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.Pesokg__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.Pesokg__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.Pesokg__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.Pesokg__c))), 3) & "," & IF(MOD(ABS(Opportunity.Pesokg__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.Pesokg__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.Pesokg__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        Kg
+    </div>
+    
+    <!-- INVERSORES -->
+    <div style="position:relative; bottom:332px; left:420px; right:110px;font-weight: bold;">
+        <apex:outputText value="{0, number, #0}">
+            <apex:param value="{!IF(ISBLANK(Opportunity.NumeroInversores__c), 0, Opportunity.NumeroInversores__c)}" />
+        </apex:outputText> 
+        Inversores
+    </div>
+    <div style="position:relative; bottom:330px; left:379px; right:100px; font-size:11px">
+        Fabricante: {!IF(ISBLANK(Opportunity.FabricanteInversor__c), '-', Opportunity.FabricanteInversor__c)}
+    </div>
+    <div style="position:relative; bottom:328px; left:379px; right:120px; font-size:11px; width:100px;">
+        Modelo: {!IF(ISBLANK(Opportunity.ModeloInversor__c), '-', Opportunity.ModeloInversor__c)}
+    </div>
+    <div style="position:relative; bottom:325px; left:379px; right:120px; font-size:11px">
+        Potência Nominal:    
+        <apex:outputtext rendered="{!IF(Opportunity.PotenciaNominalSistema__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.PotenciaNominalSistema__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.PotenciaNominalSistema__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.PotenciaNominalSistema__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.PotenciaNominalSistema__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.PotenciaNominalSistema__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.PotenciaNominalSistema__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.PotenciaNominalSistema__c))), 3) & "," & IF(MOD(ABS(Opportunity.PotenciaNominalSistema__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.PotenciaNominalSistema__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.PotenciaNominalSistema__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        KW
+    </div>
+    
+    <!-- POTÊNCIA PICO -->
+    <div style="position:relative; bottom:246px; left:255px; right:100px; font-size: 18px; font-weight: bold;">
+        <apex:outputtext rendered="{!IF(Opportunity.PotenciaPicoSistema__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.PotenciaPicoSistema__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.PotenciaPicoSistema__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.PotenciaPicoSistema__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.PotenciaPicoSistema__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.PotenciaPicoSistema__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.PotenciaPicoSistema__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.PotenciaPicoSistema__c))), 3) & "," & IF(MOD(ABS(Opportunity.PotenciaPicoSistema__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.PotenciaPicoSistema__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.PotenciaPicoSistema__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        KWp
+    </div>
+    
+    <!-- PRODUÇÃO ANUAL -->
+    <div style="position:relative; bottom:266px; left:465px; right:100px; font-size: 18px; font-weight: bold;">
+        <apex:outputtext rendered="{!IF(Opportunity.GeracaoAnualEstimada__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.GeracaoAnualEstimada__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.GeracaoAnualEstimada__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.GeracaoAnualEstimada__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.GeracaoAnualEstimada__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.GeracaoAnualEstimada__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.GeracaoAnualEstimada__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.GeracaoAnualEstimada__c))), 3) & "," & IF(MOD(ABS(Opportunity.GeracaoAnualEstimada__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.GeracaoAnualEstimada__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.GeracaoAnualEstimada__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        KWh
+    </div>
+    
+    <!-- ESTRUTURA DE FIXAÇÃO -->
+    <div style="position:relative; bottom: 156px; left:170px; right:100px; font-size: 18px; font-weight: bold;">
+        {!IF(ISBLANK(Opportunity.TipoTelhadoEstrutura__c), '-', Opportunity.TipoTelhadoEstrutura__c)}
+    </div>
+    
+    <!-- ÁREA MÍNIMA DE INSTALAÇÃO -->
+    <div style="position:relative; bottom:191px; left:422px; right:100px; font-size: 18px; font-weight: bold;">
+        <apex:outputtext rendered="{!IF(Opportunity.AreaM__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.AreaM__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.AreaM__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.AreaM__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.AreaM__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.AreaM__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.AreaM__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.AreaM__c))), 3) & "," & IF(MOD(ABS(Opportunity.AreaM__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.AreaM__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.AreaM__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        m²
+    </div>
+    
+
+    <!-- PAGINA 5 ------------------------------------->
+    <!-- imagem de fundo -->
+    <div style="height:915px;" >
+        <apex:image url="{!pdfUrls[4]}" height="1131px" />
+    </div>
+    
+    <!-- GERAÇÃO ANUAL ESTIMADA -->
+    <div style="position:relative; bottom:670px; left:115px; right:120px; font: 18px; font-weight: bold;">
+        <apex:outputtext rendered="{!IF(Opportunity.GeracaoAnualEstimada__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.GeracaoAnualEstimada__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.GeracaoAnualEstimada__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.GeracaoAnualEstimada__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.GeracaoAnualEstimada__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.GeracaoAnualEstimada__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.GeracaoAnualEstimada__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.GeracaoAnualEstimada__c))), 3) & "," & IF(MOD(ABS(Opportunity.GeracaoAnualEstimada__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.GeracaoAnualEstimada__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.GeracaoAnualEstimada__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        KWh
+    </div>
+    
+    <!-- GERAÇÃO MÉDIA MENSAL ESTIMADA -->
+    <div style="position:relative; bottom:690px; left:315px; right:120px; font: 18px; font-weight: bold;">
+        <apex:outputtext rendered="{!IF(Opportunity.GeracaoMensalEstimada__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.GeracaoMensalEstimada__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.GeracaoMensalEstimada__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.GeracaoMensalEstimada__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.GeracaoMensalEstimada__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.GeracaoMensalEstimada__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.GeracaoMensalEstimada__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.GeracaoMensalEstimada__c))), 3) & "," & IF(MOD(ABS(Opportunity.GeracaoMensalEstimada__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.GeracaoMensalEstimada__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.GeracaoMensalEstimada__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        KWh
+    </div>
+    
+    <!-- CONSUMO ANUAL ESTIMADO -->
+    <div style="position:relative; bottom:710px; left:515px; right:120px; font: 18px; font-weight: bold;">
+        <apex:outputtext rendered="{!IF(Opportunity.ConsumoAnual__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.ConsumoAnual__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.ConsumoAnual__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.ConsumoAnual__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.ConsumoAnual__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.ConsumoAnual__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.ConsumoAnual__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.ConsumoAnual__c))), 3) & "," & IF(MOD(ABS(Opportunity.ConsumoAnual__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.ConsumoAnual__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.ConsumoAnual__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        KWh
+    </div>
+    
+    <!-- PAYBACK (RETORNO) -->
+    <div style="position:relative; bottom: 610px; left: 113px; right:120px; font: 18px; font-weight: bold;">
+        <apex:outputtext rendered="{!IF(Opportunity.PaybackAnos__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.PaybackAnos__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.PaybackAnos__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.PaybackAnos__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.PaybackAnos__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.PaybackAnos__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.PaybackAnos__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.PaybackAnos__c))), 3) & "," & IF(MOD(ABS(Opportunity.PaybackAnos__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.PaybackAnos__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.PaybackAnos__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        anos
+    </div>
+    
+    <!-- ECONOMIA MENSAL ESTIMADA -->
+    <div style="position:relative; bottom:630px; left:275px; right:120px; font: 18px; font-weight: bold;">
+        R$   
+        <apex:outputtext rendered="{!IF(Opportunity.EconomiaMensalEstimada__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.EconomiaMensalEstimada__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.EconomiaMensalEstimada__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.EconomiaMensalEstimada__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.EconomiaMensalEstimada__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.EconomiaMensalEstimada__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.EconomiaMensalEstimada__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.EconomiaMensalEstimada__c))), 3) & "," & IF(MOD(ABS(Opportunity.EconomiaMensalEstimada__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.EconomiaMensalEstimada__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.EconomiaMensalEstimada__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+    </div>
+    
+    <!-- ECONOMIA ANUAL ESTIMADA -->
+    <div style="position:relative; bottom:650px; left:500px; right:120px; font: 18px; font-weight: bold;">
+        R$     
+        <apex:outputtext rendered="{!IF(Opportunity.EconomiaAnualEstimada__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.EconomiaAnualEstimada__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.EconomiaAnualEstimada__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.EconomiaAnualEstimada__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.EconomiaAnualEstimada__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.EconomiaAnualEstimada__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.EconomiaAnualEstimada__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.EconomiaAnualEstimada__c))), 3) & "," & IF(MOD(ABS(Opportunity.EconomiaAnualEstimada__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.EconomiaAnualEstimada__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.EconomiaAnualEstimada__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+    </div>
+
+    <!-- ECONOMIA ACUMULADA EM 25 ANOS -->
+    <div style="position:relative; bottom:550px; left:110px; right:120px; font-weight: bold;">
+        R$    
+        <apex:outputtext rendered="{!IF(Opportunity.EconomiaAcumulada__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.EconomiaAcumulada__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.EconomiaAcumulada__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.EconomiaAcumulada__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.EconomiaAcumulada__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.EconomiaAcumulada__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.EconomiaAcumulada__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.EconomiaAcumulada__c))), 3) & "," & IF(MOD(ABS(Opportunity.EconomiaAcumulada__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.EconomiaAcumulada__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.EconomiaAcumulada__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+    </div>
+    
+    <!-- TIR -->
+    <div style="position:relative; bottom:570px; left:320px; right:125px; font-weight: bold;">
+        <apex:outputtext rendered="{!IF(Opportunity.TIR__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.TIR__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.TIR__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.TIR__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.TIR__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.TIR__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.TIR__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.TIR__c))), 3) & "," & IF(MOD(ABS(Opportunity.TIR__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.TIR__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.TIR__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+        %
+    </div>
+    
+    <!-- VPL -->
+    <div style="position:relative; bottom:590px; left:500px; right:120px; font-weight: bold;">
+        R$     
+        <apex:outputtext rendered="{!IF(Opportunity.VPL__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.VPL__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.VPL__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.VPL__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.VPL__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.VPL__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.VPL__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.VPL__c))), 3) & "," & IF(MOD(ABS(Opportunity.VPL__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.VPL__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.VPL__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+    </div>
+
+    <div style="position: absolute;bottom: 3390px;left:20px">
+        <apex:outputText value="{!opportunityChartImage}" escape="false"/>
+    </div>
+
+    <!-- PAGINA 6 ------------------------------------->
+    <!-- imagem de fundo -->
+    <div style="height: 925px;" >
+        <apex:image url="{!pdfUrls[5]}"  height="1131px" />
+    </div >
+
+    <!-- INVESTIMENTO TOTAL -->
+    <div style="position:relative; bottom:677px; left:75px; right:120px; font-size:28px; font-weight: bold;">
+        R$     
+        <apex:outputtext rendered="{!IF(Opportunity.ValorTotalProposta__c == null, true, false)}">
+            -
+        </apex:outputtext>
+        <apex:outputtext rendered="{!IF(Opportunity.ValorTotalProposta__c != null, true, false)}">
+            <span>
+                {!IF(Opportunity.ValorTotalProposta__c < 0 , TEXT(0),"") &
+                IF(ABS(Opportunity.ValorTotalProposta__c) >= 1000000, TEXT(FLOOR(ABS(Opportunity.ValorTotalProposta__c) / 1000000)) & ".", "")& 
+                IF(ABS(Opportunity.ValorTotalProposta__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.ValorTotalProposta__c) / 1000)), 3) & ".", "")& 
+                RIGHT(TEXT(FLOOR(ABS(Opportunity.ValorTotalProposta__c))), 3) & "," & IF(MOD(ABS(Opportunity.ValorTotalProposta__c) , 1)* 100 < 10, "0" & 
+                TEXT(ROUND(MOD(ABS(Opportunity.ValorTotalProposta__c) , 1), 2) * 100),
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.ValorTotalProposta__c) , 1), 2) * 100, 99)))}
+            </span>
+        </apex:outputtext>
+    </div>
+
+    <div style="position:relative; bottom:770px; left:400px; font-size:13px; width:300px; height:140px; ">
+        <apex:outputText value="{!IF(ISBLANK(Opportunity.ValoresAdicionaisInclusosProposta__c), '-', Opportunity.ValoresAdicionaisInclusosProposta__c)}" style="overflow-wrap:break-word;white-space:pre-wrap;" escape="false"/>
+    </div>
+	<!-- PRAZO DE ENTREGA -->
+    <div style="position:relative; bottom:526px; left:230px; right:120px; font-size:13px;">
+        {!IF(ISBLANK(Opportunity.PrazoEntregaDias__c), '-', Opportunity.PrazoEntregaDias__c)} 
+    </div>
+
+    <!-- PAGINA 7 ------------------------------------->
+    <!-- imagem de fundo -->
+    <div style="height: 1100px;">
+        <apex:image url="{!pdfUrls[6]}" height="1130px" />
+        <div  style="position:relative; bottom:480px; left:37px; font-size:12px; margin-right:85px; word-break: normal;">
+        	<!-- <apex:outputText value="{!IF(ISBLANK(Opportunity.Observacoes__c), '-', Opportunity.Observacoes__c)}"/> -->
+    	</div> 
+    </div>
+
+    <!-- PAGINA 8 ------------------------------------->
+    <!-- imagem de fundo -->
+    <div style="height: 1100px;">
+        <apex:image url="{!pdfUrls[7]}" height="1130px" />
+    </div>
+</apex:page>

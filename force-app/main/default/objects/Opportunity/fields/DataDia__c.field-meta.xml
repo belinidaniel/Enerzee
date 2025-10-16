@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DataDia__c</fullName>
+    <description>Data de Hoje.</description>
+    <externalId>false</externalId>
+    <formula>TEXT(DAY(   DataCerta__c   ) ) &amp; &quot;/&quot; &amp; TEXT( MONTH(  DataCerta__c ) ) &amp; &quot;/&quot; &amp; TEXT( YEAR(  DataCerta__c ) )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Data do dia</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

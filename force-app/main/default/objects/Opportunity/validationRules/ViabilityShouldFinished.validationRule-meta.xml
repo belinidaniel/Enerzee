@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ViabilityShouldFinished</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( ViabilityStudyFinished__c == false,
+    OR(
+        TEXT(PRIORVALUE(StageName)) == &apos;Viabilidade Técnica&apos;,
+        TEXT(PRIORVALUE(StageName)) == &apos;Viabilidade Tecnica&apos;
+    ),
+    ISCHANGED(StageName),
+    $UserRole.DeveloperName != &apos;Gerente_Administrativo&apos;,
+    $UserRole.DeveloperName != &apos;GerenteEngenharia&apos;				
+)</errorConditionFormula>
+    <errorMessage>Para mudar de fazer é necessario finalizar o estudo de viabilidade em Aberto!</errorMessage>
+</ValidationRule>

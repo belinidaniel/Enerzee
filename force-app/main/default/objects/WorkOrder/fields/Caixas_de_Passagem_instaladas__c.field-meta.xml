@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Caixas_de_Passagem_instaladas__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Campo para definir se &quot;Caixas de Passagem instaladas?&quot; sim ou não.</description>
+    <label>Caixas de Passagem instaladas?</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

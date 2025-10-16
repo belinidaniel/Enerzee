@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FormaPagamento__c</fullName>
+    <label>Forma de Pagamento</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>REC CARTAO</fullName>
+                <default>false</default>
+                <label>Cartão de crédito</label>
+            </value>
+            <value>
+                <fullName>REC FINANCIAMEN</fullName>
+                <default>false</default>
+                <label>Financiamento</label>
+            </value>
+            <value>
+                <fullName>R001</fullName>
+                <default>false</default>
+                <label>Boleto</label>
+            </value>
+            <value>
+                <fullName>R0002</fullName>
+                <default>false</default>
+                <label>Transferencia PIX</label>
+            </value>
+            <value>
+                <fullName>Negociação</fullName>
+                <default>false</default>
+                <label>Negociação</label>
+            </value>
+            <value>
+                <fullName>Cartão de débito</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Cartão de débito</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
