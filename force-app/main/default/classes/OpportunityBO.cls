@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-16-2025
+ * @last modified on  : 10-17-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -1293,7 +1293,7 @@ public class OpportunityBO {
                 /*if(OpportunityUtils.isStatusAwaitingVisitData(opportunity)){
                     if(taskNumberToOwnerUser.get(4) == null){
                         taskNumberToOwnerUser.put(4, [
-                            SELECT Id FROM User WHERE Email LIKE 'gustavo@enerzee.com.br%' LIMIT 1
+                            SELECT Id FROM User WHERE Email LIKE 'wellington.santos@enerzee.com.br%' LIMIT 1
                         ]);
                     }
                     taskstoInsert.add(TaskBO.createTask(
