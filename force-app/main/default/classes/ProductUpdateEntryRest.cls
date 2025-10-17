@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 08-29-2025
+ * @last modified on  : 10-16-2025
  * @last modified by  : Daniel Belini
 **/
 @RestResource(urlMapping = '/ProductUpdateEntry/*')
@@ -61,7 +61,7 @@ global with sharing class ProductUpdateEntryRest {
                 for (Product2 p : [
                     SELECT Id, Name, Family, ProductCode, IsActive, ExternalId__c, Id_Externo__c
                     FROM Product2
-                    WHERE (ProductCode IN :productCodes OR Name IN :names OR ExternalId__c IN :extIds)
+                    WHERE (ExternalId__c IN :extIds)
                 ]) {
                     idToProd.put(p.Id, p);
 
@@ -151,12 +151,6 @@ global with sharing class ProductUpdateEntryRest {
                 String code = String.isBlank(u.productCode) ? null : u.productCode.trim();
                 String ext  = String.isBlank(u.externalId)  ? null : u.externalId.trim();
 
-                if (code != null && codeToProds.containsKey(code)) {
-                    chosen = chooseByFamily(codeToProds.get(code), u.productFamily);
-                }
-                if (chosen == null && !String.isBlank(u.name) && nameToProds.containsKey(u.name.trim())) {
-                    chosen = chooseByFamily(nameToProds.get(u.name.trim()), u.productFamily);
-                }
                 if (chosen == null && ext != null && extIdToProds.containsKey(ext)) {
                     chosen = chooseByFamily(extIdToProds.get(ext), u.productFamily);
                 }
