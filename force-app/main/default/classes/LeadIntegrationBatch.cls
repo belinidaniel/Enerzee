@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-12-2025
+ * @last modified on  : 10-16-2025
  * @last modified by  : Daniel Belini
 **/
 global class LeadIntegrationBatch implements Database.Batchable<SObject>, Database.AllowsCallouts {
@@ -12,7 +12,7 @@ global class LeadIntegrationBatch implements Database.Batchable<SObject>, Databa
             'FROM Lead ' +
             'WHERE Lab065_IntegracaoDistribuicaoLead__c = false ' +
             'AND Status = \'Distribuído\' ' +
-            'AND RecordType.Name = \'Qualificação de Clientes\' ' +
+            'AND RecordType.Name = \'Qualificação de Clientes\' AND ConsultorRegional__r.IdVirtualOffice__c != null ' +
             ' ORDER BY CreatedDate DESC LIMIT 10 ';
         return Database.getQueryLocator(query);
     }

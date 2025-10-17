@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-09-2025
+ * @last modified on  : 10-16-2025
  * @last modified by  : Daniel Belini
 **/
 global with sharing class LeadIntegrationScheduler implements Schedulable {
@@ -22,7 +22,7 @@ global with sharing class LeadIntegrationScheduler implements Schedulable {
     }
 
     private void scheduleNextExecution() {
-        Integer intervalMinutes = 15;
+        Integer intervalMinutes = 5;
         DateTime nextExecution = DateTime.now().addMinutes(intervalMinutes);
         List<String> args = new List<String>{
             '0',

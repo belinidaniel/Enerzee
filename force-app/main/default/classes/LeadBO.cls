@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 10-17-2025
+ * @last modified by  : Daniel Belini
+**/
 public class LeadBO {
 	public static Id QualificarClienteRT = Schema.SObjectType.Lead.getRecordTypeInfosByDeveloperName().get('QualificacaodeClientes').getRecordTypeId();
     public static Id QualificarClienteQUEUE = getQueueIdByName('QualificacaodeClientes');
@@ -48,8 +55,8 @@ public class LeadBO {
             ){
                 for(Task task : LeadIdToTaskList.get(lead.Id)){
                     if(!task.Status.equalsIgnoreCase(TaskUtils.STATUS_CONCLUIDO)){
-                        lead.addError('Todas as tarefas existentes para esse lead precisam estar concluídas antes de avançar de fase!');
-                        break;
+                        // lead.addError('Todas as tarefas existentes para esse lead precisam estar concluídas antes de avançar de fase!');
+                        // break;
                     }
                 }
             }

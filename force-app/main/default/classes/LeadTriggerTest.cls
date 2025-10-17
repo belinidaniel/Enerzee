@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-07-2025
+ * @last modified on  : 10-16-2025
  * @last modified by  : Daniel Belini
 **/
 @isTest
@@ -46,7 +46,6 @@ public class LeadTriggerTest {
 
         Lead leadCriar = new Lead(FirstName='Lionel',LastName='Messi',Company='Teste',RecordTypeId=QualificarClienteRT);
         leadCriar.consultorRegional__c = consultorCriar.Id;
-        leadCriar.FalarComAgente__c = true;
         insert leadCriar;
         
         ID IdLead = leadCriar.Id;
@@ -54,7 +53,6 @@ public class LeadTriggerTest {
         
         try {
 			LeadAtualizar.Status = 'Qualified';
-            leadCriar.FalarComAgente__c = true;
 			Update LeadAtualizar;
         } catch(Exception e){
             System.debug('Erro capturado: ' + e.getMessage());

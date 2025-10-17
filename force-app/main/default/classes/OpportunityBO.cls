@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-15-2025
+ * @last modified on  : 10-16-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -264,7 +264,8 @@ public class OpportunityBO {
                     Id_Externo__c     = product.Id,
                     ProductCode       = product.Id,
                     Preco_Unitario__c = product.UnitaryValue,
-                    Name              = product.Name
+                    Name              = product.Name,
+                    ExternalId__c     = product.Id
                 ));
             }
             upsert productsToInsert Id_Externo__c;
@@ -1957,7 +1958,6 @@ public class OpportunityBO {
                         formulaFieldsChanged(oldOpp, opp)
                     ) ||
                     (
-                        OpportunityUtils.isStatusProposalSimulation(opp) && 
                         opp.PropostaGerada__c == false
                     )
                 ){
