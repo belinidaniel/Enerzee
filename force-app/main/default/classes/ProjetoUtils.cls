@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 10-17-2025
+ * @last modified by  : Daniel Belini
+**/
 public class ProjetoUtils {
 
     public static Map<String, User> userEmailToUser = new Map<String, User>();
@@ -81,13 +88,13 @@ public class ProjetoUtils {
     //  Usuários chave
     public static User COORDENADOR_DE_ENGENHARIA {
         get {
-            populateUserEmailMap(); return Test.isRunningTest() == true ? userEmailToUser.get('integracao@lab065.com'): userEmailToUser.get('gustavo@enerzee.com.br');
+            populateUserEmailMap(); return Test.isRunningTest() == true ? userEmailToUser.get('integracao@lab065.com'): userEmailToUser.get('wellington.santos@enerzee.com.br');
         }
     }
 
     public static User COORDENADOR_DE_VIABILIDADE {
         get {
-            populateUserEmailMap(); return Test.isRunningTest() == true ? userEmailToUser.get('integracao@lab065.com'): userEmailToUser.get('gustavo@enerzee.com.br');
+            populateUserEmailMap(); return Test.isRunningTest() == true ? userEmailToUser.get('integracao@lab065.com'): userEmailToUser.get('wellington.santos@enerzee.com.br');
         }
     }
 
