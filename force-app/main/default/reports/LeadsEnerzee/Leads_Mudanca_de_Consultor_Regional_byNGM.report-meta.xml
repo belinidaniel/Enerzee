@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>OLDVAL</field>
+    </columns>
+    <columns>
+        <field>NEWVAL</field>
+    </columns>
+    <columns>
+        <field>CREATED_DATE</field>
+    </columns>
+    <columns>
+        <field>LEAD_SOURCE</field>
+    </columns>
+    <customDetailFormulas>
+        <calculatedFormula>IF(ISBLANK(MIDDLE_NAME), 
+FIRST_NAME&amp;&quot; &quot;&amp;LAST_NAME, 
+FIRST_NAME&amp;&quot; &quot;&amp;MIDDLE_NAME&amp;&quot; &quot;&amp;LAST_NAME)</calculatedFormula>
+        <dataType>Text</dataType>
+        <description>Nome completo do Lead</description>
+        <developerName>CDF1</developerName>
+        <label>Nome do Lead</label>
+        <scale>2</scale>
+    </customDetailFormulas>
+    <description>Leads com alteração de Consultor Regional, do tipo &quot;Qualificação de Clientes&quot; no Status &quot;Distribuído&quot;.</description>
+    <filter>
+        <criteriaItems>
+            <column>RECORDTYPE</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>false</isUnlocked>
+            <operator>equals</operator>
+            <value>Lead.Cliente,Lead.QualificacaodeClientes</value>
+        </criteriaItems>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>CDF1</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>field_key</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Leads - Mudança de Consultor Regional</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>LeadAuditHistory@Lead.ConsultorRegional__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>false</showGrandTotal>
+    <showSubTotals>false</showSubTotals>
+    <sortColumn>CREATED_DATE</sortColumn>
+    <sortOrder>Asc</sortOrder>
+    <timeFrameFilter>
+        <dateColumn>CREATED_DATE</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
