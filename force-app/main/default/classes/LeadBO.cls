@@ -19,7 +19,7 @@ public class LeadBO {
         Id voUserId = [
             SELECT  Id
             FROM    User
-            WHERE   Username like 'integracao@lab065.com'
+            WHERE   Username like 'integracao@lab065.com%'
             LIMIT   1
         ].Id;
         
