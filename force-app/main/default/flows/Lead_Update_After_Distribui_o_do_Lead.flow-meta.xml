@@ -3,8 +3,8 @@
     <actionCalls>
         <name>Call_Lead_Integration</name>
         <label>Call Lead Integration</label>
-        <locationX>1656</locationX>
-        <locationY>1613</locationY>
+        <locationX>886</locationX>
+        <locationY>1637</locationY>
         <actionName>LeadIntegrationService</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -67,29 +67,6 @@
         </connector>
     </assignments>
     <assignments>
-        <name>Assign_First_Consultant_Hot_No_State</name>
-        <label>Assign First Consultant Hot No State</label>
-        <locationX>2426</locationX>
-        <locationY>647</locationY>
-        <assignmentItems>
-            <assignToReference>varConsultorId.Id</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>Get_User_Hot.Id</elementReference>
-            </value>
-        </assignmentItems>
-        <assignmentItems>
-            <assignToReference>varConsultorSelecionadoId</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>Get_User_Hot.Id</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Update_Lead_Owner</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
         <name>Assign_First_Consultant_Prioritario</name>
         <label>Assign First Consultant Prioritario</label>
         <locationX>1370</locationX>
@@ -113,56 +90,10 @@
         </connector>
     </assignments>
     <assignments>
-        <name>Assign_First_Consultant_Prioritario_No_State</name>
-        <label>Assign First Consultant Prioritario No State</label>
-        <locationX>2690</locationX>
-        <locationY>647</locationY>
-        <assignmentItems>
-            <assignToReference>varConsultorId.Id</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>Get_User_Prioritario.Id</elementReference>
-            </value>
-        </assignmentItems>
-        <assignmentItems>
-            <assignToReference>varConsultorSelecionadoId</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>Get_User_Prioritario.Id</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Update_Lead_Owner</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
-        <name>Assign_First_Consultant_Warm_No_State</name>
-        <label>Assign First Consultant Warm No State</label>
-        <locationX>2162</locationX>
-        <locationY>647</locationY>
-        <assignmentItems>
-            <assignToReference>varConsultorId.Id</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>Get_User_Warm.Id</elementReference>
-            </value>
-        </assignmentItems>
-        <assignmentItems>
-            <assignToReference>varConsultorSelecionadoId</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>Get_User_Warm.Id</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Update_Lead_Owner</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
         <name>Assign_Last_Lead_Consultant</name>
         <label>Assign Last Lead Consultant</label>
-        <locationX>1656</locationX>
-        <locationY>1397</locationY>
+        <locationX>886</locationX>
+        <locationY>1421</locationY>
         <assignmentItems>
             <assignToReference>varConsultorId.Lb065_UltimoLeadRecebido__c</assignToReference>
             <operator>Assign</operator>
@@ -215,80 +146,10 @@
         </connector>
     </assignments>
     <decisions>
-        <name>Evaluete_Lead_Rating</name>
-        <label>Evaluete Lead Rating</label>
-        <locationX>2426</locationX>
-        <locationY>431</locationY>
-        <defaultConnector>
-            <targetReference>Update_Lead_Owner</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
-        <rules>
-            <name>Cold</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Rating</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Cold</stringValue>
-                </rightValue>
-            </conditions>
-            <label>Cold</label>
-        </rules>
-        <rules>
-            <name>Warm</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Rating</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Warm</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Get_User_Warm</targetReference>
-            </connector>
-            <label>Warm</label>
-        </rules>
-        <rules>
-            <name>Hot</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Rating</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Hot</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Get_User_Hot</targetReference>
-            </connector>
-            <label>Hot</label>
-        </rules>
-        <rules>
-            <name>Prioritario</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Rating</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Prioritário</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Get_User_Prioritario</targetReference>
-            </connector>
-            <label>Prioritário</label>
-        </rules>
-    </decisions>
-    <decisions>
         <name>Evaluete_Lead_Rating_Filter_True</name>
         <label>Evaluete Lead Rating Filter True</label>
         <locationX>886</locationX>
         <locationY>431</locationY>
-        <defaultConnector>
-            <targetReference>Update_Lead_Owner</targetReference>
-        </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Cold_And_Warm_With_Status</name>
@@ -321,7 +182,7 @@
         </rules>
         <rules>
             <name>WarmTrue</name>
-            <conditionLogic>and</conditionLogic>
+            <conditionLogic>or</conditionLogic>
             <conditions>
                 <leftValueReference>$Record.Rating</leftValueReference>
                 <operator>EqualTo</operator>
@@ -392,7 +253,7 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Update_Lead_Owner</targetReference>
+                <targetReference>get_recordtype</targetReference>
             </connector>
             <label>Yes</label>
         </rules>
@@ -418,7 +279,7 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Update_Lead_Owner</targetReference>
+                <targetReference>get_recordtype</targetReference>
             </connector>
             <label>Yes</label>
         </rules>
@@ -444,7 +305,7 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Update_Lead_Owner</targetReference>
+                <targetReference>get_recordtype</targetReference>
             </connector>
             <label>Yes</label>
         </rules>
@@ -470,7 +331,7 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Update_Lead_Owner</targetReference>
+                <targetReference>get_recordtype</targetReference>
             </connector>
             <label>Yes</label>
         </rules>
@@ -478,17 +339,14 @@
     <decisions>
         <name>Is_There_State</name>
         <label>Is There State</label>
-        <locationX>1656</locationX>
+        <locationX>1436</locationX>
         <locationY>323</locationY>
-        <defaultConnector>
-            <targetReference>Evaluete_Lead_Rating</targetReference>
-        </defaultConnector>
         <defaultConnectorLabel>No</defaultConnectorLabel>
         <rules>
             <name>YesState</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.Lb065_Estado__c</leftValueReference>
+                <leftValueReference>$Record.State</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -536,12 +394,12 @@
         <connector>
             <targetReference>Assign_First_Consultant_Hot</targetReference>
         </connector>
-        <filterLogic>1 AND (2 OR 3) AND 4 AND 5 AND 6</filterLogic>
+        <filterLogic>1 AND (2 OR 3 OR (7 AND 8)) AND 4 AND 5 AND 6</filterLogic>
         <filters>
             <field>Lb065_RegiaoConsultorEstado__c</field>
             <operator>Contains</operator>
             <value>
-                <elementReference>$Record.Lb065_Estado__c</elementReference>
+                <elementReference>$Record.LeadRegion__c</elementReference>
             </value>
         </filters>
         <filters>
@@ -575,6 +433,20 @@
         <filters>
             <field>FreezeConsult__c</field>
             <operator>EqualTo</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>SpecialRange__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Rating</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>SpecialRange__c</field>
+            <operator>IsNull</operator>
             <value>
                 <booleanValue>false</booleanValue>
             </value>
@@ -594,14 +466,7 @@
         <connector>
             <targetReference>Assign_First_Consultant_Prioritario</targetReference>
         </connector>
-        <filterLogic>1 AND (2 OR 3) AND 4 AND 5 AND 6</filterLogic>
-        <filters>
-            <field>Lb065_RegiaoConsultorEstado__c</field>
-            <operator>Contains</operator>
-            <value>
-                <elementReference>$Record.Lb065_Estado__c</elementReference>
-            </value>
-        </filters>
+        <filterLogic>(1 OR 2 OR (6 AND 7)) AND 3 AND 4 AND 5</filterLogic>
         <filters>
             <field>Lb65_Graduacao__c</field>
             <operator>EqualTo</operator>
@@ -633,6 +498,20 @@
         <filters>
             <field>FreezeConsult__c</field>
             <operator>EqualTo</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>SpecialRange__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Rating</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>SpecialRange__c</field>
+            <operator>IsNull</operator>
             <value>
                 <booleanValue>false</booleanValue>
             </value>
@@ -652,19 +531,19 @@
         <connector>
             <targetReference>Assign_Consultant_Warm</targetReference>
         </connector>
-        <filterLogic>1 AND (2 OR 3) AND 4 AND 5 AND 6</filterLogic>
+        <filterLogic>1 AND (2 OR 3 OR (7 AND 8)) AND 4 AND 5 AND 6</filterLogic>
         <filters>
             <field>Lb065_RegiaoConsultorEstado__c</field>
             <operator>Contains</operator>
             <value>
-                <elementReference>$Record.Lb065_Estado__c</elementReference>
+                <elementReference>$Record.LeadRegion__c</elementReference>
             </value>
         </filters>
         <filters>
             <field>Lb65_Graduacao__c</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>Advisor</stringValue>
+                <stringValue>Advanced Builder</stringValue>
             </value>
         </filters>
         <filters>
@@ -695,82 +574,18 @@
                 <booleanValue>true</booleanValue>
             </value>
         </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>Consultor__c</object>
-        <sortField>Lb065_UltimoLeadRecebido__c</sortField>
-        <sortOrder>Asc</sortOrder>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
-        <name>Get_User_Hot</name>
-        <label>Get Consultant Hot</label>
-        <locationX>2426</locationX>
-        <locationY>539</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Assign_First_Consultant_Hot_No_State</targetReference>
-        </connector>
-        <filterLogic>(1 OR 2) AND 3</filterLogic>
         <filters>
-            <field>Lb65_Graduacao__c</field>
+            <field>SpecialRange__c</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>Advanced Builder</stringValue>
+                <elementReference>$Record.Rating</elementReference>
             </value>
         </filters>
         <filters>
-            <field>Lb65_Graduacao__c</field>
-            <operator>EqualTo</operator>
+            <field>SpecialRange__c</field>
+            <operator>IsNull</operator>
             <value>
-                <stringValue>Gold</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>Ativo__c</field>
-            <operator>EqualTo</operator>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>Consultor__c</object>
-        <sortField>Lb065_UltimoLeadRecebido__c</sortField>
-        <sortOrder>Asc</sortOrder>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
-        <name>Get_User_Prioritario</name>
-        <label>Get Consultant Prioritario</label>
-        <locationX>2690</locationX>
-        <locationY>539</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Assign_First_Consultant_Prioritario_No_State</targetReference>
-        </connector>
-        <filterLogic>(1 OR 2 OR 3) AND 4</filterLogic>
-        <filters>
-            <field>Lb65_Graduacao__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Platinum</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>Lb65_Graduacao__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Diamond</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>Lb65_Graduacao__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Carbon Diamond</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>Ativo__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
+                <booleanValue>false</booleanValue>
             </value>
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
@@ -780,40 +595,24 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
-        <name>Get_User_Warm</name>
-        <label>Get Consultant Warm</label>
-        <locationX>2162</locationX>
-        <locationY>539</locationY>
+        <name>get_recordtype</name>
+        <label>get recordtype</label>
+        <locationX>886</locationX>
+        <locationY>1205</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Assign_First_Consultant_Warm_No_State</targetReference>
+            <targetReference>Update_Lead_Owner</targetReference>
         </connector>
-        <filterLogic>(1 OR 2) AND 3</filterLogic>
+        <filterLogic>and</filterLogic>
         <filters>
-            <field>Lb65_Graduacao__c</field>
+            <field>DeveloperName</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>Advisor</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>Lb65_Graduacao__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Builder</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>Ativo__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
+                <stringValue>QualificacaodeClientes</stringValue>
             </value>
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>Consultor__c</object>
-        <sortField>Lb065_UltimoLeadRecebido__c</sortField>
-        <sortOrder>Asc</sortOrder>
+        <object>RecordType</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
@@ -825,12 +624,12 @@
         <connector>
             <targetReference>AssignFirstConsultantWarm</targetReference>
         </connector>
-        <filterLogic>1 AND 2 AND 3</filterLogic>
+        <filterLogic>1 AND 2 AND 3 AND (4 OR 5 OR (6 AND 7))</filterLogic>
         <filters>
             <field>Estado__c</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference>$Record.Estado__c</elementReference>
+                <elementReference>$Record.State</elementReference>
             </value>
         </filters>
         <filters>
@@ -847,6 +646,34 @@
                 <booleanValue>false</booleanValue>
             </value>
         </filters>
+        <filters>
+            <field>Lb65_Graduacao__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Advanced Builder</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Lb65_Graduacao__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Builder</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>SpecialRange__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Rating</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>SpecialRange__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Consultor__c</object>
         <sortField>Lb065_UltimoLeadRecebido__c</sortField>
@@ -856,8 +683,8 @@
     <recordUpdates>
         <name>Update_Consultant_Least_Lead</name>
         <label>Update Consultant Least Lead</label>
-        <locationX>1656</locationX>
-        <locationY>1505</locationY>
+        <locationX>886</locationX>
+        <locationY>1529</locationY>
         <connector>
             <targetReference>Call_Lead_Integration</targetReference>
         </connector>
@@ -866,8 +693,8 @@
     <recordUpdates>
         <name>Update_Lead_Owner</name>
         <label>Update Lead Owner</label>
-        <locationX>1656</locationX>
-        <locationY>1289</locationY>
+        <locationX>886</locationX>
+        <locationY>1313</locationY>
         <connector>
             <targetReference>Assign_Last_Lead_Consultant</targetReference>
         </connector>
@@ -883,20 +710,32 @@
                 <booleanValue>false</booleanValue>
             </value>
         </inputAssignments>
+        <inputAssignments>
+            <field>RecordTypeId</field>
+            <value>
+                <elementReference>get_recordtype.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Distribuído</stringValue>
+            </value>
+        </inputAssignments>
         <inputReference>$Record</inputReference>
     </recordUpdates>
     <start>
-        <locationX>1530</locationX>
+        <locationX>1310</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Is_There_State</targetReference>
         </connector>
-        <filterLogic>(1 OR 5) AND 2 AND 3 AND 4</filterLogic>
+        <filterLogic>(1 OR (3 AND 4)) AND 2</filterLogic>
         <filters>
             <field>Status</field>
-            <operator>IsChanged</operator>
+            <operator>EqualTo</operator>
             <value>
-                <booleanValue>true</booleanValue>
+                <stringValue>Novo</stringValue>
             </value>
         </filters>
         <filters>
@@ -904,13 +743,6 @@
             <operator>IsNull</operator>
             <value>
                 <booleanValue>false</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>Status</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Distribuído</stringValue>
             </value>
         </filters>
         <filters>
@@ -928,7 +760,7 @@
             </value>
         </filters>
         <object>Lead</object>
-        <recordTriggerType>Update</recordTriggerType>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
     <status>Active</status>
@@ -962,6 +794,9 @@
         <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
     </variables>
     <variables>
         <name>varConsultorId</name>
