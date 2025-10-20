@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 10-20-2025
+ * @last modified by  : Daniel Belini
+**/
 trigger ContentDocumentLinkTrigger on ContentDocumentLink (after insert, after update, after delete) {
     if (Trigger.isInsert || Trigger.isUpdate) {
         for (ContentDocumentLink cdl : Trigger.new) {
@@ -23,13 +30,12 @@ trigger ContentDocumentLinkTrigger on ContentDocumentLink (after insert, after u
                         'Clique no link abaixo para conferir.<br><br>' +
                         (URL.getOrgDomainUrl().toExternalForm() + '/lightning/r/Account/' + acc.Id + '/view'),
 
-                        new String[]{ 'fernando.feitosa@eerzee.com.br','jonatha@enerzee.com.br','sperafico@enerzee.com.br','etiara@enerzee.com.br','tinoco@enerzee.com.br' },
-
+                        new String[]{ 'kaique.mathias@lab065.com' },
                         new String[]{ 'kaique.mathias@lab065.com' }
                     ));
 
                     if(!Test.isRunningTest()){
-                        Messaging.SendEmailResult[] results = Messaging.sendEmail(messageList);
+                        // Messaging.SendEmailResult[] results = Messaging.sendEmail(messageList);
                     }
                 }
             }
