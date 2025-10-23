@@ -437,17 +437,6 @@
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>MetaLead__c</picklist>
-        <values>
-            <fullName>Não</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Sim</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
         <picklist>Name</picklist>
         <values>
             <fullName>Dr%2E</fullName>
@@ -606,10 +595,6 @@
     </picklistValues>
     <picklistValues>
         <picklist>TipoDeImovel__c</picklist>
-        <values>
-            <fullName>Não sei%21 Preciso da ajuda de um especialista</fullName>
-            <default>false</default>
-        </values>
         <values>
             <fullName>com laje</fullName>
             <default>false</default>

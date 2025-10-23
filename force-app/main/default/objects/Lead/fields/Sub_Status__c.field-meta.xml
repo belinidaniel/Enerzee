@@ -4,10 +4,9 @@
     <label>Sub-Status</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
-    <trackHistory>false</trackHistory>
+    <trackHistory>true</trackHistory>
     <type>Picklist</type>
     <valueSet>
-        <restricted>true</restricted>
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
@@ -19,11 +18,6 @@
                 <fullName>Opt-Out</fullName>
                 <default>false</default>
                 <label>Opt-Out</label>
-            </value>
-            <value>
-                <fullName>Email Agente Enviado</fullName>
-                <default>false</default>
-                <label>Email Agente Enviado</label>
             </value>
         </valueSetDefinition>
     </valueSet>

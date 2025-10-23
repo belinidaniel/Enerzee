@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>ConsultantDeadlineRange__c</fullName>
-    <label>Faixa do Prazo Consultor</label>
+    <fullName>SpecialRange__c</fullName>
+    <label>Faixa Especial</label>
     <required>false</required>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
+        <restricted>true</restricted>
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>0</fullName>
+                <fullName>Hot</fullName>
                 <default>false</default>
-                <label>Vermelho</label>
+                <label>Muito importante</label>
             </value>
             <value>
-                <fullName>1</fullName>
+                <fullName>Warm</fullName>
                 <default>false</default>
-                <label>Laranjado</label>
+                <label>Importante</label>
             </value>
             <value>
-                <fullName>2</fullName>
+                <fullName>Cold</fullName>
                 <default>false</default>
-                <label>Amarelo</label>
+                <label>Pouco importante</label>
             </value>
             <value>
-                <fullName>3</fullName>
+                <fullName>Prioritário</fullName>
                 <default>false</default>
-                <label>Verde</label>
+                <label>Prioritário</label>
             </value>
         </valueSetDefinition>
     </valueSet>

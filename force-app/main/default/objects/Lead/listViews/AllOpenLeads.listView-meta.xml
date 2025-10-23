@@ -13,8 +13,11 @@
     <columns>CORE.USERS.FIRST_NAME</columns>
     <columns>CORE.USERS.LAST_NAME</columns>
     <columns>LEAD.CREATED_DATE</columns>
-    <columns>LEAD.LAST_UPDATE</columns>
-    <columns>LEAD.MOBILE_PHONE</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>LEAD.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Qualified</value>
+    </filters>
     <label>Todos os leads Abertos</label>
 </ListView>

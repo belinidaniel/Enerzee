@@ -10,7 +10,7 @@
     <columns>CORE.USERS.ALIAS</columns>
     <columns>LAST_UPDATE</columns>
     <columns>UPDATEDBY_USER.ALIAS</columns>
-    <filterScope>Mine</filterScope>
+    <filterScope>Team</filterScope>
     <filters>
         <field>STATUS</field>
         <operation>equals</operation>
