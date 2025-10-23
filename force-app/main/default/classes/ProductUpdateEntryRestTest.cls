@@ -10,12 +10,13 @@ public with sharing class ProductUpdateEntryRestTest {
     // Util: busca o PBE do PB padrão para um Product2
     private static PricebookEntry getStdPbe(Id productId) {
         Id stdPbId = Test.getStandardPricebookId();
-        return [
+        List<PricebookEntry> pbes = [
             SELECT Id, UnitPrice, Pricebook2Id, Product2Id, IsActive
             FROM PricebookEntry
             WHERE Pricebook2Id = :stdPbId AND Product2Id = :productId
             LIMIT 1
         ];
+        return pbes.isEmpty() ? null : pbes[0];
     }
 
     @IsTest static void testUpdatePrice_ByProductCode() {
