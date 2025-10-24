@@ -3,9 +3,10 @@
     <fullName>PhoneObg</fullName>
     <active>true</active>
     <errorConditionFormula>AND(
-  ISBLANK(Phone),
-  ISPICKVAL(Status, &apos;Distribuído&apos;),
-  ISCHANGED(Status)
+				ISBLANK(Phone),
+				ISBLANK(MobilePhone),
+				ISPICKVAL(Status, &apos;Distribuído&apos;),
+				ISCHANGED(Status)
 )</errorConditionFormula>
     <errorMessage>Campo Telefone precisa ser preenchido antes de mudar a fase do Lead.</errorMessage>
 </ValidationRule>

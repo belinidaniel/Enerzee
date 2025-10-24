@@ -4,6 +4,7 @@
     <columns>MessagingEndUser</columns>
     <columns>Telefone__c</columns>
     <columns>StartTime</columns>
+    <columns>Case</columns>
     <columns>Status</columns>
     <columns>Owner</columns>
     <columns>Name</columns>

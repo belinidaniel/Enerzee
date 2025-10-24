@@ -7,6 +7,10 @@
         <default>false</default>
     </values>
     <values>
+        <fullName>Convertido</fullName>
+        <default>false</default>
+    </values>
+    <values>
         <fullName>Distribuído</fullName>
         <default>false</default>
     </values>
@@ -15,7 +19,7 @@
         <default>true</default>
     </values>
     <values>
-        <fullName>Não qualificado</fullName>
+        <fullName>Não Qualificado</fullName>
         <default>false</default>
     </values>
     <values>

@@ -449,6 +449,17 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>MetaLead__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Name</picklist>
         <values>
             <fullName>Dr%2E</fullName>
@@ -596,6 +607,10 @@
     </picklistValues>
     <picklistValues>
         <picklist>Sub_Status__c</picklist>
+        <values>
+            <fullName>Email Agente Enviado</fullName>
+            <default>false</default>
+        </values>
         <values>
             <fullName>Não Convertido</fullName>
             <default>false</default>
