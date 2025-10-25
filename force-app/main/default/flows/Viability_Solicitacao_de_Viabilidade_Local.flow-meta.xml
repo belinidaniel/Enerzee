@@ -205,7 +205,16 @@
     <textTemplates>
         <name>Body</name>
         <isViewedAsPlainText>false</isViewedAsPlainText>
-        <text>&lt;p&gt;Prezado(a) {!Oportunidade.ConsultorOportunidade__r.Name},&lt;/p&gt;&lt;p&gt;Gostaríamos de informar que a proposta &lt;strong&gt;{!Oportunidade.Numeroproposta__c} - {!Oportunidade.Name}&lt;/strong&gt; encontra-se atualmente na etapa &lt;strong&gt;{!Oportunidade.StageName}&lt;/strong&gt;.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Para darmos continuidade ao processo, solicitamos que nos envie os dados do local no formulário abaixo:&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://enrz.my.site.com/viabilidade/s/proposta/view?id={!$Record.Id}&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;Clique aqui para acessar o formulário&lt;/a&gt;.&lt;/p&gt;</text>
+        <text>&lt;p&gt;Prezado(a)
+            {!Oportunidade.ConsultorOportunidade__r.Name},&lt;/p&gt;&lt;p&gt;Gostaríamos de informar
+            que a proposta &lt;strong&gt;{!Oportunidade.Numeroproposta__c} -
+            {!Oportunidade.Name}&lt;/strong&gt; encontra-se atualmente na etapa
+            &lt;strong&gt;{!Oportunidade.StageName}&lt;/strong&gt;.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Para
+            darmos continuidade ao processo, solicitamos que nos envie os dados do local no
+            formulário abaixo:&lt;/p&gt;&lt;p&gt;&lt;a
+            href=&quot;https://enrz.my.site.com/viabilidade/s/proposta/view?id={!$Record.Id}&quot;
+            rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;Clique aqui para
+            acessar o formulário&lt;/a&gt;.&lt;/p&gt;</text>
     </textTemplates>
     <textTemplates>
         <name>Subject</name>

@@ -3,14 +3,6 @@
     <fullName>Assinatura</fullName>
     <isActive>true</isActive>
     <values>
-        <fullName>Aguard%2E Assinatura %28PLIN%29</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Aguard%2EAssinatura %28AXS%29</fullName>
-        <default>false</default>
-    </values>
-    <values>
         <fullName>Elaboração de proposta</fullName>
         <default>false</default>
     </values>
@@ -19,15 +11,7 @@
         <default>false</default>
     </values>
     <values>
-        <fullName>Finalizado %28Aguard%2ENF%29</fullName>
-        <default>false</default>
-    </values>
-    <values>
         <fullName>Ganho fechado</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Negociação %28PLIN%29</fullName>
         <default>false</default>
     </values>
 </BusinessProcess>

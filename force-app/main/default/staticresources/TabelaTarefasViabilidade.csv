@@ -1,0 +1,21 @@
+﻿TipoViabilidade;Status;Assunto;Acoes;Observacoes;Responsavel;Interessados;PrazoDiasUteis;DataVencimentoDMais;TipoProprietario
+Solar;AGENDAMENTO_DE_VISITA_TECNICA;AGENDAMENTO DE VISITA;TEXTO;Preecher as informações de agendamento de visita tecnica;Assistente Comercial / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Solar;VISITA_AGENDADA;SOLICITAR PAGAMENTO DE INTEGRADOR;INSERIR ARQUIVO;Adicionar NF do integrador ao fluxo de pagamento.;Assistente Comercial / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Solar;VISITA_AGENDADA;CONFIRMAÇÃO DE LANCAÇAMENTO DE NF;TEXTO;Solicitar cadastro de novo integrador;Analista Financeiro;Coordenador de Viabilidade;7;7;ROLE
+Solar;VISITA_AGENDADA;SOLICITAR NOVO INTEGRADOR;TEXTO;Confirmar se a localização enviada é a mesma descrita da proposta;Assistente Comercial / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Solar;AGUARDANDO_ELABORACAO;CONFERENCIA DE LOCALIZAÇÃO DA PROPOSTA;INSERIR ARQUIVO;"Criar a pasta do cliente com as fotos, localização e ficha de inspeção no servidor.";Assistente Comercial / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Solar;AGUARDANDO_ELABORACAO;CRIAR PASTA DE VIABILIDADE;TEXTO;Definir quem será o responsavel pela elaboração do estudo de viabilidade;Assistente Comercial / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Solar;AGUARDANDO_ELABORACAO;DELEGAR ANALISTA DE VIABILIDADE;TEXTO;Iniciar a analise das informações enviadas e elaborar o relatório de VT e Roteiro VT.;Assistente Comercial / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Solar;ESTUDO_EM_ELABORACAO;ELABORAR ESTUDO DE VIABILIDADE;TEXTO;Iniciar a elaboração da nuvem de pontos;OWNER;Coordenador de Viabilidade;7;7;USUARIO
+Solar;ESTUDO_EM_ELABORACAO;ELABORAR NUVEM DE PONTOS;;;Estagiário de Engenharia / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Solar;VIABILIDADE_FINALIZADA;ANEXAR ARQUIVOS DE VIABILIDADE;INSERIR ARQUIVO;"Anexar relatorio, layout, roteiro e localização e concluir etapa de viabilidade";OWNER;Coordenador de Viabilidade;7;7;USUARIO
+Ezee_Solar;AGENDAMENTO_DE_VISITA_TECNICA;AGENDAMENTO DE VISITA;TEXTO;Preecher as informações de agendamento de visita tecnica;Assistente Comercial / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Ezee_Solar;VISITA_AGENDADA;SOLICITAR PAGAMENTO DE INTEGRADOR;INSERIR ARQUIVO;Adicionar NF do integrador ao fluxo de pagamento.;Assistente Comercial / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Ezee_Solar;VISITA_AGENDADA;CONFIRMAÇÃO DE LANCAÇAMENTO DE NF;TEXTO;Solicitar cadastro de novo integrador;Analista Financeiro;Coordenador de Viabilidade;7;7;ROLE
+Ezee_Solar;VISITA_AGENDADA;SOLICITAR NOVO INTEGRADOR;TEXTO;Confirmar se a localização enviada é a mesma descrita da proposta;Assistente Comercial / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Ezee_Solar;AGUARDANDO_ELABORACAO;CONFERENCIA DE LOCALIZAÇÃO DA PROPOSTA;INSERIR ARQUIVO;"Criar a pasta do cliente com as fotos; localização e ficha de inspeção no servidor.";Assistente Comercial / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Ezee_Solar;AGUARDANDO_ELABORACAO;CRIAR PASTA DE VIABILIDADE;TEXTO;Definir quem será o responsavel pela elaboração do estudo de viabilidade;Assistente Comercial / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Ezee_Solar;AGUARDANDO_ELABORACAO;DELEGAR ANALISTA DE VIABILIDADE;TEXTO;Iniciar a analise das informações enviadas e elaborar o relatório de VT e Roteiro VT.;Assistente Comercial / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Ezee_Solar;ESTUDO_EM_ELABORACAO;ELABORAR ESTUDO DE VIABILIDADE;TEXTO;Iniciar a elaboração da nuvem de pontos;OWNER;Coordenador de Viabilidade;7;7;USUARIO
+Ezee_Solar;ESTUDO_EM_ELABORACAO;ELABORAR NUVEM DE PONTOS;;;Estagiário de Engenharia / Viabilidade;Coordenador de Viabilidade;7;7;ROLE
+Ezee_Solar;VIABILIDADE_FINALIZADA;ANEXAR ARQUIVOS DE VIABILIDADE;INSERIR ARQUIVO;"Anexar relatorio, layout, roteiro e localização e concluir etapa de viabilidade";OWNER;Coordenador de Viabilidade;7;7;USUARIO

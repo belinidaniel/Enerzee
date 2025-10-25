@@ -2,9 +2,9 @@
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Produtos_e_Servi_os</fullName>
     <columns>OPPORTUNITY.NAME</columns>
+    <columns>OPPORTUNITY.RECORDTYPE</columns>
     <columns>ACCOUNT.NAME</columns>
     <columns>ConsultorOportunidade__c</columns>
-    <columns>OPPORTUNITY.RECORDTYPE</columns>
     <columns>OPPORTUNITY.STAGE_NAME</columns>
     <columns>OPPORTUNITY.AMOUNT</columns>
     <columns>OPPORTUNITY.CREATED_DATE</columns>
