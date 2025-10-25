@@ -38,6 +38,12 @@
             </value>
         </filters>
         <inputAssignments>
+            <field>MainViability__c</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <field>ViabilityStudyFinished__c</field>
             <value>
                 <booleanValue>true</booleanValue>

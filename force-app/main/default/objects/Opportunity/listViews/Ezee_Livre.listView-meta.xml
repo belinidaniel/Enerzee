@@ -12,5 +12,5 @@
         <operation>equals</operation>
         <value>Opportunity.EzeeLivre</value>
     </filters>
-    <label>Ezee Livre</label>
+    <label>5 - Ezee Livre</label>
 </ListView>

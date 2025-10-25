@@ -16,15 +16,7 @@
         <default>false</default>
     </values>
     <values>
-        <fullName>Proposta enviada</fullName>
-        <default>false</default>
-    </values>
-    <values>
         <fullName>Readequação de Proposta</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Viabilidade Técnica</fullName>
         <default>false</default>
     </values>
 </BusinessProcess>
