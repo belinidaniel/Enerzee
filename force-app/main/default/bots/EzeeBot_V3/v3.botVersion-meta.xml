@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <BotVersion xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>v2</fullName>
+    <fullName>v3</fullName>
     <articleAnswersGPTEnabled>false</articleAnswersGPTEnabled>
     <botDialogGroups>
         <developerName>Caminho</developerName>
@@ -13,7 +13,7 @@
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
-            <stepIdentifier>f206356f-e5b6-4a1f-a95f-202601e315b4</stepIdentifier>
+            <stepIdentifier>4df67f30-3c19-4f24-9134-5f9784260230</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Transferir_Comercial</developerName>
@@ -41,9 +41,9 @@
                     </invocationMappings>
                 </botInvocation>
                 <type>Set</type>
-                <variableOperationIdentifier>c830a9a0-9482-4231-818d-e3872f7b9724</variableOperationIdentifier>
+                <variableOperationIdentifier>bef3a5ae-7a5a-4a83-b9b7-e251dcd2769c</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>ba9ff8e2-b5c2-490e-a9c1-2fa67e945eb7</stepIdentifier>
+            <stepIdentifier>e76ae06c-83b5-4252-81e8-04f901b2daea</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -53,19 +53,23 @@
                     <message>Olá {!Name_User}! Seja bem-vindo ao Suporte da Enerzee.   
 Estamos aqui para te atender da melhor forma possível. Antes de começar, com quem   
 estamos falando?</message>
-                    <messageIdentifier>d82d1674-aefa-4d6e-b04a-6415698597d8</messageIdentifier>
+                    <messageIdentifier>d06d9c6f-c54c-4d32-9aa7-cda750176074</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
                     <literalValue>Cliente</literalValue>
-                    <quickReplyOptionIdentifier>4f07495e-9daf-47fe-8518-700008a76a52</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>f54f859a-2058-469a-8e96-af448504f9fa</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Consultor</literalValue>
-                    <quickReplyOptionIdentifier>f3d1ec91-3692-4fac-a0a9-af9e9cca7deb</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>3999f6cf-00b4-4733-b38d-9b11196eb323</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Integrador</literalValue>
-                    <quickReplyOptionIdentifier>0d023876-c25d-43d2-92d2-9fd702f2c703</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>b021801e-cb46-49e8-91f3-41e540b3780f</quickReplyOptionIdentifier>
+                </botQuickReplyOptions>
+                <botQuickReplyOptions>
+                    <literalValue>Outros Assuntos</literalValue>
+                    <quickReplyOptionIdentifier>cb78a569-ec34-1354-58ec-2b1860518370</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>false</disableAutoFill>
@@ -79,9 +83,9 @@ estamos falando?</message>
                 <quickReplyType>Static</quickReplyType>
                 <quickReplyWidgetType>Menu</quickReplyWidgetType>
                 <type>Collect</type>
-                <variableOperationIdentifier>79dc3f4c-5032-48c8-a098-80b1e2c9a2ef</variableOperationIdentifier>
+                <variableOperationIdentifier>55ee53dd-7464-4358-8cba-44f581a54f5a</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>2d922236-79f7-4fc3-8ef8-a93f186a27ab</stepIdentifier>
+            <stepIdentifier>586f788f-2b6f-48a3-a4c4-6b313ca8bae4</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -110,7 +114,7 @@ estamos falando?</message>
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>e2a1925a-8942-4d56-b043-06ca1936be2e</stepIdentifier>
+                <stepIdentifier>22671dd4-53bb-4a96-9c62-d448d7359aa1</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <botSteps>
@@ -120,13 +124,13 @@ estamos falando?</message>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Unset</type>
-                    <variableOperationIdentifier>e5264be8-e04c-4dc0-95c2-0c84c0c3a5e1</variableOperationIdentifier>
+                    <variableOperationIdentifier>298b75ce-3c2f-46cc-bb2a-e61d2fd6a89f</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>b04f00fe-2975-4b52-8735-07ecb092c413</stepIdentifier>
+                <stepIdentifier>f2ad5e9b-4d88-46ab-9281-97cd8c57712c</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>f9b8400c-6662-4d2a-a5f8-0d15977c1d24</stepIdentifier>
+            <stepIdentifier>d6a05fc7-dffa-4106-afcd-c5f396bf3aaa</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -143,11 +147,11 @@ estamos falando?</message>
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>4ee59a6d-8976-4f43-8bbf-ffb3c9c5026b</stepIdentifier>
+                <stepIdentifier>ecd40594-1d82-4c4b-834c-fb68d6e6eed3</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>f013cd4e-e6f3-402d-ac6f-179a14418ac6</stepIdentifier>
+            <stepIdentifier>d1194fbc-006c-407a-b2e5-2c1da267c5df</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -164,11 +168,11 @@ estamos falando?</message>
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>76e5ccd7-3276-43ce-8053-beff8b489def</stepIdentifier>
+                <stepIdentifier>af6f2dad-011b-4c0d-a871-c2ce81c96755</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>fd237779-0ece-4450-b19c-20f8189b3b61</stepIdentifier>
+            <stepIdentifier>55e933df-062d-4d68-9cb7-76e1fa4b72da</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -185,15 +189,36 @@ estamos falando?</message>
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>b32ded4c-fac9-4e0a-8a2b-95079409b5ec</stepIdentifier>
+                <stepIdentifier>de3f2a23-6fb9-4d19-9560-5084a813354b</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>ec93cf62-a416-45e6-8edc-cb1f51425869</stepIdentifier>
+            <stepIdentifier>7f9187a0-5d85-4079-9b90-2f5734016b45</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>59a00d79-814a-44fb-a32b-9e9b283f0013</stepIdentifier>
+            <botStepConditions>
+                <leftOperandName>Tipo_de_usuario</leftOperandName>
+                <leftOperandType>ConversationVariable</leftOperandType>
+                <operatorType>Equals</operatorType>
+                <rightOperandValue>Outros Assuntos</rightOperandValue>
+            </botStepConditions>
+            <botSteps>
+                <botNavigation>
+                    <botNavigationLinks>
+                        <targetBotDialog>Recepcao</targetBotDialog>
+                    </botNavigationLinks>
+                    <type>Call</type>
+                </botNavigation>
+                <stepIdentifier>be2b474b-df8e-424b-b157-a5e80a06e8bd</stepIdentifier>
+                <type>Navigation</type>
+            </botSteps>
+            <conditionLogicType>And</conditionLogicType>
+            <stepIdentifier>7a6150bc-c74e-0ecb-80da-45e13a3e4993</stepIdentifier>
+            <type>Group</type>
+        </botSteps>
+        <botSteps>
+            <stepIdentifier>2ec4b3c8-0195-4983-a652-e564ef84bd62</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Welcome</developerName>
@@ -210,19 +235,19 @@ estamos falando?</message>
                 <askCollectIfSet>false</askCollectIfSet>
                 <botMessages>
                     <message>Escolha uma das opções abaixo para que possamos lhe direcionar melhor:</message>
-                    <messageIdentifier>1ea28bd8-0780-4a3e-a816-aaa340cb3d42</messageIdentifier>
+                    <messageIdentifier>a424c175-24d8-4d4b-b210-0b968cfc0bde</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
                     <literalValue>Sou Consultor / Quero ser Consultor</literalValue>
-                    <quickReplyOptionIdentifier>3d64e6af-c841-4b64-adbe-45d04f7b4506</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>73ea949b-8e83-4d34-8ea4-d4d0c98cf8ce</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Sou Integrador / Quero ser Integrador</literalValue>
-                    <quickReplyOptionIdentifier>119ba76b-a545-4766-b3fa-baa0ed6bc973</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>433f9cab-f2a2-472a-b78d-b49eb75a2232</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Sou Cliente / Quero ser Cliente</literalValue>
-                    <quickReplyOptionIdentifier>a556129c-d216-4bc2-a0fa-280c365ada57</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>052e662b-01f0-457f-9855-d45b3c2e0293</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -237,12 +262,12 @@ estamos falando?</message>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <retryMessages>
                     <message>Por favor, digite uma opção válida!</message>
-                    <messageIdentifier>b3321717-baf1-404e-996d-1429d367aaf3</messageIdentifier>
+                    <messageIdentifier>7c9e34c8-fa7b-4a25-9f16-d8176351235f</messageIdentifier>
                 </retryMessages>
                 <type>Collect</type>
-                <variableOperationIdentifier>842f3ea4-6ac0-458d-a0f7-7360a813a91b</variableOperationIdentifier>
+                <variableOperationIdentifier>848fb320-3607-4075-9974-8edcf3c11842</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>f95482d6-5b9a-40c5-9eb9-9a0535c230f7</stepIdentifier>
+            <stepIdentifier>48b423cf-cefd-46c5-a79d-1548d47d5694</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -255,9 +280,9 @@ estamos falando?</message>
             <botSteps>
                 <botMessages>
                     <message>A ENERZEE está presente com sistemas fotovoltaicos instalados em todo o Brasil. A empresa tem como filosofia trabalhar com parceiros/integradores locais para atendimento aos nossos clientes. Esses parceiros/integradores são empresas qualificadas para real</message>
-                    <messageIdentifier>70a8e092-afed-41ad-a78d-c550f0b48297</messageIdentifier>
+                    <messageIdentifier>b7c783df-b855-4b45-bd66-7ff94153a4bd</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>2ec2fe8e-5029-46c7-b02d-3b8859eb7e42</stepIdentifier>
+                <stepIdentifier>ca49ab5e-3c5f-4913-82d4-50381585753f</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -267,11 +292,11 @@ estamos falando?</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>d4945b03-627e-42b5-a289-36f4434fb030</stepIdentifier>
+                <stepIdentifier>7b28aadd-051b-433d-b973-8b6497dcc6cb</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>378352e6-51b9-48fb-bf1f-71e1c1b8b824</stepIdentifier>
+            <stepIdentifier>d2e5834d-912a-4deb-a664-2b65478b2e7b</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -284,9 +309,9 @@ estamos falando?</message>
             <botSteps>
                 <botMessages>
                     <message>A ENERZEE está presente com sistemas fotovoltaicos instalados em todo o Brasil. A empresa tem como filosofia trabalhar com parceiros/integradores locais para atendimento aos nossos clientes. Esses parceiros/integradores são empresas qualificadas para real</message>
-                    <messageIdentifier>781ab22e-70ab-49a0-ad46-e1e14f63256e</messageIdentifier>
+                    <messageIdentifier>0cec2a84-ce3c-4088-8b4a-5531630ba944</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>9e101f99-8aac-4945-8967-c9ddbee3c3bc</stepIdentifier>
+                <stepIdentifier>8876862c-fba5-4d73-8cd3-f8243fdbc6f2</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -296,11 +321,11 @@ estamos falando?</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>472c85ab-f2d5-433a-b365-afaa0164556b</stepIdentifier>
+                <stepIdentifier>450321a7-df42-459e-8958-c006321886bd</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>c5509e08-2630-4896-90a5-78536745f7e6</stepIdentifier>
+            <stepIdentifier>46497a1e-307c-4373-86ed-8dc9fcf9aee4</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -313,9 +338,9 @@ estamos falando?</message>
             <botSteps>
                 <botMessages>
                     <message>A ENERZEE está presente com sistemas fotovoltaicos instalados em todo o Brasil. A empresa tem como filosofia trabalhar com parceiros/integradores locais para atendimento aos nossos clientes. Esses parceiros/integradores são empresas qualificadas para real</message>
-                    <messageIdentifier>4739389a-aefe-4ec1-89e7-560960126415</messageIdentifier>
+                    <messageIdentifier>1b1a4704-aa5f-496f-a8f4-a312e2dfdf7d</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>a555a146-06ca-41a6-9af5-f00443974555</stepIdentifier>
+                <stepIdentifier>26a082de-119b-4231-8fb0-8bbb59cfb51b</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -325,15 +350,15 @@ estamos falando?</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>83c99934-529b-4f9a-98f2-25178dc6e55c</stepIdentifier>
+                <stepIdentifier>ea625530-05e2-4bb0-a4dd-5fbbbe7f299d</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>6373f556-76ad-492a-a734-7f55cef8a0a3</stepIdentifier>
+            <stepIdentifier>57a78f01-4d41-4915-b40f-b52b21ab7d18</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>27fd2a6d-9c73-4b41-9345-75c7650c4f61</stepIdentifier>
+            <stepIdentifier>da643b7a-35f4-47e7-a940-105e32a5c027</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Inexistente</developerName>
@@ -344,7 +369,7 @@ estamos falando?</message>
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
-            <stepIdentifier>37f0ded7-d716-42a0-978d-ab4638995c4e</stepIdentifier>
+            <stepIdentifier>00798c6f-0405-4066-bc75-f98dca717bf4</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Transferir_Integrador</developerName>
@@ -354,7 +379,7 @@ estamos falando?</message>
     </botDialogs>
     <botDialogs>
         <botSteps>
-            <stepIdentifier>29051044-93d0-4407-a494-605a732a2a8c</stepIdentifier>
+            <stepIdentifier>22b8d0cc-39b6-4b77-9e2f-9225af2254b8</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Main_Menu</developerName>
@@ -367,7 +392,7 @@ estamos falando?</message>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>384b76f4-216c-4abc-a68c-76067ccf2526</stepIdentifier>
+            <stepIdentifier>d13bbbdf-6e66-4872-8f1d-77b8682dbcbf</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Transfer_To_Agent</developerName>
@@ -379,13 +404,13 @@ estamos falando?</message>
         <botSteps>
             <botMessages>
                 <message>Até mais! Clique no botão &quot;Encerrar chat&quot; para finalizar nossa sessão.</message>
-                <messageIdentifier>58257910-4dbf-4779-a954-10ec02514341</messageIdentifier>
+                <messageIdentifier>9cbef870-d941-40f5-bddd-d94138f5a32d</messageIdentifier>
             </botMessages>
-            <stepIdentifier>15b99d97-6539-4a11-9b7c-0dcd5789602e</stepIdentifier>
+            <stepIdentifier>c461e28b-1f2f-4266-9458-78d4c56f487d</stepIdentifier>
             <type>Message</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>301fd7fd-07df-4552-a1a0-77c4bc4b63de</stepIdentifier>
+            <stepIdentifier>60acfccb-1af0-4dd0-8577-ce77d131b1e3</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>End_Chat</developerName>
@@ -419,9 +444,9 @@ estamos falando?</message>
                     </invocationMappings>
                 </botInvocation>
                 <type>Set</type>
-                <variableOperationIdentifier>33086c7a-7946-41f5-94b8-a695ffcd34f5</variableOperationIdentifier>
+                <variableOperationIdentifier>725e18c9-4060-4859-b84e-f08f76fed9b4</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>8f62caf7-07c5-4585-aef9-ee8d073a6778</stepIdentifier>
+            <stepIdentifier>d6b60309-89d8-4f85-9fac-5b8196a60b46</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -440,9 +465,9 @@ estamos falando?</message>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>0175008c-fc1d-4e17-9c67-ae4d39c31d74</variableOperationIdentifier>
+                    <variableOperationIdentifier>82f2406d-c2d7-410a-b2fb-36de1a3b0b4d</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>2ddfdeb4-9fe5-466f-9b9e-8144bddfeaa9</stepIdentifier>
+                <stepIdentifier>8a5e266d-30bf-4967-870c-9d1614aeb168</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -454,11 +479,11 @@ estamos falando?</message>
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>273d96df-26e0-471f-843f-8394f9d1c6ae</stepIdentifier>
+                <stepIdentifier>7abe708b-3b44-4fa9-8fc9-95b10905e330</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>b5bab938-4e6a-48f8-b84e-e63623b51370</stepIdentifier>
+            <stepIdentifier>8d6b03a7-43eb-47e3-827a-0ec78b72bd72</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -499,17 +524,17 @@ estamos falando?</message>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Unset</type>
-                    <variableOperationIdentifier>bade15e7-f935-4741-9231-fdd81fc2a76b</variableOperationIdentifier>
+                    <variableOperationIdentifier>f30a86b9-8f19-4057-9f11-1fe76b7e6b7c</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>d01e2518-e6df-4010-ae4b-53624dcceca4</stepIdentifier>
+                <stepIdentifier>c6fc2f7c-dca7-4930-aac0-8697ad640f08</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
                 <botMessages>
                     <message>Desculpe, mas não entendi. Poderia por favor selecionar entre uma das opções válidas?</message>
-                    <messageIdentifier>306d7d2f-9501-4697-bf49-19cc7d2b6377</messageIdentifier>
+                    <messageIdentifier>43dff317-eccd-4ca3-bf7b-e1bc0c44c7c4</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>09f512d4-58ec-4007-9f71-5f2518813c86</stepIdentifier>
+                <stepIdentifier>4b068a20-e95c-41a5-ae37-449cd708aa46</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -519,11 +544,11 @@ estamos falando?</message>
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>094e68ca-afd7-47e7-ab28-528e328f8807</stepIdentifier>
+                <stepIdentifier>c8dc2c48-3654-4c00-9939-67c7be1e535d</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>281f7bf6-8bc6-4c36-91a1-4116d0cd683e</stepIdentifier>
+            <stepIdentifier>5c714b27-a0bc-4750-90ba-d5240598eb32</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -540,11 +565,11 @@ estamos falando?</message>
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>a4ec629a-d114-48da-8671-be5168836439</stepIdentifier>
+                <stepIdentifier>2e40910e-c938-4f10-a0c5-ddf7d48a6572</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>56ebfcf7-bac2-4a3a-b573-97c6ceef1099</stepIdentifier>
+            <stepIdentifier>36449661-c9e0-4ca5-9ae7-70a09a668164</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -561,15 +586,15 @@ estamos falando?</message>
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>0328b1c2-4519-4131-916e-33d78116b350</stepIdentifier>
+                <stepIdentifier>4a8c8402-758f-4ce5-9dbe-9700282ead8c</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>6621df7d-f5fc-42ab-899b-aa79ca426d19</stepIdentifier>
+            <stepIdentifier>4a15ea5e-6805-443b-9573-541a58b8c581</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>4c249adb-e4e4-4769-8b2d-0cd6f87875d9</stepIdentifier>
+            <stepIdentifier>cfe1945b-39cb-4ea7-a912-d9fe3eadad4a</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Confused</developerName>
@@ -581,13 +606,13 @@ estamos falando?</message>
         <botSteps>
             <botMessages>
                 <message>Infelizmente não temos nenhum agente disponível no momento.</message>
-                <messageIdentifier>e79a6e8e-45f2-4900-b5bd-a893a32c98ef</messageIdentifier>
+                <messageIdentifier>3a6f7c8d-5ac5-479f-9ee1-77a1ec6f49e8</messageIdentifier>
             </botMessages>
-            <stepIdentifier>d56c4d50-1ec1-4d1e-8503-17ca79475534</stepIdentifier>
+            <stepIdentifier>7a5f92d4-c43e-48ca-829a-fb96c7513e22</stepIdentifier>
             <type>Message</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>84f3e990-615a-467b-8a2c-63854a61f98d</stepIdentifier>
+            <stepIdentifier>8aa7fe14-4413-446b-8e19-e9bbed018f4b</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>No_Agent_Available</developerName>
@@ -599,16 +624,16 @@ estamos falando?</message>
         <botSteps>
             <botMessages>
                 <message>Infelizmente ocorreu um erro inesperado. Vou tentar te conectar a um agente para te ajudar, está bem?</message>
-                <messageIdentifier>def6b624-cd1f-409b-b838-4f323f3f88e1</messageIdentifier>
+                <messageIdentifier>f6250636-b62f-46c5-b244-83c78446a665</messageIdentifier>
             </botMessages>
-            <stepIdentifier>90325656-0fac-4acc-af09-9d077c6b4cc9</stepIdentifier>
+            <stepIdentifier>129d07c6-c791-4271-8d6e-a7d8b4d2de8c</stepIdentifier>
             <type>Message</type>
         </botSteps>
         <botSteps>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>4690e1e6-cda2-4fbc-a1a9-305b4d4e9585</stepIdentifier>
+            <stepIdentifier>a16cc21d-8254-4201-bb6a-c5ddadd7e30f</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Error_Handling</developerName>
@@ -623,31 +648,31 @@ estamos falando?</message>
                 <botMessages>
                     <message>Será um prazer atendê-lo, {!Consultant_Name}.
 Sobre qual tema deseja falar?</message>
-                    <messageIdentifier>dd4136c3-faf3-4776-964d-c806dcd55938</messageIdentifier>
+                    <messageIdentifier>00bcde64-6166-4aee-87d7-bce907cdf24e</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
                     <literalValue>Comercial</literalValue>
-                    <quickReplyOptionIdentifier>9afec666-8c1d-4852-942e-a2b392b4ad7a</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>268501a8-9029-4a9d-8812-fd54aee7d033</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Viabilidade</literalValue>
-                    <quickReplyOptionIdentifier>23eed8df-c005-4926-814f-68915e77f57f</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>4b1f0833-096e-4161-9d7e-95a39ce2c3b1</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Financeiro</literalValue>
-                    <quickReplyOptionIdentifier>6459dbb5-1a2e-477f-95e2-7a12b9280cd8</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>43e5b0cc-eca6-4b10-baef-e1dc2372db8e</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Obras</literalValue>
-                    <quickReplyOptionIdentifier>9100046f-336e-442a-9138-4acba9318ee3</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>d7b59434-1684-4502-9917-06e11805caf9</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Pós-Vendas</literalValue>
-                    <quickReplyOptionIdentifier>6f15efa6-116d-4259-82ac-271365bd5a65</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>66b9d780-4182-43da-a6c3-c11fe0a2fb6b</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Contratual e Métodos de pagamento</literalValue>
-                    <quickReplyOptionIdentifier>11557d3b-75de-475b-bfb1-ecb840ad2587</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>33b0edbf-1e9b-4af6-bdff-c046f4aea643</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -662,12 +687,12 @@ Sobre qual tema deseja falar?</message>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <retryMessages>
                     <message>Por favor, digite uma opção válida!</message>
-                    <messageIdentifier>b0586e97-9bb8-4bdb-870e-581a25fcd652</messageIdentifier>
+                    <messageIdentifier>9b208163-cbda-471e-99b2-d93a7afe95b4</messageIdentifier>
                 </retryMessages>
                 <type>Collect</type>
-                <variableOperationIdentifier>6891f7e3-e276-4314-b457-b1b4aec53f4b</variableOperationIdentifier>
+                <variableOperationIdentifier>58076053-4dda-45c0-bff7-60ed0178c4c6</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>7a4d683f-69d4-4809-8a12-6865696d2237</stepIdentifier>
+            <stepIdentifier>d437ac5d-447b-4211-9b93-f62f930d8fc3</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -676,15 +701,15 @@ Sobre qual tema deseja falar?</message>
                 <botMessages>
                     <message>Certo!
 Você possui o número da proposta?</message>
-                    <messageIdentifier>abdc59c0-da15-4504-9f44-18c629c9c759</messageIdentifier>
+                    <messageIdentifier>85518cd7-5145-4639-abe2-1a0ffb6a10e8</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
                     <literalValue>Sim</literalValue>
-                    <quickReplyOptionIdentifier>fc0196e6-d0c5-4b96-abdf-9c0e5723873c</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>0d221d89-d3e4-4d72-9270-be5c7bf4c37c</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Não</literalValue>
-                    <quickReplyOptionIdentifier>923679b0-31a7-4954-b4a7-d4bb21fa2b7e</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>5f0bcc65-3660-49f6-9a5a-1041fa22c5eb</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -698,9 +723,9 @@ Você possui o número da proposta?</message>
                 <quickReplyType>Static</quickReplyType>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <type>Collect</type>
-                <variableOperationIdentifier>c9fa38fe-2b74-4ed8-a178-0f02d58b1adf</variableOperationIdentifier>
+                <variableOperationIdentifier>00f1d365-40a8-46e7-8033-d4e86db6cb37</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>bb27aa0f-04c7-43f7-b565-2dfd0904697c</stepIdentifier>
+            <stepIdentifier>8e30daf2-95ba-47e0-b9c8-044beef5a635</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -717,11 +742,11 @@ Você possui o número da proposta?</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>c8726167-fb4b-4cd8-bc7a-ca88e6adf43a</stepIdentifier>
+                <stepIdentifier>0aeb9421-46d8-4d7b-913b-3afd710629c1</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>12949e80-ce79-452b-9c73-32a46ca2b785</stepIdentifier>
+            <stepIdentifier>a50b73a4-6329-4121-8456-a74908b0f4f6</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -729,9 +754,9 @@ Você possui o número da proposta?</message>
                 <message>Sem problemas!
 Já vou te transferir para o nosso time de atendimento.
 Por favor, aguarde.</message>
-                <messageIdentifier>2cf98a29-750f-4181-afad-4035d0bd0cc8</messageIdentifier>
+                <messageIdentifier>7e279549-691e-4c65-8d08-40fb4a99847a</messageIdentifier>
             </botMessages>
-            <stepIdentifier>609211c1-200e-42d5-bc89-2b5eb6fe117c</stepIdentifier>
+            <stepIdentifier>f6e8eda6-e3fc-4321-981f-c532f0437f31</stepIdentifier>
             <type>Message</type>
         </botSteps>
         <botSteps>
@@ -748,11 +773,11 @@ Por favor, aguarde.</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>26ad329a-3bc4-406a-a990-7789bdcd2e57</stepIdentifier>
+                <stepIdentifier>ceec7508-2808-48ff-a4ae-dc47054f2da1</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>bb94ad85-0798-43e4-88ce-4cf2f9edf22d</stepIdentifier>
+            <stepIdentifier>0715f816-a7db-4e48-92e2-51e8158d0dd3</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -769,11 +794,11 @@ Por favor, aguarde.</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>be1adc12-ca4c-424f-9c94-3821d03e95d1</stepIdentifier>
+                <stepIdentifier>987b825f-6a09-4676-ade7-0c4989183063</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>3594724b-62ec-4e56-bcec-97c28b635074</stepIdentifier>
+            <stepIdentifier>3d613d91-6491-4ad4-b09f-216766536cec</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -790,11 +815,11 @@ Por favor, aguarde.</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>a376edc5-3aa3-41e3-8efd-a3624409254d</stepIdentifier>
+                <stepIdentifier>49437202-fa9f-4ecd-95a0-3887afd2506d</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>6608aebe-d190-45bd-9944-50915a27dd59</stepIdentifier>
+            <stepIdentifier>fb0c4885-391d-45cf-b849-598590784cc4</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -811,11 +836,11 @@ Por favor, aguarde.</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>07c8bb74-b931-4de4-ac47-c91c41fd2e3b</stepIdentifier>
+                <stepIdentifier>70787d0e-b05e-4318-89f4-74e9461f33ee</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>ca002b2d-56dd-4713-a067-036fb2fc22fe</stepIdentifier>
+            <stepIdentifier>9d9b0691-82f8-4acb-b57f-01d43fc767ae</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -832,11 +857,11 @@ Por favor, aguarde.</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>5ae19501-4d3d-4a6b-a2cb-182c4ab7498c</stepIdentifier>
+                <stepIdentifier>65b2a3c2-22fa-40a5-abc5-250edb3d1a68</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>68840d29-58ee-4420-b418-e7afe4cecf1b</stepIdentifier>
+            <stepIdentifier>08aa0b71-b1c9-448c-aa52-59ef27f28907</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -853,15 +878,15 @@ Por favor, aguarde.</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>a9fd24ce-24d8-403c-97c2-a939a9b92a1f</stepIdentifier>
+                <stepIdentifier>6b39e052-6412-4ed6-9d9c-5e4aee2dd5e8</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>e373835c-4831-4433-b5d5-35ab121ca81a</stepIdentifier>
+            <stepIdentifier>5cffb313-956f-4ceb-9a00-6fae88879dcb</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>58cccb9a-e4a2-42fe-b339-dbb71e619980</stepIdentifier>
+            <stepIdentifier>07f38ef6-9c33-4bb5-93e7-b1f77ab6fbe5</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Caminho_Consultor_Franqueado</developerName>
@@ -872,7 +897,7 @@ Por favor, aguarde.</message>
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
-            <stepIdentifier>22d1f7ab-b046-4ef8-b0c9-f1debd7d1fa9</stepIdentifier>
+            <stepIdentifier>fe26b1e9-7326-4e35-993b-0b6ea50df58e</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Transferir_Obras</developerName>
@@ -883,7 +908,7 @@ Por favor, aguarde.</message>
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
-            <stepIdentifier>000cd947-48a1-4832-b35e-f4b0454428b2</stepIdentifier>
+            <stepIdentifier>487f0b7d-e218-457c-9034-682f5c862e94</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Transferir_Pre_Vendas</developerName>
@@ -894,7 +919,7 @@ Por favor, aguarde.</message>
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
-            <stepIdentifier>52e4c27a-d478-4210-81a7-b98b3284b580</stepIdentifier>
+            <stepIdentifier>0f468ebd-5dad-4033-b6f3-e3c358795349</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Transferir_Financeiro</developerName>
@@ -905,7 +930,7 @@ Por favor, aguarde.</message>
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
-            <stepIdentifier>5eed9778-06fe-405d-8a2c-14fdf5c6699d</stepIdentifier>
+            <stepIdentifier>4d6f7844-dfc2-456a-bffd-5bc10c61ffcb</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Transferir_Contratual_e_Metodos_de_pagamento</developerName>
@@ -920,7 +945,7 @@ Por favor, aguarde.</message>
                 <botMessages>
                     <message>Execelente!
 Pode me informar o número da proposta , por favor?</message>
-                    <messageIdentifier>6aff3966-42ae-42fb-8dae-313fae8dcd9e</messageIdentifier>
+                    <messageIdentifier>322ca2eb-a2cf-4acf-9ecf-a48986b812b5</messageIdentifier>
                 </botMessages>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -932,18 +957,18 @@ Pode me informar o número da proposta , por favor?</message>
                 <optionalCollect>false</optionalCollect>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <type>Collect</type>
-                <variableOperationIdentifier>402a38b3-3ca1-4836-a086-91520e8d45f4</variableOperationIdentifier>
+                <variableOperationIdentifier>ad764415-3bb2-41fc-890e-cde075bf96c8</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>4c178b93-4ffb-4560-a8d2-76e11c5a6eb1</stepIdentifier>
+            <stepIdentifier>cd2a37d6-40e5-4eac-8a93-48fda0d5f1bb</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
             <botMessages>
                 <message>Perfeito!
 Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</message>
-                <messageIdentifier>15fbaf54-4f91-4f09-b440-bf30ad4c9dc8</messageIdentifier>
+                <messageIdentifier>fdd0662b-24ff-40c6-9034-fb6a1ddf9996</messageIdentifier>
             </botMessages>
-            <stepIdentifier>2ba8389c-f271-4a88-a35b-fb3ad196ec27</stepIdentifier>
+            <stepIdentifier>e93a3b17-a3c7-4a3b-abf3-8f62a0cc465e</stepIdentifier>
             <type>Message</type>
         </botSteps>
         <botSteps>
@@ -960,11 +985,11 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>04d7284b-be87-4d1a-99d5-dc4e0c1dcb4d</stepIdentifier>
+                <stepIdentifier>0bb31eec-dbd6-400f-860f-ffe32e2ab20a</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>e7cb2853-45d7-467d-8b09-b727b0cea217</stepIdentifier>
+            <stepIdentifier>43bc89c8-23f7-4ee8-942e-3470f613be02</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -981,11 +1006,11 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>b4c07824-a330-40ac-8b57-ab85e96a25bf</stepIdentifier>
+                <stepIdentifier>9490a913-0dc6-4896-8d93-324a89069e37</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>dcc16eb3-4ba5-4b5c-a807-4c73db4be15f</stepIdentifier>
+            <stepIdentifier>fa5cfbb2-f839-45fc-8e48-33341e281c40</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1002,11 +1027,11 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>28a7dcec-448b-48a4-b2f5-ba136c536a24</stepIdentifier>
+                <stepIdentifier>d5821a22-ab3a-4485-89bf-89f2019b7f17</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>499c9287-1134-44e0-9e6d-3d6c8ee65422</stepIdentifier>
+            <stepIdentifier>1b296669-ed04-4270-84e3-7091e24b99f3</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1023,11 +1048,11 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>1a7909ac-02d9-4bb3-8abe-cdb3515c4fac</stepIdentifier>
+                <stepIdentifier>ac01a702-d331-46f0-8a5b-60d94f6b4b13</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>374bc846-3466-4c5c-b361-60ad08f2082a</stepIdentifier>
+            <stepIdentifier>75048192-65ad-4480-ace1-83b8df12b01b</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1044,11 +1069,11 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>4855d802-0d8a-4383-8a5e-603a30a8f474</stepIdentifier>
+                <stepIdentifier>36d3488b-d84a-40e3-b0f5-439a247063e4</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>0a2bd01d-00ea-4659-a99d-67ef8ff35c5e</stepIdentifier>
+            <stepIdentifier>9d91db38-6366-466a-87b3-ad530b70eb96</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1065,15 +1090,15 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>6c22cae1-6bfc-47fb-b178-90055dd99e3d</stepIdentifier>
+                <stepIdentifier>53130c3a-1d9f-4285-966d-977b668b5d43</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>bdf0b42f-f214-415e-9058-69598ddf0d73</stepIdentifier>
+            <stepIdentifier>c508d999-e311-439f-9d44-0679fdf7657a</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>9bb2fe9f-73ae-4719-8c7b-0779cf508bcb</stepIdentifier>
+            <stepIdentifier>cb507ae7-8c74-4de7-9107-c31051baaa95</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Caminho_Consultor_Franqueado_Proposta</developerName>
@@ -1088,7 +1113,7 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                 <botMessages>
                     <message>Excelente!
 Pode me informar o número da proposta, por favor?</message>
-                    <messageIdentifier>2cc38867-6ac3-497b-83b4-c15b9bb524ff</messageIdentifier>
+                    <messageIdentifier>d39e9534-ab51-438f-bf71-a23f2a6f7ec6</messageIdentifier>
                 </botMessages>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -1100,9 +1125,9 @@ Pode me informar o número da proposta, por favor?</message>
                 <optionalCollect>false</optionalCollect>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <type>Collect</type>
-                <variableOperationIdentifier>b4a22852-865a-4af0-afcd-ee7892c7958b</variableOperationIdentifier>
+                <variableOperationIdentifier>d58a1987-01eb-4637-8e50-3c08c7d81e16</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>2114a0ce-5d17-4dfa-ac3c-0e92e9236547</stepIdentifier>
+            <stepIdentifier>4aecaf0b-0c18-47d7-913f-34b0a9d6ee13</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -1116,9 +1141,9 @@ Pode me informar o número da proposta, por favor?</message>
                 <botMessages>
                     <message>Perfeito!
 Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</message>
-                    <messageIdentifier>af94e613-ff8c-43f6-8092-6184d08d1789</messageIdentifier>
+                    <messageIdentifier>7ac1c1df-471d-4110-a874-5ce827740eb8</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>320be8fd-e4dc-4e01-924b-5cfefd417339</stepIdentifier>
+                <stepIdentifier>39080b25-2837-482f-b76b-b491e47d6d05</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -1128,11 +1153,11 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>99255078-5b89-4c43-a20d-4bc2b6bec7c4</stepIdentifier>
+                <stepIdentifier>25c5422b-7c0e-4467-a108-e9e04aa8c784</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>e0abacee-7e16-4bc0-afdb-e88454fbad22</stepIdentifier>
+            <stepIdentifier>29a5a340-ba34-4b72-a8c2-a777d1482942</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1146,9 +1171,9 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                 <botMessages>
                     <message>Perfeito!
 Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</message>
-                    <messageIdentifier>5eee6cbd-3f59-437d-83d0-728fdc228a7d</messageIdentifier>
+                    <messageIdentifier>698a5752-3daf-45a2-a74e-8f7e652730be</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>fe934d23-71e9-466f-80ed-87f56335a2d4</stepIdentifier>
+                <stepIdentifier>ab0165d6-8217-46b6-910d-6799d54feca9</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -1158,11 +1183,11 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>ef2653f5-4a05-4e42-9bd7-63aa9a36acd4</stepIdentifier>
+                <stepIdentifier>7da43552-4833-47b3-856a-d42400a16487</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>c016f169-7ce6-4df3-8831-21a7bbfa5c1f</stepIdentifier>
+            <stepIdentifier>ba325c52-b31a-4668-b96c-f8582102e8d9</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1176,9 +1201,9 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                 <botMessages>
                     <message>Perfeito!
 Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</message>
-                    <messageIdentifier>260ca880-c0ef-4a78-b227-5a6af193f8fb</messageIdentifier>
+                    <messageIdentifier>d37a43e0-76c7-4b8a-9c2d-5f55df5d7477</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>ab302085-9804-48fe-bc52-d18e0acf9ce8</stepIdentifier>
+                <stepIdentifier>092d984b-4b5a-42fa-a989-5add8caca276</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -1188,11 +1213,11 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>3c6b2b9b-2149-465c-82b3-2e7f9be51684</stepIdentifier>
+                <stepIdentifier>e742f82e-9b64-43d1-a805-1be04bdb429a</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>5526d185-9acc-4e45-a0a1-7eaa1bbb6a2d</stepIdentifier>
+            <stepIdentifier>7565e4cb-42fd-4a93-b7b1-b0c9a554620c</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1206,9 +1231,9 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                 <botMessages>
                     <message>Perfeito!
 Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</message>
-                    <messageIdentifier>5691f241-5e40-4e12-960d-65a064df5daf</messageIdentifier>
+                    <messageIdentifier>1efc034a-ecc1-4fd2-9bc4-779887c04ba3</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>76270604-439e-4d36-901e-6b807d4f6d1d</stepIdentifier>
+                <stepIdentifier>39b7bd8e-4e3c-4fd1-9ca9-850a7a608df2</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -1218,15 +1243,15 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>d4d9e918-f493-4fcd-988f-75f0bd67208c</stepIdentifier>
+                <stepIdentifier>7d32f65a-339a-4473-b6f9-f5969d85774b</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>fcf9eaf1-b538-4b24-803b-b09a3c61e774</stepIdentifier>
+            <stepIdentifier>f0c4961a-c4ab-41dc-b63e-ec90ed6566af</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>77dc085c-2faa-439a-ae9d-e9d72b2efb7f</stepIdentifier>
+            <stepIdentifier>9fc318f2-1c0d-490d-af05-1f77954962c0</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Cliente_Proposta</developerName>
@@ -1241,23 +1266,23 @@ Por favor, aguarde enquanto te transfiro para nosso time de atendimento.</messag
                 <botMessages>
                     <message>Será um prazer atendê-lo, {!Account_Name}.
 Sobre qual tema deseja falar?</message>
-                    <messageIdentifier>199e4a6f-033f-432a-97e1-eed1d970c535</messageIdentifier>
+                    <messageIdentifier>ebccf9c0-024e-4a01-b6ac-fd4873f5b61f</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
                     <literalValue>Viabilidade</literalValue>
-                    <quickReplyOptionIdentifier>0a8f9387-e9d5-44fc-8694-804e4e1a0792</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>a25d34b9-5846-4924-ab8c-6cc3ed9c666f</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Obras</literalValue>
-                    <quickReplyOptionIdentifier>b980dc27-2459-406a-94a2-af137a7e98db</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>bbc048b9-976c-47ea-aa8b-220113ed8e53</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Pós-Vendas</literalValue>
-                    <quickReplyOptionIdentifier>bd36124c-f60b-4bb3-a409-d18951cd3885</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>0803ab2a-0b03-4a30-b2a8-0dcb3544b1fc</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Comercial</literalValue>
-                    <quickReplyOptionIdentifier>f57a1a66-4a4e-4129-a301-078ae4d28ce6</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>6cdcfb8e-54bb-4302-966f-7040a6e9d750</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -1272,12 +1297,12 @@ Sobre qual tema deseja falar?</message>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <retryMessages>
                     <message>Por favor, insira um valor válido!</message>
-                    <messageIdentifier>4bf87494-d8af-43aa-8141-0bafc9884028</messageIdentifier>
+                    <messageIdentifier>8ef2311e-b777-49ee-b35f-39d6869232f1</messageIdentifier>
                 </retryMessages>
                 <type>Collect</type>
-                <variableOperationIdentifier>9a7f1bdf-a0a6-4005-ad7a-51c02bc6f6a9</variableOperationIdentifier>
+                <variableOperationIdentifier>3744e2e5-7937-492a-80b2-200c61a6be9a</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>56778d5a-2bb9-4b3a-b864-fd206e28f37c</stepIdentifier>
+            <stepIdentifier>c9301bbf-a889-4e64-b474-9a2501f4f982</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -1286,15 +1311,15 @@ Sobre qual tema deseja falar?</message>
                 <botMessages>
                     <message>Certo!
 Você possui o número da proposta?</message>
-                    <messageIdentifier>dd157fba-8c05-4a31-98e4-143061d6233c</messageIdentifier>
+                    <messageIdentifier>ec5f29c6-4293-4d33-81d9-373e616fc6b3</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
                     <literalValue>Sim</literalValue>
-                    <quickReplyOptionIdentifier>af53dc00-c2a8-495f-bae5-eca6414d6483</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>7b3ad8d6-c713-4e68-bc72-643de6b73d43</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Não</literalValue>
-                    <quickReplyOptionIdentifier>47084cf6-affd-4230-8861-a85ee6e8245c</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>ca309552-63b8-47b4-b9db-e40181d1579d</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -1309,12 +1334,12 @@ Você possui o número da proposta?</message>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <retryMessages>
                     <message>Por favor, escolha um valor válido!</message>
-                    <messageIdentifier>b4abc683-d615-4575-b93c-3c6e7276a143</messageIdentifier>
+                    <messageIdentifier>d8fa5d9c-2b03-41de-9f36-141fae71d861</messageIdentifier>
                 </retryMessages>
                 <type>Collect</type>
-                <variableOperationIdentifier>5b2348e6-3757-4baf-b2c8-143c7904e4f2</variableOperationIdentifier>
+                <variableOperationIdentifier>adf0ddf1-bc57-4ef2-b2dd-450f05afc5a3</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>ba6c8739-1f5f-4492-9296-4a33d26296c8</stepIdentifier>
+            <stepIdentifier>b369037f-952b-4f23-b40c-6b8d970ea6ef</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -1331,11 +1356,11 @@ Você possui o número da proposta?</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>5ca48d3c-f8d6-4c99-8d93-32bbc6fd28ca</stepIdentifier>
+                <stepIdentifier>ba0698c8-5e7b-4fb8-8c0f-48462facab25</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>b33cb2dd-c29c-4ef8-ab16-b32a4afd07fe</stepIdentifier>
+            <stepIdentifier>aae6dfc7-a1e7-4e20-9444-901fdf2a7f1f</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1350,9 +1375,9 @@ Você possui o número da proposta?</message>
                     <message>Sem problemas!
 Já vou te transferir para o nosso time de atendimento.
 Por favor, aguarde.</message>
-                    <messageIdentifier>fe139581-fc29-452f-a5b1-59f7c46088ca</messageIdentifier>
+                    <messageIdentifier>e6864f2f-74d2-4e77-9057-cf487cd108c6</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>e9443c55-b969-49cb-81f6-4800859bc8e7</stepIdentifier>
+                <stepIdentifier>3419e4fb-07af-48dd-9d80-c09fe9edeae0</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -1362,11 +1387,11 @@ Por favor, aguarde.</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>105c157c-aa87-4dee-a358-4972dea2c622</stepIdentifier>
+                <stepIdentifier>e36625c6-eead-416d-952d-6c9cc5c834fe</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>0f70ea67-e033-4c6f-b85f-0491652e3887</stepIdentifier>
+            <stepIdentifier>92028c85-b17c-43d9-9936-d3e8904b0274</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1381,9 +1406,9 @@ Por favor, aguarde.</message>
                     <message>Sem problemas!
 Já vou te transferir para o nosso time de atendimento.
 Por favor, aguarde.</message>
-                    <messageIdentifier>15a69206-27f0-4036-a39b-658eb52f48a3</messageIdentifier>
+                    <messageIdentifier>43d169da-cbf6-41fd-97bf-f2ee613e9c51</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>bd7cf657-c20c-4172-a548-9f6c60df9035</stepIdentifier>
+                <stepIdentifier>101f2a70-2dc1-464b-947c-4051931a1ff6</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -1393,11 +1418,11 @@ Por favor, aguarde.</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>6728589d-4541-4d4c-822d-db0eef478e7f</stepIdentifier>
+                <stepIdentifier>c3224377-4be9-4b83-8619-7c59aab172cb</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>0d2bbb98-f0a0-4f78-b85f-df878f6208be</stepIdentifier>
+            <stepIdentifier>86e0307a-a623-4e1d-8a9f-670c9115868a</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1412,9 +1437,9 @@ Por favor, aguarde.</message>
                     <message>Sem problemas!
 Já vou te transferir para o nosso time de atendimento.
 Por favor, aguarde.</message>
-                    <messageIdentifier>c32f3f82-87aa-49ec-b32c-f2b0bc018d35</messageIdentifier>
+                    <messageIdentifier>68c2fedf-5d6d-43d1-b0ce-51e0ddc1a7eb</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>a17f84ce-88d3-4a76-944c-4967f41b3f1d</stepIdentifier>
+                <stepIdentifier>f7b6d312-d517-421c-a313-e7d24d35330d</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -1424,11 +1449,11 @@ Por favor, aguarde.</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>91a3f600-992f-4f9a-80e5-11b048fd06bd</stepIdentifier>
+                <stepIdentifier>d011a9fa-9d01-4c25-b933-e91c7b230d2d</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>15f81525-1208-497b-947c-f0dddefd0e3e</stepIdentifier>
+            <stepIdentifier>e8bab023-3c39-4523-8f33-7dd1d81ed37b</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1443,9 +1468,9 @@ Por favor, aguarde.</message>
                     <message>Sem problemas!
 Já vou te transferir para o nosso time de atendimento.
 Por favor, aguarde.</message>
-                    <messageIdentifier>47750b19-5cfe-451c-b95c-04463cf85028</messageIdentifier>
+                    <messageIdentifier>56365be7-d030-42e6-89c4-286ed9ec4096</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>cca9be25-c275-4646-86ca-be7bdc45826a</stepIdentifier>
+                <stepIdentifier>dd2ac954-cbba-4880-9097-53804307373d</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -1455,15 +1480,15 @@ Por favor, aguarde.</message>
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>e4457240-7142-451d-ae7c-faa3f5d1551c</stepIdentifier>
+                <stepIdentifier>b8d8b0f8-dc25-453f-91e4-5bd6b7b6d87b</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>748ba797-6001-4d31-bf3e-c53577677b22</stepIdentifier>
+            <stepIdentifier>de2cc088-5fbb-453c-aa9c-09c684c884be</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>6bed9821-de02-4964-83ac-dae9dd72429c</stepIdentifier>
+            <stepIdentifier>2115f82e-52b1-4aae-a7f4-b9988996045f</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Cliente_Pessoa_Fisica</developerName>
@@ -1474,7 +1499,7 @@ Por favor, aguarde.</message>
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
-            <stepIdentifier>0d87fa4e-08b3-4565-8016-56c6c740c96d</stepIdentifier>
+            <stepIdentifier>f7a637f0-d221-4e9e-9d2c-2ac6a33f0d65</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Suporte_ao_Integrador</developerName>
@@ -1488,15 +1513,15 @@ Por favor, aguarde.</message>
                 <askCollectIfSet>false</askCollectIfSet>
                 <botMessages>
                     <message>Você já é Integrador Enerzee?</message>
-                    <messageIdentifier>91ec27e4-b02a-43aa-88fb-4cd7c894a966</messageIdentifier>
+                    <messageIdentifier>66040819-c46f-4376-a74c-749581716bfd</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
                     <literalValue>Sim, já sou integrador parceiro da Enerzee</literalValue>
-                    <quickReplyOptionIdentifier>4e8d45e6-129f-4675-9b78-372273e5752c</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>09c52444-b2d1-450d-a39f-86bde081e86b</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Não, quero me tornar integrador parceiro da Enerzee</literalValue>
-                    <quickReplyOptionIdentifier>0d572362-c0f5-44ca-ac48-f8cfe2ff6a76</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>ccbaef6c-aac5-4a02-9e3a-f4dbce92a860</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -1511,12 +1536,12 @@ Por favor, aguarde.</message>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <retryMessages>
                     <message>Por favor, escolha uma opção válida!</message>
-                    <messageIdentifier>7a00f3b9-e90c-4369-b445-86efe29e3dff</messageIdentifier>
+                    <messageIdentifier>de4922bb-82b6-4086-ab1c-4536f5d16528</messageIdentifier>
                 </retryMessages>
                 <type>Collect</type>
-                <variableOperationIdentifier>1857833a-3451-4861-a951-ed57e4802f42</variableOperationIdentifier>
+                <variableOperationIdentifier>677669a4-730c-4698-bccf-865524d39abf</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>0edb6d0a-398b-43cd-a220-ec9ba8b9a451</stepIdentifier>
+            <stepIdentifier>96071b9b-def9-4de0-ac91-ee7a54ec8e68</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -1531,9 +1556,9 @@ Por favor, aguarde.</message>
                     <message>Aguarde um momento enquanto te transferimos para o nosso setor de Suporte ao Integrador.
 
 Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>92b08747-883e-42b3-a912-e3631474bd2e</messageIdentifier>
+                    <messageIdentifier>fb3cf480-a66b-4615-b3a1-05a9a9b5f7cd</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>62570c2a-04b9-4380-9d42-8260508e3273</stepIdentifier>
+                <stepIdentifier>faaedb50-d77f-4152-8a33-f5b0ea02e8df</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -1543,11 +1568,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>a24bbe99-64a9-447c-839b-db3ec133db45</stepIdentifier>
+                <stepIdentifier>bbeef470-d35c-4f0c-b827-0f795a7ce320</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>4d0c1d4c-0358-422d-996b-e885893dfba5</stepIdentifier>
+            <stepIdentifier>d898ea73-7959-402a-a783-35987c84c1cf</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1562,9 +1587,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     <message>Aguarde um momento enquanto te transferimos para o nosso setor de Novos Integradores.
 
 Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>1b3e0afe-317c-4d9a-98a6-ca516e5f06c8</messageIdentifier>
+                    <messageIdentifier>03df21a1-6cf4-4ab6-9103-a4d81bcc6a5e</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>025716f8-2da9-4f83-a6f2-ae69bcebb90e</stepIdentifier>
+                <stepIdentifier>315b414f-8cf6-4788-83bb-7e9793ca977f</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -1574,15 +1599,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Redirect</type>
                 </botNavigation>
-                <stepIdentifier>fc3be340-12da-44ff-8364-1b11950efb04</stepIdentifier>
+                <stepIdentifier>f8b852d9-7eea-4ad8-a941-0f48b954c1d4</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>f5518352-39a5-479c-bfc0-29de53ea6de9</stepIdentifier>
+            <stepIdentifier>d7b56dd6-b788-46bb-bcab-603b10fa5524</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>9742099e-c53e-44ac-97b1-aa45e9bef5f3</stepIdentifier>
+            <stepIdentifier>f229516f-b566-44a8-a4ed-030f1442923c</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Caminho_Integrador</developerName>
@@ -1593,7 +1618,7 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
-            <stepIdentifier>8a32162b-81af-44ef-a0f1-75db84311b2a</stepIdentifier>
+            <stepIdentifier>9cb62c4c-edc6-4268-bc84-7c8b5e3e7bc5</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Quero_ser_um_Integrador</developerName>
@@ -1608,15 +1633,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <askCollectIfSet>false</askCollectIfSet>
                 <botMessages>
                     <message>Você deseja:</message>
-                    <messageIdentifier>968d107c-db83-4fd8-a465-0cdb1e05b9cf</messageIdentifier>
+                    <messageIdentifier>ec21fc24-f947-4fb1-b43b-1a9b6c40e894</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
                     <literalValue>Atendimento com a Assistência Técnica</literalValue>
-                    <quickReplyOptionIdentifier>fc7f33c5-d1ca-42d6-90b5-14a267738eec</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>0d3d0133-1457-4627-8b06-1590a7cae74c</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Falar com o Atendimento ao Cliente</literalValue>
-                    <quickReplyOptionIdentifier>6579bed9-59da-419e-956e-7340d37b88e9</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>af75276f-4f71-472c-99f3-1117b2507a6c</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -1630,9 +1655,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <quickReplyType>Static</quickReplyType>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <type>Collect</type>
-                <variableOperationIdentifier>ca91f798-13bb-4123-a992-5db62ebc7f91</variableOperationIdentifier>
+                <variableOperationIdentifier>b5bb3e05-2021-4c4c-988a-9690ac54834a</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>43311f1f-4145-4de5-a5ac-98132dea3003</stepIdentifier>
+            <stepIdentifier>e68421cd-1e2b-48d1-8058-4f46fc521866</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -1646,9 +1671,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <botMessages>
                     <message>Aguarde um momento enquanto te transferimos para o nosso setor de assistência técnica.
 Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>6b11fdfb-011c-41a4-9137-11e4f32b1675</messageIdentifier>
+                    <messageIdentifier>a1fc7d85-3d33-4083-bf87-e97e64f58fb2</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>49e327dd-b7c2-4e08-ab62-6aa954cda963</stepIdentifier>
+                <stepIdentifier>696032fa-b063-42c6-84b0-00a821529562</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -1660,9 +1685,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>b4a4535e-8873-4efb-a6a1-b761c4966345</variableOperationIdentifier>
+                    <variableOperationIdentifier>134c37b2-fa3e-453c-9e53-624340806b29</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>a999a2c5-dea3-47e3-9ac8-ea77db9ff0ed</stepIdentifier>
+                <stepIdentifier>98824a67-e950-45fc-a3c0-5dca4c2c8c1d</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -1674,11 +1699,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>88430989-cf7f-4b4c-b9a1-7a1a0457f926</stepIdentifier>
+                <stepIdentifier>6f6b4a5e-9ba3-43e8-a1b7-f8984757bf8e</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>378a9cf6-0aa8-46fa-8ed0-7f02aee654a9</stepIdentifier>
+            <stepIdentifier>b114e3c2-0cbe-4921-bff6-77edbf7763d5</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1693,9 +1718,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     <message>Aguarde um momento enquanto te transferimos para o nosso setor de Atendimento ao Cliente.
 
 Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>8eff3cea-4cef-47d3-b505-ec58e9916561</messageIdentifier>
+                    <messageIdentifier>1abca70f-2570-4f33-8ba7-db38119d7491</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>8e093241-553b-4568-8a51-074307fe4bda</stepIdentifier>
+                <stepIdentifier>e61a3fa0-60be-422b-849e-216f1613ca91</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -1707,9 +1732,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>6c683324-31e8-4178-9436-67f76a455979</variableOperationIdentifier>
+                    <variableOperationIdentifier>254e5258-c331-4bf3-9749-9249cc69b9c6</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>93a08aa3-0cf1-4d91-ba43-c56ae82bc529</stepIdentifier>
+                <stepIdentifier>93f8b534-f94b-41e9-98cb-8734fc67bce5</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -1721,18 +1746,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>fdf0e526-4ecb-4653-ab82-5c224c3931e5</stepIdentifier>
+                <stepIdentifier>6317232e-7b8f-41d3-9a1f-3f1d937f41bf</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>f4b3adcf-a83d-4612-a751-af1842eaf9a9</stepIdentifier>
+            <stepIdentifier>122c86a7-97e1-4a11-a413-bb14c39a6de0</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>fb0e9d65-6fbf-4555-9920-c72a97e9b08c</stepIdentifier>
+            <stepIdentifier>5a4a1183-329f-423b-b29a-ad27723775f3</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Cliente_Fluxo_Pos_Vendas</developerName>
@@ -1753,9 +1778,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <botMessages>
                     <message>Aguarde um momento enquanto te transferimos para o nosso setor comercial.
 Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>7b5848d1-c31a-443f-8fa5-e271636773b2</messageIdentifier>
+                    <messageIdentifier>e9ea0c8b-9b38-4b87-b2f8-4ddba395edaf</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>5957561b-2277-422a-8c6d-d51010f6bf9b</stepIdentifier>
+                <stepIdentifier>a0136122-71dc-4883-bf55-fca6139ac040</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -1767,9 +1792,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>a2fe0c69-9e8a-4bbd-b4ae-a9a563ca18a3</variableOperationIdentifier>
+                    <variableOperationIdentifier>554e78d2-f9e1-4600-a8b1-c94c992595fe</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>1dd2d63d-d92e-4284-8c81-0834bf8acac9</stepIdentifier>
+                <stepIdentifier>4d27874a-feb3-4402-851d-5f20d462e636</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -1781,18 +1806,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>22a6b7bc-4ce2-4ba2-9c1a-b912a1648714</stepIdentifier>
+                <stepIdentifier>41cadc65-4d7a-45ef-8a54-8954aad1606d</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>90dda34f-cec8-42df-81cf-989ba57820f0</stepIdentifier>
+            <stepIdentifier>269bb164-e12a-4f9e-9957-d0fab99f11c5</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>18961d44-701b-4489-971c-1fed46cf0b3c</stepIdentifier>
+            <stepIdentifier>c1fc2889-4656-4a88-9896-b45389962f7a</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Cliente_Fluxo_Comercial</developerName>
@@ -1807,27 +1832,27 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <askCollectIfSet>true</askCollectIfSet>
                 <botMessages>
                     <message>Você deseja falar sobre qual assunto?</message>
-                    <messageIdentifier>397fe95f-7e20-4fbc-88c6-b2721ad27d6a</messageIdentifier>
+                    <messageIdentifier>b74d9b99-d7d3-4e0c-a83d-8bd896ef87e5</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
                     <literalValue>Propostas</literalValue>
-                    <quickReplyOptionIdentifier>67edeaff-a473-4c1d-a47f-b07d07db9b18</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>4b750728-7b64-43f2-9c7e-e116435949e6</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Viabilidade Técnica</literalValue>
-                    <quickReplyOptionIdentifier>3d270a3f-1934-42c7-9903-d649aaf5d118</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>0806cb0e-133f-4fa2-b248-cf1c7262ae25</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Assistência Técnica</literalValue>
-                    <quickReplyOptionIdentifier>edb33cfb-b367-40b9-a29f-2056bc6c538b</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>05b61588-6c1c-4eeb-837e-cd186a326ec8</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Me tornar um consultor</literalValue>
-                    <quickReplyOptionIdentifier>9e536ba3-8082-4465-87f7-c56f8ec057fa</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>1e9f5272-d6ea-43b8-8b10-4b3378c76c35</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Suporte ao Consultor</literalValue>
-                    <quickReplyOptionIdentifier>ab644e6f-d6fe-4be2-b1ee-0470c32d130f</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>e19a32a5-a30f-4d17-af5e-b46fa0adefac</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>false</disableAutoFill>
@@ -1841,9 +1866,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <quickReplyType>Static</quickReplyType>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <type>Collect</type>
-                <variableOperationIdentifier>c0ba3398-d5ae-4fbe-9fec-dd4f41901c36</variableOperationIdentifier>
+                <variableOperationIdentifier>f312896f-0558-4220-b5fe-1dece6d7acb5</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>03825eb4-26ef-4b57-b3d1-f66d3770722f</stepIdentifier>
+            <stepIdentifier>1b679df2-7a86-4b92-af96-5a9cb5a50292</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -1884,11 +1909,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>e1f368b3-4634-4b2b-8ed5-1b7b59176d2d</stepIdentifier>
+                <stepIdentifier>bf807323-a9fa-4e52-8af9-0b3a97865836</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>f2c15c7f-14db-4a3f-9e7e-42e8506c6111</stepIdentifier>
+            <stepIdentifier>dd5b7689-859c-449a-adda-c92b136db6b7</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1905,11 +1930,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>94e84164-ceb5-48d4-900d-d793a47f4192</stepIdentifier>
+                <stepIdentifier>55456f08-7190-4f3e-9ee8-f5fe2b0f60a9</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>55467902-5ac2-4f36-bdf8-c121d2b7fdf4</stepIdentifier>
+            <stepIdentifier>404a2f79-19c2-4b99-b225-6fc4ea80497a</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1926,11 +1951,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>90c760a5-c0b4-4959-b300-3c5599ab37e5</stepIdentifier>
+                <stepIdentifier>539b4173-b8fe-4839-a77e-1f554974c155</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>c7238729-acb6-47ab-b753-dc5608676497</stepIdentifier>
+            <stepIdentifier>ca2b9428-2a66-4e80-a6b8-bfa35e449ed5</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1947,11 +1972,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>5050ba75-a3b9-4872-b3ec-3d5aebca0773</stepIdentifier>
+                <stepIdentifier>c55d4798-2c45-41aa-bda8-cdfd63236019</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>0657b95a-163d-4cc7-bcbe-947caf04940d</stepIdentifier>
+            <stepIdentifier>9a6ad941-fbe3-474c-bdf7-30ac77ffc9c8</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1968,11 +1993,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>bd275d22-a7e5-4357-9c28-777d0a1f49ac</stepIdentifier>
+                <stepIdentifier>5a97a0c4-cd92-42e7-8286-8dc85f9f3a00</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>5ddd93aa-74c5-49b2-8bbd-e781cf9b53c4</stepIdentifier>
+            <stepIdentifier>cd38d647-a907-46b8-a7e5-b4482cdd0e1c</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -1989,11 +2014,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>08a0c3d3-0e6e-4eed-b839-a859d5e7a75f</stepIdentifier>
+                <stepIdentifier>e540b9ef-de5f-43e5-be79-8fcdcf898892</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>9046ffca-3264-4ff4-93b7-c8c115a19250</stepIdentifier>
+            <stepIdentifier>477724c2-ae6b-47d9-a71b-ba3fb8ee70b1</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -2010,15 +2035,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>4c320ed8-6a11-4704-b97d-d2cbdda2c929</stepIdentifier>
+                <stepIdentifier>abe83601-80a7-463f-9205-65317eeae67b</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>7d674098-71c0-4b37-8744-0fb30790dd9b</stepIdentifier>
+            <stepIdentifier>07296c30-d2cf-4e35-a81e-730a82fff1de</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>4af9b878-edc3-46c3-919d-9c1ab450ccd8</stepIdentifier>
+            <stepIdentifier>cc5855a4-b987-4115-969c-9fd3dc9c9703</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Consultor</developerName>
@@ -2033,15 +2058,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <askCollectIfSet>false</askCollectIfSet>
                 <botMessages>
                     <message>Você já é Integrador Enerzee?</message>
-                    <messageIdentifier>b0b558d8-f677-4de7-8d49-c222a153c028</messageIdentifier>
+                    <messageIdentifier>9a43058b-3426-41cb-bc21-422827ed0805</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
                     <literalValue>Sim, já sou integrador parceiro da Enerzee</literalValue>
-                    <quickReplyOptionIdentifier>d4052a0c-fe04-4061-a52d-145641ea5566</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>18d7161f-bda9-4b53-a1a7-2c0ead3a662c</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Não, quero me tornar integrador parceiro da Enerzee</literalValue>
-                    <quickReplyOptionIdentifier>01ab61c2-3f7c-4646-90f9-ba10e89d800d</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>2c4672e4-8602-4bff-af22-7a44f43f2057</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -2055,9 +2080,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <quickReplyType>Static</quickReplyType>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <type>Collect</type>
-                <variableOperationIdentifier>5ad870e3-2ad2-44c0-9c37-9ee253749096</variableOperationIdentifier>
+                <variableOperationIdentifier>fe3c65be-133c-458a-9365-593e7ec5e186</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>038ccd03-dbda-4c4d-8921-a527127fb649</stepIdentifier>
+            <stepIdentifier>673cb520-cf8c-4a68-9450-058263200d04</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -2080,9 +2105,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Unset</type>
-                    <variableOperationIdentifier>5cfcd104-60a8-4b6e-b1ce-d9c9a80d2d9f</variableOperationIdentifier>
+                    <variableOperationIdentifier>11351b37-c8a2-467a-b712-a5484fecd207</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>0f00e06c-abd1-4f44-9944-47b2a856c9e2</stepIdentifier>
+                <stepIdentifier>e56d2ab7-dfd0-4e10-b4c1-f4add99c9620</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2092,11 +2117,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>241c7ccb-c057-438e-b212-ad8db98af318</stepIdentifier>
+                <stepIdentifier>076aa399-122c-4ed7-b98b-5eaef1e61e50</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>eefd6619-3c81-4b0a-9e69-5542e62b9294</stepIdentifier>
+            <stepIdentifier>8f2a9e1b-733c-4c9b-b6ae-d86865c4221e</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -2113,11 +2138,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>8133d8f2-73f4-4bb8-9ada-bfb897a72607</stepIdentifier>
+                <stepIdentifier>59283b76-4b02-4d86-91dd-9bd26dce3fd8</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>3e9c9620-b3bb-493f-b184-016471d7bf53</stepIdentifier>
+            <stepIdentifier>ca2abcd6-1f27-499e-8bdb-7401d6d00e2b</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -2134,15 +2159,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>3882d897-decd-44ff-b53c-181af9e1e40a</stepIdentifier>
+                <stepIdentifier>fe2840ca-3e01-4fae-848e-62539f4591d4</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>3104a97c-2846-4b05-b432-94d754e189de</stepIdentifier>
+            <stepIdentifier>37af7c39-0085-4b25-a5df-144dc8c8e4cc</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>639cd38b-680b-4d67-bca7-7c9739786ea1</stepIdentifier>
+            <stepIdentifier>9782762a-8b86-469d-baf4-91e05584b74c</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Integrador</developerName>
@@ -2157,27 +2182,27 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <askCollectIfSet>false</askCollectIfSet>
                 <botMessages>
                     <message>Selecione uma das opções:</message>
-                    <messageIdentifier>9b29ca45-46da-4642-b07e-8760d46ed3c8</messageIdentifier>
+                    <messageIdentifier>c71d0880-30a8-4802-95f7-57e3e9ce2a72</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
-                    <literalValue>Direct</literalValue>
-                    <quickReplyOptionIdentifier>3bfe7970-df24-4def-a25f-96995c443ee7</quickReplyOptionIdentifier>
+                    <literalValue>Solar</literalValue>
+                    <quickReplyOptionIdentifier>1ea03035-9200-4a73-bf63-e0ea38ceaf41</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Ezee Solar</literalValue>
-                    <quickReplyOptionIdentifier>c0a77ddf-70fb-46ea-9468-cd2eef190240</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>5f924157-8e95-4843-9e3b-f80b6ac4d71b</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Ezee Connect</literalValue>
-                    <quickReplyOptionIdentifier>6d52e745-851d-4557-a867-2be7e5d82893</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>8dde822b-b6ae-499f-8bbc-8d4c98a3b42d</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Ezee Livre</literalValue>
-                    <quickReplyOptionIdentifier>e17450c3-8c19-43b6-89d2-7f1795eb9603</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>ffc7df4f-ce19-4015-9063-24168ae4373f</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Produtos e Serviços</literalValue>
-                    <quickReplyOptionIdentifier>f8b43726-8b12-4642-b217-c0c3fd9d108a</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>56e2298f-cfd9-4501-ad5f-7efa115f152f</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -2191,9 +2216,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <quickReplyType>Static</quickReplyType>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <type>Collect</type>
-                <variableOperationIdentifier>4da5acab-47e2-4558-b9fa-cf570dd89611</variableOperationIdentifier>
+                <variableOperationIdentifier>c62a64ce-0cbb-4844-bc06-f4202d66e15c</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>77cccf6d-5fbb-4b34-9101-6102606a566e</stepIdentifier>
+            <stepIdentifier>160a0293-5ccb-4659-9f3c-6610f206a020</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -2201,30 +2226,28 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <leftOperandName>Tipo_Consultor_Produto</leftOperandName>
                 <leftOperandType>ConversationVariable</leftOperandType>
                 <operatorType>Equals</operatorType>
-                <rightOperandValue>Direct</rightOperandValue>
+                <rightOperandValue>Solar</rightOperandValue>
             </botStepConditions>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de Propostas / Suporte ao Consultor.
-
-Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>60878bd0-61a9-4401-8f27-56d07b006d94</messageIdentifier>
+                    <message>Aguarde um momento enquanto te transferimos para o nosso setor responsável.</message>
+                    <messageIdentifier>64611a3b-1fa8-4258-bc2e-bc192b8bd307</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>47d5fa20-7032-4fb5-b7db-6b963004d89b</stepIdentifier>
+                <stepIdentifier>1060c7a6-8b01-4910-a0f8-4a8e9e082753</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
                 <botVariableOperation>
                     <botVariableOperands>
-                        <sourceName>Rotear_de_EzeeBot_Propostas_Direct</sourceName>
+                        <sourceName>Rotear_de_EzeeBot_Comercial</sourceName>
                         <sourceType>FlowDefinition</sourceType>
                         <targetName>Rounting_to_queue_flow</targetName>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>ee3cc5e5-a7e9-4936-a880-36857b71ca48</variableOperationIdentifier>
+                    <variableOperationIdentifier>d01b9984-1e37-47fe-807f-5277a26582fe</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>b1614121-3661-43cd-9256-8b85c6c87e60</stepIdentifier>
+                <stepIdentifier>4c282636-c251-4702-a708-5cdf6f7b36fe</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2236,11 +2259,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>0521675b-f961-4af2-a766-294feca8b453</stepIdentifier>
+                <stepIdentifier>126ee222-e2b4-47c3-a296-1d0f89bfb5f3</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>073092ff-9f02-4268-bfac-cbdfe0dfb8f0</stepIdentifier>
+            <stepIdentifier>bd76aa01-3e61-434b-bad0-34806288eec1</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -2252,26 +2275,24 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
             </botStepConditions>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de Propostas / Suporte ao Consultor.
-
-Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>2f1e56f1-8c2d-4151-aa64-336d7cb83547</messageIdentifier>
+                    <message>Aguarde um momento enquanto te transferimos para o nosso setor responsável.</message>
+                    <messageIdentifier>5e4cf6a2-f26f-4b3c-a30d-9057514ada19</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>ba79903f-2c23-4b92-8bc6-5fd0e3e93d3c</stepIdentifier>
+                <stepIdentifier>1401f39d-5a42-4fb4-9686-d447672ca639</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
                 <botVariableOperation>
                     <botVariableOperands>
-                        <sourceName>Rotear_de_EzeeBot_Propostas_Ezee_Solar</sourceName>
+                        <sourceName>Rotear_de_EzeeBot_Comercial</sourceName>
                         <sourceType>FlowDefinition</sourceType>
                         <targetName>Rounting_to_queue_flow</targetName>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>90a14d8d-3c29-4e70-8d23-19ffd6a518a1</variableOperationIdentifier>
+                    <variableOperationIdentifier>777da0d6-3605-49de-b8ad-340c880c0b84</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>2bbc1f5a-a4ec-4d31-af32-d0f04c423055</stepIdentifier>
+                <stepIdentifier>d6daaf26-8d25-4735-ab34-c2117c7eeddd</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2283,11 +2304,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>1dfda605-0872-45fd-bae5-ca7853b6b140</stepIdentifier>
+                <stepIdentifier>d767cf38-1ad1-4097-aed3-dab7d838225e</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>8e3e8bc1-176b-4aff-9152-75bec47680ba</stepIdentifier>
+            <stepIdentifier>6236a307-cc52-4ce7-96f9-1a4d23371e18</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -2299,26 +2320,24 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
             </botStepConditions>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de Propostas / Suporte ao Consultor.
-
-Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>d671c204-58ce-4d10-a2e1-14ab22f90acd</messageIdentifier>
+                    <message>Aguarde um momento enquanto te transferimos para o nosso setor responsável.</message>
+                    <messageIdentifier>7d1e9738-ec51-4780-9d55-58325fa6ea0d</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>51fcd50a-1763-4770-93e0-a905b6a319dd</stepIdentifier>
+                <stepIdentifier>d3c5f66e-6a63-4739-9264-6d8d2475e00b</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
                 <botVariableOperation>
                     <botVariableOperands>
-                        <sourceName>Rotear_de_EzeeBot_Propostas_Connect</sourceName>
+                        <sourceName>Rotear_de_EzeeBot_Comercial</sourceName>
                         <sourceType>FlowDefinition</sourceType>
                         <targetName>Rounting_to_queue_flow</targetName>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>5e062a8d-7f3f-4953-aef6-c979a9710b19</variableOperationIdentifier>
+                    <variableOperationIdentifier>c5b0c237-7ad7-4c8b-aa0f-da71a6322a76</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>ac2fe7bf-e974-44d3-a053-44e3db0f9a5d</stepIdentifier>
+                <stepIdentifier>5ad21d38-36c1-40df-a225-34106506d2d0</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2330,11 +2349,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>1e72f9ae-d97d-43f6-85e4-30c9be377020</stepIdentifier>
+                <stepIdentifier>35f54b2c-5d4a-490b-8993-7f1cb4c56f19</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>2af9dea5-6512-4d50-9ced-75e32072f4e5</stepIdentifier>
+            <stepIdentifier>ad048e85-fcc6-474e-b9c0-fa452ac02c74</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -2346,26 +2365,24 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
             </botStepConditions>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de Propostas / Suporte ao Consultor.
-
-Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>5d901047-1de1-4fc7-8548-c4aec7798b5e</messageIdentifier>
+                    <message>Aguarde um momento enquanto te transferimos para o nosso setor responsável.</message>
+                    <messageIdentifier>b7c82e19-946a-4d2f-9639-adfcc8df4f62</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>9f49581c-a41d-437a-8a6a-ec38be9b166b</stepIdentifier>
+                <stepIdentifier>a172be18-d19b-4ea4-9df6-4f83de5fca35</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
                 <botVariableOperation>
                     <botVariableOperands>
-                        <sourceName>Rotear_de_EzeeBot_Ezee_Livre</sourceName>
+                        <sourceName>Rotear_de_EzeeBot_Comercial</sourceName>
                         <sourceType>FlowDefinition</sourceType>
                         <targetName>Rounting_to_queue_flow</targetName>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>8f539a80-9eba-4cbf-acdb-2e5f5477ad9c</variableOperationIdentifier>
+                    <variableOperationIdentifier>e9ccc6e9-f926-439c-814e-6539d9c342aa</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>834c18bd-89a4-4cde-a95f-55604a88ef18</stepIdentifier>
+                <stepIdentifier>87e03ac1-b75c-4de4-994a-100819854744</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2377,11 +2394,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>057b9e97-2883-42e9-b0b7-d8e14c1231e6</stepIdentifier>
+                <stepIdentifier>8de8f1c3-d63e-4381-8a19-da8e2fd4cf35</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>a07f9664-6a3f-467d-a541-df2a7075e056</stepIdentifier>
+            <stepIdentifier>1f8070ad-a62d-4ce3-9d2f-af2f3efaca21</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -2393,26 +2410,24 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
             </botStepConditions>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de Propostas / Suporte ao Consultor.
-
-Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>05f40a22-72bc-4dd7-8d82-7d3261e51ab2</messageIdentifier>
+                    <message>Aguarde um momento enquanto te transferimos para o nosso setor responsável.</message>
+                    <messageIdentifier>e2e331c8-c868-40d7-a43b-5dfc6f3803a4</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>92744ebf-ea29-4707-9364-0ec1b50ffc97</stepIdentifier>
+                <stepIdentifier>79166585-642b-43d4-a8cc-91ed8ec4df83</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
                 <botVariableOperation>
                     <botVariableOperands>
-                        <sourceName>Rotear_de_Ezeebot_Propostas_Produtos_e_Servi_os</sourceName>
+                        <sourceName>Rotear_de_EzeeBot_Comercial</sourceName>
                         <sourceType>FlowDefinition</sourceType>
                         <targetName>Rounting_to_queue_flow</targetName>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>43a534bd-f28d-47fd-b878-1256f71940b0</variableOperationIdentifier>
+                    <variableOperationIdentifier>ba69d426-19b7-4e00-a3a0-7f644ffc6b04</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>45a1bfd1-b343-418d-bf2a-b2281a3e24e1</stepIdentifier>
+                <stepIdentifier>6fb36ebd-f54c-49a8-a16b-3f6f1f90eead</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2424,18 +2439,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>a7c66745-655e-4cae-96d0-f5340de7e007</stepIdentifier>
+                <stepIdentifier>50344571-ea91-4da4-8ede-a5f1a8dec1db</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>54f036b8-c68d-4031-af45-e06f329a42f7</stepIdentifier>
+            <stepIdentifier>1d81a1ee-96fd-4657-82dd-c7d920d26173</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>86b14389-2dea-477b-9c3e-4dc752e55287</stepIdentifier>
+            <stepIdentifier>6054e462-82fd-48f0-a5e8-48bc1e4658d2</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Consultor_Propostas_Suporte_ao_Consultor</developerName>
@@ -2448,12 +2463,10 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
         <botSteps>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de Assitência Técnica.
-
-Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>5abb6d5f-f6f9-4d6a-a363-b875001ca3e4</messageIdentifier>
+                    <message>Aguarde um momento enquanto te transferimos para o nosso setor responsável.</message>
+                    <messageIdentifier>6fd8f1f8-4698-4e6b-bea7-698ded2d8f94</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>2726a1d0-c19d-4a99-ad54-8c719892b7df</stepIdentifier>
+                <stepIdentifier>350b4006-aa87-4e12-b8f1-42a12f4eef1b</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -2465,9 +2478,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>f0190e5c-a097-49a4-9456-39140776a99e</variableOperationIdentifier>
+                    <variableOperationIdentifier>780ba394-cd48-4006-9c06-e4a69641298c</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>c4dd26b2-7856-42db-a473-87d7686d54f2</stepIdentifier>
+                <stepIdentifier>8434063b-6cea-4dd4-a86f-0221304095c7</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2479,18 +2492,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>080ee3bb-9364-4ece-9e02-4d6ca9fb5191</stepIdentifier>
+                <stepIdentifier>d5774d16-ed78-4fd8-b57f-67410611829d</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>a9ebd9b9-85ab-4743-ad11-821e54b0bfea</stepIdentifier>
+            <stepIdentifier>43953678-38ab-49ea-8a9b-ef88f370566f</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>42c8950c-53c0-4613-bb5f-352ecb8a609a</stepIdentifier>
+            <stepIdentifier>704284b9-da28-4dd1-8a73-d2fcba7b3e87</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Consultor_Viabilidade_tecnica</developerName>
@@ -2506,9 +2519,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     <message>Aguarde um momento enquanto te transferimos para o nosso setor de Financiamento.
 
 Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>b50e2607-01d5-44fe-b43e-b9c63331573f</messageIdentifier>
+                    <messageIdentifier>959dec36-d100-4547-944f-a25c34618353</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>fdf3a756-ded0-4e22-9f4e-1fd81a1e862e</stepIdentifier>
+                <stepIdentifier>968da4f5-35ee-4d85-8030-da22a9b1c354</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -2520,9 +2533,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>94f75514-0cbc-4498-9f69-08e5c4d6b462</variableOperationIdentifier>
+                    <variableOperationIdentifier>16ab2c75-ccdc-43f5-862d-8703724ed7c0</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>66f669bc-3855-4dc2-bb49-c1c8219b744b</stepIdentifier>
+                <stepIdentifier>87dbb2b0-dece-4543-a130-d9b1c0dd8fe5</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2534,18 +2547,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>b510f9ec-5678-4f12-9094-4f3ddb1d2c19</stepIdentifier>
+                <stepIdentifier>df71c030-2456-45ce-9af6-27d7cb5aefff</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>b90f3d26-5348-4477-90cb-3b38522fc214</stepIdentifier>
+            <stepIdentifier>c82ecb02-7037-4c3e-9992-976bd089fdcc</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>1e5fd6ae-e1e7-49a4-a09e-9de21b4c63aa</stepIdentifier>
+            <stepIdentifier>bbb875d7-edec-48d3-917e-a8a3f0410e58</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Consultor_Financiamento</developerName>
@@ -2561,9 +2574,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     <message>Aguarde um momento enquanto te transferimos para o nosso setor de Contratos.
 
 Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>18aff698-f13e-4b9e-8829-2f3056d44bcc</messageIdentifier>
+                    <messageIdentifier>0f1d2781-ed2d-442d-832d-8d37d209337f</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>af0fb221-bfb2-4b1a-bc54-77fe847b4f14</stepIdentifier>
+                <stepIdentifier>094744e8-dcd8-43ef-807b-efbcaae4d3ab</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -2575,9 +2588,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>49681ac3-381d-42c4-bbe6-cf102437c7f1</variableOperationIdentifier>
+                    <variableOperationIdentifier>600e1161-087e-46cc-b8ba-33f0717bf3a6</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>1af8bc0c-40dd-4ed3-999a-dc455b12c284</stepIdentifier>
+                <stepIdentifier>d019cce8-bf41-4636-9e3c-12acfc2a1dcc</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2589,18 +2602,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>1834b4c2-6c93-42fb-b8c1-24a19b73d5b9</stepIdentifier>
+                <stepIdentifier>d5e69cb1-3c8a-4932-b685-86de03117f62</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>8282f52e-b33f-4619-9728-d93aaeb487f5</stepIdentifier>
+            <stepIdentifier>7137a89e-5f94-4f60-8fe5-793a224b57b6</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>5300b2cf-4f40-440d-afed-7de0ef0a2ee1</stepIdentifier>
+            <stepIdentifier>312c3e55-163d-4d59-b082-389b5a8349dc</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Consultor_Contratos</developerName>
@@ -2615,15 +2628,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <askCollectIfSet>false</askCollectIfSet>
                 <botMessages>
                     <message>Você deseja falar sobre:</message>
-                    <messageIdentifier>8f4e9310-f808-49b3-acd9-30a093362b1d</messageIdentifier>
+                    <messageIdentifier>c6734389-ab6a-4e63-bbc8-cf84dae686a7</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
                     <literalValue>Assistência Técnica</literalValue>
-                    <quickReplyOptionIdentifier>748bfb7f-80fe-46aa-89c8-0d3547b214c3</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>ecf81ea8-4f71-4cbf-b687-1057014aa35c</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Jornada do Cliente</literalValue>
-                    <quickReplyOptionIdentifier>8c99daf8-9e5f-4675-a93c-cd037c54e33f</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>e88c79aa-020d-45b4-98d6-0e2d7fca1d61</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -2637,9 +2650,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <quickReplyType>Static</quickReplyType>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <type>Collect</type>
-                <variableOperationIdentifier>ebd3d7ef-263a-4fdc-b316-88ceb264ca0a</variableOperationIdentifier>
+                <variableOperationIdentifier>071c922e-8983-409e-b6e2-49f10fbbec31</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>f6d8f880-7c56-479b-b430-7220af897a9d</stepIdentifier>
+            <stepIdentifier>6045d6d1-4560-4fed-9d0f-964eb3714707</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -2654,9 +2667,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     <message>Aguarde um momento enquanto te transferimos para o nosso setor de Assistência Técnica.
 
 Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>35d3afb4-9621-4063-8173-3893fc21e162</messageIdentifier>
+                    <messageIdentifier>8732a6b5-3f8a-46b2-b65a-15ba0f8dbfd8</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>c1f24709-7ac6-468d-ae39-e7897f55082f</stepIdentifier>
+                <stepIdentifier>c672a79e-5a5a-4809-b192-5f40c7ae43af</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -2668,9 +2681,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>9e5c9000-97ce-48fb-b6fa-dccede980050</variableOperationIdentifier>
+                    <variableOperationIdentifier>fc16f901-3fee-4b76-99f8-df53a07174f4</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>978155f7-ac0b-4662-85eb-022550fe192d</stepIdentifier>
+                <stepIdentifier>6dc2ef16-c4b5-479f-82ff-4373a3e05d6f</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2682,11 +2695,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>bfce1c7a-f1d6-4090-b647-5867ed3e1fd2</stepIdentifier>
+                <stepIdentifier>6d56fa06-ee5f-4503-a1f2-6cf0571f49e1</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>24976771-b0c6-4d75-a20a-3aa3654bf22a</stepIdentifier>
+            <stepIdentifier>3027e3c5-693d-4e8c-a51d-e5b0ece0d2c3</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -2701,9 +2714,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     <message>Aguarde um momento enquanto te transferimos para o nosso setor de Jornada do Cliente.
 
 Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>64cf5bd6-996e-4bb6-9a30-3da8db6c3d87</messageIdentifier>
+                    <messageIdentifier>3c8a104f-78e2-4680-b33c-faa0dbfc4faa</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>a2b6f0a1-1b83-4a78-a53b-6b254c99cedf</stepIdentifier>
+                <stepIdentifier>a7df4e0f-d6a5-421e-b615-019965dcfae6</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -2715,9 +2728,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>fb6c0529-1229-4baa-b0f1-e0f179d11341</variableOperationIdentifier>
+                    <variableOperationIdentifier>c8571512-2ee8-418d-8d5d-3ac6134354b9</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>9f4ecc78-f68b-4d41-bf71-0d5a9cdf5c43</stepIdentifier>
+                <stepIdentifier>6bd4db28-510e-4357-94dc-aa41c43bb373</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2729,18 +2742,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>64779dea-801a-4473-bc39-1a0c1108c4ab</stepIdentifier>
+                <stepIdentifier>2b0ec816-c76b-4254-b177-e570cfc13fc5</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>1f6ec907-7800-4332-bc20-b1858b48b6ce</stepIdentifier>
+            <stepIdentifier>42133b3e-b4b4-4d29-b9fe-b2f94552c542</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>cb1e0192-3d7f-4aeb-b0e7-982f5c9e16c7</stepIdentifier>
+            <stepIdentifier>0048e621-d33b-4a6f-a96c-deb876880ffc</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Consultor_Pos_venda</developerName>
@@ -2753,12 +2766,10 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
         <botSteps>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de Novos Consultores.
-
-Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>f29d3eb1-d857-46a5-9190-82dc7e1665d3</messageIdentifier>
+                    <message>Aguarde um momento enquanto te transferimos para o nosso setor responsável.</message>
+                    <messageIdentifier>fe7b85e7-871d-4326-9799-d2860dcd376e</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>469b3295-175e-46d1-84f6-e0f8e583a890</stepIdentifier>
+                <stepIdentifier>ee6deaf1-f1fc-4f0d-8d60-290d5d2f5f00</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -2770,9 +2781,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>8583d3df-708b-42f0-97b9-1a400551fbe7</variableOperationIdentifier>
+                    <variableOperationIdentifier>0753b112-a7ae-4aca-b1cb-595925d92d76</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>d2f298ca-4305-4a78-9128-b4d47dc01255</stepIdentifier>
+                <stepIdentifier>1a381064-882c-444d-be9d-985f37655377</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2784,18 +2795,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>53a1c580-1132-4acb-b4ca-ddc84a0f1550</stepIdentifier>
+                <stepIdentifier>5552a173-bf66-4cd5-861a-7642e1c744f0</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>60861af7-4889-4962-8465-3202c88d8517</stepIdentifier>
+            <stepIdentifier>b9203ee7-4e62-4a53-8947-cf6f5a21c86e</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>b21250ca-b2f5-46bf-95d2-d995e6660440</stepIdentifier>
+            <stepIdentifier>2018e706-18ce-4626-aab4-e607f6c78775</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Consultor_Me_tornar_consultor</developerName>
@@ -2808,12 +2819,10 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
         <botSteps>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de Suporte ao Integrador.
-
-Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>cabb2efa-551e-4ec6-aaf8-dc6e3bce5fb5</messageIdentifier>
+                    <message>Aguarde um momento enquanto te transferimos para o nosso setor resposável.</message>
+                    <messageIdentifier>d4755e8b-c3c8-4426-8b72-9c22a65d1698</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>62a62e4b-c038-41e0-a907-e72ee60c2078</stepIdentifier>
+                <stepIdentifier>040653d4-d6a6-4770-b9c3-dbd57111f2cc</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -2825,9 +2834,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>78224752-372f-4551-8569-533e7d923dde</variableOperationIdentifier>
+                    <variableOperationIdentifier>03c8d24a-8f20-415d-900d-de617ed1de7e</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>72bbfa62-a175-47a0-99e6-d8ebb4939f5a</stepIdentifier>
+                <stepIdentifier>67ba02f1-2b06-4892-b816-6c7ed7f07f94</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2839,18 +2848,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>8d4e4a8e-fa2d-4628-99c6-a370b5c9bc88</stepIdentifier>
+                <stepIdentifier>547055d4-4dad-476a-a7e0-29b7badd37f0</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>7304826b-5047-429b-b78a-8a6788f1b882</stepIdentifier>
+            <stepIdentifier>d3eec3c4-db21-44f3-9440-e46aafc7a179</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>f58e8218-8ab6-4641-8b46-509076e7c5e3</stepIdentifier>
+            <stepIdentifier>8412c2f2-e76a-4fe5-b454-50a587b14ff6</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Integrador_ja_e_integrador_Enerzee</developerName>
@@ -2863,26 +2872,24 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
         <botSteps>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de Novos Integradores.
-
-Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>f2b17b2a-83f8-478c-b7ef-50daeb0c8a66</messageIdentifier>
+                    <message>Aguarde um momento enquanto te transferimos para o nosso setor responsável.</message>
+                    <messageIdentifier>9722c5e6-0dd8-4d82-a7aa-f61448314514</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>717b0844-aa58-455f-8c3a-c3356916a997</stepIdentifier>
+                <stepIdentifier>21cf64f5-c3c1-4012-af7c-24978639d876</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
                 <botVariableOperation>
                     <botVariableOperands>
-                        <sourceName>Rotear_de_EzeeBot_Quero_ser_um_integrador</sourceName>
+                        <sourceName>Rotear_de_EzeeBot_Suporte_ao_Integrador</sourceName>
                         <sourceType>FlowDefinition</sourceType>
                         <targetName>Rounting_to_queue_flow</targetName>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>94c9211d-daa8-4557-bf37-54e8b5ca5f21</variableOperationIdentifier>
+                    <variableOperationIdentifier>acfcd07b-7c9b-4a23-b3de-672f3b3ed9ad</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>2ed06993-a70a-4a13-986a-8c8ab0d3ad55</stepIdentifier>
+                <stepIdentifier>1188c445-1502-430b-90b9-0b25c980d8b9</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2894,18 +2901,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>d514f82d-d981-4582-9e03-a1137a792fa6</stepIdentifier>
+                <stepIdentifier>8a83ccf5-afbc-4935-b732-83aef4aff718</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>5b1c625f-f527-49eb-ba1f-fc78c721af4c</stepIdentifier>
+            <stepIdentifier>98fe248b-ab37-40a9-ba95-a7fe975c8991</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>527e2672-73c7-4873-aeb6-09f6163fbfe1</stepIdentifier>
+            <stepIdentifier>3209c5af-f325-4d88-8209-0c349b3debd7</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Integrador_quero_me_tornar_integrador_Enerzee</developerName>
@@ -2933,9 +2940,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </invocationMappings>
                 </botInvocation>
                 <type>Set</type>
-                <variableOperationIdentifier>fb032c0a-212e-4573-bf56-d612c43c4a67</variableOperationIdentifier>
+                <variableOperationIdentifier>e36375be-dbe4-490b-8385-b16022546783</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>fc47b1da-40d2-46cd-b1c4-6ecd6e263a11</stepIdentifier>
+            <stepIdentifier>5e1a1c93-e699-4ea5-9e59-2f64a6490dfa</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -2949,13 +2956,13 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <botMessages>
                     <message>Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.
 Retornaremos o contato.</message>
-                    <messageIdentifier>c56beabb-32cc-4d45-b9c4-ad656d7dc3c7</messageIdentifier>
+                    <messageIdentifier>7fbe755a-9366-4179-abaf-74325674110d</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>55632f3c-46d3-41b6-b89a-3e8bddc84c4f</stepIdentifier>
+                <stepIdentifier>49ca1adf-5b4d-4378-83a3-43de4fc91015</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>49b3b87d-9ede-4096-9ce8-bae951262428</stepIdentifier>
+            <stepIdentifier>8604949c-0241-44a9-b324-1d193dc7cd1b</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -2967,15 +2974,14 @@ Retornaremos o contato.</message>
             </botStepConditions>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto transferimos para o setor responsável.
-Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>526bf884-7c4f-465b-83db-6f2b6cbddfa1</messageIdentifier>
+                    <message>Aguarde um momento enquanto transferimos para o setor responsável.</message>
+                    <messageIdentifier>d5f7babc-bd3d-46ab-af5a-0b96e68108c2</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>e08b84d3-5b70-4e47-9cf1-8a3a1f327b56</stepIdentifier>
+                <stepIdentifier>d0e89559-053b-44a0-8f25-81f1218dbadf</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>bda1794f-ed0b-46f2-a2dd-c48b4bd44599</stepIdentifier>
+            <stepIdentifier>04008b46-7038-4c3e-8e25-0f10e39ffa59</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -2988,9 +2994,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>f2c9ae26-88c8-4357-852d-05e20b6a6eb6</variableOperationIdentifier>
+                    <variableOperationIdentifier>11f0c6e6-378a-4bfa-b319-958dfff6446e</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>0d0988ad-2a27-4a25-8218-9ac58499c7aa</stepIdentifier>
+                <stepIdentifier>e1481d8e-f00e-474f-a154-6b3370a6ff65</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -3002,18 +3008,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>9b5a3765-9b8e-41de-abcc-53a0f1d6699d</stepIdentifier>
+                <stepIdentifier>a54bc7d7-0f59-4e1d-9edb-58f3cd9d51f6</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>e0406088-3c99-4128-bf1c-f2be4e491582</stepIdentifier>
+            <stepIdentifier>a026e911-d66f-4435-922b-93a53a82bb13</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>531e5eb5-fb1c-4027-b01c-04781ddb852d</stepIdentifier>
+            <stepIdentifier>743c808a-0624-40cb-bca4-7ddf1b0cbd36</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Recepcao</developerName>
@@ -3041,9 +3047,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </invocationMappings>
                 </botInvocation>
                 <type>Set</type>
-                <variableOperationIdentifier>1e202ddf-c9ec-437f-805a-6090e60238d9</variableOperationIdentifier>
+                <variableOperationIdentifier>df8e6ea8-b67b-49ea-9d0a-3597b72709d1</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>6a07fa72-5359-4596-b387-ac0c9423a300</stepIdentifier>
+            <stepIdentifier>43bffdd2-f719-4f22-a845-1f68c7c74d45</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -3057,13 +3063,13 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <botMessages>
                     <message>Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.
 Retornaremos o contato.</message>
-                    <messageIdentifier>48aa82f8-50ff-499d-8e4c-891275a04d4b</messageIdentifier>
+                    <messageIdentifier>8b54174b-ccc9-4fe9-9266-2165a15e8300</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>873091a2-4ef3-4a9b-9adf-2f52716da683</stepIdentifier>
+                <stepIdentifier>12d6772f-01d2-45df-acd5-17bec54a0433</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>3820f0b1-1171-4967-a8be-057332cdcd22</stepIdentifier>
+            <stepIdentifier>17d1a098-5002-4901-a490-07cfd4b78ddf</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -3075,30 +3081,29 @@ Retornaremos o contato.</message>
             </botStepConditions>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto transferimos para o setor responsável.
-Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>718035c1-8c17-4793-9209-7c2dc36f2bd9</messageIdentifier>
+                    <message>Aguarde um momento enquanto transferimos para o setor responsável.</message>
+                    <messageIdentifier>43461e1d-c439-479a-bee9-b4d1b7c19105</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>4f1f9b13-0d2b-40bf-b0db-0759112e8dec</stepIdentifier>
+                <stepIdentifier>599dfefd-3828-4bd6-86d7-9e38478b323a</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>4e3fef50-b9f9-4239-bb04-729311ec9e67</stepIdentifier>
+            <stepIdentifier>fd4af070-d69c-4baf-ae28-1d6567995740</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
             <botSteps>
                 <botVariableOperation>
                     <botVariableOperands>
-                        <sourceName>Rotear_de_EzeeBot_Recepcao</sourceName>
+                        <sourceName>Rotear_de_EzeeBot_Atendimento_ao_Consultor</sourceName>
                         <sourceType>FlowDefinition</sourceType>
                         <targetName>Rounting_to_queue_flow</targetName>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>b96dfeb6-f11a-4e62-9776-ac68d2c69f07</variableOperationIdentifier>
+                    <variableOperationIdentifier>a07178f9-07e7-4415-9761-16430b207907</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>5de61aab-d4f2-4b1d-9349-43eee44c001f</stepIdentifier>
+                <stepIdentifier>17b1c8f4-2d22-4284-8c40-a494c6e23c9d</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -3110,18 +3115,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>2748b8fd-abc4-453e-b663-3e7fe6aca1e7</stepIdentifier>
+                <stepIdentifier>0d25e926-f6db-4a6d-8c05-b27f45e347ed</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>ca53ae98-d937-45c2-9681-cdc7293efacd</stepIdentifier>
+            <stepIdentifier>4d8a21af-5fb6-4dc8-bdaf-dfaa569881c5</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
             <conversationSystemMessage>
                 <type>Transfer</type>
             </conversationSystemMessage>
-            <stepIdentifier>47a0d8ed-f754-466d-9ae1-09b63cac1d3f</stepIdentifier>
+            <stepIdentifier>90aadd76-fad2-428a-8774-7896d7b111ee</stepIdentifier>
             <type>SystemMessage</type>
         </botSteps>
         <developerName>Consultor_Suporte_ao_Consultor</developerName>
@@ -3135,23 +3140,23 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <askCollectIfSet>false</askCollectIfSet>
                 <botMessages>
                     <message>Escolha uma das opções abaixo para que possamos lhe direcionar melhor:</message>
-                    <messageIdentifier>f6dced5a-4dba-4a61-b7dc-fbcb90caca7c</messageIdentifier>
+                    <messageIdentifier>6e4f6712-1b4b-4f98-963c-5142ffd82fe5</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
                     <literalValue>Cliente</literalValue>
-                    <quickReplyOptionIdentifier>7f11eb5c-4ba0-42b7-892f-783032b7607b</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>88648a06-af02-4125-9c96-90382b407ecf</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Consultor</literalValue>
-                    <quickReplyOptionIdentifier>eaf2f82d-6c44-48e6-8808-d0d761a32a9a</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>803c468f-b5c6-4840-af8a-678c3a4ffcfe</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Outros Assuntos</literalValue>
-                    <quickReplyOptionIdentifier>0d03bb0f-ed34-49bd-af0d-3d538e17301c</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>b9d63c38-0b00-40b8-a170-daed5fd4dcf4</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Outros Assuntos</literalValue>
-                    <quickReplyOptionIdentifier>b7768b53-aac4-1d03-b856-c725c116a9ad</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>7d0fd3ed-5acd-4014-b4f6-3260d80e475a</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -3165,9 +3170,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <quickReplyType>Static</quickReplyType>
                 <quickReplyWidgetType>Menu</quickReplyWidgetType>
                 <type>Collect</type>
-                <variableOperationIdentifier>0063c6f3-5335-4290-a211-2db2ccf3a1cc</variableOperationIdentifier>
+                <variableOperationIdentifier>d83a7d04-f104-45cd-803d-3ab3da128051</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>66284cff-56c5-4d8f-bd2f-8cf04d5dddff</stepIdentifier>
+            <stepIdentifier>3a28a7db-5e80-45e2-9148-9411bf5a476c</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -3184,11 +3189,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>35346af5-27b7-434f-88a7-ce54423b172f</stepIdentifier>
+                <stepIdentifier>683fdf7a-8284-4117-bb28-8da12d54191f</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>4f963629-1c9e-4bb7-abbf-cedef49f2db1</stepIdentifier>
+            <stepIdentifier>2f4a7d27-a75a-4a63-8d1b-0ae70cb8df6b</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -3205,11 +3210,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>9f712a80-dce6-4eb3-9d7d-03aea740cc2c</stepIdentifier>
+                <stepIdentifier>7d0020ac-0199-4249-bc68-c10b70dd538e</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>99529b32-6965-421a-9b72-a03ebcf35c8f</stepIdentifier>
+            <stepIdentifier>d8225219-e2f8-4aaa-a4cd-e76a84e673f5</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -3226,15 +3231,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </botNavigationLinks>
                     <type>Call</type>
                 </botNavigation>
-                <stepIdentifier>c5515462-3583-486a-b6b5-90f08da673b1</stepIdentifier>
+                <stepIdentifier>cd34cfea-f1d3-4130-b4f7-e55cb3a20447</stepIdentifier>
                 <type>Navigation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>361e1757-fc2e-4efd-a762-cddcc5fbcf90</stepIdentifier>
+            <stepIdentifier>c0da4c5a-9d86-4144-9c7b-6f662fb6c2d9</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>8906df47-d402-48a1-befd-2cea3f53fe7f</stepIdentifier>
+            <stepIdentifier>379d59de-b0e0-461d-89d0-4448acc5f486</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Pergunta_Inicial</developerName>
@@ -3246,10 +3251,10 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
         <botSteps>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de Propostas / Suporte ao Consultor. Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>81132c41-2554-4792-9995-7f734055a6c7</messageIdentifier>
+                    <message>Aguarde um momento enquanto te transferimos para o nosso setor responsável.</message>
+                    <messageIdentifier>a8214ee9-523a-438b-85e2-3e9d584c0f9e</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>14ce454f-e2bd-4e39-a5c0-a05b0209c515</stepIdentifier>
+                <stepIdentifier>df25ea49-62da-4cf5-8c86-8ac380148b1e</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -3261,9 +3266,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>eb963a8a-2dc0-49d6-b0c6-7abf3d4d7748</variableOperationIdentifier>
+                    <variableOperationIdentifier>3707304e-7119-40d7-a28f-4ced5763584c</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>67ef148a-bc6c-4644-93ed-6d498bb5afcf</stepIdentifier>
+                <stepIdentifier>50bfb500-5953-494b-bbbc-c8d616e68e18</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -3275,15 +3280,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>b89aa34a-28a7-4f55-9621-ccdcdd3e184e</stepIdentifier>
+                <stepIdentifier>a5f88f52-c109-4901-9051-ff4ff637c9b9</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>ebeb358b-b741-460e-91a0-b6fb8c591305</stepIdentifier>
+            <stepIdentifier>7d6a1a08-74c1-4f04-8e1b-dcfd4cc9414a</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>8aaf5a30-ede7-4301-be7b-28d5a66f197e</stepIdentifier>
+            <stepIdentifier>4d28ebba-93c0-4c83-9f04-9034691471b0</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Consultor_Assist_ncia_tecnica</developerName>
@@ -3298,15 +3303,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <askCollectIfSet>false</askCollectIfSet>
                 <botMessages>
                     <message>Agora, escolha a opção que melhor descreve sua necessidade:</message>
-                    <messageIdentifier>16020ef7-887e-2143-8bed-828a39e45ccf</messageIdentifier>
+                    <messageIdentifier>1aa0fcb9-6378-4df9-8dc4-af908251c2e2</messageIdentifier>
                 </botMessages>
                 <botQuickReplyOptions>
                     <literalValue>Acompanhar minha instalação</literalValue>
-                    <quickReplyOptionIdentifier>8b63e76c-5993-dff1-cdaf-ec9c6e9ee4e9</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>1b37551c-87a3-4b10-9d18-7683c878703f</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botQuickReplyOptions>
                     <literalValue>Assistência ou manutenção</literalValue>
-                    <quickReplyOptionIdentifier>045b4c3c-22cd-9b32-63d6-43c209a916af</quickReplyOptionIdentifier>
+                    <quickReplyOptionIdentifier>7d201e5d-b827-40f6-947d-66c09e8816e0</quickReplyOptionIdentifier>
                 </botQuickReplyOptions>
                 <botVariableOperands>
                     <disableAutoFill>true</disableAutoFill>
@@ -3320,9 +3325,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <quickReplyType>Static</quickReplyType>
                 <quickReplyWidgetType>Buttons</quickReplyWidgetType>
                 <type>Collect</type>
-                <variableOperationIdentifier>0830b92c-9b0f-de56-b603-57892524c926</variableOperationIdentifier>
+                <variableOperationIdentifier>3e40e0d8-7218-45f8-bcd9-fb51b9077d74</variableOperationIdentifier>
             </botVariableOperation>
-            <stepIdentifier>3373ebb6-6bd4-45ad-9413-4c87c28cebdc</stepIdentifier>
+            <stepIdentifier>20075234-4fbd-4067-aa1e-7baf021f8ae8</stepIdentifier>
             <type>VariableOperation</type>
         </botSteps>
         <botSteps>
@@ -3336,9 +3341,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                 <botMessages>
                     <message>Aguarde um momento enquanto te transferimos para o nosso setor de assistência técnica.
 Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>9c4f9b1c-d0ec-bded-c043-d6c40bcc5c5b</messageIdentifier>
+                    <messageIdentifier>a55ee424-3276-40be-aa83-bf9da0720071</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>d3c40f7a-0502-c755-83c6-f86c0e6e3975</stepIdentifier>
+                <stepIdentifier>638cf207-2a1f-420b-ae38-ed83c02439d7</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -3350,13 +3355,13 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>c49c60ed-9f02-4ef9-bebe-1c760187122e</variableOperationIdentifier>
+                    <variableOperationIdentifier>8bead19d-8552-4f34-ae67-7a304a74f556</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>27705434-281d-4fbf-88ae-5efe77b8daa6</stepIdentifier>
+                <stepIdentifier>746be787-d157-4aaa-aa5a-d7cb4157b65b</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>6d834690-08b7-45b5-a442-83d5258688dd</stepIdentifier>
+            <stepIdentifier>7d26590d-e7ce-4c08-9a40-82887b7a9aa4</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -3371,9 +3376,9 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     <message>Aguarde um momento enquanto te transferimos para o nosso setor de Atendimento ao Cliente.
 
 Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>9ef6b42a-8824-7121-7828-13409fbac3a7</messageIdentifier>
+                    <messageIdentifier>867a172d-956f-48dc-97fd-7403e1cc0cf3</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>d7d3317a-c291-2d0c-95f0-8719e56bad0e</stepIdentifier>
+                <stepIdentifier>0a8c89a7-1992-4141-b52e-fb3d08d7bdb4</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -3385,17 +3390,17 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>d7ec767a-5537-49a3-ac19-fc63d94fe75a</variableOperationIdentifier>
+                    <variableOperationIdentifier>a0258b98-7e04-4dcb-9e19-8c700c383976</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>bac38a4a-b99d-4ab5-9c18-c28ed727b9d5</stepIdentifier>
+                <stepIdentifier>dbedba12-7651-428b-bec0-f1fe68ca3001</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>234314b8-71d6-b46f-dda0-39e676d3c86b</stepIdentifier>
+            <stepIdentifier>0c32cb48-bfbf-4f2a-a554-e5301865d862</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
-            <stepIdentifier>5291a734-ce21-42f1-9f48-c941f09cfb50</stepIdentifier>
+            <stepIdentifier>91162ff9-edb0-4641-9009-7efe01521ce2</stepIdentifier>
             <type>Wait</type>
         </botSteps>
         <developerName>Cliente</developerName>
@@ -3477,6 +3482,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
         <developerName>isWithin</developerName>
         <includeInPrompt>false</includeInPrompt>
         <label>isWithin</label>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <developerName>Name</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Name</label>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <developerName>Name_User</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Name_User</label>
     </conversationVariables>
     <conversationVariables>
         <dataType>Text</dataType>
@@ -3569,18 +3586,6 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
         <developerName>userId</developerName>
         <includeInPrompt>false</includeInPrompt>
         <label>userId</label>
-    </conversationVariables>
-    <conversationVariables>
-        <dataType>Text</dataType>
-        <developerName>Name</developerName>
-        <includeInPrompt>false</includeInPrompt>
-        <label>Name</label>
-    </conversationVariables>
-    <conversationVariables>
-        <dataType>Text</dataType>
-        <developerName>Name_User</developerName>
-        <includeInPrompt>false</includeInPrompt>
-        <label>Name_User</label>
     </conversationVariables>
     <entryDialog>Welcome</entryDialog>
     <intentDisambiguationEnabled>false</intentDisambiguationEnabled>
