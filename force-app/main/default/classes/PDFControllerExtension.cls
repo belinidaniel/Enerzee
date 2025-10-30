@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-25-2025
+ * @last modified on  : 10-29-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class PDFControllerExtension {
@@ -554,7 +554,8 @@ public with sharing class PDFControllerExtension {
                         AdditionalCost__c,
                         OtherCosts__c,
                         CoberturaCost__c,
-                        StruturalReport__c
+                        StruturalReport__c,
+                        OtherCostsDescription__c
                 FROM    ViabilityStudy__c
                 WHERE   Opportunity__c = :this.opportunity.Id
                 ORDER BY CreatedDate DESC
@@ -576,6 +577,14 @@ public with sharing class PDFControllerExtension {
             for(String label : splitMultiSelectValues(multiSelectValues)){
                 Decimal amount = resolveViabilityCostAmount(label, viability);
                 if(amount != null){
+                    if(label == 'Outros custos' || label == 'Outros custos'){
+                        if(viability.OtherCostsDescription__c == null || viability.OtherCostsDescription__c == ''){
+                            label = 'Outros custos';
+                        }else{
+                            String otherDesc = viability.OtherCostsDescription__c != null ? viability.OtherCostsDescription__c : '';
+                            label = otherDesc;
+                        }
+                    }
                     entries.add(label + ' (' + formatCurrencyBR(amount) + ')');
                 } else {
                     entries.add(label);

@@ -92,6 +92,7 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.addPlanToUserInVirtualOffice((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.sendAprovalUpdate((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.handleOpportunityLeadConversion((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
+        OpportunityBO.closeActivitiesAndFlowsForClosedLost((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityShareHandler.gerenciarCompartilhamentoOportunidade((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
 
     }
