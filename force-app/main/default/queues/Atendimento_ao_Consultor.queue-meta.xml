@@ -3,6 +3,12 @@
     <doesSendEmailToMembers>true</doesSendEmailToMembers>
     <name>Atendimento ao Consultor</name>
     <queueMembers>
+        <roles>
+            <role>Assistente_Comercial</role>
+            <role>Assistente_de_Atendimento_Consultor</role>
+            <role>CSO</role>
+            <role>GerenteComercial</role>
+        </roles>
         <users>
             <user>dayane.silva@enerzee.com.br</user>
         </users>
@@ -22,6 +28,9 @@
     </queueSobject>
     <queueSobject>
         <sobjectType>MessagingSession</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>SetupMessagingSession__c</sobjectType>
     </queueSobject>
     <queueSobject>
         <sobjectType>Task</sobjectType>

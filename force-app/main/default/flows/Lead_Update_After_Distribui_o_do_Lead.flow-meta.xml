@@ -404,7 +404,7 @@
         <locationY>755</locationY>
         <defaultConnector>
             <isGoTo>true</isGoTo>
-            <targetReference>Get_Consultor_Filter_Warm</targetReference>
+            <targetReference>Get_Consultor_Filter_Prioritario</targetReference>
         </defaultConnector>
         <defaultConnectorLabel>No</defaultConnectorLabel>
         <rules>
@@ -430,7 +430,7 @@
         <locationY>755</locationY>
         <defaultConnector>
             <isGoTo>true</isGoTo>
-            <targetReference>Get_Consultor_Filter_Hot</targetReference>
+            <targetReference>Evaluete_Lead_Rating</targetReference>
         </defaultConnector>
         <defaultConnectorLabel>No</defaultConnectorLabel>
         <rules>

@@ -18,6 +18,7 @@
     <tabs>Log__c</tabs>
     <tabs>Knowledge__kav</tabs>
     <tabs>LeadInteraction__c</tabs>
+    <tabs>SetupMessagingSession__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>New_App_Sales_UtilityBar</utilityBar>
 </CustomApplication>

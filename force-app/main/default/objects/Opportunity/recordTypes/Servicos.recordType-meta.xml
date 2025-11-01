@@ -829,7 +829,23 @@
     <picklistValues>
         <picklist>LeadSource</picklist>
         <values>
+            <fullName>Acesso direto ao site ou via busca orgânica</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Advertisement</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Anúncio patrocinado com preenchimento completo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Base antiga sem nova ação</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Base reativada com nova interação</fullName>
             <default>false</default>
         </values>
         <values>
@@ -874,6 +890,10 @@
         </values>
         <values>
             <fullName>Website</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>WhatsApp via botão no site %2F link direto</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -1081,11 +1101,55 @@
     <picklistValues>
         <picklist>Status__c</picklist>
         <values>
+            <fullName>Agendado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Agendamento de Visita</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aguardando Documentos</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aguardando Pagamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aprovado</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Contrato Assinado</fullName>
             <default>false</default>
         </values>
         <values>
             <fullName>Contrato Enviado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Em Agendamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Em Andamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Em Análise</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Em instalação</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Entrega de materiais</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Estudo de Viabilidade</fullName>
             <default>false</default>
         </values>
         <values>
@@ -1097,7 +1161,19 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>Pago</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pendência</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Perdido</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Validando Bonificação</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -1193,6 +1269,10 @@
         </values>
         <values>
             <fullName>5</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>6</fullName>
             <default>false</default>
         </values>
     </picklistValues>

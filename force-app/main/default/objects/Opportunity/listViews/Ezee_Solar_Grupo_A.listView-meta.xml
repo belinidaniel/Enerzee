@@ -10,18 +10,13 @@
     <filterScope>Everything</filterScope>
     <filters>
         <field>OPPORTUNITY.STAGE_NAME</field>
-        <operation>contains</operation>
-        <value>Elaboração de proposta</value>
+        <operation>equals</operation>
+        <value>Elaboração de proposta,Viabilidade Técnica,Readequação de Proposta</value>
     </filters>
     <filters>
         <field>OPPORTUNITY.RECORDTYPE</field>
         <operation>equals</operation>
-        <value>Opportunity.EzeeSolarB</value>
-    </filters>
-    <filters>
-        <field>GrupoTarifario__c</field>
-        <operation>equals</operation>
-        <value>Grupo A</value>
+        <value>Opportunity.EzeeSolarA</value>
     </filters>
     <label>Ezee Solar Grupo A</label>
 </ListView>

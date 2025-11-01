@@ -1200,10 +1200,6 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Fast Track</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Ganho</fullName>
             <default>false</default>
         </values>
@@ -1320,6 +1316,10 @@
         </values>
         <values>
             <fullName>5</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>6</fullName>
             <default>false</default>
         </values>
     </picklistValues>

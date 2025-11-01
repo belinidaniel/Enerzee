@@ -264,6 +264,7 @@
     <tabs>Parceiro__c</tabs>
     <tabs>Knowledge__kav</tabs>
     <tabs>LeadInteraction__c</tabs>
+    <tabs>SetupMessagingSession__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Sales_UtilityBar</utilityBar>
 </CustomApplication>

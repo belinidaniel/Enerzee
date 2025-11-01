@@ -6,6 +6,7 @@
     <columns>ConsultorOportunidade__c</columns>
     <columns>OPPORTUNITY.STAGE_NAME</columns>
     <columns>OPPORTUNITY.RECORDTYPE</columns>
+    <columns>Parceiro__c</columns>
     <columns>CORE.USERS.FULL_NAME</columns>
     <columns>OPPORTUNITY.CREATED_DATE</columns>
     <columns>ValorTotalProdutos__c</columns>
@@ -13,7 +14,7 @@
     <filters>
         <field>OPPORTUNITY.RECORDTYPE</field>
         <operation>equals</operation>
-        <value>Opportunity.BowE,Opportunity.EzeeConnect,Opportunity.Nextron,Opportunity.Simplifica,Opportunity.EzeeConnect_Solled,Opportunity.Ultragaz,Opportunity.Origo</value>
+        <value>Opportunity.EzeeConnect</value>
     </filters>
     <label>3 - Ezee Connect</label>
 </ListView>
