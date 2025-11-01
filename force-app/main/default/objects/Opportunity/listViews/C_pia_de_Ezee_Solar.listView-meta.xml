@@ -8,7 +8,17 @@
     <columns>OPPORTUNITY.CREATED_DATE</columns>
     <columns>OPPORTUNITY.LAST_STAGE_CHANGE</columns>
     <columns>GrupoTarifario__c</columns>
-    <columns>OPPORTUNITY.RECORDTYPE</columns>
+    <columns>Parceiro__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.EzeeSolarA,Opportunity.EzeeSolarB</value>
+    </filters>
+    <filters>
+        <field>Origem__c</field>
+        <operation>notEqual</operation>
+        <value>Bitrix</value>
+    </filters>
     <label>2 - Ezee Solar</label>
 </ListView>

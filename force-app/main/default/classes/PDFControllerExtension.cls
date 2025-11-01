@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-25-2025
+ * @last modified on  : 10-06-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class PDFControllerExtension {
@@ -18,8 +18,6 @@ public with sharing class PDFControllerExtension {
     public Boolean lastSaveSuccess { get; set; }
     public String  lastSaveMessage { get; set; }
     public String  description { get; set; }
-    public List<String> viabilityEnerzeeCostEntries { get; private set; }
-    public List<String> viabilityClientCostEntries { get; private set; }
 
     public PDFControllerExtension(ApexPages.StandardController controller) {
         
@@ -76,8 +74,6 @@ public with sharing class PDFControllerExtension {
         //if (String.isEmpty(salvar)) {
         loadPdfUrls();
         //}
-
-        loadViabilityCostDetails();
     }
 
     public String getLogoUrl() {
@@ -147,15 +143,6 @@ public with sharing class PDFControllerExtension {
         }
     
     }
-
-    public Boolean getHasViabilityEnerzeeCosts(){
-        return viabilityEnerzeeCostEntries != null && !viabilityEnerzeeCostEntries.isEmpty();
-    }
-
-    public Boolean getHasViabilityClientCosts(){
-        return viabilityClientCostEntries != null && !viabilityClientCostEntries.isEmpty();
-    }
-
     public PageReference salvarPDF() {
 
         // Evita recursão ao chamar getContent() dentro do mesmo request
@@ -537,108 +524,6 @@ public with sharing class PDFControllerExtension {
             return formatCurrencyBR(this.opportunity.EconomiaAnualEstimada__c);
         }
 
-        private void loadViabilityCostDetails(){
-            viabilityEnerzeeCostEntries = new List<String>();
-            viabilityClientCostEntries = new List<String>();
-
-            if(this.opportunity == null){
-                return;
-            }
-
-            List<ViabilityStudy__c> viabilityList = [
-                SELECT  AdequacyCostEnerzee__c,
-                        AdequacyCostClient__c,
-                        AcBranchCost__c,
-                        DcBranchCost__c,
-                        StandardAdequacyCost__c,
-                        AdditionalCost__c,
-                        OtherCosts__c,
-                        CoberturaCost__c,
-                        StruturalReport__c
-                FROM    ViabilityStudy__c
-                WHERE   Opportunity__c = :this.opportunity.Id
-                ORDER BY CreatedDate DESC
-                LIMIT   1
-            ];
-
-            if(viabilityList.isEmpty()){
-                return;
-            }
-
-            ViabilityStudy__c viability = viabilityList[0];
-
-            viabilityEnerzeeCostEntries = buildViabilityCostEntries(viability.AdequacyCostEnerzee__c, viability);
-            viabilityClientCostEntries = buildViabilityCostEntries(viability.AdequacyCostClient__c, viability);
-        }
-
-        private List<String> buildViabilityCostEntries(String multiSelectValues, ViabilityStudy__c viability){
-            List<String> entries = new List<String>();
-            for(String label : splitMultiSelectValues(multiSelectValues)){
-                Decimal amount = resolveViabilityCostAmount(label, viability);
-                if(amount != null){
-                    entries.add(label + ' (' + formatCurrencyBR(amount) + ')');
-                } else {
-                    entries.add(label);
-                }
-            }
-            return entries;
-        }
-
-        private List<String> splitMultiSelectValues(String values){
-            List<String> results = new List<String>();
-            if(String.isBlank(values)){
-                return results;
-            }
-
-            for(String value : values.split(';')){
-                String trimmed = value != null ? value.trim() : null;
-                if(!String.isBlank(trimmed)){
-                    results.add(trimmed);
-                }
-            }
-
-            return results;
-        }
-
-        private Decimal resolveViabilityCostAmount(String label, ViabilityStudy__c viability){
-            if(viability == null || String.isBlank(label)){
-                return null;
-            }
-
-            String normalized = label.trim().toLowerCase();
-
-            Decimal amount;
-            if(normalized == 'ramal cc'){
-                amount = viability.DcBranchCost__c;
-            } else if(normalized == 'ramal ca'){
-                amount = viability.AcBranchCost__c;
-            } else if(normalized == 'adequação padrão' || normalized == 'adequacao padrao'){
-                amount = viability.StandardAdequacyCost__c;
-            } else if(normalized == 'cobertura'){
-                amount = viability.CoberturaCost__c;
-            } else if(normalized == 'laudo estrutural'){
-                amount = viability.StruturalReport__c;
-            } else if(normalized == 'outros custos' || normalized == 'outros custos'){
-                amount = viability.OtherCosts__c;
-            } else if(normalized == 'custos adicionais' || normalized == 'custos adicionais'){
-                amount = viability.AdditionalCost__c;
-            }else{
-                amount = null;
-            }
-            if(amount != null && amount != 0){
-                return amount;
-            }
-            return null;
-        }
-
-        private Decimal firstNonZero(List<Decimal> values){
-            for(Decimal value : values){
-                if(value != null && value != 0){
-                    return value;
-                }
-            }
-            return null;
-        }
 
 
 }

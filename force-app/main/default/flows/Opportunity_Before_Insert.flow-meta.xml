@@ -3,9 +3,38 @@
     <apiVersion>62.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
+        <name>recordtype</name>
+        <label>recordtype</label>
+        <locationX>182</locationX>
+        <locationY>395</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>solar_ou_produtos</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Solar</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Produtos</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>update_close_date_today</targetReference>
+            </connector>
+            <label>solar ou produtos</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>status_close_date</name>
         <label>status  close date</label>
-        <locationX>182</locationX>
+        <locationX>380</locationX>
         <locationY>287</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -26,7 +55,7 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>update_close_date_today</targetReference>
+                <targetReference>recordtype</targetReference>
             </connector>
             <label>yes</label>
         </rules>
@@ -62,7 +91,7 @@
         <name>update_close_date_today</name>
         <label>update close date today</label>
         <locationX>50</locationX>
-        <locationY>395</locationY>
+        <locationY>503</locationY>
         <inputAssignments>
             <field>CloseDate</field>
             <value>
@@ -72,7 +101,7 @@
         <inputReference>$Record</inputReference>
     </recordUpdates>
     <start>
-        <locationX>56</locationX>
+        <locationX>254</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>status_close_date</targetReference>

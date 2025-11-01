@@ -11,11 +11,11 @@
     <columns>ConsultorRegional__c</columns>
     <columns>LEAD.RECORDTYPE</columns>
     <columns>LEAD.STATUS</columns>
-    <columns>CORE.USERS.FIRST_NAME</columns>
     <columns>Nome_da_Campanha_Meta__c</columns>
     <columns>Nome_do_Conjunto_de_An_ncios_Meta__c</columns>
     <columns>Nome_do_An_ncio_Meta__c</columns>
     <columns>Origem_do_Tr_fego__c</columns>
+    <columns>LEAD.CONVERTED</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>LEAD.RECORDTYPE</field>

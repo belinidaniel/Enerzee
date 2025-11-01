@@ -9,8 +9,7 @@
     ),
     ISCHANGED(StageName),
     $UserRole.DeveloperName != &apos;Gerente_Administrativo&apos;,
-    $UserRole.DeveloperName != &apos;GerenteEngenharia&apos;,
-				TEXT(StageName) != &apos;Fechado Perdido&apos;
+    $UserRole.DeveloperName != &apos;GerenteEngenharia&apos;				
 )</errorConditionFormula>
     <errorMessage>Para mudar de fazer é necessario finalizar o estudo de viabilidade em Aberto!</errorMessage>
 </ValidationRule>

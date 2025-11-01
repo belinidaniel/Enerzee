@@ -10,6 +10,7 @@
     <columns>CORE.USERS.ALIAS</columns>
     <columns>LEAD.UNREAD</columns>
     <columns>Lab065_IntegracaoDistribuicaoLead__c</columns>
+    <columns>Lb065_Estado__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>LEAD.CREATED_DATE</field>
