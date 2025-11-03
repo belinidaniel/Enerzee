@@ -63,6 +63,12 @@
                 <elementReference>$Record.Id</elementReference>
             </value>
         </inputAssignments>
+        <inputAssignments>
+            <field>InstalledPowerKwp__c</field>
+            <value>
+                <elementReference>$Record.PotenciaPicoSistema__c</elementReference>
+            </value>
+        </inputAssignments>
         <object>ViabilityStudy__c</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordCreates>

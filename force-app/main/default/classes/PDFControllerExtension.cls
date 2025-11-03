@@ -618,11 +618,11 @@ public with sharing class PDFControllerExtension {
                 amount = viability.CoberturaCost__c;
             } else if(normalized == 'laudo estrutural'){
                 amount = viability.StruturalReport__c;
-            } else if(normalized == 'outros custos' || normalized == 'outros custos'){
+            } else if(normalized == 'outros custos'){
                 amount = viability.OtherCosts__c;
-            } else if(normalized == 'custos adicionais' || normalized == 'custos adicionais'){
+            } else if(normalized == 'custos adicionais'){
                 amount = viability.AdditionalCost__c;
-            }else{
+            } else {
                 amount = null;
             }
             if(amount != null && amount != 0){

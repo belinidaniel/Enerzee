@@ -548,4 +548,128 @@ public class TaskBO {
         }
 
     }
+
+    public static void notifyViabilityInvoiceAttachment(Task taskRecord, ContentDocumentLink link){
+        if(taskRecord == null || link == null){
+            return;
+        }
+
+        if(String.isBlank(taskRecord.Subject) || !taskRecord.Subject.equalsIgnoreCase(TaskUtils.SUBJECT_SOLICITAR_PAGAMENTO_DE_INTEGRADOR)){
+            return;
+        }
+
+        if(taskRecord.WhatId == null || taskRecord.WhatId.getSObjectType() != ViabilityStudy__c.SObjectType){
+            return;
+        }
+
+        ViabilityStudy__c viability;
+        try{
+            viability = [
+                SELECT  Id, Name, Opportunity__c, Opportunity__r.Name
+                FROM    ViabilityStudy__c
+                WHERE   Id = :taskRecord.WhatId
+                LIMIT   1
+            ];
+        } catch (Exception ex){
+            return;
+        }
+
+        ContentVersion fileVersion;
+        try{
+            fileVersion = [
+                SELECT  Id, Title, VersionData, FileExtension
+                FROM    ContentVersion
+                WHERE   ContentDocumentId = :link.ContentDocumentId
+                ORDER BY IsLatest DESC
+                LIMIT   1
+            ];
+        } catch (Exception ex){
+            return;
+        }
+
+        if(fileVersion == null){
+            return;
+        }
+
+        Messaging.EmailFileAttachment attachment = new Messaging.EmailFileAttachment();
+        attachment.setBody(fileVersion.VersionData);
+        attachment.setFileName(
+            String.isBlank(fileVersion.FileExtension) ?
+            fileVersion.Title :
+            fileVersion.Title + '.' + fileVersion.FileExtension
+        );
+
+        Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+        email.setToAddresses(new String[]{'contabilidade@enerzee.com.br'});
+        email.setCcAddresses(new String[]{'financeiro@enerzee.com.br'});
+
+        String opportunityName = viability.Opportunity__c != null && viability.Opportunity__r != null ? viability.Opportunity__r.Name : '';
+        String subject = 'NF de Integrador anexada - Viabilidade ' + viability.Name;
+        if(!String.isBlank(opportunityName)){
+            subject += ' / ' + opportunityName;
+        }
+        email.setSubject(subject);
+
+        String emailBody = 'Olá,<br/><br/>' +
+            'A nota fiscal do integrador foi anexada na atividade <strong>"SOLICITAR PAGAMENTO DE INTEGRADOR"</strong> ' +
+            'da viabilidade <strong>' + viability.Name + '</strong>';
+        if(!String.isBlank(opportunityName)){
+            emailBody += ' vinculada à oportunidade <strong>' + opportunityName + '</strong>';
+        }
+        emailBody += '.<br/><br/>' +
+            'O arquivo segue em anexo para conferência.<br/><br/>' +
+            'Atenciosamente,<br/>Enerzee CRM';
+
+        email.setHtmlBody(emailBody);
+        email.setUseSignature(false);
+        email.setFileAttachments(new Messaging.EmailFileAttachment[]{attachment});
+
+        if(!Test.isRunningTest()){
+            Messaging.sendEmail(new Messaging.SingleEmailMessage[]{ email });
+        }
+    }
+
+    public static void updateViabilityStatusOnTaskCompletion(List<Task> taskList, Map<Id, Task> oldMap){
+        if(taskList == null || taskList.isEmpty()){ return; }
+
+        Map<Id, ViabilityStudy__c> recordsToUpdate = new Map<Id, ViabilityStudy__c>();
+
+        for(Task taskRecord : taskList){
+            if(taskRecord == null || taskRecord.WhatId == null){
+                continue;
+            }
+
+            if(taskRecord.WhatId.getSObjectType() != ViabilityStudy__c.SObjectType){
+                continue;
+            }
+
+            Task oldTask = oldMap != null ? oldMap.get(taskRecord.Id) : null;
+            if(oldTask == null || !TaskUtils.isTaskBeingConcluded(oldTask, taskRecord)){
+                continue;
+            }
+
+            String subject = taskRecord.Subject != null ? taskRecord.Subject.trim() : '';
+
+            if(subject.equalsIgnoreCase('AGENDAMENTO DE VISITA')){
+                ViabilityStudy__c viabilityUpdate = new ViabilityStudy__c(
+                    Id = taskRecord.WhatId,
+                    StatusFeasibility__c = 'Visita Agendada'
+                );
+                recordsToUpdate.put(viabilityUpdate.Id, viabilityUpdate);
+                continue;
+            }
+
+            if(subject.equalsIgnoreCase('ANEXAR ARQUIVOS DE VIABILIDADE')){
+                ViabilityStudy__c viabilityUpdate = new ViabilityStudy__c(
+                    Id = taskRecord.WhatId,
+                    StatusFeasibility__c = 'Viabilidade Finalizada'
+                );
+                recordsToUpdate.put(viabilityUpdate.Id, viabilityUpdate);
+            }
+        }
+
+        if(!recordsToUpdate.isEmpty()){
+            update recordsToUpdate.values();
+        }
+    }
 }
