@@ -3,7 +3,7 @@
     <caseAccessLevel>Edit</caseAccessLevel>
     <contactAccessLevel>Edit</contactAccessLevel>
     <mayForecastManagerShare>false</mayForecastManagerShare>
-    <name>Assistente de Atendimento / Cliente</name>
+    <name>Assistente de Atendimento</name>
     <opportunityAccessLevel>Edit</opportunityAccessLevel>
     <parentRole>Supervisor_de_RLC</parentRole>
 </Role>

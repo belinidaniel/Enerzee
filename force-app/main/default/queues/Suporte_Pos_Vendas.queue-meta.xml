@@ -19,6 +19,9 @@
         <sobjectType>MessagingSession</sobjectType>
     </queueSobject>
     <queueSobject>
+        <sobjectType>SetupMessagingSession__c</sobjectType>
+    </queueSobject>
+    <queueSobject>
         <sobjectType>Task</sobjectType>
     </queueSobject>
 </Queue>

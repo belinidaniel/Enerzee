@@ -5,7 +5,7 @@
         <name>RoutingAction</name>
         <label>Rotear de EzeeBot</label>
         <locationX>176</locationX>
-        <locationY>134</locationY>
+        <locationY>242</locationY>
         <actionName>routeWork</actionName>
         <actionType>routeWork</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -54,14 +54,11 @@
         <inputParameters>
             <name>agentId</name>
             <value>
-                <stringValue>005U5000007FChZIAW</stringValue>
+                <elementReference>get_Messaging.OwnerId</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
             <name>agentLabel</name>
-            <value>
-                <stringValue>Mayara Moura</stringValue>
-            </value>
         </inputParameters>
         <inputParameters>
             <name>queueLabel</name>
@@ -74,6 +71,12 @@
         </inputParameters>
         <inputParameters>
             <name>skillRequirementsResourceItem</name>
+        </inputParameters>
+        <inputParameters>
+            <name>isAgentVariable</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
         </inputParameters>
         <inputParameters>
             <name>botId</name>
@@ -133,11 +136,32 @@
         </value>
     </processMetadataValues>
     <processType>RoutingFlow</processType>
+    <recordLookups>
+        <name>get_Messaging</name>
+        <label>get Messaging</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>RoutingAction</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>MessagingSession</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>RoutingAction</targetReference>
+            <targetReference>get_Messaging</targetReference>
         </connector>
     </start>
     <status>Active</status>

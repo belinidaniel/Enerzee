@@ -21,6 +21,11 @@
         <sharedToType>User</sharedToType>
     </folderShares>
     <folderShares>
+        <accessLevel>View</accessLevel>
+        <sharedTo>contabilidade@enerzee.com.br</sharedTo>
+        <sharedToType>User</sharedToType>
+    </folderShares>
+    <folderShares>
         <accessLevel>Manage</accessLevel>
         <sharedTo>daniel.belini@enerzee.com.br</sharedTo>
         <sharedToType>User</sharedToType>
@@ -58,11 +63,6 @@
     <folderShares>
         <accessLevel>View</accessLevel>
         <sharedTo>financeiro@enerzee.com.br</sharedTo>
-        <sharedToType>User</sharedToType>
-    </folderShares>
-    <folderShares>
-        <accessLevel>View</accessLevel>
-        <sharedTo>contabilidade@enerzee.com.br</sharedTo>
         <sharedToType>User</sharedToType>
     </folderShares>
     <folderShares>

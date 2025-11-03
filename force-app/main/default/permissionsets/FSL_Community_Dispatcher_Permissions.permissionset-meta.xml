@@ -859,6 +859,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>FSL__UserSetting__c.FSL__FirstDayOfWeek__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>FSL__UserSetting__c.FSL__Gantt_Palette__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -960,6 +965,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>FSL__UserSetting__c.FSL__Map_Reports__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>FSL__UserSetting__c.FSL__MatchGanttServiceTerritories__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

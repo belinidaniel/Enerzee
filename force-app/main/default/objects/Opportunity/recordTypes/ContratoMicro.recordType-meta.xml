@@ -1292,6 +1292,10 @@
             <fullName>5</fullName>
             <default>false</default>
         </values>
+        <values>
+            <fullName>6</fullName>
+            <default>false</default>
+        </values>
     </picklistValues>
     <picklistValues>
         <picklist>TipoObraProjeto__c</picklist>

@@ -17,7 +17,7 @@
     <filters>
         <field>OPPORTUNITY.RECORDTYPE</field>
         <operation>equals</operation>
-        <value>Opportunity.EzeeSolarB</value>
+        <value>Opportunity.Ezee_Solar</value>
     </filters>
     <label>Ezee Solar (elaboração da simulação)</label>
 </ListView>

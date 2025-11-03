@@ -315,9 +315,6 @@
             </value>
         </filters>
         <inputAssignments>
-            <field>MainViability__c</field>
-        </inputAssignments>
-        <inputAssignments>
             <field>ViabilityStudyFinished__c</field>
             <value>
                 <booleanValue>false</booleanValue>

@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-25-2025
+ * @last modified on  : 11-03-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class PDFControllerExtension {
@@ -18,8 +18,6 @@ public with sharing class PDFControllerExtension {
     public Boolean lastSaveSuccess { get; set; }
     public String  lastSaveMessage { get; set; }
     public String  description { get; set; }
-    public List<String> viabilityEnerzeeCostEntries { get; private set; }
-    public List<String> viabilityClientCostEntries { get; private set; }
 
     public PDFControllerExtension(ApexPages.StandardController controller) {
         
@@ -76,8 +74,6 @@ public with sharing class PDFControllerExtension {
         //if (String.isEmpty(salvar)) {
         loadPdfUrls();
         //}
-
-        loadViabilityCostDetails();
     }
 
     public String getLogoUrl() {
@@ -147,15 +143,6 @@ public with sharing class PDFControllerExtension {
         }
     
     }
-
-    public Boolean getHasViabilityEnerzeeCosts(){
-        return viabilityEnerzeeCostEntries != null && !viabilityEnerzeeCostEntries.isEmpty();
-    }
-
-    public Boolean getHasViabilityClientCosts(){
-        return viabilityClientCostEntries != null && !viabilityClientCostEntries.isEmpty();
-    }
-
     public PageReference salvarPDF() {
 
         // Evita recursão ao chamar getContent() dentro do mesmo request

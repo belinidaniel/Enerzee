@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Suporte_ao_Integrador_SetupMessagingSession</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Suporte ao Integrador</label>
+    <queue>Suporte_ao_Integrador</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

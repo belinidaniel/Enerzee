@@ -305,6 +305,16 @@
                 <identifier>RecordValorTotalProdutos_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Kwh__c</fieldItem>
+                <identifier>RecordKwh_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-a28f2fdc-7ad1-4819-8f03-904775623724</name>
         <type>Facet</type>
     </flexiPageRegions>

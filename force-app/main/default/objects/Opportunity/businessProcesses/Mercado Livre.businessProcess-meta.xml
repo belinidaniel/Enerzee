@@ -3,7 +3,27 @@
     <fullName>Mercado Livre</fullName>
     <isActive>true</isActive>
     <values>
+        <fullName>Agendamento Pendente</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Aguardando Informação</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Aguardando Pagamento</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Elaboração de Estudo</fullName>
+        <default>false</default>
+    </values>
+    <values>
         <fullName>Fechado Perdido</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Finalizado %28Aguard%2E NF%29</fullName>
         <default>false</default>
     </values>
     <values>
@@ -11,7 +31,23 @@
         <default>false</default>
     </values>
     <values>
+        <fullName>Minuta Gerada</fullName>
+        <default>false</default>
+    </values>
+    <values>
         <fullName>Negociação</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Pagamento Confirmado</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Prospecção</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Reunião Agendada</fullName>
         <default>false</default>
     </values>
 </BusinessProcess>

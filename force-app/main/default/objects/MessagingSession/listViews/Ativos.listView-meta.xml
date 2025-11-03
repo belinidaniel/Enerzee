@@ -11,10 +11,5 @@
     <columns>PlatformType</columns>
     <columns>ChannelName</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>Status</field>
-        <operation>equals</operation>
-        <value>0</value>
-    </filters>
     <label>Ativos</label>
 </ListView>
