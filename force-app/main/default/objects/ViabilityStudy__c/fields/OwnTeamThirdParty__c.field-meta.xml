@@ -21,6 +21,11 @@
                 <default>false</default>
                 <label>Enerzee</label>
             </value>
+            <value>
+                <fullName>Nao_cadastrado</fullName>
+                <default>false</default>
+                <label>Não cadastrado</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

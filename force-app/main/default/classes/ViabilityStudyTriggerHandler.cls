@@ -31,12 +31,20 @@ public class ViabilityStudyTriggerHandler extends TriggerHandler {
             (List<ViabilityStudy__c>) newRecordList,
             new Map<Id, ViabilityStudy__c>()
         );
+        ViabilityStudyBO.syncOpportunityInstalledPower(
+            (List<ViabilityStudy__c>) newRecordList,
+            new Map<Id, ViabilityStudy__c>()
+        );
     }
 
     public override void beforeUpdate(){}
 
     public override void afterUpdate(){
         ViabilityStudyBO.createTasks(
+            (List<ViabilityStudy__c>) newRecordList,
+            (Map<Id, ViabilityStudy__c>) oldMap
+        );
+        ViabilityStudyBO.syncOpportunityInstalledPower(
             (List<ViabilityStudy__c>) newRecordList,
             (Map<Id, ViabilityStudy__c>) oldMap
         );
