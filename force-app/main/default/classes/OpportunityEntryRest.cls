@@ -2,23 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-10-2025
- * @last modified by  : Daniel Belini
-**/
-
-/**
- * @description       : 
- * @author            : Daniel Belini
- * @group             : 
- * @last modified on  : 10-10-2025
- * @last modified by  : Daniel Belini
-**/
-
-/**
- * @description       : 
- * @author            : Daniel Belini
- * @group             : 
- * @last modified on  : 10-10-2025
+ * @last modified on  : 11-04-2025
  * @last modified by  : Daniel Belini
 **/
 @RestResource(urlMapping = '/OpportunityEntry/*')
@@ -26,7 +10,7 @@ global with sharing class OpportunityEntryRest {
 
     @HttpPost
     global static void makePost() {
-        // try {
+        try {
             RestRequest request = RestContext.request;
             String body = request.requestBody.toString();
             Utils.createLog('OpportunityEntryRest', 'makePost', request);
@@ -136,15 +120,15 @@ global with sharing class OpportunityEntryRest {
                 }
 
                 // Atualizar IDs das oportunidades existentes
-                for (Opportunity existingOpportunity : [
-                    SELECT Id, IdVirtualOffice__c
-                    FROM Opportunity
-                    WHERE IdVirtualOffice__c IN :externalIdToOpportunitiesToInsert.keySet()
-                ]) {
-                    externalIdToOpportunitiesToInsert.get(existingOpportunity.IdVirtualOffice__c).Id = existingOpportunity.Id;
-                }
+                // for (Opportunity existingOpportunity : [
+                //     SELECT Id, IdVirtualOffice__c
+                //     FROM Opportunity
+                //     WHERE IdVirtualOffice__c IN :externalIdToOpportunitiesToInsert.keySet()
+                // ]) {
+                //     externalIdToOpportunitiesToInsert.get(existingOpportunity.IdVirtualOffice__c).Id = existingOpportunity.Id;
+                // }
 
-                upsert externalIdToOpportunitiesToInsert.values();
+                insert externalIdToOpportunitiesToInsert.values();
 
                 // Coletar os IDs das Oportunidades upsertadas
                 List<Id> opportunityIds = new List<Id>();
@@ -192,11 +176,11 @@ global with sharing class OpportunityEntryRest {
                 RestResponse res = RestContext.response;
                 res.responseBody = Blob.valueOf(JSON.serializePretty(responseMap));
 
-        // } catch (Exception e) {
-        //     Utils.createLog('OpportunityEntryRest', 'OpportunityEntryRest - ERRO ', e);
-        //     RestContext.response.statusCode = 500;
-        //     RestContext.response.responseBody = Blob.valueOf('Erro: ' + e.getMessage());
-        // }
+        } catch (Exception e) {
+            Utils.createLog('OpportunityEntryRest', 'OpportunityEntryRest - ERRO ', e);
+            RestContext.response.statusCode = 500;
+            RestContext.response.responseBody = Blob.valueOf('Erro: ' + e.getMessage());
+        }
     }
 
         /**
@@ -279,28 +263,6 @@ global with sharing class OpportunityEntryRest {
                 Decimal.valueOf(String.valueOf(prodMap.get('Quantity'))) : 1;
             oli.UnitPrice = (prodMap.containsKey('UnitaryValue') && prodMap.get('UnitaryValue') != null) ?
                 Decimal.valueOf(String.valueOf(prodMap.get('UnitaryValue'))) : 0;
-            // Adicionar campos customizados se existirem
-            // if (prodMap.containsKey('AdditionalFixedCost') && prodMap.get('AdditionalFixedCost') != null) {
-            //     oli.put('AdditionalFixedCost__c', Decimal.valueOf(String.valueOf(prodMap.get('AdditionalFixedCost'))));
-            // }
-            // if (prodMap.containsKey('FinancialCostWeg') && prodMap.get('FinancialCostWeg') != null) {
-            //     oli.put('FinancialCostWeg__c', Decimal.valueOf(String.valueOf(prodMap.get('FinancialCostWeg'))));
-            // }
-            // if (prodMap.containsKey('Installation') && prodMap.get('Installation') != null) {
-            //     oli.put('Installation__c', Decimal.valueOf(String.valueOf(prodMap.get('Installation'))));
-            // }
-            // if (prodMap.containsKey('Direct') && prodMap.get('Direct') != null) {
-            //     oli.put('Direct__c', Decimal.valueOf(String.valueOf(prodMap.get('Direct'))));
-            // }
-            // if (prodMap.containsKey('Rede') && prodMap.get('Rede') != null) {
-            //     oli.put('Rede__c', Decimal.valueOf(String.valueOf(prodMap.get('Rede'))));
-            // }
-            // if (prodMap.containsKey('Pontos') && prodMap.get('Pontos') != null) {
-            //     oli.put('Pontos__c', Decimal.valueOf(String.valueOf(prodMap.get('Pontos'))));
-            // }
-            // if (prodMap.containsKey('Bdi') && prodMap.get('Bdi') != null) {
-            //     oli.put('Bdi__c', Decimal.valueOf(String.valueOf(prodMap.get('Bdi'))));
-            // }
             if (prodMap.containsKey('Description') && prodMap.get('Description') != null) {
                 oli.Description = String.valueOf(prodMap.get('Description'));
             }

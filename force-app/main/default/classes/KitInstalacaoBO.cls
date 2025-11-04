@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 08-27-2025
+ * @last modified on  : 11-04-2025
  * @last modified by  : Daniel Belini
 **/
 public without sharing class KitInstalacaoBO {
@@ -125,7 +125,7 @@ public without sharing class KitInstalacaoBO {
                     CustoAdicionalFixo__c, Instalacao__c, CustoFinanceiroWeg__c,ConsumoAlvo__c,
                     (SELECT ID, product2.Name, Quantity, UnitPrice, product2.Family, product2.ExternalId__c FROM OpportunityLineItems)
             FROM    Opportunity
-            WHERE   Id IN :oppIdToKitIdMap.keySet()
+            WHERE   Id IN :oppIdToKitIdMap.keySet() AND Isclosed = false
         ];
         
         List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
