@@ -79,6 +79,14 @@
                 <behavior>Edit</behavior>
                 <field>PartnerName__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Lead__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>MainViability__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -94,16 +102,8 @@
                 <field>Name</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Parceiro__c</field>
-            </layoutItems>
-            <layoutItems>
                 <behavior>Required</behavior>
                 <field>StageName</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Status__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Required</behavior>
@@ -422,6 +422,15 @@
         <fields>NAME</fields>
         <fields>AttachmentURL__c</fields>
         <relatedList>OpportunityAttachmentLink__c.OpportunityId__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>Name</fields>
+        <fields>MessagingPlatformKey</fields>
+        <fields>MessagingChannel</fields>
+        <fields>MessageType</fields>
+        <fields>Locale</fields>
+        <fields>MessagingConsentStatus</fields>
+        <relatedList>MessagingEndUser.Oportunidade__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>Name</fields>

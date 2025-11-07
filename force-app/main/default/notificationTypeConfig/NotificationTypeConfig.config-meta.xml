@@ -59,13 +59,6 @@
             <desktopEnabled>true</desktopEnabled>
             <mobileEnabled>false</mobileEnabled>
         </notificationChannels>
-        <notificationType>async_egpt_kb_creation</notificationType>
-    </notificationTypeSettings>
-    <notificationTypeSettings>
-        <notificationChannels>
-            <desktopEnabled>true</desktopEnabled>
-            <mobileEnabled>false</mobileEnabled>
-        </notificationChannels>
         <notificationType>bulk_action_plan_save</notificationType>
     </notificationTypeSettings>
     <notificationTypeSettings>
@@ -187,21 +180,6 @@
             <mobileEnabled>true</mobileEnabled>
         </notificationChannels>
         <notificationType>direct_message</notificationType>
-    </notificationTypeSettings>
-    <notificationTypeSettings>
-        <appSettings>
-            <connectedAppName>sf_fieldservice__Salesforce_Field_Service_for_Android</connectedAppName>
-            <enabled>true</enabled>
-        </appSettings>
-        <appSettings>
-            <connectedAppName>sf_fieldservice__Salesforce_Field_Service_for_iOS</connectedAppName>
-            <enabled>true</enabled>
-        </appSettings>
-        <notificationChannels>
-            <desktopEnabled>true</desktopEnabled>
-            <mobileEnabled>true</mobileEnabled>
-        </notificationChannels>
-        <notificationType>document_generation</notificationType>
     </notificationTypeSettings>
     <notificationTypeSettings>
         <notificationChannels>
@@ -543,13 +521,6 @@
         <notificationType>wave_condition</notificationType>
     </notificationTypeSettings>
     <notificationTypeSettings>
-        <notificationChannels>
-            <desktopEnabled>true</desktopEnabled>
-            <mobileEnabled>false</mobileEnabled>
-        </notificationChannels>
-        <notificationType>ya_contract_renewal_notify</notificationType>
-    </notificationTypeSettings>
-    <notificationTypeSettings>
         <appSettings>
             <connectedAppName>sf_chttr_apps__Chatter_for_Android</connectedAppName>
             <enabled>false</enabled>
@@ -571,28 +542,5 @@
             <mobileEnabled>true</mobileEnabled>
         </notificationChannels>
         <notificationType>Padrao</notificationType>
-    </notificationTypeSettings>
-    <notificationTypeSettings>
-        <appSettings>
-            <connectedAppName>sf_chttr_apps__Chatter_for_Android</connectedAppName>
-            <enabled>false</enabled>
-        </appSettings>
-        <appSettings>
-            <connectedAppName>sf_chttr_apps__Chatter_for_iOS</connectedAppName>
-            <enabled>false</enabled>
-        </appSettings>
-        <appSettings>
-            <connectedAppName>sf_fieldservice__Salesforce_Field_Service_for_Android</connectedAppName>
-            <enabled>false</enabled>
-        </appSettings>
-        <appSettings>
-            <connectedAppName>sf_fieldservice__Salesforce_Field_Service_for_iOS</connectedAppName>
-            <enabled>false</enabled>
-        </appSettings>
-        <notificationChannels>
-            <desktopEnabled>true</desktopEnabled>
-            <mobileEnabled>true</mobileEnabled>
-        </notificationChannels>
-        <notificationType>rsplus__Incoming_message_notification_VT</notificationType>
     </notificationTypeSettings>
 </NotificationTypeConfig>

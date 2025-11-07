@@ -1,15 +1,24 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 11-03-2025
+ * @last modified by  : Daniel Belini
+**/
 public class ViabilityStudyBO {
 
     private static final String STATIC_RESOURCE_NAME = 'TabelaTarefasViabilidade';
 
     private static Map<String, Group> queueIdentifierToGroup;
     private static Map<String, RoleAssignmentState> roleAssignmentStateByIdentifier = new Map<String, RoleAssignmentState>();
+    private static Map<String, User> userEmailToUser = new Map<String, User>();
 
     @TestVisible private static TaskViabilityTable taskTableOverride;
 
     @TestVisible private static void resetTestState(){
         queueIdentifierToGroup = null;
         roleAssignmentStateByIdentifier = new Map<String, RoleAssignmentState>();
+        userEmailToUser = new Map<String, User>();
     }
 
     public static void createTasks(List<ViabilityStudy__c> newRecords, Map<Id, ViabilityStudy__c> oldRecordsMap){
@@ -139,6 +148,10 @@ public class ViabilityStudyBO {
                     continue;
                 }
 
+                if(!shouldCreateTaskForSubject(templateLine.Assunto, viability)){
+                    continue;
+                }
+
                 Id ownerId = resolveTaskOwner(templateLine, viability, opportunity, queueMap);
                 if(ownerId == null){
                     viability.addError('É necessário informar um usuário, fila ou papel ativo para criar a tarefa "' + templateLine.Assunto + '".');
@@ -174,6 +187,44 @@ public class ViabilityStudyBO {
         }
     }
 
+    public static void syncOpportunityInstalledPower(List<ViabilityStudy__c> newRecords, Map<Id, ViabilityStudy__c> oldRecordsMap){
+        if(newRecords == null || newRecords.isEmpty()){
+            return;
+        }
+
+        Map<Id, Opportunity> updatesByOpportunityId = new Map<Id, Opportunity>();
+
+        for(ViabilityStudy__c viability : newRecords){
+            if(viability == null || String.isBlank(viability.Opportunity__c)){
+                continue;
+            }
+
+            Decimal newKwp = viability.InstalledPowerKwp__c;
+            Decimal oldKwp = oldRecordsMap != null && oldRecordsMap.containsKey(viability.Id) ?
+                oldRecordsMap.get(viability.Id).InstalledPowerKwp__c :
+                null;
+
+            Boolean changed =
+                (newKwp == null && oldKwp != null) ||
+                (newKwp != null && oldKwp == null) ||
+                (newKwp != null && oldKwp != null && newKwp != oldKwp);
+
+            if(!changed){
+                continue;
+            }
+
+            Opportunity oppUpdate = new Opportunity(
+                Id = viability.Opportunity__c,
+                PotenciaPicoSistema__c = newKwp
+            );
+            updatesByOpportunityId.put(oppUpdate.Id, oppUpdate);
+        }
+
+        if(!updatesByOpportunityId.isEmpty()){
+            update updatesByOpportunityId.values();
+        }
+    }
+
     private static Integer parseInteger(String value, Integer defaultValue){
         if(String.isBlank(value)){
             return defaultValue;
@@ -204,6 +255,23 @@ public class ViabilityStudyBO {
             }
         }
         return interestedList;
+    }
+
+    private static Boolean shouldCreateTaskForSubject(String subject, ViabilityStudy__c viability){
+        if(String.isBlank(subject)){
+            return true;
+        }
+
+        if(subject.equalsIgnoreCase('SOLICITAR NOVO INTEGRADOR')){
+            if(viability == null || String.isBlank(viability.OwnTeamThirdParty__c)){
+                return false;
+            }
+
+            String option = viability.OwnTeamThirdParty__c.trim().toLowerCase();
+            return option == 'nao_cadastrado' || option == 'não cadastrado';
+        }
+
+        return true;
     }
 
     private static void populateInterestedFields(Task task, List<String> interestedList){
@@ -258,6 +326,11 @@ public class ViabilityStudyBO {
                 if(viability.OwnerId != null){
                     return viability.OwnerId;
                 }
+            } else {
+                User targetUser = getUserByEmail(line.Responsavel);
+                if(targetUser != null){
+                    return targetUser.Id;
+                }
             }
         }
 
@@ -299,6 +372,30 @@ public class ViabilityStudyBO {
         }
 
         return state.nextUserId();
+    }
+
+    private static User getUserByEmail(String email){
+        if(String.isBlank(email)){
+            return null;
+        }
+
+        String key = email.trim().toLowerCase();
+        if(!userEmailToUser.containsKey(key)){
+            List<User> users = [
+                SELECT  Id, Email
+                FROM    User
+                WHERE   Email like :email.trim() +'%'
+                AND     IsActive = true
+                LIMIT   1
+            ];
+            if(!users.isEmpty()){
+                userEmailToUser.put(key, users[0]);
+            } else {
+                userEmailToUser.put(key, null);
+            }
+        }
+
+        return userEmailToUser.get(key);
     }
 
     private static RoleAssignmentState buildRoleAssignmentState(String roleIdentifier){

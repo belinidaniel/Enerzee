@@ -163,6 +163,14 @@
                 <behavior>Edit</behavior>
                 <field>SubTipo__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Lead__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>MainViability__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -192,10 +200,6 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Origem__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>ParentOpportunity__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
@@ -1101,12 +1105,6 @@
         <relatedList>ViabilityStudy__c.Opportunity__c</relatedList>
     </relatedLists>
     <relatedLists>
-        <fields>OPPORTUNITY.NAME</fields>
-        <fields>ACCOUNT.NAME</fields>
-        <fields>OPPORTUNITY.CLOSE_DATE</fields>
-        <relatedList>Opportunity.ParentOpportunity__c</relatedList>
-    </relatedLists>
-    <relatedLists>
         <fields>NAME</fields>
         <relatedList>Projeto__c.Oportunidade__c</relatedList>
     </relatedLists>
@@ -1118,15 +1116,6 @@
         <fields>CASES.STATUS</fields>
         <fields>OWNER_NAME</fields>
         <relatedList>RelatedCaseList</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <fields>CASES.CASE_NUMBER</fields>
-        <fields>CASES.SUBJECT</fields>
-        <fields>CASES.PRIORITY</fields>
-        <fields>CASES.CREATED_DATE</fields>
-        <fields>CASES.STATUS</fields>
-        <fields>OWNER_NAME</fields>
-        <relatedList>Case.Oportunidade_Pai__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
@@ -1200,6 +1189,15 @@
     </relatedLists>
     <relatedLists>
         <fields>Name</fields>
+        <fields>MessagingPlatformKey</fields>
+        <fields>MessagingChannel</fields>
+        <fields>MessageType</fields>
+        <fields>Locale</fields>
+        <fields>MessagingConsentStatus</fields>
+        <relatedList>MessagingEndUser.Oportunidade__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>Name</fields>
         <fields>MessagingEndUser</fields>
         <fields>Owner</fields>
         <fields>StartTime</fields>
@@ -1214,9 +1212,6 @@
         <fields>CASES.CREATED_DATE</fields>
         <fields>CASES.PRIORITY</fields>
         <relatedList>Case.Nome_da_Oportunidade__c</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <relatedList>RelatedEntityHistoryList</relatedList>
     </relatedLists>
     <relatedObjects>AccountId</relatedObjects>
     <showEmailCheckbox>false</showEmailCheckbox>

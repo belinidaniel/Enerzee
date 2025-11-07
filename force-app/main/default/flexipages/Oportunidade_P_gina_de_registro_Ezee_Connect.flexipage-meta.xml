@@ -33,9 +33,6 @@
                             </visibilityRule>
                         </valueListItems>
                         <valueListItems>
-                            <value>Opportunity.SendMessageConsultant</value>
-                        </valueListItems>
-                        <valueListItems>
                             <value>Edit</value>
                         </valueListItems>
                         <valueListItems>
@@ -200,6 +197,12 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.UrlSimulation__c</fieldItem>
                 <identifier>RecordUrlSimulation_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.MainViability__c</fieldItem>
+                <identifier>RecordMainViability__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-4f29f008-654e-48c1-9384-f1d14b676bc7</name>

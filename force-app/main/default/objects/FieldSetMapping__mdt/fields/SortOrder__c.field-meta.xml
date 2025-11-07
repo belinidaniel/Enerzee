@@ -5,7 +5,8 @@
     <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Sort Order</label>
     <precision>5</precision>
-    <scale>0</scale>
     <required>false</required>
+    <scale>0</scale>
     <type>Number</type>
+    <unique>false</unique>
 </CustomField>

@@ -9,7 +9,8 @@ trigger ContentDocumentLinkTrigger on ContentDocumentLink (after insert, after u
     if (Trigger.isInsert || Trigger.isUpdate) {
         for (ContentDocumentLink cdl : Trigger.new) {
             if (cdl.LinkedEntityId.getSObjectType() == Task.SObjectType) {
-                Task task = [SELECT Id, WhatId FROM Task WHERE Id = :cdl.LinkedEntityId];
+                Task task = [SELECT Id, WhatId, Subject FROM Task WHERE Id = :cdl.LinkedEntityId];
+                TaskBO.notifyViabilityInvoiceAttachment(task, cdl);
                 if (task.WhatId != null) {
                     ContentDocumentLink projectLink = new ContentDocumentLink(
                         ContentDocumentId = cdl.ContentDocumentId,

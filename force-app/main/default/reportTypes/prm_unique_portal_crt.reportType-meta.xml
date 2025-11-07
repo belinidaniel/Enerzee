@@ -388,4 +388,12 @@
         </columns>
         <masterLabel>Usuários</masterLabel>
     </sections>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>ProfileName__c</field>
+            <table>User</table>
+        </columns>
+        <masterLabel>Users</masterLabel>
+    </sections>
 </ReportType>

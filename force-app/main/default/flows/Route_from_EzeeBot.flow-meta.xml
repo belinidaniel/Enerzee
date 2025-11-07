@@ -36,7 +36,7 @@
         <inputParameters>
             <name>routingType</name>
             <value>
-                <stringValue>Agent</stringValue>
+                <stringValue>QueueBased</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -48,25 +48,19 @@
         <inputParameters>
             <name>queueId</name>
             <value>
-                <stringValue>00GU5000001ehthMAA</stringValue>
+                <stringValue>00G5e000000c2bLEAQ</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
             <name>agentId</name>
-            <value>
-                <stringValue>005U5000007FChZIAW</stringValue>
-            </value>
         </inputParameters>
         <inputParameters>
             <name>agentLabel</name>
-            <value>
-                <stringValue>Mayara Moura</stringValue>
-            </value>
         </inputParameters>
         <inputParameters>
             <name>queueLabel</name>
             <value>
-                <stringValue>Assistência tecnica</stringValue>
+                <stringValue>Chat Enerzee</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -82,31 +76,12 @@
             <name>botLabel</name>
         </inputParameters>
         <inputParameters>
-            <name>externalConversationBotId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>externalConversationBotLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>copilotId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>copilotLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>agentforceEmployeeAgentId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>agentforceEmployeeAgentLabel</name>
-        </inputParameters>
-        <inputParameters>
             <name>isQueueVariable</name>
             <value>
                 <booleanValue>false</booleanValue>
             </value>
         </inputParameters>
         <nameSegment>routeWork</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <apiVersion>61.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>

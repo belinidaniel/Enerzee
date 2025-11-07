@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-17-2025
+ * @last modified on  : 11-07-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -808,12 +808,6 @@ public class OpportunityBO {
                     1 - GERANDO PROPOSTA
                     Enviar PDF da Proposta após geração no Salesforce
                 */
-
-                // if(OpportunityUtils.hasDiscountApprovalStatusChangedToApprovedOrRejected(opportunity, oldOpportunity)){
-                //     System.debug('----------------------------------------------------------------------------------------------------');
-                //     createAddContextIdToEndpointMap(endpointIdToContextIds, 9, opportunity.Id);
-                //     //continue;
-                // }
 
                 /*
                     2 - ETAPA VIABILIDADE
@@ -2688,6 +2682,131 @@ public class OpportunityBO {
     }
 
 
+    public static void closeActivitiesAndFlowsForClosedLost(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap) {
+        if (newRecords == null || newRecords.isEmpty() || oldRecordsMap == null || oldRecordsMap.isEmpty()) {
+            return;
+        }
+
+        Set<Id> closedLostOpportunityIds = new Set<Id>();
+        Map<Id, Opportunity> closedLostOpportunities = new Map<Id, Opportunity>();
+
+        for (Opportunity opportunity : newRecords) {
+            Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
+            if (oldOpportunity == null) {
+                continue;
+            }
+
+            if (OpportunityUtils.isStatusClosedLost(opportunity) && !OpportunityUtils.isStatusClosedLost(oldOpportunity)) {
+                closedLostOpportunityIds.add(opportunity.Id);
+                closedLostOpportunities.put(opportunity.Id, opportunity);
+            }
+        }
+
+        if (closedLostOpportunityIds.isEmpty()) {
+            return;
+        }
+
+        final String AUTOMATION_NOTE = 'Encerrado automaticamente - Oportunidade marcada como Fechado Perdido.';
+
+        List<Task> tasksToUpdate = new List<Task>();
+        List<Projeto__c> projectsToUpdate = new List<Projeto__c>();
+        List<ViabilityStudy__c> viabilityToUpdate = new List<ViabilityStudy__c>();
+        Set<Id> usersToNotify = new Set<Id>();
+        Set<Id> recordIdsToCloseTasks = new Set<Id>(closedLostOpportunityIds);
+
+        Map<String, Schema.SObjectField> projectFields = Schema.SObjectType.Projeto__c.fields.getMap();
+        Schema.SObjectField projectDescriptionField = projectFields.containsKey('Description__c')
+            ? projectFields.get('Description__c')
+            : null;
+
+        for (Opportunity opportunity : closedLostOpportunities.values()) {
+            if (opportunity.OwnerId != null) {
+                usersToNotify.add(opportunity.OwnerId);
+            }
+        }
+
+        List<String> opportunityIdStrings = new List<String>();
+        for (Id oppId : closedLostOpportunityIds) {
+            opportunityIdStrings.add('\'' + String.valueOf(oppId) + '\'');
+        }
+
+        String projectQuery = 'SELECT Id, Status__c, GestorObra__c';
+        if (projectDescriptionField != null) {
+            projectQuery += ', Description__c';
+        }
+        projectQuery += ' FROM Projeto__c WHERE Oportunidade__c IN (' + String.join(opportunityIdStrings, ',') + ')';
+
+        for (Projeto__c project : Database.query(projectQuery)) {
+            if (project.Status__c == null || project.Status__c != 'Projeto cancelado') {
+                project.Status__c = 'Projeto cancelado';
+            }
+            if (projectDescriptionField != null) {
+                String currentDescription = (String) project.get(projectDescriptionField);
+                project.put(
+                    projectDescriptionField,
+                    appendAutomationNote(currentDescription, AUTOMATION_NOTE, 255)
+                );
+            }
+            projectsToUpdate.add(project);
+            recordIdsToCloseTasks.add(project.Id);
+
+            if (project.GestorObra__c != null) {
+                usersToNotify.add(project.GestorObra__c);
+            }
+        }
+
+        for (ViabilityStudy__c viability : [
+            SELECT  Id, StatusFeasibility__c, ObservationsPostVisit__c, OwnerId, Owner__c
+            FROM    ViabilityStudy__c
+            WHERE   Opportunity__c IN :closedLostOpportunityIds
+        ]) {
+            if (viability.StatusFeasibility__c == null || viability.StatusFeasibility__c != 'Viabilidade Finalizada') {
+                viability.StatusFeasibility__c = 'Viabilidade Finalizada';
+            }
+            viability.ObservationsPostVisit__c = appendAutomationNote(viability.ObservationsPostVisit__c, AUTOMATION_NOTE, 131072);
+            viabilityToUpdate.add(viability);
+            recordIdsToCloseTasks.add(viability.Id);
+
+            if (viability.OwnerId != null) {
+                usersToNotify.add(viability.OwnerId);
+            }
+            if (viability.Owner__c != null) {
+                usersToNotify.add(viability.Owner__c);
+            }
+        }
+
+        for (Task task : [
+            SELECT  Id, Status, Description, OwnerId, WhatId
+            FROM    Task
+            WHERE   WhatId IN :recordIdsToCloseTasks
+                AND Status != :TaskUtils.STATUS_CONCLUIDO
+        ]) {
+            task.Status = TaskUtils.STATUS_CONCLUIDO;
+            task.Description = appendAutomationNote(task.Description, AUTOMATION_NOTE, 32000);
+            tasksToUpdate.add(task);
+
+            if (task.OwnerId != null) {
+                usersToNotify.add(task.OwnerId);
+            }
+        }
+
+        if (!tasksToUpdate.isEmpty()) {
+            update tasksToUpdate;
+        }
+        if (!projectsToUpdate.isEmpty()) {
+            update projectsToUpdate;
+        }
+        if (!viabilityToUpdate.isEmpty()) {
+            update viabilityToUpdate;
+        }
+        Boolean orgType = [SELECT IsSandbox FROM Organization LIMIT 1].IsSandbox;
+
+        if(!orgType){
+            sendClosedLostAutomationEmail(closedLostOpportunities.values(), usersToNotify, AUTOMATION_NOTE);
+        }
+    }
+
+
     //fields are != null
     public static Boolean areRequiredFieldsFilled(Opportunity opp) {
         return
@@ -2747,5 +2866,88 @@ public class OpportunityBO {
         return false;
     }
 
+    public Static void updateApproveComment(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap) {
+        for( Opportunity opportunity : newRecords) {
+            Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
+            if(OpportunityUtils.hasDiscountApprovalStatusChangedToApprovedOrRejected(opportunity, oldOpportunity)){
+                opportunity.ObservacaoAprovacao__c = OpportunityUtils.getApproveComment(opportunity);
+            }
+        }
+        
+    }
+
+    private static String appendAutomationNote(String currentValue, String note, Integer maxLength) {
+        if (String.isBlank(note) || maxLength == null || maxLength <= 0) {
+            return currentValue;
+        }
+
+        if (String.isBlank(currentValue)) {
+            return note.length() > maxLength ? note.substring(0, maxLength) : note;
+        }
+
+        if (currentValue.contains(note)) {
+            return currentValue;
+        }
+
+        String separator = currentValue.endsWith('.') ? ' ' : ' | ';
+        String candidate = currentValue + separator + note;
+
+        return candidate.length() > maxLength ? candidate.substring(0, maxLength) : candidate;
+    }
+
+
+    private static void sendClosedLostAutomationEmail(List<Opportunity> opportunities, Set<Id> userIds, String note) {
+        if (opportunities == null || opportunities.isEmpty() || userIds == null || userIds.isEmpty()) {
+            return;
+        }
+
+        List<User> users = [
+            SELECT  Id, Email
+            FROM    User
+            WHERE   Id IN :userIds
+                AND Email != null
+        ];
+
+        if (users.isEmpty()) {
+            return;
+        }
+
+        List<String> recipientEmails = new List<String>();
+        for (User userRecord : users) {
+            if (!String.isBlank(userRecord.Email)) {
+                recipientEmails.add(userRecord.Email);
+            }
+        }
+
+        if (recipientEmails.isEmpty() || Test.isRunningTest()) {
+            return;
+        }
+
+        if (recipientEmails.size() > 100) {
+            List<String> limitedRecipients = new List<String>();
+            for (Integer index = 0; index < 100; index++) {
+                limitedRecipients.add(recipientEmails[index]);
+            }
+            recipientEmails = limitedRecipients;
+        }
+
+        String body = 'Olá,<br/><br/>' +
+            'As seguintes oportunidades foram atualizadas para o estágio &quot;Fechado Perdido&quot; ' +
+            'e tiveram suas atividades relacionadas encerradas automaticamente:<br/><ul>';
+
+        for (Opportunity opportunity : opportunities) {
+            String opportunityLink = URL.getSalesforceBaseUrl().toExternalForm() + '/' + opportunity.Id;
+            body += '<li><a href=&quot;' + opportunityLink + '&quot;>' + opportunity.Name + '</a></li>';
+        }
+
+        body += '</ul><br/>' + note;
+
+        Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+        email.setToAddresses(recipientEmails);
+        email.setSubject('Encerramento automático de atividades - Fechado Perdido');
+        email.setHtmlBody(body);
+
+        Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ email });
+    }
 
 }

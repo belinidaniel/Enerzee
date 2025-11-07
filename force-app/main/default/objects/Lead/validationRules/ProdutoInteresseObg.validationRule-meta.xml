@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ProdutoInteresseObg</fullName>
-    <active>false</active>
+    <active>true</active>
     <errorConditionFormula>AND(
-    ISPICKVAL(Lb065_ProdutoInteresse__c,&apos;&apos;),
-    ISPICKVAL(Status, &apos;Distribuído&apos;),
-    ISCHANGED(Status),
-    RecordType.DeveloperName = &apos;QualificacaodeClientes&apos;
-    )</errorConditionFormula>
+  ISPICKVAL(Lb065_ProdutoInteresse__c,&apos;&apos;),
+  ISPICKVAL(Status, &apos;Distribuído&apos;),
+  ISCHANGED(Status),
+  RecordType.DeveloperName = &apos;QualificacaodeClientes&apos;
+)</errorConditionFormula>
     <errorMessage>Campo Produto de interesse precisa ser preenchido antes de mudar a fase do Lead.</errorMessage>
 </ValidationRule>

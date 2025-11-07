@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-10-2025
+ * @last modified on  : 11-07-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityTriggerHandler extends TriggerHandler {
@@ -58,6 +58,7 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.controlsSubstatus((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.sendProposalValueUpdate((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.assignOwnerByPartner((List<Opportunity>) Trigger.new);
+        OpportunityBO.updateApproveComment((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
     }
 
     public override void afterUpdate(){
@@ -92,6 +93,7 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.addPlanToUserInVirtualOffice((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.sendAprovalUpdate((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.handleOpportunityLeadConversion((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
+        OpportunityBO.closeActivitiesAndFlowsForClosedLost((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityShareHandler.gerenciarCompartilhamentoOportunidade((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
 
     }

@@ -31,7 +31,6 @@ FIRST_NAME&amp;&quot; &quot;&amp;MIDDLE_NAME&amp;&quot; &quot;&amp;LAST_NAME)</c
             <operator>equals</operator>
             <value>Lead.Cliente,Lead.QualificacaodeClientes</value>
         </criteriaItems>
-        <language>en_US</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>

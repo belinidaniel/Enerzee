@@ -38,9 +38,27 @@
             </value>
         </filters>
         <inputAssignments>
+            <field>GeracaoAnualEstimada__c</field>
+            <value>
+                <elementReference>$Record.EstimatedAnnualGeneration__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <field>MainViability__c</field>
             <value>
                 <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>PotenciaPicoSistema__c</field>
+            <value>
+                <elementReference>$Record.InstalledPowerKwp__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>PropostaGerada__c</field>
+            <value>
+                <booleanValue>false</booleanValue>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -82,5 +100,5 @@
         <recordTriggerType>Update</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Draft</status>
 </Flow>

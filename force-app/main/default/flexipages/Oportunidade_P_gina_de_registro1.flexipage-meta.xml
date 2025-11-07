@@ -63,9 +63,6 @@
                             </visibilityRule>
                         </valueListItems>
                         <valueListItems>
-                            <value>Opportunity.SendMessageConsultant</value>
-                        </valueListItems>
-                        <valueListItems>
                             <value>Edit</value>
                         </valueListItems>
                         <valueListItems>
@@ -298,24 +295,36 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ParentOpportunity__c</fieldItem>
-                <identifier>RecordParentOpportunity_cField</identifier>
+                <fieldItem>Record.DataHoraAgendamento__c</fieldItem>
+                <identifier>RecordDataHoraAgendamento_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Tempo_em_Aberto__c</fieldItem>
-                <identifier>RecordTempo_em_Aberto_cField</identifier>
+                <fieldItem>Record.Lead__c</fieldItem>
+                <identifier>RecordLead__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.MainViability__c</fieldItem>
+                <identifier>RecordMainViability__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-dc22ef86-3ad0-43b6-8347-863cd7bb2628</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>required</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Name</fieldItem>
+                <identifier>RecordNameField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -454,16 +463,6 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.CondicoesPagamento__c</fieldItem>
                 <identifier>RecordCondicoesPagamento_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.DataHoraAgendamento__c</fieldItem>
-                <identifier>RecordDataHoraAgendamento_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-57a0fac7-02be-4ed0-b915-6cf6c202c8a9</name>

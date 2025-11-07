@@ -2,30 +2,29 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ClientTotalCost__c</fullName>
     <description>Total de custos atribuídos ao cliente conforme estudo de viabilidade vinculado.</description>
-    <formula>
-        IF(
+    <formula>IF(
         ISBLANK(MainViability__c),
         0,
-        IF(INCLUDES(MainViability__r.AdequacyCostClient__c, &apos;Ramal CC&apos;),
+        IF(INCLUDES(MainViability__r.AdequacyCostEnerzee__c, &apos;Ramal CC&apos;),
         BLANKVALUE(MainViability__r.DcBranchCost__c, 0), 0) +
-        IF(INCLUDES(MainViability__r.AdequacyCostClient__c, &apos;Ramal CA&apos;),
+        IF(INCLUDES(MainViability__r.AdequacyCostEnerzee__c, &apos;Ramal CA&apos;),
         BLANKVALUE(MainViability__r.AcBranchCost__c, 0), 0) +
-        IF(INCLUDES(MainViability__r.AdequacyCostClient__c, &apos;Adequação Padrão&apos;),
+        IF(INCLUDES(MainViability__r.AdequacyCostEnerzee__c, &apos;Adequação Padrão&apos;),
         BLANKVALUE(MainViability__r.StandardAdequacyCost__c, 0), 0) +
-        IF(INCLUDES(MainViability__r.AdequacyCostClient__c, &apos;Cobertura&apos;),
+        IF(INCLUDES(MainViability__r.AdequacyCostEnerzee__c, &apos;Cobertura&apos;),
         BLANKVALUE(MainViability__r.CoberturaCost__c, 0), 0) +
-        IF(INCLUDES(MainViability__r.AdequacyCostClient__c, &apos;Laudo Estrutural&apos;),
+        IF(INCLUDES(MainViability__r.AdequacyCostEnerzee__c, &apos;Laudo Estrutural&apos;),
         BLANKVALUE(MainViability__r.StruturalReport__c, 0), 0) +
-        IF(INCLUDES(MainViability__r.AdequacyCostClient__c, &apos;Outros Custos&apos;),
+        IF(INCLUDES(MainViability__r.AdequacyCostEnerzee__c, &apos;Outros Custos&apos;),
         BLANKVALUE(MainViability__r.OtherCosts__c, 0), 0) +
-        IF(INCLUDES(MainViability__r.AdequacyCostClient__c, &apos;Custos Adicionais&apos;),
+        IF(INCLUDES(MainViability__r.AdequacyCostEnerzee__c, &apos;Custos Adicionais&apos;),
         BLANKVALUE(MainViability__r.AdditionalCost__c, 0), 0) +
-        IF(INCLUDES(MainViability__r.AdequacyCostClient__c, &apos;Visita Técnica&apos;),
+        IF(INCLUDES(MainViability__r.AdequacyCostEnerzee__c, &apos;Visita Técnica&apos;),
         BLANKVALUE(MainViability__r.TechnicalVisitCost__c, 0), 0)
         )</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <inlineHelpText>Total de custos atribuídos ao cliente conforme estudo de viabilidade vinculado.</inlineHelpText>
-    <label>Custo Total do Cliente</label>
+    <label>Custo Total da Enerzee</label>
     <precision>18</precision>
     <required>false</required>
     <scale>2</scale>

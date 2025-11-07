@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 08-13-2025
+ * @last modified on  : 11-07-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityUtils {
@@ -518,5 +518,12 @@ public class OpportunityUtils {
         if (opp.GrupoTarifario__c != 'Grupo B' || opp.StageName != 'Análise de Crédito') return false;
 
         return !String.isBlank(opp.ReferenceIdRevo__c) && opp.StageName != oldOpp.StageName;
+    }
+
+    public static String getApproveComment(Opportunity opportunity) {
+        return [SELECT Id, Comments FROM ProcessInstanceStep 
+        WHERE ProcessInstance.TargetObjectId = :opportunity.Id 
+        AND StepStatus IN ('Approved', 'Rejected')
+        Order By CreatedDate Desc Limit 1].Comments;
     }
 }

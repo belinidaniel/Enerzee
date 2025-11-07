@@ -8,28 +8,6 @@
             <stringValue>{&quot;location&quot;:&quot;top&quot;,&quot;type&quot;:&quot;simple&quot;}</stringValue>
         </value>
     </customProperties>
-    <decisions>
-        <name>is_Readequacao</name>
-        <label>is Readequacao</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <defaultConnector>
-            <targetReference>Change_Stage</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
-        <rules>
-            <name>true</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Get_Opportunity.StageName</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Readequação de Proposta</stringValue>
-                </rightValue>
-            </conditions>
-            <label>true</label>
-        </rules>
-    </decisions>
     <environments>Default</environments>
     <formulas>
         <description>te</description>
@@ -129,7 +107,7 @@ RIGHT(&quot;0&quot; &amp; TEXT(MINUTE(TIMEVALUE(NOW()))), 2)</expression>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
         <connector>
-            <targetReference>is_Readequacao</targetReference>
+            <targetReference>Change_Stage</targetReference>
         </connector>
         <fields>
             <name>lwcfile</name>

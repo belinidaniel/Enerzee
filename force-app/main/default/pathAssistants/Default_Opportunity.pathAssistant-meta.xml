@@ -5,10 +5,6 @@
     <fieldName>StageName</fieldName>
     <masterLabel>Default</masterLabel>
     <pathAssistantSteps>
-        <info>&lt;ul&gt;&lt;li&gt;&lt;br&gt;&lt;/li&gt;&lt;/ul&gt;</info>
-        <picklistValueName>Aguardando Aprovação</picklistValueName>
-    </pathAssistantSteps>
-    <pathAssistantSteps>
         <info>&lt;ul&gt;&lt;li&gt;Avaliar dados informados pelo consultor&lt;/li&gt;&lt;li&gt;a&lt;/li&gt;&lt;li&gt;b&lt;/li&gt;&lt;li&gt;c&lt;/li&gt;&lt;li&gt;d&lt;/li&gt;&lt;li&gt;&lt;br&gt;&lt;/li&gt;&lt;/ul&gt;</info>
         <picklistValueName>Prospecção</picklistValueName>
     </pathAssistantSteps>

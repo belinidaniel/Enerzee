@@ -24,11 +24,11 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Client_Id__c</field>
+                <field>Client_Secret__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Client_Secret__c</field>
+                <field>Client_Id__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>

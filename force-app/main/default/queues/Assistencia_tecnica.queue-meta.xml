@@ -4,7 +4,9 @@
     <name>Assistência tecnica</name>
     <queueMembers>
         <users>
-            <user>diogo.boas@enerzee.com.br</user>
+            <user>ellen.vieira@enerzee.com.br</user>
+            <user>joao.souza@enerzee.com.br</user>
+            <user>mauro.paula@enerzee.com.br</user>
         </users>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>

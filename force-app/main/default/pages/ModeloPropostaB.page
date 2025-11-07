@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 10-25-2025
+  @last modified on  : 11-07-2025
   @last modified by  : Daniel Belini
 -->
 <apex:page standardController="Opportunity" applyBodyTag="false" extensions="PDFControllerExtension,OpportunityDataController" action="{!salvarPDF}" standardStylesheets="false" showHeader="false"  sidebar="false" renderAs="PDF" cache="false">     
@@ -107,7 +107,7 @@
             {!IF(ISBLANK(Opportunity.EnderecoOportunidade__c), '-', Opportunity.EnderecoOportunidade__c)}
         </div>
         <!-- CONSUMO ANUAL CONSIDERADO -->
-        <div style="position:relative; bottom:467px; left:287px; right:120px;">
+        <div style="position:relative; bottom:467px; left:307px; right:120px;">
             <apex:outputtext rendered="{!IF(Opportunity.ConsumoAnual__c == null, true, false)}">
                 -
             </apex:outputtext>
@@ -124,7 +124,7 @@
             KWh
         </div>
         <!-- TARIFA DE ENERGIA -->
-        <div style="position:relative; bottom:450px; left:200px; right:120px;">
+        <div style="position:relative; bottom:450px; left:210px; right:120px;">
             R$ 
             <apex:outputtext rendered="{!IF(Opportunity.TarifaComTributosB__c == null, true, false)}">
                 -
@@ -151,7 +151,7 @@
             {!IF(ISBLANK(Opportunity.GrupoTarifario__c), '-', Opportunity.GrupoTarifario__c)} 
         </div>
         <!-- CUSTO MÉDIO MENSAL DE ENERGIA -->
-        <div style="position:relative; bottom:414px; left:310px; right:120px;">
+        <div style="position:relative; bottom:414px; left:320px; right:120px;">
             R$     
             <apex:outputtext rendered="{!IF(Opportunity.CustoMedioEnergia__c == null, true, false)}">
                 -
@@ -662,8 +662,8 @@
         </apex:outputtext>
     </div>
 
-    <div style="position: absolute;bottom: 3390px;left:20px">
-        <apex:outputText value="{!opportunityChartImage}" escape="false"/>
+    <div style="position:relative; margin-top:-462px; left:10px; right:120px; 18px; font-weight: bold;">
+        <apex:outputText value="{!opportunityChartImage}" escape="false" />
     </div>
 
 
@@ -745,5 +745,14 @@
     <div style="height: 1100px;">   
         <apex:image url="{!pdfUrls[7]}" height="1130px" />
     </div>
+
+    <!-- PAGINA 8 ------------------------------------->
+         <!-- imagem de fundo -->
+
+    <apex:outputPanel rendered="{!pdfUrls.size > 8}">
+        <div style="height: 1100px;">
+            <apex:image url="{!pdfUrls[8]}" height="1130px" rendered="{!NOT(ISBLANK(pdfUrls[8]))}" />
+        </div>
+    </apex:outputPanel>
 
 </apex:page>

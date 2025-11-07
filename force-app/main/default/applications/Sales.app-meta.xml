@@ -260,10 +260,7 @@
     <tabs>ViabilityStudy__c</tabs>
     <tabs>ClickSign__c</tabs>
     <tabs>TabelaEzeeConnect__c</tabs>
-    <tabs>Log__c</tabs>
     <tabs>Parceiro__c</tabs>
-    <tabs>Knowledge__kav</tabs>
-    <tabs>LeadInteraction__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Sales_UtilityBar</utilityBar>
 </CustomApplication>

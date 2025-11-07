@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>AllOpenLeads</fullName>
-    <columns>LEAD.CREATED_DATE</columns>
     <columns>FULL_NAME</columns>
-    <columns>LEAD.LEAD_SOURCE</columns>
-    <columns>Lb065_ProdutoInteresse__c</columns>
-    <columns>InteresseEnergiaSolar__c</columns>
-    <columns>CustoEnergiaMes__c</columns>
-    <columns>LEAD.STATE</columns>
-    <columns>ConsultorRegional__c</columns>
+    <columns>LEAD.COMPANY</columns>
+    <columns>LEAD.TITLE</columns>
     <columns>LEAD.RECORDTYPE</columns>
+    <columns>LEAD.STATE</columns>
+    <columns>LEAD.PHONE</columns>
+    <columns>LEAD.EMAIL</columns>
     <columns>LEAD.STATUS</columns>
+    <columns>LEAD.LEAD_SOURCE</columns>
     <columns>CORE.USERS.FIRST_NAME</columns>
-    <columns>Nome_da_Campanha_Meta__c</columns>
-    <columns>Nome_do_Conjunto_de_An_ncios_Meta__c</columns>
-    <columns>Nome_do_An_ncio_Meta__c</columns>
-    <columns>Origem_do_Tr_fego__c</columns>
+    <columns>CORE.USERS.LAST_NAME</columns>
+    <columns>LEAD.CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>LEAD.RECORDTYPE</field>
+        <field>LEAD.STATUS</field>
         <operation>notEqual</operation>
-        <value>Lead.QualificacaodeConsultores</value>
+        <value>Qualified</value>
     </filters>
     <label>Todos os leads Abertos</label>
 </ListView>

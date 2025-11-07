@@ -6,5 +6,5 @@
     <mayForecastManagerShare>false</mayForecastManagerShare>
     <name>kmath Conta pessoal de Parceiro</name>
     <opportunityAccessLevel>None</opportunityAccessLevel>
-    <parentRole>GerenteComercial</parentRole>
+    <parentRole>CTO</parentRole>
 </Role>

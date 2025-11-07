@@ -13,7 +13,7 @@
         <type>role</type>
     </allowedSubmitters>
     <allowedSubmitters>
-        <submitter>GerenteComercial</submitter>
+        <submitter>CTO</submitter>
         <type>roleSubordinates</type>
     </allowedSubmitters>
     <approvalPageFields>
@@ -21,7 +21,6 @@
         <field>CondicoesPagamento__c</field>
         <field>NotePaymentMethod__c</field>
         <field>ValorTotalProposta__c</field>
-        <field>URL__c</field>
         <field>Owner</field>
     </approvalPageFields>
     <approvalStep>

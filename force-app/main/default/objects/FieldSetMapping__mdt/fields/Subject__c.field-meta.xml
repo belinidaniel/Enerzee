@@ -7,4 +7,5 @@
     <length>255</length>
     <required>false</required>
     <type>Text</type>
+    <unique>false</unique>
 </CustomField>
