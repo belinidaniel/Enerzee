@@ -3,10 +3,10 @@
     <doesSendEmailToMembers>true</doesSendEmailToMembers>
     <name>Contratos</name>
     <queueMembers>
-        <users>
-            <user>oldcontrato@enerzee.com.brold</user>
-            <user>contrato@enerzee.com.br</user>
-        </users>
+        <roles>
+            <role>AnalistaAdmContratos</role>
+            <role>Gerente_Administrativo</role>
+        </roles>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>
     <queueSobject>
@@ -23,6 +23,9 @@
     </queueSobject>
     <queueSobject>
         <sobjectType>MessagingSession</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>SetupMessagingSession__c</sobjectType>
     </queueSobject>
     <queueSobject>
         <sobjectType>Task</sobjectType>

@@ -28,7 +28,8 @@
         <name>Update_opportunity</name>
         <label>Update opportunity</label>
         <locationX>176</locationX>
-        <locationY>323</locationY>
+        <locationY>
+        323</locationY>
         <filterLogic>and</filterLogic>
         <filters>
             <field>Id</field>
@@ -73,7 +74,8 @@
                 <elementReference>$User.Id</elementReference>
             </value>
         </inputAssignments>
-        <object>Opportunity</object>
+        <object>
+        Opportunity</object>
     </recordUpdates>
     <start>
         <locationX>50</locationX>
@@ -81,7 +83,8 @@
         <connector>
             <targetReference>Update_opportunity</targetReference>
         </connector>
-        <filterLogic>and</filterLogic>
+        <filterLogic>
+        and</filterLogic>
         <filters>
             <field>StatusFeasibility__c</field>
             <operator>EqualTo</operator>
@@ -96,9 +99,11 @@
                 <booleanValue>true</booleanValue>
             </value>
         </filters>
-        <object>ViabilityStudy__c</object>
+        <object>
+        ViabilityStudy__c</object>
         <recordTriggerType>Update</recordTriggerType>
-        <triggerType>RecordAfterSave</triggerType>
+        <triggerType>
+        RecordAfterSave</triggerType>
     </start>
     <status>Draft</status>
 </Flow>

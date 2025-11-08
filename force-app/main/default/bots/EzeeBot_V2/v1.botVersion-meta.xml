@@ -22,6 +22,144 @@
         <showInFooterMenu>false</showInFooterMenu>
     </botDialogs>
     <botDialogs>
+        <botDialogGroup>Caminho</botDialogGroup>
+        <botSteps>
+            <botVariableOperation>
+                <askCollectIfSet>false</askCollectIfSet>
+                <botMessages>
+                    <message>Escolha uma das opções abaixo para que possamos lhe direcionar melhor:</message>
+                    <messageIdentifier>84701c32-d3ba-4f9b-8f4a-20a3113f1178</messageIdentifier>
+                </botMessages>
+                <botQuickReplyOptions>
+                    <literalValue>Sou Consultor / Quero ser Consultor</literalValue>
+                    <quickReplyOptionIdentifier>e06cde6f-1d19-45ae-b599-de8bfbb930c5</quickReplyOptionIdentifier>
+                </botQuickReplyOptions>
+                <botQuickReplyOptions>
+                    <literalValue>Sou Integrador / Quero ser Integrador</literalValue>
+                    <quickReplyOptionIdentifier>d796e95d-64d0-4300-81c0-2ec07f78886c</quickReplyOptionIdentifier>
+                </botQuickReplyOptions>
+                <botQuickReplyOptions>
+                    <literalValue>Sou Cliente / Quero ser Cliente</literalValue>
+                    <quickReplyOptionIdentifier>f7d29bfd-82bd-4a84-bc3d-875ee4378358</quickReplyOptionIdentifier>
+                </botQuickReplyOptions>
+                <botVariableOperands>
+                    <disableAutoFill>true</disableAutoFill>
+                    <sourceName>Inexistente</sourceName>
+                    <sourceType>MlSlotClass</sourceType>
+                    <targetName>Path_does_not_exist</targetName>
+                    <targetType>ConversationVariable</targetType>
+                </botVariableOperands>
+                <ignoreIntentRecognition>false</ignoreIntentRecognition>
+                <optionalCollect>false</optionalCollect>
+                <quickReplyType>Static</quickReplyType>
+                <quickReplyWidgetType>Buttons</quickReplyWidgetType>
+                <retryMessages>
+                    <message>Por favor, digite uma opção válida!</message>
+                    <messageIdentifier>a71cb9b3-9f96-413d-8602-238b36d0a08f</messageIdentifier>
+                </retryMessages>
+                <type>Collect</type>
+                <variableOperationIdentifier>02525be4-29a1-4245-ae01-55d0c0ffcb1e</variableOperationIdentifier>
+            </botVariableOperation>
+            <stepIdentifier>cd8747ed-3d82-4017-81aa-c503288d899d</stepIdentifier>
+            <type>VariableOperation</type>
+        </botSteps>
+        <botSteps>
+            <botStepConditions>
+                <leftOperandName>Path_does_not_exist</leftOperandName>
+                <leftOperandType>ConversationVariable</leftOperandType>
+                <operatorType>Equals</operatorType>
+                <rightOperandValue>Sou Consultor / Quero ser Consultor</rightOperandValue>
+            </botStepConditions>
+            <botSteps>
+                <botMessages>
+                    <message>A ENERZEE está presente com sistemas fotovoltaicos instalados em todo o Brasil. A empresa tem como filosofia trabalhar com parceiros/integradores locais para atendimento aos nossos clientes. Esses parceiros/integradores são empresas qualificadas para real</message>
+                    <messageIdentifier>2b62afce-885a-42e0-826a-92f354e36c22</messageIdentifier>
+                </botMessages>
+                <stepIdentifier>e3c4ba5d-f6fd-40e0-bdb7-48c48664c99b</stepIdentifier>
+                <type>Message</type>
+            </botSteps>
+            <botSteps>
+                <botNavigation>
+                    <botNavigationLinks>
+                        <targetBotDialog>Caminho_Integrador</targetBotDialog>
+                    </botNavigationLinks>
+                    <type>Redirect</type>
+                </botNavigation>
+                <stepIdentifier>1b3aa61f-3048-41c3-ac1e-9dcfa3d67514</stepIdentifier>
+                <type>Navigation</type>
+            </botSteps>
+            <conditionLogicType>And</conditionLogicType>
+            <stepIdentifier>4ca3a9d0-f107-4d5c-8525-68eb68c51141</stepIdentifier>
+            <type>Group</type>
+        </botSteps>
+        <botSteps>
+            <botStepConditions>
+                <leftOperandName>Path_does_not_exist</leftOperandName>
+                <leftOperandType>ConversationVariable</leftOperandType>
+                <operatorType>Equals</operatorType>
+                <rightOperandValue>Sou Integrador / Quero Ser Integrador</rightOperandValue>
+            </botStepConditions>
+            <botSteps>
+                <botMessages>
+                    <message>A ENERZEE está presente com sistemas fotovoltaicos instalados em todo o Brasil. A empresa tem como filosofia trabalhar com parceiros/integradores locais para atendimento aos nossos clientes. Esses parceiros/integradores são empresas qualificadas para real</message>
+                    <messageIdentifier>3088cea9-2c5c-4631-a4ed-91dcbfb22e90</messageIdentifier>
+                </botMessages>
+                <stepIdentifier>00035506-2ed2-7806-0bc3-eb96ae24e828</stepIdentifier>
+                <type>Message</type>
+            </botSteps>
+            <botSteps>
+                <botNavigation>
+                    <botNavigationLinks>
+                        <targetBotDialog>Caminho_Integrador</targetBotDialog>
+                    </botNavigationLinks>
+                    <type>Redirect</type>
+                </botNavigation>
+                <stepIdentifier>efd8cdaf-6ddf-4162-9e63-ea5d9b43ee6a</stepIdentifier>
+                <type>Navigation</type>
+            </botSteps>
+            <conditionLogicType>And</conditionLogicType>
+            <stepIdentifier>2bea473b-1048-6f62-8e31-c6c3ce45a4a2</stepIdentifier>
+            <type>Group</type>
+        </botSteps>
+        <botSteps>
+            <botStepConditions>
+                <leftOperandName>Path_does_not_exist</leftOperandName>
+                <leftOperandType>ConversationVariable</leftOperandType>
+                <operatorType>Equals</operatorType>
+                <rightOperandValue>Sou Cliente / Quero ser Cliente</rightOperandValue>
+            </botStepConditions>
+            <botSteps>
+                <botMessages>
+                    <message>A ENERZEE está presente com sistemas fotovoltaicos instalados em todo o Brasil. A empresa tem como filosofia trabalhar com parceiros/integradores locais para atendimento aos nossos clientes. Esses parceiros/integradores são empresas qualificadas para real</message>
+                    <messageIdentifier>08df7cb3-173b-9a9a-5cf3-57676cf91e6b</messageIdentifier>
+                </botMessages>
+                <stepIdentifier>33035db7-5064-aa0d-6459-8498b0014765</stepIdentifier>
+                <type>Message</type>
+            </botSteps>
+            <botSteps>
+                <botNavigation>
+                    <botNavigationLinks>
+                        <targetBotDialog>Caminho_Integrador</targetBotDialog>
+                    </botNavigationLinks>
+                    <type>Redirect</type>
+                </botNavigation>
+                <stepIdentifier>d4954b96-a539-4366-ad0f-dd938a2d35ce</stepIdentifier>
+                <type>Navigation</type>
+            </botSteps>
+            <conditionLogicType>And</conditionLogicType>
+            <stepIdentifier>243a5855-8e37-9928-48e6-a8c3fd50cc40</stepIdentifier>
+            <type>Group</type>
+        </botSteps>
+        <botSteps>
+            <stepIdentifier>4539fe88-871d-4227-ba74-f56612140715</stepIdentifier>
+            <type>Wait</type>
+        </botSteps>
+        <developerName>Inexistente</developerName>
+        <isPlaceholderDialog>false</isPlaceholderDialog>
+        <label>Inexistente</label>
+        <showInFooterMenu>false</showInFooterMenu>
+    </botDialogs>
+    <botDialogs>
         <botSteps>
             <botVariableOperation>
                 <botInvocation>
@@ -243,144 +381,6 @@
         <label>Welcome</label>
         <mlIntent>Welcome</mlIntent>
         <mlIntentTrainingEnabled>true</mlIntentTrainingEnabled>
-        <showInFooterMenu>false</showInFooterMenu>
-    </botDialogs>
-    <botDialogs>
-        <botDialogGroup>Caminho</botDialogGroup>
-        <botSteps>
-            <botVariableOperation>
-                <askCollectIfSet>false</askCollectIfSet>
-                <botMessages>
-                    <message>Escolha uma das opções abaixo para que possamos lhe direcionar melhor:</message>
-                    <messageIdentifier>84701c32-d3ba-4f9b-8f4a-20a3113f1178</messageIdentifier>
-                </botMessages>
-                <botQuickReplyOptions>
-                    <literalValue>Sou Consultor / Quero ser Consultor</literalValue>
-                    <quickReplyOptionIdentifier>e06cde6f-1d19-45ae-b599-de8bfbb930c5</quickReplyOptionIdentifier>
-                </botQuickReplyOptions>
-                <botQuickReplyOptions>
-                    <literalValue>Sou Integrador / Quero ser Integrador</literalValue>
-                    <quickReplyOptionIdentifier>d796e95d-64d0-4300-81c0-2ec07f78886c</quickReplyOptionIdentifier>
-                </botQuickReplyOptions>
-                <botQuickReplyOptions>
-                    <literalValue>Sou Cliente / Quero ser Cliente</literalValue>
-                    <quickReplyOptionIdentifier>f7d29bfd-82bd-4a84-bc3d-875ee4378358</quickReplyOptionIdentifier>
-                </botQuickReplyOptions>
-                <botVariableOperands>
-                    <disableAutoFill>true</disableAutoFill>
-                    <sourceName>Inexistente</sourceName>
-                    <sourceType>MlSlotClass</sourceType>
-                    <targetName>Path_does_not_exist</targetName>
-                    <targetType>ConversationVariable</targetType>
-                </botVariableOperands>
-                <ignoreIntentRecognition>false</ignoreIntentRecognition>
-                <optionalCollect>false</optionalCollect>
-                <quickReplyType>Static</quickReplyType>
-                <quickReplyWidgetType>Buttons</quickReplyWidgetType>
-                <retryMessages>
-                    <message>Por favor, digite uma opção válida!</message>
-                    <messageIdentifier>a71cb9b3-9f96-413d-8602-238b36d0a08f</messageIdentifier>
-                </retryMessages>
-                <type>Collect</type>
-                <variableOperationIdentifier>02525be4-29a1-4245-ae01-55d0c0ffcb1e</variableOperationIdentifier>
-            </botVariableOperation>
-            <stepIdentifier>cd8747ed-3d82-4017-81aa-c503288d899d</stepIdentifier>
-            <type>VariableOperation</type>
-        </botSteps>
-        <botSteps>
-            <botStepConditions>
-                <leftOperandName>Path_does_not_exist</leftOperandName>
-                <leftOperandType>ConversationVariable</leftOperandType>
-                <operatorType>Equals</operatorType>
-                <rightOperandValue>Sou Consultor / Quero ser Consultor</rightOperandValue>
-            </botStepConditions>
-            <botSteps>
-                <botMessages>
-                    <message>A ENERZEE está presente com sistemas fotovoltaicos instalados em todo o Brasil. A empresa tem como filosofia trabalhar com parceiros/integradores locais para atendimento aos nossos clientes. Esses parceiros/integradores são empresas qualificadas para real</message>
-                    <messageIdentifier>2b62afce-885a-42e0-826a-92f354e36c22</messageIdentifier>
-                </botMessages>
-                <stepIdentifier>e3c4ba5d-f6fd-40e0-bdb7-48c48664c99b</stepIdentifier>
-                <type>Message</type>
-            </botSteps>
-            <botSteps>
-                <botNavigation>
-                    <botNavigationLinks>
-                        <targetBotDialog>Caminho_Integrador</targetBotDialog>
-                    </botNavigationLinks>
-                    <type>Redirect</type>
-                </botNavigation>
-                <stepIdentifier>1b3aa61f-3048-41c3-ac1e-9dcfa3d67514</stepIdentifier>
-                <type>Navigation</type>
-            </botSteps>
-            <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>4ca3a9d0-f107-4d5c-8525-68eb68c51141</stepIdentifier>
-            <type>Group</type>
-        </botSteps>
-        <botSteps>
-            <botStepConditions>
-                <leftOperandName>Path_does_not_exist</leftOperandName>
-                <leftOperandType>ConversationVariable</leftOperandType>
-                <operatorType>Equals</operatorType>
-                <rightOperandValue>Sou Integrador / Quero Ser Integrador</rightOperandValue>
-            </botStepConditions>
-            <botSteps>
-                <botMessages>
-                    <message>A ENERZEE está presente com sistemas fotovoltaicos instalados em todo o Brasil. A empresa tem como filosofia trabalhar com parceiros/integradores locais para atendimento aos nossos clientes. Esses parceiros/integradores são empresas qualificadas para real</message>
-                    <messageIdentifier>3088cea9-2c5c-4631-a4ed-91dcbfb22e90</messageIdentifier>
-                </botMessages>
-                <stepIdentifier>00035506-2ed2-7806-0bc3-eb96ae24e828</stepIdentifier>
-                <type>Message</type>
-            </botSteps>
-            <botSteps>
-                <botNavigation>
-                    <botNavigationLinks>
-                        <targetBotDialog>Caminho_Integrador</targetBotDialog>
-                    </botNavigationLinks>
-                    <type>Redirect</type>
-                </botNavigation>
-                <stepIdentifier>efd8cdaf-6ddf-4162-9e63-ea5d9b43ee6a</stepIdentifier>
-                <type>Navigation</type>
-            </botSteps>
-            <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>2bea473b-1048-6f62-8e31-c6c3ce45a4a2</stepIdentifier>
-            <type>Group</type>
-        </botSteps>
-        <botSteps>
-            <botStepConditions>
-                <leftOperandName>Path_does_not_exist</leftOperandName>
-                <leftOperandType>ConversationVariable</leftOperandType>
-                <operatorType>Equals</operatorType>
-                <rightOperandValue>Sou Cliente / Quero ser Cliente</rightOperandValue>
-            </botStepConditions>
-            <botSteps>
-                <botMessages>
-                    <message>A ENERZEE está presente com sistemas fotovoltaicos instalados em todo o Brasil. A empresa tem como filosofia trabalhar com parceiros/integradores locais para atendimento aos nossos clientes. Esses parceiros/integradores são empresas qualificadas para real</message>
-                    <messageIdentifier>08df7cb3-173b-9a9a-5cf3-57676cf91e6b</messageIdentifier>
-                </botMessages>
-                <stepIdentifier>33035db7-5064-aa0d-6459-8498b0014765</stepIdentifier>
-                <type>Message</type>
-            </botSteps>
-            <botSteps>
-                <botNavigation>
-                    <botNavigationLinks>
-                        <targetBotDialog>Caminho_Integrador</targetBotDialog>
-                    </botNavigationLinks>
-                    <type>Redirect</type>
-                </botNavigation>
-                <stepIdentifier>d4954b96-a539-4366-ad0f-dd938a2d35ce</stepIdentifier>
-                <type>Navigation</type>
-            </botSteps>
-            <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>243a5855-8e37-9928-48e6-a8c3fd50cc40</stepIdentifier>
-            <type>Group</type>
-        </botSteps>
-        <botSteps>
-            <stepIdentifier>4539fe88-871d-4227-ba74-f56612140715</stepIdentifier>
-            <type>Wait</type>
-        </botSteps>
-        <developerName>Inexistente</developerName>
-        <isPlaceholderDialog>false</isPlaceholderDialog>
-        <label>Inexistente</label>
         <showInFooterMenu>false</showInFooterMenu>
     </botDialogs>
     <botDialogs>

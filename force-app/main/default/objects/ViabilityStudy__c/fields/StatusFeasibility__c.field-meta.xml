@@ -17,6 +17,11 @@
                 <label>Agendamento de Visita Técnica</label>
             </value>
             <value>
+                <fullName>Solicitação de Novo Integrador</fullName>
+                <default>false</default>
+                <label>Solicitação de Novo Integrador</label>
+            </value>
+            <value>
                 <fullName>Visita Agendada</fullName>
                 <default>false</default>
                 <label>Visita Agendada</label>
@@ -35,12 +40,6 @@
                 <fullName>Viabilidade Finalizada</fullName>
                 <default>false</default>
                 <label>Viabilidade Finalizada</label>
-            </value>
-            <value>
-                <fullName>Solicitação de Novo Integrador</fullName>
-                <default>false</default>
-                <isActive>false</isActive>
-                <label>Solicitação de Novo Integrador</label>
             </value>
         </valueSetDefinition>
     </valueSet>

@@ -14,5 +14,10 @@
     <columns>PotenciaPicoSistema__c</columns>
     <columns>CORE.USERS.FULL_NAME</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.Bitrix</value>
+    </filters>
     <label>Todas as oportunidades - Bitrix</label>
 </ListView>

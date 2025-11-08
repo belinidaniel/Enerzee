@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 11-08-2025
+ * @last modified by  : Daniel Belini
+**/
 public class TaskBO {
     
     public static Task createTask(Id whatId, String subject, String description, Id ownerId, Date dueDate, String deadline){

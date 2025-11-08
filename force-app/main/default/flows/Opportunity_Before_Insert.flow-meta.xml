@@ -5,7 +5,8 @@
     <decisions>
         <name>Registro_criado_ou_atualizado</name>
         <label>Registro criado ou atualizado?</label>
-        <locationX>176</locationX>
+        <locationX>
+        176</locationX>
         <locationY>287</locationY>
         <defaultConnectorLabel>Resultado padrão</defaultConnectorLabel>
         <rules>
@@ -69,7 +70,8 @@
     <recordUpdates>
         <name>Preencher_Validade_Proposta</name>
         <label>Preencher Validade Proposta</label>
-        <locationX>176</locationX>
+        <locationX>
+        176</locationX>
         <locationY>587</locationY>
         <inputAssignments>
             <field>ValidadeProposta__c</field>
@@ -77,7 +79,8 @@
                 <elementReference>Days</elementReference>
             </value>
         </inputAssignments>
-        <inputReference>$Record</inputReference>
+        <inputReference>
+        $Record</inputReference>
     </recordUpdates>
     <start>
         <locationX>50</locationX>
@@ -85,9 +88,11 @@
         <connector>
             <targetReference>Registro_criado_ou_atualizado</targetReference>
         </connector>
-        <object>Opportunity</object>
+        <object>
+        Opportunity</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
-        <triggerType>RecordBeforeSave</triggerType>
+        <triggerType>
+        RecordBeforeSave</triggerType>
     </start>
     <status>Obsolete</status>
     <variables>
@@ -95,7 +100,8 @@
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
-        <isOutput>true</isOutput>
+        <isOutput>
+        true</isOutput>
         <value>
             <stringValue>7</stringValue>
         </value>
