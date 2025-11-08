@@ -27,13 +27,7 @@
         <tabType>AIAgents</tabType>
     </omniSupervisorConfigTab>
     <omniSupervisorConfigUser>
-        <user>kaique.mathias@lab065.com.br.enrz</user>
-    </omniSupervisorConfigUser>
-    <omniSupervisorConfigUser>
-        <user>daniel.belini@enerzee.com.br</user>
-    </omniSupervisorConfigUser>
-    <omniSupervisorConfigUser>
-        <user>elenara.rodrigues@enerzee.com.br</user>
+        <user>kaique.mathias@lab065.com.br.enrz.qa</user>
     </omniSupervisorConfigUser>
     <skillVisibility>AllSkills</skillVisibility>
 </OmniSupervisorConfig>

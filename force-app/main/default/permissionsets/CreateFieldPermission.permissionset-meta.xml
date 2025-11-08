@@ -1982,6 +1982,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Opportunity.UC1NovembroForaPonta__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Opportunity.UC1NovembroPonta__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -2008,6 +2013,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.UC1Setembro__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.UC1__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2042,6 +2052,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Opportunity.UC2DezembroForaPonta__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Opportunity.UC2DezembroPonta__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -2063,11 +2078,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.UC2Fevereiro__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Opportunity.UC2JaneiroForaPonta__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

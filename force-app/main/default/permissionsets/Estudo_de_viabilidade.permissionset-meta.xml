@@ -22,7 +22,27 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>ViabilityStudy__c.AcBranchCost__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>ViabilityStudy__c.AdditionalCost__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ViabilityStudy__c.AdequacyCostClient__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ViabilityStudy__c.AdequacyCostEnerzee__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ViabilityStudy__c.ApproveDate__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -37,7 +57,17 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>ViabilityStudy__c.DcBranchCost__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>ViabilityStudy__c.DurationMinutes__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ViabilityStudy__c.EstudoViabilidadeLocal__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -62,6 +92,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>ViabilityStudy__c.InstalledPowerKwp__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ViabilityStudy__c.LocalizacaoFixa__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>ViabilityStudy__c.ObservationsPostShading__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -71,13 +111,28 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>ViabilityStudy__c.OpportunityType__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>ViabilityStudy__c.Opportunity__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>ViabilityStudy__c.OtherCosts__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>ViabilityStudy__c.OwnTeamThirdParty__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ViabilityStudy__c.Owner__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -88,6 +143,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>ViabilityStudy__c.ServiceResource__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ViabilityStudy__c.StandardAdequacyCost__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -108,6 +168,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>ViabilityStudy__c.StructureStudy__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ViabilityStudy__c.TechnicalVisitCost__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

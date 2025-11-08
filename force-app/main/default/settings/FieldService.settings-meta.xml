@@ -11,7 +11,7 @@
     <doesShareSaWithAr>true</doesShareSaWithAr>
     <enableAdvancedDataSync>false</enableAdvancedDataSync>
     <enableBatchWindow>false</enableBatchWindow>
-    <enableDocumentBuilder>true</enableDocumentBuilder>
+    <enableDocumentBuilder>false</enableDocumentBuilder>
     <enableFloatingWorkOrder>false</enableFloatingWorkOrder>
     <enableLsdkMode>false</enableLsdkMode>
     <enablePopulateWorkOrderAddress>false</enablePopulateWorkOrderAddress>

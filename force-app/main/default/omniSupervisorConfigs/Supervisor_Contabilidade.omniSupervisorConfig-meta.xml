@@ -41,7 +41,7 @@
         <tabType>FlexipageType</tabType>
     </omniSupervisorConfigTab>
     <omniSupervisorConfigUser>
-        <user>contabilidade@enerzee.com.br</user>
+        <user>contabilidade@enerzee.com.br.qa</user>
     </omniSupervisorConfigUser>
     <skillVisibility>AllSkills</skillVisibility>
 </OmniSupervisorConfig>

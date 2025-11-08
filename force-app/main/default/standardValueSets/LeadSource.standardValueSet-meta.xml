@@ -111,9 +111,4 @@
         <default>false</default>
         <label>Base antiga sem nova ação</label>
     </standardValue>
-    <standardValue>
-        <fullName>Agente Force</fullName>
-        <default>false</default>
-        <label>Agente Force</label>
-    </standardValue>
 </StandardValueSet>

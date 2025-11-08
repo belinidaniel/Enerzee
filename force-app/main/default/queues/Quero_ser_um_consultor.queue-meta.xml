@@ -4,7 +4,7 @@
     <name>Quero ser um consultor</name>
     <queueMembers>
         <users>
-            <user>dayane.silva@enerzee.com.br</user>
+            <user>consultor@enerzee.com.br</user>
         </users>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>

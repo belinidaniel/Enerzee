@@ -7,6 +7,11 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
+        <sharedTo>Analista_Financeiro</sharedTo>
+        <sharedToType>Role</sharedToType>
+    </folderShares>
+    <folderShares>
+        <accessLevel>View</accessLevel>
         <sharedTo>AnalistaAdmContratos</sharedTo>
         <sharedToType>Role</sharedToType>
     </folderShares>
@@ -32,6 +37,11 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
+        <sharedTo>CTO</sharedTo>
+        <sharedToType>Role</sharedToType>
+    </folderShares>
+    <folderShares>
+        <accessLevel>View</accessLevel>
         <sharedTo>CoordenadorEngenharia</sharedTo>
         <sharedToType>Role</sharedToType>
     </folderShares>
@@ -47,17 +57,7 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
-        <sharedTo>Analista_Financeiro</sharedTo>
-        <sharedToType>Role</sharedToType>
-    </folderShares>
-    <folderShares>
-        <accessLevel>View</accessLevel>
         <sharedTo>Gerente_Administrativo</sharedTo>
-        <sharedToType>Role</sharedToType>
-    </folderShares>
-    <folderShares>
-        <accessLevel>View</accessLevel>
-        <sharedTo>GerenteComercial</sharedTo>
         <sharedToType>Role</sharedToType>
     </folderShares>
     <folderShares>
@@ -72,6 +72,11 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
+        <sharedTo>Analista_Financeiro</sharedTo>
+        <sharedToType>RoleAndSubordinates</sharedToType>
+    </folderShares>
+    <folderShares>
+        <accessLevel>View</accessLevel>
         <sharedTo>AnalistaAdmContratos</sharedTo>
         <sharedToType>RoleAndSubordinates</sharedToType>
     </folderShares>
@@ -97,6 +102,11 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
+        <sharedTo>CTO</sharedTo>
+        <sharedToType>RoleAndSubordinates</sharedToType>
+    </folderShares>
+    <folderShares>
+        <accessLevel>View</accessLevel>
         <sharedTo>CoordenadorEngenharia</sharedTo>
         <sharedToType>RoleAndSubordinates</sharedToType>
     </folderShares>
@@ -112,17 +122,7 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
-        <sharedTo>Analista_Financeiro</sharedTo>
-        <sharedToType>RoleAndSubordinates</sharedToType>
-    </folderShares>
-    <folderShares>
-        <accessLevel>View</accessLevel>
         <sharedTo>Gerente_Administrativo</sharedTo>
-        <sharedToType>RoleAndSubordinates</sharedToType>
-    </folderShares>
-    <folderShares>
-        <accessLevel>View</accessLevel>
-        <sharedTo>GerenteComercial</sharedTo>
         <sharedToType>RoleAndSubordinates</sharedToType>
     </folderShares>
     <folderShares>

@@ -6,5 +6,5 @@
     <enableAgentHealthMonitoring>false</enableAgentHealthMonitoring>
     <enablePBHideScopedNotif>false</enablePBHideScopedNotif>
     <enablePBPromptPerformanceMetrics>false</enablePBPromptPerformanceMetrics>
-    <enableTrustPIIMasking>true</enableTrustPIIMasking>
+    <enableTrustPIIMasking>false</enableTrustPIIMasking>
 </EinsteinAISettings>

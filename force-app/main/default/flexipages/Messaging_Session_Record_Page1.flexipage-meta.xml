@@ -21,9 +21,6 @@
                         <valueListItems>
                             <value>MessagingSession.Transferir_chamada</value>
                         </valueListItems>
-                        <valueListItems>
-                            <value>MessagingSession.Desbloquear_chat</value>
-                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>

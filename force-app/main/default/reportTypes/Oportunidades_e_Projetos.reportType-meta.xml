@@ -922,6 +922,11 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>UC1NovembroForaPonta__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>UC1NovembroPonta__c</field>
             <table>Opportunity</table>
         </columns>
@@ -948,6 +953,11 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>UC1Setembro__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>UC1__c</field>
             <table>Opportunity</table>
         </columns>
         <columns>
@@ -982,6 +992,11 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>UC2DezembroForaPonta__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>UC2DezembroPonta__c</field>
             <table>Opportunity</table>
         </columns>
@@ -1003,11 +1018,6 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>UC2Fevereiro__c</field>
-            <table>Opportunity</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>UC2JaneiroForaPonta__c</field>
             <table>Opportunity</table>
         </columns>
         <columns>
@@ -2480,11 +2490,6 @@
             <field>IsDirect__c</field>
             <table>Opportunity</table>
         </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Tempo_em_Aberto__c</field>
-            <table>Opportunity</table>
-        </columns>
         <masterLabel>Oportunidades</masterLabel>
     </sections>
     <sections>
@@ -2759,6 +2764,71 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>ParentOpportunity__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>URL__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>TipoKitPromocional__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>PropostaAlterada__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>ValorTotalProposto__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>ValorTotalPropostaOriginal__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>BDIOriginal__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>DirectOriginal__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>RedeOriginal3750__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>PontosOriginal__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>TotalRedeOriginal__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>PropostaRevo__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Lead__c</field>
+            <table>Opportunity</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>MainViability__c</field>
             <table>Opportunity</table>
         </columns>
         <masterLabel>Opportunities</masterLabel>

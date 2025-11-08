@@ -14,6 +14,10 @@
                 <behavior>Edit</behavior>
                 <field>et4ae5__ExactTargetForAppExchangeUser__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>ProfileName__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns/>
         <style>TwoColumnsLeftToRight</style>

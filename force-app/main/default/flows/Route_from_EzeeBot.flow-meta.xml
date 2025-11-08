@@ -2,13 +2,16 @@
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
         <description>Roteia todas as mensagens de seu bot aprimorado para uma fila.</description>
-        <name>RoutingAction</name>
+        <name>
+        RoutingAction</name>
         <label>Rotear de EzeeBot</label>
         <locationX>176</locationX>
         <locationY>242</locationY>
-        <actionName>routeWork</actionName>
+        <actionName>
+        routeWork</actionName>
         <actionType>routeWork</actionType>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <flowTransactionModel>
+        CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>recordId</name>
             <value>
@@ -36,7 +39,7 @@
         <inputParameters>
             <name>routingType</name>
             <value>
-                <stringValue>Agent</stringValue>
+                <stringValue>QueueBased</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -48,14 +51,11 @@
         <inputParameters>
             <name>queueId</name>
             <value>
-                <stringValue>00GU5000001ehthMAA</stringValue>
+                <stringValue>00G5e000000c2bLEAQ</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
             <name>agentId</name>
-            <value>
-                <elementReference>get_Messaging.OwnerId</elementReference>
-            </value>
         </inputParameters>
         <inputParameters>
             <name>agentLabel</name>
@@ -63,7 +63,7 @@
         <inputParameters>
             <name>queueLabel</name>
             <value>
-                <stringValue>Assistência tecnica</stringValue>
+                <stringValue>Chat Enerzee</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -85,31 +85,13 @@
             <name>botLabel</name>
         </inputParameters>
         <inputParameters>
-            <name>externalConversationBotId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>externalConversationBotLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>copilotId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>copilotLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>agentforceEmployeeAgentId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>agentforceEmployeeAgentLabel</name>
-        </inputParameters>
-        <inputParameters>
             <name>isQueueVariable</name>
             <value>
                 <booleanValue>false</booleanValue>
             </value>
         </inputParameters>
-        <nameSegment>routeWork</nameSegment>
-        <offset>0</offset>
+        <nameSegment>
+        routeWork</nameSegment>
     </actionCalls>
     <apiVersion>61.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
@@ -140,7 +122,8 @@
         <name>get_Messaging</name>
         <label>get Messaging</label>
         <locationX>176</locationX>
-        <locationY>134</locationY>
+        <locationY>
+        134</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>RoutingAction</targetReference>
@@ -153,7 +136,8 @@
                 <elementReference>recordId</elementReference>
             </value>
         </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <getFirstRecordOnly>
+        true</getFirstRecordOnly>
         <object>MessagingSession</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
@@ -169,7 +153,8 @@
         <name>recordId</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
-        <isInput>true</isInput>
+        <isInput>
+        true</isInput>
         <isOutput>false</isOutput>
     </variables>
 </Flow>

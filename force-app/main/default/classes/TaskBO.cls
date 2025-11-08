@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 11-08-2025
+ * @last modified by  : Daniel Belini
+**/
 public class TaskBO {
     
     public static Task createTask(Id whatId, String subject, String description, Id ownerId, Date dueDate, String deadline){
@@ -623,6 +630,14 @@ public class TaskBO {
         email.setHtmlBody(emailBody);
         email.setUseSignature(false);
         email.setFileAttachments(new Messaging.EmailFileAttachment[]{attachment});
+        
+        FeedItem viabilityChatComment = new FeedItem(
+            ParentId  = viability.Id,
+            Body      = 'E-mail enviado para contabilidade/financeiro com a NF do integrador.',
+            Type      = 'TextPost',
+            Visibility = 'AllUsers'
+        );
+        Database.insert(viabilityChatComment, false);
 
         if(!Test.isRunningTest()){
             Messaging.sendEmail(new Messaging.SingleEmailMessage[]{ email });

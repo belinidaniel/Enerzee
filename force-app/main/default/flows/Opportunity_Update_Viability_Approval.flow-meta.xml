@@ -2,6 +2,22 @@
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>62.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>Set_Approve_Date</name>
+        <label>Definir data de aprovação</label>
+        <locationX>182</locationX>
+        <locationY>503</locationY>
+        <assignmentItems>
+            <assignToReference>Get_Latest_Viability.ApproveDate__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Viability</targetReference>
+        </connector>
+    </assignments>
     <decisions>
         <name>Evaluate_Stage_Change</name>
         <label>Avaliar mudança de fase</label>
@@ -96,22 +112,6 @@
             <label>Sim</label>
         </rules>
     </decisions>
-    <assignments>
-        <name>Set_Approve_Date</name>
-        <label>Definir data de aprovação</label>
-        <locationX>182</locationX>
-        <locationY>503</locationY>
-        <assignmentItems>
-            <assignToReference>Get_Latest_Viability.ApproveDate__c</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>$Flow.CurrentDateTime</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Update_Viability</targetReference>
-        </connector>
-    </assignments>
     <environments>Default</environments>
     <interviewLabel>Opportunity - Atualizar aprovação de viabilidade {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Opportunity - Atualizar aprovação de viabilidade</label>

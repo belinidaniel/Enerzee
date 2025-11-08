@@ -25,11 +25,6 @@
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <environments>Default</environments>
     <formulas>
-        <name>CreateDateFML</name>
-        <dataType>DateTime</dataType>
-        <expression>DATETIMEVALUE(TODAY()-300)</expression>
-    </formulas>
-    <formulas>
         <name>thirtyDays</name>
         <dataType>Date</dataType>
         <expression>TODAY() - 30</expression>
@@ -69,7 +64,7 @@
             </value>
         </filters>
         <filters>
-            <field>LastModifiedDate</field>
+            <field>LastActivityDate</field>
             <operator>LessThanOrEqualTo</operator>
             <value>
                 <elementReference>thirtyDays</elementReference>
@@ -124,7 +119,7 @@
         </connector>
         <schedule>
             <frequency>Daily</frequency>
-            <startDate>2025-09-20</startDate>
+            <startDate>2025-09-15</startDate>
             <startTime>14:06:00.000Z</startTime>
         </schedule>
         <triggerType>Scheduled</triggerType>

@@ -3,7 +3,7 @@
     <caseAccessLevel>Edit</caseAccessLevel>
     <contactAccessLevel>Edit</contactAccessLevel>
     <mayForecastManagerShare>false</mayForecastManagerShare>
-    <name>Contabilidade</name>
+    <name>Coordenador Contábil</name>
     <opportunityAccessLevel>Edit</opportunityAccessLevel>
     <parentRole>Gerente_Administrativo</parentRole>
 </Role>

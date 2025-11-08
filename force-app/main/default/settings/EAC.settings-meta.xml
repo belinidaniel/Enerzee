@@ -14,7 +14,6 @@
     <enableInboxActivitySharing>false</enableInboxActivitySharing>
     <enableInsightsInTimeline>true</enableInsightsInTimeline>
     <enableInsightsInTimelineEacStd>false</enableInsightsInTimelineEacStd>
-    <enableUnifiedActivitiesPref>false</enableUnifiedActivitiesPref>
     <provisionProductivityFeatures>false</provisionProductivityFeatures>
     <relationshipGraphPref>true</relationshipGraphPref>
     <s2XSvcAccEmail>true</s2XSvcAccEmail>

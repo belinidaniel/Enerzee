@@ -5,5 +5,5 @@
     <mayForecastManagerShare>false</mayForecastManagerShare>
     <name>Gerente Administrativo</name>
     <opportunityAccessLevel>Edit</opportunityAccessLevel>
-    <parentRole>CEO</parentRole>
+    <parentRole>VP</parentRole>
 </Role>

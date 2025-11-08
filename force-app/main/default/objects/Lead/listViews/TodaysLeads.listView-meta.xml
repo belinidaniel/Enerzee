@@ -9,13 +9,6 @@
     <columns>LEAD.CREATED_DATE</columns>
     <columns>CORE.USERS.ALIAS</columns>
     <columns>LEAD.UNREAD</columns>
-    <columns>Lab065_IntegracaoDistribuicaoLead__c</columns>
-    <columns>Lb065_Estado__c</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>LEAD.CREATED_DATE</field>
-        <operation>equals</operation>
-        <value>TODAY</value>
-    </filters>
     <label>Today&apos;s Leads</label>
 </ListView>

@@ -12,7 +12,7 @@
             <name>Yes</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.Parceiro__r.OwnerOpportunity__c</leftValueReference>
+                <leftValueReference>$Record.Parceiro__r.OwnerId</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>

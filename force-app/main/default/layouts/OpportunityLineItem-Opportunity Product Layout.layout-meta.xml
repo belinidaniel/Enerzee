@@ -26,6 +26,10 @@
                 <behavior>Readonly</behavior>
                 <field>Kit_Instalacao__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>byIntegration__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

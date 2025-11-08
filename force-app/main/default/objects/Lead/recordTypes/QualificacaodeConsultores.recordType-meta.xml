@@ -413,17 +413,6 @@
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>MetaLead__c</picklist>
-        <values>
-            <fullName>Não</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Sim</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
         <picklist>Name</picklist>
         <values>
             <fullName>Dr%2E</fullName>

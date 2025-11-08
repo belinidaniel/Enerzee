@@ -41,7 +41,8 @@
                 <identifier>runtime_sales_pathassistant_pathAssistant</identifier>
             </componentInstance>
         </itemInstances>
-        <mode>Replace</mode>
+        <mode>
+        Replace</mode>
         <name>header</name>
         <type>Region</type>
     </flexiPageRegions>
@@ -92,7 +93,8 @@
                 <identifier>RecordApproveDate_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-6a7cfce6-4534-4747-8635-a46b9b92bd7a</name>
+        <name>
+        Facet-6a7cfce6-4534-4747-8635-a46b9b92bd7a</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -132,7 +134,8 @@
                 <identifier>RecordLastModifiedByIdField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-9fb2877f-7700-4122-93fb-b51a821b270b</name>
+        <name>
+        Facet-9fb2877f-7700-4122-93fb-b51a821b270b</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -156,7 +159,8 @@
                 <identifier>flexipage_column6</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-04b9ee20-9ac4-4ef2-85ca-28c6e8ed7aa5</name>
+        <name>
+        Facet-04b9ee20-9ac4-4ef2-85ca-28c6e8ed7aa5</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -170,7 +174,8 @@
                 <identifier>RecordAdequacyCostEnerzee_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-5ea429f3-114c-4358-9f74-8d67cc77bb00</name>
+        <name>
+        Facet-5ea429f3-114c-4358-9f74-8d67cc77bb00</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -184,7 +189,8 @@
                 <identifier>RecordAdequacyCostClient_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-86ba1b79-1d07-4f61-8134-d7ec281c1dc1</name>
+        <name>
+        Facet-86ba1b79-1d07-4f61-8134-d7ec281c1dc1</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -208,7 +214,63 @@
                 <identifier>flexipage_column8</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-a36afd57-bd19-4755-b721-75d225fd73f9</name>
+        <name>
+        Facet-a36afd57-bd19-4755-b721-75d225fd73f9</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.AdequacyCostEnerzee__c</fieldItem>
+                <identifier>RecordAdequacyCostEnerzee_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>
+        Facet-5ea429f3-114c-4358-9f74-8d67cc77bb00</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.AdequacyCostClient__c</fieldItem>
+                <identifier>RecordAdequacyCostClient_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>
+        Facet-86ba1b79-1d07-4f61-8134-d7ec281c1dc1</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-5ea429f3-114c-4358-9f74-8d67cc77bb00</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column7</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-86ba1b79-1d07-4f61-8134-d7ec281c1dc1</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column8</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>
+        Facet-a36afd57-bd19-4755-b721-75d225fd73f9</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -242,7 +304,8 @@
                 <identifier>RecordTechnicalVisitCost__cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-3125c079-1da4-426d-a5d9-559b50ff7b1b</name>
+        <name>
+        Facet-3125c079-1da4-426d-a5d9-559b50ff7b1b</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -290,7 +353,25 @@
                 </visibilityRule>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-500c5b38-e7d2-4566-9edc-1637d02d8815</name>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ServiceResource__c</fieldItem>
+                <identifier>RecordServiceResource_cField</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!Record.OwnTeamThirdParty__c}</leftValue>
+                        <operator>NE</operator>
+                        <rightValue>Nao_cadastrado</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </fieldInstance>
+        </itemInstances>
+        <name>
+        Facet-500c5b38-e7d2-4566-9edc-1637d02d8815</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -314,7 +395,8 @@
                 <identifier>flexipage_column2</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-394dbef0-15fb-42a8-b63c-46e1812d9bfa</name>
+        <name>
+        Facet-394dbef0-15fb-42a8-b63c-46e1812d9bfa</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -358,7 +440,8 @@
                 <identifier>RecordOtherCosts__cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-viabilityCostSectionLeft</name>
+        <name>
+        Facet-viabilityCostSectionLeft</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -402,7 +485,18 @@
                 <identifier>RecordInstalledPowerKwp__cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-viabilityCostSectionRight</name>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.EstimatedAnnualGeneration__c</fieldItem>
+                <identifier>RecordEstimatedAnnualGeneration__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>
+        Facet-viabilityCostSectionRight</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -426,7 +520,123 @@
                 <identifier>flexipage_columnViabilityCostsRight</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-viabilityCostSectionColumns</name>
+        <name>
+        Facet-viabilityCostSectionColumns</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.StandardAdequacyCost__c</fieldItem>
+                <identifier>RecordStandardAdequacyCost__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.StruturalReport__c</fieldItem>
+                <identifier>RecordStruturalReport_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.OtherCostsDescription__c</fieldItem>
+                <identifier>RecordOtherCostsDescription__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.OtherCosts__c</fieldItem>
+                <identifier>RecordOtherCosts__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>
+        Facet-viabilityCostSectionLeft</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.DcBranchCost__c</fieldItem>
+                <identifier>RecordDcBranchCost__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.AcBranchCost__c</fieldItem>
+                <identifier>RecordAcBranchCost__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.CoberturaCost__c</fieldItem>
+                <identifier>RecordCoberturaCost__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.InstalledPowerKwp__c</fieldItem>
+                <identifier>RecordInstalledPowerKwp__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>
+        Facet-viabilityCostSectionRight</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-viabilityCostSectionLeft</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_columnViabilityCostsLeft</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-viabilityCostSectionRight</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_columnViabilityCostsRight</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>
+        Facet-viabilityCostSectionColumns</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -500,7 +710,8 @@
                 <identifier>RecordTypeWorkProjectFeasibility_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-yo1pwsgk7p</name>
+        <name>
+        Facet-yo1pwsgk7p</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -584,7 +795,8 @@
                 <identifier>RecordTextReason_cField2</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-5cae9pamkrx</name>
+        <name>
+        Facet-5cae9pamkrx</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -608,7 +820,8 @@
                 <identifier>flexipage_column4</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-v2ad51dw1cs</name>
+        <name>
+        Facet-v2ad51dw1cs</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -702,8 +915,20 @@
                 <identifier>flexipage_fieldSection2</identifier>
             </componentInstance>
         </itemInstances>
-        <mode>Replace</mode>
+        <mode>
+        Replace</mode>
         <name>detailTabContent</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>forceChatter:recordFeedContainer</componentName>
+                <identifier>forceChatter_recordFeedContainer</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>
+        Facet-bdf00b1e-6215-4dfb-8feb-82c6626c84a9</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -725,7 +950,22 @@
                 <identifier>detailTab</identifier>
             </componentInstance>
         </itemInstances>
-        <mode>Replace</mode>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-bdf00b1e-6215-4dfb-8feb-82c6626c84a9</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Standard.Tab.collaborate</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>flexipage_tab2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <mode>
+        Replace</mode>
         <name>maintabs</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -734,7 +974,6 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Tabs</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>tabs</name>
@@ -744,7 +983,8 @@
                 <identifier>flexipage_tabset</identifier>
             </componentInstance>
         </itemInstances>
-        <mode>Replace</mode>
+        <mode>
+        Replace</mode>
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
@@ -803,7 +1043,8 @@
                 <identifier>force_relatedListSingleContainer</identifier>
             </componentInstance>
         </itemInstances>
-        <mode>Replace</mode>
+        <mode>
+        Replace</mode>
         <name>activityTabContent</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -814,7 +1055,8 @@
                 <identifier>forceChatter_recordFeedContainer</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-4f51d1c4-cb5d-4acb-bf41-004c6459538c</name>
+        <name>
+        Facet-4f51d1c4-cb5d-4acb-bf41-004c6459538c</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -836,21 +1078,8 @@
                 <identifier>activityTab</identifier>
             </componentInstance>
         </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-4f51d1c4-cb5d-4acb-bf41-004c6459538c</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>Standard.Tab.collaborate</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>flexipage_tab</identifier>
-            </componentInstance>
-        </itemInstances>
-        <mode>Replace</mode>
+        <mode>
+        Replace</mode>
         <name>sidebartabs</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -875,7 +1104,8 @@
                 <identifier>c_Maps</identifier>
             </componentInstance>
         </itemInstances>
-        <mode>Replace</mode>
+        <mode>
+        Replace</mode>
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>

@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-03-2025
+ * @last modified on  : 11-08-2025
  * @last modified by  : Daniel Belini
 **/
 @isTest
@@ -331,6 +331,18 @@ private class ViabilityStudyBOTest {
         Test.startTest();
         TaskBO.notifyViabilityInvoiceAttachment(taskRecord, link);
         Test.stopTest();
+
+        List<FeedItem> viabilityFeedPosts = [
+            SELECT  Id, Body, ParentId
+            FROM    FeedItem
+            WHERE   ParentId = :viability.Id
+        ];
+        System.assertEquals(1, viabilityFeedPosts.size(), 'Viability chat comment should be created.');
+        System.assertEquals(
+            'E-mail enviado para contabilidade/financeiro com a NF do integrador.',
+            viabilityFeedPosts[0].Body,
+            'Feed comment text should match the notification message.'
+        );
     }
 
     @isTest
