@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 09-09-2025
+  @last modified on  : 10-25-2025
   @last modified by  : Daniel Belini
 -->
 <apex:page standardController="Opportunity" applyBodyTag="false" extensions="PDFControllerExtension,OpportunityDataController"  standardStylesheets="false" showHeader="false"  sidebar="false" renderAs="PDF"  action="{!salvarPDF}" cache="false">
@@ -548,8 +548,19 @@
         </apex:outputtext>
     </div>
 
-    <div style="position:relative; bottom:770px; left:400px; font-size:13px; width:300px; height:140px; ">
-        <apex:outputText value="{!IF(ISBLANK(Opportunity.ValoresAdicionaisInclusosProposta__c), '-', Opportunity.ValoresAdicionaisInclusosProposta__c)}" style="overflow-wrap:break-word;white-space:pre-wrap;" escape="false"/>
+    <div style="position:relative; bottom:870px; left:400px; font-size:11px !important; width:300px; height:140px; ">
+        <apex:outputPanel layout="block" rendered="{!hasViabilityEnerzeeCosts}">
+            <div style="font-weight:bold; margin-bottom:4px;">Incluso no valor à vista:</div>
+            <apex:repeat value="{!viabilityEnerzeeCostEntries}" var="item">
+                <div>&bull; {!item}</div>
+            </apex:repeat>
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" rendered="{!hasViabilityClientCosts}">
+            <div style="font-weight:bold; margin-top:8px; margin-bottom:4px;">Neste valor não está incluso:</div>
+            <apex:repeat value="{!viabilityClientCostEntries}" var="item">
+                <div>&bull; {!item}</div>
+            </apex:repeat>
+        </apex:outputPanel>
     </div>
 	<!-- PRAZO DE ENTREGA -->
     <div style="position:relative; bottom:526px; left:230px; right:120px; font-size:13px;">

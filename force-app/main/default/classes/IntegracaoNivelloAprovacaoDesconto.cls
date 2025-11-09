@@ -36,7 +36,7 @@ public with sharing class IntegracaoNivelloAprovacaoDesconto {
                 }else{
                     payload.returnRequestDiscount = 0;
                     opportunity.DescontoUFV__c = 0;
-                    //oppsToUpdate.add(opportunity);
+                    oppsToUpdate.add(opportunity);
                 }
                 
                 // Chama a API da Nivello para enviar o status de aprovação do desconto
