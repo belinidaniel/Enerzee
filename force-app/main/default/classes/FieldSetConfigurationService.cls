@@ -3,6 +3,30 @@
  */
 public with sharing class FieldSetConfigurationService {
 
+    @TestVisible
+    private static List<FieldSetMapping__mdt> testFieldSetMappings;
+
+    @TestVisible
+    private static RecordContext testRecordContextOverride;
+
+    @TestVisible
+    private static void setTestFieldSetMappings(List<FieldSetMapping__mdt> mappings) {
+        testFieldSetMappings = mappings;
+    }
+
+    @TestVisible
+    private static void setTestRecordContext(String recordTypeDeveloperName, String subject) {
+        if (String.isBlank(recordTypeDeveloperName) && String.isBlank(subject)) {
+            testRecordContextOverride = null;
+            return;
+        }
+
+        RecordContext context = new RecordContext();
+        context.recordTypeDeveloperName = normalize(recordTypeDeveloperName);
+        context.subject = normalize(subject);
+        testRecordContextOverride = context;
+    }
+
     @AuraEnabled(cacheable=true)
     public static List<SectionConfiguration> getConfiguration(String objectApiName, Id recordId) {
         return getConfigurationInternal(objectApiName, recordId, null);
@@ -129,13 +153,18 @@ public with sharing class FieldSetConfigurationService {
     }
 
     private static List<FieldSetMapping__mdt> fetchFieldSetMappings(String objectApiName, RecordContext recordContext) {
-        List<FieldSetMapping__mdt> mappings = [
-            SELECT DeveloperName, FieldSetName__c, SectionLabel__c, IsSectionRequired__c, SortOrder__c,
-                RecordTypeDeveloperName__c, Subject__c
-            FROM FieldSetMapping__mdt
-            WHERE ObjectApiName__c = :objectApiName
-            ORDER BY SortOrder__c, DeveloperName
-        ];
+        List<FieldSetMapping__mdt> mappings;
+        if (Test.isRunningTest() && testFieldSetMappings != null) {
+            mappings = testFieldSetMappings;
+        } else {
+            mappings = [
+                SELECT DeveloperName, FieldSetName__c, SectionLabel__c, IsSectionRequired__c, SortOrder__c,
+                    RecordTypeDeveloperName__c, Subject__c
+                FROM FieldSetMapping__mdt
+                WHERE ObjectApiName__c = :objectApiName
+                ORDER BY SortOrder__c, DeveloperName
+            ];
+        }
 
         List<FieldSetMapping__mdt> filtered = new List<FieldSetMapping__mdt>();
         for (FieldSetMapping__mdt mapping : mappings) {
@@ -149,6 +178,10 @@ public with sharing class FieldSetConfigurationService {
     }
 
     private static RecordContext resolveRecordContext(Schema.DescribeSObjectResult describeResult, Id recordId) {
+        if (Test.isRunningTest() && testRecordContextOverride != null) {
+            return testRecordContextOverride;
+        }
+
         RecordContext recordContext = new RecordContext();
 
         if (recordId == null) {
@@ -164,6 +197,10 @@ public with sharing class FieldSetConfigurationService {
             fieldsToQuery.add('Subject');
         }
 
+        if (hasRecordType) {
+            fieldsToQuery.add('RecordType.DeveloperName');
+        }
+
         String queryString = 'SELECT ' + String.join(fieldsToQuery, ', ')
             + ' FROM ' + describeResult.getName()
             + ' WHERE Id = :recordId'
@@ -174,6 +211,13 @@ public with sharing class FieldSetConfigurationService {
 
         if (hasSubjectField) {
             recordContext.subject = normalize((String)record.get('Subject'));
+        }
+
+        if (hasRecordType) {
+            SObject recordTypeRecord = record.getSObject('RecordType');
+            if (recordTypeRecord != null) {
+                recordContext.recordTypeDeveloperName = normalize((String)recordTypeRecord.get('DeveloperName'));
+            }
         }
 
         return recordContext;

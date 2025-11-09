@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-03-2025
+ * @last modified on  : 10-25-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class PDFControllerExtension {
@@ -18,6 +18,8 @@ public with sharing class PDFControllerExtension {
     public Boolean lastSaveSuccess { get; set; }
     public String  lastSaveMessage { get; set; }
     public String  description { get; set; }
+    public List<String> viabilityEnerzeeCostEntries { get; private set; }
+    public List<String> viabilityClientCostEntries { get; private set; }
 
     public PDFControllerExtension(ApexPages.StandardController controller) {
         
@@ -74,6 +76,8 @@ public with sharing class PDFControllerExtension {
         //if (String.isEmpty(salvar)) {
         loadPdfUrls();
         //}
+
+        loadViabilityCostDetails();
     }
 
     public String getLogoUrl() {
@@ -143,6 +147,15 @@ public with sharing class PDFControllerExtension {
         }
     
     }
+
+    public Boolean getHasViabilityEnerzeeCosts(){
+        return viabilityEnerzeeCostEntries != null && !viabilityEnerzeeCostEntries.isEmpty();
+    }
+
+    public Boolean getHasViabilityClientCosts(){
+        return viabilityClientCostEntries != null && !viabilityClientCostEntries.isEmpty();
+    }
+
     public PageReference salvarPDF() {
 
         // Evita recursão ao chamar getContent() dentro do mesmo request
@@ -605,11 +618,11 @@ public with sharing class PDFControllerExtension {
                 amount = viability.CoberturaCost__c;
             } else if(normalized == 'laudo estrutural'){
                 amount = viability.StruturalReport__c;
-            } else if(normalized == 'outros custos'){
+            } else if(normalized == 'outros custos' || normalized == 'outros custos'){
                 amount = viability.OtherCosts__c;
-            } else if(normalized == 'custos adicionais'){
+            } else if(normalized == 'custos adicionais' || normalized == 'custos adicionais'){
                 amount = viability.AdditionalCost__c;
-            } else {
+            }else{
                 amount = null;
             }
             if(amount != null && amount != 0){

@@ -13,8 +13,11 @@
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
+            <conversationSystemMessage>
+                <type>Transfer</type>
+            </conversationSystemMessage>
             <stepIdentifier>4df67f30-3c19-4f24-9134-5f9784260230</stepIdentifier>
-            <type>Wait</type>
+            <type>SystemMessage</type>
         </botSteps>
         <developerName>Transferir_Comercial</developerName>
         <isPlaceholderDialog>false</isPlaceholderDialog>
@@ -369,8 +372,11 @@ estamos falando?</message>
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
+            <conversationSystemMessage>
+                <type>Transfer</type>
+            </conversationSystemMessage>
             <stepIdentifier>00798c6f-0405-4066-bc75-f98dca717bf4</stepIdentifier>
-            <type>Wait</type>
+            <type>SystemMessage</type>
         </botSteps>
         <developerName>Transferir_Integrador</developerName>
         <isPlaceholderDialog>false</isPlaceholderDialog>
@@ -897,8 +903,11 @@ Por favor, aguarde.</message>
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
+            <conversationSystemMessage>
+                <type>Transfer</type>
+            </conversationSystemMessage>
             <stepIdentifier>fe26b1e9-7326-4e35-993b-0b6ea50df58e</stepIdentifier>
-            <type>Wait</type>
+            <type>SystemMessage</type>
         </botSteps>
         <developerName>Transferir_Obras</developerName>
         <isPlaceholderDialog>false</isPlaceholderDialog>
@@ -908,8 +917,11 @@ Por favor, aguarde.</message>
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
+            <conversationSystemMessage>
+                <type>Transfer</type>
+            </conversationSystemMessage>
             <stepIdentifier>487f0b7d-e218-457c-9034-682f5c862e94</stepIdentifier>
-            <type>Wait</type>
+            <type>SystemMessage</type>
         </botSteps>
         <developerName>Transferir_Pre_Vendas</developerName>
         <isPlaceholderDialog>false</isPlaceholderDialog>
@@ -919,8 +931,11 @@ Por favor, aguarde.</message>
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
+            <conversationSystemMessage>
+                <type>Transfer</type>
+            </conversationSystemMessage>
             <stepIdentifier>0f468ebd-5dad-4033-b6f3-e3c358795349</stepIdentifier>
-            <type>Wait</type>
+            <type>SystemMessage</type>
         </botSteps>
         <developerName>Transferir_Financeiro</developerName>
         <isPlaceholderDialog>false</isPlaceholderDialog>
@@ -930,8 +945,11 @@ Por favor, aguarde.</message>
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
+            <conversationSystemMessage>
+                <type>Transfer</type>
+            </conversationSystemMessage>
             <stepIdentifier>4d6f7844-dfc2-456a-bffd-5bc10c61ffcb</stepIdentifier>
-            <type>Wait</type>
+            <type>SystemMessage</type>
         </botSteps>
         <developerName>Transferir_Contratual_e_Metodos_de_pagamento</developerName>
         <isPlaceholderDialog>false</isPlaceholderDialog>
@@ -1499,8 +1517,11 @@ Por favor, aguarde.</message>
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
+            <conversationSystemMessage>
+                <type>Transfer</type>
+            </conversationSystemMessage>
             <stepIdentifier>f7a637f0-d221-4e9e-9d2c-2ac6a33f0d65</stepIdentifier>
-            <type>Wait</type>
+            <type>SystemMessage</type>
         </botSteps>
         <developerName>Suporte_ao_Integrador</developerName>
         <isPlaceholderDialog>false</isPlaceholderDialog>
@@ -1618,8 +1639,11 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
     <botDialogs>
         <botDialogGroup>Tranferencia</botDialogGroup>
         <botSteps>
+            <conversationSystemMessage>
+                <type>Transfer</type>
+            </conversationSystemMessage>
             <stepIdentifier>9cb62c4c-edc6-4268-bc84-7c8b5e3e7bc5</stepIdentifier>
-            <type>Wait</type>
+            <type>SystemMessage</type>
         </botSteps>
         <developerName>Quero_ser_um_Integrador</developerName>
         <isPlaceholderDialog>false</isPlaceholderDialog>
@@ -2239,15 +2263,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
             <botSteps>
                 <botVariableOperation>
                     <botVariableOperands>
-                        <sourceName>Rotear_de_EzeeBot_Comercial</sourceName>
+                        <sourceName>Rotear_de_EzeeBot_Comercial_BOT</sourceName>
                         <sourceType>FlowDefinition</sourceType>
                         <targetName>Rounting_to_queue_flow</targetName>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>d01b9984-1e37-47fe-807f-5277a26582fe</variableOperationIdentifier>
+                    <variableOperationIdentifier>bf7abbb7-14f6-4f52-8d01-c3d6d3f175b2</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>4c282636-c251-4702-a708-5cdf6f7b36fe</stepIdentifier>
+                <stepIdentifier>455a781d-ab62-423b-8649-837f9d89ff61</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2259,7 +2283,7 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>126ee222-e2b4-47c3-a296-1d0f89bfb5f3</stepIdentifier>
+                <stepIdentifier>9caf994b-3240-41ec-bd38-7dde26f37617</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
@@ -2284,15 +2308,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
             <botSteps>
                 <botVariableOperation>
                     <botVariableOperands>
-                        <sourceName>Rotear_de_EzeeBot_Comercial</sourceName>
+                        <sourceName>Rotear_de_EzeeBot_Comercial_BOT</sourceName>
                         <sourceType>FlowDefinition</sourceType>
                         <targetName>Rounting_to_queue_flow</targetName>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>777da0d6-3605-49de-b8ad-340c880c0b84</variableOperationIdentifier>
+                    <variableOperationIdentifier>aa35439d-62be-4796-85d6-e7103302d33e</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>d6daaf26-8d25-4735-ab34-c2117c7eeddd</stepIdentifier>
+                <stepIdentifier>01022d26-05a2-48e1-a368-7de1349a830c</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2304,7 +2328,7 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>d767cf38-1ad1-4097-aed3-dab7d838225e</stepIdentifier>
+                <stepIdentifier>7683cf15-b656-4586-90e1-47a216a932fe</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
@@ -2329,15 +2353,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
             <botSteps>
                 <botVariableOperation>
                     <botVariableOperands>
-                        <sourceName>Rotear_de_EzeeBot_Comercial</sourceName>
+                        <sourceName>Rotear_de_EzeeBot_Comercial_BOT</sourceName>
                         <sourceType>FlowDefinition</sourceType>
                         <targetName>Rounting_to_queue_flow</targetName>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>c5b0c237-7ad7-4c8b-aa0f-da71a6322a76</variableOperationIdentifier>
+                    <variableOperationIdentifier>13e3b3ba-ee4f-4d09-aaea-32a38e554bff</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>5ad21d38-36c1-40df-a225-34106506d2d0</stepIdentifier>
+                <stepIdentifier>95d5e44f-d75c-46c1-8269-57e858d8a85f</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2349,7 +2373,7 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>35f54b2c-5d4a-490b-8993-7f1cb4c56f19</stepIdentifier>
+                <stepIdentifier>4afc80de-75b0-47af-88b9-6d0a7a721c21</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
@@ -2374,15 +2398,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
             <botSteps>
                 <botVariableOperation>
                     <botVariableOperands>
-                        <sourceName>Rotear_de_EzeeBot_Comercial</sourceName>
+                        <sourceName>Rotear_de_EzeeBot_Comercial_BOT</sourceName>
                         <sourceType>FlowDefinition</sourceType>
                         <targetName>Rounting_to_queue_flow</targetName>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>e9ccc6e9-f926-439c-814e-6539d9c342aa</variableOperationIdentifier>
+                    <variableOperationIdentifier>7264aba5-770f-41ac-a288-8315aa123797</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>87e03ac1-b75c-4de4-994a-100819854744</stepIdentifier>
+                <stepIdentifier>3f5c0af3-0138-45ce-909c-64695705b6ae</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2394,7 +2418,7 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>8de8f1c3-d63e-4381-8a19-da8e2fd4cf35</stepIdentifier>
+                <stepIdentifier>d194f65c-2064-43af-89ed-96f18d7e40da</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
@@ -2419,15 +2443,15 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
             <botSteps>
                 <botVariableOperation>
                     <botVariableOperands>
-                        <sourceName>Rotear_de_EzeeBot_Comercial</sourceName>
+                        <sourceName>Rotear_de_EzeeBot_Comercial_BOT</sourceName>
                         <sourceType>FlowDefinition</sourceType>
                         <targetName>Rounting_to_queue_flow</targetName>
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>ba69d426-19b7-4e00-a3a0-7f644ffc6b04</variableOperationIdentifier>
+                    <variableOperationIdentifier>30297972-b836-49f7-8ee2-a6e3224d6c7c</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>6fb36ebd-f54c-49a8-a16b-3f6f1f90eead</stepIdentifier>
+                <stepIdentifier>4b87b6df-14b5-4b78-b273-728de9c92903</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <botSteps>
@@ -2439,7 +2463,7 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                     </systemMessageMappings>
                     <type>Transfer</type>
                 </conversationSystemMessage>
-                <stepIdentifier>50344571-ea91-4da4-8ede-a5f1a8dec1db</stepIdentifier>
+                <stepIdentifier>cb975ba3-f93a-43cd-9839-67fbae9dedb5</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
@@ -3300,7 +3324,7 @@ Retornaremos o contato.</message>
         <botDialogGroup>Caminho</botDialogGroup>
         <botSteps>
             <botVariableOperation>
-                <askCollectIfSet>false</askCollectIfSet>
+                <askCollectIfSet>true</askCollectIfSet>
                 <botMessages>
                     <message>Agora, escolha a opção que melhor descreve sua necessidade:</message>
                     <messageIdentifier>1aa0fcb9-6378-4df9-8dc4-af908251c2e2</messageIdentifier>
@@ -3339,11 +3363,10 @@ Retornaremos o contato.</message>
             </botStepConditions>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de assistência técnica.
-Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>a55ee424-3276-40be-aa83-bf9da0720071</messageIdentifier>
+                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de Atendimento ao Cliente.</message>
+                    <messageIdentifier>867a172d-956f-48dc-97fd-7403e1cc0cf3</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>638cf207-2a1f-420b-ae38-ed83c02439d7</stepIdentifier>
+                <stepIdentifier>0a8c89a7-1992-4141-b52e-fb3d08d7bdb4</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -3355,13 +3378,13 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>8bead19d-8552-4f34-ae67-7a304a74f556</variableOperationIdentifier>
+                    <variableOperationIdentifier>e53f19e6-5515-4f5e-ab46-f1acbf9fb355</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>746be787-d157-4aaa-aa5a-d7cb4157b65b</stepIdentifier>
+                <stepIdentifier>37e11c66-d418-422c-8613-9e69b71ebf1b</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>7d26590d-e7ce-4c08-9a40-82887b7a9aa4</stepIdentifier>
+            <stepIdentifier>0c32cb48-bfbf-4f2a-a554-e5301865d862</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
@@ -3373,12 +3396,10 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
             </botStepConditions>
             <botSteps>
                 <botMessages>
-                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de Atendimento ao Cliente.
-
-Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00 às 18:00.</message>
-                    <messageIdentifier>867a172d-956f-48dc-97fd-7403e1cc0cf3</messageIdentifier>
+                    <message>Aguarde um momento enquanto te transferimos para o nosso setor de Atendimento ao Cliente.</message>
+                    <messageIdentifier>c2da028b-1d68-5f7b-dc07-eeff25e43b89</messageIdentifier>
                 </botMessages>
-                <stepIdentifier>0a8c89a7-1992-4141-b52e-fb3d08d7bdb4</stepIdentifier>
+                <stepIdentifier>abc4a4dd-6eae-263f-60e1-149684622565</stepIdentifier>
                 <type>Message</type>
             </botSteps>
             <botSteps>
@@ -3390,18 +3411,21 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
                         <targetType>ConversationVariable</targetType>
                     </botVariableOperands>
                     <type>Set</type>
-                    <variableOperationIdentifier>a0258b98-7e04-4dcb-9e19-8c700c383976</variableOperationIdentifier>
+                    <variableOperationIdentifier>27ae24c8-992e-4725-9910-7524d1e8f98b</variableOperationIdentifier>
                 </botVariableOperation>
-                <stepIdentifier>dbedba12-7651-428b-bec0-f1fe68ca3001</stepIdentifier>
+                <stepIdentifier>e7ca93f6-cdde-4ffc-a22f-f882abcfdcc8</stepIdentifier>
                 <type>VariableOperation</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
-            <stepIdentifier>0c32cb48-bfbf-4f2a-a554-e5301865d862</stepIdentifier>
+            <stepIdentifier>5f0756d6-45a0-6587-5b60-d84e7434f6d5</stepIdentifier>
             <type>Group</type>
         </botSteps>
         <botSteps>
+            <conversationSystemMessage>
+                <type>Transfer</type>
+            </conversationSystemMessage>
             <stepIdentifier>91162ff9-edb0-4641-9009-7efe01521ce2</stepIdentifier>
-            <type>Wait</type>
+            <type>SystemMessage</type>
         </botSteps>
         <developerName>Cliente</developerName>
         <isPlaceholderDialog>false</isPlaceholderDialog>

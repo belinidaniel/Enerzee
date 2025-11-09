@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-07-2025
+ * @last modified on  : 11-08-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -1793,7 +1793,7 @@ public class OpportunityBO {
             Opportunity updateOpp = new Opportunity(Id = opp.Id);
             
             // Verifique se o desconto foi alterado
-            if (opp.DescontoUFV__c != oldOpp.DescontoUFV__c) {
+            if (opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c) {
                 // Calculando a porcentagem de desconto em relação ao valor total da proposta
                 Decimal discountPercentage = (opp.DescontoUFV__c / opp.ValorTotalProposta__c) * 100;
 
