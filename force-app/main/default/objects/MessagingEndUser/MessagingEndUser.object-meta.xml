@@ -119,6 +119,7 @@
         <lookupPhoneDialogsAdditionalFields>MessagingConsentStatus</lookupPhoneDialogsAdditionalFields>
         <lookupPhoneDialogsAdditionalFields>CONTACT.PHONE3</lookupPhoneDialogsAdditionalFields>
         <lookupPhoneDialogsAdditionalFields>CONTACT.PHONE5</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Contact.rsplus__My_phone__c</lookupPhoneDialogsAdditionalFields>
         <lookupPhoneDialogsAdditionalFields>Account.Celular__c</lookupPhoneDialogsAdditionalFields>
         <searchResultsAdditionalFields>MessagingPlatformKey</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>MessagingChannel</searchResultsAdditionalFields>

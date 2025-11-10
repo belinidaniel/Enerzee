@@ -189,7 +189,8 @@ public with sharing class FieldSetConfigurationService {
         }
 
         List<String> fieldsToQuery = new List<String>{'Id'};
-        Boolean hasRecordType = !describeResult.getRecordTypeInfos().isEmpty();
+        Boolean hasRecordType = !describeResult.getRecordTypeInfos().isEmpty()
+            && describeResult.fields.getMap().containsKey('RecordTypeId');
         Boolean hasSubjectField = describeResult.fields.getMap().containsKey('Subject');
 
 
@@ -198,7 +199,7 @@ public with sharing class FieldSetConfigurationService {
         }
 
         if (hasRecordType) {
-            fieldsToQuery.add('RecordType.DeveloperName');
+            fieldsToQuery.add('RecordTypeId');
         }
 
         String queryString = 'SELECT ' + String.join(fieldsToQuery, ', ')
@@ -214,10 +215,9 @@ public with sharing class FieldSetConfigurationService {
         }
 
         if (hasRecordType) {
-            SObject recordTypeRecord = record.getSObject('RecordType');
-            if (recordTypeRecord != null) {
-                recordContext.recordTypeDeveloperName = normalize((String)recordTypeRecord.get('DeveloperName'));
-            }
+            Id recordTypeId = (Id)record.get('RecordTypeId');
+            String developerName = resolveRecordTypeDeveloperName(describeResult, recordTypeId);
+            recordContext.recordTypeDeveloperName = normalize(developerName);
         }
 
         return recordContext;
@@ -253,6 +253,20 @@ public with sharing class FieldSetConfigurationService {
 
     private static String normalize(String value) {
         return String.isBlank(value) ? null : value.trim();
+    }
+
+    private static String resolveRecordTypeDeveloperName(Schema.DescribeSObjectResult describeResult, Id recordTypeId) {
+        if (recordTypeId == null) {
+            return null;
+        }
+
+        Map<Id, Schema.RecordTypeInfo> infosById = describeResult.getRecordTypeInfosById();
+        if (infosById == null || !infosById.containsKey(recordTypeId)) {
+            return null;
+        }
+
+        Schema.RecordTypeInfo info = infosById.get(recordTypeId);
+        return info == null ? null : info.getDeveloperName();
     }
 
     private static Boolean matchesCriterion(String contextValue, String criterionValue) {

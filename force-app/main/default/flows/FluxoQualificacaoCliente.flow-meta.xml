@@ -274,6 +274,14 @@
         <connector>
             <targetReference>RecordTypeQualificacaoDeClientes</targetReference>
         </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>FalarComAgente__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
         <object>Lead</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>

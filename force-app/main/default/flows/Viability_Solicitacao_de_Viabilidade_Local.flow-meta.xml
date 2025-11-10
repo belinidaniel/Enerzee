@@ -201,7 +201,7 @@
         <recordTriggerType>Create</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Obsolete</status>
+    <status>Active</status>
     <textTemplates>
         <name>Body</name>
         <isViewedAsPlainText>false</isViewedAsPlainText>

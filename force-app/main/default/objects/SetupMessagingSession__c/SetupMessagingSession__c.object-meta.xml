@@ -156,9 +156,8 @@
     <gender>Feminine</gender>
     <label>Configuração Messaging Session</label>
     <nameField>
-        <displayFormat>CMS-{0000}</displayFormat>
         <label>Configuração Messaging Session Name</label>
-        <type>AutoNumber</type>
+        <type>Text</type>
     </nameField>
     <pluralLabel>Configuração Messaging Session</pluralLabel>
     <searchLayouts></searchLayouts>

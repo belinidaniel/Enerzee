@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-08-2025
+ * @last modified on  : 11-10-2025
  * @last modified by  : Daniel Belini
 **/
 public class TaskBO {
@@ -609,6 +609,8 @@ public class TaskBO {
         Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
         email.setToAddresses(new String[]{'contabilidade@enerzee.com.br'});
         email.setCcAddresses(new String[]{'financeiro@enerzee.com.br'});
+        email.setCcAddresses(new String[]{'Adrilino.silvestre@enerzee.com.br'});
+        email.setCcAddresses(new String[]{'daniel.belini@enerzee.com.br'});
 
         String opportunityName = viability.Opportunity__c != null && viability.Opportunity__r != null ? viability.Opportunity__r.Name : '';
         String subject = 'NF de Integrador anexada - Viabilidade ' + viability.Name;

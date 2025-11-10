@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 11-08-2025
+  @last modified on  : 11-10-2025
   @last modified by  : Daniel Belini
 -->
 <apex:page standardController="Opportunity" applyBodyTag="false" extensions="PDFControllerExtension,OpportunityDataController" action="{!salvarPDF}" standardStylesheets="false" showHeader="false"  sidebar="false" renderAs="PDF" cache="false">     
@@ -724,6 +724,9 @@
                 <div>&bull; {!item}</div>
             </apex:repeat>
         </apex:outputPanel>
+    </div>
+    <div style="position:relative; bottom:306px; left:230px; right:120px; font-size:13px;">
+        {!IF(ISBLANK(Opportunity.PrazoEntregaDias__c), '-', Opportunity.PrazoEntregaDias__c)} 
     </div>
     
     <!-- PAGINA 7 ------------------------------------->

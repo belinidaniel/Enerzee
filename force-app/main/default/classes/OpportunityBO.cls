@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-08-2025
+ * @last modified on  : 11-10-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -1793,7 +1793,7 @@ public class OpportunityBO {
             Opportunity updateOpp = new Opportunity(Id = opp.Id);
             
             // Verifique se o desconto foi alterado
-            if (opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c) {
+            if (opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c && opp.StatusAprovacaoDesconto__c == 'Pendente') {
                 // Calculando a porcentagem de desconto em relação ao valor total da proposta
                 Decimal discountPercentage = (opp.DescontoUFV__c / opp.ValorTotalProposta__c) * 100;
 
@@ -2756,7 +2756,7 @@ public class OpportunityBO {
         }
 
         for (ViabilityStudy__c viability : [
-            SELECT  Id, StatusFeasibility__c, ObservationsPostVisit__c, OwnerId, Owner__c
+            SELECT  Id, StatusFeasibility__c, ObservationsPostVisit__c, OwnerId
             FROM    ViabilityStudy__c
             WHERE   Opportunity__c IN :closedLostOpportunityIds
         ]) {
@@ -2769,9 +2769,6 @@ public class OpportunityBO {
 
             if (viability.OwnerId != null) {
                 usersToNotify.add(viability.OwnerId);
-            }
-            if (viability.Owner__c != null) {
-                usersToNotify.add(viability.Owner__c);
             }
         }
 

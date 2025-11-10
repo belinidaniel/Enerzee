@@ -4,7 +4,7 @@
         <name>Routing_to_agent</name>
         <label>Routing to agent</label>
         <locationX>314</locationX>
-        <locationY>782</locationY>
+        <locationY>2330</locationY>
         <actionName>routeWork</actionName>
         <actionType>routeWork</actionType>
         <faultConnector>
@@ -208,6 +208,38 @@
     <apiVersion>62.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
+        <name>Assign_AssigneeId</name>
+        <label>Assign AssigneeId</label>
+        <locationX>666</locationX>
+        <locationY>1706</locationY>
+        <assignmentItems>
+            <assignToReference>assigneeLicenseIds</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Loop_assignments.AssigneeId</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_assignments</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Available_Status_id</name>
+        <label>Assign Available Status id</label>
+        <locationX>886</locationX>
+        <locationY>674</locationY>
+        <assignmentItems>
+            <assignToReference>availableStatusId</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Available_Status.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Available_Status</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
         <name>Assign_QueueId_Selected</name>
         <label>Assign QueueId Selected</label>
         <locationX>50</locationX>
@@ -227,7 +259,7 @@
         <name>Assign_UserId_Selected</name>
         <label>Assign UserId Selected</label>
         <locationX>314</locationX>
-        <locationY>674</locationY>
+        <locationY>2222</locationY>
         <assignmentItems>
             <assignToReference>userId</assignToReference>
             <operator>Assign</operator>
@@ -237,6 +269,22 @@
         </assignmentItems>
         <connector>
             <targetReference>Routing_to_agent</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>AssignUserId</name>
+        <label>AssignUserId</label>
+        <locationX>666</locationX>
+        <locationY>1190</locationY>
+        <assignmentItems>
+            <assignToReference>onlineUserIds</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Loop_1.UserId</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_1</targetReference>
         </connector>
     </assignments>
     <choices>
@@ -256,9 +304,59 @@
         </value>
     </choices>
     <decisions>
+        <name>Found_Users</name>
+        <label>Found Users?</label>
+        <locationX>578</locationX>
+        <locationY>2006</locationY>
+        <defaultConnector>
+            <targetReference>WithoutOnlineUsers</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes_Found_Users</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Users</leftValueReference>
+                <operator>IsEmpty</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>User_Selection</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Has_Online_Users</name>
+        <label>Has Online Users?</label>
+        <locationX>798</locationX>
+        <locationY>974</locationY>
+        <defaultConnector>
+            <targetReference>WithoutOnlineUsers</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes_online_user</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Online_Users</leftValueReference>
+                <operator>IsEmpty</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Loop_1</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>Routing_Type</name>
         <label>Routing Type</label>
-        <locationX>446</locationX>
+        <locationX>622</locationX>
         <locationY>350</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -287,7 +385,7 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Get_Users</targetReference>
+                <targetReference>Get_Service_Presence_Status</targetReference>
             </connector>
             <label>IsUser</label>
         </rules>
@@ -311,6 +409,48 @@
     <environments>Default</environments>
     <interviewLabel>Transfer Chat {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Transfer Chat</label>
+    <loops>
+        <name>Available_Status</name>
+        <label>Available Status</label>
+        <locationX>798</locationX>
+        <locationY>566</locationY>
+        <collectionReference>Get_Service_Presence_Status</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Assign_Available_Status_id</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Get_Online_Users</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <loops>
+        <name>Loop_1</name>
+        <label>Loop 1</label>
+        <locationX>578</locationX>
+        <locationY>1082</locationY>
+        <collectionReference>Get_Online_Users</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>AssignUserId</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Get_Permission_Set_License</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <loops>
+        <name>Loop_assignments</name>
+        <label>Loop assignments</label>
+        <locationX>578</locationX>
+        <locationY>1598</locationY>
+        <collectionReference>Get_Permission_Set_License_Assignments</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Assign_AssigneeId</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Get_Users</targetReference>
+        </noMoreValuesConnector>
+    </loops>
     <processMetadataValues>
         <name>BuilderType</name>
         <value>
@@ -333,7 +473,7 @@
     <recordLookups>
         <name>Get_Currenct_Messaging_Session</name>
         <label>Get Currenct Messaging Session</label>
-        <locationX>446</locationX>
+        <locationX>622</locationX>
         <locationY>134</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -351,6 +491,78 @@
         <object>MessagingSession</object>
         <sortField>CreatedDate</sortField>
         <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Online_Users</name>
+        <label>Get Online Users</label>
+        <locationX>798</locationX>
+        <locationY>866</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Has_Online_Users</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>IsCurrentState</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>ServicePresenceStatusId</field>
+            <operator>In</operator>
+            <value>
+                <elementReference>availableStatusId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>UserServicePresence</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>UserId</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Permission_Set_License</name>
+        <label>Get Permission Set License</label>
+        <locationX>578</locationX>
+        <locationY>1382</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Permission_Set_License_Assignments</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>LiveMessageUserPsl</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>PermissionSetLicense</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Permission_Set_License_Assignments</name>
+        <label>Get Permission Set License Assignments</label>
+        <locationX>578</locationX>
+        <locationY>1490</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_assignments</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>PermissionSetLicenseId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Permission_Set_License.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>PermissionSetLicenseAssign</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
@@ -508,13 +720,48 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
-        <name>Get_Users</name>
-        <label>Get Users</label>
-        <locationX>314</locationX>
+        <name>Get_Service_Presence_Status</name>
+        <label>Get Service Presence Status</label>
+        <locationX>798</locationX>
         <locationY>458</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>User_Selection</targetReference>
+            <targetReference>Available_Status</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>WhatsApp</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Available_Chat</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Online</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>ServicePresenceStatus</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Users</name>
+        <label>Get Users</label>
+        <locationX>578</locationX>
+        <locationY>1898</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Found_Users</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -525,10 +772,17 @@
             </value>
         </filters>
         <filters>
-            <field>UserPermissionsLiveAgentUser</field>
-            <operator>EqualTo</operator>
+            <field>Id</field>
+            <operator>In</operator>
             <value>
-                <booleanValue>true</booleanValue>
+                <elementReference>onlineUserIds</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Id</field>
+            <operator>In</operator>
+            <value>
+                <elementReference>assigneeLicenseIds</elementReference>
             </value>
         </filters>
         <getFirstRecordOnly>false</getFirstRecordOnly>
@@ -539,7 +793,7 @@
         <name>Atualizar_Owner</name>
         <label>Atualizar Owner</label>
         <locationX>578</locationX>
-        <locationY>890</locationY>
+        <locationY>2438</locationY>
         <filterLogic>and</filterLogic>
         <filters>
             <field>Id</field>
@@ -599,7 +853,7 @@
     <screens>
         <name>Routing_Type_Selection</name>
         <label>Routing Type Selection</label>
-        <locationX>446</locationX>
+        <locationX>622</locationX>
         <locationY>242</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
@@ -633,7 +887,7 @@
         <name>User_Selection</name>
         <label>User Selection</label>
         <locationX>314</locationX>
-        <locationY>566</locationY>
+        <locationY>2114</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -662,14 +916,54 @@
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
     </screens>
+    <screens>
+        <name>WithoutOnlineUsers</name>
+        <label>WithoutOnlineUsers</label>
+        <locationX>798</locationX>
+        <locationY>2846</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <backButtonLabel>Voltar</backButtonLabel>
+        <fields>
+            <name>messageErrorWithoutUsers</name>
+            <fieldText>&lt;p style=&quot;text-align: center;&quot;&gt;&lt;span style=&quot;color: rgb(255, 0, 0); font-size: 16px;&quot;&gt;Nenhum agente online no momento!&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <nextOrFinishButtonLabel>Sair</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>false</showHeader>
+    </screens>
     <start>
-        <locationX>320</locationX>
+        <locationX>496</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Get_Currenct_Messaging_Session</targetReference>
         </connector>
     </start>
     <status>Active</status>
+    <variables>
+        <name>assigneeLicenseIds</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>availableStatusId</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
     <variables>
         <name>contactId</name>
         <dataType>String</dataType>
@@ -686,6 +980,13 @@
     </variables>
     <variables>
         <name>messagingUserIds</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>onlineUserIds</name>
         <dataType>String</dataType>
         <isCollection>true</isCollection>
         <isInput>false</isInput>
@@ -711,5 +1012,12 @@
         <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <name>userIds</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
     </variables>
 </Flow>

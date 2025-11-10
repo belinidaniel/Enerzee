@@ -3,10 +3,13 @@
     <actionCalls>
         <name>Rotear_para_Agent_SDR</name>
         <label>Rotear para Agent SDR</label>
-        <locationX>842</locationX>
-        <locationY>890</locationY>
+        <locationX>50</locationX>
+        <locationY>782</locationY>
         <actionName>routeWork</actionName>
         <actionType>routeWork</actionType>
+        <connector>
+            <targetReference>Update_message</targetReference>
+        </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>recordId</name>
@@ -104,8 +107,8 @@
     <actionCalls>
         <name>Rotear_para_Agente_que_est_tratando_o_Caso</name>
         <label>Rotear para Agente que está tratando o Caso</label>
-        <locationX>50</locationX>
-        <locationY>782</locationY>
+        <locationX>314</locationX>
+        <locationY>890</locationY>
         <actionName>routeWork</actionName>
         <actionType>routeWork</actionType>
         <faultConnector>
@@ -188,10 +191,22 @@
             <name>botLabel</name>
         </inputParameters>
         <inputParameters>
+            <name>externalConversationBotId</name>
+        </inputParameters>
+        <inputParameters>
+            <name>externalConversationBotLabel</name>
+        </inputParameters>
+        <inputParameters>
             <name>copilotId</name>
         </inputParameters>
         <inputParameters>
             <name>copilotLabel</name>
+        </inputParameters>
+        <inputParameters>
+            <name>agentforceEmployeeAgentId</name>
+        </inputParameters>
+        <inputParameters>
+            <name>agentforceEmployeeAgentLabel</name>
         </inputParameters>
         <nameSegment>routeWork</nameSegment>
         <offset>0</offset>
@@ -199,8 +214,8 @@
     <actionCalls>
         <name>Rotear_para_fila_de_Pos_Venda_Jornada_do_Cliente</name>
         <label>Rotear para fila de Pos Venda - Jornada do Cliente</label>
-        <locationX>578</locationX>
-        <locationY>782</locationY>
+        <locationX>842</locationX>
+        <locationY>890</locationY>
         <actionName>routeWork</actionName>
         <actionType>routeWork</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -390,39 +405,29 @@
     <apiVersion>61.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
-        <name>prospecao_outbound</name>
-        <label>É prospecção outbound?</label>
-        <locationX>974</locationX>
-        <locationY>782</locationY>
+        <name>Verifica_se_rotea_para_bot_ou_agente_ou_fila</name>
+        <label>Verifica se rotea para bot ou agente ou fila</label>
+        <locationX>578</locationX>
+        <locationY>674</locationY>
         <defaultConnector>
-            <targetReference>RoutingAction</targetReference>
+            <targetReference>Update_by_standard</targetReference>
         </defaultConnector>
-        <defaultConnectorLabel>Não</defaultConnectorLabel>
+        <defaultConnectorLabel>Resultado padrão</defaultConnectorLabel>
         <rules>
-            <name>Sim</name>
-            <conditionLogic>and</conditionLogic>
+            <name>get_bot_number</name>
+            <conditionLogic>or</conditionLogic>
             <conditions>
-                <leftValueReference>Consultar_Messaging_Session.Telefone__c</leftValueReference>
-                <operator>EqualTo</operator>
+                <leftValueReference>Agenteforce_Obter_Informa_o_Message.leadId</leftValueReference>
+                <operator>IsNull</operator>
                 <rightValue>
-                    <stringValue>554188752480</stringValue>
+                    <booleanValue>false</booleanValue>
                 </rightValue>
             </conditions>
             <connector>
                 <targetReference>Rotear_para_Agent_SDR</targetReference>
             </connector>
-            <label>Sim</label>
+            <label>get bot number</label>
         </rules>
-    </decisions>
-    <decisions>
-        <name>Verifica_se_rotea_para_bot_ou_agente_ou_fila</name>
-        <label>Verifica se rotea para bot ou agente ou fila</label>
-        <locationX>512</locationX>
-        <locationY>566</locationY>
-        <defaultConnector>
-            <targetReference>Update_by_standard</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Resultado padrão</defaultConnectorLabel>
         <rules>
             <name>Usuario</name>
             <conditionLogic>1 AND (2 OR 3)</conditionLogic>
@@ -494,6 +499,7 @@
         <expression>({!Consultar_Caso_de_Jornada_do_Cliente.ClosedDate} + 1) &gt; NOW()</expression>
     </formulas>
     <interviewLabel>Rotear para EzeeBot {!$Flow.CurrentDateTime}</interviewLabel>
+    <isAdditionalPermissionRequiredToRun>true</isAdditionalPermissionRequiredToRun>
     <label>Rotear para EzeeBot V2</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -517,11 +523,11 @@
     <recordLookups>
         <name>Consultar_Caso_de_Jornada_do_Cliente</name>
         <label>Consultar Caso de Jornada do Cliente</label>
-        <locationX>512</locationX>
+        <locationX>578</locationX>
         <locationY>458</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Verifica_se_rotea_para_bot_ou_agente_ou_fila</targetReference>
+            <targetReference>Agenteforce_Obter_Informa_o_Message</targetReference>
         </connector>
         <faultConnector>
             <targetReference>Copy_2_of_Update_by_error_get_user</targetReference>
@@ -541,6 +547,13 @@
                 <elementReference>Consultar_Tipo_de_registro_Jornada_do_cliente.Id</elementReference>
             </value>
         </filters>
+        <filters>
+            <field>ContactId</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Case</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
@@ -548,7 +561,7 @@
     <recordLookups>
         <name>Consultar_Messaging_Session</name>
         <label>Consultar Messaging Session</label>
-        <locationX>512</locationX>
+        <locationX>578</locationX>
         <locationY>134</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -569,7 +582,7 @@
     <recordLookups>
         <name>Consultar_Messaging_User</name>
         <label>Consultar Messaging User</label>
-        <locationX>512</locationX>
+        <locationX>578</locationX>
         <locationY>242</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -600,7 +613,7 @@
     <recordLookups>
         <name>Consultar_Tipo_de_registro_Jornada_do_cliente</name>
         <label>Consultar Tipo de registro Jornada do cliente</label>
-        <locationX>512</locationX>
+        <locationX>578</locationX>
         <locationY>350</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -670,8 +683,8 @@
     <recordUpdates>
         <name>Update_by_Queue</name>
         <label>Update by Queue</label>
-        <locationX>578</locationX>
-        <locationY>674</locationY>
+        <locationX>842</locationX>
+        <locationY>782</locationY>
         <connector>
             <targetReference>Rotear_para_fila_de_Pos_Venda_Jornada_do_Cliente</targetReference>
         </connector>
@@ -694,10 +707,10 @@
     <recordUpdates>
         <name>Update_by_standard</name>
         <label>Update by standard</label>
-        <locationX>974</locationX>
-        <locationY>674</locationY>
+        <locationX>1106</locationX>
+        <locationY>782</locationY>
         <connector>
-            <targetReference>prospecao_outbound</targetReference>
+            <targetReference>RoutingAction</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -718,8 +731,8 @@
     <recordUpdates>
         <name>Update_by_user</name>
         <label>Update by user</label>
-        <locationX>50</locationX>
-        <locationY>674</locationY>
+        <locationX>314</locationX>
+        <locationY>782</locationY>
         <connector>
             <targetReference>Rotear_para_Agente_que_est_tratando_o_Caso</targetReference>
         </connector>
@@ -746,10 +759,37 @@
         <object>MessagingSession</object>
     </recordUpdates>
     <recordUpdates>
+        <name>Update_message</name>
+        <label>Update message</label>
+        <locationX>50</locationX>
+        <locationY>890</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Consultar_Messaging_Session.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>AgenteSDR__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>LeadId</field>
+            <value>
+                <elementReference>Agenteforce_Obter_Informa_o_Message.leadId</elementReference>
+            </value>
+        </inputAssignments>
+        <object>MessagingSession</object>
+    </recordUpdates>
+    <recordUpdates>
         <name>Update_Owner_Messaging_Session</name>
         <label>Update Owner Messaging Session</label>
-        <locationX>314</locationX>
-        <locationY>890</locationY>
+        <locationX>578</locationX>
+        <locationY>998</locationY>
         <filterLogic>and</filterLogic>
         <filters>
             <field>Id</field>
@@ -767,13 +807,30 @@
         <object>MessagingSession</object>
     </recordUpdates>
     <start>
-        <locationX>386</locationX>
+        <locationX>452</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Consultar_Messaging_Session</targetReference>
         </connector>
     </start>
     <status>Active</status>
+    <subflows>
+        <name>Agenteforce_Obter_Informa_o_Message</name>
+        <label>[Agenteforce ] - Obter Informação_Message</label>
+        <locationX>578</locationX>
+        <locationY>566</locationY>
+        <connector>
+            <targetReference>Verifica_se_rotea_para_bot_ou_agente_ou_fila</targetReference>
+        </connector>
+        <flowName>Agenteforce_Obter_Informacao_Message</flowName>
+        <inputAssignments>
+            <name>messagingSessionId</name>
+            <value>
+                <elementReference>Consultar_Messaging_Session.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </subflows>
     <variables>
         <name>recordId</name>
         <dataType>String</dataType>

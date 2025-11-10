@@ -34,6 +34,11 @@
                 <default>false</default>
                 <label>edifício</label>
             </value>
+            <value>
+                <fullName>Não sei! Preciso da ajuda de um especialista</fullName>
+                <default>false</default>
+                <label>Não sei! Preciso da ajuda de um especialista</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

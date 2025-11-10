@@ -9,9 +9,13 @@
     <columns>LEAD.CREATED_DATE</columns>
     <columns>CORE.USERS.ALIAS</columns>
     <columns>LEAD.UNREAD</columns>
-    <filterScope>Queue</filterScope>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>LEAD.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Lead.QualificacaodeClientes</value>
+    </filters>
     <label>Qualificação de Clientes</label>
-    <queue>QualificacaodeClientes</queue>
     <sharedTo>
         <allInternalUsers></allInternalUsers>
     </sharedTo>

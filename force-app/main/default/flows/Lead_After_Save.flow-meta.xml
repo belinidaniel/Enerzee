@@ -1,6 +1,378 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
+        <name>C_pia_1_de_Envia_Mensagem_Ezee_Connect</name>
+        <label>Envia Mensagem Ezee Solar</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>sendConversationMessages</actionName>
+        <actionType>sendConversationMessages</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>messageDefinitionName</name>
+            <value>
+                <stringValue>agent_sdr_entrada_interesse_ezee_solar</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingDefinitionInputParameters</name>
+            <value>
+                <apexValue>[
+  {
+    &quot;name&quot;: &quot;leadName&quot;,
+    &quot;textValue&quot;: &quot;{!v_leadName}&quot;
+  }
+]</apexValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>requestType</name>
+            <value>
+                <stringValue>SendNotificationMessages</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>isEnforceMessagingChannelConsent</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>channelConsentType</name>
+            <value>
+                <stringValue>MessagingEndUser</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>allowedSessionStatus</name>
+            <value>
+                <stringValue>Any</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingEndUserIds</name>
+            <value>
+                <elementReference>v_messagingEndUsers</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>sendConversationMessages</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <name>C_pia_1_de_Envia_Mensagem_Ezee_Solar</name>
+        <label>Envia Mensagem Solar</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>sendConversationMessages</actionName>
+        <actionType>sendConversationMessages</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>messageDefinitionName</name>
+            <value>
+                <stringValue>agent_sdr_entrada_solar</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingDefinitionInputParameters</name>
+            <value>
+                <apexValue>[
+  {
+    &quot;name&quot;: &quot;leadName&quot;,
+    &quot;textValue&quot;: &quot;{!v_leadName}&quot;
+  }
+]</apexValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>requestType</name>
+            <value>
+                <stringValue>SendNotificationMessages</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>isEnforceMessagingChannelConsent</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>channelConsentType</name>
+            <value>
+                <stringValue>MessagingEndUser</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>allowedSessionStatus</name>
+            <value>
+                <stringValue>Any</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingEndUserIds</name>
+            <value>
+                <elementReference>v_messagingEndUsers</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>sendConversationMessages</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <name>C_pia_1_de_Envia_Mensagem_Inicial_Geral</name>
+        <label>Envia Mensagem Carregador Veicular</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>sendConversationMessages</actionName>
+        <actionType>sendConversationMessages</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>messageDefinitionName</name>
+            <value>
+                <stringValue>agent_sdr_carregador_veicular</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingDefinitionInputParameters</name>
+            <value>
+                <apexValue>[
+  {
+    &quot;name&quot;: &quot;leadName&quot;,
+    &quot;textValue&quot;: &quot;{!v_leadName}&quot;
+  }
+]</apexValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>requestType</name>
+            <value>
+                <stringValue>SendNotificationMessages</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>isEnforceMessagingChannelConsent</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>channelConsentType</name>
+            <value>
+                <stringValue>MessagingEndUser</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>allowedSessionStatus</name>
+            <value>
+                <stringValue>Any</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingEndUserIds</name>
+            <value>
+                <elementReference>v_messagingEndUsers</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>sessionLongevityPreference</name>
+            <value>
+                <stringValue>KeepSessionOpen</stringValue>
+            </value>
+        </inputParameters>
+        <nameSegment>sendConversationMessages</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <name>C_pia_2_de_Envia_Mensagem_Carregador_Baterias</name>
+        <label>Envia Mensagem Ezee Livre</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>sendConversationMessages</actionName>
+        <actionType>sendConversationMessages</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>messageDefinitionName</name>
+            <value>
+                <stringValue>agent_sdr_entrada_ezee_livre</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingDefinitionInputParameters</name>
+            <value>
+                <apexValue>[
+  {
+    &quot;name&quot;: &quot;leadName&quot;,
+    &quot;textValue&quot;: &quot;{!v_leadName}&quot;
+  }
+]</apexValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>requestType</name>
+            <value>
+                <stringValue>SendNotificationMessages</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>isEnforceMessagingChannelConsent</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>channelConsentType</name>
+            <value>
+                <stringValue>MessagingEndUser</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>allowedSessionStatus</name>
+            <value>
+                <stringValue>Any</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingEndUserIds</name>
+            <value>
+                <elementReference>v_messagingEndUsers</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>sessionLongevityPreference</name>
+            <value>
+                <stringValue>KeepSessionOpen</stringValue>
+            </value>
+        </inputParameters>
+        <nameSegment>sendConversationMessages</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <name>C_pia_2_de_Envia_Mensagem_Carregador_Veicular</name>
+        <label>Envia Mensagem Carregador Baterias</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>sendConversationMessages</actionName>
+        <actionType>sendConversationMessages</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>messageDefinitionName</name>
+            <value>
+                <stringValue>agent_sdr_entrada_baterias</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingDefinitionInputParameters</name>
+            <value>
+                <apexValue>[
+  {
+    &quot;name&quot;: &quot;leadName&quot;,
+    &quot;textValue&quot;: &quot;{!v_leadName}&quot;
+  }
+]</apexValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>requestType</name>
+            <value>
+                <stringValue>SendNotificationMessages</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>isEnforceMessagingChannelConsent</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>channelConsentType</name>
+            <value>
+                <stringValue>MessagingEndUser</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>allowedSessionStatus</name>
+            <value>
+                <stringValue>Any</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingEndUserIds</name>
+            <value>
+                <elementReference>v_messagingEndUsers</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>sessionLongevityPreference</name>
+            <value>
+                <stringValue>KeepSessionOpen</stringValue>
+            </value>
+        </inputParameters>
+        <nameSegment>sendConversationMessages</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <name>Envia_Mensagem_Ezee_Connect</name>
+        <label>Envia Mensagem Ezee Connect</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>sendConversationMessages</actionName>
+        <actionType>sendConversationMessages</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>messageDefinitionName</name>
+            <value>
+                <stringValue>agent_sdr_entrada_ezee_connect</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingDefinitionInputParameters</name>
+            <value>
+                <apexValue>[
+  {
+    &quot;name&quot;: &quot;leadName&quot;,
+    &quot;textValue&quot;: &quot;{!v_leadName}&quot;
+  }
+]</apexValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>requestType</name>
+            <value>
+                <stringValue>SendNotificationMessages</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>isEnforceMessagingChannelConsent</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>channelConsentType</name>
+            <value>
+                <stringValue>MessagingEndUser</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>allowedSessionStatus</name>
+            <value>
+                <stringValue>Any</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingEndUserIds</name>
+            <value>
+                <elementReference>v_messagingEndUsers</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>sendConversationMessages</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
         <name>Envia_Mensagem_Inicial_Geral</name>
         <label>Envia Mensagem Inicial Geral</label>
         <locationX>0</locationX>
@@ -112,7 +484,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Envia_Mensagem_Inicial_Geral</targetReference>
+            <targetReference>Produto_de_Interesse</targetReference>
         </connector>
     </assignments>
     <decisions>
@@ -181,6 +553,106 @@
                 <targetReference>Obter_Canal_do_Messaging</targetReference>
             </connector>
             <label>Sim</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Produto_de_Interesse</name>
+        <label>Produto de Interesse</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Envia_Mensagem_Inicial_Geral</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Resultado padrão</defaultConnectorLabel>
+        <rules>
+            <name>Solar</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Lb065_ProdutoInteresse__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Solar</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>C_pia_1_de_Envia_Mensagem_Ezee_Solar</targetReference>
+            </connector>
+            <label>Solar</label>
+        </rules>
+        <rules>
+            <name>Ezee_Solar</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Lb065_ProdutoInteresse__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Ezee Solar</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>C_pia_1_de_Envia_Mensagem_Ezee_Connect</targetReference>
+            </connector>
+            <label>Ezee Solar</label>
+        </rules>
+        <rules>
+            <name>Ezee_Connect</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Lb065_ProdutoInteresse__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Ezee Connect</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Envia_Mensagem_Ezee_Connect</targetReference>
+            </connector>
+            <label>Ezee Connect</label>
+        </rules>
+        <rules>
+            <name>Ezee_Livre</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Lb065_ProdutoInteresse__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Ezee Livre</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>C_pia_2_de_Envia_Mensagem_Carregador_Baterias</targetReference>
+            </connector>
+            <label>Ezee Livre</label>
+        </rules>
+        <rules>
+            <name>Baterias</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Lb065_ProdutoInteresse__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Baterias</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>C_pia_2_de_Envia_Mensagem_Carregador_Veicular</targetReference>
+            </connector>
+            <label>Baterias</label>
+        </rules>
+        <rules>
+            <name>Carregador_veicular</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Lb065_ProdutoInteresse__c</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>Carregador veicular</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>C_pia_1_de_Envia_Mensagem_Inicial_Geral</targetReference>
+            </connector>
+            <label>Carregador veicular</label>
         </rules>
     </decisions>
     <environments>Default</environments>

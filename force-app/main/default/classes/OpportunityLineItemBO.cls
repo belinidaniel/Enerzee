@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-04-2025
+ * @last modified on  : 08-21-2025
  * @last modified by  : Daniel Belini
 **/
 public without sharing class OpportunityLineItemBO {
@@ -97,4 +97,5 @@ public without sharing class OpportunityLineItemBO {
         
         return true; // Não há bloqueio
     }
+    
 }

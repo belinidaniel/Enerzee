@@ -10,6 +10,7 @@
     <columns>CORE.USERS.ALIAS</columns>
     <columns>LAST_UPDATE</columns>
     <columns>UPDATEDBY_USER.ALIAS</columns>
+    <columns>CORE.USERS.FULL_NAME</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>IS_CLOSED</field>

@@ -5,16 +5,16 @@
     <columns>CREATEDBY_USER</columns>
     <columns>CREATEDBY_USER.ALIAS</columns>
     <columns>CREATED_DATE</columns>
-    <columns>UPDATEDBY_USER</columns>
-    <columns>UPDATEDBY_USER.ALIAS</columns>
     <columns>LAST_UPDATE</columns>
     <columns>MinuteSLAN1__c</columns>
     <columns>MinuteSLAN2__c</columns>
+    <columns>MinuteSLAN3__c</columns>
     <columns>OWNER.ALIAS</columns>
     <columns>OWNER.FIRST_NAME</columns>
     <columns>OWNER.LAST_NAME</columns>
-    <columns>OBJECT_ID</columns>
-    <columns>QueueSupervisor__c</columns>
+    <columns>QueueAtendentRole__c</columns>
+    <columns>QueueSupervisorRole__c</columns>
+    <columns>QueueCoordinatorRole__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>

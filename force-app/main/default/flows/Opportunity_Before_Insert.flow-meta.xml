@@ -3,41 +3,61 @@
     <apiVersion>62.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
-        <name>Registro_criado_ou_atualizado</name>
-        <label>Registro criado ou atualizado?</label>
-        <locationX>
-        176</locationX>
-        <locationY>287</locationY>
-        <defaultConnectorLabel>Resultado padrão</defaultConnectorLabel>
+        <name>recordtype</name>
+        <label>recordtype</label>
+        <locationX>182</locationX>
+        <locationY>395</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
-            <name>Criado</name>
-            <conditionLogic>and</conditionLogic>
+            <name>solar_ou_produtos</name>
+            <conditionLogic>or</conditionLogic>
             <conditions>
-                <leftValueReference>ISNEW</leftValueReference>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
-                    <booleanValue>true</booleanValue>
+                    <stringValue>Solar</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Produtos</stringValue>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Preencher_Validade_Proposta</targetReference>
+                <targetReference>update_close_date_today</targetReference>
             </connector>
-            <label>Criado</label>
+            <label>solar ou produtos</label>
         </rules>
+    </decisions>
+    <decisions>
+        <name>status_close_date</name>
+        <label>status  close date</label>
+        <locationX>380</locationX>
+        <locationY>287</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
-            <name>Atualizado</name>
+            <name>yes</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference>$Record.StageName</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
-                    <stringValue>Elaboração de proposta</stringValue>
+                    <stringValue>Ganho fechado</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.StageName</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Preencher_Validade_Proposta</targetReference>
+                <targetReference>recordtype</targetReference>
             </connector>
-            <label>Atualizado</label>
+            <label>yes</label>
         </rules>
     </decisions>
     <environments>Default</environments>
@@ -68,40 +88,35 @@
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <recordUpdates>
-        <name>Preencher_Validade_Proposta</name>
-        <label>Preencher Validade Proposta</label>
-        <locationX>
-        176</locationX>
-        <locationY>587</locationY>
+        <name>update_close_date_today</name>
+        <label>update close date today</label>
+        <locationX>50</locationX>
+        <locationY>503</locationY>
         <inputAssignments>
-            <field>ValidadeProposta__c</field>
+            <field>CloseDate</field>
             <value>
-                <elementReference>Days</elementReference>
+                <elementReference>$Flow.CurrentDate</elementReference>
             </value>
         </inputAssignments>
-        <inputReference>
-        $Record</inputReference>
+        <inputReference>$Record</inputReference>
     </recordUpdates>
     <start>
-        <locationX>50</locationX>
+        <locationX>254</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Registro_criado_ou_atualizado</targetReference>
+            <targetReference>status_close_date</targetReference>
         </connector>
-        <object>
-        Opportunity</object>
+        <object>Opportunity</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
-        <triggerType>
-        RecordBeforeSave</triggerType>
+        <triggerType>RecordBeforeSave</triggerType>
     </start>
-    <status>Obsolete</status>
+    <status>Active</status>
     <variables>
         <name>Days</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
-        <isOutput>
-        true</isOutput>
+        <isOutput>true</isOutput>
         <value>
             <stringValue>7</stringValue>
         </value>

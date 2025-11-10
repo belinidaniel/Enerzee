@@ -12,22 +12,22 @@
             <value>
                 <fullName>0</fullName>
                 <default>false</default>
-                <label>0</label>
+                <label>Vermelho</label>
             </value>
             <value>
                 <fullName>1</fullName>
                 <default>false</default>
-                <label>1</label>
+                <label>Laranjado</label>
             </value>
             <value>
                 <fullName>2</fullName>
                 <default>false</default>
-                <label>2</label>
+                <label>Amarelo</label>
             </value>
             <value>
                 <fullName>3</fullName>
                 <default>false</default>
-                <label>3</label>
+                <label>Verde</label>
             </value>
         </valueSetDefinition>
     </valueSet>
