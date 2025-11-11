@@ -64,12 +64,8 @@
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.ConsultantDeadlineRange__c</fieldItem>
-                <identifier>RecordConsultantDeadlineRange_cField2</identifier>
+                <fieldItem>Record.SpecialRange__c</fieldItem>
+                <identifier>RecordSpecialRange__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-b208d1ae-56d9-4c43-b4b7-c61b1f0784b9</name>
@@ -83,7 +79,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.FreezeConsult__c</fieldItem>
-                <identifier>RecordFreezeConsult__cField</identifier>
+                <identifier>RecordFreezeConsult_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -104,6 +100,16 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.Ativo__c</fieldItem>
                 <identifier>RecordAtivo_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ConsultantDeadlineRange__c</fieldItem>
+                <identifier>RecordConsultantDeadlineRange_cField2</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-28751402-02ba-4804-acf9-52fece02948f</name>

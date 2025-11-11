@@ -317,11 +317,10 @@
     <relatedLists>
         <fields>Name</fields>
         <fields>MessagingPlatformKey</fields>
+        <fields>Owner</fields>
         <fields>MessagingChannel</fields>
         <fields>MessageType</fields>
-        <fields>Locale</fields>
-        <fields>MessagingConsentStatus</fields>
-        <relatedList>MessagingEndUser.AccountId__c</relatedList>
+        <relatedList>MessagingEndUser</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>Name</fields>
