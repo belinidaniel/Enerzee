@@ -1,0 +1,54 @@
+<template>
+    <div class="slds-card">
+        <header class="slds-media slds-media_center slds-has-flexi-truncate slds-p-around_small">
+            <div class="slds-media__figure">
+                <lightning-icon
+                    icon-name="utility:attach"
+                    alternative-text="Icon"
+                    size="small">
+                </lightning-icon>
+            </div>
+            
+            <div class="slds-media__body">
+                <h2 class="slds-text-heading_small slds-truncate" title={labels.ClickSign_HeaderTitle}>
+                    {labels.ClickSign_HeaderTitle} ({clickSignRecords.length})
+                </h2>
+            </div>
+            <div class="slds-p-around_small slds-border_top">
+                <lightning-button
+                    label={labels.ClickSign_SendDocument}
+                    variant="neutral"
+                    onclick={handleSend}>
+                </lightning-button>
+            </div>
+        </header>
+        
+        <template if:true={clickSignRecords.length}>
+            <div class="slds-p-horizontal_small slds-p-vertical_x-small">
+                <ul class="slds-list_horizontal slds-wrap">
+                    <template for:each={clickSignRecords} for:item="record">
+                        <li key={record.Id} class="slds-item slds-p-around_x-small slds-border_bottom">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <strong>Name:</strong>
+                                    <a href="javascript:void(0);" data-id={record.Id} onclick={handleNameClick}>
+                                        {record.Name}
+                                    </a>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <strong>Status:</strong> {record.Status__c}
+                                </div>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </template>
+
+        <template if:false={clickSignRecords.length}>
+            <div class="slds-p-around_small slds-text-align_center">
+                <p>No ClickSign records found.</p>
+            </div>
+        </template>
+    </div>
+</template>

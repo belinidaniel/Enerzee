@@ -1,0 +1,303 @@
+<!--
+  @description       : 
+  @author            : Daniel Belini
+  @group             : 
+  @last modified on  : 11-12-2025
+  @last modified by  : Daniel Belini
+-->
+<template>
+    <div class="desktop-layout">
+        <div class="container">
+            <template if:true={isViabilityAvailable}>
+                <div class="alert-message">
+                    Atenção! Registro inválido ou Análise de viabilidade técnica do Local já concluída.
+                </div>
+            </template>
+
+            <h2 class="title">Viabilidade Técnica</h2>
+            <h1 class="subtitle">Formulário de Análise de Viabilidade Técnica do Local</h1>
+    
+            <div class="progress">
+                <lightning-progress-indicator current-step={currentStep} type="path">
+                    <lightning-progress-step label="Detalhes da Proposta" value="Detalhes da Proposta" class="progress-step"></lightning-progress-step>
+                    <lightning-progress-step label="Localização Fixa"     value="Localização Fixa"     class="progress-step"></lightning-progress-step>
+                    <lightning-progress-step label="Dados do Local"       value="Dados do Local"       class="progress-step"></lightning-progress-step>
+                    <lightning-progress-step label="Finalizado"           value="Finalizado"           class="progress-step"></lightning-progress-step>
+                </lightning-progress-indicator>
+            </div>
+    
+            <template if:true={isLoading}>
+                <div class="slds-spinner_container">
+                    <lightning-spinner alternative-text="Carregando..." size="large"></lightning-spinner>
+                </div>
+            </template>
+    
+            <div class="form-content">
+                <lightning-record-view-form object-api-name="Opportunity" record-id={oppId} style="margin-top: 40px;">
+                                
+                    <template if:true={isDetalhesDaProposta}> 
+                        <div style="margin-bottom: 10px;">
+                            <h2 style="font-size: 16px; color: #333; border-bottom: 2px solid #eeeeee; padding-bottom: 5px;">Detalhes da Proposta</h2>
+                            <lightning-layout horizontal-align="spread">
+                                <lightning-layout-item size="6">
+                                    <lightning-output-field field-name="Numeroproposta__c"></lightning-output-field>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="6">
+                                    <lightning-output-field field-name="Tipo_de_registro__c"></lightning-output-field>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+    
+                        <div style="margin-bottom: 10px;">
+                            <h2 style="font-size: 16px; color: #333; border-bottom: 2px solid #eeeeee; padding-bottom: 5px;">Responsável do Local</h2>
+                            <lightning-layout horizontal-align="spread">
+                                <lightning-layout-item size="6">
+                                    <lightning-output-field field-name="NomeDaConta__c"></lightning-output-field>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="6">
+                                    <lightning-output-field field-name="Telefone__c"></lightning-output-field>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+    
+                        <div style="margin-bottom: 10px;">
+                            <h2 style="font-size: 16px; color: #333; border-bottom: 2px solid #eeeeee; padding-bottom: 5px;">Endereço de Instalação</h2>
+                            <lightning-layout horizontal-align="spread">
+                                <lightning-layout-item size="6">
+                                    <lightning-output-field field-name="EnderecoOportunidade__c"></lightning-output-field>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+                    </template>
+    
+                </lightning-record-view-form>
+    
+                <template if:true={isLocalizacaoFixa}>
+                    <div class="slds-align_absolute-center slds-m-vertical_large">
+                        <lightning-button class="slds-m-around_small" variant="brand" disabled={locationButtonDisabled} icon-name="utility:target" label="Inserir Localização Fixa" title="Insira um link com a localização do local." onclick={handleOpenModal}></lightning-button>
+
+                        <template if:true={isModalOpen}>
+                            <section role="dialog" class="slds-modal slds-fade-in-open">
+                                <div class="slds-modal__container">
+                                    <header class="slds-modal__header">
+                                        <h2 class="slds-text-heading_medium">Inserir Localização</h2>
+                                    </header>
+                                    <div class="slds-modal__content slds-p-around_medium">
+                                        <lightning-input type="url" label="Link do Google Maps" value={mapLink} onchange={handleInputChange}></lightning-input>
+                                    </div>
+                                    <footer class="slds-modal__footer">
+                                        <lightning-button label="Cancelar" onclick={handleCloseModal}></lightning-button>
+                                        <lightning-button variant="brand" label="Inserir" onclick={handleExtractAndSave} class="slds-m-left_small"></lightning-button>
+                                    </footer>
+                                </div>
+                            </section>
+                            <div class="slds-backdrop slds-backdrop_open"></div>
+                        </template>
+
+                        <lightning-button class="slds-m-around_small" variant="brand" disabled={locationButtonDisabled} icon-name="utility:target" label="Obter Localização Atual" title="Use o GPS e outros sensores de localização do seu dispositivo para determinar sua localização atual" onclick={handleGetCurrentLocationClick}></lightning-button>
+                    </div>
+                    <div class="fullwidth-map">
+                        <lightning-map map-markers={currentLocationAsMarker} zoom-level="18"></lightning-map>
+                    </div>
+                </template>
+    
+                <template if:true={isDadosDoLocal}>
+                    <div style="margin-bottom: 20px;">
+                        <h2 style="font-size: 16px; font-weight: bold; color: #333; padding-bottom: 5px;">Estrutura de Instalação</h2>
+                        <lightning-layout multiple-rows>
+                            <lightning-layout-item size="4">
+                                <lightning-combobox name="combobox" label="Tipo do telhado - Estrutura de fixação" placeholder="" options={options} value={value} onchange={handleChange} style="margin-top: 0;"></lightning-combobox>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </div>
+        
+                    <div style="margin-bottom: 20px;">
+                        <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <h2 style="font-size: 16px; font-weight: bold; color: #333; margin: 0;">Anexos do Local</h2>
+                            <lightning-helptext content="Suporte para até 10 arquivos por vez, com tamanho máximo de 2 GB por arquivo."></lightning-helptext>
+                        </div>
+
+                        <div style="font-size: 12px; color: #696969; margin-top: 10px; margin-bottom: 20px;">
+                            <p><lightning-formatted-text value="• Foto do telhado" >                                              </lightning-formatted-text></p>
+                            <p><lightning-formatted-text value="• Foto do padrão de entrada" >                                    </lightning-formatted-text></p>
+                            <p><lightning-formatted-text value="• Foto do disjuntor do local" >                                   </lightning-formatted-text></p>
+                            <p><lightning-formatted-text value="• Foto do quadro de disjuntores interno (se aplicável)" >         </lightning-formatted-text></p>
+                            <p><lightning-formatted-text value="• Foto do local onde deseja instalar o inversor" >                </lightning-formatted-text></p>
+                            <p><lightning-formatted-text value="• Gravação caminhando do quadro geral até o local do inversor">   </lightning-formatted-text></p>
+                            <p><lightning-formatted-text value="• Gravação caminhando do padrão de entrada" >                     </lightning-formatted-text></p>
+                        </div>
+
+                        <lightning-file-upload
+                            label="Selecionar Arquivos (Máximo 10 arquivos)" 
+                            name="fileUploader"
+                            record-id={id}
+                            multiple
+                            accepted-formats=".pdf,.png,.jpg,.mp4,.avi,.mov"
+                            onuploadfinished={handleUploadFinished}>
+                        </lightning-file-upload>
+                    </div>
+                    
+                </template>
+            </div>
+    
+            <div class="button-container">
+                <template if:true={showContinueButton}>
+                    <button class="slds-button slds-button_brand" onclick={handleNextStep} disabled={isViabilityAvailable}>Continuar</button>
+                </template>
+                <template if:true={showFinishButton}>
+                    <button class="slds-button slds-button_success" onclick={handleUpload} disabled={isViabilityAvailable}>Enviar</button>
+                </template>
+            </div>
+        </div>
+    </div>
+<!--     
+    <div class="mobile-layout">
+        <div class="container">
+            <template if:true={isViabilityAvailable}>
+                <div class="alert-message">
+                    Atenção! Registro inválido ou Análise de viabilidade técnica do Local já concluída.
+                </div>
+            </template>
+    
+            <h2 class="title">Viabilidade Técnica</h2>
+            <h1 class="subtitle">Formulário de Análise de Viabilidade Técnica do Local</h1>
+    
+            <div class="progress">
+                <lightning-progress-indicator current-step={currentStep} type="path" class="progress-indicator">
+                    <lightning-progress-step label="Proposta"    value="Detalhes da Proposta" class="progress-step"></lightning-progress-step>
+                    <lightning-progress-step label="Localização" value="Localização Fixa"     class="progress-step"></lightning-progress-step>
+                    <lightning-progress-step label="Anexos"      value="Dados do Local"       class="progress-step"></lightning-progress-step>
+                    <lightning-progress-step label="Finalizado"  value="Finalizado"           class="progress-step"></lightning-progress-step>
+                </lightning-progress-indicator>
+            </div>
+    
+            <template if:true={isLoading}>
+                <div class="slds-spinner_container">
+                    <lightning-spinner alternative-text="Carregando..." size="large"></lightning-spinner>
+                </div>
+            </template>
+    
+            <div class="form-content">
+                <lightning-record-view-form object-api-name="Opportunity" record-id={oppId} style="margin-top: 20px;">
+                        
+                    <template if:true={isDetalhesDaProposta}>
+                        <div style="margin-bottom: 20px;">
+                            <h2 style="font-size: 16px; font-weight: bold; color: #333; padding-bottom: 5px;">Detalhes da Proposta</h2>
+                            <lightning-layout multiple-rows>
+                                <lightning-layout-item size="12" style="border-bottom: 2px solid #eeeeee;">
+                                    <lightning-output-field field-name="Numeroproposta__c"></lightning-output-field>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12" style="border-bottom: 2px solid #eeeeee;">
+                                    <lightning-output-field field-name="Tipo_de_registro__c"></lightning-output-field>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+    
+                        <div style="margin-bottom: 20px;">
+                            <h2 style="font-size: 16px; font-weight: bold; color: #333; padding-bottom: 5px;">Responsável do Local</h2>
+                            <lightning-layout multiple-rows>
+                                <lightning-layout-item size="12" style="border-bottom: 2px solid #eeeeee;">
+                                    <lightning-output-field field-name="NomeDaConta__c"></lightning-output-field>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12" style="border-bottom: 2px solid #eeeeee;">
+                                    <lightning-output-field field-name="Telefone__c"></lightning-output-field>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+    
+                        <div style="margin-bottom: 20px;">
+                            <h2 style="font-size: 16px; font-weight: bold; color: #333; padding-bottom: 5px;">Endereço de Instalação</h2>
+                            <lightning-layout multiple-rows>
+                                <lightning-layout-item size="12" style="border-bottom: 2px solid #eeeeee;">
+                                    <lightning-output-field field-name="EnderecoOportunidade__c"></lightning-output-field>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+                    </template>
+    
+                </lightning-record-view-form>
+    
+                <template if:true={isLocalizacaoFixa}>
+                    <div class="slds-align_absolute-center slds-m-vertical_large">
+                        <div class="slds-grid slds-grid_vertical slds-grid_align-center">
+                            <lightning-button class="slds-m-around_small" variant="brand" disabled={locationButtonDisabled} icon-name="utility:target" label="Inserir Localização Fixa" title="Insira um link com a localização do local." onclick={handleOpenModal}></lightning-button>
+
+                            <template if:true={isModalOpen}>
+                                <section role="dialog" class="slds-modal slds-fade-in-open">
+                                    <div class="slds-modal__container">
+                                        <header class="slds-modal__header">
+                                            <h2 class="slds-text-heading_medium">Inserir Localização</h2>
+                                        </header>
+                                        <div class="slds-modal__content slds-p-around_medium">
+                                            <lightning-input type="url" label="Link do Google Maps" value={mapLink} onchange={handleInputChange}></lightning-input>
+                                        </div>
+                                        <footer class="slds-modal__footer">
+                                            <lightning-button label="Cancelar" onclick={handleCloseModal}></lightning-button>
+                                            <lightning-button variant="brand" label="Inserir" onclick={handleExtractAndSave} class="slds-m-left_small"></lightning-button>
+                                        </footer>
+                                    </div>
+                                </section>
+                                <div class="slds-backdrop slds-backdrop_open"></div>
+                            </template>
+
+                            <lightning-button class="slds-m-around_small" variant="brand" disabled={locationButtonDisabled} icon-name="utility:target" label="Obter Localização Atual" title="Use o GPS e outros sensores de localização do seu dispositivo para determinar sua localização atual" onclick={handleGetCurrentLocationClick}></lightning-button>
+                        </div>
+                    </div>
+                    
+                    <div class="fullwidth-map">
+                        <lightning-map map-markers={currentLocationAsMarker} zoom-level="18"></lightning-map>
+                    </div>
+                </template>
+    
+                <template if:true={isDadosDoLocal}>
+                    <div style="margin-bottom: 20px;">
+                        <h2 style="font-size: 16px; font-weight: bold; color: #333; padding-bottom: 5px;">Estrutura de Instalação</h2>
+                        <lightning-layout multiple-rows>
+                            <lightning-layout-item size="8">
+                                <lightning-combobox name="combobox" label="Tipo do telhado - Estrutura de fixação" placeholder="" options={options} value={value} onchange={handleChange} style="margin-top: 0;"></lightning-combobox>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </div>
+    
+                    <div style="margin-bottom: 20px;">
+                        <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <h2 style="font-size: 16px; font-weight: bold; color: #333; margin: 0;">Anexos do Local</h2>
+                            <lightning-helptext content="Suporte para até 10 arquivos por vez, com tamanho máximo de 2 GB por arquivo."></lightning-helptext>
+                        </div>
+
+                        <div style="font-size: 12px; color: #696969; margin-top: 10px; margin-bottom: 20px;">
+                            <p><lightning-formatted-text value="• Foto do telhado" >                                              </lightning-formatted-text></p>
+                            <p><lightning-formatted-text value="• Foto do padrão de entrada" >                                    </lightning-formatted-text></p>
+                            <p><lightning-formatted-text value="• Foto do disjuntor do local" >                                   </lightning-formatted-text></p>
+                            <p><lightning-formatted-text value="• Foto do quadro de disjuntores interno (se aplicável)" >         </lightning-formatted-text></p>
+                            <p><lightning-formatted-text value="• Foto do local onde deseja instalar o inversor" >                </lightning-formatted-text></p>
+                            <p><lightning-formatted-text value="• Gravação caminhando do quadro geral até o local do inversor">   </lightning-formatted-text></p>
+                            <p><lightning-formatted-text value="• Gravação caminhando do padrão de entrada" >                     </lightning-formatted-text></p>
+                        </div>
+
+                        <lightning-file-upload
+                            label="Selecionar Arquivos (Máximo 10 arquivos)" 
+                            name="fileUploader"
+                            record-id={id}
+                            multiple
+                            accepted-formats=".pdf,.png,.jpg,.mp4,.avi,.mov"
+                            onuploadfinished={handleUploadFinished}>
+                        </lightning-file-upload>
+                    </div>
+                    
+                </template>
+            </div>
+    
+            <div class="button-container">
+                <template if:true={showContinueButton}>
+                    <button class="slds-button slds-button_brand" onclick={handleNextStep} disabled={isViabilityAvailable}>Continuar</button>
+                </template>
+    
+                <template if:true={showFinishButton}>
+                    <button class="slds-button slds-button_success" onclick={handleUpload} disabled={isViabilityAvailable}>Enviar</button>
+                </template>
+            </div>
+        </div>
+    </div>
+     -->
+</template>

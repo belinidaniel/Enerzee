@@ -1,0 +1,50 @@
+<template>
+    <template if:true={isLoading}>
+        <div class="slds-spinner_container">
+            <div role="status" class="slds-spinner slds-spinner_medium">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </template>
+    
+    <template if:false={isLoading}>
+        <div class="document-container">
+            <h3 class="title">{labels.ClickSign_Recipients}</h3>
+            <template if:true={recipients.length}>
+                <ul class="recipient-list title-recipients">
+                    <template for:each={recipients} for:item="recipient">
+                        <li key={recipient.Id} class="recipient-item">
+                            <lightning-icon icon-name="utility:user" size="small" alternative-text="User Icon" class="recipient-icon"></lightning-icon>
+                            <span class="recipient-name">{recipient.Name}</span>
+                            <lightning-icon icon-name="utility:email" size="small" alternative-text="Email Icon" class="recipient-icon"></lightning-icon>
+                            <span class="recipient-email">{recipient.Email__c}</span>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+            <template if:false={recipients.length}>
+                <p>{labels.ClickSign_NoRecipients}</p>
+            </template>
+    
+            <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_small button-container"  style="text-align: center;">
+                    <template if:true={clickSign.ClickSignTemplate__c}>
+                        <div class=" slds-col slds-size_6-of-12">
+                            <button onclick={handlePreviewDocument} style="width:100%" class="slds-button slds-button_neutral">{labels.ClickSign_PreviewDocument}</button>
+                        </div>
+                    </template>
+                    <div class=" slds-col slds-size_6-of-12">
+                            <button onclick={handleSend} style="width:100%" disabled={disableSendDocument} class="slds-button slds-button_brand">{labels.ClickSign_SendDocuments}</button>
+                    </div>
+            </div>
+                <!-- Show the Preview button only if ClickSignTemplate__c exists -->
+            <!-- Always show the iframe but update its source -->
+            <template if:true={selectedDocumentUrl}>
+                <div class="iframe-container">
+                    <iframe src={selectedDocumentUrl} class="document-iframe" onload={handleIframeLoad}></iframe>
+                </div>
+            </template>
+        </div>
+    </template>
+</template>

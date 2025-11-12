@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 10-25-2025
+  @last modified on  : 11-12-2025
   @last modified by  : Daniel Belini
 -->
 <apex:page standardController="Opportunity" applyBodyTag="false" extensions="PDFControllerExtension,OpportunityDataController"  standardStylesheets="false" showHeader="false"  sidebar="false" renderAs="PDF"  action="{!salvarPDF}" cache="false">
@@ -575,6 +575,38 @@
         	<!-- <apex:outputText value="{!IF(ISBLANK(Opportunity.Observacoes__c), '-', Opportunity.Observacoes__c)}"/> -->
     	</div> 
     </div>
+
+    <apex:outputPanel rendered="{!shouldRenderMainViabilityStudy}">
+        <apex:variable var="chunkIndex" value="{!0}" />
+        <apex:repeat value="{!mainViabilityStudyChunks}" var="chunk">
+            <div style="page-break-before:always;">
+                <div style="padding:80px 70px 60px 70px; font-family:'Calibri', Arial, sans-serif; font-size:12px; line-height:20px; color:#1d1d1d;">
+                    <div style="font-family:'Effra', 'Calibri', Arial, sans-serif; font-weight:bold; font-size:18px; margin-bottom:18px; text-transform:uppercase; color:#3569A1; letter-spacing:0.5px;">
+                        {!IF(chunkIndex == 0, 'Texto de Estudo', 'Texto de Estudo (continuação)')}
+                    </div>
+                    <apex:outputText value="{!chunk}" style="white-space:pre-line; display:block;" />
+                    <apex:outputPanel rendered="{!AND(hasMainViabilityLayout, chunkIndex == mainViabilityChunkCount - 1)}" layout="block" style="margin-top:35px;">
+                        <div style="font-family:'Effra', 'Calibri', Arial, sans-serif; font-weight:bold; font-size:18px; margin-bottom:12px; text-transform:uppercase; color:#3569A1; letter-spacing:0.5px;">Layout</div>
+                        <div style="text-align:center;">
+                            <apex:image url="{!mainViabilityLayoutUrl}" width="650" style="width:650px; height:auto; display:inline-block;" />
+                        </div>
+                    </apex:outputPanel>
+                </div>
+            </div>
+            <apex:variable var="chunkIndex" value="{!chunkIndex + 1}" />
+        </apex:repeat>
+    </apex:outputPanel>
+
+    <apex:outputPanel rendered="{!AND(hasMainViabilityLayout, NOT(shouldRenderMainViabilityStudy))}">
+        <div style="page-break-before:always;">
+            <div style="padding:80px 70px 60px 70px; font-family:'Calibri', Arial, sans-serif; font-size:12px; line-height:20px; color:#1d1d1d;">
+                <div style="font-family:'Effra', 'Calibri', Arial, sans-serif; font-weight:bold; font-size:18px; margin-bottom:12px; text-transform:uppercase; color:#3569A1; letter-spacing:0.5px;">Layout</div>
+                <div style="text-align:center;">
+                    <apex:image url="{!mainViabilityLayoutUrl}" width="650" style="width:650px; height:auto; display:inline-block;" />
+                </div>
+            </div>
+        </div>
+    </apex:outputPanel>
 
     <!-- PAGINA 8 ------------------------------------->
     <!-- imagem de fundo -->

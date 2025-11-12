@@ -1,0 +1,14 @@
+<template>
+    <template if:true={showAlert}>
+        <div class="slds-notify slds-notify_alert slds-theme_warning" role="alert">
+            <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Alerta">
+                <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                    <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+                </svg>
+            </span>
+            <span>
+                Atenção: Para oportunidades do tipo Solar criadas antes de 12/08/2025, a composição não é somada automaticamente no valor da proposta.
+            </span>
+        </div>
+    </template>
+</template>

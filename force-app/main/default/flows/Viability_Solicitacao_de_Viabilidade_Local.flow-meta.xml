@@ -40,6 +40,9 @@
         </inputParameters>
         <nameSegment>EmailWithAttachmentById</nameSegment>
         <offset>0</offset>
+        <connector>
+            <targetReference>Registrar_Chatter_Email</targetReference>
+        </connector>
     </actionCalls>
     <apiVersion>62.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
@@ -190,6 +193,31 @@
         </inputAssignments>
         <inputReference>$Record</inputReference>
     </recordUpdates>
+    <recordCreates>
+        <name>Registrar_Chatter_Email</name>
+        <label>Registrar evento no Chatter</label>
+        <locationX>50</locationX>
+        <locationY>1085</locationY>
+        <inputAssignments>
+            <field>Body</field>
+            <value>
+                <elementReference>ChatterMessage</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ParentId</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value>
+                <stringValue>TextPost</stringValue>
+            </value>
+        </inputAssignments>
+        <object>FeedItem</object>
+    </recordCreates>
     <start>
         <locationX>254</locationX>
         <locationY>0</locationY>
@@ -211,6 +239,11 @@
         <name>Subject</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
         <text>Análise de Viabilidade Local - {!Oportunidade.Name}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>ChatterMessage</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>Fluxo "Viability - Solicitação de Viabilidade Local": e-mail enviado para {!EmailConsultor} (cópia: {!EmailViabilidade}) em {!$Flow.CurrentDateTime}.</text>
     </textTemplates>
     <variables>
         <name>EmailConsultor</name>

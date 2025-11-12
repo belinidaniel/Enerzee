@@ -1,0 +1,107 @@
+<template>
+    <div class="data-source-container">
+        <label class="slds-form-element__label">{label}</label>
+
+        <!-- Dropdown for selecting fields -->
+        <div class="slds-form-element">
+            <div class="slds-form-element__control">
+                <select class="slds-select" onchange={handleFieldChange}>
+                    <option value="">{labels.selectField}</option>
+                    <!-- Case Fields -->
+                    <template if:true={options}>
+                        <optgroup label={objectName}>
+                            <template for:each={options} for:item="option">
+                                <option key={option.apiName} value={option.apiName} data-related-object={option.relatedObject}>{option.label}</option>
+                            </template>
+                        </optgroup>
+                    </template>
+
+                    <template if:false={isContactInfo}>
+                        <!-- Relationship Fields -->
+                        <template if:true={optionsRelationship}>
+                            <optgroup label={labels.relationshipFields}>
+                                <template for:each={optionsRelationship} for:item="option">
+                                    <option 
+                                        key={option.apiName} 
+                                        value={option.apiName} 
+                                        data-related-object={option.relatedObject}>
+                                        {option.label}
+                                    </option>
+                                </template>
+                            </optgroup>
+                        </template>
+                        <template if:true={optionsRelated}>
+                            <optgroup label={labels.lookupFields}>
+                                <template for:each={optionsRelated} for:item="option">
+                                    <option key={option.apiName} value={option.apiName}>{option.label}</option>
+                                </template>
+                            </optgroup>
+                        </template>
+                    </template>
+                </select>
+            </div>
+        </div>
+
+        <template if:true={labelFieldName}>
+            <div class="slds-form-element">
+                <label class="slds-form-element__label">{labels.selectedField}: {labelFieldName}</label>
+            </div>
+        </template>
+
+        <template if:true={showRelatedField}>
+            <template if:true={isContactInfo}>
+                <div class="slds-form-element" style="margin-left: 20px;">
+                    <label class="slds-form-element__label" for="relatedFields">{labels.selectNameField}</label>
+                    <div class="slds-form-element__control">
+                        <select id="Name" class="slds-select" onchange={handleContactChange}>
+                            <option value="">{labels.selectNameField}</option>
+                            <template for:each={relatedFields} for:item="field">
+                                <option key={field.apiName} value={field.apiName}>{field.label}</option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+                <div class="slds-form-element" style="margin-left: 20px;">
+                    <label class="slds-form-element__label" for="emailFields">{labels.selectEmailField}</label>
+                    <div class="slds-form-element__control">
+                        <select id="Email" class="slds-select" onchange={handleContactChange}>
+                            <option value="">{labels.selectEmailField}</option>
+                            <template for:each={emailFields} for:item="field">
+                                <option key={field.apiName} value={field.apiName}>{field.label}</option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+                <div class="slds-form-element" style="margin-left: 20px;">
+                    <label class="slds-form-element__label" for="roleOptions">{labels.selectRoleField}</label>
+                    <div class="slds-form-element__control">
+                        <select id="Role" class="slds-select" onchange={handleContactChange}>
+                            <option value="">{labels.selectRoleField}</option>
+                            <template for:each={roleOptions} for:item="field">
+                                <option key={field.value} value={field.value}>{field.label}</option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+            </template>
+            <template if:false={isContactInfo}>
+                <div class="slds-form-element" style="margin-left: 20px;">
+                    <label class="slds-form-element__label" for="relatedFields">{relatedObjectName} Fields</label>
+                    <div class="slds-form-element__control">
+                        <select id="relatedFields" class="slds-select" onchange={handleRelatedFieldChange}>
+                            <option value="">{labels.selectRelatedField}</option>
+                            <template for:each={relatedFields} for:item="field">
+                                <option key={field.apiName} value={field.apiName}>{field.label}</option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+            </template>
+        </template>
+        <template if:true={labelRelatedField}>
+            <div class="slds-form-element">
+                <label class="slds-form-element__label">{labels.selectedRelatedField}: {labelRelatedField}</label>
+            </div>
+        </template>
+    </div>
+</template>
