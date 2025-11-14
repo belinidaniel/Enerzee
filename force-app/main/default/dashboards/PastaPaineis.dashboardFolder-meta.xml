@@ -7,11 +7,6 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
-        <sharedTo>Analista_Financeiro</sharedTo>
-        <sharedToType>Role</sharedToType>
-    </folderShares>
-    <folderShares>
-        <accessLevel>View</accessLevel>
         <sharedTo>AnalistaAdmContratos</sharedTo>
         <sharedToType>Role</sharedToType>
     </folderShares>
@@ -37,11 +32,6 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
-        <sharedTo>CTO</sharedTo>
-        <sharedToType>Role</sharedToType>
-    </folderShares>
-    <folderShares>
-        <accessLevel>View</accessLevel>
         <sharedTo>CoordenadorEngenharia</sharedTo>
         <sharedToType>Role</sharedToType>
     </folderShares>
@@ -52,7 +42,7 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
-        <sharedTo>CoordenadorViabilidade</sharedTo>
+        <sharedTo>Analista_Financeiro</sharedTo>
         <sharedToType>Role</sharedToType>
     </folderShares>
     <folderShares>
@@ -62,7 +52,17 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
+        <sharedTo>GerenteComercial</sharedTo>
+        <sharedToType>Role</sharedToType>
+    </folderShares>
+    <folderShares>
+        <accessLevel>View</accessLevel>
         <sharedTo>GerenteEngenharia</sharedTo>
+        <sharedToType>Role</sharedToType>
+    </folderShares>
+    <folderShares>
+        <accessLevel>View</accessLevel>
+        <sharedTo>Supervisor_de_Viabilidade</sharedTo>
         <sharedToType>Role</sharedToType>
     </folderShares>
     <folderShares>
@@ -72,11 +72,6 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
-        <sharedTo>Analista_Financeiro</sharedTo>
-        <sharedToType>RoleAndSubordinates</sharedToType>
-    </folderShares>
-    <folderShares>
-        <accessLevel>View</accessLevel>
         <sharedTo>AnalistaAdmContratos</sharedTo>
         <sharedToType>RoleAndSubordinates</sharedToType>
     </folderShares>
@@ -102,11 +97,6 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
-        <sharedTo>CTO</sharedTo>
-        <sharedToType>RoleAndSubordinates</sharedToType>
-    </folderShares>
-    <folderShares>
-        <accessLevel>View</accessLevel>
         <sharedTo>CoordenadorEngenharia</sharedTo>
         <sharedToType>RoleAndSubordinates</sharedToType>
     </folderShares>
@@ -117,7 +107,7 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
-        <sharedTo>CoordenadorViabilidade</sharedTo>
+        <sharedTo>Analista_Financeiro</sharedTo>
         <sharedToType>RoleAndSubordinates</sharedToType>
     </folderShares>
     <folderShares>
@@ -127,7 +117,17 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
+        <sharedTo>GerenteComercial</sharedTo>
+        <sharedToType>RoleAndSubordinates</sharedToType>
+    </folderShares>
+    <folderShares>
+        <accessLevel>View</accessLevel>
         <sharedTo>GerenteEngenharia</sharedTo>
+        <sharedToType>RoleAndSubordinates</sharedToType>
+    </folderShares>
+    <folderShares>
+        <accessLevel>View</accessLevel>
+        <sharedTo>Supervisor_de_Viabilidade</sharedTo>
         <sharedToType>RoleAndSubordinates</sharedToType>
     </folderShares>
     <name>Pasta Paineis</name>
