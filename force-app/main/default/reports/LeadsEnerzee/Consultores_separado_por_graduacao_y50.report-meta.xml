@@ -14,6 +14,9 @@
         <field>Consultor__c.Estado__c</field>
     </columns>
     <columns>
+        <field>Consultor__c.SpecialRange__c</field>
+    </columns>
+    <columns>
         <field>Consultor__c.Lb065_RegiaoConsultorEstado__c</field>
     </columns>
     <columns>
@@ -21,6 +24,10 @@
     </columns>
     <columns>
         <field>Consultor__c.ConsultantDeadlineRange__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>Consultor__c.SendLead__c</field>
     </columns>
     <filter>
         <criteriaItems>
@@ -37,6 +44,7 @@
             <operator>notEqual</operator>
             <value></value>
         </criteriaItems>
+        <language>en_US</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>
