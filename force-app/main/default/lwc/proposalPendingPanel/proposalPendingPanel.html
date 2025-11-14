@@ -1,0 +1,183 @@
+<template>
+    <lightning-card title="Pendências da Proposta" icon-name="standard:record">
+        <div class="card-actions">
+            <lightning-button label="Nova pendência" variant="brand" onclick={handleNewClick}></lightning-button>
+        </div>
+
+        <template if:true={isLoading}>
+            <div class="spinner-wrapper">
+                <lightning-spinner alternative-text="Carregando pendências" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:false={isLoading}>
+            <template if:true={hasPendings}>
+                <div class="pending-list">
+                    <template for:each={pendings} for:item="pending">
+                        <article key={pending.id} class="pending-card" data-variant={pending.statusVariant}>
+                            <div class="pending-card__header">
+                                <div>
+                                    <p class="pending-card__type">{pending.documentTypeName}</p>
+                                    <p class="pending-card__name">{pending.name}</p>
+                                </div>
+                                <div class="pending-card__status">
+                                    <span class="status-label">Status</span>
+                                    <span class="status-value">{pending.status}</span>
+                                    <template if:true={pending.requiresDecision}>
+                                        <lightning-radio-group
+                                            data-pending-id={pending.id}
+                                            options={statusDecisionOptions}
+                                            value={pending.decisionValue}
+                                            onchange={handleDecisionChange}
+                                            type="button"
+                                            class="status-decision"
+                                            label="Decisão"
+                                            disabled={pending.isUpdating}
+                                        ></lightning-radio-group>
+                                        <template if:true={pending.isUpdating}>
+                                            <span class="status-helper">Atualizando...</span>
+                                        </template>
+                                    </template>
+                                </div>
+                            </div>
+                            <p class="pending-card__description">{pending.description}</p>
+
+                            <template if:true={pending.response}>
+                                <p class="field-label">Resposta</p>
+                                <p class="field-value">{pending.response}</p>
+                            </template>
+
+                            <template if:true={pending.fileUrl}>
+                                <div class="attachment">
+                                    <span class="field-label">Anexo</span>
+                                    <div class="attachment__link">
+                                        <lightning-button-icon
+                                            icon-name="utility:attach"
+                                            variant="bare"
+                                            alternative-text="Abrir anexo"
+                                            onclick={handleAttachmentClick}
+                                            data-url={pending.fileUrl}
+                                        ></lightning-button-icon>
+                                        <lightning-formatted-url
+                                            value={pending.fileUrl}
+                                            label="Abrir anexo"
+                                            target="_blank"
+                                        ></lightning-formatted-url>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <div class="metadata">
+                                <span>Registrado em&nbsp;
+                                    <lightning-formatted-date-time
+                                        value={pending.createdDate}
+                                        year="numeric"
+                                        month="2-digit"
+                                        day="2-digit"
+                                        hour="2-digit"
+                                        minute="2-digit"
+                                    ></lightning-formatted-date-time>
+                                </span>
+                                <template if:true={pending.respondedDate}>
+                                    <span>Respondido em
+                                        <lightning-formatted-date-time
+                                            value={pending.respondedDate}
+                                            year="numeric"
+                                            month="2-digit"
+                                            day="2-digit"
+                                            hour="2-digit"
+                                            minute="2-digit"
+                                        ></lightning-formatted-date-time>
+                                    </span>
+                                </template>
+                            </div>
+                        </article>
+                    </template>
+                </div>
+            </template>
+            <template if:false={hasPendings}>
+                <div class="empty-state">
+                    <p>Nenhuma pendência cadastrada para esta oportunidade.</p>
+                </div>
+            </template>
+        </template>
+    </lightning-card>
+
+    <template if:true={isModalOpen}>
+        <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-modal__title slds-hyphenate">Adicionar pendências</h2>
+                </header>
+                <div class="slds-modal__content slds-var-p-around_medium">
+                    <template for:each={draftRows} for:item="row" for:index="index">
+                        <div key={row.uid} class="draft-row">
+                            <lightning-input
+                                class="draft-row__input"
+                                label="Descrição"
+                                value={row.description}
+                                data-uid={row.uid}
+                                data-field="description"
+                                oninput={handleDraftDescriptionChange}
+                                required
+                            ></lightning-input>
+                            <div class="draft-row__document">
+                                <lightning-input
+                                    type="checkbox"
+                                    label="Solicitar documento"
+                                    data-uid={row.uid}
+                                    checked={row.requestDocument}
+                                    onchange={handleDraftRequestDocumentChange}
+                                    class="draft-row__checkbox"
+                                ></lightning-input>
+                                <lightning-combobox
+                                    class="draft-row__input"
+                                    label="Tipo de documento"
+                                    data-uid={row.uid}
+                                    data-field="documentType"
+                                    value={row.documentTypeId}
+                                    options={documentTypeOptions}
+                                    onchange={handleDraftDocumentTypeChange}
+                                    disabled={row.documentInputDisabled}
+                                    required={row.requestDocument}
+                                ></lightning-combobox>
+                            </div>
+                            <div class="draft-row__actions">
+                                <lightning-button-icon
+                                    icon-name="utility:add"
+                                    variant="bare"
+                                    alternative-text="Adicionar linha"
+                                    onclick={handleAddDraftRow}
+                                ></lightning-button-icon>
+                                <lightning-button-icon
+                                    icon-name="utility:dash"
+                                    variant="bare"
+                                    alternative-text="Remover linha"
+                                    onclick={handleRemoveDraftRow}
+                                    data-uid={row.uid}
+                                    disabled={disableRemoveButton}
+                                ></lightning-button-icon>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template if:true={documentTypesLoading}>
+                        <div class="spinner-wrapper">
+                            <lightning-spinner size="small" alternative-text="Carregando tipos"></lightning-spinner>
+                        </div>
+                    </template>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancelar" onclick={closeModal}></lightning-button>
+                    <lightning-button
+                        variant="brand"
+                        label="Enviar pendências"
+                        onclick={handleSavePendings}
+                        disabled={isModalSaveDisabled}
+                    ></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

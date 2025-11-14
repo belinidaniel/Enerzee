@@ -127,6 +127,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>MediaConsumo__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>ComentarioSolicitante__c</field>
             </layoutItems>
         </layoutColumns>
