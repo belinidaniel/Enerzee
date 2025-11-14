@@ -1,8 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
+		<members>SfdcServiceCloudDashboards/SfdcCaseManagementAndRepMetrics</members>
+		<members>SfdcServiceCloudDashboards/SfdcRepMetrics</members>
+		<name>Dashboard</name>
+	</types>
+	<types>
 		<members>*</members>
 		<name>Layout</name>
+	</types>
+	<types>
+		<members>SfdcRepWorkReports/SfdcClosedWorkByRep</members>
+		<members>SfdcRepWorkReports/SfdcDeclinedWorkByRep</members>
+		<members>SfdcRepWorkReports/SfdcRepPresenceStatus</members>
+		<members>SfdcRepWorkReports/SfdcRepWorkAndProductivity</members>
+		<members>SfdcRepWorkReports/SfdcRepWorkByCreatedDate</members>
+		<members>SfdcRepWorkReports/SfdcRepWorkByQueue</members>
+		<members>SfdcRepWorkWithCasesReports/SfdcCaseProductivity</members>
+		<members>SfdcRepWorkWithCasesReports/SfdcClosedCasesByRep</members>
+		<members>SfdcRepWorkWithCasesReports/SfdcOpenCasesByRepAndStatus</members>
+		<members>SfdcRepWorkWithCasesReports/SfdcRepWorkByCasePriorityAndOrigin</members>
+		<members>SfdcRepWorkWithCasesReports/SfdcRepWorkByCaseType</members>
+		<name>Report</name>
 	</types>
 	<version>65.0</version>
 </Package>

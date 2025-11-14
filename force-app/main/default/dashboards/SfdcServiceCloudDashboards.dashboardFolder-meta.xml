@@ -5,5 +5,5 @@
         <sharedTo>AllInternalUsers</sharedTo>
         <sharedToType>Organization</sharedToType>
     </folderShares>
-    <name>Service Cloud Dashboards</name>
+    <name>Painéis do Service Cloud</name>
 </DashboardFolder>
