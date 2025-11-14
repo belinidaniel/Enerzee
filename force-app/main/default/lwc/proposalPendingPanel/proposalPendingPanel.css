@@ -1,0 +1,204 @@
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.5rem;
+}
+
+.spinner-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+.pending-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.pending-card {
+    border: 1px solid var(--lwc-colorBorder, #d4d4d4);
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.pending-card[data-variant='pending'] {
+    border-color: #f4c35b;
+    background: linear-gradient(180deg, #fff7e6 0%, #fff 65%);
+}
+
+.pending-card[data-variant='success'] {
+    border-color: #48c78e;
+    background: linear-gradient(180deg, #e8fff2 0%, #fff 65%);
+}
+
+.pending-card[data-variant='error'] {
+    border-color: #f46f6f;
+    background: linear-gradient(180deg, #ffecec 0%, #fff 65%);
+}
+
+.pending-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.pending-card__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.pending-card__status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    gap: 0.25rem;
+}
+
+.status-label {
+    font-size: 0.7rem;
+    color: var(--lwc-colorTextWeak, #666);
+}
+
+.status-value {
+    margin-top: 0.2rem;
+    padding: 0.2rem 0.85rem;
+    border-radius: 999px;
+    font-weight: 600;
+    background: var(--lwc-colorBackgroundAlt, #f4f6f9);
+    border: 1px solid transparent;
+    letter-spacing: 0.02em;
+}
+
+.pending-card[data-variant='pending'] .status-value {
+    color: #a66300;
+    background: #fff2d6;
+    border-color: #f4c35b;
+}
+
+.pending-card[data-variant='success'] .status-value {
+    color: #0f5132;
+    background: #d1fae5;
+    border-color: #48c78e;
+}
+
+.pending-card[data-variant='error'] .status-value {
+    color: #842029;
+    background: #ffe4e6;
+    border-color: #f46f6f;
+}
+.pending-card__type {
+    font-weight: 700;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.pending-card__name {
+    color: var(--lwc-colorTextWeak, #5f5f5f);
+    margin: 0.1rem 0 0 0;
+    font-size: 0.9rem;
+}
+
+.pending-card__description {
+    margin: 0.6rem 0;
+    white-space: pre-line;
+    font-size: 0.95rem;
+    color: #1f1f1f;
+}
+
+.field-label {
+    font-size: 0.75rem;
+    color: var(--lwc-colorTextWeak, #666);
+    margin-bottom: 0.15rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.field-value {
+    margin: 0 0 0.5rem 0;
+}
+
+.attachment {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.attachment__link {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.metadata {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.75rem;
+    color: var(--lwc-colorTextWeak, #666);
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding-top: 0.5rem;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--lwc-colorTextWeak, #777);
+    padding: 1rem 0;
+}
+
+.draft-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.draft-row__input {
+    flex: 1;
+}
+
+.draft-row__document {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 12rem;
+}
+
+.draft-row__checkbox {
+    margin-bottom: 0;
+}
+
+.draft-row__actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.status-decision {
+    min-width: 10rem;
+}
+
+.pending-card[data-variant='pending'] .status-decision lightning-button {
+    --slds-c-button-neutral-color-background: #fff7e6;
+    --slds-c-button-text-color: #a66300;
+}
+
+.pending-card[data-variant='success'] .status-decision lightning-button {
+    --slds-c-button-neutral-color-background: #e9fff2;
+    --slds-c-button-text-color: #0f5132;
+}
+
+.pending-card[data-variant='error'] .status-decision lightning-button {
+    --slds-c-button-neutral-color-background: #ffecec;
+    --slds-c-button-text-color: #842029;
+}
+
+.status-helper {
+    font-size: 0.65rem;
+    color: var(--lwc-colorTextWeak, #666);
+}
