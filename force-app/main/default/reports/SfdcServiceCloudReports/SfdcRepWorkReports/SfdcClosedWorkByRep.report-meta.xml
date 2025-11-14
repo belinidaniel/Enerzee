@@ -6,7 +6,7 @@
         <developerName>FORMULA1</developerName>
         <isActive>true</isActive>
         <isCrossBlock>false</isCrossBlock>
-        <masterLabel>Total Closed</masterLabel>
+        <masterLabel>Total Encerrado</masterLabel>
         <scale>2</scale>
     </aggregates>
     <columns>
@@ -24,7 +24,7 @@
     <columns>
         <field>AgentWork$CloseDateTime</field>
     </columns>
-    <description>This report provides details about closed work items, grouped by rep. Details include the requested date, acceptance date, and closed date.</description>
+    <description>Este relatório apresenta detalhes sobre trabalhos encerrados, agrupados por representante. Inclui a data da solicitação, da aceitação e do encerramento.</description>
     <filter>
         <criteriaItems>
             <column>AgentWork$Status</column>
@@ -41,7 +41,7 @@
         <field>AgentWork$User</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Closed Work by Rep</name>
+    <name>Trabalhos Encerrados por Representante</name>
     <params>
         <name>co</name>
         <value>1</value>

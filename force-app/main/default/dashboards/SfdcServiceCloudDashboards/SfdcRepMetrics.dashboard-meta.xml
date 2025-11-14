@@ -55,7 +55,7 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Total Rep Work by Channel</header>
+                <header>Total de Trabalho dos Representantes por Canal</header>
                 <legendPosition>Bottom</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkByQueue</report>
                 <showPercentage>false</showPercentage>
@@ -95,7 +95,7 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Total Rep Work by Queue</header>
+                <header>Total de Trabalho dos Representantes por Fila</header>
                 <legendPosition>Bottom</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkByQueue</report>
                 <showPercentage>false</showPercentage>
@@ -136,7 +136,7 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Average Handle Time by Rep</header>
+                <header>Tempo Médio de Atendimento por Representante</header>
                 <legendPosition>Bottom</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkAndProductivity</report>
                 <showPercentage>false</showPercentage>
@@ -177,7 +177,7 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Average Active Time by Rep</header>
+                <header>Tempo Médio Ativo por Representante</header>
                 <legendPosition>Bottom</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkAndProductivity</report>
                 <showPercentage>false</showPercentage>
@@ -219,7 +219,7 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Average Response Time by Rep</header>
+                <header>Tempo Médio de Resposta por Representante</header>
                 <legendPosition>Bottom</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkAndProductivity</report>
                 <showPercentage>false</showPercentage>
@@ -258,7 +258,7 @@
                         <inheritedReportGroupingSort>r</inheritedReportGroupingSort>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Total Rep Work by Created Date</header>
+                <header>Total de Trabalho dos Representantes por Data de Criação</header>
                 <legendPosition>Bottom</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkByCreatedDate</report>
                 <showPercentage>false</showPercentage>
@@ -298,7 +298,7 @@
                         <sortOrder>d</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Total Closed Work by Rep</header>
+                <header>Total de Trabalhos Encerrados por Representante</header>
                 <legendPosition>Right</legendPosition>
                 <maxValuesDisplayed>6</maxValuesDisplayed>
                 <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcClosedWorkByRep</report>
@@ -344,7 +344,7 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Average Active and Handle Time by Rep</header>
+                <header>Tempo Médio Ativo e de Atendimento por Representante</header>
                 <legendPosition>Right</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkAndProductivity</report>
                 <showPercentage>false</showPercentage>
@@ -390,7 +390,7 @@
                         <sortOrder>d</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Average Status Duration by Presence Status and Rep</header>
+                <header>Duração Média por Status de Presença e Representante</header>
                 <legendPosition>Right</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepPresenceStatus</report>
                 <showPercentage>false</showPercentage>
@@ -431,7 +431,7 @@
                         <sortOrder>d</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Average Idle Duration by Rep</header>
+                <header>Duração Média de Ociosidade por Representante</header>
                 <legendPosition>Bottom</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepPresenceStatus</report>
                 <showPercentage>false</showPercentage>
@@ -470,7 +470,7 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Total Declined Work by Reason</header>
+                <header>Total de Trabalhos Recusados por Motivo</header>
                 <legendPosition>Bottom</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcDeclinedWorkByRep</report>
                 <showPercentage>false</showPercentage>
@@ -510,7 +510,7 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Total Declined Work by Rep</header>
+                <header>Total de Trabalhos Recusados por Representante</header>
                 <legendPosition>Bottom</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcDeclinedWorkByRep</report>
                 <showPercentage>false</showPercentage>
@@ -526,12 +526,12 @@
         <rowHeight>80</rowHeight>
     </dashboardGridLayout>
     <dashboardType>SpecifiedUser</dashboardType>
-    <description>This dashboard provides a comprehensive overview of rep work by channel, rep work by queue, and rep performance metrics, such as average handle time, active time, response time, and idle time.</description>
+    <description>Este painel oferece uma visão abrangente do trabalho dos representantes por canal e por fila, além de métricas de desempenho como tempo médio de atendimento, tempo ativo, tempo de resposta e tempo ocioso.</description>
     <isGridLayout>true</isGridLayout>
     <owner>daniel.belini@enerzee.com.br</owner>
     <runningUser>daniel.belini@enerzee.com.br</runningUser>
     <textColor>#000000</textColor>
-    <title>Rep Metrics</title>
+    <title>Métricas dos Representantes</title>
     <titleColor>#000000</titleColor>
     <titleSize>12</titleSize>
 </Dashboard>

@@ -10,7 +10,7 @@
         <aggregateTypes>Sum</aggregateTypes>
         <field>AgentWork$AgentCapacityWhenDeclined</field>
     </columns>
-    <description>This report provides details about declined work items, grouped by rep and decline reason. Details include the decline date and rep’s capacity when the work was declined.</description>
+    <description>Este relatório apresenta trabalhos recusados, agrupados por representante e motivo da recusa. Inclui a data da recusa e a capacidade do representante quando ocorreu.</description>
     <filter>
         <criteriaItems>
             <column>AgentWork$DeclineReason</column>
@@ -32,7 +32,7 @@
         <field>AgentWork$DeclineReason</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Declined Work by Rep and Reason</name>
+    <name>Trabalhos Recusados por Representante e Motivo</name>
     <params>
         <name>co</name>
         <value>1</value>

@@ -6,7 +6,7 @@
         <developerName>FORMULA1</developerName>
         <isActive>false</isActive>
         <isCrossBlock>false</isCrossBlock>
-        <masterLabel>Average Active Time</masterLabel>
+        <masterLabel>Tempo Médio Ativo</masterLabel>
         <scale>2</scale>
     </aggregates>
     <aggregates>
@@ -15,7 +15,7 @@
         <developerName>FORMULA2</developerName>
         <isActive>false</isActive>
         <isCrossBlock>false</isCrossBlock>
-        <masterLabel>Average Handle Time</masterLabel>
+        <masterLabel>Tempo Médio de Atendimento</masterLabel>
         <scale>2</scale>
     </aggregates>
     <columns>
@@ -69,7 +69,7 @@
         <aggregateTypes>Sum</aggregateTypes>
         <field>AgentWork$CapacityPercentage</field>
     </columns>
-    <description>This report provides details about routed work items, grouped by rep. Details include key metrics such as active time, handle time, speed to answer, and required capacity.</description>
+    <description>Este relatório apresenta detalhes sobre trabalhos roteados, agrupados por representante. Inclui métricas como tempo ativo, tempo de atendimento, velocidade de resposta e capacidade necessária.</description>
     <filter>
         <criteriaItems>
             <column>AgentWork$ActiveTime</column>
@@ -86,7 +86,7 @@
         <field>AgentWork$User</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Rep Work and Productivity</name>
+    <name>Trabalho e Produtividade dos Representantes</name>
     <params>
         <name>co</name>
         <value>1</value>

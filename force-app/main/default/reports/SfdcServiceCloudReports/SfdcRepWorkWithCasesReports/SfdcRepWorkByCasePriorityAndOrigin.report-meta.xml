@@ -34,7 +34,7 @@
         <aggregateTypes>Sum</aggregateTypes>
         <field>AgentWork.Case$IsEscalated</field>
     </columns>
-    <description>This report provides case details, grouped by priority and origin. Details include the case number, subject, speed to answer, handle time, active time, and whether the case was escalated.</description>
+    <description>Este relatório apresenta detalhes dos casos, agrupados por prioridade e origem. Inclui número e assunto do caso, velocidade de resposta, tempo de atendimento, tempo ativo e se o caso foi escalado.</description>
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
@@ -46,7 +46,7 @@
         <field>AgentWork.Case$Origin</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Rep Work by Case Priority and Origin</name>
+    <name>Trabalho dos Representantes por Prioridade e Origem do Caso</name>
     <params>
         <name>co</name>
         <value>1</value>

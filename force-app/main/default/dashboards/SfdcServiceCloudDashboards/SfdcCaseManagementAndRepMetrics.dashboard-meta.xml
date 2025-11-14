@@ -54,7 +54,7 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Total Cases by Priority</header>
+                <header>Total de Casos por Prioridade</header>
                 <legendPosition>Bottom</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcRepWorkByCasePriorityAndOrigin</report>
                 <showPercentage>false</showPercentage>
@@ -93,7 +93,7 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Total Cases by Origin</header>
+                <header>Total de Casos por Origem</header>
                 <legendPosition>Right</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcRepWorkByCasePriorityAndOrigin</report>
                 <showPercentage>false</showPercentage>
@@ -133,7 +133,7 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Total Cases by Case Type</header>
+                <header>Total de Casos por Tipo de Caso</header>
                 <legendPosition>Right</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcRepWorkByCaseType</report>
                 <showPercentage>false</showPercentage>
@@ -163,7 +163,7 @@
                 <gaugeMax>100.0</gaugeMax>
                 <gaugeMin>0.0</gaugeMin>
                 <groupingSortProperties/>
-                <header>Total Open Cases</header>
+                <header>Total de Casos em Aberto</header>
                 <indicatorBreakpoint1>33.0</indicatorBreakpoint1>
                 <indicatorBreakpoint2>67.0</indicatorBreakpoint2>
                 <indicatorHighColor>#00716B</indicatorHighColor>
@@ -196,7 +196,7 @@
                 <gaugeMax>100.0</gaugeMax>
                 <gaugeMin>0.0</gaugeMin>
                 <groupingSortProperties/>
-                <header>Total Closed Cases</header>
+                <header>Total de Casos Encerrados</header>
                 <indicatorBreakpoint1>33.0</indicatorBreakpoint1>
                 <indicatorBreakpoint2>67.0</indicatorBreakpoint2>
                 <indicatorHighColor>#00716B</indicatorHighColor>
@@ -230,7 +230,7 @@
                 <gaugeMax>100.0</gaugeMax>
                 <gaugeMin>0.0</gaugeMin>
                 <groupingSortProperties/>
-                <header>Total Escalated Cases</header>
+                <header>Total de Casos Escalados</header>
                 <indicatorBreakpoint1>33.0</indicatorBreakpoint1>
                 <indicatorBreakpoint2>67.0</indicatorBreakpoint2>
                 <indicatorHighColor>#00716B</indicatorHighColor>
@@ -277,7 +277,7 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Total Open Cases by Rep</header>
+                <header>Total de Casos em Aberto por Representante</header>
                 <legendPosition>Right</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcOpenCasesByRepAndStatus</report>
                 <showPercentage>false</showPercentage>
@@ -316,7 +316,7 @@
                         <sortOrder>a</sortOrder>
                     </groupingSorts>
                 </groupingSortProperties>
-                <header>Total Closed Cases by Rep</header>
+                <header>Total de Casos Encerrados por Representante</header>
                 <legendPosition>Bottom</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcClosedCasesByRep</report>
                 <showPercentage>false</showPercentage>
@@ -347,7 +347,7 @@
                 <gaugeMax>100.0</gaugeMax>
                 <gaugeMin>0.0</gaugeMin>
                 <groupingSortProperties/>
-                <header>Average Handle Time for Cases</header>
+                <header>Tempo Médio de Atendimento dos Casos</header>
                 <indicatorBreakpoint1>33.0</indicatorBreakpoint1>
                 <indicatorBreakpoint2>67.0</indicatorBreakpoint2>
                 <indicatorHighColor>#00716B</indicatorHighColor>
@@ -381,7 +381,7 @@
                 <gaugeMax>100.0</gaugeMax>
                 <gaugeMin>0.0</gaugeMin>
                 <groupingSortProperties/>
-                <header>Average Speed to Answer for Cases</header>
+                <header>Velocidade Média de Resposta dos Casos</header>
                 <indicatorBreakpoint1>33.0</indicatorBreakpoint1>
                 <indicatorBreakpoint2>67.0</indicatorBreakpoint2>
                 <indicatorHighColor>#00716B</indicatorHighColor>
@@ -415,7 +415,7 @@
                 <gaugeMax>100.0</gaugeMax>
                 <gaugeMin>0.0</gaugeMin>
                 <groupingSortProperties/>
-                <header>Average Active Time for Cases</header>
+                <header>Tempo Médio Ativo dos Casos</header>
                 <indicatorBreakpoint1>33.0</indicatorBreakpoint1>
                 <indicatorBreakpoint2>67.0</indicatorBreakpoint2>
                 <indicatorHighColor>#00716B</indicatorHighColor>
@@ -435,12 +435,12 @@
         <rowHeight>80</rowHeight>
     </dashboardGridLayout>
     <dashboardType>SpecifiedUser</dashboardType>
-    <description>This dashboard provides key insights into rep performance, including average handle time, speed to answer, and active time, as well as case metrics such as the number of open, escalated, and closed cases, case origin, and case reason.</description>
+    <description>Este painel apresenta insights essenciais sobre o desempenho dos representantes, incluindo tempo médio de atendimento, velocidade de resposta e tempo ativo, além de métricas de casos como número de casos em aberto, escalados e encerrados, origem e motivo do caso.</description>
     <isGridLayout>true</isGridLayout>
     <owner>daniel.belini@enerzee.com.br</owner>
     <runningUser>daniel.belini@enerzee.com.br</runningUser>
     <textColor>#000000</textColor>
-    <title>Case Management and Rep Metrics</title>
+    <title>Gestão de Casos e Métricas dos Representantes</title>
     <titleColor>#000000</titleColor>
     <titleSize>12</titleSize>
 </Dashboard>

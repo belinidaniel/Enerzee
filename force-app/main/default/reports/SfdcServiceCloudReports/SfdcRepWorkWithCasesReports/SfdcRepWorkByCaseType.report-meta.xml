@@ -34,14 +34,14 @@
         <aggregateTypes>Sum</aggregateTypes>
         <field>AgentWork.Case$IsEscalated</field>
     </columns>
-    <description>This report provides details about cases, grouped by case type. Details include case number, description, rep name, and key metrics such as handle time, speed to answer, and active time.</description>
+    <description>Este relatório apresenta detalhes dos casos, agrupados por tipo de caso. Inclui número, descrição, nome do representante e métricas como tempo de atendimento, velocidade de resposta e tempo ativo.</description>
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
         <field>AgentWork.Case$Type</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Rep Work by Case Type</name>
+    <name>Trabalho dos Representantes por Tipo de Caso</name>
     <params>
         <name>co</name>
         <value>1</value>

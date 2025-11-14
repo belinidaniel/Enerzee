@@ -30,7 +30,7 @@
     <columns>
         <field>AgentWork.Case$ClosedDate</field>
     </columns>
-    <description>This report provides details about cases, grouped by case number and case reason. Details include key metrics such as handle time, speed to answer, and active time.</description>
+    <description>Este relatório apresenta detalhes dos casos, agrupados por número e motivo do caso. Inclui métricas como tempo de atendimento, velocidade de resposta e tempo ativo.</description>
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
@@ -42,7 +42,7 @@
         <field>AgentWork.Case$Reason</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Case Productivity</name>
+    <name>Produtividade dos Casos</name>
     <params>
         <name>co</name>
         <value>1</value>
