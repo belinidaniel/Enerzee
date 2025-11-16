@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 08-09-2025
+ * @last modified on  : 11-16-2025
  * @last modified by  : Daniel Belini
 **/
 @isTest
@@ -15,6 +15,7 @@ private class ProposalCoverTriggerTest{
         cover.IsDefault__c = isDefault;
         cover.IsActive__c = true;
         cover.Template__c ='ModeloPropostaB';
+        
 
         return cover;
     }
