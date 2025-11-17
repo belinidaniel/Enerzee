@@ -262,13 +262,25 @@ public class ViabilityStudyBO {
             return true;
         }
 
-        if(subject.equalsIgnoreCase('SOLICITAR NOVO INTEGRADOR')){
+        String normalizedSubject = subject.trim().toLowerCase();
+
+        if(normalizedSubject == 'solicitar novo integrador'){
             if(viability == null || String.isBlank(viability.OwnTeamThirdParty__c)){
                 return false;
             }
 
             String option = viability.OwnTeamThirdParty__c.trim().toLowerCase();
             return option == 'nao_cadastrado' || option == 'não cadastrado';
+        }
+
+        if(normalizedSubject == 'confirmação de lançamento de nf' ||
+            normalizedSubject == 'confirmação de lancaçamento de nf'){
+            if(viability == null || String.isBlank(viability.OwnTeamThirdParty__c)){
+                return false;
+            }
+
+            String option = viability.OwnTeamThirdParty__c.trim();
+            return !option.equalsIgnoreCase('enerzee');
         }
 
         return true;
