@@ -33,12 +33,6 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>force:detailPanel</componentName>
-                <identifier>force_detailPanel</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
                 <componentName>dynamicFieldsetForm</componentName>
                 <identifier>c_dynamicFieldsetForm</identifier>
             </componentInstance>
@@ -136,16 +130,6 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>forceChatter:recordFeedContainer</componentName>
-                <identifier>forceChatter_recordFeedContainer</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>Facet-98d18cbb-08d6-4ae4-b637-07b9005acda7</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
                 <componentInstanceProperties>
                     <name>active</name>
                     <value>true</value>
@@ -176,20 +160,6 @@
                 <identifier>flexipage_tab2</identifier>
             </componentInstance>
         </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-98d18cbb-08d6-4ae4-b637-07b9005acda7</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>Standard.Tab.collaborate</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>flexipage_tab</identifier>
-            </componentInstance>
-        </itemInstances>
         <name>tabs</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -211,10 +181,20 @@
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>force:detailPanel</componentName>
+                <identifier>force_detailPanel</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>sidebar</name>
+        <type>Region</type>
+    </flexiPageRegions>
     <masterLabel>Task Record Page</masterLabel>
     <sobjectType>Task</sobjectType>
     <template>
-        <name>flexipage:recordHomeSimpleViewTemplate</name>
+        <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
     <type>RecordPage</type>
 </FlexiPage>

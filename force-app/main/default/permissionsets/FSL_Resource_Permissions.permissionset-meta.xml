@@ -1,41 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <classAccesses>
-        <apexClass>FSL__AutomationNameRest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__BulkServiceBasedRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__FillResourceGapsRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__O2FetchFiles</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__ResourceBasedRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__ServiceBasedRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__TerritoryBasedReadOnlyRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__TerritoryBasedRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__UpdatePermissionsRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
     <fieldPermissions>
         <editable>false</editable>
         <field>Account.AccountNumber</field>
@@ -3824,14 +3788,6 @@
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
-        <recordType>ResourceAbsence.FSL__Break</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <recordType>ResourceAbsence.FSL__Non_Availability</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
         <recordType>WorkOrder.Instalacao</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
@@ -3847,10 +3803,6 @@
         <recordType>WorkType.TipoTrabalho</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
-    <tabSettings>
-        <tab>FSL__CapacityManagement</tab>
-        <visibility>Visible</visibility>
-    </tabSettings>
     <tabSettings>
         <tab>standard-ServiceAppointment</tab>
         <visibility>Visible</visibility>
