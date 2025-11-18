@@ -14,6 +14,7 @@ public with sharing class EzeeConnectProposalPendingService {
     public class PendingUpdateRequest {
         public Integer Status;
         public String PendingId;
+        public String DescriptionRejected;
     }
 
     public class DocumentTypeOption {

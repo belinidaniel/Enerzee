@@ -8,10 +8,12 @@
 public class ProposalPendingStatusQueueable implements Queueable, Database.AllowsCallouts {
     private Id pendingId;
     private String status;
+    private String descriptionRejected;
 
-    public ProposalPendingStatusQueueable(Id pendingId, String status){
+    public ProposalPendingStatusQueueable(Id pendingId, String status, String descriptionRejected){
         this.pendingId = pendingId;
         this.status = status;
+        this.descriptionRejected = descriptionRejected;
     }
 
     public void execute(QueueableContext context) {
@@ -38,6 +40,9 @@ public class ProposalPendingStatusQueueable implements Queueable, Database.Allow
             payload.PendingId = pending.Id;
             ProposalPendingController.PendingStatus statusEnum = ProposalPendingController.parseStatus(status);
             payload.Status    = ProposalPendingController.getStatusCode(statusEnum);
+            if(!String.isBlank(descriptionRejected)){
+                payload.DescriptionRejected = descriptionRejected;
+            }
 
             EzeeConnectProposalPendingService.updatePendingInApp(payload);
 

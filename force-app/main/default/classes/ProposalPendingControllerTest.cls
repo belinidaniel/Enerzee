@@ -107,7 +107,8 @@ public class ProposalPendingControllerTest {
         Test.startTest();
         ProposalPendingController.ProposalPendingDTO updated = ProposalPendingController.updatePendingStatus(
             pending.Id,
-            'Aprovado'
+            'Aprovado',
+            null
         );
         Test.stopTest();
 

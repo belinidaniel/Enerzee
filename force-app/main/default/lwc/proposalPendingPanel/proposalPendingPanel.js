@@ -30,6 +30,10 @@ export default class ProposalPendingPanel extends LightningElement {
     previewFileObjectUrl;
     previewIsImage = false;
     previewIsPdf = false;
+    isRejectModalOpen = false;
+    rejectReason = '';
+    rejectReasonError = '';
+    shouldRestorePreviewAfterReject = false;
 
     connectedCallback() {
         this.resetDraftRows();
@@ -217,6 +221,8 @@ export default class ProposalPendingPanel extends LightningElement {
         if (this.isStatusActionRunning) {
             return;
         }
+        this.shouldRestorePreviewAfterReject = false;
+        this.closeRejectModal(false);
         this.isPreviewModalOpen = false;
         this.previewPending = null;
         this.previewIsImage = false;
@@ -275,7 +281,48 @@ export default class ProposalPendingPanel extends LightningElement {
     }
 
     handleReject() {
-        this.handleStatusDecision('4');
+        if (!this.previewPending || this.isStatusActionRunning) {
+            return;
+        }
+        this.shouldRestorePreviewAfterReject = this.isPreviewModalOpen;
+        this.isPreviewModalOpen = false;
+        this.rejectReason = '';
+        this.rejectReasonError = '';
+        this.isRejectModalOpen = true;
+    }
+
+    closeRejectModal(restorePreview = true) {
+        if (this.isStatusActionRunning) {
+            return;
+        }
+        this.isRejectModalOpen = false;
+        this.rejectReason = '';
+        this.rejectReasonError = '';
+        if (restorePreview && this.shouldRestorePreviewAfterReject) {
+            this.isPreviewModalOpen = true;
+        }
+        this.shouldRestorePreviewAfterReject = false;
+    }
+
+    handleRejectReasonChange(event) {
+        const value = event?.detail?.value !== undefined ? event.detail.value : event.target.value;
+        this.rejectReason = value || '';
+        this.rejectReasonError = '';
+    }
+
+    async handleConfirmReject() {
+        const textarea = this.template.querySelector('[data-id="rejectReasonInput"]');
+        const currentValue = textarea ? textarea.value : this.rejectReason;
+        const reasonValue = currentValue ? currentValue.trim() : '';
+        if (!reasonValue) {
+            this.rejectReasonError = 'Informe o motivo da recusa.';
+            return;
+        }
+        const reason = reasonValue;
+        this.rejectReason = reason;
+        this.rejectReasonError = '';
+        this.closeRejectModal(false);
+        await this.handleStatusDecision('4', reason);
     }
 
     handleOpenPreviewExternally() {
@@ -284,14 +331,23 @@ export default class ProposalPendingPanel extends LightningElement {
         }
     }
 
-    async handleStatusDecision(status) {
+    async handleStatusDecision(status, descriptionRejected = null) {
         if (!this.previewPending || this.isStatusActionRunning) {
             return;
         }
 
         this.isStatusActionRunning = true;
         try {
-            await updatePendingStatus({ pendingId: this.previewPending.id, status });
+            this.logDebug('updateStatusPayload', {
+                pendingId: this.previewPending.id,
+                status,
+                descriptionRejected
+            });
+            await updatePendingStatus({
+                pendingId: this.previewPending.id,
+                status,
+                descriptionRejected
+            });
             const statusLabel = (this.STATUS_MAP[String(status)] || {}).label || status;
             this.showToast('Sucesso', `Pendência ${statusLabel.toLowerCase()} com sucesso.`, 'success');
             this.isPreviewModalOpen = false;

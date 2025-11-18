@@ -143,7 +143,8 @@ public with sharing class ProposalPendingController {
     }
 
     @AuraEnabled
-    public static ProposalPendingDTO updatePendingStatus(Id pendingId, String status) {
+    public static ProposalPendingDTO updatePendingStatus(Id pendingId, String status, String descriptionRejected) {
+        System.debug('ProposalPendingController.updatePendingStatus - payload: pendingId=' + pendingId + ', status=' + status + ', descriptionRejected=' + descriptionRejected);
         if(pendingId == null){
             throw new AuraHandledException('Informe a pendência que deseja atualizar.');
         }
@@ -153,6 +154,7 @@ public with sharing class ProposalPendingController {
         }
 
         PendingStatus statusEnum = parseStatus(status);
+        String normalizedReason = String.isBlank(descriptionRejected) ? null : descriptionRejected.trim();
 
         ProposalPending__c pending = [
             SELECT  Id,
@@ -172,7 +174,7 @@ public with sharing class ProposalPendingController {
         try{
             pending.Status__c = getStatusValue(statusEnum);
             update pending;
-            enqueueStatusUpdate(pending.Id, status);
+            enqueueStatusUpdate(pending.Id, status, normalizedReason);
         } catch(Exception e){
             Database.rollback(sp);
             throw new AuraHandledException('Não foi possível atualizar o status da pendência: ' + e.getMessage());
@@ -217,11 +219,11 @@ public with sharing class ProposalPendingController {
     }
 
     @TestVisible
-    static void enqueueStatusUpdate(Id pendingId, String status){
+    static void enqueueStatusUpdate(Id pendingId, String status, String descriptionRejected){
         if(pendingId == null || String.isBlank(status)){
             return;
         }
-        System.enqueueJob(new ProposalPendingStatusQueueable(pendingId, status));
+        System.enqueueJob(new ProposalPendingStatusQueueable(pendingId, status, descriptionRejected));
     }
 
     private static Opportunity loadOpportunity(Id opportunityId) {

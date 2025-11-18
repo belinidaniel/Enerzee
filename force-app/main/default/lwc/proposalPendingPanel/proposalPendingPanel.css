@@ -187,3 +187,9 @@
 .pending-card__action {
     float: right;
 }
+
+.reject-modal__error {
+    color: #ba0517;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+}
