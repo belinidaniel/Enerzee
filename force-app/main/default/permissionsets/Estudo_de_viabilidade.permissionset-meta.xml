@@ -137,6 +137,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>ViabilityStudy__c.Consultor__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>ViabilityStudy__c.SectionNominalCableGage__c</field>
         <readable>true</readable>
     </fieldPermissions>

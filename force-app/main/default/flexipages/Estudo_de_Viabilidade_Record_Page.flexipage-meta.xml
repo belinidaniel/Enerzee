@@ -92,6 +92,16 @@
                 <identifier>RecordApproveDate_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Consultor__c</fieldItem>
+                <identifier>RecordConsultor__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-6a7cfce6-4534-4747-8635-a46b9b92bd7a</name>
         <type>Facet</type>
     </flexiPageRegions>

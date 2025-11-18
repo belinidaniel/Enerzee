@@ -14,6 +14,7 @@ public class ViabilityStudyBO {
     private static Map<String, User> userEmailToUser = new Map<String, User>();
 
     @TestVisible private static TaskViabilityTable taskTableOverride;
+    @TestVisible public static Boolean bypassTaskCreation = false;
 
     @TestVisible private static void resetTestState(){
         queueIdentifierToGroup = null;
@@ -22,6 +23,9 @@ public class ViabilityStudyBO {
     }
 
     public static void createTasks(List<ViabilityStudy__c> newRecords, Map<Id, ViabilityStudy__c> oldRecordsMap){
+        if(bypassTaskCreation){
+            return;
+        }
         if(newRecords == null || newRecords.isEmpty()){
             return;
         }

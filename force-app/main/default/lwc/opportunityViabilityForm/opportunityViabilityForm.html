@@ -136,6 +136,81 @@
                             onuploadfinished={handleUploadFinished}>
                         </lightning-file-upload>
                     </div>
+
+                    <div class="viability-panel">
+                        <h2>Responsáveis e Custos</h2>
+                        <div class="viability-grid">
+                            <div>
+                                <c-lookup
+                                    label="Consultor"
+                                    placeholder="Pesquisar consultor"
+                                    object-api-name="Consultor__c"
+                                    field-api-name="Name"
+                                    icon-name="standard:scan_card"
+                                    selection={consultantSelection}
+                                    onselect={handleConsultantSelected}>
+                                </c-lookup>
+                            </div>
+                            <div class="approval-date">
+                                <span class="field-label">Data de Aprovação (Consultor/Cliente)</span>
+                                <template if:true={hasApprovalDate}>
+                                    <lightning-formatted-date-time value={approvalDate} year="numeric" month="2-digit" day="2-digit"></lightning-formatted-date-time>
+                                </template>
+                                <template if:false={hasApprovalDate}>
+                                    <p class="helper-text">A data será preenchida automaticamente conforme a fase da oportunidade.</p>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="viability-grid">
+                            <div>
+                                <lightning-combobox
+                                    label="Equipe própria ou Terceira?"
+                                    value={teamSelection}
+                                    options={teamPicklistOptions}
+                                    placeholder="Selecione"
+                                    onchange={handleTeamChange}>
+                                </lightning-combobox>
+                            </div>
+                            <template if:true={showIntegratorLink}>
+                                <div class="integrator-link">
+                                    <span class="field-label">Responsável pela visita</span>
+                                    <span>{integratorDisplayName}</span>
+                                    <template if:true={serviceResourceId}>
+                                        <lightning-button label="Abrir prestador" variant="neutral" onclick={handleOpenServiceProvider}></lightning-button>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="viability-grid">
+                            <lightning-dual-listbox
+                                name="enerzeeCosts"
+                                label="Valores adequação Enerzee (Custo Ramal CC…)"
+                                source-label="Disponíveis"
+                                selected-label="Selecionados"
+                                options={enerzeeCostOptions}
+                                value={selectedEnerzeeCosts}
+                                onchange={handleEnerzeeCostChange}>
+                            </lightning-dual-listbox>
+                            <lightning-dual-listbox
+                                name="clientCosts"
+                                label="Valores adequação Cliente (Custo Ramal CC…)"
+                                source-label="Disponíveis"
+                                selected-label="Selecionados"
+                                options={clientCostOptions}
+                                value={selectedClientCosts}
+                                onchange={handleClientCostChange}>
+                            </lightning-dual-listbox>
+                        </div>
+                        <div class="viability-grid">
+                            <lightning-input
+                                type="number"
+                                label="Custo Visita Técnica"
+                                value={technicalVisitCost}
+                                onchange={handleTechnicalVisitCostChange}
+                                step="0.01">
+                            </lightning-input>
+                        </div>
+                    </div>
                     
                 </template>
             </div>
@@ -283,6 +358,81 @@
                             accepted-formats=".pdf,.png,.jpg,.mp4,.avi,.mov"
                             onuploadfinished={handleUploadFinished}>
                         </lightning-file-upload>
+                    </div>
+
+                    <div class="viability-panel">
+                        <h2>Responsáveis e Custos</h2>
+                        <div class="viability-grid">
+                            <div>
+                                <c-lookup
+                                    label="Consultor"
+                                    placeholder="Pesquisar consultor"
+                                    object-api-name="Consultor__c"
+                                    field-api-name="Name"
+                                    icon-name="standard:scan_card"
+                                    selection={consultantSelection}
+                                    onselect={handleConsultantSelected}>
+                                </c-lookup>
+                            </div>
+                            <div class="approval-date">
+                                <span class="field-label">Data de Aprovação (Consultor/Cliente)</span>
+                                <template if:true={hasApprovalDate}>
+                                    <lightning-formatted-date-time value={approvalDate} year="numeric" month="2-digit" day="2-digit"></lightning-formatted-date-time>
+                                </template>
+                                <template if:false={hasApprovalDate}>
+                                    <p class="helper-text">A data será preenchida automaticamente conforme a fase da oportunidade.</p>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="viability-grid">
+                            <div>
+                                <lightning-combobox
+                                    label="Equipe própria ou Terceira?"
+                                    value={teamSelection}
+                                    options={teamPicklistOptions}
+                                    placeholder="Selecione"
+                                    onchange={handleTeamChange}>
+                                </lightning-combobox>
+                            </div>
+                            <template if:true={showIntegratorLink}>
+                                <div class="integrator-link">
+                                    <span class="field-label">Responsável pela visita</span>
+                                    <span>{integratorDisplayName}</span>
+                                    <template if:true={serviceResourceId}>
+                                        <lightning-button label="Abrir prestador" variant="neutral" onclick={handleOpenServiceProvider}></lightning-button>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="viability-grid">
+                            <lightning-dual-listbox
+                                name="enerzeeCostsMobile"
+                                label="Valores adequação Enerzee (Custo Ramal CC…)"
+                                source-label="Disponíveis"
+                                selected-label="Selecionados"
+                                options={enerzeeCostOptions}
+                                value={selectedEnerzeeCosts}
+                                onchange={handleEnerzeeCostChange}>
+                            </lightning-dual-listbox>
+                            <lightning-dual-listbox
+                                name="clientCostsMobile"
+                                label="Valores adequação Cliente (Custo Ramal CC…)"
+                                source-label="Disponíveis"
+                                selected-label="Selecionados"
+                                options={clientCostOptions}
+                                value={selectedClientCosts}
+                                onchange={handleClientCostChange}>
+                            </lightning-dual-listbox>
+                        </div>
+                        <div class="viability-grid">
+                            <lightning-input
+                                type="number"
+                                label="Custo Visita Técnica"
+                                value={technicalVisitCost}
+                                onchange={handleTechnicalVisitCostChange}
+                                step="0.01">
+                            </lightning-input>
+                        </div>
                     </div>
                     
                 </template>
