@@ -30,9 +30,7 @@ public class ProposalPendingSendQueueable implements Queueable, Database.AllowsC
                 payload.ProposalId  = pending.Opportunity__r.IdVirtualOffice__c;
                 payload.Description = pending.Description__c;
                 payload.DocumentType= pending.DocumentTypeId__c != null ? Integer.valueOf(pending.DocumentTypeId__c.intValue()) : null;
-                ProposalPendingController.PendingStatus statusEnum =
-                    ProposalPendingController.parseStatus(pending.Status__c);
-                payload.Status      = ProposalPendingController.getStatusCode(statusEnum);
+                payload.Status      = EzeeConnectProposalPendingService.getStatusCode(pending.Status__c);
                 payload.PendingId   = pending.Id;
 
                 EzeeConnectProposalPendingService.sendPendingToApp(payload);

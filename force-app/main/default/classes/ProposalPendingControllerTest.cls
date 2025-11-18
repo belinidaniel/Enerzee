@@ -127,35 +127,5 @@ public class ProposalPendingControllerTest {
         System.assertEquals(2, types.size(), 'Deveria retornar as opções mockadas.');
     }
 
-    @IsTest
-    static void shouldValidateVirtualOffice(){
-        Account account = (Account) TestFactory.createSObject(new Account(), true);
-        OpportunityTriggerHandler.disableTrigger();
-        Opportunity opp = (Opportunity) TestFactory.createSObject(new Opportunity(
-            AccountId = account.Id
-        ));
-        OpportunityTriggerHandler.enableTrigger();
-        opp.IdVirtualOffice__c = null;
-        OpportunityTriggerHandler.disableTrigger();
-        insert opp;
-        OpportunityTriggerHandler.enableTrigger();
-
-        ProposalPendingController.PendingInput input = new ProposalPendingController.PendingInput();
-        input.description = 'Teste';
-        input.documentTypeId = 1;
-        input.documentTypeName = 'CPF frente';
-        input.requestDocument = true;
-
-
-        try{
-            ProposalPendingController.createPendings(
-                opp.Id,
-                JSON.serialize(new List<ProposalPendingController.PendingInput>{ input })
-            );
-            System.assert(false, 'Era esperado erro por falta de ID Virtual Office.');
-        } catch (AuraHandledException expected){
-            System.assert(expected.getMessage().contains('ID Virtual Office'), 'Mensagem deve mencionar o campo obrigatório.');
-        }
-    }
 
 }

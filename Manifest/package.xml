@@ -1,8 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
-		<members>*</members>
-		<name>Layout</name>
+		<members>EzeeConnectProposalPendingService</members>
+		<members>ProposalPendingController</members>
+		<members>ProposalPendingControllerTest</members>
+		<members>ProposalPendingResponseRest</members>
+		<members>ProposalPendingResponseRestTest</members>
+		<members>ProposalPendingSendQueueable</members>
+		<members>ProposalPendingStatusQueueable</members>
+		<members>ProposalService</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>Integrador.ProposalStatus</members>
+		<members>Integrador.SetProposalPending</members>
+		<members>Integrador.UpdateProposalPending</members>
+		<name>CustomMetadata</name>
+	</types>
+	<types>
+		<members>ProposalPending__c</members>
+		<name>CustomObject</name>
+	</types>
+	<types>
+		<members>Oportunidade_P_gina_de_registro_Ezee_Connect</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
+		<members>EzeeConnectPendencias</members>
+		<members>ProposalPendingPanelAccess</members>
+		<name>PermissionSet</name>
 	</types>
 	<version>65.0</version>
 </Package>
