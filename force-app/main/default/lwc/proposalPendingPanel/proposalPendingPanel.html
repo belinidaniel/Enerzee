@@ -64,7 +64,7 @@
                                         ></lightning-formatted-date-time>
                                     </span>
                                 </template>
-                                <template if:true={pending.fileUrl}>
+                                <template if:true={pending.showActionButton}>
                                         <lightning-button
                                             variant="neutral"
                                             label={pending.actionLabel}
@@ -172,30 +172,43 @@
                     <h2 class="slds-modal__title slds-hyphenate">Visualizar documento</h2>
                 </header>
                 <div class="slds-modal__content slds-var-p-around_medium file-preview__content">
-                    <template if:true={isPreviewLoading}>
-                        <div class="spinner-wrapper">
-                            <lightning-spinner alternative-text="Carregando documento" size="medium"></lightning-spinner>
+                    <template if:true={isResponsePreview}>
+                        <div class="response-preview">
+                            <p class="field-label">Resposta enviada</p>
+                            <template if:true={hasResponseText}>
+                                <p class="response-preview__text">{previewResponseText}</p>
+                            </template>
+                            <template if:false={hasResponseText}>
+                                <p class="response-preview__text response-preview__text_empty">Sem detalhes da resposta.</p>
+                            </template>
                         </div>
                     </template>
-                    <template if:false={isPreviewLoading}>
-                        <template if:true={previewDisplayUrl}>
-                            <template if:true={previewIsImage}>
-                                <img src={previewDisplayUrl} alt="Pré-visualização" class="file-preview__image" />
-                            </template>
-                            <template if:true={previewIsPdf}>
-                                <iframe src={previewDisplayUrl} class="file-preview__frame" title="Documento em PDF" style="width: 100%;height: 1000px;"></iframe>
-                            </template>
-                            <template if:true={previewIsUnsupported}>
-                                <p>Visualização não suportada. Utilize o botão abaixo para abrir o arquivo.</p>
-                                <lightning-button
-                                    label="Abrir em nova aba"
-                                    variant="neutral"
-                                    onclick={handleOpenPreviewExternally}
-                                ></lightning-button>
-                            </template>
+                    <template if:false={isResponsePreview}>
+                        <template if:true={isPreviewLoading}>
+                            <div class="spinner-wrapper">
+                                <lightning-spinner alternative-text="Carregando documento" size="medium"></lightning-spinner>
+                            </div>
                         </template>
-                        <template if:false={previewDisplayUrl}>
-                            <p>Arquivo não disponível para esta pendência.</p>
+                        <template if:false={isPreviewLoading}>
+                            <template if:true={previewDisplayUrl}>
+                                <template if:true={previewIsImage}>
+                                    <img src={previewDisplayUrl} alt="Pré-visualização" class="file-preview__image" />
+                                </template>
+                                <template if:true={previewIsPdf}>
+                                    <iframe src={previewDisplayUrl} class="file-preview__frame" title="Documento em PDF" style="width: 100%;height: 1000px;"></iframe>
+                                </template>
+                                <template if:true={previewIsUnsupported}>
+                                    <p>Visualização não suportada. Utilize o botão abaixo para abrir o arquivo.</p>
+                                    <lightning-button
+                                        label="Abrir em nova aba"
+                                        variant="neutral"
+                                        onclick={handleOpenPreviewExternally}
+                                    ></lightning-button>
+                                </template>
+                            </template>
+                            <template if:false={previewDisplayUrl}>
+                                <p>Arquivo não disponível para esta pendência.</p>
+                            </template>
                         </template>
                     </template>
                 </div>

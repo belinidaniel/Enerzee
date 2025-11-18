@@ -30,6 +30,8 @@ export default class ProposalPendingPanel extends LightningElement {
     previewFileObjectUrl;
     previewIsImage = false;
     previewIsPdf = false;
+    previewMode = 'file';
+    previewResponseText = '';
     isRejectModalOpen = false;
     rejectReason = '';
     rejectReasonError = '';
@@ -207,14 +209,31 @@ export default class ProposalPendingPanel extends LightningElement {
             return;
         }
 
-        if (!pending.fileUrl) {
-            this.showToast('Arquivo indisponível', 'Esta pendência não possui documento para visualização.', 'warning');
+        const hasFile = !!pending.fileUrl;
+        const hasResponse = !!pending.response;
+
+        if (!hasFile && !hasResponse) {
+            this.showToast(
+                'Conteúdo indisponível',
+                'Esta pendência não possui documento ou resposta para visualização.',
+                'warning'
+            );
             return;
         }
 
         this.previewPending = pending;
+        this.previewResponseText = pending.response || '';
+        this.previewMode = hasFile ? 'file' : 'response';
         this.isPreviewModalOpen = true;
-        this.preparePreviewFromUrl(pending.fileUrl);
+
+        if (hasFile) {
+            this.preparePreviewFromUrl(pending.fileUrl);
+        } else {
+            this.previewFileObjectUrl = null;
+            this.previewIsImage = false;
+            this.previewIsPdf = false;
+            this.isPreviewLoading = false;
+        }
     }
 
     handleClosePreview() {
@@ -225,6 +244,8 @@ export default class ProposalPendingPanel extends LightningElement {
         this.closeRejectModal(false);
         this.isPreviewModalOpen = false;
         this.previewPending = null;
+        this.previewMode = 'file';
+        this.previewResponseText = '';
         this.previewIsImage = false;
         this.previewIsPdf = false;
         if (this.previewFileObjectUrl && this.previewFileObjectUrl.startsWith('blob:')) {
@@ -265,7 +286,7 @@ export default class ProposalPendingPanel extends LightningElement {
     }
 
     get previewHasActions() {
-        if (!this.previewPending || !this.previewPending.fileUrl) {
+        if (!this.previewPending) {
             return false;
         }
         const code = String(this.previewPending.statusCode || this.previewPending.status || '');
@@ -273,7 +294,18 @@ export default class ProposalPendingPanel extends LightningElement {
     }
 
     get previewIsUnsupported() {
+        if (this.previewMode !== 'file') {
+            return false;
+        }
         return !!this.previewFileObjectUrl && !this.previewIsImage && !this.previewIsPdf;
+    }
+
+    get isResponsePreview() {
+        return this.previewMode === 'response';
+    }
+
+    get hasResponseText() {
+        return !!(this.previewResponseText && this.previewResponseText.trim());
     }
 
     handleApprove() {
@@ -459,6 +491,15 @@ export default class ProposalPendingPanel extends LightningElement {
     decoratePendings(pendings) {
         return pendings.map((pending) => {
             const meta = this.getStatusMeta(pending.status);
+            const hasFile = !!pending.fileUrl;
+            const hasResponse = (() => {
+                if (!pending.response) {
+                    return false;
+                }
+                return typeof pending.response === 'string'
+                    ? !!pending.response.trim()
+                    : true;
+            })();
             return {
                 ...pending,
                 statusCode: meta.code,
@@ -466,6 +507,7 @@ export default class ProposalPendingPanel extends LightningElement {
                 statusVariant: meta.variant,
                 allowActions: meta.allowActions,
                 actionLabel: meta.allowActions ? 'Analisar' : 'Visualizar',
+                showActionButton: hasFile || (meta.allowActions && hasResponse),
                 cardClass: `pending-card pending-card_${meta.variant}`,
                 documentTypeLabel: pending.documentTypeName || ''
             };

@@ -193,3 +193,21 @@
     margin-top: 0.5rem;
     font-size: 0.85rem;
 }
+
+.response-preview {
+    background: var(--lwc-colorBackgroundAlt, #f4f6f9);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    min-height: 8rem;
+}
+
+.response-preview__text {
+    white-space: pre-line;
+    font-size: 0.95rem;
+    color: var(--lwc-colorTextDefault, #1f1f1f);
+    margin: 0;
+}
+
+.response-preview__text_empty {
+    color: var(--lwc-colorTextWeak, #777);
+}
