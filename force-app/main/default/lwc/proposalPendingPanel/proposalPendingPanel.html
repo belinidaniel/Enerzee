@@ -1,3 +1,10 @@
+<!--
+  @description       : 
+  @author            : Daniel Belini
+  @group             : 
+  @last modified on  : 11-18-2025
+  @last modified by  : Daniel Belini
+-->
 <template>
     <lightning-card title="Pendências da Proposta" icon-name="standard:record">
         <div class="card-actions">
@@ -21,23 +28,10 @@
                                     <p class="pending-card__name">{pending.name}</p>
                                 </div>
                                 <div class="pending-card__status">
-                                    <span class="status-label">Status</span>
-                                    <span class="status-value">{pending.status}</span>
-                                    <template if:true={pending.requiresDecision}>
-                                        <lightning-radio-group
-                                            data-pending-id={pending.id}
-                                            options={statusDecisionOptions}
-                                            value={pending.decisionValue}
-                                            onchange={handleDecisionChange}
-                                            type="button"
-                                            class="status-decision"
-                                            label="Decisão"
-                                            disabled={pending.isUpdating}
-                                        ></lightning-radio-group>
-                                        <template if:true={pending.isUpdating}>
-                                            <span class="status-helper">Atualizando...</span>
-                                        </template>
-                                    </template>
+                                    <div class="pending-card__status">
+                                        <span class="status-label">Status</span>
+                                        <span class="status-value">{pending.status}</span>
+                                    </div>
                                 </div>
                             </div>
                             <p class="pending-card__description">{pending.description}</p>
@@ -45,26 +39,6 @@
                             <template if:true={pending.response}>
                                 <p class="field-label">Resposta</p>
                                 <p class="field-value">{pending.response}</p>
-                            </template>
-
-                            <template if:true={pending.fileUrl}>
-                                <div class="attachment">
-                                    <span class="field-label">Anexo</span>
-                                    <div class="attachment__link">
-                                        <lightning-button-icon
-                                            icon-name="utility:attach"
-                                            variant="bare"
-                                            alternative-text="Abrir anexo"
-                                            onclick={handleAttachmentClick}
-                                            data-url={pending.fileUrl}
-                                        ></lightning-button-icon>
-                                        <lightning-formatted-url
-                                            value={pending.fileUrl}
-                                            label="Abrir anexo"
-                                            target="_blank"
-                                        ></lightning-formatted-url>
-                                    </div>
-                                </div>
                             </template>
 
                             <div class="metadata">
@@ -89,6 +63,15 @@
                                             minute="2-digit"
                                         ></lightning-formatted-date-time>
                                     </span>
+                                </template>
+                                <template if:true={pending.fileUrl}>
+                                        <lightning-button
+                                            variant="neutral"
+                                            label={pending.actionLabel}
+                                            class="pending-card__action"
+                                            data-id={pending.id}
+                                            onclick={handleOpenPreview}
+                                        ></lightning-button>
                                 </template>
                             </div>
                         </article>
@@ -126,6 +109,7 @@
                                     type="checkbox"
                                     label="Solicitar documento"
                                     data-uid={row.uid}
+                                    data-field="requestDocument"
                                     checked={row.requestDocument}
                                     onchange={handleDraftRequestDocumentChange}
                                     class="draft-row__checkbox"
@@ -175,6 +159,62 @@
                         onclick={handleSavePendings}
                         disabled={isModalSaveDisabled}
                     ></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <template if:true={isPreviewModalOpen}>
+        <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container file-preview__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-modal__title slds-hyphenate">Visualizar documento</h2>
+                </header>
+                <div class="slds-modal__content slds-var-p-around_medium file-preview__content">
+                    <template if:true={isPreviewLoading}>
+                        <div class="spinner-wrapper">
+                            <lightning-spinner alternative-text="Carregando documento" size="medium"></lightning-spinner>
+                        </div>
+                    </template>
+                    <template if:false={isPreviewLoading}>
+                        <template if:true={previewDisplayUrl}>
+                            <template if:true={previewIsImage}>
+                                <img src={previewDisplayUrl} alt="Pré-visualização" class="file-preview__image" />
+                            </template>
+                            <template if:true={previewIsPdf}>
+                                <iframe src={previewDisplayUrl} class="file-preview__frame" title="Documento em PDF"></iframe>
+                            </template>
+                            <template if:true={previewIsUnsupported}>
+                                <p>Visualização não suportada. Utilize o botão abaixo para abrir o arquivo.</p>
+                                <lightning-button
+                                    label="Abrir em nova aba"
+                                    variant="neutral"
+                                    onclick={handleOpenPreviewExternally}
+                                ></lightning-button>
+                            </template>
+                        </template>
+                        <template if:false={previewDisplayUrl}>
+                            <p>Arquivo não disponível para esta pendência.</p>
+                        </template>
+                    </template>
+                </div>
+                <footer class="slds-modal__footer file-preview__footer" style="text-align: center;">
+                    <lightning-button label="Fechar" onclick={handleClosePreview} disabled={isStatusActionRunning}></lightning-button>
+                    <template if:true={previewHasActions}>
+                        <lightning-button
+                            variant="destructive"
+                            label="Reprovar"
+                            onclick={handleReject}
+                            disabled={isStatusActionRunning}
+                        ></lightning-button>
+                        <lightning-button
+                            variant="brand"
+                            label="Aprovar"
+                            onclick={handleApprove}
+                            disabled={isStatusActionRunning}
+                        ></lightning-button>
+                    </template>
                 </footer>
             </div>
         </section>

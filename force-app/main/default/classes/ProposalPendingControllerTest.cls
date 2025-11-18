@@ -149,4 +149,5 @@ public class ProposalPendingControllerTest {
             System.assert(expected.getMessage().contains('ID Virtual Office'), 'Mensagem deve mencionar o campo obrigatório.');
         }
     }
+
 }

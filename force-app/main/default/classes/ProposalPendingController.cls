@@ -65,8 +65,9 @@ public with sharing class ProposalPendingController {
             ProposalPending__c record = new ProposalPending__c();
             record.Opportunity__c     = opportunity.Id;
             record.Description__c     = input.description != null ? input.description.trim() : null;
-            record.DocumentTypeId__c  = input.documentTypeId;
-            record.DocumentTypeName__c= input.documentTypeName;
+            Boolean requireDocument = input.requestDocument == null ? true : input.requestDocument;
+            record.DocumentTypeId__c  = requireDocument ? input.documentTypeId : null;
+            record.DocumentTypeName__c= requireDocument ? input.documentTypeName : null;
             record.Status__c          = 'Aguardando';
             recordsToInsert.add(record);
         }
@@ -211,13 +212,13 @@ public with sharing class ProposalPendingController {
             throw new AuraHandledException('A descrição é obrigatória.');
         }
 
-        Boolean requestDocument = input.requestDocument == true;
+        Boolean requireDocument = input.requestDocument == null ? true : input.requestDocument;
 
-        if(requestDocument && input.documentTypeId == null){
-            throw new AuraHandledException('Selecione o tipo de documento.');
+        if(requireDocument && input.documentTypeId == null){
+            throw new AuraHandledException('Selecione o tipo de documento para pendências que solicitarem arquivo.');
         }
 
-        if(!requestDocument){
+        if(!requireDocument){
             input.documentTypeId = null;
             input.documentTypeName = null;
         }

@@ -92,6 +92,7 @@
     background: #ffe4e6;
     border-color: #f46f6f;
 }
+
 .pending-card__type {
     font-weight: 700;
     margin: 0;
@@ -136,7 +137,6 @@
 }
 
 .metadata {
-    display: flex;
     gap: 1.5rem;
     font-size: 0.75rem;
     color: var(--lwc-colorTextWeak, #666);
@@ -201,4 +201,8 @@
 .status-helper {
     font-size: 0.65rem;
     color: var(--lwc-colorTextWeak, #666);
+}
+
+.pending-card__action {
+    float: right;
 }

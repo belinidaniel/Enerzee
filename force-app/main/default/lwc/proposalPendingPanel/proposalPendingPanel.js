@@ -5,11 +5,7 @@ import createPendings from '@salesforce/apex/ProposalPendingController.createPen
 import updatePendingStatus from '@salesforce/apex/ProposalPendingController.updatePendingStatus';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
-
-const STATUS_DECISION_OPTIONS = Object.freeze([
-    { label: 'Aprovar', value: 'Aprovado' },
-    { label: 'Recusar', value: 'Recusado' }
-]);
+import { subscribe, unsubscribe, onError } from 'lightning/empApi';
 
 export default class ProposalPendingPanel extends LightningElement {
     @api recordId;
@@ -18,7 +14,6 @@ export default class ProposalPendingPanel extends LightningElement {
     isModalOpen = false;
     isSubmitting = false;
     documentTypesLoading = false;
-    statusUpdatingId;
     hasLoadedPendings = false;
     hasLoadedDocumentTypes = false;
 
@@ -26,12 +21,24 @@ export default class ProposalPendingPanel extends LightningElement {
     draftPendings = [];
     draftRowSeed = 0;
     wiredPendingsResult;
-    statusDecisionOptions = STATUS_DECISION_OPTIONS;
+    channelName = '/data/ProposalPending__ChangeEvent';
+    pendingsSubscription;
+    isPreviewModalOpen = false;
+    previewPending;
+    isStatusActionRunning = false;
+    isPreviewLoading = false;
+    previewFileObjectUrl;
+    previewIsImage = false;
+    previewIsPdf = false;
 
     connectedCallback() {
         this.resetDraftRows();
+        this.handleSubscribe();
     }
 
+    disconnectedCallback() {
+        this.handleUnsubscribe();
+    }
 
     get hasPendings() {
         return this.pendings && this.pendings.length > 0;
@@ -86,7 +93,10 @@ export default class ProposalPendingPanel extends LightningElement {
         this.ensureDocumentTypes();
     }
 
-    closeModal() {
+    closeModal(force = false) {
+        if (this.isSubmitting && !force) {
+            return;
+        }
         this.isModalOpen = false;
     }
 
@@ -101,7 +111,7 @@ export default class ProposalPendingPanel extends LightningElement {
             description: '',
             documentTypeId: null,
             documentTypeName: '',
-            requestDocument: false
+            requestDocument: true
         };
     }
 
@@ -177,6 +187,114 @@ export default class ProposalPendingPanel extends LightningElement {
         this.draftPendings = this.draftPendings.filter((row) => row.uid !== uid);
     }
 
+    async handleOpenPreview(event) {
+        const pendingId = event.currentTarget.dataset.id;
+        const pending = this.pendings.find((item) => item.id === pendingId);
+
+        if (!pending) {
+            return;
+        }
+
+        if (!pending.fileUrl) {
+            this.showToast('Arquivo indisponível', 'Esta pendência não possui documento para visualização.', 'warning');
+            return;
+        }
+
+        this.previewPending = pending;
+        this.isPreviewModalOpen = true;
+        this.preparePreviewFromUrl(pending.fileUrl);
+    }
+
+    handleClosePreview() {
+        if (this.isStatusActionRunning) {
+            return;
+        }
+        this.isPreviewModalOpen = false;
+        this.previewPending = null;
+        this.previewIsImage = false;
+        this.previewIsPdf = false;
+        if (this.previewFileObjectUrl && this.previewFileObjectUrl.startsWith('blob:')) {
+            URL.revokeObjectURL(this.previewFileObjectUrl);
+        }
+        this.previewFileObjectUrl = null;
+    }
+
+    preparePreviewFromUrl(fileUrl) {
+        this.isPreviewLoading = true;
+        this.previewIsImage = false;
+        this.previewIsPdf = false;
+
+        if (this.previewFileObjectUrl && this.previewFileObjectUrl.startsWith('blob:')) {
+            URL.revokeObjectURL(this.previewFileObjectUrl);
+        }
+
+        try {
+            const normalized = (fileUrl || '').toLowerCase();
+            const cleanUrl = normalized.includes('?') ? normalized.substring(0, normalized.indexOf('?')) : normalized;
+            this.previewIsImage =
+                cleanUrl.endsWith('.png') ||
+                cleanUrl.endsWith('.jpg') ||
+                cleanUrl.endsWith('.jpeg') ||
+                cleanUrl.endsWith('.gif');
+            this.previewIsPdf = cleanUrl.endsWith('.pdf');
+            this.previewFileObjectUrl = fileUrl;
+        } catch (error) {
+            this.handleError('Não foi possível carregar o arquivo para visualização.', error);
+            this.handleClosePreview();
+        } finally {
+            this.isPreviewLoading = false;
+        }
+    }
+
+    get previewDisplayUrl() {
+        return this.previewFileObjectUrl;
+    }
+
+    get previewHasActions() {
+        return (
+            this.previewPending &&
+            this.previewPending.fileUrl &&
+            (this.previewPending.status || '').toLowerCase() === 'respondido'
+        );
+    }
+
+    get previewIsUnsupported() {
+        return !!this.previewFileObjectUrl && !this.previewIsImage && !this.previewIsPdf;
+    }
+
+    handleApprove() {
+        this.handleStatusDecision('Aprovado');
+    }
+
+    handleReject() {
+        this.handleStatusDecision('Recusado');
+    }
+
+    handleOpenPreviewExternally() {
+        if (this.previewPending && this.previewPending.fileUrl) {
+            window.open(this.previewPending.fileUrl, '_blank');
+        }
+    }
+
+    async handleStatusDecision(status) {
+        if (!this.previewPending || this.isStatusActionRunning) {
+            return;
+        }
+
+        this.isStatusActionRunning = true;
+        try {
+            await updatePendingStatus({ pendingId: this.previewPending.id, status });
+            this.showToast('Sucesso', `Pendência ${status.toLowerCase()} com sucesso.`, 'success');
+            this.isPreviewModalOpen = false;
+            this.previewPending = null;
+            await this.refreshPendings();
+        } catch (error) {
+            this.handleError('Não foi possível atualizar o status.', error);
+        } finally {
+            this.isStatusActionRunning = false;
+        }
+    }
+
     async handleSavePendings() {
         if (this.isSubmitting) {
             return;
@@ -210,7 +328,7 @@ export default class ProposalPendingPanel extends LightningElement {
             this.showToast('Sucesso', 'Pendências enviadas para o aplicativo.', 'success');
             await this.refreshPendings();
             this.resetDraftRows();
-            this.closeModal();
+            this.closeModal(true);
         } catch (error) {
             this.handleError('Não foi possível salvar as pendências.', error);
         } finally {
@@ -233,6 +351,15 @@ export default class ProposalPendingPanel extends LightningElement {
             rowsByUid.get(uid).description = input.value || '';
         });
 
+        const requestCheckboxes = this.template.querySelectorAll('lightning-input[data-field="requestDocument"]');
+        requestCheckboxes.forEach((checkbox) => {
+            const uid = checkbox.dataset.uid || checkbox.getAttribute('data-uid');
+            if (!rowsByUid.has(uid)) {
+                return;
+            }
+            rowsByUid.get(uid).requestDocument = checkbox.checked;
+        });
+
         const documentCombos = this.template.querySelectorAll('lightning-combobox[data-field="documentType"]');
         documentCombos.forEach((combo) => {
             const uid = combo.dataset.uid || combo.getAttribute('data-uid');
@@ -246,9 +373,9 @@ export default class ProposalPendingPanel extends LightningElement {
 
         return Array.from(rowsByUid.values()).map((row) => ({
             description: row.description || '',
-            documentTypeId: row.documentTypeId || null,
-            documentTypeName: row.documentTypeName || '',
-            requestDocument: !!row.requestDocument
+            requestDocument: !!row.requestDocument,
+            documentTypeId: row.requestDocument ? row.documentTypeId || null : null,
+            documentTypeName: row.requestDocument ? row.documentTypeName || '' : ''
         }));
     }
 
@@ -265,24 +392,33 @@ export default class ProposalPendingPanel extends LightningElement {
     }
 
     decoratePendings(pendings) {
-        return pendings.map((pending) => ({
-            ...pending,
-            requiresDecision: pending.status === 'Respondido',
-            decisionValue: null,
-            isUpdating: false,
-            statusVariant: this.getStatusVariant(pending.status)
-        }));
+        return pendings.map((pending) => {
+            const variant = this.getStatusVariant(pending.status);
+            return {
+                ...pending,
+                statusVariant: variant,
+                cardClass: `pending-card pending-card_${variant}`,
+                actionLabel: this.getActionLabel(pending.status)
+            };
+        });
     }
 
     getStatusVariant(status) {
         const normalized = (status || '').toLowerCase();
-        if (normalized === 'respondido' || normalized === 'aprovado') {
+        if (normalized === 'respondido') {
+            return 'info';
+        }
+        if (normalized === 'aprovado') {
             return 'success';
         }
-        if (normalized === 'recusado' || normalized === 'reprovado') {
+        if (normalized === 'recusado') {
             return 'error';
         }
         return 'pending';
+    }
+
+    getActionLabel(status) {
+        return (status || '').toLowerCase() === 'aprovado' ? 'Visualizar' : 'Analisar';
     }
 
     async refreshPendings() {
@@ -313,45 +449,39 @@ export default class ProposalPendingPanel extends LightningElement {
         }
     }
 
-    async handleDecisionChange(event) {
-        const pendingId = event.currentTarget.dataset.pendingId;
-        const value = event.detail.value;
-        if (!pendingId) {
+    handleSubscribe() {
+        if (this.pendingsSubscription || !this.channelName) {
             return;
         }
 
-        this.updatePendingLocally(pendingId, { decisionValue: value });
+        subscribe(this.channelName, -1, (message) => this.handleCdcMessage(message))
+            .then((response) => {
+                this.pendingsSubscription = response;
+            })
+            .catch((error) => {
+                this.handleError('Erro no canal de atualizações de pendências.', error, true);
+            });
 
-        if (!value) {
-            return;
+        onError((error) => {
+            this.handleError('Erro no canal de atualizações de pendências.', error, true);
+        });
+    }
+
+    handleUnsubscribe() {
+        if (this.pendingsSubscription) {
+            unsubscribe(this.pendingsSubscription, () => {});
+            this.pendingsSubscription = null;
         }
+    }
 
-        this.statusUpdatingId = pendingId;
-        this.updatePendingLocally(pendingId, { isUpdating: true });
-
+    handleCdcMessage(message) {
         try {
-            await updatePendingStatus({ pendingId, status: value });
-            this.showToast('Sucesso', 'Status atualizado.', 'success');
-            await this.refreshPendings();
+            const opportunityId = message?.data?.payload?.Opportunity__c;
+            if (opportunityId === this.recordId) {
+                this.refreshPendings();
+            }
         } catch (error) {
-            this.handleError('Não foi possível atualizar o status da pendência.', error);
-            this.updatePendingLocally(pendingId, { decisionValue: null });
-        } finally {
-            this.statusUpdatingId = null;
-            this.updatePendingLocally(pendingId, { isUpdating: false });
-        }
-    }
-
-    updatePendingLocally(pendingId, changes) {
-        this.pendings = this.pendings.map((pending) =>
-            pending.id === pendingId ? { ...pending, ...changes } : pending
-        );
-    }
-
-    handleAttachmentClick(event) {
-        const url = event.currentTarget.dataset.url;
-        if (url) {
-            window.open(url, '_blank');
+            this.handleError('Erro ao processar atualização das pendências.', error, true);
         }
     }
 
