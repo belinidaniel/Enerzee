@@ -25,24 +25,29 @@
     transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-.pending-card[data-variant='pending'] {
-    border-color: #f4c35b;
-    background: linear-gradient(180deg, #fff7e6 0%, #fff 65%);
+.pending-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
 }
 
-.pending-card[data-variant='success'] {
+.pending-card_pending {
+    border-color: #f4c35b;
+    background: linear-gradient(180deg, #fff9ec 0%, #fff 65%);
+}
+
+.pending-card_info {
+    border-color: #6cb4ff;
+    background: linear-gradient(180deg, #eef6ff 0%, #fff 65%);
+}
+
+.pending-card_success {
     border-color: #48c78e;
     background: linear-gradient(180deg, #e8fff2 0%, #fff 65%);
 }
 
-.pending-card[data-variant='error'] {
+.pending-card_error {
     border-color: #f46f6f;
     background: linear-gradient(180deg, #ffecec 0%, #fff 65%);
-}
-
-.pending-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
 }
 
 .pending-card__header {
@@ -75,19 +80,19 @@
     letter-spacing: 0.02em;
 }
 
-.pending-card[data-variant='pending'] .status-value {
+.pending-card_pending .status-value {
     color: #a66300;
     background: #fff2d6;
     border-color: #f4c35b;
 }
 
-.pending-card[data-variant='success'] .status-value {
+.pending-card_success .status-value {
     color: #0f5132;
     background: #d1fae5;
     border-color: #48c78e;
 }
 
-.pending-card[data-variant='error'] .status-value {
+.pending-card_error .status-value {
     color: #842029;
     background: #ffe4e6;
     border-color: #f46f6f;
@@ -177,30 +182,6 @@
 .draft-row__actions {
     display: flex;
     gap: 0.25rem;
-}
-
-.status-decision {
-    min-width: 10rem;
-}
-
-.pending-card[data-variant='pending'] .status-decision lightning-button {
-    --slds-c-button-neutral-color-background: #fff7e6;
-    --slds-c-button-text-color: #a66300;
-}
-
-.pending-card[data-variant='success'] .status-decision lightning-button {
-    --slds-c-button-neutral-color-background: #e9fff2;
-    --slds-c-button-text-color: #0f5132;
-}
-
-.pending-card[data-variant='error'] .status-decision lightning-button {
-    --slds-c-button-neutral-color-background: #ffecec;
-    --slds-c-button-text-color: #842029;
-}
-
-.status-helper {
-    font-size: 0.65rem;
-    color: var(--lwc-colorTextWeak, #666);
 }
 
 .pending-card__action {

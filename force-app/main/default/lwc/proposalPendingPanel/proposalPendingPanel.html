@@ -21,16 +21,16 @@
             <template if:true={hasPendings}>
                 <div class="pending-list">
                     <template for:each={pendings} for:item="pending">
-                        <article key={pending.id} class="pending-card" data-variant={pending.statusVariant}>
+                        <article key={pending.id} class={pending.cardClass}>
                             <div class="pending-card__header">
                                 <div>
-                                    <p class="pending-card__type">{pending.documentTypeName}</p>
+                                    <p class="pending-card__type">{pending.documentTypeLabel}</p>
                                     <p class="pending-card__name">{pending.name}</p>
                                 </div>
                                 <div class="pending-card__status">
                                     <div class="pending-card__status">
                                         <span class="status-label">Status</span>
-                                        <span class="status-value">{pending.status}</span>
+                                        <span class="status-value">{pending.statusLabel}</span>
                                     </div>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@
                                 <img src={previewDisplayUrl} alt="Pré-visualização" class="file-preview__image" />
                             </template>
                             <template if:true={previewIsPdf}>
-                                <iframe src={previewDisplayUrl} class="file-preview__frame" title="Documento em PDF"></iframe>
+                                <iframe src={previewDisplayUrl} class="file-preview__frame" title="Documento em PDF" style="width: 100%;height: 1000px;"></iframe>
                             </template>
                             <template if:true={previewIsUnsupported}>
                                 <p>Visualização não suportada. Utilize o botão abaixo para abrir o arquivo.</p>

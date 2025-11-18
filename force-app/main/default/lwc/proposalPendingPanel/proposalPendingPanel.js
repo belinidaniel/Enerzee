@@ -36,6 +36,14 @@ export default class ProposalPendingPanel extends LightningElement {
         this.handleSubscribe();
     }
 
+    // Map of status codes (API names) to labels and variants
+    STATUS_MAP = {
+        '1': { code: '1', label: 'Aguardando', variant: 'pending', allowActions: false },
+        '2': { code: '2', label: 'Respondido', variant: 'info', allowActions: true },
+        '3': { code: '3', label: 'Aprovado', variant: 'success', allowActions: false },
+        '4': { code: '4', label: 'Recusado', variant: 'error', allowActions: false }
+    };
+
     disconnectedCallback() {
         this.handleUnsubscribe();
     }
@@ -167,7 +175,7 @@ export default class ProposalPendingPanel extends LightningElement {
                 ? {
                       ...row,
                       requestDocument: checked,
-                      documentTypeId: checked ? row.documentTypeId : null,
+                      documentTypeId: checked ? row.documentTypeId : 0,
                       documentTypeName: checked ? row.documentTypeName : ''
                   }
                 : row
@@ -251,11 +259,11 @@ export default class ProposalPendingPanel extends LightningElement {
     }
 
     get previewHasActions() {
-        return (
-            this.previewPending &&
-            this.previewPending.fileUrl &&
-            (this.previewPending.status || '').toLowerCase() === 'respondido'
-        );
+        if (!this.previewPending || !this.previewPending.fileUrl) {
+            return false;
+        }
+        const code = String(this.previewPending.statusCode || this.previewPending.status || '');
+        return code === '2' || code.toLowerCase() === 'respondido';
     }
 
     get previewIsUnsupported() {
@@ -263,11 +271,11 @@ export default class ProposalPendingPanel extends LightningElement {
     }
 
     handleApprove() {
-        this.handleStatusDecision('Aprovado');
+        this.handleStatusDecision('3');
     }
 
     handleReject() {
-        this.handleStatusDecision('Recusado');
+        this.handleStatusDecision('4');
     }
 
     handleOpenPreviewExternally() {
@@ -284,7 +292,8 @@ export default class ProposalPendingPanel extends LightningElement {
         this.isStatusActionRunning = true;
         try {
             await updatePendingStatus({ pendingId: this.previewPending.id, status });
-            this.showToast('Sucesso', `Pendência ${status.toLowerCase()} com sucesso.`, 'success');
+            const statusLabel = (this.STATUS_MAP[String(status)] || {}).label || status;
+            this.showToast('Sucesso', `Pendência ${statusLabel.toLowerCase()} com sucesso.`, 'success');
             this.isPreviewModalOpen = false;
             this.previewPending = null;
             await this.refreshPendings();
@@ -393,32 +402,30 @@ export default class ProposalPendingPanel extends LightningElement {
 
     decoratePendings(pendings) {
         return pendings.map((pending) => {
-            const variant = this.getStatusVariant(pending.status);
+            const meta = this.getStatusMeta(pending.status);
             return {
                 ...pending,
-                statusVariant: variant,
-                cardClass: `pending-card pending-card_${variant}`,
-                actionLabel: this.getActionLabel(pending.status)
+                statusCode: meta.code,
+                statusLabel: meta.label,
+                statusVariant: meta.variant,
+                allowActions: meta.allowActions,
+                actionLabel: meta.allowActions ? 'Analisar' : 'Visualizar',
+                cardClass: `pending-card pending-card_${meta.variant}`,
+                documentTypeLabel: pending.documentTypeName || ''
             };
         });
     }
 
-    getStatusVariant(status) {
-        const normalized = (status || '').toLowerCase();
-        if (normalized === 'respondido') {
-            return 'info';
+    getStatusMeta(status) {
+        const value = status ? String(status) : '';
+        let meta = this.STATUS_MAP[value];
+        if (!meta) {
+            const normalized = value.toLowerCase();
+            meta = Object.values(this.STATUS_MAP).find((item) => item.label.toLowerCase() === normalized);
         }
-        if (normalized === 'aprovado') {
-            return 'success';
-        }
-        if (normalized === 'recusado') {
-            return 'error';
-        }
-        return 'pending';
-    }
-
-    getActionLabel(status) {
-        return (status || '').toLowerCase() === 'aprovado' ? 'Visualizar' : 'Analisar';
+        return (
+            meta || { code: value || '', label: value || '', variant: 'pending', allowActions: false }
+        );
     }
 
     async refreshPendings() {

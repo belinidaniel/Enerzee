@@ -36,7 +36,8 @@ public class ProposalPendingStatusQueueable implements Queueable, Database.Allow
         try{
             EzeeConnectProposalPendingService.PendingUpdateRequest payload = new EzeeConnectProposalPendingService.PendingUpdateRequest();
             payload.PendingId = pending.Id;
-            payload.Status    = EzeeConnectProposalPendingService.getStatusCode(status);
+            ProposalPendingController.PendingStatus statusEnum = ProposalPendingController.parseStatus(status);
+            payload.Status    = ProposalPendingController.getStatusCode(statusEnum);
 
             EzeeConnectProposalPendingService.updatePendingInApp(payload);
 

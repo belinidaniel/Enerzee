@@ -30,9 +30,12 @@ global with sharing class ProposalPendingResponseRest {
             pending.Response__c     = payload.Response;
             pending.FileUrl__c      = payload.UrlArquivo;
             pending.RespondedDate__c= System.now();
-            pending.Status__c       = payload.Status != null
-                ? EzeeConnectProposalPendingService.getStatusLabel(payload.Status)
-                : 'Respondido';
+            if(payload.Status != null){
+                ProposalPendingController.PendingStatus statusEnum = ProposalPendingController.getStatusByCode(payload.Status);
+                pending.Status__c = ProposalPendingController.getStatusValue(statusEnum);
+            } else {
+                pending.Status__c = ProposalPendingController.getStatusValue(ProposalPendingController.PendingStatus.Respondido);
+            }
 
             update pending;
 

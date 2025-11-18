@@ -9,6 +9,45 @@ public with sharing class ProposalPendingController {
 
     private static final Map<Id, List<ProposalPendingDTO>> cache = new Map<Id, List<ProposalPendingDTO>>();
 
+    public enum PendingStatus {
+        Aguardando,
+        Respondido,
+        Aprovado,
+        Recusado
+    }
+
+    private static final Map<PendingStatus, Integer> STATUS_TO_CODE = new Map<PendingStatus, Integer>{
+        PendingStatus.Aguardando => 1,
+        PendingStatus.Respondido => 2,
+        PendingStatus.Aprovado   => 3,
+        PendingStatus.Recusado   => 4
+    };
+
+    private static final Map<Integer, PendingStatus> CODE_TO_STATUS = new Map<Integer, PendingStatus>{
+        1 => PendingStatus.Aguardando,
+        2 => PendingStatus.Respondido,
+        3 => PendingStatus.Aprovado,
+        4 => PendingStatus.Recusado
+    };
+
+    private static final Map<PendingStatus, String> STATUS_TO_API_VALUE = new Map<PendingStatus, String>{
+        PendingStatus.Aguardando => '1',
+        PendingStatus.Respondido => '2',
+        PendingStatus.Aprovado   => '3',
+        PendingStatus.Recusado   => '4'
+    };
+
+    private static final Map<String, PendingStatus> VALUE_TO_STATUS = new Map<String, PendingStatus>{
+        '1' => PendingStatus.Aguardando,
+        '2' => PendingStatus.Respondido,
+        '3' => PendingStatus.Aprovado,
+        '4' => PendingStatus.Recusado,
+        'Aguardando' => PendingStatus.Aguardando,
+        'Respondido' => PendingStatus.Respondido,
+        'Aprovado'   => PendingStatus.Aprovado,
+        'Recusado'   => PendingStatus.Recusado
+    };
+
     @AuraEnabled(cacheable=true)
     public static List<ProposalPendingDTO> getPendings(Id opportunityId) {
         if(opportunityId == null){
@@ -68,7 +107,7 @@ public with sharing class ProposalPendingController {
             Boolean requireDocument = input.requestDocument == null ? true : input.requestDocument;
             record.DocumentTypeId__c  = requireDocument ? input.documentTypeId : null;
             record.DocumentTypeName__c= requireDocument ? input.documentTypeName : null;
-            record.Status__c          = 'Aguardando';
+            record.Status__c          = getStatusValue(PendingStatus.Aguardando);
             recordsToInsert.add(record);
         }
 
@@ -113,6 +152,8 @@ public with sharing class ProposalPendingController {
             throw new AuraHandledException('Selecione o novo status.');
         }
 
+        PendingStatus statusEnum = parseStatus(status);
+
         ProposalPending__c pending = [
             SELECT  Id,
                     Status__c,
@@ -129,7 +170,7 @@ public with sharing class ProposalPendingController {
         Savepoint sp = Database.setSavepoint();
 
         try{
-            pending.Status__c = status;
+            pending.Status__c = getStatusValue(statusEnum);
             update pending;
             enqueueStatusUpdate(pending.Id, status);
         } catch(Exception e){
@@ -229,12 +270,18 @@ public with sharing class ProposalPendingController {
 
         for(ProposalPending__c record : records){
             ProposalPendingDTO dto = new ProposalPendingDTO();
+            PendingStatus statusEnum;
+            try{
+                statusEnum = parseStatus(record.Status__c);
+            } catch(Exception e){
+                statusEnum = null;
+            }
             dto.id                = record.Id;
             dto.name              = record.Name;
             dto.description       = record.Description__c;
             dto.documentTypeId    = record.DocumentTypeId__c != null ? Integer.valueOf(record.DocumentTypeId__c.intValue()) : null;
             dto.documentTypeName  = record.DocumentTypeName__c;
-            dto.status            = record.Status__c;
+            dto.status            = statusEnum != null ? statusEnum.name() : record.Status__c;
             dto.response          = record.Response__c;
             dto.fileUrl           = record.FileUrl__c;
             dto.respondedDate     = record.RespondedDate__c;
@@ -265,5 +312,37 @@ public with sharing class ProposalPendingController {
         @AuraEnabled public Datetime respondedDate;
         @AuraEnabled public Datetime createdDate;
         @AuraEnabled public Datetime lastModifiedDate;
+    }
+
+    public static PendingStatus parseStatus(String value){
+        PendingStatus status = VALUE_TO_STATUS.get(value);
+        if(status == null){
+            throw new AuraHandledException('Status inválido informado: ' + value);
+        }
+        return status;
+    }
+
+    public static Integer getStatusCode(PendingStatus status){
+        Integer code = STATUS_TO_CODE.get(status);
+        if(code == null){
+            throw new AuraHandledException('Status não suportado para integração: ' + status);
+        }
+        return code;
+    }
+
+    public static PendingStatus getStatusByCode(Integer code){
+        PendingStatus status = CODE_TO_STATUS.get(code);
+        if(status == null){
+            throw new AuraHandledException('Código de status não suportado: ' + code);
+        }
+        return status;
+    }
+
+    public static String getStatusValue(PendingStatus status){
+        String value = STATUS_TO_API_VALUE.get(status);
+        if(value == null){
+            throw new AuraHandledException('Valor de picklist não encontrado para o status: ' + status);
+        }
+        return value;
     }
 }
