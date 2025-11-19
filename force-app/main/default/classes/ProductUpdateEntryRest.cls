@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 10-23-2025
+ * @last modified on  : 11-19-2025
  * @last modified by  : Daniel Belini
 **/
 @RestResource(urlMapping = '/ProductUpdateEntry/*')
@@ -14,6 +14,7 @@ global with sharing class ProductUpdateEntryRest {
         public String name;
         public Decimal price;
         public String productFamily;
+        public String description;
     }
     global class ResponseWrapper {
         public String status;
@@ -99,7 +100,8 @@ global with sharing class ProductUpdateEntryRest {
                         Family         = u.productFamily,
                         IsActive       = true,
                         ExternalId__c  = ext,
-                        Id_Externo__c  = ext
+                        Id_Externo__c  = ext,
+                        Description    = u.description
                     );
                     productsToInsert.add(newProd);
                     if (code != null) newByProductCode.put(code, newProd);
