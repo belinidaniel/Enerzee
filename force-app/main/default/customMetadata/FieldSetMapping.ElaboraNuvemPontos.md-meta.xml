@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <label>ELABORAR ESTUDO DE VIABILIDADE2</label>
-    <protected>true</protected>
+    <label>ELABORAR NUVEM DE PONTOS</label>
+    <protected>false</protected>
     <values>
         <field>FieldSetName__c</field>
-        <value xsi:type="xsd:string">ElaborarEstudoViabilidade</value>
+        <value xsi:type="xsd:string">ELABORAR_NUVEM_DE_PONTOS</value>
     </values>
     <values>
         <field>IsSectionRequired__c</field>
-        <value xsi:type="xsd:boolean">false</value>
+        <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
         <field>ObjectApiName__c</field>
@@ -20,7 +20,7 @@
     </values>
     <values>
         <field>SectionLabel__c</field>
-        <value xsi:type="xsd:string">Elaborar Estudo Viabilidade</value>
+        <value xsi:type="xsd:string">ELABORAR NUVEM DE PONTOS</value>
     </values>
     <values>
         <field>SortOrder__c</field>
@@ -28,6 +28,6 @@
     </values>
     <values>
         <field>Subject__c</field>
-        <value xsi:type="xsd:string">ELABORAR ESTUDO DE VIABILIDADE</value>
+        <value xsi:type="xsd:string">ELABORAR NUVEM DE PONTOS</value>
     </values>
 </CustomMetadata>
