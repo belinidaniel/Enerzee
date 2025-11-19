@@ -32,8 +32,5 @@
         <displayOrder>5</displayOrder>
         <tabType>AIAgents</tabType>
     </omniSupervisorConfigTab>
-    <omniSupervisorConfigUser>
-        <user>elenara.rodrigues@enerzee.com.br.qa</user>
-    </omniSupervisorConfigUser>
     <skillVisibility>AllSkills</skillVisibility>
 </OmniSupervisorConfig>

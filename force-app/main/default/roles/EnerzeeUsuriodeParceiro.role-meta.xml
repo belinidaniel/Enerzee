@@ -6,5 +6,5 @@
     <mayForecastManagerShare>false</mayForecastManagerShare>
     <name>Enerzee Usuário de Parceiro</name>
     <opportunityAccessLevel>None</opportunityAccessLevel>
-    <parentRole>CTO</parentRole>
+    <parentRole>GerenteComercial</parentRole>
 </Role>

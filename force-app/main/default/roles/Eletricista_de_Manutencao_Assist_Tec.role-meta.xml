@@ -5,5 +5,5 @@
     <mayForecastManagerShare>false</mayForecastManagerShare>
     <name>Eletricista de Manutenção / Assist Tec</name>
     <opportunityAccessLevel>Edit</opportunityAccessLevel>
-    <parentRole>Assistente_Assistencia_tecnica</parentRole>
+    <parentRole>Analista_de_Engenharia</parentRole>
 </Role>

@@ -8,18 +8,18 @@
             <role>Coordenador_Contabil</role>
             <role>CoordenadorEngenharia</role>
             <role>Coordenador_de_Pos_Venda</role>
-            <role>CoordenadorViabilidade</role>
             <role>CSO</role>
-            <role>CTO</role>
             <role>Gerente_Administrativo</role>
+            <role>GerenteComercial</role>
             <role>GerenteEngenharia</role>
             <role>Supervisor_Assistencia_Tecnica</role>
             <role>Supervisor_Comercial</role>
-            <role>Supervisor_de_Engenharia</role>
             <role>Supervisor_de_Marketing</role>
             <role>Supervisor_de_Obras</role>
+            <role>Supervisor_de_Projetos</role>
             <role>Supervisor_de_RLC</role>
             <role>Supervisor_de_Suprimentos</role>
+            <role>Supervisor_de_Viabilidade</role>
             <role>VP</role>
         </roles>
     </queueMembers>

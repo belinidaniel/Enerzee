@@ -4,7 +4,7 @@
     <name>Coordernador de viabilidade</name>
     <queueMembers>
         <roles>
-            <role>CoordenadorViabilidade</role>
+            <role>Supervisor_de_Viabilidade</role>
         </roles>
     </queueMembers>
     <queueSobject>

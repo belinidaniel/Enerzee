@@ -4,7 +4,7 @@
     <name>Suporte ao Integrador</name>
     <queueMembers>
         <roles>
-            <role>Assistente_Assistencia_tecnica</role>
+            <role>Analista_de_Engenharia</role>
             <role>CoordenadorEngenharia</role>
             <role>GerenteEngenharia</role>
         </roles>

@@ -828,7 +828,4 @@
     <sections>
         <masterLabel>Métricas diárias de contatos</masterLabel>
     </sections>
-    <sections>
-        <masterLabel>Accounts</masterLabel>
-    </sections>
 </ReportType>

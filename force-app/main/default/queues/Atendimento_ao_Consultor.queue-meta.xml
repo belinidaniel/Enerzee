@@ -5,12 +5,11 @@
     <queueMembers>
         <roles>
             <role>Assistente_Comercial</role>
-            <role>Assistente_de_Atendimento_Consultor</role>
             <role>CSO</role>
             <role>GerenteComercial</role>
         </roles>
         <users>
-            <user>consultor@enerzee.com.br</user>
+            <user>dayane.silva@enerzee.com.br</user>
         </users>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>

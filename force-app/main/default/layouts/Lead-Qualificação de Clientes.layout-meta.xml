@@ -84,6 +84,10 @@
                 <behavior>Edit</behavior>
                 <field>SDRAgent__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Distributiontype__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -188,6 +192,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>ResumoInteracao__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>DistributionValue__c</field>
             </layoutItems>
         </layoutColumns>
         <style>OneColumn</style>

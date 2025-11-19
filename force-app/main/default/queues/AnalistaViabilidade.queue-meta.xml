@@ -6,8 +6,8 @@
     <queueMembers>
         <roles>
             <role>Analista_de_Engenharia_Viabilidade</role>
-            <role>Assistente_Comercial_Viabilidade</role>
-            <role>Estagiario_de_Engenharia_Viabilidade</role>
+            <role>Assistente_Viabilidade</role>
+            <role>Estagiario_de_Viabilidade</role>
         </roles>
     </queueMembers>
     <queueSobject>
