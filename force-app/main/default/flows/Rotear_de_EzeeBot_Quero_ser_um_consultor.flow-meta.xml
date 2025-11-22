@@ -5,7 +5,7 @@
         <name>RoutingAction</name>
         <label>Rotear de EzeeBot</label>
         <locationX>176</locationX>
-        <locationY>242</locationY>
+        <locationY>134</locationY>
         <actionName>routeWork</actionName>
         <actionType>routeWork</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -79,6 +79,24 @@
             <name>botLabel</name>
         </inputParameters>
         <inputParameters>
+            <name>externalConversationBotId</name>
+        </inputParameters>
+        <inputParameters>
+            <name>externalConversationBotLabel</name>
+        </inputParameters>
+        <inputParameters>
+            <name>copilotId</name>
+        </inputParameters>
+        <inputParameters>
+            <name>copilotLabel</name>
+        </inputParameters>
+        <inputParameters>
+            <name>agentforceEmployeeAgentId</name>
+        </inputParameters>
+        <inputParameters>
+            <name>agentforceEmployeeAgentLabel</name>
+        </inputParameters>
+        <inputParameters>
             <name>isQueueVariable</name>
             <value>
                 <booleanValue>false</booleanValue>
@@ -86,75 +104,6 @@
         </inputParameters>
         <nameSegment>routeWork</nameSegment>
         <offset>0</offset>
-    </actionCalls>
-    <actionCalls>
-        <name>Verificar_se_a_fila_possui_agentes_disponiveis</name>
-        <label>Verificar se a fila possui agentes disponiveis</label>
-        <locationX>176</locationX>
-        <locationY>134</locationY>
-        <actionName>checkAvailabilityForRouting</actionName>
-        <actionType>checkAvailabilityForRouting</actionType>
-        <connector>
-            <targetReference>RoutingAction</targetReference>
-        </connector>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <inputParameters>
-            <name>serviceChannelId</name>
-            <value>
-                <stringValue>0N95e000000pR15CAE</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>routingType</name>
-            <value>
-                <stringValue>QueueBased</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>serviceChannelDevName</name>
-            <value>
-                <stringValue>sfdc_livemessage</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>serviceChannelLabel</name>
-            <value>
-                <stringValue>LiveMessage</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>queueId</name>
-            <value>
-                <stringValue>00GU5000001ejAjMAI</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>queueLabel</name>
-            <value>
-                <stringValue>Quero ser um consultor</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>skillOption</name>
-        </inputParameters>
-        <inputParameters>
-            <name>skillRequirementsResourceItem</name>
-        </inputParameters>
-        <inputParameters>
-            <name>agentId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>agentLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>selectedOutputs</name>
-            <value>
-                <stringValue>GET_ALL</stringValue>
-            </value>
-        </inputParameters>
-        <nameSegment>checkAvailabilityForRouting</nameSegment>
-        <offset>0</offset>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
     <apiVersion>61.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
@@ -184,7 +133,7 @@
         <locationX>50</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Verificar_se_a_fila_possui_agentes_disponiveis</targetReference>
+            <targetReference>RoutingAction</targetReference>
         </connector>
     </start>
     <status>Active</status>

@@ -20,6 +20,18 @@
         <converted>false</converted>
     </standardValue>
     <standardValue>
+        <fullName>Qualified</fullName>
+        <default>false</default>
+        <label>Qualificado</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Unqualified</fullName>
+        <default>false</default>
+        <label>Não Qualificado</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
         <fullName>Remarketing</fullName>
         <default>false</default>
         <label>Remarketing</label>
@@ -32,21 +44,9 @@
         <converted>false</converted>
     </standardValue>
     <standardValue>
-        <fullName>Não Qualificado</fullName>
+        <fullName>Converted</fullName>
         <default>false</default>
-        <label>Não qualificado</label>
-        <converted>false</converted>
-    </standardValue>
-    <standardValue>
-        <fullName>Não Convertido</fullName>
-        <default>false</default>
-        <label>Não Convertido</label>
-        <converted>false</converted>
-    </standardValue>
-    <standardValue>
-        <fullName>Qualified</fullName>
-        <default>false</default>
-        <label>Qualificado</label>
+        <label>Convertido</label>
         <converted>true</converted>
     </standardValue>
 </StandardValueSet>

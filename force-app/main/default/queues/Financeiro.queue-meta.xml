@@ -4,18 +4,6 @@
     <name>Financeiro</name>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>
     <queueSobject>
-        <sobjectType>Case</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>LiveAgentSession</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>LiveChatTranscript</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>MessagingEndUser</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>MessagingSession</sobjectType>
+        <sobjectType>ApprovalSubmission</sobjectType>
     </queueSobject>
 </Queue>

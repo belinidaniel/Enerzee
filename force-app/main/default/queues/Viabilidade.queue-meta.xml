@@ -4,9 +4,10 @@
     <name>Viabilidade</name>
     <queueMembers>
         <roles>
-            <role>Assistente_Assistencia_tecnica</role>
-            <role>CoordenadorViabilidade</role>
+            <role>Analista_de_Engenharia</role>
+            <role>Assistente_Viabilidade</role>
             <role>GerenteEngenharia</role>
+            <role>Supervisor_de_Viabilidade</role>
         </roles>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>

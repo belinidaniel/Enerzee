@@ -18,6 +18,66 @@
         <offset>0</offset>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
+    <actionCalls>
+        <name>Split_value_consultant</name>
+        <label>Split value consultant</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <actionName>StringListParser</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>get_Consultant_by_Email</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>delimiterType</name>
+            <value>
+                <stringValue>VIRGULA</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>rawValue</name>
+            <value>
+                <elementReference>$Record.DistributionValue__c</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>StringListParser</nameSegment>
+        <offset>0</offset>
+        <outputParameters>
+            <assignToReference>ValueSearchList</assignToReference>
+            <name>values</name>
+        </outputParameters>
+    </actionCalls>
+    <actionCalls>
+        <name>Split_value_graduation</name>
+        <label>Split value graduation</label>
+        <locationX>402</locationX>
+        <locationY>431</locationY>
+        <actionName>StringListParser</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Get_Consultant_by_graduation</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>delimiterType</name>
+            <value>
+                <stringValue>VIRGULA</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>rawValue</name>
+            <value>
+                <elementReference>$Record.DistributionValue__c</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>StringListParser</nameSegment>
+        <offset>0</offset>
+        <outputParameters>
+            <assignToReference>ValueSearchList</assignToReference>
+            <name>values</name>
+        </outputParameters>
+    </actionCalls>
     <apiVersion>63.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
@@ -201,7 +261,7 @@
         <name>Copy_1_of_Assign_First_Consultant_Prioritario</name>
         <label>Assign First Consultant</label>
         <locationX>50</locationX>
-        <locationY>539</locationY>
+        <locationY>647</locationY>
         <assignmentItems>
             <assignToReference>varConsultorSelecionadoId</assignToReference>
             <operator>Assign</operator>
@@ -225,7 +285,7 @@
         <name>Copy_2_of_Copy_1_of_Assign_First_Consultant_Prioritario</name>
         <label>Assign First Consultant</label>
         <locationX>402</locationX>
-        <locationY>539</locationY>
+        <locationY>647</locationY>
         <assignmentItems>
             <assignToReference>varConsultorSelecionadoId</assignToReference>
             <operator>Assign</operator>
@@ -265,7 +325,7 @@
         <name>Copy_2_of_Has_Owner_Warm</name>
         <label>Has Owner</label>
         <locationX>402</locationX>
-        <locationY>647</locationY>
+        <locationY>755</locationY>
         <defaultConnector>
             <isGoTo>true</isGoTo>
             <targetReference>Evaluete_Lead_Rating_Filter_True</targetReference>
@@ -561,14 +621,14 @@
             <name>By_Consutant</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.EmailConsultor__c</leftValueReference>
-                <operator>IsNull</operator>
+                <leftValueReference>$Record.Distributiontype__c</leftValueReference>
+                <operator>EqualTo</operator>
                 <rightValue>
-                    <booleanValue>false</booleanValue>
+                    <stringValue>Email</stringValue>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>get_Consultant_by_Email</targetReference>
+                <targetReference>Split_value_consultant</targetReference>
             </connector>
             <label>By Consutant</label>
         </rules>
@@ -576,14 +636,14 @@
             <name>By_Graduation</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.ConsultantGraduation__c</leftValueReference>
-                <operator>IsNull</operator>
+                <leftValueReference>$Record.Distributiontype__c</leftValueReference>
+                <operator>EqualTo</operator>
                 <rightValue>
-                    <booleanValue>false</booleanValue>
+                    <stringValue>Graduação</stringValue>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Get_Consultant_by_graduation</targetReference>
+                <targetReference>Split_value_graduation</targetReference>
             </connector>
             <label>By Graduation</label>
         </rules>
@@ -634,7 +694,7 @@
         <name>get_Consultant_by_Email</name>
         <label>get Consultant by Email</label>
         <locationX>50</locationX>
-        <locationY>431</locationY>
+        <locationY>539</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Copy_1_of_Assign_First_Consultant_Prioritario</targetReference>
@@ -642,9 +702,9 @@
         <filterLogic>and</filterLogic>
         <filters>
             <field>Email__c</field>
-            <operator>EqualTo</operator>
+            <operator>In</operator>
             <value>
-                <elementReference>$Record.EmailConsultor__c</elementReference>
+                <elementReference>ValueSearchList</elementReference>
             </value>
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
@@ -655,7 +715,7 @@
         <name>Get_Consultant_by_graduation</name>
         <label>Get Consultant by graduation</label>
         <locationX>402</locationX>
-        <locationY>431</locationY>
+        <locationY>539</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Copy_2_of_Copy_1_of_Assign_First_Consultant_Prioritario</targetReference>
@@ -663,9 +723,9 @@
         <filterLogic>and</filterLogic>
         <filters>
             <field>Lb65_Graduacao__c</field>
-            <operator>EqualTo</operator>
+            <operator>In</operator>
             <value>
-                <elementReference>$Record.ConsultantGraduation__c</elementReference>
+                <elementReference>ValueSearchList</elementReference>
             </value>
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
@@ -1199,6 +1259,13 @@
         <value>
             <booleanValue>false</booleanValue>
         </value>
+    </variables>
+    <variables>
+        <name>ValueSearchList</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
     </variables>
     <variables>
         <name>varConsultorId</name>

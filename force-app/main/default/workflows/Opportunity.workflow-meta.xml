@@ -25,7 +25,7 @@
         <description>Envio da Fase Aguardando dados da visita para coordenador e Responsável</description>
         <protected>false</protected>
         <recipients>
-            <recipient>CoordenadorViabilidade</recipient>
+            <recipient>Supervisor_de_Viabilidade</recipient>
             <type>role</type>
         </recipients>
         <recipients>
@@ -40,11 +40,7 @@
         <description>Notificar fases da proposta - Jornada do Cliente</description>
         <protected>false</protected>
         <recipients>
-            <recipient>ellen.vieira@enerzee.com.br</recipient>
-            <type>user</type>
-        </recipients>
-        <recipients>
-            <recipient>kaique.mathias@lab065.com.br.enrz</recipient>
+            <recipient>daniel.belini@enerzee.com.br</recipient>
             <type>user</type>
         </recipients>
         <senderAddress>support@enerzee.com.br</senderAddress>
@@ -59,17 +55,12 @@
             <recipient>Projetos</recipient>
             <type>group</type>
         </recipients>
-        <recipients>
-            <recipient>kaique.mathias@lab065.com.br.enrz</recipient>
-            <type>user</type>
-        </recipients>
         <senderAddress>support@enerzee.com.br</senderAddress>
         <senderType>OrgWideEmailAddress</senderType>
         <template>unfiled$public/NotificacaoFasesPropostaProjetos</template>
     </alerts>
     <alerts>
         <fullName>Notificar_fases_da_proposta</fullName>
-        <ccEmails>vitor.avancini@lab065.com</ccEmails>
         <description>Notificar fases da proposta</description>
         <protected>false</protected>
         <recipients>
@@ -84,10 +75,6 @@
         <ccEmails>financeiro@enerzee.com.br</ccEmails>
         <description>Notificar fases da proposta - financeiro</description>
         <protected>false</protected>
-        <recipients>
-            <recipient>kaique.mathias@lab065.com.br.enrz</recipient>
-            <type>user</type>
-        </recipients>
         <senderType>CurrentUser</senderType>
         <template>unfiled$public/Notificacao_Fases_Proposta_Financeiro</template>
     </alerts>
@@ -103,11 +90,10 @@
     </alerts>
     <alerts>
         <fullName>Oportunidade_Aprovada</fullName>
-        <ccEmails>kaique.mathias@lab065.com</ccEmails>
         <description>Oportunidade Aprovada</description>
         <protected>false</protected>
         <recipients>
-            <recipient>CoordenadorViabilidade</recipient>
+            <recipient>Supervisor_de_Viabilidade</recipient>
             <type>role</type>
         </recipients>
         <senderType>CurrentUser</senderType>
@@ -156,8 +142,6 @@
     </alerts>
     <alerts>
         <fullName>Simulacao_de_financiamento_solicitada</fullName>
-        <ccEmails>kaique.mathias@lab065.com</ccEmails>
-        <ccEmails>edinilson.bonato@enerzee.com.br</ccEmails>
         <description>Simulacao de financiamento solicitada</description>
         <protected>false</protected>
         <recipients>

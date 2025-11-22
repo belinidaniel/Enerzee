@@ -3,7 +3,7 @@
     <caseAccessLevel>Edit</caseAccessLevel>
     <contactAccessLevel>Edit</contactAccessLevel>
     <mayForecastManagerShare>false</mayForecastManagerShare>
-    <name>Analista de Logistica</name>
+    <name>Logistica</name>
     <opportunityAccessLevel>Edit</opportunityAccessLevel>
     <parentRole>Supervisor_de_Suprimentos</parentRole>
 </Role>

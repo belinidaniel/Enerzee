@@ -3,9 +3,10 @@
     <doesSendEmailToMembers>false</doesSendEmailToMembers>
     <name>Atendimento ao Cliente</name>
     <queueMembers>
-        <users>
-            <user>ellen.vieira@enerzee.com.br</user>
-        </users>
+        <roles>
+            <role>Assistente_de_Atendimento_Cliente</role>
+            <role>Gerente_Administrativo</role>
+        </roles>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>
     <queueSobject>

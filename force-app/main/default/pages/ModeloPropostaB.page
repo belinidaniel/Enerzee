@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 11-13-2025
+  @last modified on  : 11-19-2025
   @last modified by  : Daniel Belini
 -->
 <apex:page standardController="Opportunity" applyBodyTag="false" extensions="PDFControllerExtension,OpportunityDataController" action="{!salvarPDF}" standardStylesheets="false" showHeader="false"  sidebar="false" renderAs="PDF" cache="false">     
@@ -717,7 +717,7 @@
                 IF(ABS(Opportunity.ValorTotalProposta__c) >= 1000, RIGHT(TEXT(FLOOR(ABS(Opportunity.ValorTotalProposta__c) / 1000)), 3) & ".", "")& 
                 RIGHT(TEXT(FLOOR(ABS(Opportunity.ValorTotalProposta__c))), 3) & "," & IF(MOD(ABS(Opportunity.ValorTotalProposta__c) , 1)* 100 < 10, "0" & 
                 TEXT(ROUND(MOD(ABS(Opportunity.ValorTotalProposta__c) , 1), 2) * 100),
-                TEXT(MIN(ROUND(MOD(ABS(Opportunity.Amount) , 1), 2) * 100, 99)))}
+                TEXT(MIN(ROUND(MOD(ABS(Opportunity.ValorTotalProposta__c) , 1), 2) * 100, 99)))}
             </span>
         </apex:outputtext>
         

@@ -11,19 +11,4 @@
     <queueSobject>
         <sobjectType>Case</sobjectType>
     </queueSobject>
-    <queueSobject>
-        <sobjectType>LiveAgentSession</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>LiveChatTranscript</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>MessagingEndUser</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>MessagingSession</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>SetupMessagingSession__c</sobjectType>
-    </queueSobject>
 </Queue>

@@ -312,37 +312,4 @@ public with sharing class PDFControllerExtensionTest {
             System.assert(chunk.length() <= 2500, 'Each chunk should respect the maximum page size approximation');
         }
     }
-
-    @isTest
-    static void shouldUseOtherCostsDescriptionWhenProvided(){
-        ProposalCover__c proposalCover = (ProposalCover__c) TestFactory.createSObject(new ProposalCover__c(Template__c = 'ModeloPropostaA'), true);
-        Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(new Parceiro__c(
-            CapaProposta__c = proposalCover.id,
-            Produto__c = 'Solar'
-        ), true);
-
-        Opportunity opp = (Opportunity) TestFactory.createSObject(new Opportunity(
-            Parceiro__c = parceiro.id
-        ), true);
-
-        ViabilityStudy__c viability = new ViabilityStudy__c(
-            Opportunity__c = opp.Id,
-            AdequacyCostClient__c = 'Outros custos',
-            OtherCosts__c = 500,
-            OtherCostsDescription__c = 'Adequações especiais'
-        );
-        insert viability;
-
-        PageReference pageRef = Page.PropostaContainer;
-        pageRef.getParameters().put('id', String.valueOf(opp.Id));
-        Test.setCurrentPage(pageRef);
-
-        test.startTest();
-            ApexPages.StandardController sc = new ApexPages.StandardController(new Opportunity(Id = opp.Id));
-            PDFControllerExtension controller = new PDFControllerExtension(sc);
-        test.stopTest();
-
-        System.assert(!controller.viabilityClientCostEntries.isEmpty(), 'Expected viability client cost entries');
-        System.assert(controller.viabilityClientCostEntries[0].startsWith('Adequações especiais'), 'Should use OtherCostsDescription__c when present');
-    }
 }

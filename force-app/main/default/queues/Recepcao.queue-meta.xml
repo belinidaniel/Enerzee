@@ -4,7 +4,7 @@
     <name>Recepção</name>
     <queueMembers>
         <users>
-            <user>contato@enerzee.com.br</user>
+            <user>_contato@enerzee.com.br</user>
         </users>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>
