@@ -500,25 +500,43 @@
             <default>false</default>
         </values>
     </picklistValues>
+    
     <picklistValues>
         <picklist>Status__c</picklist>
         <values>
-            <fullName>Obra concluída</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Obra em execução</fullName>
-            <default>false</default>
-        </values>
-        <values>
             <fullName>Planejamento</fullName>
             <default>true</default>
+        </values>
+        <values>
+            <fullName>Planejamento de projeto</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Elaboração de projeto</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Projeto protocolado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Projetos em elaboração</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Projeto em análise</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Projeto aprovado</fullName>
+            <default>false</default>
         </values>
         <values>
             <fullName>Projeto cancelado</fullName>
             <default>false</default>
         </values>
     </picklistValues>
+
     <picklistValues>
         <picklist>TipoObra__c</picklist>
         <values>

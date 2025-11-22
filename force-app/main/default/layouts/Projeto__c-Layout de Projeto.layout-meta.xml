@@ -58,11 +58,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>InstallDate__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>DateInspection__c</field>
+                <field>Instalacao__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -79,20 +75,12 @@
                 <field>Status__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Instalacao__c</field>
-            </layoutItems>
-            <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>PotenciaPicoSistemakWp__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Projetista__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>GestorObra__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
