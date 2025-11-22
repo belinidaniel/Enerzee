@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 11-16-2025
+ * @last modified by  : Daniel Belini
+**/
 public class ProposalCoverTriggerHandler extends TriggerHandler {
     
     public ProposalCoverTriggerHandler(){
@@ -8,6 +15,7 @@ public class ProposalCoverTriggerHandler extends TriggerHandler {
             Trigger.newMap, 
             Trigger.oldMap
         );
+        
     }
 
     public static boolean enabled = true;
