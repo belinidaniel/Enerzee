@@ -52,41 +52,6 @@
                 <label>Projeto aprovado</label>
             </value>
             <value>
-                <fullName>Planejamento de Obra</fullName>
-                <default>false</default>
-                <label>Planejamento de Obra</label>
-            </value>
-            <value>
-                <fullName>Obra em execução</fullName>
-                <default>false</default>
-                <label>Obra em execução</label>
-            </value>
-            <value>
-                <fullName>Obra concluída - Aguardando troca de medidor</fullName>
-                <default>false</default>
-                <label>Obra concluída - Aguardando troca de medidor</label>
-            </value>
-            <value>
-                <fullName>Aguardando vistoria</fullName>
-                <default>false</default>
-                <label>Aguardando vistoria</label>
-            </value>
-            <value>
-                <fullName>Ligação solicitada</fullName>
-                <default>false</default>
-                <label>Ligação solicitada</label>
-            </value>
-            <value>
-                <fullName>Usina operando</fullName>
-                <default>false</default>
-                <label>Usina operando</label>
-            </value>
-            <value>
-                <fullName>Obra concluída</fullName>
-                <default>false</default>
-                <label>Obra concluída</label>
-            </value>
-            <value>
                 <fullName>Projeto cancelado</fullName>
                 <default>false</default>
                 <label>Projeto cancelado</label>

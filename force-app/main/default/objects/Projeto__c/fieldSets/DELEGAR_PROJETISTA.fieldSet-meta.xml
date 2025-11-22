@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DELEGAR_PROJETISTA</fullName>
+    <description>DELEGAR PROJETISTA</description>
+    <displayedFields>
+        <field>Projetista__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>false</isRequired>
+    </displayedFields>
+    <label>DELEGAR PROJETISTA</label>
+</FieldSet>
