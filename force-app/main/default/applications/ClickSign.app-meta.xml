@@ -4,8 +4,7 @@
         <headerColor>#FE4501</headerColor>
         <logo>clicksign_logo</logo>
         <logoVersion>1</logoVersion>
-        <shouldOverrideOrgTheme>
-        true</shouldOverrideOrgTheme>
+        <shouldOverrideOrgTheme>true</shouldOverrideOrgTheme>
     </brand>
     <formFactors>Small</formFactors>
     <formFactors>Large</formFactors>
@@ -19,7 +18,10 @@
     <tabs>ClickSignLog__c</tabs>
     <tabs>ClickSignTemplate__c</tabs>
     <tabs>Send_with_Click_Sign</tabs>
-    <tabs>Parceiro__c</tabs>
+    <tabs>Log__c</tabs>
+    <tabs>Knowledge__kav</tabs>
+    <tabs>LeadInteraction__c</tabs>
+    <tabs>SetupMessagingSession__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>ClickSign_UtilityBar</utilityBar>
 </CustomApplication>

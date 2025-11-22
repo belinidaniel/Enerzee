@@ -5,7 +5,7 @@
         <description>Notificar Atribuição de Tarefa - Fechado</description>
         <protected>false</protected>
         <recipients>
-            <recipient>wagner.sampaio@enerzee.com.br</recipient>
+            <recipient>daniel.belini@enerzee.com.br</recipient>
             <type>user</type>
         </recipients>
         <senderAddress>support@enerzee.com.br</senderAddress>

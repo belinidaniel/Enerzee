@@ -191,6 +191,16 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.Lb065_FaturaEnergia__c</fieldItem>
+                <identifier>RecordLb065_FaturaEnergia_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.InteresseEnergiaSolar__c</fieldItem>
                 <identifier>RecordInteresseEnergiaSolar_cField</identifier>
             </fieldInstance>
@@ -203,16 +213,6 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.TipoDeImovel__c</fieldItem>
                 <identifier>RecordTipoDeImovel_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Lb065_FaturaEnergia__c</fieldItem>
-                <identifier>RecordLb065_FaturaEnergia_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -381,8 +381,18 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ConsultantGraduation__c</fieldItem>
-                <identifier>RecordConsultantGraduation_cField</identifier>
+                <fieldItem>Record.Distributiontype__c</fieldItem>
+                <identifier>RecordDistributiontype__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.SDRAgent__c</fieldItem>
+                <identifier>RecordSDRAgent_cField2</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-e8aab3c2-dc2f-4f37-8662-41008b10e9a1</name>
@@ -407,6 +417,16 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.Rating</fieldItem>
                 <identifier>RecordRatingField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.DistributionValue__c</fieldItem>
+                <identifier>RecordDistributionValue__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-fb642560-76f6-403b-b260-146ac5350059</name>

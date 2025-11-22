@@ -193,6 +193,10 @@
         </itemInstances>
         <itemInstances>
             <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Lead__c</fieldItem>
                 <identifier>RecordLead__cField</identifier>
             </fieldInstance>
@@ -421,6 +425,16 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.NumeroInstalacao__c</fieldItem>
                 <identifier>RecordNumeroInstalacao_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Kwh__c</fieldItem>
+                <identifier>RecordKwh_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-1e73970e-0498-478f-a294-020d95d17172</name>

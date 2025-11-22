@@ -4,18 +4,12 @@
     <name>Quero ser um consultor</name>
     <queueMembers>
         <users>
-            <user>consultor@enerzee.com.br</user>
+            <user>dayane.silva@enerzee.com.br</user>
         </users>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>
     <queueSobject>
         <sobjectType>Case</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>LiveAgentSession</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>LiveChatTranscript</sobjectType>
     </queueSobject>
     <queueSobject>
         <sobjectType>MessagingEndUser</sobjectType>
@@ -24,6 +18,12 @@
         <sobjectType>MessagingSession</sobjectType>
     </queueSobject>
     <queueSobject>
-        <sobjectType>SetupMessagingSession__c</sobjectType>
+        <sobjectType>rsplus__Group_Messaging_Member__c</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>rsplus__Group_Messaging__c</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>rsplus__OTP__c</sobjectType>
     </queueSobject>
 </Queue>

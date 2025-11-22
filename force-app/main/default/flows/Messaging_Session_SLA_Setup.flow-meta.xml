@@ -2,6 +2,28 @@
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>65.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>has_queue_setup</name>
+        <label>has queue setup</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Queue_by_name.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Message</targetReference>
+            </connector>
+            <label>yes</label>
+        </rules>
+    </decisions>
     <environments>Default</environments>
     <interviewLabel>Messaging Session - SLA Setup {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Messaging Session - SLA Setup</label>
@@ -31,7 +53,7 @@
         <locationY>0</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Update_Message</targetReference>
+            <targetReference>has_queue_setup</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -134,6 +156,12 @@
             </value>
         </inputAssignments>
         <inputAssignments>
+            <field>QueueN1__c</field>
+            <value>
+                <elementReference>Get_Message_Config_by_Owner.QueueAtendentRole__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <field>QueueSupervisorRole__c</field>
             <value>
                 <elementReference>Get_Message_Config_by_Owner.QueueSupervisorRole__c</elementReference>
@@ -154,14 +182,10 @@
         <connector>
             <targetReference>Get_Queue_by_name</targetReference>
         </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>OwnerChanged__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
+        <filterFormula>AND(
+ISCHANGED({!$Record.OwnerId}),
+{!$Record__Prior.OwnerId} != {!$Record.OwnerId}
+)</filterFormula>
         <object>MessagingSession</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>

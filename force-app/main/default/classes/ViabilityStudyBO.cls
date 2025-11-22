@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-03-2025
+ * @last modified on  : 11-18-2025
  * @last modified by  : Daniel Belini
 **/
 public class ViabilityStudyBO {
@@ -279,8 +279,8 @@ public class ViabilityStudyBO {
                 return false;
             }
 
-            String option = viability.OwnTeamThirdParty__c.trim();
-            return !option.equalsIgnoreCase('enerzee');
+            String option = viability.OwnTeamThirdParty__c.trim().toLowerCase();
+            return option != 'enerzee' && option != 'consultor';
         }
 
         return true;

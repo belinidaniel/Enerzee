@@ -6,6 +6,7 @@
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
+    public static Boolean skipAsyncProposalGeneration = false;
 
     //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
     public static void createSellBuyOrder(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
@@ -98,6 +99,7 @@ public class OpportunityBO {
             opportunity.Origem__c = singleOpportunity.Origem;
         }
         if (singleOpportunity.ConsumptionAverage != null) {
+            opportunity.ConsumptionAverage__c = singleOpportunity.ConsumptionAverage;
             opportunity.MediaConsumo__c = singleOpportunity.ConsumptionAverage;
         }
         if (singleOpportunity.TargetConsume != null) {
@@ -1953,6 +1955,9 @@ public class OpportunityBO {
     }
     
     public static void generateProposalAsync(Map<Id,Opportunity> newMap, Map<Id,Opportunity> oldMap) {
+        if(skipAsyncProposalGeneration == true){
+            return;
+        }
         for(Opportunity opp :  newMap.values() ){
             Opportunity oldOpp = oldMap.get(opp.Id);
             if(((opp.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('EzeeConnect').getRecordTypeId() && areRequiredFieldsFilledConnect(opp)) ||
@@ -1975,9 +1980,6 @@ public class OpportunityBO {
                         opp.PropostaGerada__c == true &&
                         opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c &&
                         opp.StatusAprovacaoDesconto__c == 'Aprovado'
-                    ) ||
-                    (
-                        formulaFieldsChanged(oldOpp, opp)
                     ) ||
                     (
                         opp.PropostaGerada__c == false
