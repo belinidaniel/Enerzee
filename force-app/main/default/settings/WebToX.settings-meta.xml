@@ -3,5 +3,5 @@
     <optOutEmailForInactiveWebToCase>false</optOutEmailForInactiveWebToCase>
     <shouldHideRecordInfoInEmail>false</shouldHideRecordInfoInEmail>
     <webToCaseSpamFilter>true</webToCaseSpamFilter>
-    <webToLeadSpamFilter>false</webToLeadSpamFilter>
+    <webToLeadSpamFilter>true</webToLeadSpamFilter>
 </WebToXSettings>

@@ -9,6 +9,7 @@
     <columns>LEAD.CREATED_DATE</columns>
     <columns>CORE.USERS.ALIAS</columns>
     <columns>LEAD.UNREAD</columns>
+    <columns>LEAD.LEAD_SOURCE</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>LEAD.LEAD_SOURCE</field>

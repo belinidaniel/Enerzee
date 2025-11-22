@@ -1,0 +1,222 @@
+<template>
+    <lightning-card title="Propostas">
+        <template if:true={error}>
+            <div class="slds-text-color_error slds-p-around_small">{error}</div>
+        </template>
+
+        <div class="action-row slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-around_small">
+            <div class="action-left">
+                <lightning-button label="Visualizar proposta"
+                                  variant="neutral"
+                                  onclick={handleOpenPreview}
+                                  disabled={disableActions}></lightning-button>
+            </div>
+            <div class="action-right">
+                <lightning-button label="Enviar proposta"
+                                  variant="brand"
+                                  onclick={handleOpenSend}
+                                  disabled={disableActions}></lightning-button>
+            </div>
+        </div>
+
+        <lightning-tabset class="slds-m-top_small"
+                          variant="scoped"
+                          active-tab-value={activeTab}
+                          onactive={handleTabChange}>
+            <lightning-tab label="Propostas" value="proposal">
+                <template if:true={hasProposalAttachments}>
+                    <div class="slds-p-horizontal_small slds-m-vertical_small file-list">
+                        <template for:each={proposalFiles} for:item="file">
+                            <article key={file.id} class="file-card slds-media">
+                                <div class="file-thumb slds-media__figure">
+                                    <lightning-icon icon-name={file.iconName} size="small" alternative-text="Arquivo"></lightning-icon>
+                                </div>
+                                <button class="slds-media__body file-body slds-button_reset"
+                                        type="button"
+                                        data-id={file.id}
+                                        data-collection="proposal"
+                                        onclick={handlePreviewFile}>
+                                    <span class="file-title">{file.title}</span>
+                                    <p class="file-meta slds-text-body_small slds-text-color_weak">
+                                        {file.displayMeta}
+                                    </p>
+                                </button>
+                                <div class="file-actions">
+                                    <lightning-button-icon icon-name="utility:new_window"
+                                                           alternative-text="Abrir"
+                                                           onclick={openFile}
+                                                           data-url={file.downloadUrl}></lightning-button-icon>
+                                </div>
+                            </article>
+                        </template>
+                    </div>
+                    <template if:true={canLoadMoreProposals}>
+                        <div class="slds-text-align_center slds-p-around_small">
+                            <lightning-button label="Ver mais"
+                                              variant="neutral"
+                                              data-collection="proposal"
+                                              onclick={handleLoadMore}></lightning-button>
+                        </div>
+                    </template>
+                </template>
+                <template if:false={hasProposalAttachments}>
+                    <p class="slds-text-body_small slds-p-around_small slds-text-color_weak">
+                        Nenhuma proposta disponível ainda.
+                    </p>
+                </template>
+            </lightning-tab>
+            <lightning-tab label="Outros documentos" value="other">
+                <template if:true={hasOtherAttachments}>
+                    <div class="slds-p-horizontal_small slds-m-vertical_small file-list">
+                        <template for:each={otherFiles} for:item="file">
+                            <article key={file.id} class="file-card slds-media">
+                                <div class="file-thumb slds-media__figure">
+                                    <lightning-icon icon-name={file.iconName} size="small" alternative-text="Documento"></lightning-icon>
+                                </div>
+                                <button class="slds-media__body file-body slds-button_reset"
+                                        type="button"
+                                        data-id={file.id}
+                                        data-collection="other"
+                                        onclick={handlePreviewFile}>
+                                    <span class="file-title">{file.title}</span>
+                                    <p class="file-meta slds-text-body_small slds-text-color_weak">
+                                        {file.displayMeta}
+                                    </p>
+                                </button>
+                                <div class="file-actions">
+                                    <lightning-button-icon icon-name="utility:new_window"
+                                                           alternative-text="Abrir"
+                                                           onclick={openFile}
+                                                           data-url={file.downloadUrl}></lightning-button-icon>
+                                </div>
+                            </article>
+                        </template>
+                    </div>
+                    <template if:true={canLoadMoreOthers}>
+                        <div class="slds-text-align_center slds-p-around_small">
+                            <lightning-button label="Ver mais"
+                                              variant="neutral"
+                                              data-collection="other"
+                                              onclick={handleLoadMore}></lightning-button>
+                        </div>
+                    </template>
+                </template>
+                <template if:false={hasOtherAttachments}>
+                    <p class="slds-text-body_small slds-p-around_small slds-text-color_weak">
+                        Nenhum documento externo disponível.
+                    </p>
+                </template>
+            </lightning-tab>
+        </lightning-tabset>
+    </lightning-card>
+
+    <template if:true={isModalOpen}>
+        <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning-button-icon icon-name="utility:close"
+                                           alternative-text="Fechar"
+                                           onclick={closeModal}
+                                           variant="bare-inverse"
+                                           class="slds-modal__close"></lightning-button-icon>
+                    <h2 class="slds-text-heading_medium">{modalTitle}</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <template if:true={hasTemplates}>
+                        <lightning-combobox name="template"
+                                            label="Modelo de proposta"
+                                            value={comboboxValue}
+                                            placeholder="Selecione"
+                                            options={templateOptions}
+                                            onchange={handleTemplateChange}></lightning-combobox>
+                        <template if:true={previewUrl}>
+                            <div class="preview-container slds-m-top_medium">
+                                <template if:true={isPreviewLoading}>
+                                    <lightning-spinner alternative-text="Carregando proposta"
+                                                       size="medium"
+                                                       class="preview-spinner"></lightning-spinner>
+                                </template>
+                                <iframe src={previewUrl}
+                                        title="Pré-visualização da proposta"
+                                        onload={handleIframeLoad}></iframe>
+                            </div>
+                        </template>
+                    </template>
+                    <template if:false={hasTemplates}>
+                        <p class="slds-text-body_small slds-text-color_error">
+                            Nenhum modelo disponível para este parceiro.
+                        </p>
+                    </template>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancelar" onclick={closeModal}></lightning-button>
+                    <template if:true={isSendMode}>
+                        <lightning-button label="Enviar proposta"
+                                          variant="brand"
+                                          onclick={handleSendProposal}
+                                          disabled={disablePrimaryAction}></lightning-button>
+                    </template>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <template if:true={isFileModalOpen}>
+        <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container file-preview__container">
+                <header class="slds-modal__header">
+                    <lightning-button-icon icon-name="utility:close"
+                                           alternative-text="Fechar"
+                                           onclick={closeFileModal}
+                                           variant="bare-inverse"
+                                           class="slds-modal__close"></lightning-button-icon>
+                    <h2 class="slds-text-heading_medium">{filePreviewName}</h2>
+                </header>
+                <div class="slds-modal__content slds-var-p-around_medium file-preview__content">
+                    <template if:true={isAttachmentPreviewLoading}>
+                        <div class="spinner-wrapper">
+                            <lightning-spinner alternative-text="Carregando documento" size="medium"></lightning-spinner>
+                        </div>
+                    </template>
+                    <template if:false={isAttachmentPreviewLoading}>
+                        <template if:true={hasPreviewUrl}>
+                            <template if:true={filePreviewIsImage}>
+                                <img src={filePreviewUrl} alt="Pré-visualização" class="file-preview__image" />
+                            </template>
+                            <template if:true={filePreviewIsPdf}>
+                                <iframe src={filePreviewUrl}
+                                        title="Documento em PDF"
+                                        class="file-preview__frame"
+                                        style="width: 100%; height: 1000px;"></iframe>
+                            </template>
+                            <template if:true={filePreviewIsUnsupported}>
+                                <p>Visualização não suportada. Utilize o botão abaixo para abrir o arquivo.</p>
+                                <div class="slds-text-align_center slds-p-top_medium">
+                                    <lightning-button label="Abrir em nova aba"
+                                                      variant="neutral"
+                                                      onclick={downloadCurrentFile}></lightning-button>
+                                </div>
+                            </template>
+                        </template>
+                        <template if:false={hasPreviewUrl}>
+                            <p>Arquivo não disponível para visualização.</p>
+                        </template>
+                    </template>
+                </div>
+                <footer class="slds-modal__footer file-preview__footer">
+                    <lightning-button label="Baixar" onclick={downloadCurrentFile}></lightning-button>
+                    <lightning-button label="Fechar"
+                                      variant="brand"
+                                      class="slds-m-left_small"
+                                      onclick={closeFileModal}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <template if:true={isLoading}>
+        <lightning-spinner alternative-text="Carregando" size="small" class="fixed-spinner"></lightning-spinner>
+    </template>
+</template>

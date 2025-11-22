@@ -116,4 +116,14 @@
         <default>false</default>
         <label>Agente Force</label>
     </standardValue>
+    <standardValue>
+        <fullName>Agente SDR - Whatsapp</fullName>
+        <default>false</default>
+        <label>Agente SDR - Whatsapp</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Meta Ads</fullName>
+        <default>false</default>
+        <label>Meta Ads</label>
+    </standardValue>
 </StandardValueSet>

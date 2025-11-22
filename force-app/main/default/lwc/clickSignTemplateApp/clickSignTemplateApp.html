@@ -1,0 +1,141 @@
+<template>
+    <template if:true={isLoading}>
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+    </template>
+    <template if:false={showModal}>
+        <template if:false={isLoading}>
+            <!-- Header -->
+            <div class="header slds-grid">
+                <div class="header-title slds-col slds-size_2-of-3">
+                    <lightning-icon icon-name="custom:custom63" size="small" alternative-text="icon"></lightning-icon>
+                    <span>{labels.headerTitle}</span>
+                </div>
+                <div class="header-actions slds-col slds-size_1-of-3">
+                    <lightning-button
+                        label={labels.cancelButton}
+                        variant="neutral"
+                        class="cancel-button"
+                        onclick={handleCancel}>
+                    </lightning-button>
+                    <lightning-button
+                        label={labels.backButton}
+                        variant="neutral"
+                        class="back-button"
+                        onclick={handleBack}
+                        disabled={isBackDisabled}>
+                    </lightning-button>
+                    <template if:true={isCreateButton}>
+                        <lightning-button
+                            label={labels.createButtonTitle}
+                            variant="brand"
+                            class="create-button"
+                            onclick={handleCreate}>
+                        </lightning-button>
+                    </template>
+                    <template if:false={isCreateButton}>
+                        <lightning-button
+                            label={labels.nextButton}
+                            variant="brand"
+                            class="next-button"
+                            onclick={handleNext}
+                            disabled={isNextDisabled}>
+                        </lightning-button>
+                    </template>
+                </div>
+            </div>
+            <div style="padding: 100px 250px 0px 250px;">
+                <!-- Path Component -->
+                <div class="progress-container">
+                    <c-path
+                        indicator-type="path"
+                        step-list="Select Source, Add Fields, Upload Documents,Add Recipient, Preview Documents, Create button Template"
+                        current-step={currentStep}
+                        current-step-percentage="0">
+                    </c-path>
+                </div>
+
+                <!-- Dynamically Render Components -->
+                <div class="content">
+                    <template if:true={isSourcePhase}>
+                        <!-- Select Data Source Section -->
+                        <div class="slds-p-around_medium">
+                            <h1 class="slds-text-heading_large" style="padding: 20px 14px 45px 0px;">{labels.selectDataSource}</h1>
+                            <p>Escolha o objeto do Salesforce que você usará neste modelo. Seus usuários finais gerarão documentos com os dados deste objeto.</p>
+                            <c-click-sign-data-source
+                                object-name={objectName}
+                                select-record=false
+                                template-id={templateId}
+                                onselectobject={handleUpdateObject}>
+                            </c-click-sign-data-source>
+                        </div>
+                    </template>
+                    <template if:true={isAddFields}>
+                        <c-click-sign-Template-Fields 
+                            template-id={templateId}
+                            onfieldschange={handleFieldsChange}
+                            object-name={objectName}>
+                        </c-click-sign-Template-Fields>
+                    </template>
+                    <template if:true={isUploadDocuments}>
+                        <c-click-sign-upload-documents
+                            onchangefilename={handleFileNameChange}
+                            template-id={templateId}>
+                        </c-click-sign-upload-documents>
+                    </template>
+                    <template if:true={isRecipient}>
+                        <c-click-sign-recipients template-id={templateId} object-name={objectName} click-sign-template={clickSignTemplate}></c-click-sign-recipients>
+                    </template>
+                    <template if:true={isPreviewDocuments}>
+                        <c-click-sign-preview-documents
+                            key={refreshKey} 
+                            template-id={templateId}
+                            object-name={objectName}
+                            file-name={fileName}>
+                        </c-click-sign-preview-documents>
+                    </template>
+                    <template if:true={isCreateButtonTemplate}>
+                        <c-click-sign-create-buttom-template
+                        template-id={templateId}
+                        >
+                        </c-click-sign-create-buttom-template>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </template>
+    <template if:true={showModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">{labels.createButtonTitle}</h2>
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"></lightning-icon>
+                    </button>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <lightning-input
+                        label={labels.templateName}
+                        type="text"
+                        data-id="templateName"
+                        required
+                    ></lightning-input>
+                    <lightning-textarea
+                        label={labels.templateDescription}
+                        data-id="templateDescription"
+                        required
+                    ></lightning-textarea>
+
+                    <c-click-sign-data-source
+                        select-record=false
+                        onselectobject={handleObjectSelection}>
+                    </c-click-sign-data-source>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={closeModal}>{labels.cancelButton}</button>
+                    <button class="slds-button slds-button_brand" onclick={handleSave}>Salvar</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

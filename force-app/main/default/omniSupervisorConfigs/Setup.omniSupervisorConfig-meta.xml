@@ -26,6 +26,15 @@
         <displayOrder>5</displayOrder>
         <tabType>AIAgents</tabType>
     </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>6</displayOrder>
+        <flexiPage>MessagensSLA</flexiPage>
+        <tabType>FlexipageType</tabType>
+    </omniSupervisorConfigTab>
+    <omniSupervisorConfigTab>
+        <displayOrder>7</displayOrder>
+        <tabType>Reports</tabType>
+    </omniSupervisorConfigTab>
     <omniSupervisorConfigUser>
         <user>kaique.mathias@lab065.com.br.enrz</user>
     </omniSupervisorConfigUser>

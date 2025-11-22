@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 10-16-2025
+ * @last modified on  : 11-19-2025
  * @last modified by  : Daniel Belini
 **/
 @RestResource(urlMapping = '/ProductUpdateEntry/*')
@@ -14,6 +14,7 @@ global with sharing class ProductUpdateEntryRest {
         public String name;
         public Decimal price;
         public String productFamily;
+        public String description;
     }
     global class ResponseWrapper {
         public String status;
@@ -64,15 +65,6 @@ global with sharing class ProductUpdateEntryRest {
                     WHERE (ExternalId__c IN :extIds)
                 ]) {
                     idToProd.put(p.Id, p);
-
-                    if (!String.isBlank(p.ProductCode)) {
-                        if (!codeToProds.containsKey(p.ProductCode)) codeToProds.put(p.ProductCode, new List<Product2>());
-                        codeToProds.get(p.ProductCode).add(p);
-                    }
-                    if (!String.isBlank(p.Name)) {
-                        if (!nameToProds.containsKey(p.Name)) nameToProds.put(p.Name, new List<Product2>());
-                        nameToProds.get(p.Name).add(p);
-                    }
                     String extVal = (String)p.get('ExternalId__c');
                     if (!String.isBlank(extVal)) {
                         if (!extIdToProds.containsKey(extVal)) extIdToProds.put(extVal, new List<Product2>());
@@ -108,7 +100,8 @@ global with sharing class ProductUpdateEntryRest {
                         Family         = u.productFamily,
                         IsActive       = true,
                         ExternalId__c  = ext,
-                        Id_Externo__c  = ext
+                        Id_Externo__c  = ext,
+                        Description    = u.description
                     );
                     productsToInsert.add(newProd);
                     if (code != null) newByProductCode.put(code, newProd);

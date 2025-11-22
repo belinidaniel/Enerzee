@@ -1,0 +1,92 @@
+<template>
+    <template if:false={isLoading}>
+        <div class="upload-container">
+            
+            <h1 class="slds-text-heading_large" style="margin-bottom: 1rem;">{label.ClickSign_HeaderTitle}</h1>
+            <p>{label.ClickSign_DragDropFiles}</p>
+            <template if:false={uploadedFile}>
+                <!-- File Upload Section -->
+                <div class="upload-container">
+                    <!-- Document List -->
+                        <template if:false={uploadedFile}>
+                            <input type="file" accept=".docx" onchange={handleFileUpload} />
+                        </template>
+                </div>
+            </template>
+
+            <!-- Uploaded File Display -->
+            <template if:true={uploadedFile}>
+                <div class="uploaded-file-container slds-box slds-p-around_medium slds-grid slds-wrap">
+                    <!-- File Details -->
+                    <div class="slds-size_4-of-12" >
+                        <div class="file-details slds-grid slds-wrap">
+                            <div class="file-icon slds-col slds-size_1-of-12">
+                                <lightning-icon icon-name="doctype:word" size="small" alternative-text="Word File"></lightning-icon>
+                            </div>
+                            <div class="file-info slds-col slds-size_9-of-12">
+                                <h2>{document.title}</h2>
+                                <p>{document.size}</p>
+                            </div>
+    
+                        </div>
+                    </div>
+                    <!-- File Settings -->
+                    <div class="file-settings slds-m-top_medium slds-size_4-of-12">
+                        <lightning-input style="width: 100%;"
+                            label={label.ClickSign_GeneratedFileName}
+                            type="text"
+                            value={generatedFileName}
+                            onchange={handleGeneratedFileNameChange}>
+                        </lightning-input>
+                        <!-- <lightning-combobox
+                            label="File Suffix"
+                            options={fileSuffixOptions}
+                            value={fileSuffix}
+                            onchange={handleFileSuffixChange}>
+                        </lightning-combobox>
+                        <lightning-combobox
+                            label="File Format"
+                            options={fileFormatOptions}
+                            value={fileFormat}
+                            onchange={handleFileFormatChange}>
+                        </lightning-combobox> -->
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <lightning-button-icon
+                            icon-name="utility:close"
+                            alternative-text={label.ClickSign_RemoveFile}
+                            onclick={handleRemoveDocument}>
+                        </lightning-button-icon>
+                    </div>
+                </div>
+            </template>
+        </div>
+    
+    </template>
+
+    <!-- Toast Notification -->
+    <template if:true={showToast}>
+        <div class="slds-notify_container slds-is-absolute">
+            <div class="slds-notify slds-notify_toast slds-theme_{toastVariant}" role="alert">
+                <span class="slds-assistive-text">{toastVariant}</span>
+                <div class="slds-notify__content">
+                    <h2 class="slds-text-heading_small">{toastMessage}</h2>
+                </div>
+                <button class="slds-button slds-button_icon slds-button_icon-small slds-notify__close slds-button_icon-inverse"
+                        title={label.ClickSign_Close} onclick={closeToast}>
+                    <lightning-icon icon-name="utility:close" alternative-text={label.ClickSign_Close}></lightning-icon>
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <template if:true={isLoading}>
+        <div class="slds-spinner_container">
+            <div role="status" class="slds-spinner slds-spinner_medium">
+                <span class="slds-assistive-text">{label.ClickSign_Loading}</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </template>
+</template>

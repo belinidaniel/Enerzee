@@ -9,7 +9,7 @@
                         <valueListItems>
                             <value>Opportunity.Gerar_Proposta</value>
                             <visibilityRule>
-                                <booleanFilter>1 OR 2 OR 3</booleanFilter>
+                                <booleanFilter>1 OR 2 OR 3 OR 4 OR 5</booleanFilter>
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
@@ -24,27 +24,26 @@
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
                                     <rightValue>Readequação de Proposta</rightValue>
+                                </criteria>
+                                <criteria>
+                                    <leftValue>{!Record.StageName}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>Viabilidade Técnica</rightValue>
+                                </criteria>
+                                <criteria>
+                                    <leftValue>{!Record.StageName}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>Viabilidade Tecnica</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
                         <valueListItems>
                             <value>Opportunity.Enviar_Proposta_manualmente</value>
                             <visibilityRule>
-                                <booleanFilter>1 OR 2 OR 3</booleanFilter>
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
                                     <rightValue>Elaboração de proposta</rightValue>
-                                </criteria>
-                                <criteria>
-                                    <leftValue>{!Record.StageName}</leftValue>
-                                    <operator>EQUAL</operator>
-                                    <rightValue>Proposta Gerada</rightValue>
-                                </criteria>
-                                <criteria>
-                                    <leftValue>{!Record.StageName}</leftValue>
-                                    <operator>EQUAL</operator>
-                                    <rightValue>Readequação de Proposta</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -56,13 +55,6 @@
                         </valueListItems>
                         <valueListItems>
                             <value>Submit</value>
-                            <visibilityRule>
-                                <criteria>
-                                    <leftValue>{!Record.StageName}</leftValue>
-                                    <operator>EQUAL</operator>
-                                    <rightValue>Validação do método de pagamento</rightValue>
-                                </criteria>
-                            </visibilityRule>
                         </valueListItems>
                         <valueListItems>
                             <value>Delete</value>
@@ -257,16 +249,6 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.PropostaRevo__c</fieldItem>
-                <identifier>RecordPropostaRevo_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.UrlSimulation__c</fieldItem>
                 <identifier>RecordUrlSimulation_cField</identifier>
             </fieldInstance>
@@ -275,6 +257,16 @@
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>required</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Name</fieldItem>
+                <identifier>RecordNameField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -425,6 +417,26 @@
                 <identifier>RecordKwh_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.TipoKitPromocional__c</fieldItem>
+                <identifier>RecordTipoKitPromocional_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.PropostaRevo__c</fieldItem>
+                <identifier>RecordPropostaRevo_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-0ce53166-d159-437e-917e-534a4ba3b1a6</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -565,16 +577,6 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.ComentarioSolicitante__c</fieldItem>
                 <identifier>RecordComentarioSolicitante_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.TipoKitPromocional__c</fieldItem>
-                <identifier>RecordTipoKitPromocional_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-446b4619-c24a-415a-b5e9-ea56eb12f2f8</name>
@@ -2622,6 +2624,96 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.MainViability__c</fieldItem>
+                <identifier>RecordMainViability_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.MainViability__r.AdequacyCostEnerzee__c</fieldItem>
+                <identifier>RecordMainViability_rAdequacyCostEnerzee_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.MainViability__r.CoberturaCost__c</fieldItem>
+                <identifier>RecordMainViability_rCoberturaCost_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.MainViability__r.AdditionalCost__c</fieldItem>
+                <identifier>RecordMainViability_rAdditionalCost_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-339b5cc6-2903-4f02-8e4b-a61ac1369f47</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.MainViability__r.AdequacyCostClient__c</fieldItem>
+                <identifier>RecordMainViability_rAdequacyCostClient_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.MainViability__r.AcBranchCost__c</fieldItem>
+                <identifier>RecordMainViability_rAcBranchCost_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.MainViability__r.DcBranchCost__c</fieldItem>
+                <identifier>RecordMainViability_rDcBranchCost_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.MainViability__r.TechnicalVisitCost__c</fieldItem>
+                <identifier>RecordMainViability_rTechnicalVisitCost_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.MainViability__r.OtherCosts__c</fieldItem>
+                <identifier>RecordMainViability_rOtherCosts_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-b19027ab-441b-4df2-b9ae-15474b7aa2c1</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-339b5cc6-2903-4f02-8e4b-a61ac1369f47</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column43</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-b19027ab-441b-4df2-b9ae-15474b7aa2c1</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column44</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-5bb41bd3-5d2a-4bb1-a1ec-18227dae625c</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.ConsumoAlvo__c</fieldItem>
                 <identifier>RecordConsumoAlvo_cField</identifier>
             </fieldInstance>
@@ -3395,6 +3487,24 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>columns</name>
+                    <value>Facet-5bb41bd3-5d2a-4bb1-a1ec-18227dae625c</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Custos da viabilidade</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:fieldSection</componentName>
+                <identifier>flexipage_fieldSection22</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>columns</name>
                     <value>Facet-14ca0531-e696-4b25-a455-4ac49d2abdd5</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -3568,12 +3678,6 @@
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>leadOpportunityAlert</componentName>
-                <identifier>c_leadOpportunityAlert</identifier>
-            </componentInstance>
-        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>

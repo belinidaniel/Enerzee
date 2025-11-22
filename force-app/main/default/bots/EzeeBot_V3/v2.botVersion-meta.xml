@@ -3480,18 +3480,6 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
     </conversationVariables>
     <conversationVariables>
         <dataType>Text</dataType>
-        <developerName>Name</developerName>
-        <includeInPrompt>false</includeInPrompt>
-        <label>Name</label>
-    </conversationVariables>
-    <conversationVariables>
-        <dataType>Text</dataType>
-        <developerName>Name_User</developerName>
-        <includeInPrompt>false</includeInPrompt>
-        <label>Name_User</label>
-    </conversationVariables>
-    <conversationVariables>
-        <dataType>Text</dataType>
         <developerName>None</developerName>
         <includeInPrompt>false</includeInPrompt>
         <label>None</label>
@@ -3581,6 +3569,18 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
         <developerName>userId</developerName>
         <includeInPrompt>false</includeInPrompt>
         <label>userId</label>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <developerName>Name</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Name</label>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <developerName>Name_User</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Name_User</label>
     </conversationVariables>
     <entryDialog>Welcome</entryDialog>
     <intentDisambiguationEnabled>false</intentDisambiguationEnabled>

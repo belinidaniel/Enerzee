@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <buckets>
+        <bucketType>text</bucketType>
+        <developerName>BucketField_46964861</developerName>
+        <masterLabel>Produto</masterLabel>
+        <nullTreatment>n</nullTreatment>
+        <sourceColumnName>Opportunity.Tipo_de_registro__c</sourceColumnName>
+        <useOther>false</useOther>
+        <values>
+            <sourceValues>
+                <sourceValue>Contrato Micro</sourceValue>
+            </sourceValues>
+            <sourceValues>
+                <sourceValue>Contrato Mini</sourceValue>
+            </sourceValues>
+            <sourceValues>
+                <sourceValue>Outras Oportunidades</sourceValue>
+            </sourceValues>
+            <sourceValues>
+                <sourceValue>Micro Grupo A - Elaboração</sourceValue>
+            </sourceValues>
+            <sourceValues>
+                <sourceValue>Micro Grupo B - Elaboração</sourceValue>
+            </sourceValues>
+            <value>Solar</value>
+        </values>
+        <values>
+            <sourceValues>
+                <sourceValue>Bow-e</sourceValue>
+            </sourceValues>
+            <sourceValues>
+                <sourceValue>Raízen</sourceValue>
+            </sourceValues>
+            <sourceValues>
+                <sourceValue>Plin</sourceValue>
+            </sourceValues>
+            <sourceValues>
+                <sourceValue>Ezee Connect</sourceValue>
+            </sourceValues>
+            <value>Ezee Connect</value>
+        </values>
+        <values>
+            <sourceValues>
+                <sourceValue>Produtos e Serviços</sourceValue>
+            </sourceValues>
+            <value>Produtos e Serviços</value>
+        </values>
+        <values>
+            <sourceValues>
+                <sourceValue>Ezee Solar</sourceValue>
+            </sourceValues>
+            <value>Ezee Solar</value>
+        </values>
+        <values>
+            <sourceValues>
+                <sourceValue>Ezee Livre</sourceValue>
+            </sourceValues>
+            <value>Ezee Livre</value>
+        </values>
+    </buckets>
+    <chart>
+        <backgroundColor1>#FFFFFF</backgroundColor1>
+        <backgroundColor2>#FFFFFF</backgroundColor2>
+        <backgroundFadeDir>Diagonal</backgroundFadeDir>
+        <chartSummaries>
+            <aggregate>Median</aggregate>
+            <axisBinding>y</axisBinding>
+            <column>STAGE_DURATION</column>
+        </chartSummaries>
+        <chartType>HorizontalBar</chartType>
+        <enableHoverLabels>false</enableHoverLabels>
+        <expandOthers>true</expandOthers>
+        <groupingColumn>STAGE_NAME</groupingColumn>
+        <location>CHART_BOTTOM</location>
+        <showAxisLabels>false</showAxisLabels>
+        <showPercentage>false</showPercentage>
+        <showTotal>false</showTotal>
+        <showValues>false</showValues>
+        <size>Medium</size>
+        <summaryAxisRange>Auto</summaryAxisRange>
+        <textColor>#000000</textColor>
+        <textSize>12</textSize>
+        <titleColor>#000000</titleColor>
+        <titleSize>18</titleSize>
+    </chart>
+    <columns>
+        <field>CREATED_DATE</field>
+    </columns>
+    <columns>
+        <field>Opportunity.Numeroproposta__c</field>
+    </columns>
+    <columns>
+        <field>OPPORTUNITY_NAME</field>
+    </columns>
+    <columns>
+        <field>RECORDTYPE</field>
+    </columns>
+    <columns>
+        <field>Opportunity.SubTipo__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Median</aggregateTypes>
+        <field>STAGE_DURATION</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>Opportunity.ValorTotalProposta__c</field>
+    </columns>
+    <filter>
+        <criteriaItems>
+            <column>RECORDTYPE</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>notEqual</operator>
+            <value>Opportunity.Bitrix</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>STAGE_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>Parecer de acesso</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>RECORDTYPE</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>Opportunity.OutrasOportunidades,Opportunity.Produtos,Opportunity.Servicos,Opportunity.Solar</value>
+        </criteriaItems>
+        <language>en_US</language>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>STAGE_NAME</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Todos Produtos - Parecer de Acesso</name>
+    <params>
+        <name>open</name>
+        <value>all</value>
+    </params>
+    <params>
+        <name>probability</name>
+        <value>&gt;0</value>
+    </params>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Opportunity</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>CLOSE_DATE</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>

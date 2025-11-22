@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>EzeeConnectProposalPendingService</members>
+        <members>ProposalPendingController</members>
+        <members>ProposalPendingControllerTest</members>
+        <members>ProposalPendingResponseRest</members>
+        <members>ProposalPendingResponseRestTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Opportunity-Opportunity Layout Bow-e</members>
+        <members>Opportunity-Opportunity Layout Ezee Connect</members>
+        <members>Opportunity-Opportunity Layout Ezee Livre</members>
+        <members>Opportunity-Opportunity Layout Ezee Solar</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>Opportunity.ConsumptionAverage__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Integrador.SetProposalPending</members>
+        <members>Integrador.TypesDocumentPending</members>
+        <members>Integrador.UpdateProposalPending</members>
+        <name>CustomMetadata</name>
+    </types>
+    <types>
+        <members>ProposalPending__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>EzeeConnectPendencias</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>proposalPendingPanel</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>Oportunidade_P_gina_de_registro_Ezee_Connect</members>
+        <name>FlexiPage</name>
+    </types>
+    <version>59.0</version>
+</Package>
+    

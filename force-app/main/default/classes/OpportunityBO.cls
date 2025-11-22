@@ -2,10 +2,11 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-17-2025
+ * @last modified on  : 11-21-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
+    public static Boolean skipAsyncProposalGeneration = false;
 
     //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
     public static void createSellBuyOrder(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
@@ -98,6 +99,7 @@ public class OpportunityBO {
             opportunity.Origem__c = singleOpportunity.Origem;
         }
         if (singleOpportunity.ConsumptionAverage != null) {
+            opportunity.ConsumptionAverage__c = singleOpportunity.ConsumptionAverage;
             opportunity.MediaConsumo__c = singleOpportunity.ConsumptionAverage;
         }
         if (singleOpportunity.TargetConsume != null) {
@@ -809,12 +811,6 @@ public class OpportunityBO {
                     Enviar PDF da Proposta após geração no Salesforce
                 */
 
-                // if(OpportunityUtils.hasDiscountApprovalStatusChangedToApprovedOrRejected(opportunity, oldOpportunity)){
-                //     System.debug('----------------------------------------------------------------------------------------------------');
-                //     createAddContextIdToEndpointMap(endpointIdToContextIds, 9, opportunity.Id);
-                //     //continue;
-                // }
-
                 /*
                     2 - ETAPA VIABILIDADE
                     Enviar atualização da etapa de viabilidade a cada mudança
@@ -1058,6 +1054,24 @@ public class OpportunityBO {
             OpportunitySetIds.add(opp.Id);
         }
 
+        // Evitar criar projetos duplicados via trigger; se já existe projeto para a oportunidade, não cria outro
+        // Exceção: se Categoria = Fast Track, permitimos criar um projeto (e instalação) sempre que o fluxo for acionado
+        Set<Id> opportunitiesWithProject = new Set<Id>();
+        Map<Id, Opportunity> oppMap = new Map<Id, Opportunity>(newRecords);
+        for (Projeto__c existingProject : [
+            SELECT Oportunidade__c
+            FROM   Projeto__c
+            WHERE  Oportunidade__c IN :OpportunitySetIds
+        ]) {
+            Opportunity opp = oppMap.get(existingProject.Oportunidade__c);
+            if (opp != null && 'Fast Track'.equalsIgnoreCase(opp.Categoria__c)) {
+                continue;
+            }
+            if (existingProject.Oportunidade__c != null) {
+                opportunitiesWithProject.add(existingProject.Oportunidade__c);
+            }
+        }
+
         Map<String, String> statusByRecordType = new Map<String, String>{
             'Bombeamento'               => 'STATUS_PLANEJAMENTO',
             'Estação de Recarga'        => 'STATUS_PLANEJAMENTO',
@@ -1077,6 +1091,9 @@ public class OpportunityBO {
             Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
             if(viabilityMap.get(opportunity.Id) == null){
                 return;
+            }
+            if (opportunitiesWithProject.contains(opportunity.Id)) {
+                continue;
             }
             if(
                 (
@@ -1121,6 +1138,13 @@ public class OpportunityBO {
             }
         }
         insert projectsToInsert;
+        if(!projectsToInsert.isEmpty()){
+            Map<Id, Opportunity> opportunityById = new Map<Id, Opportunity>();
+            for(Opportunity opp : newRecords){
+                opportunityById.put(opp.Id, opp);
+            }
+            InstalacaoBO.createInstallationsForFastTrackProjects(projectsToInsert, opportunityById);
+        }
     }
 
     public static void changeOpportunityStageOnViabilityChanging(List<Opportunity> newList, Map<Id, Opportunity> oldMap){
@@ -1799,7 +1823,7 @@ public class OpportunityBO {
             Opportunity updateOpp = new Opportunity(Id = opp.Id);
             
             // Verifique se o desconto foi alterado
-            if (opp.DescontoUFV__c != oldOpp.DescontoUFV__c) {
+            if (opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c && opp.StatusAprovacaoDesconto__c == 'Pendente') {
                 // Calculando a porcentagem de desconto em relação ao valor total da proposta
                 Decimal discountPercentage = (opp.DescontoUFV__c / opp.ValorTotalProposta__c) * 100;
 
@@ -1931,6 +1955,9 @@ public class OpportunityBO {
     }
     
     public static void generateProposalAsync(Map<Id,Opportunity> newMap, Map<Id,Opportunity> oldMap) {
+        if(skipAsyncProposalGeneration == true){
+            return;
+        }
         for(Opportunity opp :  newMap.values() ){
             Opportunity oldOpp = oldMap.get(opp.Id);
             if(((opp.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('EzeeConnect').getRecordTypeId() && areRequiredFieldsFilledConnect(opp)) ||
@@ -1955,14 +1982,11 @@ public class OpportunityBO {
                         opp.StatusAprovacaoDesconto__c == 'Aprovado'
                     ) ||
                     (
-                        formulaFieldsChanged(oldOpp, opp)
-                    ) ||
-                    (
                         opp.PropostaGerada__c == false
                     )
                 ){
                     System.debug('if 2 - generateProposalAsync - ');
-                    PDFControllerExtension.savePdfFileAsync(opp.Id);
+                    // PDFControllerExtension.savePdfFileAsync(opp.Id);
                 }
             }
         }
@@ -2334,8 +2358,11 @@ public class OpportunityBO {
 
             Map<Id, Opportunity> filteredOpportunities = new Map<Id, Opportunity>();
             Map<Id, Projeto__c> projectByOpportunityId = new Map<Id, Projeto__c>();
+            Map<Id, Instalacao__c> installationByProjectId = new Map<Id, Instalacao__c>();
+            Map<Id, Instalacao__c> installationByOpportunityId = new Map<Id, Instalacao__c>();
             Map<Id, Contact> contactByAccountId = new Map<Id, Contact>();
             Set<Id> accountIds = new Set<Id>();
+            Set<Id> projectIds = new Set<Id>();
             
             for(Opportunity opportunity : newRecords){
 
@@ -2374,6 +2401,23 @@ public class OpportunityBO {
             if(projects != null){
                 for(Projeto__c project : projects){
                     projectByOpportunityId.put(project.Oportunidade__c, project);
+                    projectIds.add(project.Id);
+                }
+            }
+
+            if(!projectIds.isEmpty() || !filteredOpportunities.isEmpty()){
+                for(Instalacao__c installation : [
+                    SELECT  Id, Projeto__c, Oportunidade__c, GestorObra__c, InstallDate__c, DateInspection__c
+                    FROM    Instalacao__c
+                    WHERE   Projeto__c IN :projectIds
+                        OR  Oportunidade__c IN :filteredOpportunities.keySet()
+                ]){
+                    if(installation.Projeto__c != null && !installationByProjectId.containsKey(installation.Projeto__c)){
+                        installationByProjectId.put(installation.Projeto__c, installation);
+                    }
+                    if(installation.Oportunidade__c != null && !installationByOpportunityId.containsKey(installation.Oportunidade__c)){
+                        installationByOpportunityId.put(installation.Oportunidade__c, installation);
+                    }
                 }
             }
 
@@ -2383,8 +2427,13 @@ public class OpportunityBO {
 
                 Projeto__c project = projectByOpportunityId.get(opportunity.Id);
 
+                Instalacao__c installation = installationByProjectId.get(project?.Id);
+                if(installation == null){
+                    installation = installationByOpportunityId.get(opportunity.Id);
+                }
+
                 casesCustomerJourney.add(
-                    buildCase(opportunity, project, contact)
+                    buildCase(opportunity, project, installation, contact)
                 );
             }
 
@@ -2399,7 +2448,7 @@ public class OpportunityBO {
         
     }
     
-    public static Case buildCase(Opportunity opportunity, Projeto__c project, Contact contact){
+    public static Case buildCase(Opportunity opportunity, Projeto__c project, Instalacao__c installation, Contact contact){
 
         List<Group> queueSupport = [
             SELECT Id 
@@ -2418,10 +2467,22 @@ public class OpportunityBO {
         caseRecord.AccountId = opportunity.AccountId;
         caseRecord.ContactId = contact != null ? contact.Id : null;
         if(project?.Consultor__c != null) caseRecord.Nome_do_Consultor__c = project.Consultor__c;
-        if(project?.GestorObra__c != null) caseRecord.ManagerName__c = project.GestorObra__c;
+        if(installation?.GestorObra__c != null){
+            caseRecord.ManagerName__c = installation.GestorObra__c;
+        } else if(project?.GestorObra__c != null){
+            caseRecord.ManagerName__c = project.GestorObra__c;
+        }
         if(project?.ApprovalDate__c != null) caseRecord.ProjectApprovalDate__c = project.ApprovalDate__c;
-        if(project?.InstallDate__c != null) caseRecord.InstallDate__c = project.InstallDate__c;
-        if(project?.DateInspection__c != null) caseRecord.DateInspection__c = project.DateInspection__c;
+        if(installation?.InstallDate__c != null){
+            caseRecord.InstallDate__c = installation.InstallDate__c;
+        } else if(project?.InstallDate__c != null){
+            caseRecord.InstallDate__c = project.InstallDate__c;
+        }
+        if(installation?.DateInspection__c != null){
+            caseRecord.DateInspection__c = installation.DateInspection__c;
+        } else if(project?.DateInspection__c != null){
+            caseRecord.DateInspection__c = project.DateInspection__c;
+        }
 
         return caseRecord;
     }
@@ -2688,6 +2749,128 @@ public class OpportunityBO {
     }
 
 
+    public static void closeActivitiesAndFlowsForClosedLost(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap) {
+        if (newRecords == null || newRecords.isEmpty() || oldRecordsMap == null || oldRecordsMap.isEmpty()) {
+            return;
+        }
+
+        Set<Id> closedLostOpportunityIds = new Set<Id>();
+        Map<Id, Opportunity> closedLostOpportunities = new Map<Id, Opportunity>();
+
+        for (Opportunity opportunity : newRecords) {
+            Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
+            if (oldOpportunity == null) {
+                continue;
+            }
+
+            if (OpportunityUtils.isStatusClosedLost(opportunity) && !OpportunityUtils.isStatusClosedLost(oldOpportunity)) {
+                closedLostOpportunityIds.add(opportunity.Id);
+                closedLostOpportunities.put(opportunity.Id, opportunity);
+            }
+        }
+
+        if (closedLostOpportunityIds.isEmpty()) {
+            return;
+        }
+
+        final String AUTOMATION_NOTE = 'Encerrado automaticamente - Oportunidade marcada como Fechado Perdido.';
+
+        List<Task> tasksToUpdate = new List<Task>();
+        List<Projeto__c> projectsToUpdate = new List<Projeto__c>();
+        List<ViabilityStudy__c> viabilityToUpdate = new List<ViabilityStudy__c>();
+        Set<Id> usersToNotify = new Set<Id>();
+        Set<Id> recordIdsToCloseTasks = new Set<Id>(closedLostOpportunityIds);
+
+        Map<String, Schema.SObjectField> projectFields = Schema.SObjectType.Projeto__c.fields.getMap();
+        Schema.SObjectField projectDescriptionField = projectFields.containsKey('Description__c')
+            ? projectFields.get('Description__c')
+            : null;
+
+        for (Opportunity opportunity : closedLostOpportunities.values()) {
+            if (opportunity.OwnerId != null) {
+                usersToNotify.add(opportunity.OwnerId);
+            }
+        }
+
+        List<String> opportunityIdStrings = new List<String>();
+        for (Id oppId : closedLostOpportunityIds) {
+            opportunityIdStrings.add('\'' + String.valueOf(oppId) + '\'');
+        }
+
+        String projectQuery = 'SELECT Id, Status__c, GestorObra__c';
+        if (projectDescriptionField != null) {
+            projectQuery += ', Description__c';
+        }
+        projectQuery += ' FROM Projeto__c WHERE Oportunidade__c IN (' + String.join(opportunityIdStrings, ',') + ')';
+
+        for (Projeto__c project : Database.query(projectQuery)) {
+            if (project.Status__c == null || project.Status__c != 'Projeto cancelado') {
+                project.Status__c = 'Projeto cancelado';
+            }
+            if (projectDescriptionField != null) {
+                String currentDescription = (String) project.get(projectDescriptionField);
+                project.put(
+                    projectDescriptionField,
+                    appendAutomationNote(currentDescription, AUTOMATION_NOTE, 255)
+                );
+            }
+            projectsToUpdate.add(project);
+            recordIdsToCloseTasks.add(project.Id);
+
+            if (project.GestorObra__c != null) {
+                usersToNotify.add(project.GestorObra__c);
+            }
+        }
+
+        for (ViabilityStudy__c viability : [
+            SELECT  Id, StatusFeasibility__c, ObservationsPostVisit__c, OwnerId
+            FROM    ViabilityStudy__c
+            WHERE   Opportunity__c IN :closedLostOpportunityIds
+        ]) {
+            if (viability.StatusFeasibility__c == null || viability.StatusFeasibility__c != 'Viabilidade Finalizada') {
+                viability.StatusFeasibility__c = 'Viabilidade Finalizada';
+            }
+            viability.ObservationsPostVisit__c = appendAutomationNote(viability.ObservationsPostVisit__c, AUTOMATION_NOTE, 131072);
+            viabilityToUpdate.add(viability);
+            recordIdsToCloseTasks.add(viability.Id);
+
+            if (viability.OwnerId != null) {
+                usersToNotify.add(viability.OwnerId);
+            }
+        }
+
+        for (Task task : [
+            SELECT  Id, Status, Description, OwnerId, WhatId
+            FROM    Task
+            WHERE   WhatId IN :recordIdsToCloseTasks
+                AND Status != :TaskUtils.STATUS_CONCLUIDO
+        ]) {
+            task.Status = TaskUtils.STATUS_CONCLUIDO;
+            task.Description = appendAutomationNote(task.Description, AUTOMATION_NOTE, 32000);
+            tasksToUpdate.add(task);
+
+            if (task.OwnerId != null) {
+                usersToNotify.add(task.OwnerId);
+            }
+        }
+
+        if (!tasksToUpdate.isEmpty()) {
+            update tasksToUpdate;
+        }
+        if (!projectsToUpdate.isEmpty()) {
+            update projectsToUpdate;
+        }
+        if (!viabilityToUpdate.isEmpty()) {
+            update viabilityToUpdate;
+        }
+        Boolean orgType = [SELECT IsSandbox FROM Organization LIMIT 1].IsSandbox;
+
+        if(!orgType){
+            sendClosedLostAutomationEmail(closedLostOpportunities.values(), usersToNotify, AUTOMATION_NOTE);
+        }
+    }
+
+
     //fields are != null
     public static Boolean areRequiredFieldsFilled(Opportunity opp) {
         return
@@ -2747,5 +2930,88 @@ public class OpportunityBO {
         return false;
     }
 
+    public Static void updateApproveComment(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap) {
+        for( Opportunity opportunity : newRecords) {
+            Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
+            if(OpportunityUtils.hasDiscountApprovalStatusChangedToApprovedOrRejected(opportunity, oldOpportunity)){
+                opportunity.ObservacaoAprovacao__c = OpportunityUtils.getApproveComment(opportunity);
+            }
+        }
+        
+    }
+
+    private static String appendAutomationNote(String currentValue, String note, Integer maxLength) {
+        if (String.isBlank(note) || maxLength == null || maxLength <= 0) {
+            return currentValue;
+        }
+
+        if (String.isBlank(currentValue)) {
+            return note.length() > maxLength ? note.substring(0, maxLength) : note;
+        }
+
+        if (currentValue.contains(note)) {
+            return currentValue;
+        }
+
+        String separator = currentValue.endsWith('.') ? ' ' : ' | ';
+        String candidate = currentValue + separator + note;
+
+        return candidate.length() > maxLength ? candidate.substring(0, maxLength) : candidate;
+    }
+
+
+    private static void sendClosedLostAutomationEmail(List<Opportunity> opportunities, Set<Id> userIds, String note) {
+        if (opportunities == null || opportunities.isEmpty() || userIds == null || userIds.isEmpty()) {
+            return;
+        }
+
+        List<User> users = [
+            SELECT  Id, Email
+            FROM    User
+            WHERE   Id IN :userIds
+                AND Email != null
+        ];
+
+        if (users.isEmpty()) {
+            return;
+        }
+
+        List<String> recipientEmails = new List<String>();
+        for (User userRecord : users) {
+            if (!String.isBlank(userRecord.Email)) {
+                recipientEmails.add(userRecord.Email);
+            }
+        }
+
+        if (recipientEmails.isEmpty() || Test.isRunningTest()) {
+            return;
+        }
+
+        if (recipientEmails.size() > 100) {
+            List<String> limitedRecipients = new List<String>();
+            for (Integer index = 0; index < 100; index++) {
+                limitedRecipients.add(recipientEmails[index]);
+            }
+            recipientEmails = limitedRecipients;
+        }
+
+        String body = 'Olá,<br/><br/>' +
+            'As seguintes oportunidades foram atualizadas para o estágio &quot;Fechado Perdido&quot; ' +
+            'e tiveram suas atividades relacionadas encerradas automaticamente:<br/><ul>';
+
+        for (Opportunity opportunity : opportunities) {
+            String opportunityLink = URL.getSalesforceBaseUrl().toExternalForm() + '/' + opportunity.Id;
+            body += '<li><a href=&quot;' + opportunityLink + '&quot;>' + opportunity.Name + '</a></li>';
+        }
+
+        body += '</ul><br/>' + note;
+
+        Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+        email.setToAddresses(recipientEmails);
+        email.setSubject('Encerramento automático de atividades - Fechado Perdido');
+        email.setHtmlBody(body);
+
+        Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ email });
+    }
 
 }

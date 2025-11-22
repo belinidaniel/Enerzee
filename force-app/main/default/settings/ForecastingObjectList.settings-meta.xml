@@ -1042,6 +1042,10 @@
             <label>Economia Promocional</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00NU5000000Emj8</field>
             <label>Consumo Médio Mensal</label>
         </forecastingObjectListLabelMappings>
@@ -1120,6 +1124,10 @@
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qlCX</field>
             <label>CEP</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qmF3</field>
@@ -2215,6 +2223,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -2642,6 +2651,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -3694,6 +3704,10 @@
             <label>Economia Promocional</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00NU5000000Emj8</field>
             <label>Consumo Médio Mensal</label>
         </forecastingObjectListLabelMappings>
@@ -3772,6 +3786,10 @@
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qlCX</field>
             <label>CEP</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qmF3</field>
@@ -4867,6 +4885,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -5294,6 +5313,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -6350,6 +6370,10 @@
             <label>Economia Promocional</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00NU5000000Emj8</field>
             <label>Consumo Médio Mensal</label>
         </forecastingObjectListLabelMappings>
@@ -6428,6 +6452,10 @@
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qlCX</field>
             <label>CEP</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qmF3</field>
@@ -7524,6 +7552,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -7951,6 +7980,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -9003,6 +9033,10 @@
             <label>Economia Promocional</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00NU5000000Emj8</field>
             <label>Consumo Médio Mensal</label>
         </forecastingObjectListLabelMappings>
@@ -9081,6 +9115,10 @@
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qlCX</field>
             <label>CEP</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qmF3</field>
@@ -10176,6 +10214,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -10603,6 +10642,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -11659,6 +11699,10 @@
             <label>Economia Promocional</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00NU5000000Emj8</field>
             <label>Consumo Médio Mensal</label>
         </forecastingObjectListLabelMappings>
@@ -11737,6 +11781,10 @@
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qlCX</field>
             <label>CEP</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qmF3</field>
@@ -12833,6 +12881,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -13260,6 +13309,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -14312,6 +14362,10 @@
             <label>Economia Promocional</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00NU5000000Emj8</field>
             <label>Consumo Médio Mensal</label>
         </forecastingObjectListLabelMappings>
@@ -14390,6 +14444,10 @@
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qlCX</field>
             <label>CEP</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qmF3</field>
@@ -15485,6 +15543,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -15912,6 +15971,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -16968,6 +17028,10 @@
             <label>Economia Promocional</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00NU5000000Emj8</field>
             <label>Consumo Médio Mensal</label>
         </forecastingObjectListLabelMappings>
@@ -17046,6 +17110,10 @@
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qlCX</field>
             <label>CEP</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qmF3</field>
@@ -18142,6 +18210,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -18569,6 +18638,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -19621,6 +19691,10 @@
             <label>Economia Promocional</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00NU5000000Emj8</field>
             <label>Consumo Médio Mensal</label>
         </forecastingObjectListLabelMappings>
@@ -19699,6 +19773,10 @@
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qlCX</field>
             <label>CEP</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qmF3</field>
@@ -20794,6 +20872,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -21221,6 +21300,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -22277,6 +22357,10 @@
             <label>Economia Promocional</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00NU5000000Emj8</field>
             <label>Consumo Médio Mensal</label>
         </forecastingObjectListLabelMappings>
@@ -22355,6 +22439,10 @@
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qlCX</field>
             <label>CEP</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qmF3</field>
@@ -23451,6 +23539,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -23878,6 +23967,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -24930,6 +25020,10 @@
             <label>Economia Promocional</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00NU5000000Emj8</field>
             <label>Consumo Médio Mensal</label>
         </forecastingObjectListLabelMappings>
@@ -25008,6 +25102,10 @@
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qlCX</field>
             <label>CEP</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qmF3</field>
@@ -26103,6 +26201,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -26530,6 +26629,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -27586,6 +27686,10 @@
             <label>Economia Promocional</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00NU5000000Emj8</field>
             <label>Consumo Médio Mensal</label>
         </forecastingObjectListLabelMappings>
@@ -27664,6 +27768,10 @@
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qlCX</field>
             <label>CEP</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qmF3</field>
@@ -28760,6 +28868,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -29187,6 +29296,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -30239,6 +30349,10 @@
             <label>Economia Promocional</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00NU5000000Emj8</field>
             <label>Consumo Médio Mensal</label>
         </forecastingObjectListLabelMappings>
@@ -30317,6 +30431,10 @@
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qlCX</field>
             <label>CEP</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00NU5000000qmF3</field>
@@ -31412,6 +31530,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -31839,6 +31958,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>

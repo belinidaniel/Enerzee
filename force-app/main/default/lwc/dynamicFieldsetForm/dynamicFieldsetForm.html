@@ -1,0 +1,90 @@
+<template>
+    <template if:true={isLoading}>
+        <div class="spinner-wrapper">
+            <lightning-spinner alternative-text="Carregando" size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <template if:false={isLoading}>
+        <template if:true={showForm}>
+            <lightning-record-edit-form
+                class="form"
+                object-api-name={targetObjectApiName}
+                record-id={targetRecordId}
+                onsubmit={handleSubmit}
+                onsuccess={handleSuccess}
+                onerror={handleFormError}
+            >
+                <lightning-messages></lightning-messages>
+
+                <div class="slds-card form-card">
+                    <div class="slds-card__body slds-card__body_inner">
+                        <lightning-accordion
+                            class="accordion"
+                            allow-multiple-sections-open
+                            active-section-name={activeSectionNames}
+                        >
+                            <template for:each={sections} for:item="section">
+                                <lightning-accordion-section
+                                    key={section.key}
+                                    name={section.key}
+                                    label={section.label}
+                                >
+                                    <template if:true={section.required}>
+                                        <div class="section__note">Obrigatória</div>
+                                    </template>
+
+                                    <lightning-layout class="section__layout" multiple-rows>
+                                        <template for:each={section.fields} for:item="field">
+                                            <lightning-layout-item
+                                                key={field.domKey}
+                                                class="section__layout-item"
+                                                size="6"
+                                            >
+                                                <lightning-input-field
+                                                    field-name={field.apiName}
+                                                    data-field-api={field.apiName}
+                                                    data-required={field.required}
+                                                    data-updateable={field.updateable}
+                                                    disabled={isReadOnly}
+                                                    onchange={handleFieldChange}
+                                                ></lightning-input-field>
+                                            </lightning-layout-item>
+                                        </template>
+                                    </lightning-layout>
+                                </lightning-accordion-section>
+                            </template>
+                        </lightning-accordion>
+                    </div>
+
+                    <template if:true={showActions}>
+                        <div class="slds-card__footer actions">
+                            <lightning-button
+                                variant="neutral"
+                                label="Cancelar"
+                                onclick={handleCancel}
+                            ></lightning-button>
+                            <lightning-button
+                                variant="brand"
+                                label="Salvar"
+                                onclick={handleSave}
+                                class="actions__primary"
+                            ></lightning-button>
+                        </div>
+                    </template>
+                </div>
+            </lightning-record-edit-form>
+        </template>
+
+        <template if:false={showForm}>
+            <div class="empty-state">
+                <template if:true={hasSections}>
+                    <p>Registro relacionado não disponível para edição.</p>
+                </template>
+                <template if:false={hasSections}>
+                    <p>Nenhuma seção configurada para este registro.</p>
+                </template>
+            </div>
+        </template>
+    </template>
+</template>

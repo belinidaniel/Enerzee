@@ -21,6 +21,11 @@
         <sharedToType>User</sharedToType>
     </folderShares>
     <folderShares>
+        <accessLevel>View</accessLevel>
+        <sharedTo>contabilidade@enerzee.com.br</sharedTo>
+        <sharedToType>User</sharedToType>
+    </folderShares>
+    <folderShares>
         <accessLevel>Manage</accessLevel>
         <sharedTo>daniel.belini@enerzee.com.br</sharedTo>
         <sharedToType>User</sharedToType>
@@ -62,11 +67,6 @@
     </folderShares>
     <folderShares>
         <accessLevel>View</accessLevel>
-        <sharedTo>contabilidade@enerzee.com.br</sharedTo>
-        <sharedToType>User</sharedToType>
-    </folderShares>
-    <folderShares>
-        <accessLevel>View</accessLevel>
         <sharedTo>gabriel.bulhoes@enerzee.com.br</sharedTo>
         <sharedToType>User</sharedToType>
     </folderShares>
@@ -93,11 +93,6 @@
     <folderShares>
         <accessLevel>Manage</accessLevel>
         <sharedTo>kaique.mathias@lab065.com.br.enrz</sharedTo>
-        <sharedToType>User</sharedToType>
-    </folderShares>
-    <folderShares>
-        <accessLevel>View</accessLevel>
-        <sharedTo>lariani.yuki@enerzee.com.br</sharedTo>
         <sharedToType>User</sharedToType>
     </folderShares>
     <folderShares>

@@ -22,7 +22,7 @@
     <filters>
         <field>OPPORTUNITY.STAGE_NAME</field>
         <operation>equals</operation>
-        <value>Elaboração de proposta,Readequação de Proposta</value>
+        <value>Elaboração de proposta</value>
     </filters>
     <label>Elaboração de propostas (Mini)</label>
 </ListView>

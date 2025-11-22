@@ -187,8 +187,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.PropostaRevo__c</fieldItem>
-                <identifier>RecordPropostaRevo_cField</identifier>
+                <fieldItem>Record.UrlSimulation__c</fieldItem>
+                <identifier>RecordUrlSimulation_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -197,8 +197,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.UrlSimulation__c</fieldItem>
-                <identifier>RecordUrlSimulation_cField</identifier>
+                <fieldItem>Record.Lead__c</fieldItem>
+                <identifier>RecordLead__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-b8651752-9646-4c01-b30a-f3b21e3b08c1</name>
@@ -209,10 +209,10 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>none</value>
+                    <value>required</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ParentOpportunity__c</fieldItem>
-                <identifier>RecordParentOpportunity_cField</identifier>
+                <fieldItem>Record.Name</fieldItem>
+                <identifier>RecordNameField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -303,6 +303,16 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.ValorTotalProdutos__c</fieldItem>
                 <identifier>RecordValorTotalProdutos_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.PropostaRevo__c</fieldItem>
+                <identifier>RecordPropostaRevo_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-a28f2fdc-7ad1-4819-8f03-904775623724</name>
@@ -415,6 +425,16 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.NumeroInstalacao__c</fieldItem>
                 <identifier>RecordNumeroInstalacao_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Kwh__c</fieldItem>
+                <identifier>RecordKwh_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-1e73970e-0498-478f-a294-020d95d17172</name>
@@ -2025,12 +2045,6 @@
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>leadOpportunityAlert</componentName>
-                <identifier>c_leadOpportunityAlert</identifier>
-            </componentInstance>
-        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>

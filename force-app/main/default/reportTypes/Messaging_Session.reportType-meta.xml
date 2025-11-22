@@ -205,6 +205,61 @@
             <field>AgenteSDR__c</field>
             <table>MessagingSession</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>MinuteSLAN1__c</field>
+            <table>MessagingSession</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>MinuteSLAN2__c</field>
+            <table>MessagingSession</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>MinuteSLAN3__c</field>
+            <table>MessagingSession</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>QueueSupervisor__c</field>
+            <table>MessagingSession</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>QueueSupervisorRole__c</field>
+            <table>MessagingSession</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>QueueCoordinatorRole__c</field>
+            <table>MessagingSession</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>NotifyN1__c</field>
+            <table>MessagingSession</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>NotifyN2__c</field>
+            <table>MessagingSession</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>NotifyN3__c</field>
+            <table>MessagingSession</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>OwnerAssignmentDate__c</field>
+            <table>MessagingSession</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>QueueN1__c</field>
+            <table>MessagingSession</table>
+        </columns>
         <masterLabel>Messaging Sessions</masterLabel>
     </sections>
     <sections>

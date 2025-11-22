@@ -6309,6 +6309,61 @@
         <type>Flexipage</type>
         <profile>Vendedor</profile>
     </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LeadPaginaDeRegistroQualificacaoDeCliente</content>
+        <formFactor>Small</formFactor>
+        <pageOrSobjectType>Lead</pageOrSobjectType>
+        <recordType>Lead.Cliente</recordType>
+        <type>Flexipage</type>
+        <profile>Analista</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LeadPaginaDeRegistroQualificacaoDeCliente</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Lead</pageOrSobjectType>
+        <recordType>Lead.Cliente</recordType>
+        <type>Flexipage</type>
+        <profile>Analista</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LeadPaginaDeRegistroQualificacaoDeCliente</content>
+        <formFactor>Small</formFactor>
+        <pageOrSobjectType>Lead</pageOrSobjectType>
+        <recordType>Lead.Cliente</recordType>
+        <type>Flexipage</type>
+        <profile>Admin</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LeadPaginaDeRegistroQualificacaoDeCliente</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Lead</pageOrSobjectType>
+        <recordType>Lead.Cliente</recordType>
+        <type>Flexipage</type>
+        <profile>Admin</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LeadPaginaDeRegistroQualificacaoDeCliente</content>
+        <formFactor>Small</formFactor>
+        <pageOrSobjectType>Lead</pageOrSobjectType>
+        <recordType>Lead.Cliente</recordType>
+        <type>Flexipage</type>
+        <profile>Supervisor de serviço</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LeadPaginaDeRegistroQualificacaoDeCliente</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Lead</pageOrSobjectType>
+        <recordType>Lead.Cliente</recordType>
+        <type>Flexipage</type>
+        <profile>Supervisor de serviço</profile>
+    </profileActionOverrides>
+    <tabs>standard-MessagingSession</tabs>
     <tabs>standard-home</tabs>
     <tabs>standard-Lead</tabs>
     <tabs>standard-Account</tabs>
@@ -6328,6 +6383,7 @@
     <tabs>Parceiro__c</tabs>
     <tabs>Knowledge__kav</tabs>
     <tabs>LeadInteraction__c</tabs>
+    <tabs>SetupMessagingSession__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Enerzee_UtilityBar</utilityBar>
 </CustomApplication>

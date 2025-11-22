@@ -24,7 +24,7 @@
     </values>
     <values>
         <field>URL__c</field>
-        <value xsi:type="xsd:string">https://geradorpropostas.azurewebsites.net/api/proposal/contratoAssinar</value>
+        <value xsi:type="xsd:string">https://geradorpropostashomolog.azurewebsites.net/api/proposal/contratoAssinar</value>
     </values>
     <values>
         <field>Validade_token__c</field>

@@ -1,0 +1,84 @@
+.lightning-card {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background-color: #f4f4f9;
+    border-radius: 8px;
+}
+
+.section {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.section-2 {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.opportunity-info, .nps-rating, .custom-textarea {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.opportunity-info p, .nps-rating div {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+    padding: 5px 10px;
+}
+
+.nps-rating {
+    justify-content: center;
+}
+
+.nps-rating span {
+    font-size: 2rem; /* Smaller stars */
+    cursor: pointer;
+    color: #ccc; /* Default color for unselected stars */
+    transition: color 0.2s; /* Transition for hover effect */
+}
+
+.nps-rating span:hover, .nps-rating .star-filled {
+    color: rgb(255, 183, 0); /* Color for hover and selected */
+}
+
+.custom-textarea textarea {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 8px;
+    width: 100%;
+    height: 100px; /* Fixed height for textarea */
+    font-size: 16px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.custom-button {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 10px;
+}
+
+.custom-button lightning-button {
+    background-color: #0070d2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 10px 20px;
+}
+
+.task-item {
+    border: 1px solid #d8dde6;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    background-color: #f4f6f9;
+}

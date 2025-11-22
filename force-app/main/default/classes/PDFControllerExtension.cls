@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-06-2025
+ * @last modified on  : 11-21-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class PDFControllerExtension {
@@ -18,6 +18,11 @@ public with sharing class PDFControllerExtension {
     public Boolean lastSaveSuccess { get; set; }
     public String  lastSaveMessage { get; set; }
     public String  description { get; set; }
+    public List<String> viabilityEnerzeeCostEntries { get; private set; }
+    public List<String> viabilityClientCostEntries { get; private set; }
+    public String mainViabilityStudyText { get; private set; }
+    public String mainViabilityLayoutUrl { get; private set; }
+    public List<String> mainViabilityStudyChunks { get; private set; }
 
     public PDFControllerExtension(ApexPages.StandardController controller) {
         
@@ -55,6 +60,8 @@ public with sharing class PDFControllerExtension {
                             Parceiro__r.CapaPromocional__c,
                             TipoKitPromocional__c,
                             PropostaAlterada__c,
+                            MainViability__c,
+                            MainViability__r.TextStudy__c,
                             (SELECT ID, Product2.Description FROM OpportunityLineItems)
             FROM Opportunity
             WHERE Id = :opportunityId
@@ -74,6 +81,9 @@ public with sharing class PDFControllerExtension {
         //if (String.isEmpty(salvar)) {
         loadPdfUrls();
         //}
+
+        loadViabilityCostDetails();
+        loadMainViabilityStudyData();
     }
 
     public String getLogoUrl() {
@@ -143,7 +153,32 @@ public with sharing class PDFControllerExtension {
         }
     
     }
+
+    public Boolean getHasViabilityEnerzeeCosts(){
+        return viabilityEnerzeeCostEntries != null && !viabilityEnerzeeCostEntries.isEmpty();
+    }
+
+    public Boolean getHasViabilityClientCosts(){
+        return viabilityClientCostEntries != null && !viabilityClientCostEntries.isEmpty();
+    }
+
+    public Boolean getShouldRenderMainViabilityStudy(){
+        return mainViabilityStudyChunks != null && !mainViabilityStudyChunks.isEmpty();
+    }
+
+    public Boolean getHasMainViabilityLayout(){
+        return !String.isBlank(mainViabilityLayoutUrl);
+    }
+
+    public Integer getMainViabilityChunkCount(){
+        return getMainViabilityStudyChunks().size();
+    }
+
     public PageReference salvarPDF() {
+        String skipAutoSave = ApexPages.currentPage().getParameters().get('skipAutoSave');
+        // if (skipAutoSave != null && skipAutoSave.equalsIgnoreCase('true')) {
+        //     return null;
+        // }
 
         // Evita recursão ao chamar getContent() dentro do mesmo request
         if (salvar == 'Não') {
@@ -285,9 +320,7 @@ public with sharing class PDFControllerExtension {
 
 
     // Método para salvar arquivo com tratamento de exceção
-    private static Id savePdfFile(Id opportunityId, String numeroProposta, String nomePagina, Blob conteudoPdf, Boolean isChanged) {
-        System.debug('--------------------------------- savePdfFile ---------------------------------------');
-        
+    public static Id savePdfFile(Id opportunityId, String numeroProposta, String nomePagina, Blob conteudoPdf, Boolean isChanged) {
         try {
             DateTime today = DateTime.Now();
             String dateString = today.day() + '-' + today.month() + '-' + today.year();
@@ -311,7 +344,11 @@ public with sharing class PDFControllerExtension {
         }
     }
 
-    private static Blob generatePdfContent(Id opportunityId, Id capaPropostaId, String pageName, Boolean isAsync) {
+    public static Blob generatePdfContent(Id opportunityId, Id capaPropostaId, String pageName, Boolean isAsync) {
+
+        if (Test.isRunningTest()) {
+            return Blob.valueOf('TESTE CONTEUDO PDF');
+        }
 
         // Se for chamada síncrona, use a lógica atual
         if (!isAsync) {
@@ -329,6 +366,7 @@ public with sharing class PDFControllerExtension {
         PageReference pdfPage = new PageReference('/apex/' + pageName);
         pdfPage.getParameters().put('id', opportunityId);
         pdfPage.getParameters().put('selectedCoverId', capaPropostaId);
+        pdfPage.getParameters().put('skipAutoSave', 'true');
 
         try {
             return pdfPage.getContent();
@@ -370,6 +408,9 @@ public with sharing class PDFControllerExtension {
 
     @Future(callout=true)
     public static void savePdfFileAsync(Id opportunityId) {
+        if(OpportunityBO.skipAsyncProposalGeneration == true){
+            return;
+        }
         Opportunity opp = [
             SELECT Id, Name, GrupoTarifario__c, isPromotional__c,TipoKitPromocional__c, Numeroproposta__c, Distribuidora__c, Account.Name, Parceiro__r.Name, Parceiro__c, Parceiro__r.CapaProposta__c, Parceiro__r.CapaPromocional__c,RecordType.DeveloperName, RecordTypeId
             FROM Opportunity 
@@ -524,6 +565,287 @@ public with sharing class PDFControllerExtension {
             return formatCurrencyBR(this.opportunity.EconomiaAnualEstimada__c);
         }
 
+        private void loadViabilityCostDetails(){
+            viabilityEnerzeeCostEntries = new List<String>();
+            viabilityClientCostEntries = new List<String>();
+
+            if(this.opportunity == null){
+                return;
+            }
+
+            List<ViabilityStudy__c> viabilityList = [
+                SELECT  AdequacyCostEnerzee__c,
+                        AdequacyCostClient__c,
+                        AcBranchCost__c,
+                        DcBranchCost__c,
+                        StandardAdequacyCost__c,
+                        AdditionalCost__c,
+                        OtherCosts__c,
+                        OtherCostsDescription__c,
+                        CoberturaCost__c,
+                        StruturalReport__c
+                FROM    ViabilityStudy__c
+                WHERE   Opportunity__c = :this.opportunity.Id
+                ORDER BY CreatedDate DESC
+                LIMIT   1
+            ];
+
+            if(viabilityList.isEmpty()){
+                return;
+            }
+
+            ViabilityStudy__c viability = viabilityList[0];
+
+            viabilityEnerzeeCostEntries = buildViabilityCostEntries(viability.AdequacyCostEnerzee__c, viability);
+            viabilityClientCostEntries = buildViabilityCostEntries(viability.AdequacyCostClient__c, viability);
+        }
+
+        private List<String> buildViabilityCostEntries(String multiSelectValues, ViabilityStudy__c viability){
+            List<String> entries = new List<String>();
+            for(String label : splitMultiSelectValues(multiSelectValues)){
+                String displayLabel = resolveViabilityCostLabel(label, viability);
+                Decimal amount = resolveViabilityCostAmount(label, viability);
+                if(amount != null){
+                    entries.add(displayLabel + ' (' + formatCurrencyBR(amount) + ')');
+                } else {
+                    entries.add(displayLabel);
+                }
+            }
+            return entries;
+        }
+
+        private String resolveViabilityCostLabel(String label, ViabilityStudy__c viability){
+            if(String.isBlank(label)){
+                return label;
+            }
+
+            String normalized = label.trim().toLowerCase();
+            if((normalized == 'outros custos' || normalized == 'outros custo') &&
+                viability != null && !String.isBlank(viability.OtherCostsDescription__c)){
+                return viability.OtherCostsDescription__c.trim();
+            }
+
+            return label;
+        }
+
+        private List<String> splitMultiSelectValues(String values){
+            List<String> results = new List<String>();
+            if(String.isBlank(values)){
+                return results;
+            }
+
+            for(String value : values.split(';')){
+                String trimmed = value != null ? value.trim() : null;
+                if(!String.isBlank(trimmed)){
+                    results.add(trimmed);
+                }
+            }
+
+            return results;
+        }
+
+        private Decimal resolveViabilityCostAmount(String label, ViabilityStudy__c viability){
+            if(viability == null || String.isBlank(label)){
+                return null;
+            }
+
+            String normalized = label.trim().toLowerCase();
+
+            Decimal amount;
+            if(normalized == 'ramal cc'){
+                amount = viability.DcBranchCost__c;
+            } else if(normalized == 'ramal ca'){
+                amount = viability.AcBranchCost__c;
+            } else if(normalized == 'adequação padrão' || normalized == 'adequacao padrao'){
+                amount = viability.StandardAdequacyCost__c;
+            } else if(normalized == 'cobertura'){
+                amount = viability.CoberturaCost__c;
+            } else if(normalized == 'laudo estrutural'){
+                amount = viability.StruturalReport__c;
+            } else if(normalized == 'outros custos' || normalized == 'outros custos'){
+                amount = viability.OtherCosts__c;
+                label = viability.OtherCostsDescription__c != null ? viability.OtherCostsDescription__c.trim().toLowerCase() : 'outros custos';
+            } else if(normalized == 'custos adicionais' || normalized == 'custos adicionais'){
+                amount = viability.AdditionalCost__c;
+            }else{
+                amount = null;
+            }
+            if(amount != null && amount != 0){
+                return amount;
+            }
+            return null;
+        }
+
+        private void loadMainViabilityStudyData(){
+            mainViabilityStudyText = null;
+            mainViabilityLayoutUrl = null;
+            mainViabilityStudyChunks = new List<String>();
+
+            if(this.opportunity == null || this.opportunity.MainViability__c == null){
+                return;
+            }
+
+            if(this.opportunity.MainViability__r != null){
+                mainViabilityStudyText = this.opportunity.MainViability__r.TextStudy__c;
+            }
+
+            if(mainViabilityStudyText == null){
+                try{
+                    ViabilityStudy__c viabilityRecord = [
+                        SELECT TextStudy__c
+                        FROM ViabilityStudy__c
+                        WHERE Id = :this.opportunity.MainViability__c
+                        LIMIT 1
+                    ];
+                    mainViabilityStudyText = viabilityRecord != null ? viabilityRecord.TextStudy__c : null;
+                } catch (Exception ex){
+                    mainViabilityStudyText = null;
+                }
+            }
+
+            if(String.isBlank(mainViabilityStudyText)){
+                return;
+            }
+
+            mainViabilityLayoutUrl = resolveViabilityLayoutUrl(this.opportunity.MainViability__c);
+            buildMainViabilityStudyChunks();
+        }
+
+        private void buildMainViabilityStudyChunks(){
+            if(String.isBlank(mainViabilityStudyText)){
+                return;
+            }
+
+            final Integer maxCharsPerPage = 2200;
+            String remaining = mainViabilityStudyText.trim();
+
+            while(!String.isBlank(remaining)){
+                if(remaining.length() <= maxCharsPerPage){
+                    mainViabilityStudyChunks.add(remaining);
+                    break;
+                }
+
+                Integer splitIndex = findBestSplitPosition(remaining, maxCharsPerPage);
+                String currentChunk = remaining.substring(0, splitIndex).trim();
+                if(!String.isBlank(currentChunk)){
+                    mainViabilityStudyChunks.add(currentChunk);
+                }
+                remaining = remaining.substring(splitIndex).trim();
+            }
+        }
+
+        private Integer findBestSplitPosition(String text, Integer target){
+            if(String.isBlank(text)){
+                return 0;
+            }
+
+            Integer length = text.length();
+            if(length <= target){
+                return length;
+            }
+
+            Integer upperBound = Math.min(length, target + 200);
+            Integer lowerBound = Math.max(1, target - 400);
+            Integer splitIndex = target;
+
+            for(Integer i = target; i >= lowerBound; i--){
+                String currentChar = text.substring(i - 1, i);
+                if(currentChar == '\n' || currentChar == ' '){
+                    splitIndex = i;
+                    break;
+                }
+            }
+
+            if(splitIndex == target){
+                for(Integer i = target; i <= upperBound && i < length; i++){
+                    String currentChar = text.substring(i, i + 1);
+                    if(currentChar == '\n' || currentChar == ' '){
+                        splitIndex = i + 1;
+                        break;
+                    }
+                }
+            }
+
+            return Math.min(splitIndex, length);
+        }
+
+        public Integer getMainViabilityTextLineCount(){
+            if(String.isBlank(mainViabilityStudyText)){
+                return 0;
+            }
+
+            Integer newLineCount = mainViabilityStudyText.split('\n').size();
+            return Math.max(newLineCount, 1);
+        }
+
+        public List<String> getMainViabilityStudyChunks(){
+            if(mainViabilityStudyChunks == null){
+                mainViabilityStudyChunks = new List<String>();
+            }
+            return mainViabilityStudyChunks;
+        }
+
+        private String resolveViabilityLayoutUrl(Id viabilityId){
+            if(viabilityId == null){
+                return null;
+            }
+
+            List<ContentDocumentLink> links = [
+                SELECT  ContentDocumentId,
+                        ContentDocument.Title,
+                        ContentDocument.LatestPublishedVersionId,
+                        ContentDocument.CreatedDate
+                FROM    ContentDocumentLink
+                WHERE   LinkedEntityId = :viabilityId
+                ORDER BY ContentDocument.CreatedDate DESC
+                LIMIT   50
+            ];
+
+            for(ContentDocumentLink linkRecord : links){
+                ContentDocument doc = linkRecord.ContentDocument;
+                if(doc == null || String.isBlank(doc.Title)){
+                    continue;
+                }
+
+                if(isLayoutLabel(doc.Title) && doc.LatestPublishedVersionId != null){
+                    return '/sfc/servlet.shepherd/version/download/' + doc.LatestPublishedVersionId;
+                }
+            }
+
+            List<Attachment> legacyLayouts = [
+                SELECT  Id,
+                        Name
+                FROM    Attachment
+                WHERE   ParentId = :viabilityId
+                ORDER BY CreatedDate DESC
+                LIMIT   50
+            ];
+
+            for(Attachment file : legacyLayouts){
+                if(file != null && isLayoutLabel(file.Name)){
+                    return '/servlet/servlet.FileDownload?file=' + file.Id;
+                }
+            }
+
+            return null;
+        }
+
+        private Boolean isLayoutLabel(String value){
+            if(String.isBlank(value)){
+                return false;
+            }
+
+            return value.trim().toLowerCase().contains('layout');
+        }
+
+        private Decimal firstNonZero(List<Decimal> values){
+            for(Decimal value : values){
+                if(value != null && value != 0){
+                    return value;
+                }
+            }
+            return null;
+        }
 
 
 }

@@ -1,0 +1,26 @@
+.slds-card {
+    margin-bottom: 1rem;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+}
+
+.slds-card header {
+    background-color: #f4f6f9;
+    border-bottom: 1px solid #dddbda;
+}
+
+.slds-list_horizontal .slds-item {
+    width: 100%; /* Make each item take full width */
+}
+
+.slds-border_bottom {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.slds-border_top {
+    border-top: 1px solid #e0e0e0;
+}
+
+.slds-modal__container{
+    max-width: 60rem !important;
+}

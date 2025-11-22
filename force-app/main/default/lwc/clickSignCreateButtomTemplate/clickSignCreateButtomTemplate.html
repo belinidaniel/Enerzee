@@ -1,0 +1,88 @@
+<template>
+    <lightning-card title={title}>
+        <div class="container">
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading template"></lightning-spinner>
+            </template>
+
+            <template if:false={isLoading}>
+                <template if:false={isSendTemplate}>
+                    <p>{labels.createButtonDescription}</p>
+                </template>
+                <template if:true={template}>
+                    <div class="section">
+                        <h2 style="margin-bottom: 20px">{labels.templateDetails}</h2>
+                        
+                        <p><strong>{labels.templateName}:</strong> {template.Name}</p>
+                        <p><strong>{labels.templateDescription}:</strong> {template.Description__c}</p>
+                        <template if:false={isSendTemplate}>
+                            <p><strong>{labels.templateObject}:</strong> {template.SourceObject__c}</p>
+                        </template>
+                        <div class="slds-grid slds-gutters">
+                            <template if:false={isSendTemplate}>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input label={labels.buttonLabel} value={buttonLabel} onchange={handleButtonLabelChange}></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2" style="padding-top:24px;">
+                                    <lightning-button label={labels.createButtonInLayout} onclick={createButton} variant="brand"></lightning-button>
+                                </div>
+                            </template>
+                        </div>
+                        <template if:true={successMessage}>
+                            <div class="success-message">{labels.successMessage}</div>
+                        </template>
+                    </div>
+                    <div class="section">
+                        <h2>{labels.recipients}</h2>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>{labels.fieldName}</th>
+                                    <th>{labels.email}</th>
+                                    <th>{labels.roleLabel}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={contactsMapping} for:item="recipient">
+                                    <tr key={recipient.id}>
+                                        <td>{recipient.Name}</td>
+                                        <td>{recipient.Email__c}</td>
+                                        <td>{recipient.RoleLabel__c}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="section">
+                        <h2>{labels.fields}</h2>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>{labels.fieldName}</th>
+                                    <th>{labels.tag}</th>
+                                    <th>{labels.tagLabel}</th>
+                                    <th>{labels.tagValue}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={objectMappings} for:item="field">
+                                    <tr key={field.id}>
+                                        <td>{field.labelFieldName}</td>
+                                        <td>{field.tag}</td>
+                                        <td>{field.tagLabel}</td>
+                                        <td>{field.tagValue}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+
+                <template if:false={template}>
+                    <p>{labels.noTemplateData}</p>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

@@ -15,7 +15,7 @@
     <filters>
         <field>LEAD.RECORDTYPE</field>
         <operation>equals</operation>
-        <value>Lead.Cliente</value>
+        <value>Lead.QualificacaodeClientes</value>
     </filters>
     <label>Todos os Leads Qualificação de Cliente</label>
 </ListView>

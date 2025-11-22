@@ -12,15 +12,18 @@
         <sobjectType>Case</sobjectType>
     </queueSobject>
     <queueSobject>
-        <sobjectType>LiveAgentSession</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>LiveChatTranscript</sobjectType>
-    </queueSobject>
-    <queueSobject>
         <sobjectType>MessagingEndUser</sobjectType>
     </queueSobject>
     <queueSobject>
         <sobjectType>MessagingSession</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>rsplus__Group_Messaging_Member__c</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>rsplus__Group_Messaging__c</sobjectType>
+    </queueSobject>
+    <queueSobject>
+        <sobjectType>rsplus__OTP__c</sobjectType>
     </queueSobject>
 </Queue>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>disable_Trigger</name>
+        <label>disable Trigger</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>OpportunityTriggerHandlerToggle</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Update_opportunity</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>enable</name>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </inputParameters>
+        <nameSegment>OpportunityTriggerHandlerToggle</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <apiVersion>64.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <environments>Default</environments>
+    <formulas>
+        <name>CreateDateFML</name>
+        <dataType>DateTime</dataType>
+        <expression>DATETIMEVALUE(TODAY()-300)</expression>
+    </formulas>
+    <formulas>
+        <name>thirtyDays</name>
+        <dataType>Date</dataType>
+        <expression>TODAY() - 30</expression>
+    </formulas>
+    <interviewLabel>[Opportunity] - close Opportunity with Activitity {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>[Opportunity] - close Opportunity with Activitity</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_opportunity</name>
+        <label>Update opportunity</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>1 AND 2 AND (3 OR 4) AND 5</filterLogic>
+        <filters>
+            <field>IsClosed</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>LastModifiedDate</field>
+            <operator>LessThanOrEqualTo</operator>
+            <value>
+                <elementReference>thirtyDays</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>StageName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Proposta enviada</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>StageName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Proposta Gerada</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>SubTipo__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Contrato Mini</stringValue>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>DescricaoMotivoPerda__c</field>
+            <value>
+                <stringValue>Fechado por inatividade</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Loss_Reason__c</field>
+            <value>
+                <stringValue>Parado por 30 dias</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>StageName</field>
+            <value>
+                <stringValue>Fechado Perdido</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Opportunity</object>
+    </recordUpdates>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>disable_Trigger</targetReference>
+        </connector>
+        <schedule>
+            <frequency>Daily</frequency>
+            <startDate>2025-09-20</startDate>
+            <startTime>14:06:00.000Z</startTime>
+        </schedule>
+        <triggerType>Scheduled</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

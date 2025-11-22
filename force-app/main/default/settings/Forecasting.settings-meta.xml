@@ -489,6 +489,10 @@
             <label>Custos adicionais levantados:</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5e00000fvi4x</field>
             <label>Dados do inversor</label>
         </opportunityListFieldsLabelMappings>
@@ -2197,6 +2201,10 @@
             <label>Viabilidade disponível</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00NU5000000w9Kf</field>
             <label>Vlr Unit a Pagar - 2° Parc (Recorrência)</label>
         </opportunityListFieldsLabelMappings>
@@ -2322,6 +2330,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -2749,6 +2758,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -3159,6 +3169,10 @@
             <label>Custos adicionais levantados:</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5e00000fvi4x</field>
             <label>Dados do inversor</label>
         </opportunityListFieldsLabelMappings>
@@ -4867,6 +4881,10 @@
             <label>Viabilidade disponível</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00NU5000000w9Kf</field>
             <label>Vlr Unit a Pagar - 2° Parc (Recorrência)</label>
         </opportunityListFieldsLabelMappings>
@@ -4992,6 +5010,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -5419,6 +5438,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -5833,6 +5853,10 @@
             <label>Custos adicionais levantados:</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5e00000fvi4x</field>
             <label>Dados do inversor</label>
         </opportunityListFieldsLabelMappings>
@@ -7541,6 +7565,10 @@
             <label>Viabilidade disponível</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00NU5000000w9Kf</field>
             <label>Vlr Unit a Pagar - 2° Parc (Recorrência)</label>
         </opportunityListFieldsLabelMappings>
@@ -7667,6 +7695,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -8094,6 +8123,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -8504,6 +8534,10 @@
             <label>Custos adicionais levantados:</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5e00000fvi4x</field>
             <label>Dados do inversor</label>
         </opportunityListFieldsLabelMappings>
@@ -10212,6 +10246,10 @@
             <label>Viabilidade disponível</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00NU5000000w9Kf</field>
             <label>Vlr Unit a Pagar - 2° Parc (Recorrência)</label>
         </opportunityListFieldsLabelMappings>
@@ -10337,6 +10375,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -10764,6 +10803,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -11178,6 +11218,10 @@
             <label>Custos adicionais levantados:</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5e00000fvi4x</field>
             <label>Dados do inversor</label>
         </opportunityListFieldsLabelMappings>
@@ -12886,6 +12930,10 @@
             <label>Viabilidade disponível</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00NU5000000w9Kf</field>
             <label>Vlr Unit a Pagar - 2° Parc (Recorrência)</label>
         </opportunityListFieldsLabelMappings>
@@ -13012,6 +13060,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -13439,6 +13488,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -13849,6 +13899,10 @@
             <label>Custos adicionais levantados:</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5e00000fvi4x</field>
             <label>Dados do inversor</label>
         </opportunityListFieldsLabelMappings>
@@ -15557,6 +15611,10 @@
             <label>Viabilidade disponível</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00NU5000000w9Kf</field>
             <label>Vlr Unit a Pagar - 2° Parc (Recorrência)</label>
         </opportunityListFieldsLabelMappings>
@@ -15682,6 +15740,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -16109,6 +16168,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -16523,6 +16583,10 @@
             <label>Custos adicionais levantados:</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5e00000fvi4x</field>
             <label>Dados do inversor</label>
         </opportunityListFieldsLabelMappings>
@@ -18231,6 +18295,10 @@
             <label>Viabilidade disponível</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00NU5000000w9Kf</field>
             <label>Vlr Unit a Pagar - 2° Parc (Recorrência)</label>
         </opportunityListFieldsLabelMappings>
@@ -18357,6 +18425,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -18784,6 +18853,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -19194,6 +19264,10 @@
             <label>Custos adicionais levantados:</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5e00000fvi4x</field>
             <label>Dados do inversor</label>
         </opportunityListFieldsLabelMappings>
@@ -20902,6 +20976,10 @@
             <label>Viabilidade disponível</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00NU5000000w9Kf</field>
             <label>Vlr Unit a Pagar - 2° Parc (Recorrência)</label>
         </opportunityListFieldsLabelMappings>
@@ -21027,6 +21105,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -21454,6 +21533,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -21868,6 +21948,10 @@
             <label>Custos adicionais levantados:</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5e00000fvi4x</field>
             <label>Dados do inversor</label>
         </opportunityListFieldsLabelMappings>
@@ -23576,6 +23660,10 @@
             <label>Viabilidade disponível</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00NU5000000w9Kf</field>
             <label>Vlr Unit a Pagar - 2° Parc (Recorrência)</label>
         </opportunityListFieldsLabelMappings>
@@ -23702,6 +23790,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -24129,6 +24218,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -24539,6 +24629,10 @@
             <label>Custos adicionais levantados:</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5e00000fvi4x</field>
             <label>Dados do inversor</label>
         </opportunityListFieldsLabelMappings>
@@ -26247,6 +26341,10 @@
             <label>Viabilidade disponível</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00NU5000000w9Kf</field>
             <label>Vlr Unit a Pagar - 2° Parc (Recorrência)</label>
         </opportunityListFieldsLabelMappings>
@@ -26372,6 +26470,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -26799,6 +26898,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -27213,6 +27313,10 @@
             <label>Custos adicionais levantados:</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5e00000fvi4x</field>
             <label>Dados do inversor</label>
         </opportunityListFieldsLabelMappings>
@@ -28921,6 +29025,10 @@
             <label>Viabilidade disponível</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00NU5000000w9Kf</field>
             <label>Vlr Unit a Pagar - 2° Parc (Recorrência)</label>
         </opportunityListFieldsLabelMappings>
@@ -29047,6 +29155,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -29474,6 +29583,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>
@@ -29884,6 +29994,10 @@
             <label>Custos adicionais levantados:</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFkN</field>
+            <label>Custo Total da Enerzee</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00N5e00000fvi4x</field>
             <label>Dados do inversor</label>
         </opportunityListFieldsLabelMappings>
@@ -31592,6 +31706,10 @@
             <label>Viabilidade disponível</label>
         </opportunityListFieldsLabelMappings>
         <opportunityListFieldsLabelMappings>
+            <field>00NU5000001xFk8</field>
+            <label>Viabilidade Principal</label>
+        </opportunityListFieldsLabelMappings>
+        <opportunityListFieldsLabelMappings>
             <field>00NU5000000w9Kf</field>
             <label>Vlr Unit a Pagar - 2° Parc (Recorrência)</label>
         </opportunityListFieldsLabelMappings>
@@ -31717,6 +31835,7 @@
             <field>00NU5000000w1oX</field>
             <field>00NU5000000w2B7</field>
             <field>00N5e00000fwRO1</field>
+            <field>00NU5000001xFkN</field>
             <field>00N5e00000fvi4x</field>
             <field>00N5e00000fvi50</field>
             <field>00N5e00000fvi5z</field>
@@ -32144,6 +32263,7 @@
             <field>00N5e00000fviAJ</field>
             <field>00N5e00000fwRNH</field>
             <field>00NU5000000vqoH</field>
+            <field>00NU5000001xFk8</field>
             <field>00NU5000000w9Kf</field>
             <field>00NU5000000EvXt</field>
             <field>00NU5000000hiXF</field>

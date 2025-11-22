@@ -25,7 +25,7 @@
         <description>Envio da Fase Aguardando dados da visita para coordenador e Responsável</description>
         <protected>false</protected>
         <recipients>
-            <recipient>CoordenadorViabilidade</recipient>
+            <recipient>Supervisor_de_Viabilidade</recipient>
             <type>role</type>
         </recipients>
         <recipients>
@@ -93,7 +93,7 @@
         <description>Oportunidade Aprovada</description>
         <protected>false</protected>
         <recipients>
-            <recipient>CoordenadorViabilidade</recipient>
+            <recipient>Supervisor_de_Viabilidade</recipient>
             <type>role</type>
         </recipients>
         <senderType>CurrentUser</senderType>

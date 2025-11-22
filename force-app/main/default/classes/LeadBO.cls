@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 10-17-2025
+ * @last modified on  : 11-05-2025
  * @last modified by  : Daniel Belini
 **/
 public class LeadBO {
@@ -19,7 +19,7 @@ public class LeadBO {
         Id voUserId = [
             SELECT  Id
             FROM    User
-            WHERE   Username like 'integracao@lab065.com%'
+            WHERE   Username like 'integracao@lab065.com'
             LIMIT   1
         ].Id;
         
@@ -67,14 +67,14 @@ public class LeadBO {
         for(Lead lead : newRecordList){
             if (lead.RecordTypeId == QualificarClienteRT && lead.Status == 'Qualified') {
                 if (String.isBlank(lead.CPFCNPJ__c)) { 
-                    lead.addError('O campo Documento é obrigatório! Insira ao menos um antes de converter o Lead.'); 
+                    // lead.addError('O campo Documento é obrigatório! Insira ao menos um antes de converter o Lead.'); 
                 }
                 if (String.isBlank(lead.Email)) { 
                     lead.addError('O campo Email é obrigatório! Preencha antes de converter o Lead.'); 
                 }
-                if (String.isBlank(lead.Phone)) { 
-                    lead.addError('O campo Telefone é obrigatório! Preencha antes de converter o Lead.'); 
-                }
+                // if (String.isBlank(lead.MobilePhone)) { 
+                //     lead.addError('O campo Celular é obrigatório! Preencha antes de converter o Lead.'); 
+                // }
                 /*if (String.isBlank(lead.PostalCode)) { 
                     lead.addError('O campo CEP é obrigatório! Preencha antes de converter o Lead.'); 
                 }

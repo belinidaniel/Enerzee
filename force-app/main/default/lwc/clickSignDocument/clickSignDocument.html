@@ -1,0 +1,130 @@
+<template>
+    <div class="document-container">
+        <div class="header-section">
+            <h2 class="section-title">{labels.selectedDocuments} ({documents.length})</h2>
+            <div class="action-buttons slds-grid slds-gutters slds-wrap">
+                <div class="slds-col slds-size_06-of-12" style="padding-top: 20px;">
+                    <template if:false={hasDocuments}>
+                        <template if:false={hasSelectedTemplate}>
+                            <lightning-button label={labels.selectTemplate} variant="brand" onclick={openTemplateDialog}></lightning-button>
+                        </template>
+                        <template if:true={hasSelectedTemplate}>
+                            <lightning-button label={labels.changeTemplate} variant="neutral" onclick={openTemplateDialog}></lightning-button>
+                        </template>
+                    </template>
+                </div>
+                    
+                    <div class="slds-col slds-size_06-of-12">
+                        <template if:false={hasSelectedTemplate}>
+                            <lightning-input type="file"
+                            multiple
+                            accept=".pdf"
+                            onchange={handleFileSelection}
+                            class="hidden-file-input">
+                        </lightning-input>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <template if:true={hasSelectedTemplate}>
+            <div class="template-list" style="font-size: 20px;">
+                <ul>
+                    <li key={selectedTemplate} class="template-item">
+                        <lightning-icon icon-name="doctype:word" style="padding-right: 20px;" alternative-text="Template Icon" size="small"></lightning-icon>
+                        <span>{selectedTemplateName}</span>
+                        <div>
+                            <lightning-button-icon icon-name="utility:close" alternative-text="Remove Template" onclick={removeTemplate} class="remove-template-button"></lightning-button-icon>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </template>
+
+        <template if:true={hasSelectedTemplate}>
+
+        </template>
+        <template if:false={hasSelectedTemplate}>
+            <template if:false={hasDocuments}>
+                <div class="upload-area">
+                    <div class="upload-icon">
+                        <img src={documentUploadIcon} alt="Upload Icon" class="upload-image" />
+                    </div>
+                    <h3 class="upload-title">{labels.addDocuments}</h3>
+                    <p class="upload-instructions">{labels.dragDropFiles}</p>
+                    <lightning-input type="file"
+                        multiple
+                        accept=".pdf"
+                        onchange={handleFileSelection}
+                        class="hidden-file-input">
+                    </lightning-input>
+                </div>
+            </template>
+    
+            <template if:true={hasDocuments}>
+                <div class="document-list">
+                    <ul>
+                        <template for:each={documents} for:item="document">
+                            <li key={document.id} class="document-item">
+                                <lightning-icon icon-name={document.icon} alternative-text="File Icon" size="small"></lightning-icon>
+                                <span>{document.name}</span>
+                                <lightning-button-icon
+                                    icon-name="utility:close"
+                                    alternative-text="Remove"
+                                    data-id={document.id}
+                                    onclick={handleRemoveDocument}>
+                                </lightning-button-icon>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </template>
+            
+        </template>
+
+        <!-- Modal for template selection -->
+        <template if:true={showTemplateModal}>
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeTemplateDialog}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 class="slds-text-heading_medium">{labels.selectTemplate}</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <lightning-combobox
+                            name="template"
+                            label="Template"
+                            value={selectedTemplate}
+                            placeholder="Select a Template"
+                            options={templates}
+                            onchange={handleTemplateSelection}>
+                        </lightning-combobox>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning-button variant="neutral" label="Cancel" onclick={closeTemplateDialog}></lightning-button>
+                        <lightning-button variant="brand" label="Select" onclick={handleTemplateSelection}></lightning-button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+
+        <!-- Modal for loading -->
+        <template if:true={isLoading}>
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <h2 class="slds-text-heading_medium">{labels.processing}</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <p>{labels.fileProcessing}</p>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+    </div>
+</template>
