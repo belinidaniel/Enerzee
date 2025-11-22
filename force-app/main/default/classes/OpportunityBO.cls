@@ -2,10 +2,11 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-10-2025
+ * @last modified on  : 11-19-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
+    public static Boolean skipAsyncProposalGeneration = false;
 
     //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
     public static void createSellBuyOrder(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
@@ -1926,6 +1927,9 @@ public class OpportunityBO {
     }
     
     public static void generateProposalAsync(Map<Id,Opportunity> newMap, Map<Id,Opportunity> oldMap) {
+        if(skipAsyncProposalGeneration == true){
+            return;
+        }
         for(Opportunity opp :  newMap.values() ){
             Opportunity oldOpp = oldMap.get(opp.Id);
             if(((opp.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('EzeeConnect').getRecordTypeId() && areRequiredFieldsFilledConnect(opp)) ||
@@ -1950,13 +1954,9 @@ public class OpportunityBO {
                         opp.StatusAprovacaoDesconto__c == 'Aprovado'
                     ) ||
                     (
-                        formulaFieldsChanged(oldOpp, opp)
-                    ) ||
-                    (
                         opp.PropostaGerada__c == false
                     )
                 ){
-                    System.debug('if 2 - generateProposalAsync - ');
                     PDFControllerExtension.savePdfFileAsync(opp.Id);
                 }
             }

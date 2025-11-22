@@ -30,11 +30,25 @@ export default class ProposalPendingPanel extends LightningElement {
     previewFileObjectUrl;
     previewIsImage = false;
     previewIsPdf = false;
+    previewMode = 'file';
+    previewResponseText = '';
+    isRejectModalOpen = false;
+    rejectReason = '';
+    rejectReasonError = '';
+    shouldRestorePreviewAfterReject = false;
 
     connectedCallback() {
         this.resetDraftRows();
         this.handleSubscribe();
     }
+
+    // Map of status codes (API names) to labels and variants
+    STATUS_MAP = {
+        '1': { code: '1', label: 'Aguardando', variant: 'pending', allowActions: false },
+        '2': { code: '2', label: 'Respondido', variant: 'info', allowActions: true },
+        '3': { code: '3', label: 'Aprovado', variant: 'success', allowActions: false },
+        '4': { code: '4', label: 'Recusado', variant: 'error', allowActions: false }
+    };
 
     disconnectedCallback() {
         this.handleUnsubscribe();
@@ -167,7 +181,7 @@ export default class ProposalPendingPanel extends LightningElement {
                 ? {
                       ...row,
                       requestDocument: checked,
-                      documentTypeId: checked ? row.documentTypeId : null,
+                      documentTypeId: checked ? row.documentTypeId : 0,
                       documentTypeName: checked ? row.documentTypeName : ''
                   }
                 : row
@@ -195,22 +209,43 @@ export default class ProposalPendingPanel extends LightningElement {
             return;
         }
 
-        if (!pending.fileUrl) {
-            this.showToast('Arquivo indisponível', 'Esta pendência não possui documento para visualização.', 'warning');
+        const hasFile = !!pending.fileUrl;
+        const hasResponse = !!pending.response;
+
+        if (!hasFile && !hasResponse) {
+            this.showToast(
+                'Conteúdo indisponível',
+                'Esta pendência não possui documento ou resposta para visualização.',
+                'warning'
+            );
             return;
         }
 
         this.previewPending = pending;
+        this.previewResponseText = pending.response || '';
+        this.previewMode = hasFile ? 'file' : 'response';
         this.isPreviewModalOpen = true;
-        this.preparePreviewFromUrl(pending.fileUrl);
+
+        if (hasFile) {
+            this.preparePreviewFromUrl(pending.fileUrl);
+        } else {
+            this.previewFileObjectUrl = null;
+            this.previewIsImage = false;
+            this.previewIsPdf = false;
+            this.isPreviewLoading = false;
+        }
     }
 
     handleClosePreview() {
         if (this.isStatusActionRunning) {
             return;
         }
+        this.shouldRestorePreviewAfterReject = false;
+        this.closeRejectModal(false);
         this.isPreviewModalOpen = false;
         this.previewPending = null;
+        this.previewMode = 'file';
+        this.previewResponseText = '';
         this.previewIsImage = false;
         this.previewIsPdf = false;
         if (this.previewFileObjectUrl && this.previewFileObjectUrl.startsWith('blob:')) {
@@ -251,23 +286,75 @@ export default class ProposalPendingPanel extends LightningElement {
     }
 
     get previewHasActions() {
-        return (
-            this.previewPending &&
-            this.previewPending.fileUrl &&
-            (this.previewPending.status || '').toLowerCase() === 'respondido'
-        );
+        if (!this.previewPending) {
+            return false;
+        }
+        const code = String(this.previewPending.statusCode || this.previewPending.status || '');
+        return code === '2' || code.toLowerCase() === 'respondido';
     }
 
     get previewIsUnsupported() {
+        if (this.previewMode !== 'file') {
+            return false;
+        }
         return !!this.previewFileObjectUrl && !this.previewIsImage && !this.previewIsPdf;
     }
 
+    get isResponsePreview() {
+        return this.previewMode === 'response';
+    }
+
+    get hasResponseText() {
+        return !!(this.previewResponseText && this.previewResponseText.trim());
+    }
+
     handleApprove() {
-        this.handleStatusDecision('Aprovado');
+        this.handleStatusDecision('3');
     }
 
     handleReject() {
-        this.handleStatusDecision('Recusado');
+        if (!this.previewPending || this.isStatusActionRunning) {
+            return;
+        }
+        this.shouldRestorePreviewAfterReject = this.isPreviewModalOpen;
+        this.isPreviewModalOpen = false;
+        this.rejectReason = '';
+        this.rejectReasonError = '';
+        this.isRejectModalOpen = true;
+    }
+
+    closeRejectModal(restorePreview = true) {
+        if (this.isStatusActionRunning) {
+            return;
+        }
+        this.isRejectModalOpen = false;
+        this.rejectReason = '';
+        this.rejectReasonError = '';
+        if (restorePreview && this.shouldRestorePreviewAfterReject) {
+            this.isPreviewModalOpen = true;
+        }
+        this.shouldRestorePreviewAfterReject = false;
+    }
+
+    handleRejectReasonChange(event) {
+        const value = event?.detail?.value !== undefined ? event.detail.value : event.target.value;
+        this.rejectReason = value || '';
+        this.rejectReasonError = '';
+    }
+
+    async handleConfirmReject() {
+        const textarea = this.template.querySelector('[data-id="rejectReasonInput"]');
+        const currentValue = textarea ? textarea.value : this.rejectReason;
+        const reasonValue = currentValue ? currentValue.trim() : '';
+        if (!reasonValue) {
+            this.rejectReasonError = 'Informe o motivo da recusa.';
+            return;
+        }
+        const reason = reasonValue;
+        this.rejectReason = reason;
+        this.rejectReasonError = '';
+        this.closeRejectModal(false);
+        await this.handleStatusDecision('4', reason);
     }
 
     handleOpenPreviewExternally() {
@@ -276,15 +363,25 @@ export default class ProposalPendingPanel extends LightningElement {
         }
     }
 
-    async handleStatusDecision(status) {
+    async handleStatusDecision(status, descriptionRejected = null) {
         if (!this.previewPending || this.isStatusActionRunning) {
             return;
         }
 
         this.isStatusActionRunning = true;
         try {
-            await updatePendingStatus({ pendingId: this.previewPending.id, status });
-            this.showToast('Sucesso', `Pendência ${status.toLowerCase()} com sucesso.`, 'success');
+            this.logDebug('updateStatusPayload', {
+                pendingId: this.previewPending.id,
+                status,
+                descriptionRejected
+            });
+            await updatePendingStatus({
+                pendingId: this.previewPending.id,
+                status,
+                descriptionRejected
+            });
+            const statusLabel = (this.STATUS_MAP[String(status)] || {}).label || status;
+            this.showToast('Sucesso', `Pendência ${statusLabel.toLowerCase()} com sucesso.`, 'success');
             this.isPreviewModalOpen = false;
             this.previewPending = null;
             await this.refreshPendings();
@@ -393,32 +490,40 @@ export default class ProposalPendingPanel extends LightningElement {
 
     decoratePendings(pendings) {
         return pendings.map((pending) => {
-            const variant = this.getStatusVariant(pending.status);
+            const meta = this.getStatusMeta(pending.status);
+            const hasFile = !!pending.fileUrl;
+            const hasResponse = (() => {
+                if (!pending.response) {
+                    return false;
+                }
+                return typeof pending.response === 'string'
+                    ? !!pending.response.trim()
+                    : true;
+            })();
             return {
                 ...pending,
-                statusVariant: variant,
-                cardClass: `pending-card pending-card_${variant}`,
-                actionLabel: this.getActionLabel(pending.status)
+                statusCode: meta.code,
+                statusLabel: meta.label,
+                statusVariant: meta.variant,
+                allowActions: meta.allowActions,
+                actionLabel: meta.allowActions ? 'Analisar' : 'Visualizar',
+                showActionButton: hasFile || (meta.allowActions && hasResponse),
+                cardClass: `pending-card pending-card_${meta.variant}`,
+                documentTypeLabel: pending.documentTypeName || ''
             };
         });
     }
 
-    getStatusVariant(status) {
-        const normalized = (status || '').toLowerCase();
-        if (normalized === 'respondido') {
-            return 'info';
+    getStatusMeta(status) {
+        const value = status ? String(status) : '';
+        let meta = this.STATUS_MAP[value];
+        if (!meta) {
+            const normalized = value.toLowerCase();
+            meta = Object.values(this.STATUS_MAP).find((item) => item.label.toLowerCase() === normalized);
         }
-        if (normalized === 'aprovado') {
-            return 'success';
-        }
-        if (normalized === 'recusado') {
-            return 'error';
-        }
-        return 'pending';
-    }
-
-    getActionLabel(status) {
-        return (status || '').toLowerCase() === 'aprovado' ? 'Visualizar' : 'Analisar';
+        return (
+            meta || { code: value || '', label: value || '', variant: 'pending', allowActions: false }
+        );
     }
 
     async refreshPendings() {

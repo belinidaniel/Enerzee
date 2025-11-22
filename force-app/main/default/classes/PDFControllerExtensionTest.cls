@@ -54,6 +54,35 @@ public with sharing class PDFControllerExtensionTest {
     }
 
     @isTest
+    static void naoSalvaQuandoSkipAutoSave(){
+        ProposalCover__c proposalCover = (ProposalCover__c) TestFactory.createSObject(new ProposalCover__c(Template__c = 'ModeloPropostaA'), true);
+        Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(new Parceiro__c(
+            CapaProposta__c = proposalCover.id,
+            Produto__c = 'Solar'
+        ), true);
+
+        Opportunity opp = (Opportunity) TestFactory.createSObject(new Opportunity(
+            Parceiro__c = parceiro.id
+        ), true);
+
+        Test.startTest();
+            ApexPages.StandardController sc = new ApexPages.StandardController(opp);
+            PDFControllerExtension ext = new PDFControllerExtension(sc);
+            ext.selectedCoverId = proposalCover.Id;
+
+            PageReference pageRef = Page.ModeloPropostaA;
+            pageRef.getParameters().put('id', String.valueOf(opp.Id));
+            pageRef.getParameters().put('skipAutoSave', 'true');
+            Test.setCurrentPage(pageRef);
+
+            ext.salvarPDF();
+        Test.stopTest();
+
+        Integer arquivos = [SELECT COUNT() FROM ContentVersion WHERE FirstPublishLocationId = :opp.Id];
+        System.assertEquals(0, arquivos, 'Nenhum arquivo deve ser gerado quando skipAutoSave é true.');
+    }
+
+    @isTest
     static void testePositivoB(){
 
         ProposalCover__c proposalCover = (ProposalCover__c) TestFactory.createSObject(new ProposalCover__c(Template__c = 'ModeloPropostaB'), true);
