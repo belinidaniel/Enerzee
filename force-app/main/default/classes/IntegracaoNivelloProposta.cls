@@ -2,16 +2,24 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 08-16-2025
+ * @last modified on  : 11-23-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class IntegracaoNivelloProposta {
 
     //Por razões de tamanho de pilha, esta classe processa apenas uma Oportunidade por vez
 
+    public static ProposalIntegrationResult gerandoPropostaSincrona(Id oppId){
+        gerandoProposta(oppId);
+        ProposalIntegrationResult result = new ProposalIntegrationResult();
+        result.success = true;
+        result.message = 'Proposta gerada com sucesso';
+        return result;
+    }
+
+
     @future(callout=true)
     public static void gerandoProposta(Id oppId){
-
         Set<Id> contentDocumentIds   = new Set<Id>();
         Map<Id, String> mapaArquivos = new Map<Id, String>();
         
@@ -95,6 +103,7 @@ public with sharing class IntegracaoNivelloProposta {
                     system.debug('response.getStatusCode(): '+response.getStatusCode());
                     //Sucesso
                     if(response.getStatusCode() == 200){
+                        handleAttachmentResponse(opp.Id, response);
                         opp.SucessoIntegracaoNivello__c = true;
                         opp.VerificarCamposElaboracao__c = false;
                         opp.PropostaGerada__c = true;
@@ -283,6 +292,86 @@ public with sharing class IntegracaoNivelloProposta {
     public class URLSimulationRequest {
         public String Id { get; set; }
         public String urlSimulation { get; set; }
+    }
+
+    public class ProposalIntegrationResult{
+        public Boolean success = false;
+        public Integer statusCode;
+        public String message;
+        public String responseBody;
+        public String attachmentUrl;
+    }
+
+    private class ProposalResponse {
+        public Boolean success;
+        public ProposalAttachment data;
+    }
+
+    private class ProposalAttachment {
+        public String id;
+        public String urlFile;
+    }
+
+    private static Id handleAttachmentResponse(Id opportunityId, HttpResponse response) {
+        if (response == null || String.isBlank(response.getBody())) {
+            return null;
+        }
+
+        try {
+            ProposalResponse proposalResponse =
+                (ProposalResponse) JSON.deserialize(response.getBody(), ProposalResponse.class);
+
+            if (proposalResponse == null
+                || proposalResponse.data == null
+                || !proposalResponse.success
+                || String.isBlank(proposalResponse.data.urlFile)) {
+                return null;
+            }
+
+            OpportunityAttachmentLinkService.AttachmentInput input =
+                new OpportunityAttachmentLinkService.AttachmentInput();
+            input.opportunityId = opportunityId;
+            input.attachmentUrl = proposalResponse.data.urlFile;
+            input.externalId = proposalResponse.data.id;
+            input.type = 'Proposal';
+
+            String decodedFileName = extractFileName(proposalResponse.data.urlFile);
+            if (String.isNotBlank(decodedFileName)) {
+                input.description = decodedFileName;
+            }
+
+            OpportunityAttachmentLinkService.upsertAttachment(input);
+            if (String.isNotBlank(input.externalId)) {
+                OpportunityAttachmentLink__c saved = [
+                    SELECT Id
+                    FROM OpportunityAttachmentLink__c
+                    WHERE ExternalId__c = :input.externalId
+                    LIMIT 1
+                ];
+                return saved.Id;
+            }
+            return null;
+        } catch (Exception e) {
+            Utils.createLog('IntegracaoNivelloProposta', 'handleAttachmentResponse ' + opportunityId, e);
+            return null;
+        }
+    }
+
+    private static String extractFileName(String url) {
+        if (String.isBlank(url)) {
+            return null;
+        }
+
+        Integer lastSlash = url.lastIndexOf('/');
+        String fileName = lastSlash != -1 && lastSlash < url.length() - 1
+            ? url.substring(lastSlash + 1)
+            : url;
+
+        try {
+            return EncodingUtil.urlDecode(fileName, 'UTF-8');
+        } catch (Exception e) {
+            return fileName;
+        }
     }
     
 }

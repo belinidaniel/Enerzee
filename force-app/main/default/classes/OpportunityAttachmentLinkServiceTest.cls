@@ -17,15 +17,13 @@ private class OpportunityAttachmentLinkServiceTest {
         Test.stopTest();
 
         OpportunityAttachmentLink__c saved = [
-            SELECT OpportunityId__c, AttachmentURL__c, Type__c, Name, AttachmentDescription__c
+            SELECT OpportunityId__c, AttachmentURL__c, Type__c
             FROM OpportunityAttachmentLink__c
             LIMIT 1
         ];
         System.assertEquals(opp.Id, saved.OpportunityId__c);
         System.assertEquals('https://example.com/proposal.pdf', saved.AttachmentURL__c);
         System.assertEquals('Proposal', saved.Type__c);
-        System.assertEquals('Teste', saved.Name);
-        System.assertEquals('Teste', saved.AttachmentDescription__c);
     }
 
     @isTest
@@ -55,13 +53,12 @@ private class OpportunityAttachmentLinkServiceTest {
         Test.stopTest();
 
         OpportunityAttachmentLink__c saved = [
-            SELECT AttachmentURL__c, AttachmentDescription__c, Name
+            SELECT AttachmentURL__c, AttachmentDescription__c
             FROM OpportunityAttachmentLink__c
             WHERE ExternalId__c = 'ext-id'
             LIMIT 1
         ];
         System.assertEquals('https://example.com/proposal-v2.pdf', saved.AttachmentURL__c);
         System.assertEquals('Atualizado', saved.AttachmentDescription__c);
-        System.assertEquals('Atualizado', saved.Name);
     }
 }

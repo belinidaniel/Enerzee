@@ -3,7 +3,7 @@
     <actionCalls>
         <name>Email_Notificar_fase_da_proposta_consultor</name>
         <label>Email - Notificar fase da proposta - Consultor</label>
-        <locationX>182</locationX>
+        <locationX>314</locationX>
         <locationY>539</locationY>
         <actionName>emailSimple</actionName>
         <actionType>emailSimple</actionType>
@@ -59,7 +59,7 @@
     <actionCalls>
         <name>Email_Notificar_fase_da_proposta_financeiro</name>
         <label>Email - Notificar fase da proposta - Financeiro</label>
-        <locationX>182</locationX>
+        <locationX>314</locationX>
         <locationY>431</locationY>
         <actionName>Opportunity.Notificar_fases_da_proposta_financeiro</actionName>
         <actionType>emailAlert</actionType>
@@ -79,7 +79,7 @@
     <actionCalls>
         <name>Email_Notificar_fase_da_proposta_financeiro2</name>
         <label>Email - Notificar fase da proposta - Financeiro</label>
-        <locationX>578</locationX>
+        <locationX>1370</locationX>
         <locationY>431</locationY>
         <actionName>Opportunity.Notificar_fases_da_proposta_financeiro</actionName>
         <actionType>emailAlert</actionType>
@@ -96,7 +96,7 @@
     <actionCalls>
         <name>Email_Notificar_fase_da_proposta_Jornada_do_Cliente</name>
         <label>Email - Notificar fase da proposta - Jornada do Cliente</label>
-        <locationX>842</locationX>
+        <locationX>1634</locationX>
         <locationY>539</locationY>
         <actionName>Opportunity.NotificarFasesDaPropostaJornadaDoCliente</actionName>
         <actionType>emailAlert</actionType>
@@ -116,7 +116,7 @@
     <actionCalls>
         <name>Email_Notificar_fase_da_proposta_Projetos</name>
         <label>Email - Notificar fase da proposta - Projetos</label>
-        <locationX>842</locationX>
+        <locationX>1634</locationX>
         <locationY>839</locationY>
         <actionName>Opportunity.NotificarFasesDaPropostaProjetos</actionName>
         <actionType>emailAlert</actionType>
@@ -228,7 +228,7 @@
     <decisions>
         <name>Fase</name>
         <label>Fase</label>
-        <locationX>776</locationX>
+        <locationX>1238</locationX>
         <locationY>323</locationY>
         <defaultConnectorLabel>Resultado padrão</defaultConnectorLabel>
         <rules>
@@ -238,21 +238,7 @@
                 <leftValueReference>$Record.StageName</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
-                    <stringValue>Contrato</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>$Record.Status__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Contrato Enviado</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>$Record.Owner.Email</leftValueReference>
-                <operator>NotEqualTo</operator>
-                <rightValue>
-                    <stringValue>daniel.belini@enerzee.com.br</stringValue>
+                    <stringValue>Contrato enviado</stringValue>
                 </rightValue>
             </conditions>
             <connector>
@@ -270,13 +256,6 @@
                     <stringValue>Fechado Perdido</stringValue>
                 </rightValue>
             </conditions>
-            <conditions>
-                <leftValueReference>$Record.Owner.Email</leftValueReference>
-                <operator>NotEqualTo</operator>
-                <rightValue>
-                    <stringValue>daniel.belini@enerzee.com.br</stringValue>
-                </rightValue>
-            </conditions>
             <connector>
                 <targetReference>Email_Notificar_fase_da_proposta_financeiro2</targetReference>
             </connector>
@@ -292,13 +271,6 @@
                     <stringValue>Ganho fechado</stringValue>
                 </rightValue>
             </conditions>
-            <conditions>
-                <leftValueReference>$Record.Owner.Email</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>daniel.belini@enerzee.com.br</stringValue>
-                </rightValue>
-            </conditions>
             <connector>
                 <targetReference>Notificar_Jornada_do_Cliente</targetReference>
             </connector>
@@ -308,7 +280,7 @@
     <decisions>
         <name>Messaging_User_Encontrado</name>
         <label>Messaging User Encontrado</label>
-        <locationX>182</locationX>
+        <locationX>314</locationX>
         <locationY>863</locationY>
         <defaultConnectorLabel>Resultado padrão</defaultConnectorLabel>
         <rules>
@@ -330,7 +302,7 @@
     <decisions>
         <name>Notificar_Equipe_Projetos</name>
         <label>Notificar Equipe Projetos?</label>
-        <locationX>974</locationX>
+        <locationX>1766</locationX>
         <locationY>731</locationY>
         <defaultConnectorLabel>Não</defaultConnectorLabel>
         <rules>
@@ -352,7 +324,7 @@
     <decisions>
         <name>Notificar_Jornada_do_Cliente</name>
         <label>Notificar Jornada do Cliente?</label>
-        <locationX>974</locationX>
+        <locationX>1766</locationX>
         <locationY>431</locationY>
         <defaultConnector>
             <targetReference>Notificar_Equipe_Projetos</targetReference>
@@ -421,7 +393,7 @@
     <recordLookups>
         <name>Obter_Messaging_Channel</name>
         <label>Obter Messaging Channel</label>
-        <locationX>182</locationX>
+        <locationX>314</locationX>
         <locationY>647</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -442,7 +414,7 @@
     <recordLookups>
         <name>Obter_MessagingEndUser</name>
         <label>Obter MessagingEndUser</label>
-        <locationX>182</locationX>
+        <locationX>314</locationX>
         <locationY>755</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -468,7 +440,7 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <start>
-        <locationX>650</locationX>
+        <locationX>1112</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Fase</targetReference>

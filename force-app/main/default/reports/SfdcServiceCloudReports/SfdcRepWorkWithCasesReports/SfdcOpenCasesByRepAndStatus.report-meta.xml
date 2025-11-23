@@ -15,7 +15,7 @@
     <columns>
         <field>AgentWork$CreatedDate</field>
     </columns>
-    <description>Este relatório apresenta detalhes dos casos em aberto, agrupados por representante e status. Inclui número do caso, assunto, descrição, tipo e data de criação.</description>
+    <description>This report provides details about open cases, grouped by rep and status. Details include the case number, subject, description, type, and Created Date.</description>
     <filter>
         <criteriaItems>
             <column>AgentWork.Case$Status</column>
@@ -37,7 +37,7 @@
         <field>AgentWork.Case$Status</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Casos em Aberto por Representante e Status</name>
+    <name>Open Cases by Rep and Status</name>
     <params>
         <name>co</name>
         <value>1</value>

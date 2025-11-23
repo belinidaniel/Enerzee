@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 11-23-2025
+ * @last modified by  : Daniel Belini
+**/
 public class ProjetoBO {
 
     public static Map<String, User> userEmailToUser = new Map<String, User>();
@@ -21,6 +28,60 @@ public class ProjetoBO {
         }
 
         IntegracaoNivelloProjetos.sendProjetos(projectIds, Trigger.isInsert);
+    }
+
+    public static void updateCartaAprovacaoFields(List<Projeto__c> projects){
+        if(projects == null || projects.isEmpty()){
+            return;
+        }
+
+        Date today = Date.today();
+        for(Projeto__c project : projects){
+            if(project == null){
+                continue;
+            }
+
+            if(String.isBlank(project.CartaAprovacaoTipo__c) || project.CartaAprovacaoData__c == null){
+                project.CartaAprovacaoDiasRestantes__c = null;
+                continue;
+            }
+
+            Date expirationDate = calculateCartaAprovacaoExpiration(project.CartaAprovacaoData__c, project.CartaAprovacaoTipo__c);
+
+            if(expirationDate == null){
+                project.CartaAprovacaoDiasRestantes__c = null;
+                continue;
+            }
+
+            Integer daysRemaining = today.daysBetween(expirationDate);
+            project.CartaAprovacaoDiasRestantes__c = daysRemaining;
+
+            if(daysRemaining < 0){
+            } else if(daysRemaining <= 15){
+            } else {
+            }
+        }
+    }
+
+    private static Date calculateCartaAprovacaoExpiration(Date baseDate, String tipo){
+        if(baseDate == null || String.isBlank(tipo)){
+            return null;
+        }
+
+        String normalizedType = tipo.trim();
+        if(normalizedType == 'Informacao_de_Acesso'){
+            return baseDate.addDays(60);
+        } else if(normalizedType == 'Disponibilidade_de_Energia'){
+            return baseDate.addDays(90);
+        } else if(normalizedType == 'Microgeracao'){
+            return baseDate.addDays(120);
+        } else if(normalizedType == 'Minigeracao'){
+            return baseDate.addYears(1);
+        } else if(normalizedType == 'Posto_ou_Subestacao'){
+            return baseDate.addYears(2);
+        }
+
+        return null;
     }
     
     public static void createTasks(List<Projeto__c> newRecordList, Map<Id, Projeto__c> oldMap){
@@ -277,7 +338,7 @@ public class ProjetoBO {
                 }
             }
         }
-        insert tasksToInsert;
+        // insert tasksToInsert;
     }
 
     public static Task createTask(TaskProjectTableLine line, Projeto__c projeto, List<String> interessadosList, Boolean isFirst){

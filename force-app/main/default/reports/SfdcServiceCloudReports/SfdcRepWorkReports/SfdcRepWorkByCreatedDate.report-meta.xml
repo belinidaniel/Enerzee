@@ -30,13 +30,13 @@
         <aggregateTypes>Sum</aggregateTypes>
         <field>AgentWork$HandleTime</field>
     </columns>
-    <description>Este relatório apresenta trabalhos atribuídos aos representantes, agrupados pela data de criação. Inclui nome do representante, data da solicitação, capacidade necessária, tempo de atendimento e, quando aplicável, data de encerramento e motivo da recusa.</description>
+    <description>This report provides details about work items assigned to reps, grouped by Created Date. Details include the rep’s name, requested date, capacity requirement, handle time, and, if applicable, closed date and decline reason.</description>
     <format>Summary</format>
     <groupingsDown>
         <field>AgentWork$CreatedDate</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Trabalho dos Representantes por Data de Criação</name>
+    <name>Rep Work by Created Date</name>
     <params>
         <name>co</name>
         <value>1</value>

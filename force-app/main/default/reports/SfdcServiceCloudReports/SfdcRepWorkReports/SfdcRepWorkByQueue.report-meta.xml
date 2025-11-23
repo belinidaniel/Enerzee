@@ -95,7 +95,7 @@
         <aggregateTypes>Sum</aggregateTypes>
         <field>AgentWork$CapacityWeight</field>
     </columns>
-    <description>Este relatório apresenta trabalhos atribuídos aos representantes, agrupados por fila e canal de serviço. Inclui status do trabalho, canal de serviço e métricas como velocidade de resposta, tempo ativo e tempo de atendimento.</description>
+    <description>This report provides details about work items assigned to reps, grouped by queue and service channel. Details include the work status, service channel, and key metrics, such as speed to answer, active time, and handle time.</description>
     <filter>
         <criteriaItems>
             <column>AgentWork$OriginalQueue</column>
@@ -117,7 +117,7 @@
         <field>AgentWork$ServiceChannel</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Trabalho dos Representantes por Fila e Canal</name>
+    <name>Rep Work by Queue and Channel</name>
     <params>
         <name>co</name>
         <value>1</value>

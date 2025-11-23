@@ -117,6 +117,9 @@
         <aggregateTypes>Sum</aggregateTypes>
         <field>STAGE_DURATION</field>
     </columns>
+    <columns>
+        <field>Opportunity.DescricaoMotivoPerda__c</field>
+    </columns>
     <filter>
         <criteriaItems>
             <column>RECORDTYPE</column>

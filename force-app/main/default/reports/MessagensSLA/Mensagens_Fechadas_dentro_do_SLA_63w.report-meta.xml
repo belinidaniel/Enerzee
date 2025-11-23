@@ -4,9 +4,6 @@
         <field>MessagingSession$Name</field>
     </columns>
     <columns>
-        <field>MessagingSession.Intera_es_dos_leads__r$Name</field>
-    </columns>
-    <columns>
         <aggregateTypes>Sum</aggregateTypes>
         <field>MessagingSession$MinuteSLAN1__c</field>
     </columns>
@@ -16,11 +13,18 @@
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
+        <field>MessagingSession$MinuteSLAN3__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
         <field>MessagingSession$NotifyN1__c</field>
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
         <field>MessagingSession$NotifyN2__c</field>
+    </columns>
+    <columns>
+        <field>MessagingSession$QueueCoordinatorRole__c</field>
     </columns>
     <filter>
         <criteriaItems>
@@ -31,7 +35,7 @@
             <value>1</value>
         </criteriaItems>
         <criteriaItems>
-            <column>MessagingSession$QueueSupervisor__c</column>
+            <column>MessagingSession$QueueSupervisorRole__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>notEqual</operator>
@@ -54,7 +58,7 @@
     </groupingsDown>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
-        <field>MessagingSession$QueueSupervisor__c</field>
+        <field>MessagingSession$QueueSupervisorRole__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <name>Mensagens Fechadas dentro do SLA</name>

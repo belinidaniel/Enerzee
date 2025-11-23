@@ -3,6 +3,7 @@ import loadProposalData from '@salesforce/apex/ProposalConsoleController.loadPro
 import sendProposal from '@salesforce/apex/ProposalConsoleController.sendProposal';
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { subscribe, unsubscribe, onError } from 'lightning/empApi';
 
 export default class OpportunityProposalConsole extends LightningElement {
     @api recordId;
@@ -29,6 +30,20 @@ export default class OpportunityProposalConsole extends LightningElement {
     filePreviewIsImage = false;
     isAttachmentPreviewLoading = false;
     error;
+    subscription = null;
+    channelName = '/data/OpportunityAttachmentLink__ChangeEvent';
+    refreshTimer = null;
+    refreshAttempts = 0;
+
+    connectedCallback() {
+        this.subscribeToAttachmentChanges();
+        this.registerEmpError();
+    }
+
+    disconnectedCallback() {
+        this.unsubscribeFromAttachmentChanges();
+        this.clearScheduledRefresh();
+    }
 
     @wire(loadProposalData, { opportunityId: '$recordId' })
     wiredProposals(result) {
@@ -83,6 +98,11 @@ export default class OpportunityProposalConsole extends LightningElement {
         return (this.proposalData?.templates || []).length > 0;
     }
 
+    get emptyProposalMessage() {
+        const label = this.modeLabelSingular.toLowerCase();
+        return `Nenhuma ${label} disponível ainda.`;
+    }
+
     get templateOptions() {
         const options = (this.proposalData?.templates || []).map((template) => ({
             label: template.label,
@@ -107,8 +127,28 @@ export default class OpportunityProposalConsole extends LightningElement {
         return !this.selectedTemplateId || this.isProcessing;
     }
 
+    get isViabilityMode() {
+        return this.proposalData?.hasViability === true;
+    }
+
+    get modeLabelSingular() {
+        return this.isViabilityMode ? 'Readequação' : 'Proposta';
+    }
+
+    get modeLabelPlural() {
+        return this.isViabilityMode ? 'Readequações' : 'Propostas';
+    }
+
+    get viewButtonLabel() {
+        return this.isViabilityMode ? 'Visualizar readequação' : 'Visualizar proposta';
+    }
+
+    get sendButtonLabel() {
+        return this.isViabilityMode ? 'Enviar readequação' : 'Enviar proposta';
+    }
+
     get modalTitle() {
-        return this.isSendMode ? 'Enviar proposta' : 'Visualizar proposta';
+        return this.isSendMode ? this.sendButtonLabel : this.viewButtonLabel;
     }
 
     handleOpenPreview() {
@@ -236,22 +276,31 @@ export default class OpportunityProposalConsole extends LightningElement {
         this.isProcessing = true;
         this.isLoading = true;
 
+        // Oculta modal mas mantém estado para reabrir em caso de falha.
+        this.isModalOpen = false;
+
         sendProposal({
             opportunityId: this.recordId,
             coverId: this.selectedTemplateId
         })
             .then((result) => {
+                const success = result?.success !== false;
+                const variant = success ? 'success' : 'error';
                 this.dispatchEvent(
                     new ShowToastEvent({
-                        title: 'Sucesso',
+                        title: success ? 'Sucesso' : 'Falha ao enviar',
                         message: result?.message || 'Proposta enviada.',
-                        variant: 'success'
+                        variant
                     })
                 );
-                this.closeModal();
+                // Refresh imediato; agenda novos refreshes para capturar anexos assíncronos.
+                this.scheduleRefresh();
                 return refreshApex(this.wiredResult);
             })
             .catch((error) => {
+                // Reabre a modal em caso de falha.
+                this.isModalOpen = true;
+                this.isSendMode = true;
                 const message = this.reduceError(error);
                 this.dispatchEvent(
                     new ShowToastEvent({
@@ -266,6 +315,64 @@ export default class OpportunityProposalConsole extends LightningElement {
                 this.isProcessing = false;
                 this.isLoading = false;
             });
+    }
+
+    subscribeToAttachmentChanges() {
+        if (this.subscription || !this.channelName) {
+            return;
+        }
+
+        const callback = (message) => {
+            const payload = message?.data?.payload;
+            const changeType = payload?.ChangeEventHeader?.changeType;
+            const opportunityId = payload?.OpportunityId__c;
+
+            if (changeType === 'CREATE' && opportunityId === this.recordId) {
+                refreshApex(this.wiredResult);
+            }
+        };
+
+        subscribe(this.channelName, -1, callback).then((response) => {
+            this.subscription = response;
+        });
+    }
+
+    unsubscribeFromAttachmentChanges() {
+        if (this.subscription) {
+            unsubscribe(this.subscription, () => {
+                this.subscription = null;
+            });
+        }
+    }
+
+    registerEmpError() {
+        onError((error) => {
+            // Apenas loga; não interrompe fluxo principal.
+            // eslint-disable-next-line no-console
+            console.error('EMP API error: ', JSON.stringify(error));
+        });
+    }
+
+    scheduleRefresh() {
+        this.clearScheduledRefresh();
+        this.refreshAttempts = 0;
+        this.refreshTimer = window.setInterval(() => {
+            this.refreshAttempts += 1;
+            refreshApex(this.wiredResult);
+
+            // Faz 3 tentativas espaçadas (3 x 4s).
+            if (this.refreshAttempts >= 3) {
+                this.clearScheduledRefresh();
+            }
+        }, 2000);
+    }
+
+    clearScheduledRefresh() {
+        if (this.refreshTimer) {
+            window.clearInterval(this.refreshTimer);
+            this.refreshTimer = null;
+        }
+        this.refreshAttempts = 0;
     }
 
     openFile(event) {
@@ -302,7 +409,7 @@ export default class OpportunityProposalConsole extends LightningElement {
                 downloadUrl: record.downloadUrl,
                 createdDate: record.createdDate,
                 displayMeta: displayParts.join(' • '),
-                fileType: record.fileType,
+                fileType: this.isViabilityMode && collection === 'proposal' ? 'Readequação' : record.fileType,
                 iconName,
                 collection,
                 previewUrl: record.downloadUrl
