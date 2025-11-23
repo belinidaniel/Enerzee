@@ -103,6 +103,7 @@ public class OpportunityBO {
             opportunity.Origem__c = singleOpportunity.Origem;
         }
         if (singleOpportunity.ConsumptionAverage != null) {
+            opportunity.ConsumptionAverage__c = singleOpportunity.ConsumptionAverage;
             opportunity.MediaConsumo__c = singleOpportunity.ConsumptionAverage;
         }
         if (singleOpportunity.TargetConsume != null) {

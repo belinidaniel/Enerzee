@@ -14,6 +14,7 @@ public class ViabilityStudyBO {
     private static Map<String, User> userEmailToUser = new Map<String, User>();
 
     @TestVisible private static TaskViabilityTable taskTableOverride;
+    @TestVisible public static Boolean bypassTaskCreation = false;
 
     @TestVisible private static void resetTestState(){
         queueIdentifierToGroup = null;
@@ -22,6 +23,9 @@ public class ViabilityStudyBO {
     }
 
     public static void createTasks(List<ViabilityStudy__c> newRecords, Map<Id, ViabilityStudy__c> oldRecordsMap){
+        if(bypassTaskCreation){
+            return;
+        }
         if(newRecords == null || newRecords.isEmpty()){
             return;
         }
@@ -262,9 +266,7 @@ public class ViabilityStudyBO {
             return true;
         }
 
-        String normalizedSubject = subject.trim().toLowerCase();
-
-        if(normalizedSubject == 'solicitar novo integrador'){
+        if(subject.equalsIgnoreCase('SOLICITAR NOVO INTEGRADOR')){
             if(viability == null || String.isBlank(viability.OwnTeamThirdParty__c)){
                 return false;
             }
@@ -273,6 +275,7 @@ public class ViabilityStudyBO {
             return option == 'nao_cadastrado' || option == 'não cadastrado';
         }
 
+<<<<<<< HEAD
         if(normalizedSubject == 'confirmação de lançamento de nf' ||
             normalizedSubject == 'confirmação de lancaçamento de nf'){
             if(viability == null || String.isBlank(viability.OwnTeamThirdParty__c)){
@@ -283,6 +286,8 @@ public class ViabilityStudyBO {
             return option != 'enerzee' && option != 'consultor';
         }
 
+=======
+>>>>>>> UAT
         return true;
     }
 

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <description>Acesso ao objeto de Pendências de Proposta do EzeeConnect.</description>
+<<<<<<< HEAD
     <hasActivationRequired>false</hasActivationRequired>
     <label>EzeeConnect Pendências</label>
+=======
+>>>>>>> UAT
     <fieldPermissions>
         <editable>true</editable>
         <field>ProposalPending__c.Description__c</field>
@@ -33,6 +36,11 @@
         <field>ProposalPending__c.Response__c</field>
         <readable>true</readable>
     </fieldPermissions>
+<<<<<<< HEAD
+=======
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>EzeeConnect Pendências</label>
+>>>>>>> UAT
     <objectPermissions>
         <allowCreate>true</allowCreate>
         <allowDelete>false</allowDelete>
@@ -40,6 +48,10 @@
         <allowRead>true</allowRead>
         <modifyAllRecords>false</modifyAllRecords>
         <object>ProposalPending__c</object>
+<<<<<<< HEAD
+=======
+        <viewAllFields>false</viewAllFields>
+>>>>>>> UAT
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
 </PermissionSet>

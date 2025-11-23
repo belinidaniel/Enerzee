@@ -751,29 +751,14 @@ public with sharing class PDFControllerExtension {
         private List<String> buildViabilityCostEntries(String multiSelectValues, ViabilityStudy__c viability){
             List<String> entries = new List<String>();
             for(String label : splitMultiSelectValues(multiSelectValues)){
-                String displayLabel = resolveViabilityCostLabel(label, viability);
                 Decimal amount = resolveViabilityCostAmount(label, viability);
                 if(amount != null){
-                    entries.add(displayLabel + ' (' + formatCurrencyBR(amount) + ')');
+                    entries.add(label + ' (' + formatCurrencyBR(amount) + ')');
                 } else {
-                    entries.add(displayLabel);
+                    entries.add(label);
                 }
             }
             return entries;
-        }
-
-        private String resolveViabilityCostLabel(String label, ViabilityStudy__c viability){
-            if(String.isBlank(label)){
-                return label;
-            }
-
-            String normalized = label.trim().toLowerCase();
-            if((normalized == 'outros custos' || normalized == 'outros custo') &&
-                viability != null && !String.isBlank(viability.OtherCostsDescription__c)){
-                return viability.OtherCostsDescription__c.trim();
-            }
-
-            return label;
         }
 
         private List<String> splitMultiSelectValues(String values){
@@ -812,7 +797,7 @@ public with sharing class PDFControllerExtension {
                 amount = viability.StruturalReport__c;
             } else if(normalized == 'outros custos' || normalized == 'outros custos'){
                 amount = viability.OtherCosts__c;
-                label = viability.OtherCostsDescription__c != null ? viability.OtherCostsDescription__c.trim().toLowerCase() : 'outros custos';
+                normalized = viability.OtherCostsDescription__c != null ? viability.OtherCostsDescription__c.trim().toLowerCase() : 'outros custos';
             } else if(normalized == 'custos adicionais' || normalized == 'custos adicionais'){
                 amount = viability.AdditionalCost__c;
             }else{

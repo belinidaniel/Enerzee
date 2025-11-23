@@ -2,7 +2,10 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ContagemPrazoProjetoAnalise__c</fullName>
     <description>Dias corridos manuais para a fase Projeto em Análise.</description>
+<<<<<<< HEAD
     <externalId>false</externalId>
+=======
+>>>>>>> UAT
     <label>Contagem do Prazo - Projeto em Análise</label>
     <precision>18</precision>
     <required>false</required>

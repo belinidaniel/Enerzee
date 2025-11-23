@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Consultor__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Consultor responsável pela análise de viabilidade.</description>
+    <inlineHelpText>Selecione o consultor ou integrador responsável pela etapa de viabilidade.</inlineHelpText>
+    <label>Consultor</label>
+    <referenceTo>Consultor__c</referenceTo>
+    <relationshipLabel>Viabilidades</relationshipLabel>
+    <relationshipName>ViabilityStudies</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

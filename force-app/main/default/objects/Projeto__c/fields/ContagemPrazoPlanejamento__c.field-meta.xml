@@ -2,7 +2,10 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ContagemPrazoPlanejamento__c</fullName>
     <description>Dias corridos registrados enquanto o projeto está em Planejamento.</description>
+<<<<<<< HEAD
     <externalId>false</externalId>
+=======
+>>>>>>> UAT
     <label>Contagem Prazo Planejamento de Projeto</label>
     <precision>18</precision>
     <required>false</required>

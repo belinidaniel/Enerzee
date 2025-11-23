@@ -3,7 +3,10 @@
     <fullName>Description__c</fullName>
     <label>Descrição</label>
     <length>32768</length>
+<<<<<<< HEAD
     <trackHistory>false</trackHistory>
+=======
+>>>>>>> UAT
     <trackTrending>false</trackTrending>
     <type>LongTextArea</type>
     <visibleLines>3</visibleLines>

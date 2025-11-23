@@ -5,8 +5,13 @@
     <externalId>false</externalId>
     <label>Tipo de Documento (Id)</label>
     <precision>6</precision>
+<<<<<<< HEAD
     <scale>0</scale>
     <trackHistory>false</trackHistory>
+=======
+    <required>false</required>
+    <scale>0</scale>
+>>>>>>> UAT
     <trackTrending>false</trackTrending>
     <type>Number</type>
     <unique>false</unique>

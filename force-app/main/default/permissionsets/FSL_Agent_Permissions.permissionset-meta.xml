@@ -8,38 +8,6 @@
         <apexClass>FSL__AutomationNameRest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__BulkServiceBasedRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__FillResourceGapsRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__O2FetchFiles</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__ResourceBasedRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__ServiceBasedRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__TerritoryBasedReadOnlyRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__TerritoryBasedRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__UpdatePermissionsRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
     <fieldPermissions>
         <editable>false</editable>
         <field>AssignedResource.ActualTravelTime</field>
@@ -1458,18 +1426,6 @@
         <apexPage>FSL__GetCandidates</apexPage>
         <enabled>true</enabled>
     </pageAccesses>
-    <recordTypeVisibilities>
-        <recordType>ResourceAbsence.FSL__Break</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <recordType>ResourceAbsence.FSL__Non_Availability</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
-    <tabSettings>
-        <tab>FSL__CapacityManagement</tab>
-        <visibility>Visible</visibility>
-    </tabSettings>
     <userPermissions>
         <enabled>true</enabled>
         <name>FieldServiceAccess</name>

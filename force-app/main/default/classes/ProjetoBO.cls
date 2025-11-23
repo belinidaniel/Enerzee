@@ -42,14 +42,18 @@ public class ProjetoBO {
             }
 
             if(String.isBlank(project.CartaAprovacaoTipo__c) || project.CartaAprovacaoData__c == null){
+                project.CartaAprovacaoValidade__c = null;
                 project.CartaAprovacaoDiasRestantes__c = null;
+                project.CartaAprovacaoSinalizacao__c = 'Nenhuma carta registrada';
                 continue;
             }
 
             Date expirationDate = calculateCartaAprovacaoExpiration(project.CartaAprovacaoData__c, project.CartaAprovacaoTipo__c);
+            project.CartaAprovacaoValidade__c = expirationDate;
 
             if(expirationDate == null){
                 project.CartaAprovacaoDiasRestantes__c = null;
+                project.CartaAprovacaoSinalizacao__c = 'Nenhuma carta registrada';
                 continue;
             }
 
@@ -57,8 +61,11 @@ public class ProjetoBO {
             project.CartaAprovacaoDiasRestantes__c = daysRemaining;
 
             if(daysRemaining < 0){
+                project.CartaAprovacaoSinalizacao__c = 'Carta vencida há ' + String.valueOf(Math.abs(daysRemaining)) + ' dia(s)';
             } else if(daysRemaining <= 15){
+                project.CartaAprovacaoSinalizacao__c = 'Carta vence em ' + String.valueOf(daysRemaining) + ' dia(s)';
             } else {
+                project.CartaAprovacaoSinalizacao__c = 'Carta válida por ' + String.valueOf(daysRemaining) + ' dia(s)';
             }
         }
     }

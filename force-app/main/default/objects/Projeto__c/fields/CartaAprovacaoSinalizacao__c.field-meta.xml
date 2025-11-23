@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>CartaAprovacaoSinalizacao__c</fullName>
+<<<<<<< HEAD
     <externalId>false</externalId>
     <formula>IF(ISBLANK(CartaAprovacaoValidade__c), NULL, CartaAprovacaoValidade__c - TODAY())</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
@@ -11,5 +12,15 @@
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Number</type>
+=======
+    <description>Indica se a carta está dentro do prazo, em alerta ou vencida.</description>
+    <externalId>false</externalId>
+    <label>Sinalização da Carta</label>
+    <length>255</length>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+>>>>>>> UAT
     <unique>false</unique>
 </CustomField>

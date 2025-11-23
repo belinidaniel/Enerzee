@@ -158,7 +158,10 @@
     <nameField>
         <displayFormat>PP-{000000}</displayFormat>
         <label>Pendência</label>
+<<<<<<< HEAD
         <trackHistory>false</trackHistory>
+=======
+>>>>>>> UAT
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Pendências de Proposta</pluralLabel>
