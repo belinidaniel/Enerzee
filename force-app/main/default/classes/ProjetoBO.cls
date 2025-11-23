@@ -83,6 +83,75 @@ public class ProjetoBO {
 
         return null;
     }
+
+    public static void initializeStatusStartDate(List<Projeto__c> projects){
+        if(projects == null || projects.isEmpty()){
+            return;
+        }
+
+        Date today = Date.today();
+
+        for(Projeto__c project : projects){
+            if(project == null){
+                continue;
+            }
+
+            if(project.StatusAtualDesde__c == null){
+                project.StatusAtualDesde__c = today;
+            }
+        }
+    }
+
+    public static void updateStageDurations(List<Projeto__c> newProjects, Map<Id, Projeto__c> oldProjects){
+        if(newProjects == null || newProjects.isEmpty() || oldProjects == null || oldProjects.isEmpty()){
+            return;
+        }
+
+        Date today = Date.today();
+
+        for(Projeto__c project : newProjects){
+            if(project == null){
+                continue;
+            }
+
+            Projeto__c oldProject = oldProjects.get(project.Id);
+
+            if(oldProject == null){
+                continue;
+            }
+
+            Boolean statusChanged = oldProject.Status__c != project.Status__c;
+            Date previousStatusStart = oldProject.StatusAtualDesde__c != null ?
+                oldProject.StatusAtualDesde__c :
+                (oldProject.CreatedDate != null ? oldProject.CreatedDate.date() : null);
+
+            if(statusChanged){
+                Integer daysInPreviousStatus = previousStatusStart != null ? previousStatusStart.daysBetween(today) : 0;
+                if(daysInPreviousStatus < 0){
+                    daysInPreviousStatus = 0;
+                }
+
+                Decimal daysToAdd = Decimal.valueOf(daysInPreviousStatus);
+
+                if(oldProject.Status__c == ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO){
+                    Decimal previousTotal = oldProject.ContagemPrazoPlanejamento__c != null ? oldProject.ContagemPrazoPlanejamento__c : 0;
+                    project.ContagemPrazoPlanejamento__c = previousTotal + daysToAdd;
+                } else if(oldProject.Status__c == ProjetoUtils.STATUS_PROJETOS_EM_ELABORACAO){
+                    Decimal previousTotal = oldProject.ContagemPrazoProjetoElaboracao__c != null ? oldProject.ContagemPrazoProjetoElaboracao__c : 0;
+                    project.ContagemPrazoProjetoElaboracao__c = previousTotal + daysToAdd;
+                } else if(oldProject.Status__c == ProjetoUtils.STATUS_PROJETO_EM_ANALISE){
+                    Decimal previousTotal = oldProject.ContagemPrazoProjetoAnalise__c != null ? oldProject.ContagemPrazoProjetoAnalise__c : 0;
+                    project.ContagemPrazoProjetoAnalise__c = previousTotal + daysToAdd;
+                }
+
+                project.StatusAtualDesde__c = today;
+            } else {
+                if(project.StatusAtualDesde__c == null){
+                    project.StatusAtualDesde__c = previousStatusStart != null ? previousStatusStart : today;
+                }
+            }
+        }
+    }
     
     public static void createTasks(List<Projeto__c> newRecordList, Map<Id, Projeto__c> oldMap){
 
