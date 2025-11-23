@@ -68,10 +68,6 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>force:pathAssistant</componentName>
-                <identifier>pathAssistantInstalacao</identifier>
-            </componentInstance>
-            <componentInstance>
                 <componentInstanceProperties>
                     <name>tabs</name>
                     <value>maintabs</value>

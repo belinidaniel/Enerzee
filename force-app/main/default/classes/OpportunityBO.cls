@@ -2,11 +2,10 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-21-2025
+ * @last modified on  : 11-10-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
-    public static Boolean skipAsyncProposalGeneration = false;
 
     //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
     public static void createSellBuyOrder(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
@@ -99,7 +98,6 @@ public class OpportunityBO {
             opportunity.Origem__c = singleOpportunity.Origem;
         }
         if (singleOpportunity.ConsumptionAverage != null) {
-            opportunity.ConsumptionAverage__c = singleOpportunity.ConsumptionAverage;
             opportunity.MediaConsumo__c = singleOpportunity.ConsumptionAverage;
         }
         if (singleOpportunity.TargetConsume != null) {
@@ -1054,24 +1052,6 @@ public class OpportunityBO {
             OpportunitySetIds.add(opp.Id);
         }
 
-        // Evitar criar projetos duplicados via trigger; se já existe projeto para a oportunidade, não cria outro
-        // Exceção: se Categoria = Fast Track, permitimos criar um projeto (e instalação) sempre que o fluxo for acionado
-        Set<Id> opportunitiesWithProject = new Set<Id>();
-        Map<Id, Opportunity> oppMap = new Map<Id, Opportunity>(newRecords);
-        for (Projeto__c existingProject : [
-            SELECT Oportunidade__c
-            FROM   Projeto__c
-            WHERE  Oportunidade__c IN :OpportunitySetIds
-        ]) {
-            Opportunity opp = oppMap.get(existingProject.Oportunidade__c);
-            if (opp != null && 'Fast Track'.equalsIgnoreCase(opp.Categoria__c)) {
-                continue;
-            }
-            if (existingProject.Oportunidade__c != null) {
-                opportunitiesWithProject.add(existingProject.Oportunidade__c);
-            }
-        }
-
         Map<String, String> statusByRecordType = new Map<String, String>{
             'Bombeamento'               => 'STATUS_PLANEJAMENTO',
             'Estação de Recarga'        => 'STATUS_PLANEJAMENTO',
@@ -1091,9 +1071,6 @@ public class OpportunityBO {
             Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
             if(viabilityMap.get(opportunity.Id) == null){
                 return;
-            }
-            if (opportunitiesWithProject.contains(opportunity.Id)) {
-                continue;
             }
             if(
                 (
@@ -1138,13 +1115,6 @@ public class OpportunityBO {
             }
         }
         insert projectsToInsert;
-        if(!projectsToInsert.isEmpty()){
-            Map<Id, Opportunity> opportunityById = new Map<Id, Opportunity>();
-            for(Opportunity opp : newRecords){
-                opportunityById.put(opp.Id, opp);
-            }
-            InstalacaoBO.createInstallationsForFastTrackProjects(projectsToInsert, opportunityById);
-        }
     }
 
     public static void changeOpportunityStageOnViabilityChanging(List<Opportunity> newList, Map<Id, Opportunity> oldMap){
@@ -1955,9 +1925,6 @@ public class OpportunityBO {
     }
     
     public static void generateProposalAsync(Map<Id,Opportunity> newMap, Map<Id,Opportunity> oldMap) {
-        if(skipAsyncProposalGeneration == true){
-            return;
-        }
         for(Opportunity opp :  newMap.values() ){
             Opportunity oldOpp = oldMap.get(opp.Id);
             if(((opp.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('EzeeConnect').getRecordTypeId() && areRequiredFieldsFilledConnect(opp)) ||
@@ -1982,11 +1949,14 @@ public class OpportunityBO {
                         opp.StatusAprovacaoDesconto__c == 'Aprovado'
                     ) ||
                     (
+                        formulaFieldsChanged(oldOpp, opp)
+                    ) ||
+                    (
                         opp.PropostaGerada__c == false
                     )
                 ){
                     System.debug('if 2 - generateProposalAsync - ');
-                    // PDFControllerExtension.savePdfFileAsync(opp.Id);
+                    PDFControllerExtension.savePdfFileAsync(opp.Id);
                 }
             }
         }
@@ -2358,11 +2328,8 @@ public class OpportunityBO {
 
             Map<Id, Opportunity> filteredOpportunities = new Map<Id, Opportunity>();
             Map<Id, Projeto__c> projectByOpportunityId = new Map<Id, Projeto__c>();
-            Map<Id, Instalacao__c> installationByProjectId = new Map<Id, Instalacao__c>();
-            Map<Id, Instalacao__c> installationByOpportunityId = new Map<Id, Instalacao__c>();
             Map<Id, Contact> contactByAccountId = new Map<Id, Contact>();
             Set<Id> accountIds = new Set<Id>();
-            Set<Id> projectIds = new Set<Id>();
             
             for(Opportunity opportunity : newRecords){
 
@@ -2401,23 +2368,6 @@ public class OpportunityBO {
             if(projects != null){
                 for(Projeto__c project : projects){
                     projectByOpportunityId.put(project.Oportunidade__c, project);
-                    projectIds.add(project.Id);
-                }
-            }
-
-            if(!projectIds.isEmpty() || !filteredOpportunities.isEmpty()){
-                for(Instalacao__c installation : [
-                    SELECT  Id, Projeto__c, Oportunidade__c, GestorObra__c, InstallDate__c, DateInspection__c
-                    FROM    Instalacao__c
-                    WHERE   Projeto__c IN :projectIds
-                        OR  Oportunidade__c IN :filteredOpportunities.keySet()
-                ]){
-                    if(installation.Projeto__c != null && !installationByProjectId.containsKey(installation.Projeto__c)){
-                        installationByProjectId.put(installation.Projeto__c, installation);
-                    }
-                    if(installation.Oportunidade__c != null && !installationByOpportunityId.containsKey(installation.Oportunidade__c)){
-                        installationByOpportunityId.put(installation.Oportunidade__c, installation);
-                    }
                 }
             }
 
@@ -2427,13 +2377,8 @@ public class OpportunityBO {
 
                 Projeto__c project = projectByOpportunityId.get(opportunity.Id);
 
-                Instalacao__c installation = installationByProjectId.get(project?.Id);
-                if(installation == null){
-                    installation = installationByOpportunityId.get(opportunity.Id);
-                }
-
                 casesCustomerJourney.add(
-                    buildCase(opportunity, project, installation, contact)
+                    buildCase(opportunity, project, contact)
                 );
             }
 
@@ -2448,7 +2393,7 @@ public class OpportunityBO {
         
     }
     
-    public static Case buildCase(Opportunity opportunity, Projeto__c project, Instalacao__c installation, Contact contact){
+    public static Case buildCase(Opportunity opportunity, Projeto__c project, Contact contact){
 
         List<Group> queueSupport = [
             SELECT Id 
@@ -2467,22 +2412,10 @@ public class OpportunityBO {
         caseRecord.AccountId = opportunity.AccountId;
         caseRecord.ContactId = contact != null ? contact.Id : null;
         if(project?.Consultor__c != null) caseRecord.Nome_do_Consultor__c = project.Consultor__c;
-        if(installation?.GestorObra__c != null){
-            caseRecord.ManagerName__c = installation.GestorObra__c;
-        } else if(project?.GestorObra__c != null){
-            caseRecord.ManagerName__c = project.GestorObra__c;
-        }
+        if(project?.GestorObra__c != null) caseRecord.ManagerName__c = project.GestorObra__c;
         if(project?.ApprovalDate__c != null) caseRecord.ProjectApprovalDate__c = project.ApprovalDate__c;
-        if(installation?.InstallDate__c != null){
-            caseRecord.InstallDate__c = installation.InstallDate__c;
-        } else if(project?.InstallDate__c != null){
-            caseRecord.InstallDate__c = project.InstallDate__c;
-        }
-        if(installation?.DateInspection__c != null){
-            caseRecord.DateInspection__c = installation.DateInspection__c;
-        } else if(project?.DateInspection__c != null){
-            caseRecord.DateInspection__c = project.DateInspection__c;
-        }
+        if(project?.InstallDate__c != null) caseRecord.InstallDate__c = project.InstallDate__c;
+        if(project?.DateInspection__c != null) caseRecord.DateInspection__c = project.DateInspection__c;
 
         return caseRecord;
     }

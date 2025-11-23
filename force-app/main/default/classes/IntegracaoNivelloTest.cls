@@ -3,7 +3,9 @@ public class IntegracaoNivelloTest {
     private static Boolean positiveResult = true;
     
     private static String positiveResponse = 
-        '{ "success": true, "attachmentUrl": "https://example.com/proposta.pdf", "attachmentExternalId": "ATT-123", "attachmentDescription": "Proposta Teste" }';
+        '    {' +
+        '        "success": "true"' +
+        '    }';
     private static String negativeResponse = 
         '    {' +
         '        "success": "false"' +
@@ -56,14 +58,6 @@ public class IntegracaoNivelloTest {
         IntegracaoNivelloProposta.gerandoProposta(opportunity.Id);
 
         Test.stopTest();
-
-        List<OpportunityAttachmentLink__c> attachments = [
-            SELECT AttachmentURL__c, Type__c
-            FROM OpportunityAttachmentLink__c
-            WHERE OpportunityId__c = :opportunity.Id
-        ];
-        System.assertEquals(1, attachments.size(), 'Deve criar um anexo externo para proposta.');
-        System.assertEquals('Proposal', attachments[0].Type__c);
     }
 
     /*@isTest

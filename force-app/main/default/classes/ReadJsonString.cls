@@ -1,7 +1,7 @@
 /**
  * @description       : Parseia um JSON de string e retorna até 5 campos fixos conforme as chaves recebidas.
  * @author            : Daniel Belini
- * @last modified on  : 11-16-2025
+ * @last modified on  : 10-12-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class ReadJsonString {
@@ -19,7 +19,6 @@ public with sharing class ReadJsonString {
         @InvocableVariable public String field2;
         @InvocableVariable public String field3;
         @InvocableVariable public String field4;
-        
         @InvocableVariable public String field5;
     }
     

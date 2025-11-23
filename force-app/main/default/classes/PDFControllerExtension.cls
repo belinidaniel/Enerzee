@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-21-2025
+ * @last modified on  : 11-12-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class PDFControllerExtension {
@@ -175,10 +175,6 @@ public with sharing class PDFControllerExtension {
     }
 
     public PageReference salvarPDF() {
-        String skipAutoSave = ApexPages.currentPage().getParameters().get('skipAutoSave');
-        // if (skipAutoSave != null && skipAutoSave.equalsIgnoreCase('true')) {
-        //     return null;
-        // }
 
         // Evita recursão ao chamar getContent() dentro do mesmo request
         if (salvar == 'Não') {
@@ -320,7 +316,9 @@ public with sharing class PDFControllerExtension {
 
 
     // Método para salvar arquivo com tratamento de exceção
-    public static Id savePdfFile(Id opportunityId, String numeroProposta, String nomePagina, Blob conteudoPdf, Boolean isChanged) {
+    private static Id savePdfFile(Id opportunityId, String numeroProposta, String nomePagina, Blob conteudoPdf, Boolean isChanged) {
+        System.debug('--------------------------------- savePdfFile ---------------------------------------');
+        
         try {
             DateTime today = DateTime.Now();
             String dateString = today.day() + '-' + today.month() + '-' + today.year();
@@ -344,11 +342,7 @@ public with sharing class PDFControllerExtension {
         }
     }
 
-    public static Blob generatePdfContent(Id opportunityId, Id capaPropostaId, String pageName, Boolean isAsync) {
-
-        if (Test.isRunningTest()) {
-            return Blob.valueOf('TESTE CONTEUDO PDF');
-        }
+    private static Blob generatePdfContent(Id opportunityId, Id capaPropostaId, String pageName, Boolean isAsync) {
 
         // Se for chamada síncrona, use a lógica atual
         if (!isAsync) {
@@ -366,7 +360,6 @@ public with sharing class PDFControllerExtension {
         PageReference pdfPage = new PageReference('/apex/' + pageName);
         pdfPage.getParameters().put('id', opportunityId);
         pdfPage.getParameters().put('selectedCoverId', capaPropostaId);
-        pdfPage.getParameters().put('skipAutoSave', 'true');
 
         try {
             return pdfPage.getContent();
@@ -408,9 +401,6 @@ public with sharing class PDFControllerExtension {
 
     @Future(callout=true)
     public static void savePdfFileAsync(Id opportunityId) {
-        if(OpportunityBO.skipAsyncProposalGeneration == true){
-            return;
-        }
         Opportunity opp = [
             SELECT Id, Name, GrupoTarifario__c, isPromotional__c,TipoKitPromocional__c, Numeroproposta__c, Distribuidora__c, Account.Name, Parceiro__r.Name, Parceiro__c, Parceiro__r.CapaProposta__c, Parceiro__r.CapaPromocional__c,RecordType.DeveloperName, RecordTypeId
             FROM Opportunity 
