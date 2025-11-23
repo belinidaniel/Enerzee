@@ -3,7 +3,6 @@
  * @author            : Daniel Belini
 **/
 public with sharing class ProposalConsoleController {
-
     public class ProposalTemplateDTO {
         @AuraEnabled public Id id;
         @AuraEnabled public String label;
@@ -24,6 +23,7 @@ public with sharing class ProposalConsoleController {
         @AuraEnabled public Id defaultTemplateId;
         @AuraEnabled public List<ProposalFileDTO> proposalFiles;
         @AuraEnabled public List<ProposalFileDTO> otherFiles;
+        @AuraEnabled public Boolean hasViability;
     }
 
     public class ProposalActionResult {
@@ -42,7 +42,8 @@ public with sharing class ProposalConsoleController {
                    GrupoTarifario__c,
                    RecordTypeId,
                    Parceiro__r.CapaProposta__c,
-                   Parceiro__r.CapaPromocional__c
+                   Parceiro__r.CapaPromocional__c,
+                   ViabilityStudyFinished__c
             FROM Opportunity
             WHERE Id = :opportunityId
             LIMIT 1
@@ -109,6 +110,7 @@ public with sharing class ProposalConsoleController {
         result.templates = templates;
         result.proposalFiles = proposalFiles;
         result.otherFiles = otherFiles;
+        result.hasViability = opp.ViabilityStudyFinished__c;
         if (opp.Parceiro__r != null) {
             result.defaultTemplateId = opp.Parceiro__r.CapaProposta__c;
         }
@@ -134,7 +136,8 @@ public with sharing class ProposalConsoleController {
                    RecordTypeId,
                    RecordType.DeveloperName,
                    PropostaAlterada__c,
-                   Parceiro__r.Name
+                   Parceiro__r.Name,
+                   ViabilityStudyFinished__c
             FROM Opportunity
             WHERE Id = :opportunityId
             LIMIT 1
@@ -170,7 +173,6 @@ public with sharing class ProposalConsoleController {
             pdfContent,
             opp.PropostaAlterada__c
         );
-        System.debug('Content Version ID: ' + contentVersionId);
         if (contentVersionId == null) {
             throw new AuraHandledException('Não foi possível salvar o arquivo da proposta.');
         }
@@ -179,7 +181,7 @@ public with sharing class ProposalConsoleController {
             applyPostGenerationUpdates(opp, true, contentVersionId);
 
         ProposalActionResult result = new ProposalActionResult();
-        result.success = true;
+        result.success = integrationResult == null || integrationResult.success == null || integrationResult.success;
         result.contentVersionId = contentVersionId;
         result.message = String.isNotBlank(integrationResult != null ? integrationResult.message : null)
             ? integrationResult.message
@@ -194,14 +196,15 @@ public with sharing class ProposalConsoleController {
         String numero = String.isBlank(opp.Numeroproposta__c) ? '' : opp.Numeroproposta__c + ' ';
         String nomeRegistro = (numero + accountName).trim();
         String parceiro = (opp.Parceiro__r != null) ? opp.Parceiro__r.Name : null;
+        String baseLabel = opp.ViabilityStudyFinished__c ? 'Readequacao' : 'Proposta';
 
         if (opp.GrupoTarifario__c == 'Grupo A' || parceiro == 'Enerzee - Grupo A') {
-            return 'Proposta A ' + nomeRegistro;
+            return baseLabel + ' A ' + nomeRegistro;
         } else if (opp.GrupoTarifario__c == 'Grupo B' || parceiro == 'Enerzee - Grupo B') {
-            return 'Proposta B ' + nomeRegistro;
+            return baseLabel + ' B ' + nomeRegistro;
         }
 
-        return nomeRegistro;
+        return baseLabel + ' ' + nomeRegistro;
     }
 
     private static IntegracaoNivelloProposta.ProposalIntegrationResult applyPostGenerationUpdates(Opportunity sourceOpp, Boolean waitForIntegration, Id contentVersionId) {
@@ -240,13 +243,16 @@ public with sharing class ProposalConsoleController {
         try {
             if(waitForIntegration == true){
                 integrationResult = contentVersionId != null
-                    ? IntegracaoNivelloProposta.gerandoPropostaSincrona(sourceOpp.Id, contentVersionId)
+                    ? IntegracaoNivelloProposta.gerandoPropostaSincrona(sourceOpp.Id)
                     : IntegracaoNivelloProposta.gerandoPropostaSincrona(sourceOpp.Id);
             } else {
                 IntegracaoNivelloProposta.gerandoProposta(sourceOpp.Id);
             }
         } catch (Exception integrationEx) {
             Utils.createLog('ProposalConsoleController', 'IntegracaoNivelloProposta', integrationEx);
+            integrationResult = new IntegracaoNivelloProposta.ProposalIntegrationResult();
+            integrationResult.success = false;
+            integrationResult.message = 'Proposta salva, mas falha ao enviar para o aplicativo.';
         } finally {
             OpportunityBO.skipAsyncProposalGeneration = false;
         }

@@ -1,18 +1,18 @@
 <template>
-    <lightning-card title="Propostas">
+    <div class="proposal-shell">
         <template if:true={error}>
             <div class="slds-text-color_error slds-p-around_small">{error}</div>
         </template>
 
         <div class="action-row slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-around_small">
             <div class="action-left">
-                <lightning-button label="Visualizar proposta"
+                <lightning-button label={viewButtonLabel}
                                   variant="neutral"
                                   onclick={handleOpenPreview}
                                   disabled={disableActions}></lightning-button>
             </div>
             <div class="action-right">
-                <lightning-button label="Enviar proposta"
+                <lightning-button label={sendButtonLabel}
                                   variant="brand"
                                   onclick={handleOpenSend}
                                   disabled={disableActions}></lightning-button>
@@ -23,7 +23,7 @@
                           variant="scoped"
                           active-tab-value={activeTab}
                           onactive={handleTabChange}>
-            <lightning-tab label="Propostas" value="proposal">
+            <lightning-tab label={modeLabelPlural} value="proposal">
                 <template if:true={hasProposalAttachments}>
                     <div class="slds-p-horizontal_small slds-m-vertical_small file-list">
                         <template for:each={proposalFiles} for:item="file">
@@ -61,7 +61,7 @@
                 </template>
                 <template if:false={hasProposalAttachments}>
                     <p class="slds-text-body_small slds-p-around_small slds-text-color_weak">
-                        Nenhuma proposta disponível ainda.
+                        {emptyProposalMessage}
                     </p>
                 </template>
             </lightning-tab>
@@ -108,7 +108,7 @@
                 </template>
             </lightning-tab>
         </lightning-tabset>
-    </lightning-card>
+    </div>
 
     <template if:true={isModalOpen}>
         <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
@@ -205,11 +205,11 @@
                     </template>
                 </div>
                 <footer class="slds-modal__footer file-preview__footer">
-                    <lightning-button label="Baixar" onclick={downloadCurrentFile}></lightning-button>
-                    <lightning-button label="Fechar"
+                    <lightning-button label="Fechar" variant="neutral" onclick={closeFileModal}></lightning-button>
+                    <lightning-button label="Baixar"
                                       variant="brand"
                                       class="slds-m-left_small"
-                                      onclick={closeFileModal}></lightning-button>
+                                      onclick={downloadCurrentFile}></lightning-button>
                 </footer>
             </div>
         </section>

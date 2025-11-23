@@ -7,6 +7,9 @@
 **/
 public class OpportunityBO {
 
+    // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas
+    public static Boolean skipAsyncProposalGeneration = false;
+
     //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
     public static void createSellBuyOrder(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
 
@@ -1983,7 +1986,7 @@ public class OpportunityBO {
                     )
                 ){
                     System.debug('if 2 - generateProposalAsync - ');
-                    // PDFControllerExtension.savePdfFileAsync(opp.Id);
+                    PDFControllerExtension.savePdfFileAsync(opp.Id);
                 }
             }
         }

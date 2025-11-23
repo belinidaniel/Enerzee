@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-21-2025
+ * @last modified on  : 11-23-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class PDFControllerExtension {
@@ -35,7 +35,7 @@ public with sharing class PDFControllerExtension {
                             Account.Name,
                             Account.CPF__c,
                             Account.CNPJ__c,
-                            EnderecoOportunidade__c,
+                            Enderecok,
                             Distribuidora__c,
                             TarifaEnergia__c,
                             DescontoPromocional__c,
@@ -176,9 +176,9 @@ public with sharing class PDFControllerExtension {
 
     public PageReference salvarPDF() {
         String skipAutoSave = ApexPages.currentPage().getParameters().get('skipAutoSave');
-        // if (skipAutoSave != null && skipAutoSave.equalsIgnoreCase('true')) {
-        //     return null;
-        // }
+        if ('true'.equalsIgnoreCase(skipAutoSave)) {
+            return null;
+        }
 
         // Evita recursão ao chamar getContent() dentro do mesmo request
         if (salvar == 'Não') {

@@ -1,5 +1,17 @@
+.proposal-shell {
+    background: linear-gradient(135deg, #f7f9fb, #eef4ff);
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(0, 36, 94, 0.08);
+    border: 1px solid #d9e2f3;
+    padding-bottom: 0.25rem;
+}
+
 .action-row {
-    border-bottom: 1px solid var(--lwc-colorBorder, #e5e5e5);
+    border-bottom: 1px solid var(--lwc-colorBorder, #d5dceb);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
 }
 
 .action-left,
@@ -14,19 +26,27 @@
 }
 
 .file-list {
-    background: var(--lwc-colorBackgroundAlt, #fff);
+    background: #fff;
     border-radius: var(--lwc-borderRadiusMedium, 0.25rem);
-    box-shadow: var(--lwc-shadowDropDown, 0 2px 4px rgba(0, 0, 0, 0.1));
+    box-shadow: 0 12px 30px rgba(0, 36, 94, 0.06);
 }
 
 .file-card {
     padding: 0.75rem;
     border-bottom: 1px solid var(--lwc-colorBorder, #e5e5e5);
     align-items: center;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    background: #fff;
 }
 
 .file-card:last-child {
     border-bottom: 0;
+}
+
+.file-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 36, 94, 0.12);
+    border-color: #c3d3f5;
 }
 
 .file-thumb {
@@ -39,6 +59,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
 }
 
 .file-body {
@@ -50,13 +72,14 @@
 
 .file-title {
     font-weight: 600;
-    color: var(--lwc-colorTextLink, #1b5297);
+    color: #0b4f9c;
     display: inline-block;
     width: 100%;
 }
 
 .file-meta {
     margin-top: 0.25rem;
+    color: #4b5563;
 }
 
 .file-actions {
