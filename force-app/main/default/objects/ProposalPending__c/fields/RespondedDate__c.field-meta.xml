@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>RespondedDate__c</fullName>
     <label>Data de Resposta</label>
-    <trackHistory>false</trackHistory>
+    <required>false</required>
     <trackTrending>false</trackTrending>
     <type>DateTime</type>
 </CustomField>

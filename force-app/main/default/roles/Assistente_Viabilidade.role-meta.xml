@@ -3,7 +3,7 @@
     <caseAccessLevel>Edit</caseAccessLevel>
     <contactAccessLevel>Edit</contactAccessLevel>
     <mayForecastManagerShare>false</mayForecastManagerShare>
-    <name>Assistente Assistência técnica</name>
+    <name>Assistente de Viabilidade</name>
     <opportunityAccessLevel>Edit</opportunityAccessLevel>
-    <parentRole>Supervisor_de_Obras</parentRole>
+    <parentRole>Analista_de_Engenharia_Viabilidade</parentRole>
 </Role>

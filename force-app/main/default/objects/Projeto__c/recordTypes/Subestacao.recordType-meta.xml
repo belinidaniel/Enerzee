@@ -4,29 +4,6 @@
     <active>true</active>
     <label>Subestação</label>
     <picklistValues>
-        <picklist>CartaAprovacaoTipo__c</picklist>
-        <values>
-            <fullName>Disponibilidade_de_Energia</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Informacao_de_Acesso</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Microgeracao</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Minigeracao</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Posto_ou_Subestacao</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
         <picklist>Categoria__c</picklist>
         <values>
             <fullName>Fast Track</fullName>
@@ -500,15 +477,10 @@
             <default>false</default>
         </values>
     </picklistValues>
-    
     <picklistValues>
         <picklist>Status__c</picklist>
         <values>
-            <fullName>Planejamento</fullName>
-            <default>true</default>
-        </values>
-        <values>
-            <fullName>Planejamento de projeto</fullName>
+            <fullName>Aguardando vistoria</fullName>
             <default>false</default>
         </values>
         <values>
@@ -516,15 +488,23 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Projeto protocolado</fullName>
+            <fullName>Ligação solicitada</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Projetos em elaboração</fullName>
+            <fullName>Obra concluída</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Projeto em análise</fullName>
+            <fullName>Obra em execução</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Planejamento de Obra</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Planejamento de projeto</fullName>
             <default>false</default>
         </values>
         <values>
@@ -535,8 +515,11 @@
             <fullName>Projeto cancelado</fullName>
             <default>false</default>
         </values>
+        <values>
+            <fullName>Projeto protocolado</fullName>
+            <default>false</default>
+        </values>
     </picklistValues>
-
     <picklistValues>
         <picklist>TipoObra__c</picklist>
         <values>

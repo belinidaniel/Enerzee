@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>CondicaoPagamento2__c</fullName>
-    <description>As configurações deste campo são controladas pela API &quot;APIcondPagamentoOpt&quot;, usada pelo SAP. Última atualização: 19/11/2025 15:04</description>
+    <description>As configurações deste campo são controladas pela API &quot;APIcondPagamentoOpt&quot;, usada pelo SAP. Última atualização: 23/11/2025 18:27</description>
     <label>Condições de pagamento</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>

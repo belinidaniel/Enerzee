@@ -3,27 +3,29 @@
     <fullName>Status__c</fullName>
     <label>Status</label>
     <required>true</required>
-    <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
+                <fullName>1</fullName>
                 <default>true</default>
-                <fullName>Aguardando</fullName>
                 <label>Aguardando</label>
             </value>
             <value>
-                <fullName>Respondido</fullName>
+                <fullName>2</fullName>
+                <default>false</default>
                 <label>Respondido</label>
             </value>
             <value>
-                <fullName>Aprovado</fullName>
+                <fullName>3</fullName>
+                <default>false</default>
                 <label>Aprovado</label>
             </value>
             <value>
-                <fullName>Recusado</fullName>
+                <fullName>4</fullName>
+                <default>false</default>
                 <label>Recusado</label>
             </value>
         </valueSetDefinition>

@@ -1,257 +1,322 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <fieldPermissions>
-        <editable>false</editable>
-        <field>Opportunity.ClientTotalCost__c</field>
+        <editable>true</editable>
+        <field>Consultor__c.Agencia__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Opportunity.EtapaViabilidade__c</field>
+        <field>Consultor__c.Ativo__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Opportunity.MainViability__c</field>
+        <field>Consultor__c.BairroCobranca__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Opportunity.PrazoAprovacaoViabilidade__c</field>
+        <field>Consultor__c.BairroEntrega__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Opportunity.Resultado_da_Viabilidade_Tecnica__c</field>
+        <field>Consultor__c.Bairro__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Opportunity.StatusViabilidade__c</field>
+        <field>Consultor__c.Bairro_da_Unidade__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Opportunity.Tipo_de_Obra_Projeto_Viabilidade__c</field>
+        <field>Consultor__c.Banco__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Opportunity.ViabilityStudyFinished__c</field>
+        <field>Consultor__c.CEP__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Opportunity.ViabilityStudyOwner__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Projeto__c.ViabilityStudyOwner__c</field>
+        <field>Consultor__c.CEP_da_Unidade__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.AcBranchCost__c</field>
+        <field>Consultor__c.CNPJ__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.AdditionalCost__c</field>
+        <field>Consultor__c.CPF__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.AdequacyCostClient__c</field>
+        <field>Consultor__c.Celular__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.AdequacyCostEnerzee__c</field>
+        <field>Consultor__c.CidadeCobranca__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.ApproveDate__c</field>
+        <field>Consultor__c.CidadeEntrega__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.CategoryPhase__c</field>
+        <field>Consultor__c.CodigoPostalCobranca__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.CoberturaCost__c</field>
+        <field>Consultor__c.CodigoPostalEntrega__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.DateTimeVisit__c</field>
+        <field>Consultor__c.Comissao__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.DcBranchCost__c</field>
+        <field>Consultor__c.ComplementoCobranca__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.DurationMinutes__c</field>
+        <field>Consultor__c.ComplementoEntrega__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.EstimatedAnnualGeneration__c</field>
+        <field>Consultor__c.Complemento__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.EstudoViabilidadeLocal__c</field>
+        <field>Consultor__c.ConsultantDeadlineRange__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.FixationStructureVerifiedPlace__c</field>
+        <field>Consultor__c.Conta__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.HaveIncreasedLoad__c</field>
+        <field>Consultor__c.Descricao__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.IncreasingNominalPowerSystem__c</field>
+        <field>Consultor__c.EmailUnidade__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.InputCircuitBreakerNominalCurrent__c</field>
+        <field>Consultor__c.Email__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.InstalledPowerKwp__c</field>
+        <field>Consultor__c.EstadoCobranca__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.LocalizacaoFixa__c</field>
+        <field>Consultor__c.EstadoEntrega__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.ObservationsPostShading__c</field>
+        <field>Consultor__c.Estado__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.ObservationsPostVisit__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>ViabilityStudy__c.OpportunityType__c</field>
+        <field>Consultor__c.Estado_da_Unidade__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.Opportunity__c</field>
+        <field>Consultor__c.Fax__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.OtherCostsDescription__c</field>
+        <field>Consultor__c.FreezeConsult__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.OtherCosts__c</field>
+        <field>Consultor__c.IdVirtualOffice2__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.OwnTeamThirdParty__c</field>
+        <field>Consultor__c.IdVirtualOffice__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.Owner__c</field>
+        <field>Consultor__c.Lb065_RegiaoConsultorEstado__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.SectionNominalCableGage__c</field>
+        <field>Consultor__c.Lb065_UltimoLeadRecebido__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.ServiceResource__c</field>
+        <field>Consultor__c.Lb65_Graduacao__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.StandardAdequacyCost__c</field>
+        <field>Consultor__c.Login_no_virtual__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.StationTransformationViability__c</field>
+        <field>Consultor__c.LogradouroDaUnidade__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.StatusFeasibility__c</field>
+        <field>Consultor__c.Logradouro__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.StructuralReinforcementNecessary__c</field>
+        <field>Consultor__c.MunicipioCobranca__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.StructureStudy__c</field>
+        <field>Consultor__c.MunicipioEntrega__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.StruturalReport__c</field>
+        <field>Consultor__c.Municipio__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.TechnicalVisitCost__c</field>
+        <field>Consultor__c.Municipio_da_Unidade__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.TextReason__c</field>
+        <field>Consultor__c.NomeSocial__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.TextStudy__c</field>
+        <field>Consultor__c.NumeroIdentificacao__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.ThePatternShouldBeReadjusted__c</field>
+        <field>Consultor__c.NumeroRuaCobranca__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.TypeWorkProjectFeasibility__c</field>
+        <field>Consultor__c.NumeroRuaEntrega__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.VisitResponsibleName__c</field>
+        <field>Consultor__c.Observacoes__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.PaisCobranca__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.PaisEntrega__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.RazaoSocial__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.RuaCobranca__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.RuaEntrega__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.SendLead__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.SpecialRange__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.StatusBodyIntegracaoSAP__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.SucessoIntegracaoSAP__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.Telefone__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.Telefone_da_Unidade__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.Tipo__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.Usuario__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.Website__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Consultor__c.paymentMethod__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
-    <label>Estudo de viabilidade</label>
+    <label>Gerenciar Consultores</label>
     <license>Salesforce</license>
     <objectPermissions>
         <allowCreate>false</allowCreate>
@@ -259,8 +324,16 @@
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>true</modifyAllRecords>
-        <object>ViabilityStudy__c</object>
-        <viewAllFields>false</viewAllFields>
+        <object>Consultor__c</object>
+        <viewAllFields>true</viewAllFields>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
+    <recordTypeVisibilities>
+        <recordType>Consultor__c.Consultor</recordType>
+        <visible>true</visible>
+    </recordTypeVisibilities>
+    <tabSettings>
+        <tab>Consultor__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>
