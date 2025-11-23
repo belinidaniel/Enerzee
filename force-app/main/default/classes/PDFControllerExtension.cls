@@ -409,7 +409,7 @@ public with sharing class PDFControllerExtension {
     }*/
 
     // Executor central: usado pelo Queueable e pelo @future (fallback)
-    private static void savePdfFileAsyncInternal(Id opportunityId, Boolean autoIntegrate) {
+    private static void savePdfFileAsyncInternal(Id opportunityId, Boolean autoIntegrate, Boolean forceNewFile) {
         System.debug('--------------------------------- savePdfFileAsyncInternal ---------------------------------------');
         
         if(OpportunityBO.skipAsyncProposalGeneration == true){
@@ -421,7 +421,7 @@ public with sharing class PDFControllerExtension {
             return;
         }
         processingOpps.add(opportunityId);
-        System.debug('savePdfFileAsyncInternal start for opp: ' + opportunityId + ' autoIntegrate=' + autoIntegrate);
+        System.debug('savePdfFileAsyncInternal start for opp: ' + opportunityId + ' autoIntegrate=' + autoIntegrate + ' forceNewFile=' + forceNewFile);
         Opportunity opp = [
             SELECT Id, Name, GrupoTarifario__c, isPromotional__c,TipoKitPromocional__c, Numeroproposta__c, Distribuidora__c, Account.Name, Parceiro__r.Name, Parceiro__c, Parceiro__r.CapaProposta__c, Parceiro__r.CapaPromocional__c,RecordType.DeveloperName, RecordTypeId, ViabilityStudyFinished__c, IdVirtualOffice__c, PropostaGerada__c, ReadequacaoSolicitada__c, StageName
             FROM Opportunity 
@@ -430,7 +430,7 @@ public with sharing class PDFControllerExtension {
         ];
 
         // Se já marcada como gerada e não é readequação, apenas garante estágio e sai
-        if (opp.PropostaGerada__c == true && opp.ReadequacaoSolicitada__c != true) {
+        if (!forceNewFile && opp.PropostaGerada__c == true && opp.ReadequacaoSolicitada__c != true) {
             try {
                 String stageToSet;
                 if (OpportunityUtils.isStatusAwaitingAcceptance(opp)) {
@@ -505,7 +505,7 @@ public with sharing class PDFControllerExtension {
                   AND IsProposal__c = true
         ];
         System.debug('savePdfFileAsyncInternal existing proposal count: ' + existingCount + ' | PropostaGerada__c=' + opp.PropostaGerada__c + ' | ReadequacaoSolicitada__c=' + opp.ReadequacaoSolicitada__c);
-        if (existingCount > 0 || (opp.PropostaGerada__c == true && opp.ReadequacaoSolicitada__c != true)) {
+        if (!forceNewFile && (existingCount > 0 || (opp.PropostaGerada__c == true && opp.ReadequacaoSolicitada__c != true))) {
             try {
                 Opportunity oppUpdate = new Opportunity(Id = opportunityId, PropostaGerada__c = true);
                 String stageToSet;
@@ -592,18 +592,20 @@ public with sharing class PDFControllerExtension {
     @Future(callout=true)
     public static void savePdfFileAsync(Id opportunityId, Boolean autoIntegrate) {
         // Mantido como fallback, mas preferir enfileirar SavePdfJob.
-        savePdfFileAsyncInternal(opportunityId, autoIntegrate);
+        savePdfFileAsyncInternal(opportunityId, autoIntegrate, false);
     }
 
     public class SavePdfJob implements Queueable, Database.AllowsCallouts {
         private Id oppId;
         private Boolean autoIntegrate;
-        public SavePdfJob(Id opportunityId, Boolean autoIntegrate) {
+        private Boolean forceNewFile;
+        public SavePdfJob(Id opportunityId, Boolean autoIntegrate, Boolean forceNewFile) {
             this.oppId = opportunityId;
             this.autoIntegrate = autoIntegrate;
+            this.forceNewFile = forceNewFile;
         }
         public void execute(QueueableContext ctx) {
-            savePdfFileAsyncInternal(oppId, autoIntegrate);
+            savePdfFileAsyncInternal(oppId, autoIntegrate, forceNewFile);
         }
     }
 

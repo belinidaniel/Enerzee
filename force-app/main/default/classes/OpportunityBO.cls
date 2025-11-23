@@ -9,6 +9,8 @@ public class OpportunityBO {
 
     // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas
     public static Boolean skipAsyncProposalGeneration = false;
+    // Controle por transação para evitar múltiplas enfileirações da mesma oportunidade
+    private static Set<Id> queuedProposalOpps = new Set<Id>();
 
     //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
     public static void createSellBuyOrder(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
@@ -1916,6 +1918,7 @@ public class OpportunityBO {
     public static void applyApprovedDiscounts(Map<Id,Opportunity> newMap, Map<Id,Opportunity> oldMap) {
         // Lista de Opportunities que foram aprovados
         List<Opportunity> approvedOpportunities = new List<Opportunity>();
+        List<Id> approvedIds = new List<Id>();
 
         for (Opportunity opp : newMap.values() ) {
             Opportunity oldOpp = oldMap.get(opp.Id);
@@ -1939,6 +1942,10 @@ public class OpportunityBO {
                 approvedOpportunities.add(oppToUpdate);
 
                 oppToUpdate.PropostaAlterada__c = true;
+                // força nova geração/integracao após aprovação
+                oppToUpdate.PropostaGerada__c = false;
+                oppToUpdate.ReadequacaoSolicitada__c = true;
+                approvedIds.add(opp.Id);
             }
         }
 
@@ -1947,8 +1954,13 @@ public class OpportunityBO {
             OpportunityTriggerHandler.disableTrigger();
             update approvedOpportunities;
             OpportunityTriggerHandler.enableTrigger();
-            
-            for (Opportunity opp : approvedOpportunities){
+
+            // Enfileira geração de nova proposta após aprovação de desconto
+            for (Id oppId : approvedIds) {
+                if (!queuedProposalOpps.contains(oppId)) {
+                    queuedProposalOpps.add(oppId);
+                    System.enqueueJob(new PDFControllerExtension.SavePdfJob(oppId, true, true));
+                }
             }
             
         }
@@ -1957,36 +1969,38 @@ public class OpportunityBO {
     public static void generateProposalAsync(Map<Id,Opportunity> newMap, Map<Id,Opportunity> oldMap) {
         for(Opportunity opp :  newMap.values() ){
             Opportunity oldOpp = oldMap.get(opp.Id);
+            // Se já gerada e não é readequação solicitada, não enfileira novamente
+            if (opp.PropostaGerada__c == true && opp.ReadequacaoSolicitada__c != true) {
+                continue;
+            }
             if(((opp.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('EzeeConnect').getRecordTypeId() && areRequiredFieldsFilledConnect(opp)) ||
                 (opp.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId() && areRequiredFieldsFilled(opp))) &&                    
                  opp.GrupoTarifario__c != 'Grupo A'
                 ){
                 System.debug('if 1 - generateProposalAsync - ');
-                if( (OpportunityUtils.isStatusProposalElaboration(opp) || OpportunityUtils.isStatusProposalSimulation(opp)) && 
-                    (
-                        opp.StageName != oldOpp.StageName  && 
-                        opp.PropostaGerada__c == false) 
-                        ||
-                    (
-                        opp.StageName == oldOpp.StageName  && 
-                        opp.ReadequacaoSolicitada__c != oldOpp.ReadequacaoSolicitada__c &&
-                        opp.ReadequacaoSolicitada__c == true
-                    ) ||
-                    (
-                        oldOpp.PropostaGerada__c != opp.PropostaGerada__c &&
-                        opp.PropostaGerada__c == true &&
-                        opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c &&
-                        opp.StatusAprovacaoDesconto__c == 'Aprovado'
-                    ) ||
-                    (
-                        formulaFieldsChanged(oldOpp, opp)
-                    ) ||
-                    (
-                        opp.PropostaGerada__c == false
-                    )
-                ){
+
+                Boolean shouldGenerate = false;
+                if (opp.PropostaGerada__c == false) {
+                    shouldGenerate = true;
+                }
+                if (oldOpp != null && opp.ReadequacaoSolicitada__c != oldOpp.ReadequacaoSolicitada__c && opp.ReadequacaoSolicitada__c == true) {
+                    shouldGenerate = true;
+                }
+                if (oldOpp != null && opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c && opp.StatusAprovacaoDesconto__c == 'Aprovado') {
+                    shouldGenerate = true;
+                }
+                if (oldOpp != null && formulaFieldsChanged(oldOpp, opp)) {
+                    shouldGenerate = true;
+                }
+
+                if (shouldGenerate) {
                     System.debug('if 2 - generateProposalAsync - ');
-                    PDFControllerExtension.savePdfFileAsync(opp.Id);
+                    if (!queuedProposalOpps.contains(opp.Id)) {
+                        queuedProposalOpps.add(opp.Id);
+                        System.enqueueJob(new PDFControllerExtension.SavePdfJob(opp.Id, true, false));
+                    } else {
+                        System.debug('generateProposalAsync - já enfileirado para opp ' + opp.Id);
+                    }
                 }
             }
         }
