@@ -14,6 +14,7 @@ public with sharing class EzeeConnectProposalPendingService {
     public class PendingUpdateRequest {
         public Integer Status;
         public String PendingId;
+        public String DescriptionRejected;
     }
 
     public class DocumentTypeOption {
@@ -21,46 +22,17 @@ public with sharing class EzeeConnectProposalPendingService {
         @AuraEnabled public String name;
     }
 
-    private static final Map<String, Integer> STATUS_CODE_BY_LABEL = new Map<String, Integer>{
-        'Aguardando' => 1,
-        'Respondido' => 2,
-        'Aprovado'   => 3,
-        'Recusado'   => 4
-    };
-
-    private static final Map<Integer, String> STATUS_LABEL_BY_CODE = new Map<Integer, String>{
-        1 => 'Aguardando',
-        2 => 'Respondido',
-        3 => 'Aprovado',
-        4 => 'Recusado'
-    };
-
     public static Integer getStatusCode(String statusLabel) {
-        if(String.isBlank(statusLabel)){
-            throw new AuraHandledException('Status inválido informado para integração.');
-        }
-
-        Integer code = STATUS_CODE_BY_LABEL.get(statusLabel);
-
-        if(code == null){
-            throw new AuraHandledException('Status não suportado pela integração: ' + statusLabel);
-        }
-
-        return code;
+        ProposalPendingController.PendingStatus status = ProposalPendingController.parseStatus(statusLabel);
+        return ProposalPendingController.getStatusCode(status);
     }
 
     public static String getStatusLabel(Integer code) {
         if(code == null){
             return null;
         }
-
-        String label = STATUS_LABEL_BY_CODE.get(code);
-
-        if(label == null){
-            throw new AuraHandledException('Código de status não suportado pela integração: ' + code);
-        }
-
-        return label;
+        ProposalPendingController.PendingStatus status = ProposalPendingController.getStatusByCode(code);
+        return status != null ? status.name() : null;
     }
 
     public static List<DocumentTypeOption> getDocumentTypes() {
@@ -88,11 +60,13 @@ public with sharing class EzeeConnectProposalPendingService {
     }
 
     public static void sendPendingToApp(PendingRequest payload) {
+        System.debug('EzeeConnectProposalPendingService.sendPendingToApp payload: ' + JSON.serializePretty(payload));
         HttpResponse response = executeCallout('SetProposalPending', JSON.serialize(payload));
         ensureSuccess(response, 'Envio de pendência');
     }
 
     public static void updatePendingInApp(PendingUpdateRequest payload) {
+        System.debug('EzeeConnectProposalPendingService.updatePendingInApp payload: ' + JSON.serializePretty(payload));
         HttpResponse response = executeCallout('UpdateProposalPending', JSON.serialize(payload));
         ensureSuccess(response, 'Atualização de pendência');
     }
@@ -127,11 +101,13 @@ public with sharing class EzeeConnectProposalPendingService {
 
     private static void ensureSuccess(HttpResponse response, String context) {
         if(response == null){
-            throw new AuraHandledException('Sem resposta da integração: ' + context);
+            throw new PendingIntegrationException('Sem resposta da integração: ' + context);
         }
 
         if(response.getStatusCode() < 200 || response.getStatusCode() >= 300){
-            throw new AuraHandledException(context + ' falhou. Código ' + response.getStatusCode() + ' - ' + response.getBody());
+            throw new PendingIntegrationException(context + ' falhou. Código ' + response.getStatusCode() + ' - ' + response.getBody());
         }
     }
+
+    public class PendingIntegrationException extends Exception {}
 }

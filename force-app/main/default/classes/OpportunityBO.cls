@@ -2,11 +2,10 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-21-2025
+ * @last modified on  : 11-23-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
-    public static Boolean skipAsyncProposalGeneration = false;
 
     //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
     public static void createSellBuyOrder(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
@@ -99,7 +98,6 @@ public class OpportunityBO {
             opportunity.Origem__c = singleOpportunity.Origem;
         }
         if (singleOpportunity.ConsumptionAverage != null) {
-            opportunity.ConsumptionAverage__c = singleOpportunity.ConsumptionAverage;
             opportunity.MediaConsumo__c = singleOpportunity.ConsumptionAverage;
         }
         if (singleOpportunity.TargetConsume != null) {
@@ -1064,19 +1062,16 @@ public class OpportunityBO {
             WHERE  Oportunidade__c IN :OpportunitySetIds
         ]) {
             Opportunity opp = oppMap.get(existingProject.Oportunidade__c);
-            if (opp != null && 'Fast Track'.equalsIgnoreCase(opp.Categoria__c)) {
-                continue;
-            }
             if (existingProject.Oportunidade__c != null) {
                 opportunitiesWithProject.add(existingProject.Oportunidade__c);
             }
         }
 
         Map<String, String> statusByRecordType = new Map<String, String>{
-            'Bombeamento'               => 'STATUS_PLANEJAMENTO',
-            'Estação de Recarga'        => 'STATUS_PLANEJAMENTO',
+            'Bombeamento'               => 'STATUS_PLANEJAMENTO_DE_PROJETO',
+            'Estação de Recarga'        => 'STATUS_PLANEJAMENTO_DE_PROJETO',
             'Subestação'                => 'STATUS_PLANEJAMENTO_DE_PROJETO',
-            'Padrão de Entradao'        => 'STATUS_PLANEJAMENTO',
+            'Padrão de Entradao'        => 'STATUS_PLANEJAMENTO_DE_PROJETO',
             'UFV Mini acima de 300'     => 'STATUS_PLANEJAMENTO_DE_PROJETO',
             'UFV Mini até 300'          => 'STATUS_PLANEJAMENTO_DE_PROJETO',
             'UFV Micro'                 => 'STATUS_PLANEJAMENTO_DE_PROJETO'
@@ -1095,6 +1090,7 @@ public class OpportunityBO {
             if (opportunitiesWithProject.contains(opportunity.Id)) {
                 continue;
             }
+
             if(
                 (
                     OpportunityUtils.isRecordTypeEzeeSolar(opportunity) ||
@@ -1139,6 +1135,7 @@ public class OpportunityBO {
         }
         insert projectsToInsert;
         if(!projectsToInsert.isEmpty()){
+            System.debug('Creating installations for Fast Track projects...');
             Map<Id, Opportunity> opportunityById = new Map<Id, Opportunity>();
             for(Opportunity opp : newRecords){
                 opportunityById.put(opp.Id, opp);
@@ -1955,9 +1952,6 @@ public class OpportunityBO {
     }
     
     public static void generateProposalAsync(Map<Id,Opportunity> newMap, Map<Id,Opportunity> oldMap) {
-        if(skipAsyncProposalGeneration == true){
-            return;
-        }
         for(Opportunity opp :  newMap.values() ){
             Opportunity oldOpp = oldMap.get(opp.Id);
             if(((opp.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('EzeeConnect').getRecordTypeId() && areRequiredFieldsFilledConnect(opp)) ||
@@ -1980,6 +1974,9 @@ public class OpportunityBO {
                         opp.PropostaGerada__c == true &&
                         opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c &&
                         opp.StatusAprovacaoDesconto__c == 'Aprovado'
+                    ) ||
+                    (
+                        formulaFieldsChanged(oldOpp, opp)
                     ) ||
                     (
                         opp.PropostaGerada__c == false

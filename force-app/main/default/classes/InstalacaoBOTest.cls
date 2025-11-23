@@ -131,6 +131,47 @@ public class InstalacaoBOTest {
     }
 
     @isTest
+    static void advancesOpportunityStageOnProjectApproval(){
+        Account account = (Account) TestFactory.createSObject(new Account(), true);
+        Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
+            AccountId    = account.Id,
+            StageName    = OpportunityUtils.STATUS_PARECER_DE_ACESSO,
+            CloseDate    = System.today(),
+            Name         = 'Opp Avanço',
+            RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId()
+        ), true);
+
+        Projeto__c projectOld = (Projeto__c) TestFactory.createSObject(new Projeto__c(
+            Name            = 'Projeto Avanço',
+            Status__c       = ProjetoUtils.STATUS_PLANEJAMENTO,
+            Oportunidade__c = opportunity.Id,
+            RecordTypeId    = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName().get('UFVMicro').getRecordTypeId()
+        ), true);
+
+        Projeto__c projectNew = projectOld.clone(true, true, false, false);
+        projectNew.Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO;
+
+        Test.startTest();
+        InstalacaoBO.ensureInstallationOnProjectApproved(
+            new List<Projeto__c>{ projectNew },
+            new Map<Id, Projeto__c>{ projectOld.Id => projectOld }
+        );
+        Test.stopTest();
+
+        Opportunity updatedOpp = [
+            SELECT StageName
+            FROM   Opportunity
+            WHERE  Id = :opportunity.Id
+        ];
+
+        System.assertEquals(
+            OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO,
+            updatedOpp.StageName,
+            'Oportunidade deve avançar para Confirmação de pagamento contrato'
+        );
+    }
+
+    @isTest
     static void createsInstallationWhenApprovalDateFilled(){
         Account account = (Account) TestFactory.createSObject(new Account(), true);
         Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
@@ -150,7 +191,6 @@ public class InstalacaoBOTest {
 
         Projeto__c projectNew = projectOld.clone(true, true, false, false);
         projectNew.ApprovalDate__c = System.today();
-        projectNew.Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO;
 
         Test.startTest();
         InstalacaoBO.ensureInstallationOnProjectApproved(
@@ -188,7 +228,10 @@ public class InstalacaoBOTest {
         ), true);
 
         Test.startTest();
-        new ProjetoTriggerHandler().afterInsert(); // will call ensureInstallationOnProjectApproved with empty oldMap
+        InstalacaoBO.ensureInstallationOnProjectApproved(
+            new List<Projeto__c>{ project },
+            new Map<Id, Projeto__c>()
+        );
         Test.stopTest();
 
         Integer installationCount = [
@@ -198,42 +241,5 @@ public class InstalacaoBOTest {
         ];
 
         System.assertEquals(1, installationCount, 'Instalação deve ser criada para projeto inserido já aprovado');
-    }
-
-    @isTest
-    static void createsInstallationWhenAlreadyApprovedStatusNoChange(){
-        Account account = (Account) TestFactory.createSObject(new Account(), true);
-        Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
-            AccountId    = account.Id,
-            StageName    = OpportunityUtils.STATUS_PARECER_DE_ACESSO,
-            CloseDate    = System.today(),
-            Name         = 'Opp Projeto',
-            RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId()
-        ), true);
-
-        Projeto__c projectOld = (Projeto__c) TestFactory.createSObject(new Projeto__c(
-            Name            = 'Projeto Aprovado Com Mudanca',
-            Status__c       = ProjetoUtils.STATUS_PLANEJAMENTO,
-            Oportunidade__c = opportunity.Id,
-            RecordTypeId    = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName().get('UFVMicro').getRecordTypeId()
-        ), true);
-
-        Projeto__c projectNew = projectOld.clone(true, true, false, false);
-        projectNew.Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO;
-
-        Test.startTest();
-        InstalacaoBO.ensureInstallationOnProjectApproved(
-            new List<Projeto__c>{ projectNew },
-            new Map<Id, Projeto__c>{ projectOld.Id => projectOld }
-        );
-        Test.stopTest();
-
-        Integer installationCount = [
-            SELECT COUNT()
-            FROM   Instalacao__c
-            WHERE  Projeto__c = :projectOld.Id
-        ];
-
-        System.assertEquals(1, installationCount, 'Instalação deve ser criada quando o status muda para aprovado');
     }
 }

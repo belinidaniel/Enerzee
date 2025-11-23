@@ -26,7 +26,6 @@ public with sharing class MessagingSessionSLABatch implements Database.Batchable
             SELECT  Id,
                     Name,
                     OwnerId,
-                    QueueN1__c,
                     EndTime,
                     OwnerAssignmentDate__c,
                     MinuteSLAN1__c,
@@ -134,10 +133,7 @@ public with sharing class MessagingSessionSLABatch implements Database.Batchable
         PendingNotification data = new PendingNotification(session, stageNumber, configuredMinutes, elapsedMinutes);
 
         if (stageNumber == 1) {
-            if (session.QueueN1__c != null) {
-                queueIds.add(session.QueueN1__c);
-                data.queueId = session.QueueN1__c;
-            } else if (session.OwnerId != null) {
+            if (session.OwnerId != null) {
                 if (session.OwnerId.getSObjectType() == Group.SObjectType) {
                     queueIds.add(session.OwnerId);
                     data.queueId = session.OwnerId;

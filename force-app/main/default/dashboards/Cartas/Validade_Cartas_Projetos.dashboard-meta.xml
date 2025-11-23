@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Dashboard xmlns="http://soap.sforce.com/2006/04/metadata">
+    <backgroundEndColor>#FFFFFF</backgroundEndColor>
+    <backgroundStartColor>#FFFFFF</backgroundStartColor>
+    <chartTheme>light</chartTheme>
+    <colorPalette>blue</colorPalette>
+    <dashboardType>LoggedInUser</dashboardType>
+    <isGridLayout>true</isGridLayout>
+    <leftSection>
+        <columnSize>Medium</columnSize>
+        <components>
+            <componentType>Table</componentType>
+            <displayUnits>auto</displayUnits>
+            <header>Projetos a vencer (30 dias)</header>
+            <height>300</height>
+            <report>Cartas/Projetos_Cartas_A_Vencer</report>
+            <showTotal>false</showTotal>
+            <showValues>true</showValues>
+            <title>Projetos a vencer (30 dias)</title>
+            <useReportChart>false</useReportChart>
+            <width>Medium</width>
+        </components>
+    </leftSection>
+    <middleSection>
+        <columnSize>Medium</columnSize>
+        <components>
+            <componentType>Table</componentType>
+            <displayUnits>auto</displayUnits>
+            <header>Projetos com carta vencida</header>
+            <height>300</height>
+            <report>Cartas/Projetos_Cartas_Vencidas</report>
+            <showTotal>false</showTotal>
+            <showValues>true</showValues>
+            <title>Projetos vencidos</title>
+            <useReportChart>false</useReportChart>
+            <width>Medium</width>
+        </components>
+    </middleSection>
+    <rightSection>
+        <columnSize>Small</columnSize>
+    </rightSection>
+    <textColor>#000000</textColor>
+</Dashboard>

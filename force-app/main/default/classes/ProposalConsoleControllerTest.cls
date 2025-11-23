@@ -20,8 +20,7 @@ private class ProposalConsoleControllerTest {
 
         Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(new Parceiro__c(
             CapaProposta__c = cover.Id,
-            CapaPromocional__c = cover.Id,
-            Produto__c = 'Solar'
+            CapaPromocional__c = cover.Id
         ), true);
 
         TestFactory.createSObject(new Opportunity(
@@ -36,22 +35,16 @@ private class ProposalConsoleControllerTest {
     static void loadProposalDataReturnsTemplatesAndFiles() {
         Opportunity opp = [SELECT Id FROM Opportunity LIMIT 1];
 
-        OpportunityAttachmentLink__c proposalAttachment = new OpportunityAttachmentLink__c(
-            Name = 'Proposta teste',
-            OpportunityId__c = opp.Id,
-            AttachmentURL__c = 'https://example.com/proposta.pdf',
-            AttachmentDescription__c = 'Proposta teste',
-            Type__c = 'Proposal'
+        ContentVersion version = new ContentVersion(
+            Title = 'Proposta teste',
+            ContentLocation = 'S',
+            PathOnClient = 'Proposta.pdf',
+            VersionData = Blob.valueOf('teste'),
+            FirstPublishLocationId = opp.Id,
+            IsProposal__c = true,
+            NomePaginaPDF__c = 'ModeloPropostaA'
         );
-
-        OpportunityAttachmentLink__c otherAttachment = new OpportunityAttachmentLink__c(
-            Name = 'Documento teste',
-            OpportunityId__c = opp.Id,
-            AttachmentURL__c = 'https://example.com/documento.pdf',
-            AttachmentDescription__c = 'Documento teste',
-            Type__c = 'Invoice'
-        );
-        insert new List<OpportunityAttachmentLink__c>{ proposalAttachment, otherAttachment };
+        insert version;
 
         Test.startTest();
         ProposalConsoleController.ProposalDataDTO result =
@@ -60,8 +53,7 @@ private class ProposalConsoleControllerTest {
 
         System.assertNotEquals(null, result, 'Resultado não deveria ser nulo.');
         System.assertEquals(1, result.templates.size(), 'Deveria retornar pelo menos um modelo.');
-        System.assertEquals(1, result.proposalFiles.size(), 'Deveria retornar o anexo de proposta.');
-        System.assertEquals(1, result.otherFiles.size(), 'Deveria retornar o anexo adicional.');
+        System.assertEquals(1, result.files.size(), 'Deveria retornar o histórico inserido.');
     }
 
     @isTest

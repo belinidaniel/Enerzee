@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 11-12-2025
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class IntegracaoSAPCliente {
     @future(callout=true)
     public static void sendCliente(Set<Id> triggerIds){
@@ -125,6 +132,7 @@ public with sharing class IntegracaoSAPCliente {
             corpoRequisicao.BPFiscalTaxIDCollection.add(BPTaxID);
 
             try{
+                System.debug('Corpo Requisicao: ' + JSON.serialize(corpoRequisicao));
                 HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'ClienteSAP');
                 Utils.createLog('IntegracaoSAPCliente', 'sendCliente ' + acc.Id, response);
 
