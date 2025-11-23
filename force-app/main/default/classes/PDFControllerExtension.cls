@@ -35,7 +35,7 @@ public with sharing class PDFControllerExtension {
                             Account.Name,
                             Account.CPF__c,
                             Account.CNPJ__c,
-                            Enderecok,
+                            EnderecoOportunidade__c,
                             Distribuidora__c,
                             TarifaEnergia__c,
                             DescontoPromocional__c,
@@ -408,6 +408,8 @@ public with sharing class PDFControllerExtension {
 
     @Future(callout=true)
     public static void savePdfFileAsync(Id opportunityId) {
+        System.debug('--------------------------------- savePdfFileAsync ---------------------------------------');
+        
         if(OpportunityBO.skipAsyncProposalGeneration == true){
             return;
         }

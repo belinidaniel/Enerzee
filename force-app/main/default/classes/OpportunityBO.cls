@@ -2630,39 +2630,6 @@ public class OpportunityBO {
         }
     }
 
-    public static void sendProposalValueUpdate(List<Opportunity> newRecordList, Map<Id, Opportunity> oldRecordsMap) {
-        for (Opportunity opportunity : newRecordList) {
-            System.debug('sendProposalValueUpdate: ' + opportunity.Id);
-            Set<Id> opportunityIds = new Set<Id>();
-
-            Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
-
-            if (oldOpportunity == null) continue;
-            System.debug('sendProposalValueUpdate: ' + opportunity.Id);
-            System.debug('Old Value: ' + oldOpportunity.ValorTotalProposta__c);
-            System.debug('New Value: ' + opportunity.ValorTotalProposta__c);
-            
-            if ((opportunity.ValorTotalProposta__c == oldOpportunity.ValorTotalProposta__c)){
-                continue;
-            } else {
-                opportunityIds.add(opportunity.Id);
-            }
-
-            if (!opportunityIds.isEmpty()) {
-                ProposalService.updateOpportunityPhase(opportunityIds);
-
-                if (    
-                    opportunity.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('EzeeConnect').getRecordTypeId()
-                    || opportunity.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId()
-                ){
-                    opportunity.PropostaAlterada__c = true;
-                    // PDFControllerExtension.savePdfFileAsync(opportunity.Id);
-                }
-
-            }
-        }
-    }
-
     public static void sendAprovalUpdate(List<Opportunity> newRecordList, Map<Id, Opportunity> oldRecordsMap) {
 
         for(Opportunity opportunity: newRecordList) {
