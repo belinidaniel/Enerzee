@@ -1,10 +1,15 @@
 public without sharing class Utils{
     //Creates error logs
     public static Log__c createLogNoInsert(String className, String methodName, Object source){
+        return createLogNoInsert(className, methodName, source, null);
+    }
+
+    public static Log__c createLogNoInsert(String className, String methodName, Object source, Id relatedId){
 
         Log__c lg = new Log__c(
             Class__c  = className,
-            Method__c = methodName
+            Method__c = methodName,
+            RelatedId__c = relatedId
         );
 
         //Set additional log fields based on source type
@@ -53,7 +58,11 @@ public without sharing class Utils{
     }
 
     public static void createLog(String className, String methodName, Object source){
-        insert createLogNoInsert(className, methodName, source);
+        insert createLogNoInsert(className, methodName, source, null);
+    }
+
+    public static void createLog(String className, String methodName, Object source, Id relatedId){
+        insert createLogNoInsert(className, methodName, source, relatedId);
     }
 
     /* Método que recebe um request e devolve response tentando   o token de acesso da Nivello, se existir */

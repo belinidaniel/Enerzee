@@ -21,7 +21,7 @@ public class IntegracaoNivelloAnaliseVisitaTecnica {
 
             try{
                 HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'AnaliseVisitaTecnica');
-                Utils.createLog('IntegracaoNivelloAnaliseVisitaTecnica', 'sendTechnicalVisitAnalysis ' + opp.Id, response);
+                Utils.createLog('IntegracaoNivelloAnaliseVisitaTecnica', 'sendTechnicalVisitAnalysis ' + opp.Id, response, opp.Id);
 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -37,7 +37,7 @@ public class IntegracaoNivelloAnaliseVisitaTecnica {
                 }
                 opp.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('IntegracaoNivelloAnaliseVisitaTecnica', 'sendTechnicalVisitAnalysis ' + opp.Id, e);
+                Utils.createLog('IntegracaoNivelloAnaliseVisitaTecnica', 'sendTechnicalVisitAnalysis ' + opp.Id, e, opp.Id);
                 
                 opp.SucessoIntegracaoNivello__c = false;
                 opp.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();

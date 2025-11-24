@@ -24,14 +24,14 @@ public class RevoIntegrationService {
                 opp.ErroIntegracaoRevo__c = false;
             } else {
                 //System.debug('Erro ao enviar para análise de crédito: ' + (response != null ? response.getBody() : 'Resposta nula'));
-                Utils.createLog('RevoIntegrationService', 'Exception in sendToCreditAnalysis ' + opp.Id, response);
+                Utils.createLog('RevoIntegrationService', 'Exception in sendToCreditAnalysis ' + opp.Id, response, opp.Id);
                 opp.IntegradoRevo__c = false; 
                 opp.ErroIntegracaoRevo__c = true;
             }
         } catch (Exception e) {
             System.debug('Erro na integração com a Revo: ' + e.getMessage());
             if (opp != null) {
-                Utils.createLog('RevoIntegrationService', 'Exception in sendToCreditAnalysis ' + opp.Id, e.getMessage());
+                Utils.createLog('RevoIntegrationService', 'Exception in sendToCreditAnalysis ' + opp.Id, e.getMessage(), opp.Id);
                 opp.IntegradoRevo__c = true; 
                 opp.ErroIntegracaoRevo__c = true;
             }

@@ -163,10 +163,10 @@ public without sharing class KitInstalacaoBO {
                         Id relatedKitId = oppIdToKitIdMap.get(opp.Id);
                         opportunitiesToUpdate.add(createOpportunityForUpdate(opp, response, relatedKitId));
                     } else {
-                        Utils.createLog(CLASS_NAME, 'SendKitUpdate - enviarKit sem resposta ' + opp.Id, new AuraHandledException('IntegracaoNivelloContrato.enviarKit retornou nulo.'));
+                        Utils.createLog(CLASS_NAME, 'SendKitUpdate - enviarKit sem resposta ' + opp.Id, new AuraHandledException('IntegracaoNivelloContrato.enviarKit retornou nulo.'), opp.Id);
                     }
                 } catch(Exception e){
-                    Utils.createLog(CLASS_NAME, 'SendKitUpdate - opp ' + opp.Id, e);
+                    Utils.createLog(CLASS_NAME, 'SendKitUpdate - opp ' + opp.Id, e, opp.Id);
                 }
             }
 

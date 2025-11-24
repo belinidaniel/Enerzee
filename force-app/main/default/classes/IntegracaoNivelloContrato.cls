@@ -33,7 +33,7 @@ public without sharing class IntegracaoNivelloContrato {
 
             try{
                 HttpResponse response = chamadaIntegracao(JSON.serialize(request), 'ProposalStatus');
-                Utils.createLog('IntegracaoNivelloContrato', 'enviarContrato ' + opp.Id, response);
+                Utils.createLog('IntegracaoNivelloContrato', 'enviarContrato ' + opp.Id, response, opp.Id);
 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -49,7 +49,7 @@ public without sharing class IntegracaoNivelloContrato {
                 }
                 opp.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('IntegracaoNivelloContrato', 'enviarContrato ' + opp.Id, e);
+                Utils.createLog('IntegracaoNivelloContrato', 'enviarContrato ' + opp.Id, e, opp.Id);
                 
                 opp.SucessoIntegracaoNivello__c = false;
                 opp.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();

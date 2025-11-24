@@ -15,7 +15,7 @@ public without sharing class IntegracaoNivelloSimulacaoFinanciamento {
 
             try{
                 HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'AtualizaSimulacaoFinanciamento');
-                Utils.createLog('IntegracaoNivelloContrato', 'AtualizaSimulacaoFinanciamento ' + opp.Id, response);
+                Utils.createLog('IntegracaoNivelloContrato', 'AtualizaSimulacaoFinanciamento ' + opp.Id, response, opp.Id);
 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -31,7 +31,7 @@ public without sharing class IntegracaoNivelloSimulacaoFinanciamento {
                 }
                 opp.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('IntegracaoNivelloSimulacaoFinanciamento', 'AtualizaSimulacaoFinanciamento ' + opp.Id, e);
+                Utils.createLog('IntegracaoNivelloSimulacaoFinanciamento', 'AtualizaSimulacaoFinanciamento ' + opp.Id, e, opp.Id);
                 
                 opp.SucessoIntegracaoNivello__c = false;
                 opp.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();

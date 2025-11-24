@@ -22,7 +22,7 @@ public class IntegracaoNivelloDataVisitaTecnica {
 
             try{
                 HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'DataVisitaTecnica');
-                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate ' + opp.Id, response);
+                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate ' + opp.Id, response, opp.Id);
 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -38,7 +38,7 @@ public class IntegracaoNivelloDataVisitaTecnica {
                 }
                 opp.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate ' + opp.Id, e);
+                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate ' + opp.Id, e, opp.Id);
                 
                 opp.SucessoIntegracaoNivello__c = false;
                 opp.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();
@@ -52,7 +52,7 @@ public class IntegracaoNivelloDataVisitaTecnica {
     @future(callout=true)
     public static void sendTechnicalVisitDateFromServiceAppointment(Set<Id> triggerIds){
         List<ServiceAppointment> appointmentList = [
-            SELECT  Id, Oportunidade__r.IdVirtualOffice__c, SchedStartTime
+            SELECT  Id, Oportunidade__c, Oportunidade__r.IdVirtualOffice__c, SchedStartTime
             FROM    ServiceAppointment
             WHERE   Id IN :triggerIds
         ];
@@ -66,7 +66,7 @@ public class IntegracaoNivelloDataVisitaTecnica {
 
             try{
                 HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'DataVisitaTecnica');
-                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate ' + appointment.Id, response);
+                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate ' + appointment.Id, response, appointment.Oportunidade__c);
 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -82,7 +82,7 @@ public class IntegracaoNivelloDataVisitaTecnica {
                 }
                 appointment.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate ' + appointment.Id, e);
+                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate ' + appointment.Id, e, appointment.Oportunidade__c);
                 
                 appointment.SucessoIntegracaoNivello__c = false;
                 appointment.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();

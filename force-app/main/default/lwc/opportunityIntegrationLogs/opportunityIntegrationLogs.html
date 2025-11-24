@@ -1,0 +1,188 @@
+<template>
+    <template if:true={accessChecked}>
+        <template if:true={hasAccess}>
+            <lightning-card title="Logs de Integracao" icon-name="utility:bug">
+                <lightning-button-icon slot="actions" icon-name="utility:refresh" alternative-text="Recarregar"
+                    onclick={handleRefresh} title="Atualizar logs">
+                </lightning-button-icon>
+                <div class="slds-p-horizontal_small slds-p-vertical_small">
+                    <template if:true={errorMessage}>
+                        <div class="slds-text-color_error slds-m-bottom_small">{errorMessage}</div>
+                    </template>
+                    <template if:true={isLoading}>
+                        <div class="slds-is-relative slds-p-vertical_small">
+                            <lightning-spinner alternative-text="Carregando logs" size="medium"></lightning-spinner>
+                        </div>
+                    </template>
+                    <template if:false={isLoading}>
+                        <template if:true={hasLogs}>
+                            <div class="slds-table_header-fixed_container">
+                                <div class="slds-scrollable_y table-wrapper">
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                        <thead>
+                                            <tr class="slds-text-title_caps">
+                                                <th scope="col"><div class="slds-truncate" title="Data">Data</div></th>
+                                                <th scope="col"><div class="slds-truncate" title="Status Code">Status Code</div></th>
+                                                <th scope="col"><div class="slds-truncate" title="Status">Status</div></th>
+                                                <th scope="col"><div class="slds-truncate" title="Classe">Classe</div></th>
+                                                <th scope="col"><div class="slds-truncate" title="Metodo">Metodo</div></th>
+                                                <th scope="col"><div class="slds-truncate" title="HTTP Method">HTTP</div></th>
+                                                <th scope="col"><div class="slds-truncate" title="Request URI">Request URI</div></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template for:each={logs} for:item="log">
+                                                <tr key={log.Id} data-id={log.Id} class="row-hover"
+                                                    onclick={handleRowClick} onkeydown={handleRowKeydown}
+                                                    tabindex="0" role="button">
+                                                    <td data-label="Data">
+                                                        <lightning-formatted-date-time value={log.CreatedDate}
+                                                            year="numeric" month="2-digit" day="2-digit" hour="2-digit"
+                                                            minute="2-digit">
+                                                        </lightning-formatted-date-time>
+                                                    </td>
+                                                    <td data-label="Status Code">
+                                                        <span class={log.statusBadgeClass}>{log.statusValue}</span>
+                                                    </td>
+                                                    <td data-label="Status">
+                                                        <div class="slds-truncate" title={log.Status__c}>{log.Status__c}</div>
+                                                    </td>
+                                                    <td data-label="Classe">
+                                                        <div class="slds-truncate" title={log.Class__c}>{log.Class__c}</div>
+                                                    </td>
+                                                    <td data-label="Metodo">
+                                                        <div class="slds-truncate" title={log.Method__c}>{log.Method__c}</div>
+                                                    </td>
+                                                    <td data-label="HTTP">
+                                                        <div class="slds-truncate" title={log.HTTPMethod__c}>{log.HTTPMethod__c}</div>
+                                                    </td>
+                                                    <td data-label="Request URI">
+                                                        <div class="slds-truncate" title={log.RequestURI__c}>{log.RequestURI__c}</div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </template>
+                        <template if:false={hasLogs}>
+                            <div class="slds-text-align_center slds-text-body_regular slds-p-vertical_small">
+                                Nenhum log encontrado para esta oportunidade.
+                            </div>
+                        </template>
+                    </template>
+                </div>
+            </lightning-card>
+
+            <template if:true={isDetailOpen}>
+                <section role="dialog" tabindex="-1" aria-modal="true" aria-label="Detalhes do log"
+                    class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <lightning-button-icon icon-name="utility:close" alternative-text="Fechar" class="slds-modal__close"
+                                onclick={handleCloseDetail}></lightning-button-icon>
+                            <div class="slds-text-title_caps">Detalhes do Log</div>
+                            <h2 class="slds-text-heading_medium slds-m-top_x-small">{selectedLog.Name}</h2>
+                            <template if:true={detailLoading}>
+                                <lightning-spinner size="small" alternative-text="Carregando detalhes"></lightning-spinner>
+                            </template>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <template if:true={selectedLog}>
+                                <div class="slds-grid slds-wrap slds-gutters">
+                                    <div class="slds-col slds-size_1-of-1 slds-m-bottom_small">
+                                        <span class={selectedLog.statusBadgeClass}>{selectedLog.statusValue}</span>
+                                        <span class="slds-m-left_small slds-text-title_bold">{selectedLog.Message__c}</span>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1">
+                                        <div class="slds-box slds-theme_default">
+                                            <div class="slds-grid slds-wrap slds-gutters">
+                                                <div class="slds-col slds-size_1-of-2">
+                                                    <p class="label">Classe</p>
+                                                    <p class="value">{selectedLog.Class__c}</p>
+                                                </div>
+                                                <div class="slds-col slds-size_1-of-2">
+                                                    <p class="label">Metodo</p>
+                                                    <p class="value">{selectedLog.Method__c}</p>
+                                                </div>
+                                                <div class="slds-col slds-size_1-of-2">
+                                                    <p class="label">HTTP</p>
+                                                    <p class="value">{selectedLog.HTTPMethod__c}</p>
+                                                </div>
+                                                <div class="slds-col slds-size_1-of-2">
+                                                    <p class="label">Request URI</p>
+                                                    <p class="value">{selectedLog.RequestURI__c}</p>
+                                                </div>
+                                                <div class="slds-col slds-size_1-of-2">
+                                                    <p class="label">Tipo</p>
+                                                    <p class="value">{selectedLog.Type__c}</p>
+                                                </div>
+                                                <div class="slds-col slds-size_1-of-2">
+                                                    <p class="label">Data/Hora</p>
+                                                    <p class="value">
+                                                        <lightning-formatted-date-time value={selectedLog.CreatedDate}
+                                                            year="numeric" month="2-digit" day="2-digit" hour="2-digit"
+                                                            minute="2-digit">
+                                                        </lightning-formatted-date-time>
+                                                    </p>
+                                                </div>
+                                                <template if:true={selectedLog.LineNumber__c}>
+                                                    <div class="slds-col slds-size_1-of-2">
+                                                        <p class="label">Linha</p>
+                                                        <p class="value line-highlight">{selectedLog.LineNumber__c}</p>
+                                                    </div>
+                                                </template>
+                                                <template if:true={selectedLog.Status__c}>
+                                                    <div class="slds-col slds-size_1-of-1">
+                                                        <p class="label">Status</p>
+                                                        <p class="value">{selectedLog.Status__c}</p>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <template if:true={selectedLog.formattedRequest}>
+                                        <div class="slds-col slds-size_1-of-1">
+                                            <div class="slds-section">
+                                                <h3 class="slds-section__title">Request</h3>
+                                                <div class="code-block">
+                                                    <pre>{selectedLog.formattedRequest}</pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <template if:true={selectedLog.formattedResponse}>
+                                        <div class="slds-col slds-size_1-of-1">
+                                            <div class="slds-section">
+                                                <h3 class="slds-section__title">Response</h3>
+                                                <div class="code-block">
+                                                    <pre>{selectedLog.formattedResponse}</pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <template if:true={selectedLog.StackTraceString__c}>
+                                        <div class="slds-col slds-size_1-of-1">
+                                            <div class="slds-section slds-theme_error slds-box stacktrace">
+                                                <h3 class="slds-section__title slds-text-title_bold">Stack Trace</h3>
+                                                <pre>{selectedLog.StackTraceString__c}</pre>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button variant="neutral" label="Fechar" onclick={handleCloseDetail}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+        </template>
+    </template>
+</template>

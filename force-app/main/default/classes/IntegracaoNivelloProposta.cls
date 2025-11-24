@@ -108,7 +108,7 @@ public with sharing class IntegracaoNivelloProposta {
                         opp.SucessoIntegracaoNivello__c = false;
                     }
                     
-                    Utils.createLog('IntegracaoNivelloProposta', 'gerandoProposta ' + oppId, response);
+                    Utils.createLog('IntegracaoNivelloProposta', 'gerandoProposta ' + oppId, response, oppId);
                     
                     opp.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
                     
@@ -117,7 +117,7 @@ public with sharing class IntegracaoNivelloProposta {
                     OpportunityTriggerHandler.enableTrigger();
                     
                 }catch(Exception e){
-                    Utils.createLog('IntegracaoNivelloProposta', 'gerandoProposta ' + oppId, e);
+                    Utils.createLog('IntegracaoNivelloProposta', 'gerandoProposta ' + oppId, e, oppId);
                 }
             }
         }
@@ -207,13 +207,13 @@ public with sharing class IntegracaoNivelloProposta {
                 // Handle the response
                 if (res.getStatusCode() == 200) {
                     //System.debug('Request successful');
-                    Utils.createLog('IntegracaoNivelloProposta', 'sendUrlSimulation ' + opp.Id, res);
+                    Utils.createLog('IntegracaoNivelloProposta', 'sendUrlSimulation ' + opp.Id, res, opp.Id);
                 } else {
-                    Utils.createLog('IntegracaoNivelloProposta', 'sendUrlSimulation failed ' + opp.Id, res);
+                    Utils.createLog('IntegracaoNivelloProposta', 'sendUrlSimulation failed ' + opp.Id, res, opp.Id);
                     //System.debug('Request failed: ' + res.getStatus());
                 }
             }catch (Exception e) {
-                Utils.createLog('IntegracaoNivelloProposta', 'Exception in sendUrlSimulation ' + opp.Id, e.getMessage());
+                Utils.createLog('IntegracaoNivelloProposta', 'Exception in sendUrlSimulation ' + opp.Id, e.getMessage(), opp.Id);
             }
         }
     }

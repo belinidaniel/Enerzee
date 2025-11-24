@@ -260,8 +260,9 @@ public with sharing class PDFControllerExtension {
         }
 
         // ---- Pós-processamento (não deve derrubar o sucesso do arquivo) ----
+        Opportunity opp;
         try {
-            Opportunity opp = new Opportunity(Id = opportunityId);
+            opp = new Opportunity(Id = opportunityId);
             opp.PropostaGerada__c = true;
 
             // isManual da URL
@@ -295,20 +296,20 @@ public with sharing class PDFControllerExtension {
                 System.debug('testeeeeeeee  ' + opp.Id);
                 IntegracaoNivelloProposta.gerandoProposta(opp.Id);
             } catch (Exception ex1) {
-                Utils.createLog('PDFControllerExtension', 'IntegracaoNivelloProposta', ex1);
+                Utils.createLog('PDFControllerExtension', 'IntegracaoNivelloProposta', ex1, opp.Id);
             }
 
             if (this.isChanged) {
                 try {
                     ProposalService.updateOpportunityPhase(new Set<Id>{ opp.Id });
                 } catch (Exception ex2) {
-                    Utils.createLog('PDFControllerExtension', 'ProposalService.updateOpportunityPhase', ex2);
+                    Utils.createLog('PDFControllerExtension', 'ProposalService.updateOpportunityPhase', ex2, opp.Id);
                 }
             }
 
         } catch (Exception postEx) {
             // Loga problemas no pós-processamento sem afetar o salvamento do arquivo
-            Utils.createLog('PDFControllerExtension', 'salvarArquivo.posProcessamento', postEx);
+            Utils.createLog('PDFControllerExtension', 'salvarArquivo.posProcessamento', postEx, opp != null ? opp.Id : null);
         }
 
         return arquivoId;
@@ -316,7 +317,7 @@ public with sharing class PDFControllerExtension {
 
 
     // Método para salvar arquivo com tratamento de exceção
-    private static Id savePdfFile(Id opportunityId, String numeroProposta, String nomePagina, Blob conteudoPdf, Boolean isChanged) {
+    public static Id savePdfFile(Id opportunityId, String numeroProposta, String nomePagina, Blob conteudoPdf, Boolean isChanged) {
         System.debug('--------------------------------- savePdfFile ---------------------------------------');
         
         try {
@@ -342,7 +343,7 @@ public with sharing class PDFControllerExtension {
         }
     }
 
-    private static Blob generatePdfContent(Id opportunityId, Id capaPropostaId, String pageName, Boolean isAsync) {
+    public static Blob generatePdfContent(Id opportunityId, Id capaPropostaId, String pageName, Boolean isAsync) {
 
         // Se for chamada síncrona, use a lógica atual
         if (!isAsync) {

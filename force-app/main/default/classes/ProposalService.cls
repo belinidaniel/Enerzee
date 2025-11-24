@@ -49,7 +49,7 @@ public class ProposalService {
             System.debug(jsonBody);
             try{
                 HttpResponse response = sendCallout(endpointUrl,jsonBody);
-                Utils.createLog('ProposalService', 'updateOpportunityPhase ' + opportunity.Id, response);
+                Utils.createLog('ProposalService', 'updateOpportunityPhase ' + opportunity.Id, response, opportunity.Id);
 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -69,7 +69,7 @@ public class ProposalService {
 
                 opportunity.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('ProposalService', 'updateOpportunityPhase ' + opportunity.Id, e);
+                Utils.createLog('ProposalService', 'updateOpportunityPhase ' + opportunity.Id, e, opportunity.Id);
                 
                 opportunity.SucessoIntegracaoNivello__c = false;
                 opportunity.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();

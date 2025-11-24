@@ -19,7 +19,7 @@ public with sharing class IntegracaoNivelloViabilidade {
 
             try{
                 HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'Etapa_Viabilidade');
-                Utils.createLog('IntegracaoNivelloViabilidade', 'etapaViabilidade ' + opp.Id, response);
+                Utils.createLog('IntegracaoNivelloViabilidade', 'etapaViabilidade ' + opp.Id, response, opp.Id);
         
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -35,7 +35,7 @@ public with sharing class IntegracaoNivelloViabilidade {
                 }
                 opp.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('IntegracaoNivelloViabilidade', 'etapaViabilidade ' + opp.Id, e);
+                Utils.createLog('IntegracaoNivelloViabilidade', 'etapaViabilidade ' + opp.Id, e, opp.Id);
                 
                 opp.SucessoIntegracaoNivello__c = false;
                 opp.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();
@@ -65,7 +65,7 @@ public with sharing class IntegracaoNivelloViabilidade {
 
             try{
                 HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'Conclusao_Viabilidade');
-                Utils.createLog('IntegracaoNivelloViabilidade', 'conclusaoViabilidade ' + opp.Id, response);
+                Utils.createLog('IntegracaoNivelloViabilidade', 'conclusaoViabilidade ' + opp.Id, response, opp.Id);
                 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -81,7 +81,7 @@ public with sharing class IntegracaoNivelloViabilidade {
                 }
                 opp.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('IntegracaoNivelloViabilidade', 'conclusaoViabilidade ' + opp.Id, e);
+                Utils.createLog('IntegracaoNivelloViabilidade', 'conclusaoViabilidade ' + opp.Id, e, opp.Id);
                 
                 opp.SucessoIntegracaoNivello__c = false;
                 opp.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();

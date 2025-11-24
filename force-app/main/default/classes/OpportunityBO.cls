@@ -7,6 +7,8 @@
 **/
 public class OpportunityBO {
 
+    public static Boolean skipAsyncProposalGeneration = false;
+
     //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
     public static void createSellBuyOrder(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
 
@@ -1668,7 +1670,7 @@ public class OpportunityBO {
 
                 }
             }catch(Exception e){
-                Utils.createLog('OpportunityBO', 'calculateDataToProposalGraphic25Years ' + (Trigger.isInsert ? '' : opportunity.Id), e);
+                Utils.createLog('OpportunityBO', 'calculateDataToProposalGraphic25Years ' + (Trigger.isInsert ? '' : opportunity.Id), e, Trigger.isInsert ? null : opportunity.Id);
             }
         }
     }

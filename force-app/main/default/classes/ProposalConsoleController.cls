@@ -175,14 +175,14 @@ public with sharing class ProposalConsoleController {
             throw new AuraHandledException('Não foi possível salvar o arquivo da proposta.');
         }
 
-        IntegracaoNivelloProposta.ProposalIntegrationResult integrationResult =
+        String integrationMessage =
             applyPostGenerationUpdates(opp, true, contentVersionId);
 
         ProposalActionResult result = new ProposalActionResult();
         result.success = true;
         result.contentVersionId = contentVersionId;
-        result.message = String.isNotBlank(integrationResult != null ? integrationResult.message : null)
-            ? integrationResult.message
+        result.message = String.isNotBlank(integrationMessage)
+            ? integrationMessage
             : 'Proposta enviada para o aplicativo.';
         return result;
     }
@@ -204,7 +204,7 @@ public with sharing class ProposalConsoleController {
         return nomeRegistro;
     }
 
-    private static IntegracaoNivelloProposta.ProposalIntegrationResult applyPostGenerationUpdates(Opportunity sourceOpp, Boolean waitForIntegration, Id contentVersionId) {
+    private static String applyPostGenerationUpdates(Opportunity sourceOpp, Boolean waitForIntegration, Id contentVersionId) {
         OpportunityBO.skipAsyncProposalGeneration = true;
 
         Opportunity oppUpdate = new Opportunity(Id = sourceOpp.Id);
@@ -236,17 +236,17 @@ public with sharing class ProposalConsoleController {
             throw new AuraHandledException('Não foi possível atualizar a oportunidade após gerar a proposta.');
         }
 
-        IntegracaoNivelloProposta.ProposalIntegrationResult integrationResult;
+        String integrationMessage;
         try {
             if(waitForIntegration == true){
-                integrationResult = contentVersionId != null
-                    ? IntegracaoNivelloProposta.gerandoPropostaSincrona(sourceOpp.Id, contentVersionId)
-                    : IntegracaoNivelloProposta.gerandoPropostaSincrona(sourceOpp.Id);
+                IntegracaoNivelloProposta.gerandoProposta(sourceOpp.Id);
+                integrationMessage = 'Proposta enviada para o aplicativo.';
             } else {
                 IntegracaoNivelloProposta.gerandoProposta(sourceOpp.Id);
+                integrationMessage = 'Proposta enviada de forma assincrona.';
             }
         } catch (Exception integrationEx) {
-            Utils.createLog('ProposalConsoleController', 'IntegracaoNivelloProposta', integrationEx);
+            Utils.createLog('ProposalConsoleController', 'IntegracaoNivelloProposta', integrationEx, sourceOpp.Id);
         } finally {
             OpportunityBO.skipAsyncProposalGeneration = false;
         }
@@ -255,11 +255,11 @@ public with sharing class ProposalConsoleController {
             try {
                 ProposalService.updateOpportunityPhase(new Set<Id>{ sourceOpp.Id });
             } catch (Exception proposalEx) {
-                Utils.createLog('ProposalConsoleController', 'ProposalService.updateOpportunityPhase', proposalEx);
+                Utils.createLog('ProposalConsoleController', 'ProposalService.updateOpportunityPhase', proposalEx, sourceOpp.Id);
             }
         }
 
-        return integrationResult;
+        return integrationMessage;
     }
 
     private static void validateOpportunityId(Id opportunityId) {

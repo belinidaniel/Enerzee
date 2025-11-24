@@ -19,7 +19,7 @@ public with sharing class IntegracaoNivelloValorTotalProposta {
 
             try {
                 HttpResponse res = chamadaIntegracao(JSON.serialize(request));
-                Utils.createLog('IntegracaoNivelloValorTotalProposta', 'updateOpportunityTotalValue ' + opp.Id, res);
+                Utils.createLog('IntegracaoNivelloValorTotalProposta', 'updateOpportunityTotalValue ' + opp.Id, res, opp.Id);
                 
                 if (res.getStatusCode() != 200) {
                     System.debug('Error in response: ' + res.getBody());
@@ -37,7 +37,7 @@ public with sharing class IntegracaoNivelloValorTotalProposta {
                     }
                 }
             } catch (Exception e) {
-                Utils.createLog('IntegracaoNivelloValorTotalProposta', 'updateOpportunityTotalValue ' + opp.Id, e);
+                Utils.createLog('IntegracaoNivelloValorTotalProposta', 'updateOpportunityTotalValue ' + opp.Id, e, opp.Id);
                 System.debug('Error in HTTP request: ' + e.getMessage());
             }
         }
