@@ -42,11 +42,23 @@ public with sharing class IntegracaoNivelloProjetos {
             request.dataUltimaModificacao   = String.valueOf(project.LastModifiedDate).replace(' ', 'T');
             
             try{
-                HttpResponse response;
+                String endpointUrl = getEndpointUrl('ProposalStatus');
+                String requestBody = JSON.serialize(request);
+                HttpResponse response = chamadaIntegracao(requestBody, endpointUrl);
 
-                response = chamadaIntegracao(JSON.serialize(request), 'ProposalStatus');
-                
-                logs.add(Utils.createLogNoInsert('IntegracaoNivelloProjetos', 'sendProjetos ' + (isInsert ? 'Insert ' : 'Update ') + project.Id, response));
+                Utils.LogDTO logDTO = new Utils.LogDTO();
+                logDTO.className = 'IntegracaoNivelloProjetos';
+                logDTO.methodName = isInsert ? 'sendProjetosInsert' : 'sendProjetosUpdate';
+                logDTO.relatedId = project.Oportunidade__c;
+                logDTO.httpMethod = 'POST';
+                logDTO.requestBody = requestBody;
+                logDTO.requestURI = endpointUrl;
+                if(response != null){
+                    logDTO.statusCode = response.getStatusCode();
+                    logDTO.status = response.getStatus();
+                    logDTO.responseBody = response.getBody();
+                }
+                logs.add(Utils.createLogNoInsert(logDTO));
 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -62,7 +74,7 @@ public with sharing class IntegracaoNivelloProjetos {
                 }
                 project.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                logs.add(Utils.createLogNoInsert('IntegracaoNivelloProjetos', 'sendProjetos ' + (isInsert ? 'Insert ' : 'Update ') + project.Id, e));
+                logs.add(Utils.createLogNoInsert('IntegracaoNivelloProjetos', (isInsert ? 'sendProjetosInsert' : 'sendProjetosUpdate'), e, project.Oportunidade__c));
                 
                 project.SucessoIntegracaoNivello__c = false;
                 project.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();
@@ -77,22 +89,25 @@ public with sharing class IntegracaoNivelloProjetos {
         insert logs;
     }
 
-    private static HttpResponse chamadaIntegracao(String body, String endpointName){
-        Integrador__mdt parametrosIntegracao = [
-            SELECT  Id, URL__c
-            FROM    Integrador__mdt 
-            WHERE   DeveloperName = :endpointName
-        ];
-
+    private static HttpResponse chamadaIntegracao(String body, String endpointUrl){
         Http httpObj = new Http();
         HttpRequest request = new HttpRequest();
         
-        request.setEndpoint(parametrosIntegracao.URL__c);
+        request.setEndpoint(endpointUrl);
         request.setMethod('POST');
         request.setHeader('Content-Type', 'application/json');
         request.setBody(body);
         
         return Utils.callIntegrationNivello(request);
+    }
+
+    private static String getEndpointUrl(String endpointName){
+        Integrador__mdt parametrosIntegracao = [
+            SELECT  URL__c
+            FROM    Integrador__mdt 
+            WHERE   DeveloperName = :endpointName
+        ];
+        return parametrosIntegracao.URL__c;
     }
 
     

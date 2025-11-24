@@ -98,7 +98,7 @@ public with sharing class IntegracaoNivelloProposta {
                     gen.writeEndObject();
                     
                     //system.debug('json =>' + gen.getAsString());
-                    HttpResponse response = chamadaIntegracao(gen.getAsString(), 'Gerando_Proposta','POST');
+                    HttpResponse response = chamadaIntegracao(gen.getAsString(), 'Gerando_Proposta','POST', oppId, 'gerandoProposta');
                     
                     system.debug('response.getStatusCode(): '+response.getStatusCode());
                     //Sucesso
@@ -117,8 +117,6 @@ public with sharing class IntegracaoNivelloProposta {
                         opp.SucessoIntegracaoNivello__c = false;
                     }
                     
-                    Utils.createLog('IntegracaoNivelloProposta', 'gerandoProposta ' + oppId, response, oppId);
-                    
                     opp.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
                     
                     OpportunityTriggerHandler.disableTrigger();
@@ -126,7 +124,7 @@ public with sharing class IntegracaoNivelloProposta {
                     OpportunityTriggerHandler.enableTrigger();
                     
                 }catch(Exception e){
-                    Utils.createLog('IntegracaoNivelloProposta', 'gerandoProposta ' + oppId, e, oppId);
+                    Utils.createLog('IntegracaoNivelloProposta', 'gerandoProposta', e, oppId);
                 }
             }
         }
@@ -177,7 +175,7 @@ public with sharing class IntegracaoNivelloProposta {
                 implementationDateAux += '.' + opp.LastModifiedDate.millisecond() + 'Z';
 
                 corpoRequisicao.implementationDate = implementationDateAux;
-                HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'Finalizacao_Proposta','POST');
+                HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'Finalizacao_Proposta','POST', opp.Id, 'finalizacaoProposta');
 
                 
                 //Sucesso
@@ -211,23 +209,21 @@ public with sharing class IntegracaoNivelloProposta {
                 request.Id = opp.IdVirtualOffice__c;
                 request.urlSimulation = opp.URLSimulation__c;
 
-                HttpResponse res = chamadaIntegracao(JSON.serialize(request), 'Envia_URLSimulacao','PATCH');
+                HttpResponse res = chamadaIntegracao(JSON.serialize(request), 'Envia_URLSimulacao','PATCH', opp.Id, 'sendUrlSimulation');
 
                 // Handle the response
                 if (res.getStatusCode() == 200) {
                     //System.debug('Request successful');
-                    Utils.createLog('IntegracaoNivelloProposta', 'sendUrlSimulation ' + opp.Id, res, opp.Id);
                 } else {
-                    Utils.createLog('IntegracaoNivelloProposta', 'sendUrlSimulation failed ' + opp.Id, res, opp.Id  );
                     //System.debug('Request failed: ' + res.getStatus());
                 }
             }catch (Exception e) {
-                Utils.createLog('IntegracaoNivelloProposta', 'Exception in sendUrlSimulation ' + opp.Id, e.getMessage(), opp.Id);
+                Utils.createLog('IntegracaoNivelloProposta', 'Exception in sendUrlSimulation', e, opp.Id);
             }
         }
     }
 
-    private static HttpResponse chamadaIntegracao(String body, String integracaoProposta, String method){
+    private static HttpResponse chamadaIntegracao(String body, String integracaoProposta, String method, Id relatedId, String logMethodName){
         Integrador__mdt parametrosIntegracao = [
             SELECT  Id, URL__c
             FROM    Integrador__mdt 
@@ -246,7 +242,23 @@ public with sharing class IntegracaoNivelloProposta {
         request.setHeader('Content-Type', 'application/json');
         request.setBody(body);
 
-        return Utils.callIntegrationNivello(request);
+        HttpResponse response = Utils.callIntegrationNivello(request);
+
+        Utils.LogDTO logDTO = new Utils.LogDTO();
+        logDTO.className = 'IntegracaoNivelloProposta';
+        logDTO.methodName = String.isNotBlank(logMethodName) ? logMethodName : integracaoProposta;
+        logDTO.relatedId = relatedId;
+        logDTO.httpMethod = method;
+        logDTO.requestBody = body;
+        logDTO.requestURI = parametrosIntegracao.URL__c;
+        if(response != null){
+            logDTO.statusCode = response.getStatusCode();
+            logDTO.status = response.getStatus();
+            logDTO.responseBody = response.getBody();
+        }
+        Utils.createLog(logDTO);
+
+        return response;
     }
 
     /*public static integer getStatusEnum(String stageName){
@@ -352,7 +364,7 @@ public with sharing class IntegracaoNivelloProposta {
             }
             return null;
         } catch (Exception e) {
-            Utils.createLog('IntegracaoNivelloProposta', 'handleAttachmentResponse ' + opportunityId,opportunityId);
+            Utils.createLog('IntegracaoNivelloProposta', 'handleAttachmentResponse', e, opportunityId);
             return null;
         }
     }
