@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-07-2025
+ * @last modified on  : 11-23-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityTriggerHandler extends TriggerHandler {
@@ -56,7 +56,6 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.revertStageForNivelloAPIUser((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.updateOwnerOnFirstModification((List<Opportunity>) Trigger.new);
         OpportunityBO.controlsSubstatus((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
-        OpportunityBO.sendProposalValueUpdate((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.assignOwnerByPartner((List<Opportunity>) Trigger.new);
         OpportunityBO.updateApproveComment((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
     }

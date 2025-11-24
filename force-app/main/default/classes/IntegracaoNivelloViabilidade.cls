@@ -18,8 +18,7 @@ public with sharing class IntegracaoNivelloViabilidade {
             corpoRequisicao.description = opp.Description;
 
             try{
-                HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'Etapa_Viabilidade');
-                Utils.createLog('IntegracaoNivelloViabilidade', 'etapaViabilidade ' + opp.Id, response);
+                HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'Etapa_Viabilidade', opp.Id, 'etapaViabilidade');
         
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -35,7 +34,7 @@ public with sharing class IntegracaoNivelloViabilidade {
                 }
                 opp.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('IntegracaoNivelloViabilidade', 'etapaViabilidade ' + opp.Id, e);
+                Utils.createLog('IntegracaoNivelloViabilidade', 'etapaViabilidade', e, opp.Id);
                 
                 opp.SucessoIntegracaoNivello__c = false;
                 opp.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();
@@ -64,8 +63,7 @@ public with sharing class IntegracaoNivelloViabilidade {
             corpoRequisicao.deadline = deadlineAux;
 
             try{
-                HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'Conclusao_Viabilidade');
-                Utils.createLog('IntegracaoNivelloViabilidade', 'conclusaoViabilidade ' + opp.Id, response);
+                HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'Conclusao_Viabilidade', opp.Id, 'conclusaoViabilidade');
                 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -81,7 +79,7 @@ public with sharing class IntegracaoNivelloViabilidade {
                 }
                 opp.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('IntegracaoNivelloViabilidade', 'conclusaoViabilidade ' + opp.Id, e);
+                Utils.createLog('IntegracaoNivelloViabilidade', 'conclusaoViabilidade', e, opp.Id);
                 
                 opp.SucessoIntegracaoNivello__c = false;
                 opp.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();
@@ -92,7 +90,7 @@ public with sharing class IntegracaoNivelloViabilidade {
         OpportunityTriggerHandler.enableTrigger();
     }
 
-    private static HttpResponse chamadaIntegracao(String body, String integracaoViabilidade){
+    private static HttpResponse chamadaIntegracao(String body, String integracaoViabilidade, Id relatedId, String logMethodName){
         Integrador__mdt parametrosIntegracao = [
             SELECT  Id, URL__c
             FROM    Integrador__mdt 
@@ -107,7 +105,24 @@ public with sharing class IntegracaoNivelloViabilidade {
         request.setHeader('Content-Type', 'application/json');
         request.setBody(body);
         
-        return Utils.callIntegrationNivello(request);
+        HttpResponse response = Utils.callIntegrationNivello(request);
+
+        Utils.LogDTO logDTO = new Utils.LogDTO();
+        logDTO.className = 'IntegracaoNivelloViabilidade';
+        logDTO.methodName = logMethodName;
+        logDTO.relatedId = relatedId;
+        logDTO.httpMethod = request.getMethod();
+        logDTO.requestBody = body;
+        logDTO.requestURI = parametrosIntegracao.URL__c;
+        if(response != null){
+            logDTO.statusCode = response.getStatusCode();
+            logDTO.status = response.getStatus();
+            String respBody = response.getBody();
+            logDTO.responseBody = String.isNotBlank(respBody) ? respBody : response.getStatus();
+        }
+        Utils.createLog(logDTO);
+        
+        return response;
     }
 
     public class EtapaViabilidadeRequest{

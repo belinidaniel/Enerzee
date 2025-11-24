@@ -31,7 +31,7 @@
             <value>1</value>
         </criteriaItems>
         <criteriaItems>
-            <column>MessagingSession$QueueSupervisor__c</column>
+            <column>MessagingSession$QueueSupervisorRole__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>notEqual</operator>
@@ -42,7 +42,7 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>0</value>
+            <value>1</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
@@ -54,10 +54,10 @@
     </groupingsDown>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
-        <field>MessagingSession$QueueSupervisor__c</field>
+        <field>MessagingSession$QueueSupervisorRole__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Copy of Mensagens Fechadas Fora do SLA</name>
+    <name>Mensagens Fechadas Fora do SLA (N1)</name>
     <params>
         <name>co</name>
         <value>1</value>

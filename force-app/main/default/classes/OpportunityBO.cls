@@ -2,10 +2,15 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-10-2025
+ * @last modified on  : 11-23-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
+
+    // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas
+    public static Boolean skipAsyncProposalGeneration = false;
+    // Controle por transação para evitar múltiplas enfileirações da mesma oportunidade
+    private static Set<Id> queuedProposalOpps = new Set<Id>();
 
     //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
     public static void createSellBuyOrder(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
@@ -1052,11 +1057,26 @@ public class OpportunityBO {
             OpportunitySetIds.add(opp.Id);
         }
 
+        // Evitar criar projetos duplicados via trigger; se já existe projeto para a oportunidade, não cria outro
+        // Exceção: se Categoria = Fast Track, permitimos criar um projeto (e instalação) sempre que o fluxo for acionado
+        Set<Id> opportunitiesWithProject = new Set<Id>();
+        Map<Id, Opportunity> oppMap = new Map<Id, Opportunity>(newRecords);
+        for (Projeto__c existingProject : [
+            SELECT Oportunidade__c
+            FROM   Projeto__c
+            WHERE  Oportunidade__c IN :OpportunitySetIds
+        ]) {
+            Opportunity opp = oppMap.get(existingProject.Oportunidade__c);
+            if (existingProject.Oportunidade__c != null) {
+                opportunitiesWithProject.add(existingProject.Oportunidade__c);
+            }
+        }
+
         Map<String, String> statusByRecordType = new Map<String, String>{
-            'Bombeamento'               => 'STATUS_PLANEJAMENTO',
-            'Estação de Recarga'        => 'STATUS_PLANEJAMENTO',
+            'Bombeamento'               => 'STATUS_PLANEJAMENTO_DE_PROJETO',
+            'Estação de Recarga'        => 'STATUS_PLANEJAMENTO_DE_PROJETO',
             'Subestação'                => 'STATUS_PLANEJAMENTO_DE_PROJETO',
-            'Padrão de Entradao'        => 'STATUS_PLANEJAMENTO',
+            'Padrão de Entradao'        => 'STATUS_PLANEJAMENTO_DE_PROJETO',
             'UFV Mini acima de 300'     => 'STATUS_PLANEJAMENTO_DE_PROJETO',
             'UFV Mini até 300'          => 'STATUS_PLANEJAMENTO_DE_PROJETO',
             'UFV Micro'                 => 'STATUS_PLANEJAMENTO_DE_PROJETO'
@@ -1072,6 +1092,10 @@ public class OpportunityBO {
             if(viabilityMap.get(opportunity.Id) == null){
                 return;
             }
+            if (opportunitiesWithProject.contains(opportunity.Id)) {
+                continue;
+            }
+
             if(
                 (
                     OpportunityUtils.isRecordTypeEzeeSolar(opportunity) ||
@@ -1115,6 +1139,14 @@ public class OpportunityBO {
             }
         }
         insert projectsToInsert;
+        if(!projectsToInsert.isEmpty()){
+            System.debug('Creating installations for Fast Track projects...');
+            Map<Id, Opportunity> opportunityById = new Map<Id, Opportunity>();
+            for(Opportunity opp : newRecords){
+                opportunityById.put(opp.Id, opp);
+            }
+            InstalacaoBO.createInstallationsForFastTrackProjects(projectsToInsert, opportunityById);
+        }
     }
 
     public static void changeOpportunityStageOnViabilityChanging(List<Opportunity> newList, Map<Id, Opportunity> oldMap){
@@ -1886,6 +1918,7 @@ public class OpportunityBO {
     public static void applyApprovedDiscounts(Map<Id,Opportunity> newMap, Map<Id,Opportunity> oldMap) {
         // Lista de Opportunities que foram aprovados
         List<Opportunity> approvedOpportunities = new List<Opportunity>();
+        List<Id> approvedIds = new List<Id>();
 
         for (Opportunity opp : newMap.values() ) {
             Opportunity oldOpp = oldMap.get(opp.Id);
@@ -1909,6 +1942,10 @@ public class OpportunityBO {
                 approvedOpportunities.add(oppToUpdate);
 
                 oppToUpdate.PropostaAlterada__c = true;
+                // força nova geração/integracao após aprovação
+                oppToUpdate.PropostaGerada__c = false;
+                oppToUpdate.ReadequacaoSolicitada__c = true;
+                approvedIds.add(opp.Id);
             }
         }
 
@@ -1917,8 +1954,13 @@ public class OpportunityBO {
             OpportunityTriggerHandler.disableTrigger();
             update approvedOpportunities;
             OpportunityTriggerHandler.enableTrigger();
-            
-            for (Opportunity opp : approvedOpportunities){
+
+            // Enfileira geração de nova proposta após aprovação de desconto
+            for (Id oppId : approvedIds) {
+                if (!queuedProposalOpps.contains(oppId)) {
+                    queuedProposalOpps.add(oppId);
+                    System.enqueueJob(new PDFControllerExtension.SavePdfJob(oppId, true, true));
+                }
             }
             
         }
@@ -1927,36 +1969,38 @@ public class OpportunityBO {
     public static void generateProposalAsync(Map<Id,Opportunity> newMap, Map<Id,Opportunity> oldMap) {
         for(Opportunity opp :  newMap.values() ){
             Opportunity oldOpp = oldMap.get(opp.Id);
+            // Se já gerada e não é readequação solicitada, não enfileira novamente
+            if (opp.PropostaGerada__c == true && opp.ReadequacaoSolicitada__c != true) {
+                continue;
+            }
             if(((opp.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('EzeeConnect').getRecordTypeId() && areRequiredFieldsFilledConnect(opp)) ||
                 (opp.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId() && areRequiredFieldsFilled(opp))) &&                    
                  opp.GrupoTarifario__c != 'Grupo A'
                 ){
                 System.debug('if 1 - generateProposalAsync - ');
-                if( (OpportunityUtils.isStatusProposalElaboration(opp) || OpportunityUtils.isStatusProposalSimulation(opp)) && 
-                    (
-                        opp.StageName != oldOpp.StageName  && 
-                        opp.PropostaGerada__c == false) 
-                        ||
-                    (
-                        opp.StageName == oldOpp.StageName  && 
-                        opp.ReadequacaoSolicitada__c != oldOpp.ReadequacaoSolicitada__c &&
-                        opp.ReadequacaoSolicitada__c == true
-                    ) ||
-                    (
-                        oldOpp.PropostaGerada__c != opp.PropostaGerada__c &&
-                        opp.PropostaGerada__c == true &&
-                        opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c &&
-                        opp.StatusAprovacaoDesconto__c == 'Aprovado'
-                    ) ||
-                    (
-                        formulaFieldsChanged(oldOpp, opp)
-                    ) ||
-                    (
-                        opp.PropostaGerada__c == false
-                    )
-                ){
+
+                Boolean shouldGenerate = false;
+                if (opp.PropostaGerada__c == false) {
+                    shouldGenerate = true;
+                }
+                if (oldOpp != null && opp.ReadequacaoSolicitada__c != oldOpp.ReadequacaoSolicitada__c && opp.ReadequacaoSolicitada__c == true) {
+                    shouldGenerate = true;
+                }
+                if (oldOpp != null && opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c && opp.StatusAprovacaoDesconto__c == 'Aprovado') {
+                    shouldGenerate = true;
+                }
+                if (oldOpp != null && formulaFieldsChanged(oldOpp, opp)) {
+                    shouldGenerate = true;
+                }
+
+                if (shouldGenerate) {
                     System.debug('if 2 - generateProposalAsync - ');
-                    PDFControllerExtension.savePdfFileAsync(opp.Id);
+                    if (!queuedProposalOpps.contains(opp.Id)) {
+                        queuedProposalOpps.add(opp.Id);
+                        System.enqueueJob(new PDFControllerExtension.SavePdfJob(opp.Id, true, false));
+                    } else {
+                        System.debug('generateProposalAsync - já enfileirado para opp ' + opp.Id);
+                    }
                 }
             }
         }
@@ -2328,8 +2372,11 @@ public class OpportunityBO {
 
             Map<Id, Opportunity> filteredOpportunities = new Map<Id, Opportunity>();
             Map<Id, Projeto__c> projectByOpportunityId = new Map<Id, Projeto__c>();
+            Map<Id, Instalacao__c> installationByProjectId = new Map<Id, Instalacao__c>();
+            Map<Id, Instalacao__c> installationByOpportunityId = new Map<Id, Instalacao__c>();
             Map<Id, Contact> contactByAccountId = new Map<Id, Contact>();
             Set<Id> accountIds = new Set<Id>();
+            Set<Id> projectIds = new Set<Id>();
             
             for(Opportunity opportunity : newRecords){
 
@@ -2368,6 +2415,23 @@ public class OpportunityBO {
             if(projects != null){
                 for(Projeto__c project : projects){
                     projectByOpportunityId.put(project.Oportunidade__c, project);
+                    projectIds.add(project.Id);
+                }
+            }
+
+            if(!projectIds.isEmpty() || !filteredOpportunities.isEmpty()){
+                for(Instalacao__c installation : [
+                    SELECT  Id, Projeto__c, Oportunidade__c, GestorObra__c, InstallDate__c, DateInspection__c
+                    FROM    Instalacao__c
+                    WHERE   Projeto__c IN :projectIds
+                        OR  Oportunidade__c IN :filteredOpportunities.keySet()
+                ]){
+                    if(installation.Projeto__c != null && !installationByProjectId.containsKey(installation.Projeto__c)){
+                        installationByProjectId.put(installation.Projeto__c, installation);
+                    }
+                    if(installation.Oportunidade__c != null && !installationByOpportunityId.containsKey(installation.Oportunidade__c)){
+                        installationByOpportunityId.put(installation.Oportunidade__c, installation);
+                    }
                 }
             }
 
@@ -2377,8 +2441,13 @@ public class OpportunityBO {
 
                 Projeto__c project = projectByOpportunityId.get(opportunity.Id);
 
+                Instalacao__c installation = installationByProjectId.get(project?.Id);
+                if(installation == null){
+                    installation = installationByOpportunityId.get(opportunity.Id);
+                }
+
                 casesCustomerJourney.add(
-                    buildCase(opportunity, project, contact)
+                    buildCase(opportunity, project, installation, contact)
                 );
             }
 
@@ -2393,7 +2462,7 @@ public class OpportunityBO {
         
     }
     
-    public static Case buildCase(Opportunity opportunity, Projeto__c project, Contact contact){
+    public static Case buildCase(Opportunity opportunity, Projeto__c project, Instalacao__c installation, Contact contact){
 
         List<Group> queueSupport = [
             SELECT Id 
@@ -2412,10 +2481,22 @@ public class OpportunityBO {
         caseRecord.AccountId = opportunity.AccountId;
         caseRecord.ContactId = contact != null ? contact.Id : null;
         if(project?.Consultor__c != null) caseRecord.Nome_do_Consultor__c = project.Consultor__c;
-        if(project?.GestorObra__c != null) caseRecord.ManagerName__c = project.GestorObra__c;
+        if(installation?.GestorObra__c != null){
+            caseRecord.ManagerName__c = installation.GestorObra__c;
+        } else if(project?.GestorObra__c != null){
+            caseRecord.ManagerName__c = project.GestorObra__c;
+        }
         if(project?.ApprovalDate__c != null) caseRecord.ProjectApprovalDate__c = project.ApprovalDate__c;
-        if(project?.InstallDate__c != null) caseRecord.InstallDate__c = project.InstallDate__c;
-        if(project?.DateInspection__c != null) caseRecord.DateInspection__c = project.DateInspection__c;
+        if(installation?.InstallDate__c != null){
+            caseRecord.InstallDate__c = installation.InstallDate__c;
+        } else if(project?.InstallDate__c != null){
+            caseRecord.InstallDate__c = project.InstallDate__c;
+        }
+        if(installation?.DateInspection__c != null){
+            caseRecord.DateInspection__c = installation.DateInspection__c;
+        } else if(project?.DateInspection__c != null){
+            caseRecord.DateInspection__c = project.DateInspection__c;
+        }
 
         return caseRecord;
     }
@@ -2560,39 +2641,6 @@ public class OpportunityBO {
                 opportunity.Status__c = null;
             }
 
-        }
-    }
-
-    public static void sendProposalValueUpdate(List<Opportunity> newRecordList, Map<Id, Opportunity> oldRecordsMap) {
-        for (Opportunity opportunity : newRecordList) {
-            System.debug('sendProposalValueUpdate: ' + opportunity.Id);
-            Set<Id> opportunityIds = new Set<Id>();
-
-            Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
-
-            if (oldOpportunity == null) continue;
-            System.debug('sendProposalValueUpdate: ' + opportunity.Id);
-            System.debug('Old Value: ' + oldOpportunity.ValorTotalProposta__c);
-            System.debug('New Value: ' + opportunity.ValorTotalProposta__c);
-            
-            if ((opportunity.ValorTotalProposta__c == oldOpportunity.ValorTotalProposta__c)){
-                continue;
-            } else {
-                opportunityIds.add(opportunity.Id);
-            }
-
-            if (!opportunityIds.isEmpty()) {
-                ProposalService.updateOpportunityPhase(opportunityIds);
-
-                if (    
-                    opportunity.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('EzeeConnect').getRecordTypeId()
-                    || opportunity.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId()
-                ){
-                    opportunity.PropostaAlterada__c = true;
-                    // PDFControllerExtension.savePdfFileAsync(opportunity.Id);
-                }
-
-            }
         }
     }
 

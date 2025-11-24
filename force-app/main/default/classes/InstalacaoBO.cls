@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-21-2025
+ * @last modified on  : 11-23-2025
  * @last modified by  : Daniel Belini
 **/
 public class InstalacaoBO {
@@ -15,77 +15,42 @@ public class InstalacaoBO {
             return;
         }
 
+        List<Projeto__c> fastTrackProjects = new List<Projeto__c>();
         Set<Id> projectIds = new Set<Id>();
-        Set<Id> opportunityIds = new Set<Id>();
 
         for(Projeto__c project : projects){
-            Opportunity opportunity = opportunityById.get(project.Oportunidade__c);
-            if(opportunity != null && opportunity.Categoria__c != null && opportunity.Categoria__c.equalsIgnoreCase('Fast Track')){
+            Opportunity opp = opportunityById != null ? opportunityById.get(project.Oportunidade__c) : null;
+            if(opp != null && opp.Categoria__c != null && opp.Categoria__c.equalsIgnoreCase('Fast Track')){
+                fastTrackProjects.add(project);
                 projectIds.add(project.Id);
-                opportunityIds.add(project.Oportunidade__c);
             }
         }
 
-        if(opportunityIds.isEmpty()){
+        if(fastTrackProjects.isEmpty()){
             return;
         }
 
-        Map<Id, Instalacao__c> projectIdToInstallation = new Map<Id, Instalacao__c>();
-        Map<Id, Instalacao__c> opportunityIdToInstallation = new Map<Id, Instalacao__c>();
-        Map<Id, Instalacao__c> installationsToUpdate = new Map<Id, Instalacao__c>();
-
-        for(Instalacao__c existingInstallation : [
-            SELECT  Id, Projeto__c, Oportunidade__c
-            FROM    Instalacao__c
-            WHERE   Projeto__c IN :projectIds
-                OR  Oportunidade__c IN :opportunityIds
+        Map<Id, Instalacao__c> existingByProject = new Map<Id, Instalacao__c>();
+        for(Instalacao__c inst : [
+            SELECT Id, Projeto__c FROM Instalacao__c WHERE Projeto__c IN :projectIds
         ]){
-            if(existingInstallation.Projeto__c != null && !projectIdToInstallation.containsKey(existingInstallation.Projeto__c)){
-                projectIdToInstallation.put(existingInstallation.Projeto__c, existingInstallation);
-            }
-            if(existingInstallation.Oportunidade__c != null && !opportunityIdToInstallation.containsKey(existingInstallation.Oportunidade__c)){
-                opportunityIdToInstallation.put(existingInstallation.Oportunidade__c, existingInstallation);
-            }
+            existingByProject.put(inst.Projeto__c, inst);
         }
 
-        List<Instalacao__c> installationsToInsert = new List<Instalacao__c>();
-
-        for(Projeto__c project : projects){
-            Opportunity opportunity = opportunityById.get(project.Oportunidade__c);
-
-            if(opportunity == null || opportunity.Categoria__c == null || !opportunity.Categoria__c.equalsIgnoreCase('Fast Track')){
+        List<Instalacao__c> toInsert = new List<Instalacao__c>();
+        for(Projeto__c project : fastTrackProjects){
+            if(project.Instalacao__c != null || existingByProject.containsKey(project.Id)){
                 continue;
             }
-
-            Instalacao__c oppInstallation = opportunityIdToInstallation.get(project.Oportunidade__c);
-            if(oppInstallation != null){
-                // Existe instalação para a oportunidade; se não estiver vinculada ao projeto, vincular
-                if(oppInstallation.Projeto__c == null){
-                    oppInstallation.Projeto__c = project.Id;
-                    installationsToUpdate.put(oppInstallation.Id, oppInstallation);
-                }
-                if(project.Instalacao__c == null && !installationsToUpdate.containsKey(oppInstallation.Id)){
-                    installationsToUpdate.put(oppInstallation.Id, oppInstallation);
-                }
-                continue;
-            }
-
-            if(projectIdToInstallation.containsKey(project.Id)){
-                continue;
-            }
-
-            installationsToInsert.add(buildInstallation(project));
+            toInsert.add(buildInstallation(project));
+        }
+        System.debug('### InstalacaoBO.createInstallationsForFastTrackProjects - toInsert: ' + toInsert);
+        if(toInsert.isEmpty()){
+            return;
         }
 
-        if(!installationsToInsert.isEmpty()){
-            insert installationsToInsert;
-            relateProjectsToInstallations(projects, installationsToInsert);
-        }
-
-        if(!installationsToUpdate.isEmpty()){
-            update installationsToUpdate.values();
-            relateProjectsToInstallations(projects, installationsToUpdate.values());
-        }
+        insert toInsert;
+        relateProjectsToInstallations(fastTrackProjects, toInsert);
     }
 
     public static void ensureInstallationOnProjectApproved(List<Projeto__c> newProjects, Map<Id, Projeto__c> oldMap){
@@ -95,20 +60,34 @@ public class InstalacaoBO {
 
         List<Projeto__c> toProcess = new List<Projeto__c>();
         Set<Id> projectIds = new Set<Id>();
+        Set<Id> opportunityIdsToAdvance = new Set<Id>();
 
         for(Projeto__c project : newProjects){
             Projeto__c oldProject = oldMap != null ? oldMap.get(project.Id) : null;
 
-            Boolean movedToApproved =
+            Boolean statusApproved =
                 project.Status__c != null &&
                 project.Status__c.equalsIgnoreCase(ProjetoUtils.STATUS_PROJETO_APROVADO) &&
                 (oldProject == null || !project.Status__c.equalsIgnoreCase(oldProject.Status__c));
 
-            if(movedToApproved && project.Instalacao__c == null){
-                toProcess.add(project);
-                projectIds.add(project.Id);
+            Boolean approvalDateFilled =
+                project.ApprovalDate__c != null &&
+                (oldProject == null || project.ApprovalDate__c != oldProject.ApprovalDate__c);
+
+            Boolean movedToApproved = statusApproved || approvalDateFilled;
+
+            if(movedToApproved){
+                if(project.Oportunidade__c != null){
+                    opportunityIdsToAdvance.add(project.Oportunidade__c);
+                }
+                if(project.Instalacao__c == null){
+                    toProcess.add(project);
+                    projectIds.add(project.Id);
+                }
             }
         }
+
+        advanceOpportunitiesToPaymentConfirmation(opportunityIdsToAdvance);
 
         if(toProcess.isEmpty()){
             return;
@@ -137,12 +116,37 @@ public class InstalacaoBO {
         relateProjectsToInstallations(toProcess, toInsert);
     }
 
+    private static void advanceOpportunitiesToPaymentConfirmation(Set<Id> opportunityIds){
+        if(opportunityIds == null || opportunityIds.isEmpty()){
+            return;
+        }
+
+        List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
+        for(Opportunity opp : [
+            SELECT Id, StageName
+            FROM Opportunity
+            WHERE Id IN :opportunityIds
+        ]){
+            if(opp.StageName != null && opp.StageName.equalsIgnoreCase(OpportunityUtils.STATUS_PARECER_DE_ACESSO)){
+                opportunitiesToUpdate.add(new Opportunity(
+                    Id = opp.Id,
+                    StageName = OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO
+                ));
+            }
+        }
+
+        if(!opportunitiesToUpdate.isEmpty()){
+            update opportunitiesToUpdate;
+        }
+    }
+
     private static Instalacao__c buildInstallation(Projeto__c project){
         String installationName = project.Name != null ? 'Instalação - ' + project.Name : 'Instalação';
 
         return new Instalacao__c(
             Name                = installationName,
             Oportunidade__c     = project.Oportunidade__c,
+            OportunidadeConcluida__c = project.Oportunidade__c,
             Projeto__c          = project.Id,
             GestorObra__c       = project.GestorObra__c,
             InstallDate__c      = project.InstallDate__c,
@@ -194,12 +198,14 @@ public class InstalacaoBO {
 
         List<Instalacao__c> installationsToUpdate = new List<Instalacao__c>();
         for(Instalacao__c installation : installations){
-            if(installation.Oportunidade__c == null && installation.Projeto__c != null){
+            if(installation.Projeto__c != null){
                 Id oppId = projectIdToOpportunityId.get(installation.Projeto__c);
-                if(oppId != null){
+                Boolean needsOppUpdate = oppId != null && oppId != installation.Oportunidade__c;
+                if(needsOppUpdate){
                     installationsToUpdate.add(new Instalacao__c(
                         Id = installation.Id,
-                        Oportunidade__c = oppId
+                        Oportunidade__c = oppId,
+                        OportunidadeConcluida__c =  oppId
                     ));
                 }
             }

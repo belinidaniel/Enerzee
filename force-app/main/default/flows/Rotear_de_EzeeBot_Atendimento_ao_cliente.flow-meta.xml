@@ -100,9 +100,6 @@
         <locationY>350</locationY>
         <actionName>routeWork</actionName>
         <actionType>routeWork</actionType>
-        <connector>
-            <targetReference>Messaging_Session_SLA_Setup_Auto_Launched_Flow_Flow_1</targetReference>
-        </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>recordId</name>
@@ -172,24 +169,6 @@
         </inputParameters>
         <inputParameters>
             <name>botLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>externalConversationBotId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>externalConversationBotLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>copilotId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>copilotLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>agentforceEmployeeAgentId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>agentforceEmployeeAgentLabel</name>
         </inputParameters>
         <inputParameters>
             <name>isQueueVariable</name>
@@ -403,25 +382,6 @@
         </connector>
     </start>
     <status>Active</status>
-    <subflows>
-        <name>Messaging_Session_SLA_Setup_Auto_Launched_Flow_Flow_1</name>
-        <label>Messaging Session - SLA Setup - Auto Launched Flow Flow 1</label>
-        <locationX>314</locationX>
-        <locationY>458</locationY>
-        <flowName>SLA_Setup_Message_Session</flowName>
-        <inputAssignments>
-            <name>MessageId</name>
-            <value>
-                <elementReference>recordId</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <name>QueueDeveloperName</name>
-            <value>
-                <stringValue>Atendimento_ao_Cliente</stringValue>
-            </value>
-        </inputAssignments>
-    </subflows>
     <variables>
         <name>Queue_Name</name>
         <dataType>String</dataType>

@@ -62,12 +62,6 @@
                 <elementReference>messagingUserIds</elementReference>
             </value>
         </inputParameters>
-        <inputParameters>
-            <name>sessionLongevityPreference</name>
-            <value>
-                <stringValue>KeepSessionOpen</stringValue>
-            </value>
-        </inputParameters>
         <nameSegment>sendConversationMessages</nameSegment>
         <offset>0</offset>
         <storeOutputAutomatically>true</storeOutputAutomatically>
@@ -132,12 +126,6 @@
             <name>messagingEndUserIds</name>
             <value>
                 <elementReference>messagingUserIds</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>sessionLongevityPreference</name>
-            <value>
-                <stringValue>KeepSessionOpen</stringValue>
             </value>
         </inputParameters>
         <nameSegment>sendConversationMessages</nameSegment>
@@ -206,12 +194,6 @@
                 <elementReference>messagingUserIds</elementReference>
             </value>
         </inputParameters>
-        <inputParameters>
-            <name>sessionLongevityPreference</name>
-            <value>
-                <stringValue>KeepSessionOpen</stringValue>
-            </value>
-        </inputParameters>
         <nameSegment>sendConversationMessages</nameSegment>
         <offset>0</offset>
         <storeOutputAutomatically>true</storeOutputAutomatically>
@@ -276,12 +258,6 @@
             <name>messagingEndUserIds</name>
             <value>
                 <elementReference>messagingUserIds</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>sessionLongevityPreference</name>
-            <value>
-                <stringValue>KeepSessionOpen</stringValue>
             </value>
         </inputParameters>
         <nameSegment>sendConversationMessages</nameSegment>
@@ -402,9 +378,16 @@
         <defaultConnectorLabel>Resultado padrão</defaultConnectorLabel>
         <rules>
             <name>Contrato_enviado_para_assinatura</name>
-            <conditionLogic>and</conditionLogic>
+            <conditionLogic>or</conditionLogic>
             <conditions>
                 <leftValueReference>Selecione_a_mensagem_que_deseja_enviar_ao_consultor</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>Contratoenviadoparaassinatura</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Selecione_a_mensagem_que_deseja_enviar_ao_consultor_standard</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <elementReference>Contratoenviadoparaassinatura</elementReference>
@@ -420,6 +403,13 @@
             <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference>Selecione_a_mensagem_que_deseja_enviar_ao_consultor</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>IniciarConversaSobreProposta</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Selecione_a_mensagem_que_deseja_enviar_ao_consultor_standard</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <elementReference>IniciarConversaSobreProposta</elementReference>
@@ -715,6 +705,48 @@
             <targetReference>Envio_de_acordo_com_a_mensagem_selecionada</targetReference>
         </connector>
         <fields>
+            <name>Selecione_a_mensagem_que_deseja_enviar_ao_consultor_standard</name>
+            <choiceReferences>Contratoenviadoparaassinatura</choiceReferences>
+            <choiceReferences>IniciarConversaSobreProposta</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Selecione a mensagem que deseja enviar ao consultor</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+            <visibilityRule>
+                <conditionLogic>2 OR (1 AND 3)</conditionLogic>
+                <conditions>
+                    <leftValueReference>Get_Opportunity.GrupoTarifario__c</leftValueReference>
+                    <operator>NotEqualTo</operator>
+                    <rightValue>
+                        <stringValue>Grupo B</stringValue>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Get_Opportunity.RecordType.DeveloperName</leftValueReference>
+                    <operator>NotEqualTo</operator>
+                    <rightValue>
+                        <stringValue>Ezee_Solar</stringValue>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Get_Opportunity.RecordType.DeveloperName</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <stringValue>Ezee_Solar</stringValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <fields>
             <name>Selecione_a_mensagem_que_deseja_enviar_ao_consultor</name>
             <choiceReferences>Contratoenviadoparaassinatura</choiceReferences>
             <choiceReferences>IniciarConversaSobreProposta</choiceReferences>
@@ -733,6 +765,23 @@
                     <stringValue>12</stringValue>
                 </width>
             </styleProperties>
+            <visibilityRule>
+                <conditionLogic>and</conditionLogic>
+                <conditions>
+                    <leftValueReference>Get_Opportunity.GrupoTarifario__c</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <stringValue>Grupo B</stringValue>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Get_Opportunity.RecordType.DeveloperName</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <stringValue>Ezee_Solar</stringValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
         </fields>
         <fields>
             <name>previewIniciarConversa</name>
@@ -747,9 +796,16 @@
                 </width>
             </styleProperties>
             <visibilityRule>
-                <conditionLogic>and</conditionLogic>
+                <conditionLogic>or</conditionLogic>
                 <conditions>
                     <leftValueReference>Selecione_a_mensagem_que_deseja_enviar_ao_consultor</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <elementReference>IniciarConversaSobreProposta</elementReference>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Selecione_a_mensagem_que_deseja_enviar_ao_consultor_standard</leftValueReference>
                     <operator>EqualTo</operator>
                     <rightValue>
                         <elementReference>IniciarConversaSobreProposta</elementReference>
@@ -770,9 +826,16 @@
                 </width>
             </styleProperties>
             <visibilityRule>
-                <conditionLogic>and</conditionLogic>
+                <conditionLogic>or</conditionLogic>
                 <conditions>
                     <leftValueReference>Selecione_a_mensagem_que_deseja_enviar_ao_consultor</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <elementReference>Contratoenviadoparaassinatura</elementReference>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>Selecione_a_mensagem_que_deseja_enviar_ao_consultor_standard</leftValueReference>
                     <operator>EqualTo</operator>
                     <rightValue>
                         <elementReference>Contratoenviadoparaassinatura</elementReference>

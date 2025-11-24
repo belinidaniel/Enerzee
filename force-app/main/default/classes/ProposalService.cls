@@ -48,8 +48,7 @@ public class ProposalService {
             String jsonBody = JSON.serialize(request);
             System.debug(jsonBody);
             try{
-                HttpResponse response = sendCallout(endpointUrl,jsonBody);
-                Utils.createLog('ProposalService', 'updateOpportunityPhase ' + opportunity.Id, response);
+                HttpResponse response = sendCallout(endpointUrl, jsonBody, opportunity.Id, 'updateOpportunityPhase');
 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -69,7 +68,7 @@ public class ProposalService {
 
                 opportunity.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('ProposalService', 'updateOpportunityPhase ' + opportunity.Id, e);
+                Utils.createLog('ProposalService', 'updateOpportunityPhase', e, opportunity.Id);
                 
                 opportunity.SucessoIntegracaoNivello__c = false;
                 opportunity.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();
@@ -91,7 +90,7 @@ public class ProposalService {
         return (parametrosIntegracao != null) ? parametrosIntegracao.URL__c : null;
     }
 
-    private static HttpResponse sendCallout(String endpointUrl, String jsonBody) {
+    private static HttpResponse sendCallout(String endpointUrl, String jsonBody, Id relatedId, String logMethodName) {
         HttpRequest req = new HttpRequest();
         
         req.setEndpoint(endpointUrl);
@@ -99,7 +98,23 @@ public class ProposalService {
         req.setHeader('Content-Type', 'application/json');
         req.setBody(jsonBody);
 
-        return Utils.callIntegrationNivello(req);
+        HttpResponse response = Utils.callIntegrationNivello(req);
+
+        Utils.LogDTO logDTO = new Utils.LogDTO();
+        logDTO.className = 'ProposalService';
+        logDTO.methodName = logMethodName;
+        logDTO.relatedId = relatedId;
+        logDTO.httpMethod = req.getMethod();
+        logDTO.requestBody = jsonBody;
+        logDTO.requestURI = endpointUrl;
+        if(response != null){
+            logDTO.statusCode = response.getStatusCode();
+            logDTO.status = response.getStatus();
+            logDTO.responseBody = response.getBody();
+        }
+        Utils.createLog(logDTO);
+
+        return response;
     }
 
     /*private static integer getStatusEnum(String stageName){

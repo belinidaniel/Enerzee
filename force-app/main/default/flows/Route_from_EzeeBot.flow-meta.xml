@@ -5,7 +5,7 @@
         <name>RoutingAction</name>
         <label>Rotear de EzeeBot</label>
         <locationX>176</locationX>
-        <locationY>242</locationY>
+        <locationY>134</locationY>
         <actionName>routeWork</actionName>
         <actionType>routeWork</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -36,7 +36,7 @@
         <inputParameters>
             <name>routingType</name>
             <value>
-                <stringValue>Agent</stringValue>
+                <stringValue>QueueBased</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -48,14 +48,11 @@
         <inputParameters>
             <name>queueId</name>
             <value>
-                <stringValue>00GU5000001ehthMAA</stringValue>
+                <stringValue>00G5e000000c2bLEAQ</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
             <name>agentId</name>
-            <value>
-                <elementReference>get_Messaging.OwnerId</elementReference>
-            </value>
         </inputParameters>
         <inputParameters>
             <name>agentLabel</name>
@@ -63,7 +60,7 @@
         <inputParameters>
             <name>queueLabel</name>
             <value>
-                <stringValue>Assistência tecnica</stringValue>
+                <stringValue>Chat Enerzee</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -73,34 +70,10 @@
             <name>skillRequirementsResourceItem</name>
         </inputParameters>
         <inputParameters>
-            <name>isAgentVariable</name>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
             <name>botId</name>
         </inputParameters>
         <inputParameters>
             <name>botLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>externalConversationBotId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>externalConversationBotLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>copilotId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>copilotLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>agentforceEmployeeAgentId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>agentforceEmployeeAgentLabel</name>
         </inputParameters>
         <inputParameters>
             <name>isQueueVariable</name>
@@ -109,7 +82,6 @@
             </value>
         </inputParameters>
         <nameSegment>routeWork</nameSegment>
-        <offset>0</offset>
     </actionCalls>
     <apiVersion>61.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
@@ -136,32 +108,11 @@
         </value>
     </processMetadataValues>
     <processType>RoutingFlow</processType>
-    <recordLookups>
-        <name>get_Messaging</name>
-        <label>get Messaging</label>
-        <locationX>176</locationX>
-        <locationY>134</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>RoutingAction</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Id</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>recordId</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>MessagingSession</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>get_Messaging</targetReference>
+            <targetReference>RoutingAction</targetReference>
         </connector>
     </start>
     <status>Active</status>

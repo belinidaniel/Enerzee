@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>CartaAprovacaoValidade__c</fullName>
-    <description>Data limite calculada conforme o tipo da carta.</description>
-    <label>Validade da Carta de Aprovação</label>
+    <formula>IF(
+    OR(
+        ISBLANK(TEXT(CartaAprovacaoTipo__c)),
+        ISBLANK(CartaAprovacaoData__c)
+    ),
+    NULL,
+    CASE(
+        TEXT(CartaAprovacaoTipo__c),
+        &quot;Informação de Acesso&quot;, CartaAprovacaoData__c + 60,
+        &quot;Disponibilidade de Energia&quot;, CartaAprovacaoData__c + 90,
+        &quot;Microgeração&quot;, CartaAprovacaoData__c + 120,
+        &quot;Minigeração&quot;, CartaAprovacaoData__c + 365,
+        &quot;Posto de Transformação / Subestação&quot;, CartaAprovacaoData__c + 730,
+        NULL
+    )
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Carta Aprovação Validade</label>
     <required>false</required>
-    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Date</type>

@@ -40,8 +40,7 @@ public with sharing class IntegracaoNivelloAprovacaoDesconto {
                 }
                 
                 // Chama a API da Nivello para enviar o status de aprovação do desconto
-                HttpResponse response = chamadaIntegracao(JSON.serialize(payload), 'Aprovacao_Desconto');
-                Utils.createLog('IntegracaoNivelloAprovacaoDesconto', 'aprovacaoDesconto ' + opportunity.Id, response);
+                HttpResponse response = chamadaIntegracao(JSON.serialize(payload), 'Aprovacao_Desconto', opportunity.Id, 'aprovacaoDesconto');
 
                 if (response.getStatusCode() == 200) {
                     // Parsing the response
@@ -60,7 +59,7 @@ public with sharing class IntegracaoNivelloAprovacaoDesconto {
                     System.debug('Error in response: ' + response.getBody());
                 }
             } catch(Exception ex) {
-                Utils.createLog('IntegracaoNivelloAprovacaoDesconto', 'aprovacaoDesconto ' + opportunity.Id, ex);
+                Utils.createLog('IntegracaoNivelloAprovacaoDesconto', 'aprovacaoDesconto', ex, opportunity.Id);
             }   
         }
 
@@ -71,7 +70,7 @@ public with sharing class IntegracaoNivelloAprovacaoDesconto {
         }
     }
 
-    private static HttpResponse chamadaIntegracao(String body, String developerName) {
+    private static HttpResponse chamadaIntegracao(String body, String developerName, Id relatedId, String logMethodName) {
         Integrador__mdt parametrosIntegracao = [
             SELECT  Id, URL__c
             FROM    Integrador__mdt 
@@ -86,7 +85,23 @@ public with sharing class IntegracaoNivelloAprovacaoDesconto {
         request.setHeader('Content-Type', 'application/json');
         request.setBody(body);
         
-        return Utils.callIntegrationNivello(request);
+        HttpResponse response = Utils.callIntegrationNivello(request);
+
+        Utils.LogDTO logDTO = new Utils.LogDTO();
+        logDTO.className = 'IntegracaoNivelloAprovacaoDesconto';
+        logDTO.methodName = logMethodName;
+        logDTO.relatedId = relatedId;
+        logDTO.httpMethod = request.getMethod();
+        logDTO.requestBody = body;
+        logDTO.requestURI = parametrosIntegracao.URL__c;
+        if(response != null){
+            logDTO.statusCode = response.getStatusCode();
+            logDTO.status = response.getStatus();
+            logDTO.responseBody = response.getBody();
+        }
+        Utils.createLog(logDTO);
+
+        return response;
     }
 
     private static Decimal getDecimalOrZero(Decimal value){
