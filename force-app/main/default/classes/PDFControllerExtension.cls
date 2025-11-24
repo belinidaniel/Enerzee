@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-23-2025
+ * @last modified on  : 11-24-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class PDFControllerExtension {
@@ -24,6 +24,9 @@ public with sharing class PDFControllerExtension {
     public List<String> viabilityClientCostEntries { get; private set; }
     public String mainViabilityStudyText { get; private set; }
     public String mainViabilityLayoutUrl { get; private set; }
+    public String paymentMethodNoteImageUrl { get; private set; }
+    public String paymentMethodLeftHtml { get; private set; }
+    public String paymentMethodRightHtml { get; private set; }
     public List<String> mainViabilityStudyChunks { get; private set; }
 
     public PDFControllerExtension(ApexPages.StandardController controller) {
@@ -43,6 +46,9 @@ public with sharing class PDFControllerExtension {
                             DescontoPromocional__c,
                             DescontoFixoBowE__c,
                             Kwh__c,
+                            NotePaymentMethod__c,
+                            ObservacaoPagamentoEsquerdo__c,
+                            ObservacaoPagamentoDireito__c,
                             TipoConexao__c,
                             CustoMensalAproximadoBowE__c,
                             EconomiaFixa__c,
@@ -86,6 +92,11 @@ public with sharing class PDFControllerExtension {
 
         loadViabilityCostDetails();
         loadMainViabilityStudyData();
+        paymentMethodLeftHtml = opportunity.ObservacaoPagamentoEsquerdo__c;
+        paymentMethodRightHtml = opportunity.ObservacaoPagamentoDireito__c;
+        if(String.isBlank(paymentMethodLeftHtml) && !String.isBlank(opportunity.NotePaymentMethod__c)){
+            paymentMethodLeftHtml = opportunity.NotePaymentMethod__c; // fallback para dados antigos
+        }
     }
 
     public String getLogoUrl() {
@@ -127,10 +138,22 @@ public with sharing class PDFControllerExtension {
     
         if (String.isNotEmpty(selectedCoverId)) {
             // Consulta para obter ContentDocumentIds
-            List<ContentDocumentLink> docLinks = [SELECT ContentDocumentId,ContentDocument.LatestPublishedVersionId FROM ContentDocumentLink WHERE LinkedEntityId = :selectedCoverId];
+            List<ContentDocumentLink> docLinks = [
+                SELECT ContentDocumentId, ContentDocument.Title, ContentDocument.LatestPublishedVersionId
+                FROM ContentDocumentLink
+                WHERE LinkedEntityId = :selectedCoverId
+            ];
             Set<Id> documentIds = new Set<Id>();
             for (ContentDocumentLink docLink : docLinks) {
                 documentIds.add(docLink.ContentDocument.LatestPublishedVersionId);
+                if (String.isBlank(paymentMethodNoteImageUrl)
+                    && (!String.isBlank(this.opportunity.NotePaymentMethod__c)
+                        || !String.isBlank(this.opportunity.ObservacaoPagamentoEsquerdo__c)
+                        || !String.isBlank(this.opportunity.ObservacaoPagamentoDireito__c))
+                    && docLink.ContentDocument != null
+                    && docLink.ContentDocument.Title == 'SEMPAGAMENTOS') {
+                    paymentMethodNoteImageUrl = '/sfc/servlet.shepherd/version/download/' + docLink.ContentDocument.LatestPublishedVersionId;
+                }
             }
         
             // Consulta para obter ContentVersions usando IN clause
