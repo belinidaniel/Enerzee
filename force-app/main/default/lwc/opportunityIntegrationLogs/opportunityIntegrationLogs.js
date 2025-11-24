@@ -9,10 +9,10 @@ export default class OpportunityIntegrationLogs extends LightningElement {
     selectedLog;
     isLoading = true;
     detailLoading = false;
-    isDetailOpen = false;
     hasAccess = false;
     accessChecked = false;
     errorMessage;
+    lastSeenCreatedDate;
 
     @api
     get recordId() {
@@ -47,7 +47,7 @@ export default class OpportunityIntegrationLogs extends LightningElement {
         }
     }
 
-    async loadLogs() {
+    async loadLogs(isRefresh = false, refreshSelected = false) {
         if (!this.recordId) {
             this.logs = [];
             this.isLoading = false;
@@ -57,7 +57,29 @@ export default class OpportunityIntegrationLogs extends LightningElement {
         this.isLoading = true;
         try {
             const data = await getLogsByOpportunity({ opportunityId: this.recordId, recordLimit: 100 });
-            this.logs = this.decorateLogs(data);
+
+            const previousLatest = this.lastSeenCreatedDate ? new Date(this.lastSeenCreatedDate) : null;
+            const latestCreated = data.reduce((acc, log) => {
+                const created = new Date(log.CreatedDate);
+                return created > acc ? created : acc;
+            }, previousLatest || new Date(0));
+
+            const withNewFlag = data.map((log) => ({
+                ...log,
+                isNew: isRefresh && previousLatest ? new Date(log.CreatedDate) > previousLatest : false
+            }));
+
+            this.logs = this.decorateLogs(withNewFlag);
+            this.lastSeenCreatedDate = latestCreated ? latestCreated.toISOString() : this.lastSeenCreatedDate;
+
+            if (this.logs.length && (!this.selectedLog || !this.logs.some((l) => l.Id === this.selectedLog.Id))) {
+                await this.openDetail(this.logs[0].Id);
+            } else {
+                this.logs = this.decorateLogs(this.logs);
+                if (refreshSelected && this.selectedLog) {
+                    await this.openDetail(this.selectedLog.Id);
+                }
+            }
             this.errorMessage = null;
         } catch (error) {
             this.errorMessage = this.reduceError(error);
@@ -70,12 +92,17 @@ export default class OpportunityIntegrationLogs extends LightningElement {
     decorateLogs(logs = []) {
         return logs.map((log) => {
             const statusClass = this.getStatusClass(log.StatusCode__c, log.Status__c);
+            const createdDate = new Date(log.CreatedDate);
             return {
                 ...log,
+                displayClass: this.truncate(log.Class__c, 25),
+                displayDate: this.formatDate(createdDate),
+                displayTime: this.formatTime(createdDate),
                 statusValue: log.StatusCode__c !== null && log.StatusCode__c !== undefined
                     ? log.StatusCode__c
                     : (log.Status__c || '-'),
-                statusBadgeClass: `slds-badge status-badge ${statusClass}`
+                statusBadgeClass: `slds-badge status-badge ${statusClass}`,
+                rowClass: `row-hover ${this.selectedLog && this.selectedLog.Id === log.Id ? 'row-selected' : ''}`
             };
         });
     }
@@ -136,7 +163,7 @@ export default class OpportunityIntegrationLogs extends LightningElement {
                     formattedRequest: this.formatJson(log.RequestBody__c),
                     formattedResponse: this.formatJson(log.ResponseBody__c)
                 };
-                this.isDetailOpen = true;
+                this.logs = this.decorateLogs(this.logs);
             }
         } catch (error) {
             this.errorMessage = this.reduceError(error);
@@ -145,13 +172,31 @@ export default class OpportunityIntegrationLogs extends LightningElement {
         }
     }
 
-    handleCloseDetail() {
-        this.isDetailOpen = false;
-        this.selectedLog = null;
+    handleRefresh() {
+        this.loadLogs(true, true);
     }
 
-    handleRefresh() {
-        this.loadLogs();
+    truncate(text, maxLength) {
+        if (!text || text.length <= maxLength) {
+            return text;
+        }
+        return text.substring(0, maxLength - 3) + '...';
+    }
+
+    formatDate(dateObj) {
+        return new Intl.DateTimeFormat('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        }).format(dateObj);
+    }
+
+    formatTime(dateObj) {
+        return new Intl.DateTimeFormat('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).format(dateObj);
     }
 
     formatJson(rawValue) {
