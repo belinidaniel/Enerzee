@@ -32,6 +32,15 @@ public with sharing class ProposalConsoleController {
         @AuraEnabled public Id contentVersionId;
     }
 
+    private static Boolean hasViabilityRecords(Id opportunityId){
+        return [
+            SELECT Id
+            FROM ViabilityStudy__c
+            WHERE Opportunity__c = :opportunityId
+            LIMIT 1
+        ].size() > 0;
+    }
+
     @AuraEnabled(cacheable=true)
     public static ProposalDataDTO loadProposalData(Id opportunityId) {
         validateOpportunityId(opportunityId);
@@ -110,7 +119,7 @@ public with sharing class ProposalConsoleController {
         result.templates = templates;
         result.proposalFiles = proposalFiles;
         result.otherFiles = otherFiles;
-        result.hasViability = opp.ViabilityStudyFinished__c;
+        result.hasViability = hasViabilityRecords(opportunityId);
         if (opp.Parceiro__r != null) {
             result.defaultTemplateId = opp.Parceiro__r.CapaProposta__c;
         }

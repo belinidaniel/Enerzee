@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-23-2025
+ * @last modified on  : 11-24-2025
  * @last modified by  : Daniel Belini
 **/
 public class ProjetoBO {
@@ -397,7 +397,7 @@ public class ProjetoBO {
                                 if(shouldUFVPhaseBeCreated(project, line.Assunto, recordTypesUFV, financimentoProjectOpportunityIdsToSkipPhasesUFV)){
                                     interessadosList = line.Interessados != null && line.Interessados != '' ? line.Interessados.split(';') : null;
 
-                                    tasksToInsert.add(createTask(line, project, interessadosList, false));
+                                    // tasksToInsert.add(createTask(line, project, interessadosList, false));
                                 }
                             }
                             break;

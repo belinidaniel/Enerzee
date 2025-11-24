@@ -117,7 +117,8 @@ public with sharing class IntegracaoNivelloViabilidade {
         if(response != null){
             logDTO.statusCode = response.getStatusCode();
             logDTO.status = response.getStatus();
-            logDTO.responseBody = response.getBody();
+            String respBody = response.getBody();
+            logDTO.responseBody = String.isNotBlank(respBody) ? respBody : response.getStatus();
         }
         Utils.createLog(logDTO);
         
