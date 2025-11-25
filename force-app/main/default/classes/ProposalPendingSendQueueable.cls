@@ -20,6 +20,9 @@ public class ProposalPendingSendQueueable implements Queueable, Database.AllowsC
             WHERE   Id IN :pendingIds
         ];
 
+        List<EzeeConnectProposalPendingService.PendingRequest> batchPayload = new List<EzeeConnectProposalPendingService.PendingRequest>();
+        List<String> errorMessages = new List<String>();
+
         for(ProposalPending__c pending : pendings){
             if(String.isBlank(pending.Opportunity__r.IdVirtualOffice__c)){
                 continue;
@@ -33,10 +36,31 @@ public class ProposalPendingSendQueueable implements Queueable, Database.AllowsC
                 payload.Status      = EzeeConnectProposalPendingService.getStatusCode(pending.Status__c);
                 payload.PendingId   = pending.Id;
 
-                EzeeConnectProposalPendingService.sendPendingToApp(payload);
+                batchPayload.add(payload);
             } catch (Exception e){
-                Utils.createLog('ProposalPendingSendQueueable', 'execute ' + pending.Id, e);
+                errorMessages.add('Map payload error for ' + pending.Id + ': ' + e.getMessage());
             }
+        }
+
+        if(batchPayload.isEmpty()){
+            return;
+        }
+
+        try{
+            EzeeConnectProposalPendingService.sendPendingBatchToApp(batchPayload);
+        } catch (Exception batchError){
+            errorMessages.add('Batch send failed: ' + batchError.getMessage());
+            for(EzeeConnectProposalPendingService.PendingRequest payload : batchPayload){
+                try{
+                    EzeeConnectProposalPendingService.sendPendingToApp(payload);
+                } catch (Exception e){
+                    errorMessages.add('Fallback send failed for ' + payload.PendingId + ': ' + e.getMessage());
+                }
+            }
+        }
+
+        if(!errorMessages.isEmpty()){
+            System.debug(LoggingLevel.ERROR, 'ProposalPendingSendQueueable errors: ' + String.join(errorMessages, ' | '));
         }
     }
 }

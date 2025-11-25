@@ -18,6 +18,7 @@ global with sharing class ProposalPendingResponseRest {
                 SELECT  Id,
                         Name,
                         Status__c,
+                        Description__c,
                         Opportunity__c,
                         Opportunity__r.OwnerId,
                         Opportunity__r.IdVirtualOffice__c
@@ -39,6 +40,7 @@ global with sharing class ProposalPendingResponseRest {
 
             update pending;
 
+            linkAttachmentToOpportunity(pending, payload);
             notifyOwner(pending);
 
             responseWrapper.success = true;
@@ -81,6 +83,30 @@ global with sharing class ProposalPendingResponseRest {
 
         if(String.isBlank(payload.PendingId)){
             throw new PendingApiException('O campo pendingId é obrigatório.');
+        }
+    }
+
+    private static void linkAttachmentToOpportunity(ProposalPending__c pending, ResponsePayload payload){
+        if(pending == null || pending.Opportunity__c == null || String.isBlank(payload.UrlArquivo)){
+            return;
+        }
+
+        try{
+            OpportunityAttachmentLinkService.AttachmentInput input = new OpportunityAttachmentLinkService.AttachmentInput();
+            input.opportunityId = pending.Opportunity__c;
+            input.attachmentUrl = payload.UrlArquivo;
+            input.externalId = pending.Id;
+            input.type = 'Other';
+            if(String.isNotBlank(pending.Description__c)){
+                input.description = pending.Description__c;
+            } else if(String.isNotBlank(payload.Description)){
+                input.description = payload.Description;
+            } else {
+                input.description = pending.Name;
+            }
+            OpportunityAttachmentLinkService.upsertAttachment(input);
+        } catch (Exception e){
+            Utils.createLog('ProposalPendingResponseRest', 'linkAttachmentToOpportunity ' + pending.Id, e);
         }
     }
 

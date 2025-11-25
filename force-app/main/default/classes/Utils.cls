@@ -1,10 +1,33 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 11-24-2025
+ * @last modified by  : Daniel Belini
+**/
 public without sharing class Utils{
+    public class LogDTO {
+        public String className;
+        public String methodName;
+        public String httpMethod;
+        public String requestBody;
+        public String requestURI;
+        public String responseBody;
+        public Integer statusCode;
+        public String status;
+        public String message;
+        public String typeName;
+        public String stackTraceString;
+        public String lineNumber;
+        public String relatedId;
+    }
+
     //Creates error logs
     public static Log__c createLogNoInsert(String className, String methodName, Object source){
         return createLogNoInsert(className, methodName, source, null);
     }
 
-    public static Log__c createLogNoInsert(String className, String methodName, Object source, Id relatedId){
+    public static Log__c createLogNoInsert(String className, String methodName, Object source, String relatedId){
 
         Log__c lg = new Log__c(
             Class__c  = className,
@@ -30,7 +53,7 @@ public without sharing class Utils{
             HttpResponse resp = (HttpResponse) source;
 
             lg.StatusCode__c   = resp.getStatusCode();
-            lg.ResponseBody__c = resp.getBody().length() > 131072 ? resp.getBody().substring(0, 131072) : resp.getBody();
+            lg.ResponseBody__c = trimToBodyLimit(resp.getBody());
             lg.Status__c = resp.getStatus();
         }
 
@@ -38,7 +61,7 @@ public without sharing class Utils{
 
             HttpRequest req = (HttpRequest) source;
 
-            lg.RequestBody__c = req.getBody().length() > 131072 ? req.getBody().substring(0, 131072) : req.getBody();
+            lg.RequestBody__c = trimToBodyLimit(req.getBody());
             lg.HTTPMethod__c  = req.getMethod();
             lg.RequestURI__c = req.getEndpoint();
         }
@@ -49,10 +72,35 @@ public without sharing class Utils{
             
         RestRequest req = (RestRequest) source;
 
-            lg.RequestBody__c = req.requestBody.toString().length() > 131072 ? req.requestBody.toString().substring(0, 131072) : req.requestBody.toString();
+            lg.RequestBody__c = trimToBodyLimit(req.requestBody.toString());
             lg.HTTPMethod__c  = req.httpMethod;
             lg.RequestURI__c  = req.requestURI;
         }
+
+        return lg;
+    }
+
+    public static Log__c createLogNoInsert(LogDTO dto){
+        if(dto == null){
+            return null;
+        }
+
+        Log__c lg = new Log__c(
+            Class__c   = dto.className,
+            Method__c  = dto.methodName,
+            RelatedId__c = dto.relatedId
+        );
+
+        lg.HTTPMethod__c      = dto.httpMethod;
+        lg.RequestBody__c     = trimToBodyLimit(dto.requestBody);
+        lg.RequestURI__c      = dto.requestURI;
+        lg.ResponseBody__c    = trimToBodyLimit(dto.responseBody);
+        lg.StatusCode__c      = dto.statusCode;
+        lg.Status__c          = dto.status;
+        lg.Message__c         = dto.message;
+        lg.Type__c            = dto.typeName;
+        lg.StackTraceString__c = dto.stackTraceString;
+        lg.LineNumber__c      = dto.lineNumber;
 
         return lg;
     }
@@ -61,8 +109,30 @@ public without sharing class Utils{
         insert createLogNoInsert(className, methodName, source, null);
     }
 
-    public static void createLog(String className, String methodName, Object source, Id relatedId){
+    public static void createLog(String className, String methodName, Object source, String relatedId){
         insert createLogNoInsert(className, methodName, source, relatedId);
+    }
+
+    public static void createLog(LogDTO dto){
+        Log__c log = createLogNoInsert(dto);
+        if(log != null){
+            insert log;
+        }
+    }
+
+    public static void createLogFromJson(String logJSON){
+        if(String.isBlank(logJSON)){
+            return;
+        }
+        LogDTO dto = (LogDTO) JSON.deserialize(logJSON, LogDTO.class);
+        createLog(dto);
+    }
+
+    private static String trimToBodyLimit(String content){
+        if(String.isEmpty(content)){
+            return content;
+        }
+        return content.length() > 131072 ? content.substring(0, 131072) : content;
     }
 
     /* Método que recebe um request e devolve response tentando   o token de acesso da Nivello, se existir */
@@ -175,7 +245,6 @@ public without sharing class Utils{
 
         if( !NovoToken ){
             response = http.send(request);
-            Utils.createLog('Utils', 'callIntegrationVO - request', request);
             
             if(response.getStatusCode() == 401){
                 TokenAPIVOWs.access_token = '';
@@ -194,11 +263,14 @@ public without sharing class Utils{
 
             request.setTimeout(120000);
             response = http.send(request);
-            Utils.createLog('Utils', 'callIntegrationVO - request', request);
 
         } else {
             response = Status.finalResponse;
         }
+
+        // Logging via DML aqui pode conflitar com múltiplos callouts sequenciais.
+        // Mantemos apenas debug para evitar "uncommitted work pending".
+        // System.debug('callIntegrationVO response status: ' + (response != null ? response.getStatusCode() : 'null'));
 
         return response;
 

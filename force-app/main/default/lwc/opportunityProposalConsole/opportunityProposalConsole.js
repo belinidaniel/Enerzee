@@ -364,7 +364,7 @@ export default class OpportunityProposalConsole extends LightningElement {
             if (this.refreshAttempts >= 3) {
                 this.clearScheduledRefresh();
             }
-        }, 4000);
+        }, 2000);
     }
 
     clearScheduledRefresh() {

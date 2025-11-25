@@ -40,7 +40,9 @@ public class ProposalPendingStatusQueueable implements Queueable, Database.Allow
             payload.PendingId = pending.Id;
             ProposalPendingController.PendingStatus statusEnum = ProposalPendingController.parseStatus(status);
             payload.Status    = ProposalPendingController.getStatusCode(statusEnum);
-            if(!String.isBlank(descriptionRejected)){
+            if(statusEnum == ProposalPendingController.PendingStatus.Recusado){
+                payload.DescriptionRejected = String.isNotBlank(descriptionRejected) ? descriptionRejected : '';
+            } else if(!String.isBlank(descriptionRejected)){
                 payload.DescriptionRejected = descriptionRejected;
             }
 

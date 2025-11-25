@@ -154,12 +154,19 @@ public with sharing class ProposalPendingController {
         }
 
         PendingStatus statusEnum = parseStatus(status);
-        String normalizedReason = String.isBlank(descriptionRejected) ? null : descriptionRejected.trim();
+        String normalizedReason = descriptionRejected != null ? descriptionRejected.trim() : null;
+        if(statusEnum == PendingStatus.Recusado && String.isBlank(normalizedReason)){
+            throw new AuraHandledException('Informe o motivo da recusa.');
+        }
 
         ProposalPending__c pending = [
             SELECT  Id,
                     Status__c,
-                    Opportunity__r.IdVirtualOffice__c
+                    Opportunity__r.IdVirtualOffice__c,
+                    Opportunity__c,
+                    FileUrl__c,
+                    Description__c,
+                    Name
             FROM    ProposalPending__c
             WHERE   Id = :pendingId
             LIMIT   1
@@ -173,8 +180,14 @@ public with sharing class ProposalPendingController {
 
         try{
             pending.Status__c = getStatusValue(statusEnum);
+            if(statusEnum == PendingStatus.Recusado){
+                pending.Response__c = normalizedReason;
+            }
             update pending;
             enqueueStatusUpdate(pending.Id, status, normalizedReason);
+            if(statusEnum == PendingStatus.Aprovado){
+                linkAttachmentToOpportunity(pending);
+            }
         } catch(Exception e){
             Database.rollback(sp);
             throw new AuraHandledException('Não foi possível atualizar o status da pendência: ' + e.getMessage());
@@ -264,6 +277,23 @@ public with sharing class ProposalPendingController {
         if(!requireDocument){
             input.documentTypeId = null;
             input.documentTypeName = null;
+        }
+    }
+
+    private static void linkAttachmentToOpportunity(ProposalPending__c pending){
+        if(pending == null || pending.Opportunity__c == null || String.isBlank(pending.FileUrl__c)){
+            return;
+        }
+        try{
+            OpportunityAttachmentLinkService.AttachmentInput input = new OpportunityAttachmentLinkService.AttachmentInput();
+            input.opportunityId = pending.Opportunity__c;
+            input.attachmentUrl = pending.FileUrl__c;
+            input.externalId = pending.Id;
+            input.type = 'Other';
+            input.description = String.isNotBlank(pending.Description__c) ? pending.Description__c : pending.Name;
+            OpportunityAttachmentLinkService.upsertAttachment(input);
+        } catch (Exception e){
+            Utils.createLog('ProposalPendingController', 'linkAttachmentToOpportunity ' + pending.Id, e);
         }
     }
 

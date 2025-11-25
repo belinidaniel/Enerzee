@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-19-2025
+ * @last modified on  : 11-25-2025
  * @last modified by  : Daniel Belini
 **/
 @isTest
@@ -10,6 +10,7 @@ private class ProposalConsoleControllerTest {
 
     @TestSetup
     static void setup() {
+        
         Account account = (Account) TestFactory.createSObject(new Account(
             Name = 'Conta Teste'
         ), true);
