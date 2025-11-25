@@ -58,12 +58,6 @@
             <targetReference>getTerritory</targetReference>
         </connector>
         <inputAssignments>
-            <field>InstalledPowerKwp__c</field>
-            <value>
-                <elementReference>$Record.PotenciaPicoSistema__c</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
             <field>Opportunity__c</field>
             <value>
                 <elementReference>$Record.Id</elementReference>
@@ -314,9 +308,6 @@
                 <booleanValue>true</booleanValue>
             </value>
         </filters>
-        <inputAssignments>
-            <field>MainViability__c</field>
-        </inputAssignments>
         <inputAssignments>
             <field>ViabilityStudyFinished__c</field>
             <value>

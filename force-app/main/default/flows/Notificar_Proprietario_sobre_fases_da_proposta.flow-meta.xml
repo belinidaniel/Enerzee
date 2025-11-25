@@ -43,6 +43,13 @@
                     <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
+            <conditions>
+                <leftValueReference>$Record.Owner.Email</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>daniel.belini@enerzee.com.br</stringValue>
+                </rightValue>
+            </conditions>
             <connector>
                 <targetReference>Notificar_Fases_Proposta</targetReference>
             </connector>
@@ -78,7 +85,7 @@
         <connector>
             <targetReference>Proprietario_ativo_possui_Email</targetReference>
         </connector>
-        <filterLogic>(1 OR 2 OR 3 OR 4 OR 5 OR 6 OR 7 OR 8 OR 9 OR 10 OR 11 OR 12 OR 13 ) AND 14</filterLogic>
+        <filterLogic>(1 OR 2 OR 3 OR 4 OR 5 OR 6 OR 7 OR 8 OR 9 OR 11 OR 12 OR 13 ) AND 10</filterLogic>
         <filters>
             <field>StageName</field>
             <operator>EqualTo</operator>
@@ -97,7 +104,7 @@
             <field>StageName</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>Proposta enviada / Aguardando Aceite</stringValue>
+                <stringValue>Proposta enviada</stringValue>
             </value>
         </filters>
         <filters>
@@ -111,21 +118,14 @@
             <field>StageName</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>Análise de viabilidade</stringValue>
+                <stringValue>Viabilidade Técnica</stringValue>
             </value>
         </filters>
         <filters>
             <field>StageName</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>Aguardando aceite no estudo</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>StageName</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Método de pagamento</stringValue>
+                <stringValue>Confirmação de pagamento sinal</stringValue>
             </value>
         </filters>
         <filters>
@@ -133,27 +133,6 @@
             <operator>EqualTo</operator>
             <value>
                 <stringValue>Validação do método de pagamento</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>StageName</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Geração de contrato</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>StageName</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Contrato enviado</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>StageName</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Contrato firmado / Assinado</stringValue>
             </value>
         </filters>
         <filters>
@@ -175,6 +154,27 @@
             <operator>IsChanged</operator>
             <value>
                 <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>StageName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Proposta Gerada</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>StageName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Viabilidade Tecnica</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>StageName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Contrato</stringValue>
             </value>
         </filters>
         <object>Opportunity</object>

@@ -20,7 +20,8 @@ public class IntegracaoNivelloAnaliseVisitaTecnica {
             corpoRequisicao.reason = corpoRequisicao.status.equalsIgnoreCase('Inviavel') ? opp.TextoMotivo__c : null;
 
             try{
-                HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'AnaliseVisitaTecnica', opp.Id, 'sendTechnicalVisitAnalysis');
+                HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'AnaliseVisitaTecnica');
+                Utils.createLog('IntegracaoNivelloAnaliseVisitaTecnica', 'sendTechnicalVisitAnalysis ' + opp.Id, response);
 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -36,7 +37,7 @@ public class IntegracaoNivelloAnaliseVisitaTecnica {
                 }
                 opp.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('IntegracaoNivelloAnaliseVisitaTecnica', 'sendTechnicalVisitAnalysis', e, opp.Id);
+                Utils.createLog('IntegracaoNivelloAnaliseVisitaTecnica', 'sendTechnicalVisitAnalysis ' + opp.Id, e);
                 
                 opp.SucessoIntegracaoNivello__c = false;
                 opp.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();
@@ -47,7 +48,7 @@ public class IntegracaoNivelloAnaliseVisitaTecnica {
         OpportunityTriggerHandler.enableTrigger();
     }
 
-    private static HttpResponse chamadaIntegracao(String body, String metadataDeveloperName, Id relatedId, String logMethodName){
+    private static HttpResponse chamadaIntegracao(String body, String metadataDeveloperName){
         Integrador__mdt parametrosIntegracao = [
             SELECT  Id, URL__c
             FROM    Integrador__mdt 
@@ -62,23 +63,7 @@ public class IntegracaoNivelloAnaliseVisitaTecnica {
         request.setHeader('Content-Type', 'application/json');
         request.setBody(body);
         
-        HttpResponse response = Utils.callIntegrationNivello(request);
-
-        Utils.LogDTO logDTO = new Utils.LogDTO();
-        logDTO.className = 'IntegracaoNivelloAnaliseVisitaTecnica';
-        logDTO.methodName = logMethodName;
-        logDTO.relatedId = relatedId;
-        logDTO.httpMethod = request.getMethod();
-        logDTO.requestBody = body;
-        logDTO.requestURI = parametrosIntegracao.URL__c;
-        if(response != null){
-            logDTO.statusCode = response.getStatusCode();
-            logDTO.status = response.getStatus();
-            logDTO.responseBody = response.getBody();
-        }
-        Utils.createLog(logDTO);
-        
-        return response;
+        return Utils.callIntegrationNivello(request);
     }
 
     public class TechnicalVisitAnalysisRequest{

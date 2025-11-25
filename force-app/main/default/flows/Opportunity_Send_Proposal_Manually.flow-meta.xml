@@ -8,6 +8,53 @@
             <stringValue>{&quot;location&quot;:&quot;top&quot;,&quot;type&quot;:&quot;simple&quot;}</stringValue>
         </value>
     </customProperties>
+    <decisions>
+        <name>is_Product_RecordType</name>
+        <label>is Product RecordType</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Change_Stage</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Opportunity.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Produtos</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Change_Stage_Products</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>is_Readequacao</name>
+        <label>is Readequacao</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>is_Product_RecordType</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>true</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Opportunity.StageName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Readequação de Proposta</stringValue>
+                </rightValue>
+            </conditions>
+            <label>true</label>
+        </rules>
+    </decisions>
     <environments>Default</environments>
     <formulas>
         <description>te</description>
@@ -98,6 +145,27 @@ RIGHT(&quot;0&quot; &amp; TEXT(MINUTE(TIMEVALUE(NOW()))), 2)</expression>
         </inputAssignments>
         <object>Opportunity</object>
     </recordUpdates>
+    <recordUpdates>
+        <name>Change_Stage_Products</name>
+        <label>Change Stage Products</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>StageName</field>
+            <value>
+                <stringValue>Proposta enviada</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Opportunity</object>
+    </recordUpdates>
     <screens>
         <name>EnviarPropostaManualmente</name>
         <label>Enviar Proposta manualmente</label>
@@ -107,7 +175,7 @@ RIGHT(&quot;0&quot; &amp; TEXT(MINUTE(TIMEVALUE(NOW()))), 2)</expression>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
         <connector>
-            <targetReference>Change_Stage</targetReference>
+            <targetReference>is_Readequacao</targetReference>
         </connector>
         <fields>
             <name>lwcfile</name>

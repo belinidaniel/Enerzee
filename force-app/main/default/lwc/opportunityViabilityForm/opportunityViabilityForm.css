@@ -1,51 +1,17 @@
-.viability-panel {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    border: 1px solid #e5e5e5;
-    border-radius: 0.75rem;
-    background: #fafafa;
+.desktop-layout {
+    display: block;
 }
 
-.viability-panel h2 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
+.mobile-layout {
+    display: none;
 }
 
-.viability-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
+@media screen and (max-width: 768px) {
+    .desktop-layout {
+        display: none;
+    }
 
-.approval-date {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.field-label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #666;
-}
-
-.helper-text {
-    font-size: 0.75rem;
-    color: #919191;
-}
-
-.integrator-link {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.viability-panel lightning-dual-listbox,
-.viability-panel lightning-input,
-.viability-panel lightning-combobox,
-.viability-panel c-lookup {
-    width: 100%;
+    .mobile-layout {
+        display: block;
+    }
 }

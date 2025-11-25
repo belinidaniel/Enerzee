@@ -32,7 +32,8 @@ public without sharing class IntegracaoNivelloContrato {
             System.debug('Enviando contrato para Nivello: ' + JSON.serialize(request));
 
             try{
-                HttpResponse response = chamadaIntegracao(JSON.serialize(request), 'ProposalStatus', opp.Id, 'enviarContrato');
+                HttpResponse response = chamadaIntegracao(JSON.serialize(request), 'ProposalStatus');
+                Utils.createLog('IntegracaoNivelloContrato', 'enviarContrato ' + opp.Id, response);
 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -48,7 +49,7 @@ public without sharing class IntegracaoNivelloContrato {
                 }
                 opp.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('IntegracaoNivelloContrato', 'enviarContrato', e, opp.Id);
+                Utils.createLog('IntegracaoNivelloContrato', 'enviarContrato ' + opp.Id, e);
                 
                 opp.SucessoIntegracaoNivello__c = false;
                 opp.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();
@@ -64,7 +65,8 @@ public without sharing class IntegracaoNivelloContrato {
         System.debug('Enviando kit para Nivello: ' + JSON.serialize(requestBody));
 
         try{
-            HttpResponse response = chamadaIntegracao(JSON.serialize(requestBody), 'updateInfosKit', requestBody.Id, 'enviarKit');
+            HttpResponse response = chamadaIntegracao(JSON.serialize(requestBody), 'updateInfosKit');
+            Utils.createLog('IntegracaoNivelloContrato', 'enviarKit ' + requestBody.Id, response);
 
             //Sucesso
             if(response.getStatusCode() == 200){
@@ -80,14 +82,14 @@ public without sharing class IntegracaoNivelloContrato {
                 return null;
             }
         } catch (Exception e){
-            Utils.createLog('IntegracaoNivelloContrato', 'enviarKit', e, requestBody.Id);
+            Utils.createLog('IntegracaoNivelloContrato', 'enviarKit ' + requestBody.Id, e);
             // You might want to handle the exception differently.
             return null;
         }
     }
 
     
-    private static HttpResponse chamadaIntegracao(String body, String endpointName, Id relatedId, String logMethodName){
+    private static HttpResponse chamadaIntegracao(String body, String endpointName){
         Integrador__mdt parametrosIntegracao = [
             SELECT  Id, URL__c
             FROM    Integrador__mdt 
@@ -106,23 +108,7 @@ public without sharing class IntegracaoNivelloContrato {
         request.setBody(body);
         System.debug('body: ' + request.getBody());
 
-        HttpResponse response = Utils.callIntegrationNivello(request);
-
-        Utils.LogDTO logDTO = new Utils.LogDTO();
-        logDTO.className = 'IntegracaoNivelloContrato';
-        logDTO.methodName = logMethodName;
-        logDTO.relatedId = relatedId;
-        logDTO.httpMethod = request.getMethod();
-        logDTO.requestBody = body;
-        logDTO.requestURI = parametrosIntegracao.URL__c;
-        if(response != null){
-            logDTO.statusCode = response.getStatusCode();
-            logDTO.status = response.getStatus();
-            logDTO.responseBody = response.getBody();
-        }
-        Utils.createLog(logDTO);
-
-        return response;
+        return Utils.callIntegrationNivello(request);
     }
 
     public class EnviarKitRequest {

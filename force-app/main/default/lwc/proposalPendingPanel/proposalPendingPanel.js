@@ -36,6 +36,7 @@ export default class ProposalPendingPanel extends LightningElement {
     rejectReason = '';
     rejectReasonError = '';
     shouldRestorePreviewAfterReject = false;
+    activeStatusTab = 'all';
 
     connectedCallback() {
         this.resetDraftRows();
@@ -56,6 +57,47 @@ export default class ProposalPendingPanel extends LightningElement {
 
     get hasPendings() {
         return this.pendings && this.pendings.length > 0;
+    }
+
+    get pendingTabs() {
+        return this.computePendingTabs(this.pendings);
+    }
+
+    computePendingTabs(pendingsSource) {
+        const tabConfigs = [
+            { value: 'all', label: 'Todas' },
+            ...Object.values(this.STATUS_MAP).map((meta) => ({
+                value: meta.code,
+                label: meta.label
+            }))
+        ];
+
+        const grouped = {};
+        tabConfigs.forEach((tab) => {
+            grouped[tab.value] = [];
+        });
+
+        (pendingsSource || []).forEach((pending) => {
+            const statusMeta = this.getStatusMeta(pending.status);
+            const code = statusMeta.code || '';
+            grouped.all.push(pending);
+            if (grouped[code]) {
+                grouped[code].push(pending);
+            }
+        });
+
+        return tabConfigs.map((tab) => {
+            const items = grouped[tab.value] || [];
+            const count = items.length;
+            return {
+                ...tab,
+                items,
+                count,
+                hasItems: count > 0,
+                lowerLabel: tab.label ? tab.label.toLowerCase() : '',
+                displayLabel: `${tab.label} (${count})`
+            };
+        });
     }
 
     get draftRows() {
@@ -99,6 +141,11 @@ export default class ProposalPendingPanel extends LightningElement {
 
     get isModalSaveDisabled() {
         return this.isSubmitting || this.documentTypesLoading;
+    }
+
+    handleTabChange(event) {
+        const value = event?.detail?.value || event?.target?.value;
+        this.activeStatusTab = value || 'all';
     }
 
     handleNewClick() {
@@ -293,6 +340,10 @@ export default class ProposalPendingPanel extends LightningElement {
         return code === '2' || code.toLowerCase() === 'respondido';
     }
 
+    get canDownloadPreviewFile() {
+        return !!(this.previewPending && this.previewPending.fileUrl);
+    }
+
     get previewIsUnsupported() {
         if (this.previewMode !== 'file') {
             return false;
@@ -360,6 +411,24 @@ export default class ProposalPendingPanel extends LightningElement {
     handleOpenPreviewExternally() {
         if (this.previewPending && this.previewPending.fileUrl) {
             window.open(this.previewPending.fileUrl, '_blank');
+        }
+    }
+
+    handleDownloadFile() {
+        if (!this.previewPending || !this.previewPending.fileUrl) {
+            return;
+        }
+        try {
+            const link = document.createElement('a');
+            link.href = this.previewPending.fileUrl;
+            link.target = '_blank';
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            this.handleError('Não foi possível iniciar o download do arquivo.', error, true);
+            this.handleOpenPreviewExternally();
         }
     }
 
@@ -489,7 +558,7 @@ export default class ProposalPendingPanel extends LightningElement {
     }
 
     decoratePendings(pendings) {
-        return pendings.map((pending) => {
+        const decorated = pendings.map((pending) => {
             const meta = this.getStatusMeta(pending.status);
             const hasFile = !!pending.fileUrl;
             const hasResponse = (() => {
@@ -512,6 +581,8 @@ export default class ProposalPendingPanel extends LightningElement {
                 documentTypeLabel: pending.documentTypeName || ''
             };
         });
+        this.ensureActiveTab(decorated);
+        return decorated;
     }
 
     getStatusMeta(status) {
@@ -524,6 +595,26 @@ export default class ProposalPendingPanel extends LightningElement {
         return (
             meta || { code: value || '', label: value || '', variant: 'pending', allowActions: false }
         );
+    }
+
+    ensureActiveTab(currentPendings) {
+        if (!this.activeStatusTab) {
+            this.activeStatusTab = 'all';
+        }
+
+        const tabs = this.computePendingTabs(currentPendings || this.pendings || []);
+        const hasActiveWithItems = tabs.some(
+            (tab) => tab.value === this.activeStatusTab && tab.hasItems
+        );
+
+        if (!hasActiveWithItems && currentPendings && currentPendings.length > 0) {
+            const firstWithItems = tabs.find((tab) => tab.hasItems);
+            if (firstWithItems && firstWithItems.value) {
+                this.activeStatusTab = firstWithItems.value;
+            } else {
+                this.activeStatusTab = 'all';
+            }
+        }
     }
 
     async refreshPendings() {

@@ -4,7 +4,7 @@
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <environments>Default</environments>
     <interviewLabel>Flow: Obter Leads por Id do Lead {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>Flow: Obter Lead por Id ou E-mail</label>
+    <label>[Agenteforce ] - Obter Lead por Id ou E-mail</label>
     <processMetadataValues>
         <name>BuilderType</name>
         <value>

@@ -7,6 +7,9 @@
         <locationY>971</locationY>
         <actionName>EmailWithAttachmentById</actionName>
         <actionType>apex</actionType>
+        <connector>
+            <targetReference>Registrar_Chatter_Email</targetReference>
+        </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>body</name>
@@ -132,6 +135,31 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Registrar_Chatter_Email</name>
+        <label>Registrar evento no Chatter</label>
+        <locationX>50</locationX>
+        <locationY>1085</locationY>
+        <inputAssignments>
+            <field>Body</field>
+            <value>
+                <elementReference>ChatterMessage</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ParentId</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value>
+                <stringValue>TextPost</stringValue>
+            </value>
+        </inputAssignments>
+        <object>FeedItem</object>
+    </recordCreates>
     <recordLookups>
         <name>ObtemPDF</name>
         <label>Obtém PDF</label>
@@ -201,11 +229,16 @@
         <recordTriggerType>Create</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Obsolete</status>
+    <status>Active</status>
     <textTemplates>
         <name>Body</name>
         <isViewedAsPlainText>false</isViewedAsPlainText>
         <text>&lt;p&gt;Prezado(a) {!Oportunidade.ConsultorOportunidade__r.Name},&lt;/p&gt;&lt;p&gt;Gostaríamos de informar que a proposta &lt;strong&gt;{!Oportunidade.Numeroproposta__c} - {!Oportunidade.Name}&lt;/strong&gt; encontra-se atualmente na etapa &lt;strong&gt;{!Oportunidade.StageName}&lt;/strong&gt;.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Para darmos continuidade ao processo, solicitamos que nos envie os dados do local no formulário abaixo:&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://enrz.my.site.com/viabilidade/s/proposta/view?id={!$Record.Id}&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;Clique aqui para acessar o formulário&lt;/a&gt;.&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>ChatterMessage</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>Fluxo &quot;Viability - Solicitação de Viabilidade Local&quot;: e-mail enviado para {!EmailConsultor} (cópia: {!EmailViabilidade}) em {!$Flow.CurrentDateTime}.</text>
     </textTemplates>
     <textTemplates>
         <name>Subject</name>

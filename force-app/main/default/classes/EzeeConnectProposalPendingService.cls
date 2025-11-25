@@ -65,6 +65,15 @@ public with sharing class EzeeConnectProposalPendingService {
         ensureSuccess(response, 'Envio de pendência');
     }
 
+    public static void sendPendingBatchToApp(List<PendingRequest> payloads) {
+        if(payloads == null || payloads.isEmpty()){
+            return;
+        }
+        System.debug('EzeeConnectProposalPendingService.sendPendingBatchToApp payload: ' + JSON.serializePretty(payloads));
+        HttpResponse response = executeCallout('SetProposalPending', JSON.serialize(payloads));
+        ensureSuccess(response, 'Envio de pendências');
+    }
+
     public static void updatePendingInApp(PendingUpdateRequest payload) {
         System.debug('EzeeConnectProposalPendingService.updatePendingInApp payload: ' + JSON.serializePretty(payload));
         HttpResponse response = executeCallout('UpdateProposalPending', JSON.serialize(payload));

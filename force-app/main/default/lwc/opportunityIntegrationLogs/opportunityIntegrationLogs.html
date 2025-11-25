@@ -1,0 +1,150 @@
+<template>
+    <template if:true={accessChecked}>
+        <template if:true={hasAccess}>
+            <lightning-card title="Logs de Integracao" icon-name="utility:bug">
+                <lightning-button-icon slot="actions" icon-name="utility:refresh" alternative-text="Recarregar"
+                    onclick={handleRefresh} title="Atualizar logs">
+                </lightning-button-icon>
+                <div class="slds-p-horizontal_small slds-p-vertical_small">
+                    <template if:true={errorMessage}>
+                        <div class="slds-text-color_error slds-m-bottom_small">{errorMessage}</div>
+                    </template>
+                    <template if:true={isLoading}>
+                        <div class="slds-is-relative slds-p-vertical_small">
+                            <lightning-spinner alternative-text="Carregando logs" size="medium"></lightning-spinner>
+                        </div>
+                    </template>
+                    <template if:false={isLoading}>
+                        <template if:true={hasLogs}>
+                            <div class="split-container">
+                                <div class="split-left">
+                                    <div class="list-wrapper">
+                                        <template for:each={logs} for:item="log">
+                                            <div key={log.Id} data-id={log.Id} class={log.rowClass}
+                                                onclick={handleRowClick} onkeydown={handleRowKeydown}
+                                                tabindex="0" role="button">
+                                                <div class="item-row">
+                                                    <div class="item-main">
+                                                        <div class="item-title">
+                                                            <span class="item-class" title={log.Class__c}>{log.displayClass}</span>
+                                                        </div>
+                                                        <div class="item-sub">
+                                                            <span class="item-date">{log.displayDate}</span>
+                                                            <span class="item-time">{log.displayTime}</span>
+                                                            <template if:true={log.isNew}>
+                                                                <span class="badge-new">Novo</span>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item-meta">
+                                                        <span class="item-http-method">{log.HTTPMethod__c}</span>
+                                                    </div>
+                                                    <div class="item-status">
+                                                        <span class={log.statusBadgeClass}>{log.statusValue}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="split-right">
+                                    <template if:true={selectedLog}>
+                                        <div class="detail-panel">
+                                            <div class="detail-header">
+                                                <div>
+                                                    <p class="slds-text-title_caps">Detalhes do Log</p>
+                                                    <p class="slds-text-heading_small">{selectedLog.Name}</p>
+                                                </div>
+                                                <span class={selectedLog.statusBadgeClass}>{selectedLog.statusValue}</span>
+                                            </div>
+                                            <div class="detail-meta slds-box slds-theme_default">
+                                                <div class="slds-grid slds-wrap slds-gutters">
+                                                    <div class="slds-col slds-size_1-of-2">
+                                                        <p class="label">Classe</p>
+                                                        <p class="value">{selectedLog.Class__c}</p>
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">
+                                                        <p class="label">Metodo</p>
+                                                        <p class="value">{selectedLog.Method__c}</p>
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">
+                                                        <p class="label">HTTP</p>
+                                                        <p class="value">{selectedLog.HTTPMethod__c}</p>
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">
+                                                        <p class="label">Request URI</p>
+                                                        <p class="value">{selectedLog.RequestURI__c}</p>
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">
+                                                        <p class="label">Tipo</p>
+                                                        <p class="value">{selectedLog.Type__c}</p>
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">
+                                                        <p class="label">Data/Hora</p>
+                                                        <p class="value">
+                                                            <lightning-formatted-date-time value={selectedLog.CreatedDate}
+                                                                year="numeric" month="2-digit" day="2-digit" hour="2-digit"
+                                                                minute="2-digit">
+                                                            </lightning-formatted-date-time>
+                                                        </p>
+                                                    </div>
+                                                    <template if:true={selectedLog.LineNumber__c}>
+                                                        <div class="slds-col slds-size_1-of-2">
+                                                            <p class="label">Linha</p>
+                                                            <p class="value line-highlight">{selectedLog.LineNumber__c}</p>
+                                                        </div>
+                                                    </template>
+                                                    <template if:true={selectedLog.Message__c}>
+                                                        <div class="slds-col slds-size_1-of-1">
+                                                            <p class="label">Mensagem</p>
+                                                            <p class="value">{selectedLog.Message__c}</p>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+
+                                            <template if:true={selectedLog.formattedRequest}>
+                                                <div class="slds-m-top_small">
+                                                    <h3 class="slds-section__title">Request</h3>
+                                                    <div class="code-block">
+                                                        <pre>{selectedLog.formattedRequest}</pre>
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            <template if:true={selectedLog.formattedResponse}>
+                                                <div class="slds-m-top_small">
+                                                    <h3 class="slds-section__title">Response</h3>
+                                                    <div class="code-block">
+                                                        <pre>{selectedLog.formattedResponse}</pre>
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            <template if:true={selectedLog.StackTraceString__c}>
+                                                <div class="slds-m-top_small stacktrace slds-box slds-theme_error">
+                                                    <h3 class="slds-section__title slds-text-title_bold">Stack Trace</h3>
+                                                    <pre>{selectedLog.StackTraceString__c}</pre>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                    <template if:false={selectedLog}>
+                                        <div class="detail-placeholder slds-text-align_center slds-p-around_medium">
+                                            Selecione um log para ver os detalhes.
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                        <template if:false={hasLogs}>
+                            <div class="slds-text-align_center slds-text-body_regular slds-p-vertical_small">
+                                Nenhum log encontrado para esta oportunidade.
+                            </div>
+                        </template>
+                    </template>
+                </div>
+            </lightning-card>
+        </template>
+    </template>
+</template>

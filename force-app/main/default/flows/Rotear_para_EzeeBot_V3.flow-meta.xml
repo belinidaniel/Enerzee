@@ -1,183 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
-        <name>Rotear_para_agente</name>
-        <label>Rotear para agente</label>
-        <locationX>182</locationX>
-        <locationY>566</locationY>
-        <actionName>routeWork</actionName>
-        <actionType>routeWork</actionType>
-        <faultConnector>
-            <targetReference>Atualiza_owner</targetReference>
-        </faultConnector>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <inputParameters>
-            <name>recordId</name>
-            <value>
-                <elementReference>recordId</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>serviceChannelId</name>
-            <value>
-                <stringValue>0N95e000000pR15CAE</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>serviceChannelLabel</name>
-            <value>
-                <stringValue>LiveMessage</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>serviceChannelDevName</name>
-            <value>
-                <stringValue>sfdc_livemessage</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>routingType</name>
-            <value>
-                <stringValue>Agent</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>routingConfigId</name>
-            <value>
-                <stringValue>0K95e0000008YyACAU</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>routingConfigLabel</name>
-            <value>
-                <stringValue>Chat Enerzee</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>agentId</name>
-            <value>
-                <elementReference>Obter_ltima_conversa.OwnerId</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>agentLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>isAgentRequired</name>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>isAgentVariable</name>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>isRoutingConfigVariable</name>
-            <value>
-                <booleanValue>false</booleanValue>
-            </value>
-        </inputParameters>
-        <nameSegment>routeWork</nameSegment>
-        <offset>0</offset>
-    </actionCalls>
-    <actionCalls>
-        <name>Rotear_para_bot_router</name>
-        <label>Rotear para bot router</label>
-        <locationX>974</locationX>
-        <locationY>350</locationY>
-        <actionName>routeWork</actionName>
-        <actionType>routeWork</actionType>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <inputParameters>
-            <name>recordId</name>
-            <value>
-                <elementReference>recordId</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>serviceChannelId</name>
-            <value>
-                <stringValue>0N95e000000pR15CAE</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>serviceChannelLabel</name>
-            <value>
-                <stringValue>LiveMessage</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>serviceChannelDevName</name>
-            <value>
-                <stringValue>sfdc_livemessage</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>routingType</name>
-            <value>
-                <stringValue>Bot</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>routingConfigId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>routingConfigLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>queueId</name>
-            <value>
-                <stringValue>00G5e000000bznSEAQ</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>agentId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>agentLabel</name>
-        </inputParameters>
-        <inputParameters>
-            <name>queueLabel</name>
-            <value>
-                <stringValue>Omni-Channel</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>skillOption</name>
-        </inputParameters>
-        <inputParameters>
-            <name>skillRequirementsResourceItem</name>
-        </inputParameters>
-        <inputParameters>
-            <name>botId</name>
-            <value>
-                <stringValue>0XxU500000005vlKAA</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>botLabel</name>
-            <value>
-                <stringValue>Bot Route</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>copilotId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>copilotLabel</name>
-        </inputParameters>
-        <nameSegment>routeWork</nameSegment>
-        <offset>0</offset>
-    </actionCalls>
-    <actionCalls>
         <description>Roteia todas as mensagens para o bot aprimorado.</description>
         <name>RoutingAction</name>
         <label>Rotear para EzeeBot</label>
-        <locationX>1502</locationX>
-        <locationY>350</locationY>
+        <locationX>176</locationX>
+        <locationY>242</locationY>
         <actionName>routeWork</actionName>
         <actionType>routeWork</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -254,10 +82,22 @@
             </value>
         </inputParameters>
         <inputParameters>
+            <name>externalConversationBotId</name>
+        </inputParameters>
+        <inputParameters>
+            <name>externalConversationBotLabel</name>
+        </inputParameters>
+        <inputParameters>
             <name>copilotId</name>
         </inputParameters>
         <inputParameters>
             <name>copilotLabel</name>
+        </inputParameters>
+        <inputParameters>
+            <name>agentforceEmployeeAgentId</name>
+        </inputParameters>
+        <inputParameters>
+            <name>agentforceEmployeeAgentLabel</name>
         </inputParameters>
         <inputParameters>
             <name>isQueueVariable</name>
@@ -270,79 +110,6 @@
     </actionCalls>
     <apiVersion>61.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
-    <decisions>
-        <name>Houve_ultima_conversa</name>
-        <label>Houve ultima conversa?</label>
-        <locationX>50</locationX>
-        <locationY>458</locationY>
-        <defaultConnector>
-            <targetReference>Rotear_para_agente</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Resultado padrão</defaultConnectorLabel>
-        <rules>
-            <name>Primeira_conversa</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Obter_ltima_conversa</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <isGoTo>true</isGoTo>
-                <targetReference>RoutingAction</targetReference>
-            </connector>
-            <label>Primeira conversa</label>
-        </rules>
-    </decisions>
-    <decisions>
-        <name>Possui_Consultor</name>
-        <label>Possui Consultor?</label>
-        <locationX>776</locationX>
-        <locationY>242</locationY>
-        <defaultConnector>
-            <targetReference>RoutingAction</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Resultado padrão</defaultConnectorLabel>
-        <rules>
-            <name>Sim</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Obter_Messaging_Session.MessagingEndUser.Consultor__c</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>Obter_Messaging_Session.MessagingEndUser.Consultor__c</leftValueReference>
-                <operator>IsBlank</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Obter_ltima_conversa</targetReference>
-            </connector>
-            <label>Sim</label>
-        </rules>
-        <rules>
-            <name>Owner_alterado</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Obter_Messaging_Session.OwnerChanged__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Rotear_para_bot_router</targetReference>
-            </connector>
-            <label>Owner alterado</label>
-        </rules>
-    </decisions>
     <environments>Default</environments>
     <interviewLabel>Rotear para EzeeBot {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Rotear para EzeeBot V3</label>
@@ -366,52 +133,14 @@
     </processMetadataValues>
     <processType>RoutingFlow</processType>
     <recordLookups>
-        <name>Obter_ltima_conversa</name>
-        <label>Obter última conversa</label>
-        <locationX>50</locationX>
-        <locationY>350</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Houve_ultima_conversa</targetReference>
-        </connector>
-        <faultConnector>
-            <isGoTo>true</isGoTo>
-            <targetReference>RoutingAction</targetReference>
-        </faultConnector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>MessagingEndUserId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>Obter_Messaging_Session.MessagingEndUserId</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>Id</field>
-            <operator>NotEqualTo</operator>
-            <value>
-                <elementReference>recordId</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>MessagingSession</object>
-        <sortField>CreatedDate</sortField>
-        <sortOrder>Desc</sortOrder>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
         <name>Obter_Messaging_Session</name>
         <label>Obter Messaging Session</label>
-        <locationX>776</locationX>
+        <locationX>176</locationX>
         <locationY>134</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Possui_Consultor</targetReference>
-        </connector>
-        <faultConnector>
-            <isGoTo>true</isGoTo>
             <targetReference>RoutingAction</targetReference>
-        </faultConnector>
+        </connector>
         <filterLogic>and</filterLogic>
         <filters>
             <field>Id</field>
@@ -424,29 +153,8 @@
         <object>MessagingSession</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
-    <recordUpdates>
-        <name>Atualiza_owner</name>
-        <label>Atualiza owner</label>
-        <locationX>446</locationX>
-        <locationY>674</locationY>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Id</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>recordId</elementReference>
-            </value>
-        </filters>
-        <inputAssignments>
-            <field>OwnerId</field>
-            <value>
-                <elementReference>Obter_ltima_conversa.OwnerId</elementReference>
-            </value>
-        </inputAssignments>
-        <object>MessagingSession</object>
-    </recordUpdates>
     <start>
-        <locationX>650</locationX>
+        <locationX>50</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Obter_Messaging_Session</targetReference>
