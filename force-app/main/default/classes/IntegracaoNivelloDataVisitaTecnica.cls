@@ -21,8 +21,7 @@ public class IntegracaoNivelloDataVisitaTecnica {
             corpoRequisicao.TechnicalVisitDate = String.valueOf(opp.PrazoAprovacaoViabilidade__c);
 
             try{
-                HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'DataVisitaTecnica');
-                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate ' + opp.Id, response);
+                HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'DataVisitaTecnica', opp.Id, 'sendTechnicalVisitDate');
 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -38,7 +37,7 @@ public class IntegracaoNivelloDataVisitaTecnica {
                 }
                 opp.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate ' + opp.Id, e);
+                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate', e, opp.Id);
                 
                 opp.SucessoIntegracaoNivello__c = false;
                 opp.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();
@@ -52,7 +51,7 @@ public class IntegracaoNivelloDataVisitaTecnica {
     @future(callout=true)
     public static void sendTechnicalVisitDateFromServiceAppointment(Set<Id> triggerIds){
         List<ServiceAppointment> appointmentList = [
-            SELECT  Id, Oportunidade__r.IdVirtualOffice__c, SchedStartTime
+            SELECT  Id, Oportunidade__c, Oportunidade__r.IdVirtualOffice__c, SchedStartTime
             FROM    ServiceAppointment
             WHERE   Id IN :triggerIds
         ];
@@ -65,8 +64,7 @@ public class IntegracaoNivelloDataVisitaTecnica {
                 String.valueOf(appointment.SchedStartTime.addHours(-3)) : null;
 
             try{
-                HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'DataVisitaTecnica');
-                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate ' + appointment.Id, response);
+                HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'DataVisitaTecnica', appointment.Oportunidade__c, 'sendTechnicalVisitDate');
 
                 //Sucesso
                 if(response.getStatusCode() == 200){
@@ -82,7 +80,7 @@ public class IntegracaoNivelloDataVisitaTecnica {
                 }
                 appointment.StatusBodyIntegracaoNivello__c = response.getStatusCode() + ' ' + response.getBody();
             } catch (Exception e){
-                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate ' + appointment.Id, e);
+                Utils.createLog('IntegracaoNivelloDataVisitaTecnica', 'sendTechnicalVisitDate', e, appointment.Oportunidade__c);
                 
                 appointment.SucessoIntegracaoNivello__c = false;
                 appointment.StatusBodyIntegracaoNivello__c = e.getMessage() + ' ' + e.getStackTraceString();
@@ -93,7 +91,7 @@ public class IntegracaoNivelloDataVisitaTecnica {
         ServiceAppointmentTriggerHandler.enableTrigger();
     }
 
-    private static HttpResponse chamadaIntegracao(String body, String metadataDeveloperName){
+    private static HttpResponse chamadaIntegracao(String body, String metadataDeveloperName, Id relatedId, String logMethodName){
         Integrador__mdt parametrosIntegracao = [
             SELECT  Id, URL__c
             FROM    Integrador__mdt 
@@ -108,7 +106,23 @@ public class IntegracaoNivelloDataVisitaTecnica {
         request.setHeader('Content-Type', 'application/json');
         request.setBody(body);
         
-        return Utils.callIntegrationNivello(request);
+        HttpResponse response = Utils.callIntegrationNivello(request);
+
+        Utils.LogDTO logDTO = new Utils.LogDTO();
+        logDTO.className = 'IntegracaoNivelloDataVisitaTecnica';
+        logDTO.methodName = logMethodName;
+        logDTO.relatedId = relatedId;
+        logDTO.httpMethod = request.getMethod();
+        logDTO.requestBody = body;
+        logDTO.requestURI = parametrosIntegracao.URL__c;
+        if(response != null){
+            logDTO.statusCode = response.getStatusCode();
+            logDTO.status = response.getStatus();
+            logDTO.responseBody = response.getBody();
+        }
+        Utils.createLog(logDTO);
+        
+        return response;
     }
 
     public class TechnicalVisitDateRequest{

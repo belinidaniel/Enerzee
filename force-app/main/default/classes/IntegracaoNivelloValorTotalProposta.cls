@@ -18,8 +18,7 @@ public with sharing class IntegracaoNivelloValorTotalProposta {
             //request.totalValue = opp.ValorTotalProposta__c;
 
             try {
-                HttpResponse res = chamadaIntegracao(JSON.serialize(request));
-                Utils.createLog('IntegracaoNivelloValorTotalProposta', 'updateOpportunityTotalValue ' + opp.Id, res);
+                HttpResponse res = chamadaIntegracao(JSON.serialize(request), opp.Id, 'updateOpportunityTotalValue');
                 
                 if (res.getStatusCode() != 200) {
                     System.debug('Error in response: ' + res.getBody());
@@ -37,7 +36,7 @@ public with sharing class IntegracaoNivelloValorTotalProposta {
                     }
                 }
             } catch (Exception e) {
-                Utils.createLog('IntegracaoNivelloValorTotalProposta', 'updateOpportunityTotalValue ' + opp.Id, e);
+                Utils.createLog('IntegracaoNivelloValorTotalProposta', 'updateOpportunityTotalValue', e, opp.Id);
                 System.debug('Error in HTTP request: ' + e.getMessage());
             }
         }
@@ -49,7 +48,7 @@ public with sharing class IntegracaoNivelloValorTotalProposta {
         }
     }
 
-    private static HttpResponse chamadaIntegracao(String body){
+    private static HttpResponse chamadaIntegracao(String body, Id relatedId, String logMethodName){
 
         Http httpObj = new Http();
         HttpRequest request = new HttpRequest();
@@ -60,7 +59,23 @@ public with sharing class IntegracaoNivelloValorTotalProposta {
         request.setHeader('Content-Type', 'application/json');
         request.setBody(body);
 
-        return Utils.callIntegrationNivello(request);
+        HttpResponse response = Utils.callIntegrationNivello(request);
+
+        Utils.LogDTO logDTO = new Utils.LogDTO();
+        logDTO.className = 'IntegracaoNivelloValorTotalProposta';
+        logDTO.methodName = logMethodName;
+        logDTO.relatedId = relatedId;
+        logDTO.httpMethod = request.getMethod();
+        logDTO.requestBody = body;
+        logDTO.requestURI = endpoint;
+        if(response != null){
+            logDTO.statusCode = response.getStatusCode();
+            logDTO.status = response.getStatus();
+            logDTO.responseBody = response.getBody();
+        }
+        Utils.createLog(logDTO);
+
+        return response;
     }
 
     public class UpdateTotalValueRequest{

@@ -191,7 +191,6 @@ global with sharing class OpportunityEntryRest {
     global static void updateOpportunityProducts() {
         RestRequest req = RestContext.request;
         String body = req.requestBody != null ? req.requestBody.toString() : '';
-        Utils.createLog('OpportunityEntryRest', 'updateOpportunityProducts', req);
         Object rawPayload = JSON.deserializeUntyped(body);
         if (!(rawPayload instanceof Map<String, Object>)) {
             RestContext.response.statusCode = 400;
@@ -214,6 +213,7 @@ global with sharing class OpportunityEntryRest {
             RestContext.response.responseBody = Blob.valueOf('Opportunity not found');
             return;
         }
+        Utils.createLog('OpportunityEntryRest', 'updateOpportunityProducts', req, opp.Id);
 
         // Buscar os produtos enviados
         List<Object> productsRaw = (List<Object>) payload.get('Products');
@@ -310,8 +310,7 @@ global with sharing class OpportunityEntryRest {
     @HttpPatch
     global static void updateDiscount() {
         RestRequest req = RestContext.request;
-        
-        Utils.createLog('OpportunityDiscountUpdate', 'updateDiscount', req);
+        Opportunity opp = null;
         String requestBodyString = req.requestBody.toString();
         if (requestBodyString.startsWith('"') && requestBodyString.endsWith('"')) {
             requestBodyString = requestBodyString.substring(1, requestBodyString.length() - 1);
@@ -331,12 +330,13 @@ global with sharing class OpportunityEntryRest {
                 response.message = 'Invalid input provided.';
                 //return response;
             }
-            Opportunity opp = [SELECT Id, DescontoUFV__c FROM Opportunity WHERE IdVirtualOffice__c = :requestBody.id LIMIT 1];
+            opp = [SELECT Id, DescontoUFV__c FROM Opportunity WHERE IdVirtualOffice__c = :requestBody.id LIMIT 1];
             if(opp == null) {
                 response.status = 'Error';
                 response.message = 'Opportunity not found for the provided Id.';
                 //return response;
             }
+            Utils.createLog('OpportunityDiscountUpdate', 'updateDiscount', req, opp.Id);
             opp.StatusAprovacaoDesconto__c = 'Pendente';
             opp.DescontoUFV__c = requestBody.discount;
             opp.ObservacaoSolicitacaoAprovacaoDesconto__c = requestBody.discountApprovalComments;
@@ -353,7 +353,7 @@ global with sharing class OpportunityEntryRest {
             res.responseBody = Blob.valueOf(JSON.serializePretty(responseMap));
 
         } catch (Exception e) {
-            Utils.createLog('OpportunityEntryRest', 'updateDiscount - ERRO ', e);
+            Utils.createLog('OpportunityEntryRest', 'updateDiscount - ERRO ', e, opp != null ? opp.Id : null);
             response.status = 'Error';
             response.message = 'Error updating discount: ' + e.getMessage();
         }
