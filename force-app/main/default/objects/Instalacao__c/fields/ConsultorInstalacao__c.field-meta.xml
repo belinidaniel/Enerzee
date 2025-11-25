@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ConsultorInstalacao__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Associação de instalação com consultor.</description>
+    <externalId>false</externalId>
+    <label>Consultor</label>
+    <referenceTo>Consultor__c</referenceTo>
+    <relationshipLabel>Instalações</relationshipLabel>
+    <relationshipName>Instalacoes</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

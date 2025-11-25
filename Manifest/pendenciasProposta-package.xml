@@ -13,6 +13,8 @@
         <members>ProposalPendingResponseRest</members>
         <members>ProposalPendingSendQueueable</members>
         <members>ProposalPendingStatusQueueable</members>
+        <members>OpportunityTriggerHandler</members>
+        <members>ServiceAppointmentTriggerTest</members>
         <members>Utils</members>
         <members>OpportunityBO</members>
         <name>ApexClass</name>

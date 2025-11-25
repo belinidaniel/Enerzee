@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <externalId>false</externalId>
+    <label>Status da Instalação</label>
+    <required>false</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Planejamento de Obra</fullName>
+                <default>false</default>
+                <label>Planejamento de Obra</label>
+            </value>
+            <value>
+                <fullName>Obra em execução</fullName>
+                <default>false</default>
+                <label>Obra em execução</label>
+            </value>
+            <value>
+                <fullName>Obra concluída - Aguardando troca de medidor</fullName>
+                <default>false</default>
+                <label>Obra concluída - Aguardando troca de medidor</label>
+            </value>
+            <value>
+                <fullName>Aguardando vistoria</fullName>
+                <default>false</default>
+                <label>Aguardando vistoria</label>
+            </value>
+            <value>
+                <fullName>Ligação solicitada</fullName>
+                <default>false</default>
+                <label>Ligação solicitada</label>
+            </value>
+            <value>
+                <fullName>Usina operando</fullName>
+                <default>false</default>
+                <label>Usina operando</label>
+            </value>
+            <value>
+                <fullName>Obra concluída</fullName>
+                <default>false</default>
+                <label>Obra concluída</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

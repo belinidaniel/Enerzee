@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-24-2025
+ * @last modified on  : 11-25-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class IntegracaoNivelloProposta {
