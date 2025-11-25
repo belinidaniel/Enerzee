@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 11-24-2025
+ * @last modified by  : Daniel Belini
+**/
 public without sharing class Utils{
     public class LogDTO {
         public String className;
@@ -238,7 +245,6 @@ public without sharing class Utils{
 
         if( !NovoToken ){
             response = http.send(request);
-            Utils.createLog('Utils', 'callIntegrationVO - request', request);
             
             if(response.getStatusCode() == 401){
                 TokenAPIVOWs.access_token = '';
@@ -257,11 +263,14 @@ public without sharing class Utils{
 
             request.setTimeout(120000);
             response = http.send(request);
-            Utils.createLog('Utils', 'callIntegrationVO - request', request);
 
         } else {
             response = Status.finalResponse;
         }
+
+        // Logging via DML aqui pode conflitar com múltiplos callouts sequenciais.
+        // Mantemos apenas debug para evitar "uncommitted work pending".
+        // System.debug('callIntegrationVO response status: ' + (response != null ? response.getStatusCode() : 'null'));
 
         return response;
 

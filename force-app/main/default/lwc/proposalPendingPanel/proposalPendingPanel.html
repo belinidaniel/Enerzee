@@ -19,64 +19,77 @@
 
         <template if:false={isLoading}>
             <template if:true={hasPendings}>
-                <div class="pending-list">
-                    <template for:each={pendings} for:item="pending">
-                        <article key={pending.id} class={pending.cardClass}>
-                            <div class="pending-card__header">
-                                <div>
-                                    <p class="pending-card__type">{pending.documentTypeLabel}</p>
-                                    <p class="pending-card__name">{pending.name}</p>
-                                </div>
-                                <div class="pending-card__status">
-                                    <div class="pending-card__status">
-                                        <span class="status-label">Status</span>
-                                        <span class="status-value">{pending.statusLabel}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="pending-card__description">{pending.description}</p>
+                <lightning-tabset variant="scoped" active-tab-value={activeStatusTab} onactive={handleTabChange}>
+                    <template for:each={pendingTabs} for:item="tab">
+                        <lightning-tab key={tab.value} value={tab.value} label={tab.displayLabel}>
+                            <template if:true={tab.hasItems}>
+                                <div class="pending-list">
+                                    <template for:each={tab.items} for:item="pending">
+                                        <article key={pending.id} class={pending.cardClass}>
+                                            <div class="pending-card__header">
+                                                <div>
+                                                    <p class="pending-card__type">{pending.documentTypeLabel}</p>
+                                                    <p class="pending-card__name">{pending.name}</p>
+                                                </div>
+                                                <div class="pending-card__status">
+                                                    <div class="pending-card__status">
+                                                        <span class="status-label">Status</span>
+                                                        <span class="status-value">{pending.statusLabel}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="pending-card__description">{pending.description}</p>
 
-                            <template if:true={pending.response}>
-                                <p class="field-label">Resposta</p>
-                                <p class="field-value">{pending.response}</p>
+                                            <template if:true={pending.response}>
+                                                <p class="field-label">Resposta</p>
+                                                <p class="field-value">{pending.response}</p>
+                                            </template>
+
+                                            <div class="metadata">
+                                                <span>Registrado em&nbsp;
+                                                    <lightning-formatted-date-time
+                                                        value={pending.createdDate}
+                                                        year="numeric"
+                                                        month="2-digit"
+                                                        day="2-digit"
+                                                        hour="2-digit"
+                                                        minute="2-digit"
+                                                    ></lightning-formatted-date-time>
+                                                </span>
+                                                <template if:true={pending.respondedDate}>
+                                                    <span>Respondido em
+                                                        <lightning-formatted-date-time
+                                                            value={pending.respondedDate}
+                                                            year="numeric"
+                                                            month="2-digit"
+                                                            day="2-digit"
+                                                            hour="2-digit"
+                                                            minute="2-digit"
+                                                        ></lightning-formatted-date-time>
+                                                    </span>
+                                                </template>
+                                                <template if:true={pending.showActionButton}>
+                                                        <lightning-button
+                                                            variant="neutral"
+                                                            label={pending.actionLabel}
+                                                            class="pending-card__action"
+                                                            data-id={pending.id}
+                                                            onclick={handleOpenPreview}
+                                                        ></lightning-button>
+                                                </template>
+                                            </div>
+                                        </article>
+                                    </template>
+                                </div>
                             </template>
-
-                            <div class="metadata">
-                                <span>Registrado em&nbsp;
-                                    <lightning-formatted-date-time
-                                        value={pending.createdDate}
-                                        year="numeric"
-                                        month="2-digit"
-                                        day="2-digit"
-                                        hour="2-digit"
-                                        minute="2-digit"
-                                    ></lightning-formatted-date-time>
-                                </span>
-                                <template if:true={pending.respondedDate}>
-                                    <span>Respondido em
-                                        <lightning-formatted-date-time
-                                            value={pending.respondedDate}
-                                            year="numeric"
-                                            month="2-digit"
-                                            day="2-digit"
-                                            hour="2-digit"
-                                            minute="2-digit"
-                                        ></lightning-formatted-date-time>
-                                    </span>
-                                </template>
-                                <template if:true={pending.showActionButton}>
-                                        <lightning-button
-                                            variant="neutral"
-                                            label={pending.actionLabel}
-                                            class="pending-card__action"
-                                            data-id={pending.id}
-                                            onclick={handleOpenPreview}
-                                        ></lightning-button>
-                                </template>
-                            </div>
-                        </article>
+                            <template if:false={tab.hasItems}>
+                                <div class="empty-state">
+                                    <p>Nenhuma pendência em {tab.lowerLabel}.</p>
+                                </div>
+                            </template>
+                        </lightning-tab>
                     </template>
-                </div>
+                </lightning-tabset>
             </template>
             <template if:false={hasPendings}>
                 <div class="empty-state">
@@ -213,6 +226,13 @@
                     </template>
                 </div>
                 <footer class="slds-modal__footer file-preview__footer" style="text-align: center;">
+                    <template if:true={canDownloadPreviewFile}>
+                        <lightning-button
+                            label="Baixar arquivo"
+                            onclick={handleDownloadFile}
+                            disabled={isStatusActionRunning}
+                        ></lightning-button>
+                    </template>
                     <lightning-button label="Fechar" onclick={handleClosePreview} disabled={isStatusActionRunning}></lightning-button>
                     <template if:true={previewHasActions}>
                         <lightning-button
