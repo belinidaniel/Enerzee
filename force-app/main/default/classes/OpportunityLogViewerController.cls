@@ -1,10 +1,3 @@
-/**
- * @description       : 
- * @author            : Daniel Belini
- * @group             : 
- * @last modified on  : 11-24-2025
- * @last modified by  : Daniel Belini
-**/
 public with sharing class OpportunityLogViewerController {
     private static final Integer DEFAULT_LIMIT = 100;
     private static final Integer MAX_LIMIT = 500;
@@ -36,7 +29,7 @@ public with sharing class OpportunityLogViewerController {
                    HTTPMethod__c, RequestURI__c
             FROM Log__c
             WHERE RelatedId__c = :opportunityId
-            ORDER BY CreatedDate DESC_
+            ORDER BY CreatedDate DESC
             LIMIT :limitSize
         ];
 
@@ -46,7 +39,7 @@ public with sharing class OpportunityLogViewerController {
         ).getRecords();
     }
 
-    @AuraEnabled(cachPeable=true)
+    @AuraEnabled(cacheable=true)
     public static Log__c getLogDetail(Id logId) {
         enforceAdminAccess();
 

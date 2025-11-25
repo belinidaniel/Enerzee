@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>jif6QH2I3t7Mptz__Cannot_create_an_Event_w_o_GTM_record</fullName>
-    <active>true</active>
-    <errorConditionFormula>ISNEW() &amp;&amp; $RecordType.Name = $Label.jif6QH2I3t7Mptz__GTM &amp;&amp; ISBLANK(jif6QH2I3t7Mptz__GTM__c)</errorConditionFormula>
-    <errorMessage>Please create the GoToMeeting Event from a Lead, Contact or Opportunity record.</errorMessage>
-</ValidationRule>

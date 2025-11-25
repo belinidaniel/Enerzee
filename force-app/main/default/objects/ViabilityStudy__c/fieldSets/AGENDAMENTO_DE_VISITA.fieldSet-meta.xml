@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>AGENDAMENTO_DE_VISITA</fullName>
-    <description>AGENDAMENTO DE VISITA</description>
-    <label>AGENDAMENTO DE VISITA</label>
-</FieldSet>

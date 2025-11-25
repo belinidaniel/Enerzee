@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label>Send with Click Sign</label>
-    <lwcComponent>clickSign</lwcComponent>
-    <motif>Custom11: Star</motif>
-</CustomTab>

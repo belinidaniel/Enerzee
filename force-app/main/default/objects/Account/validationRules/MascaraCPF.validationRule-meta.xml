@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>MascaraCPF</fullName>
-    <active>true</active>
-    <description>Modelo de mascara a ser seguido ao inserir valor no campo CPF.</description>
-    <errorConditionFormula>!REGEX( CPF__c ,&quot;^(\\d{3}\\.\\d{3}\\.\\d{3}\\-\\d{2})?$&quot;)</errorConditionFormula>
-    <errorDisplayField>CPF__c</errorDisplayField>
-    <errorMessage>Para inserir o CPF é necessário digita-lo no seguinte formato xxx.xxx.xxx-xx.</errorMessage>
-</ValidationRule>

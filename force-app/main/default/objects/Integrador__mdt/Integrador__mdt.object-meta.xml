@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>Metadado para armazenar informações de Endpoints, login, senha</description>
-    <label>Integração</label>
-    <pluralLabel>Integradores</pluralLabel>
-    <visibility>Public</visibility>
-</CustomObject>

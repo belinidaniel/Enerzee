@@ -2,26 +2,30 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>EzeeConnectProposalPendingService</members>
+        <members>IntegracaoNivelloProposta</members>
+        <members>OpportunityAttachmentLinkService</members>
+        <members>OpportunityLogViewerController</members>
+        <members>OpportunityBO</members>
+        <members>InstalacaoBO</members>
         <members>PDFControllerExtension</members>
         <members>ProposalConsoleController</members>
-        <members>ProposalConsoleControllerTest</members>
         <members>ProposalPendingController</members>
-        <members>ProposalPendingControllerTest</members>
         <members>ProposalPendingResponseRest</members>
-        <members>ProposalPendingResponseRestTest</members>
         <members>ProposalPendingSendQueueable</members>
         <members>ProposalPendingStatusQueueable</members>
         <members>Utils</members>
+        <members>OpportunityBO</members>
         <name>ApexClass</name>
     </types>
     <types>
-        <members>proposalPendingPanel</members>
         <members>opportunityIntegrationLogs</members>
         <members>opportunityProposalConsole</members>
+        <members>proposalPendingPanel</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
         <members>Log__c-Layout de Log</members>
+        <members>Opportunity-Opportunity Layout Ezee Connect</members>
         <members>Opportunity-Opportunity Layout Ezee Livre</members>
         <members>Opportunity-Opportunity Layout Ezee Solar</members>
         <name>Layout</name>
@@ -29,9 +33,19 @@
     <types>
         <members>Log__c.RelatedId__c</members>
         <members>Opportunity.ConsumptionAverage__c</members>
+        <members>Opportunity.ObservacaoPagamentoDireito__c</members>
+        <members>Opportunity.ObservacaoPagamentoEsquerdo__c</members>
+        <members>OpportunityAttachmentLink__c.Type__c</members>
+        <members>Instalacao__c.Projeto__c</members>
+        <members>Instalacao__c.Oportunidade__c</members>
+        <members>Instalacao__c.GestorObra__c</members>
+        <members>Instalacao__c.InstallDate__c</members>
+        <members>Instalacao__c.DateInspection__c</members>
         <name>CustomField</name>
     </types>
     <types>
+        <members>Instalacao__c</members>
+        <members>OpportunityAttachmentLink__c</members>
         <members>ProposalPending__c</members>
         <name>CustomObject</name>
     </types>
@@ -43,6 +57,12 @@
     <types>
         <members>EzeeConnectPendencias</members>
         <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>Integrador.SetProposalPending</members>
+        <members>Integrador.TypesDocumentPending</members>
+        <members>Integrador.UpdateProposalPending</members>
+        <name>CustomMetadata</name>
     </types>
     <types>
         <members>Oportunidade_P_gina_de_registro_Ezee_Connect</members>

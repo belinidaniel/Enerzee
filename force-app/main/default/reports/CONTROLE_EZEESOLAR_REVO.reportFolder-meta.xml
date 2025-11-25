@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ReportFolder xmlns="http://soap.sforce.com/2006/04/metadata">
-    <folderShares>
-        <accessLevel>Manage</accessLevel>
-        <sharedTo>elenara.rodrigues@enerzee.com.br</sharedTo>
-        <sharedToType>User</sharedToType>
-    </folderShares>
-    <name>CONTROLE_EZEESOLAR_REVO</name>
-</ReportFolder>
