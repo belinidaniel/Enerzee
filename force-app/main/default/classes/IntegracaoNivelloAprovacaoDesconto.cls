@@ -41,7 +41,7 @@ public with sharing class IntegracaoNivelloAprovacaoDesconto {
                 
                 // Chama a API da Nivello para enviar o status de aprovação do desconto
                 HttpResponse response = chamadaIntegracao(JSON.serialize(payload), 'Aprovacao_Desconto');
-                Utils.createLog('IntegracaoNivelloAprovacaoDesconto', 'aprovacaoDesconto ' + opportunity.Id, response);
+                Utils.createLog('IntegracaoNivelloAprovacaoDesconto', 'aprovacaoDesconto ' + opportunity.Id, response, opportunity.Id);
 
                 if (response.getStatusCode() == 200) {
                     // Parsing the response
@@ -60,7 +60,7 @@ public with sharing class IntegracaoNivelloAprovacaoDesconto {
                     System.debug('Error in response: ' + response.getBody());
                 }
             } catch(Exception ex) {
-                Utils.createLog('IntegracaoNivelloAprovacaoDesconto', 'aprovacaoDesconto ' + opportunity.Id, ex);
+                Utils.createLog('IntegracaoNivelloAprovacaoDesconto', 'aprovacaoDesconto ' + opportunity.Id, ex, opportunity.Id);
             }   
         }
 

@@ -107,7 +107,7 @@ public with sharing class IntegracaoSAPPedidoCompra {
 
                 try{
                     HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'PedidoCompraVendaSAP');
-                    Utils.createLog('IntegracaoSAPPedidoCompra', 'sendPedidoCompra ' + opp.Id, response);
+                    Utils.createLog('IntegracaoSAPPedidoCompra', 'sendPedidoCompra ' + opp.Id, response, opp.Id);
     
                     if(response.getBody() != null && response.getBody() != ''){
                         Integer[] successSAPResponseCodes = new Integer[]{200, 201, 204};
@@ -130,7 +130,7 @@ public with sharing class IntegracaoSAPPedidoCompra {
                         opp.StatusBodyIntegracaoSAP__c = statusCode + ' ' + response.getBody() + ' ' + response.getStatus();
                     }
                 } catch (Exception e){
-                    Utils.createLog('IntegracaoSAPPedidoCompra', 'sendPedidoCompra ' + opp.Id, e);
+                    Utils.createLog('IntegracaoSAPPedidoCompra', 'sendPedidoCompra ' + opp.Id, e, opp.Id);
                     system.debug('e: '+e);
                     opp.SucessoIntegracaoSAP__c = false;
                     opp.StatusBodyIntegracaoSAP__c = e.getMessage() + ' ' + e.getStackTraceString();

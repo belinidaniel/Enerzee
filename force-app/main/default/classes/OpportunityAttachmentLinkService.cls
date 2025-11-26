@@ -23,11 +23,9 @@ public with sharing class OpportunityAttachmentLinkService {
         record.OpportunityId__c = input.opportunityId;
         record.AttachmentURL__c = input.attachmentUrl;
         record.Type__c = String.isNotBlank(input.type) ? input.type : 'Other';
-        // Name tem limite de 80 chars; garantir truncamento para evitar DML error.
-        String baseName = String.isNotBlank(input.description)
+        record.Name = String.isNotBlank(input.description)
             ? input.description
             : 'Attachment ' + String.valueOf(DateTime.now().getTime());
-        record.Name = baseName.length() > 80 ? baseName.substring(0, 80) : baseName;
 
         if (String.isNotBlank(input.description)) {
             record.AttachmentDescription__c = input.description;

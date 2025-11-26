@@ -1,10 +1,3 @@
-/**
- * @description       : 
- * @author            : Daniel Belini
- * @group             : 
- * @last modified on  : 11-12-2025
- * @last modified by  : Daniel Belini
-**/
 public class EmailWithAttachmentById {
     public class Request {
         @InvocableVariable(required = true)
@@ -21,18 +14,10 @@ public class EmailWithAttachmentById {
 
         @InvocableVariable(required = false)
         public String ccEmail;
-
-        @InvocableVariable(required = false)
-        public String orgWideEmailAddressId;
     }
 
     @InvocableMethod(label = 'Enviar Email com Arquivo' description = 'Envia um e-mail com anexo buscando o arquivo pelo ContentDocumentId ou ContentVersionId.')
     public static void sendEmailWithAttachment(List<Request> requests) {
-        if(requests == null || requests.isEmpty()){
-            return;
-        }
-
-        Messaging.reserveSingleEmailCapacity(requests.size());
         for (Request req : requests) {
 
             if (String.isEmpty(req.recipientEmail) || String.isEmpty(req.subject) || 
@@ -76,58 +61,26 @@ public class EmailWithAttachmentById {
             }
 
             Messaging.EmailFileAttachment attachment = new Messaging.EmailFileAttachment();
-            String fileName = String.isNotBlank(contentVersion.Title) ? contentVersion.Title : 'anexo';
-            if(!String.isBlank(contentVersion.FileExtension)){
-                fileName += '.' + contentVersion.FileExtension;
-            }
-            attachment.setFileName(fileName);
+            attachment.setFileName(contentVersion.Title + '.' + contentVersion.FileExtension);
             attachment.setBody(contentVersion.VersionData);
 
             Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
             email.setToAddresses(new String[] { req.recipientEmail });
-            email.setTreatTargetObjectAsRecipient(false);
-            email.setUseSignature(false);
-            email.setSaveAsActivity(false);
             
             if (!String.isEmpty(req.ccEmail)) {
                 email.setCcAddresses(new String[] { req.ccEmail });
             }
 
-            if(!String.isEmpty(req.orgWideEmailAddressId)){
-                email.setOrgWideEmailAddressId(req.orgWideEmailAddressId);
-            }
-
             email.setSubject(req.subject);
             email.setHtmlBody(req.body);
-            email.setPlainTextBody(convertToPlainText(req.body));
             email.setFileAttachments(new Messaging.EmailFileAttachment[] { attachment });
 
             try {
-                Messaging.SendEmailResult[] results = Messaging.sendEmail(new Messaging.SingleEmailMessage[] { email }, false);
-                if(results == null || results.isEmpty() || !results[0].isSuccess()){
-                    String errorMessage = (results != null && !results.isEmpty() && results[0].getErrors() != null && results[0].getErrors().size() > 0)
-                        ? results[0].getErrors()[0].getMessage()
-                        : 'Motivo não informado pelo Salesforce.';
-                    throw new EmailException('Falha ao enviar e-mail: ' + errorMessage);
-                }
+                Messaging.sendEmail(new Messaging.SingleEmailMessage[] { email });
             } catch (Exception e) {
                 System.debug('Erro ao enviar e-mail: ' + e.getMessage());
                 throw e;
             }
         }
-    }
-
-    @TestVisible
-    private static String convertToPlainText(String htmlBody){
-        if(String.isBlank(htmlBody)){
-            return null;
-        }
-
-        String plain = htmlBody.replaceAll('<[^>]+>', ' ');
-        plain = plain.replaceAll('&nbsp;', ' ');
-        while(plain.contains('  ')){
-            plain = plain.replace('  ', ' ');
-        }
-        return plain.trim();
     }
 }

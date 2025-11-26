@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-18-2025
+ * @last modified on  : 11-03-2025
  * @last modified by  : Daniel Belini
 **/
 public class ViabilityStudyBO {
@@ -262,25 +262,13 @@ public class ViabilityStudyBO {
             return true;
         }
 
-        String normalizedSubject = subject.trim().toLowerCase();
-
-        if(normalizedSubject == 'solicitar novo integrador'){
+        if(subject.equalsIgnoreCase('SOLICITAR NOVO INTEGRADOR')){
             if(viability == null || String.isBlank(viability.OwnTeamThirdParty__c)){
                 return false;
             }
 
             String option = viability.OwnTeamThirdParty__c.trim().toLowerCase();
             return option == 'nao_cadastrado' || option == 'não cadastrado';
-        }
-
-        if(normalizedSubject == 'confirmação de lançamento de nf' ||
-            normalizedSubject == 'confirmação de lancaçamento de nf'){
-            if(viability == null || String.isBlank(viability.OwnTeamThirdParty__c)){
-                return false;
-            }
-
-            String option = viability.OwnTeamThirdParty__c.trim().toLowerCase();
-            return option != 'enerzee' && option != 'consultor';
         }
 
         return true;
