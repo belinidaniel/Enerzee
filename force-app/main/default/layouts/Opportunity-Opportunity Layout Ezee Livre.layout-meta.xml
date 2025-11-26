@@ -80,6 +80,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>MediaConsumo__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>UrlSimulation__c</field>
             </layoutItems>
             <layoutItems>

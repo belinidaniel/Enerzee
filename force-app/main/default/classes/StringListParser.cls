@@ -12,6 +12,30 @@ public with sharing class StringListParser {
         ';' => ';'
     };
 
+    public class Request {
+        @InvocableVariable(required = true)
+        public String delimiterType;
+
+        @InvocableVariable(required = true)
+        public String rawValue;
+    }
+
+    public class Response {
+        @InvocableVariable
+        public List<String> values;
+    }
+
+    @InvocableMethod(label = 'Split String Into List' description = 'Recebe uma string e retorna uma lista conforme o separador informado.')
+    public static List<Response> invoke(List<Request> requests) {
+        List<Response> results = new List<Response>();
+        for (Request req : requests) {
+            Response res = new Response();
+            res.values = splitValues(req != null ? req.delimiterType : null, req != null ? req.rawValue : null);
+            results.add(res);
+        }
+        return results;
+    }
+
     /**
      * Splits a string using the informed delimiter type and returns the cleaned values.
      *
@@ -45,5 +69,11 @@ public with sharing class StringListParser {
             return SUPPORTED_DELIMITERS.get(key);
         }
         return ',';
+    }
+
+    public static List<String> getSupportedDelimiterTypes() {
+        List<String> types = new List<String>(SUPPORTED_DELIMITERS.keySet());
+        types.sort();
+        return types;
     }
 }

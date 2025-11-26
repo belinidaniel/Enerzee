@@ -23,25 +23,20 @@ public class ProjetoTriggerHandler extends TriggerHandler {
         enabled = false;
     }
     
-    public override void beforeInsert(){
-        ProjetoBO.initializeStatusStartDate((List<Projeto__c>) newRecordList);
-    }
+    public override void beforeInsert(){}
 
     public override void afterInsert(){
         ProjetoBO.createTasks((List<Projeto__c>) newRecordList, new Map<Id, Projeto__c>());
         ProjetoBO.sendProjectToNivello((List<Projeto__c>) newRecordList);
-        InstalacaoBO.ensureInstallationOnProjectApproved((List<Projeto__c>) newRecordList, new Map<Id, Projeto__c>());
     }
 
     public override void beforeUpdate(){
-        ProjetoBO.updateStageDurations((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
         ProjetoBO.checkTasksConclusionBeforeStatusChange((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
     }
 
     public override void afterUpdate(){
         ProjetoBO.createTasks((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
         ProjetoBO.sendProjectToNivello((List<Projeto__c>) newRecordList);
-        InstalacaoBO.ensureInstallationOnProjectApproved((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
         ProjetoBO.createTaskOnboarding((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
         ProjetoBO.createTaskProjectApproved((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
         ProjetoBO.createTaskFinishProject((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);

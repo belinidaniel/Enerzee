@@ -29,22 +29,11 @@ A Enerzee informa que está com novos números de atendimentos via WhatsApp, tod
             <type>Message</type>
         </botSteps>
         <botSteps>
-            <botMessages>
-                <message>Gentileza atualizar seus registros e direcionar suas mensagens para estes novos contatos.
-Agradecemos pela compreensão e permanecemos à disposição para atendê-los com a mesma qualidade de sempre.
-Atenciosamente,
-Equipe Enerzee</message>
-                <messageIdentifier>ba0ef74b-b07b-41c8-4fe7-bab43dae2042</messageIdentifier>
-            </botMessages>
-            <stepIdentifier>7aa8227c-6dc1-4266-97bc-2d7ef32c7e07</stepIdentifier>
-            <type>Message</type>
-        </botSteps>
-        <botSteps>
             <botSteps>
                 <conversationSystemMessage>
                     <type>EndChat</type>
                 </conversationSystemMessage>
-                <stepIdentifier>e5b041fb-b87a-43db-a73c-74ba13567a2e</stepIdentifier>
+                <stepIdentifier>88c6050a-2a4a-429c-b228-4af7e24b94e8</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
             <conditionLogicType>And</conditionLogicType>
@@ -92,7 +81,7 @@ Equipe Enerzee</message>
     <botDialogs>
         <botSteps>
             <botMessages>
-                <message>Thanks for taking the time to chat. I’ve ended the conversation. To start a new conversation, enter some text.</message>
+                <message>Obrigado!</message>
                 <messageIdentifier>ae95c67c-3c43-4904-9388-959066418913</messageIdentifier>
             </botMessages>
             <stepIdentifier>aef4d227-22cd-466a-9fa0-bc3862271b66</stepIdentifier>
@@ -103,9 +92,10 @@ Equipe Enerzee</message>
                 <conversationSystemMessage>
                     <type>EndChat</type>
                 </conversationSystemMessage>
-                <stepIdentifier>f7574cbc-5224-4b70-a80c-75e59d18d2ad</stepIdentifier>
+                <stepIdentifier>5a72edbf-9094-49da-83a1-a5eb7fafcaff</stepIdentifier>
                 <type>SystemMessage</type>
             </botSteps>
+            <conditionLogicType>And</conditionLogicType>
             <stepIdentifier>302aae21-b0a7-4a72-a52d-6bff85749957</stepIdentifier>
             <type>Group</type>
         </botSteps>
