@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-24-2025
+ * @last modified on  : 11-27-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class PDFControllerExtension {
@@ -250,7 +250,6 @@ public with sharing class PDFControllerExtension {
         String capaPropostaId    = this.opportunity.Parceiro__r.CapaProposta__c;
         String capaPromocionalId = this.opportunity.Parceiro__r.CapaPromocional__c;
         Boolean isPromotional    = (this.opportunity.Parceiro__r.Name == 'Bow-e') ? true : this.opportunity.isPromotional__c;
-        this.isChanged           = this.opportunity.PropostaAlterada__c;
         String parceiro          = this.opportunity.Parceiro__r.Name;
 
         // Capa/Template
@@ -300,44 +299,46 @@ public with sharing class PDFControllerExtension {
             // StageName conforme regras atuais
             if (OpportunityUtils.isStatusAwaitingAcceptance(this.opportunity)) {
                 opp.StageName = OpportunityUtils.STATUS_CONTRATO;
+                this.isChanged = true;
             } else if (OpportunityUtils.isStatusProposalElaboration(this.opportunity)
                     || OpportunityUtils.isStatusProposalSimulation(this.opportunity)) {
                 if (OpportunityUtils.isRecordTypeSolar(this.opportunity)) {
                     // if (this.isManual) {
                         opp.StageName = OpportunityUtils.STATUS_PROPOSTA_GERADA;
+                        this.isChanged = true;
                     // }
                 } else if (OpportunityUtils.isRecordTypeEzeeSolarB(this.opportunity)) {
                     opp.StageName = OpportunityUtils.STATUS_ANALISE_CREDITO;
+                    this.isChanged = true;
                 } else {
                     opp.StageName = OpportunityUtils.STATUS_PROPOSTA_ENVIADA;
+                    this.isChanged = true;
                 }
-            }
-
-            if (this.isChanged) {
-                opp.PropostaAlterada__c = false;
             }
 
             update opp;
 
             // Integrações isoladas para não quebrar o fluxo de sucesso do arquivo
             try {
-                System.debug('testeeeeeeee  ' + opp.Id);
                 IntegracaoNivelloProposta.gerandoProposta(opp.Id);
             } catch (Exception ex1) {
                 Utils.createLog('PDFControllerExtension', 'IntegracaoNivelloProposta', ex1);
             }
 
+            System.debug('isChanged ==> ' + this.isChanged);
+            System.debug('opp.Id ==> ' + opp.Id);
+            System.debug('opp.StageName ==> ' + opp.StageName);
             if (this.isChanged) {
-                try {
-                    ProposalService.updateOpportunityPhase(new Set<Id>{ opp.Id });
-                } catch (Exception ex2) {
-                    Utils.createLog('PDFControllerExtension', 'ProposalService.updateOpportunityPhase', ex2);
-                }
+                // try {
+                // // ProposalService.updateOpportunityPhase(new Set<Id>{ opp.Id });
+                // } catch (Exception ex2) {
+                //     Utils.createLog('PDFControllerExtension', 'salvarArquivo.ProposalService.updateOpportunityPhase', ex2);
+                // }
             }
 
         } catch (Exception postEx) {
             // Loga problemas no pós-processamento sem afetar o salvamento do arquivo
-            Utils.createLog('PDFControllerExtension', 'salvarArquivo.posProcessamento', postEx);
+            Utils.createLog('PDFControllerExtension', 'salvarArquivo.salvarArquivo.posProcessamento', postEx);
         }
 
         return arquivoId;
@@ -471,6 +472,7 @@ public with sharing class PDFControllerExtension {
                 if (stageToSet != null && opp.StageName != stageToSet) {
                     System.debug('savePdfFileAsyncInternal early-exit: ajustando stage existente para ' + stageToSet);
                     update new Opportunity(Id = opp.Id, StageName = stageToSet);
+
                 }
             } catch (Exception eEarly) {
                 Utils.createLog('PDFControllerExtension', 'savePdfFileAsyncInternal.earlyExit', eEarly);
@@ -556,6 +558,7 @@ public with sharing class PDFControllerExtension {
                 try {
                     System.debug('savePdfFileAsyncInternal calling integration (existing file) for opp: ' + opportunityId);
                     IntegracaoNivelloProposta.gerandoProposta(opportunityId);
+                    ProposalService.updateOpportunityPhase(new Set<Id>{ opp.Id });
                 } catch (Exception eIntExisting) {
                     Utils.createLog('PDFControllerExtension', 'savePdfFileAsyncInternal.IntegracaoExisting', eIntExisting);
                 }

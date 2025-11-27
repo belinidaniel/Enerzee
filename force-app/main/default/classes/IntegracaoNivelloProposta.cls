@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-24-2025
+ * @last modified on  : 11-27-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class IntegracaoNivelloProposta {
@@ -79,20 +79,11 @@ public with sharing class IntegracaoNivelloProposta {
             if(!propostaPDFList.isEmpty()){
 
                 try{
-                    //JSON esperado
-                    //approved     //true
-                    //id		   //	"3fa85f64-5717-4562-b3fc-2c963f66afa6"
-                    //description  //  "string"
-                    //contract     //  'data:application/pdf;base64,' + base64 da proposta. O nome é "contract" mesmo pois a API foi criada assim
-
-                    //É necessário usar JSON generator para garantir a ordem das propriedades
                     JSONGenerator gen = JSON.createGenerator(true);
                     gen.writeStartObject();
                     gen.writeStringField('id', opp.IdVirtualOffice__c);
                     gen.writeBooleanField('approved', true);
                     gen.writeNumberField('opportunityPhase', StatusEnumMap.getStatusEnum(opp.recordType.Name, opp.StageName));
-                    System.debug('StatusEnumMap.getStatusEnum(opp.recordType.Name, opp.StageName');
-                    System.debug( 'integracaoNivelloProposta - opportunityPhase: ' + opp.ValorTotalProposta__c);
                     gen.writeNumberField('proposalValue', opp.ValorTotalProposta__c );
                     gen.writeStringField('contract', 'data:application/pdf;base64,' + EncodingUtil.base64Encode(propostaPDFList[0].VersionData));
                     gen.writeEndObject();

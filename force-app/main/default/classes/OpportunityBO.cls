@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-23-2025
+ * @last modified on  : 11-27-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -770,226 +770,6 @@ public class OpportunityBO {
     }
 
 
-    public static void makeVirtualOfficeCalloutByStatusChange(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
-        System.debug('newRecords ' + newRecords);
-        /*
-            1 -> Gerando Proposta
-            2 -> Etapa Viabilidade
-            3 -> Enviar Data de Visita Técnica
-            4 -> Enviar Análise da Visita Técnica
-            5 -> Conclusão Viabilidade
-            6 -> Pagamento
-            7 -> Finalização Proposta
-        */
-        Map<Integer, Set<Id>> endpointIdToContextIds = new Map<Integer, Set<Id>>();
-        Set<Id> opportunityIds = new Set<Id>();
-        
-        for(Opportunity opportunity : newRecords){
-            Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
-
-            if(
-                OpportunityUtils.isStatusChanging(opportunity, oldOpportunity)
-            )
-            // {
-            //     if(
-            //         (
-            //              OpportunityUtils.isStatusProposalGenerated(opportunity) ||
-            //              OpportunityUtils.isStatusProposalSent(opportunity)
-            //          )
-            //          ||
-            //          (
-            //              OpportunityUtils.isStatusAwaitingAcceptance(opportunity)
-            //              && OpportunityUtils.hasProposalReadjustment(opportunity)
-            //          )
-            //      ){
-            //          createAddContextIdToEndpointMap(endpointIdToContextIds, 1, opportunity.Id);
-            //      }
-            // }
-            if(
-                OpportunityUtils.isRecordTypeSolar(opportunity)
-            ) {
-                
-                /*
-                    1 - GERANDO PROPOSTA
-                    Enviar PDF da Proposta após geração no Salesforce
-                */
-
-                /*
-                    2 - ETAPA VIABILIDADE
-                    Enviar atualização da etapa de viabilidade a cada mudança
-                */
-                if(OpportunityUtils.isViabilityStepChanging(opportunity, oldOpportunity) || OpportunityUtils.isChangingToViabilityAnalysis(opportunity, oldOpportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 2, opportunity.Id);
-                }
-
-
-                /*  
-                    3 - ENVIAR DATA DA VISITA TÉCNICA
-                    Enviar valor do prazo de aprovação da viabilidade quando for preenchido
-                */
-                if(OpportunityUtils.isViabilityDeadlineBeingAssigned(opportunity, oldOpportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 3, opportunity.Id);
-                    //continue;
-                }
-
-
-                /*  
-                    4 - ENVIAR ANÁLISE DA VISITA TÉCNICA
-                Enviar status da análise da visita vécnica quando for preenchido
-                */
-                if(OpportunityUtils.isViabilityStatusBeingAssigned(opportunity, oldOpportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 4, opportunity.Id);
-                    //continue;
-                }
-
-
-                /*
-                    5 - CONCLUSÃO VIABILIDADE
-                    Enviar atualização de fim da viabilidade ao chegar no último status
-                */
-                if(OpportunityUtils.isViabilityAnalysisOver(opportunity, oldOpportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 5, opportunity.Id);
-
-                    //continue;
-                }
-
-                /*
-                    6 - PAGAMENTO
-                    Enviar atualização quando status for modificado para o de pagamento
-                */
-                /*
-                if(OpportunityUtils.isChangingToPaymentWay(opportunity, oldOpportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 6, opportunity.Id);
-                    continue;
-                }
-                */
-
-                /* 
-                    7 - CONTRATO
-                    Enviar atualização quando contrato for fechado
-                */
-
-                if(OpportunityUtils.isSubStatusContractGenerating(opportunity)){
-                    opportunityIds.add(opportunity.Id);
-                    //continue;
-                }
-                
-                if(OpportunityUtils.isSubStatusContractSent(opportunity)){
-                    opportunityIds.add(opportunity.Id);
-                    //continue;
-                }
-
-                if(OpportunityUtils.isSubStatusContractFirmedSigned(opportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 7, opportunity.Id);
-                    //continue;
-                }
-
-                /* 
-                    8 - FINALIZAÇÃO PROPOSTA
-                    Enviar atualização quando oportunidade for fechada como ganha
-                */
-
-                if(OpportunityUtils.isChangingToClosedWon(opportunity, oldOpportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 8, opportunity.Id);
-                    //continue;
-                }
-
-                if(
-                    (OpportunityUtils.isStatusProposalElaboration(opportunity) ||
-                    OpportunityUtils.isStatusProposalSimulation(opportunity) ) &&
-                    (
-                        (
-                            (
-                                OpportunityUtils.isSubTypeMiniContract(opportunity) ||
-                                OpportunityUtils.isRecordTypeOtherOpportunities(opportunity)
-                            )
-                        ) || 
-                            !OpportunityUtils.isSubTypeMiniContract(opportunity)
-                    )
-                ){
-                    opportunityIds.add(opportunity.Id);
-                    //continue;
-                }
-
-                if(OpportunityUtils.isStatusAwaitingAcceptance(opportunity)){
-                    opportunityIds.add(opportunity.Id);
-                    //continue;
-                }
-
-                if(OpportunityUtils.isSubStatusTechnicalVisitScheduling(opportunity)){
-                    opportunityIds.add(opportunity.Id);
-                    //continue;
-                }
-            }
-
-            if(
-                OpportunityUtils.isStatusProposalElaboration(opportunity)
-                || OpportunityUtils.isStatusProposalSimulation(opportunity)
-                || (oldOpportunity.StageName != opportunity.StageName)
-                || (oldOpportunity.Status__c != opportunity.Status__c && opportunity.Status__c != null)
-                || (oldOpportunity.DataHoraAgendamento__c != opportunity.DataHoraAgendamento__c && opportunity.DataHoraAgendamento__c != null)
-            ){
-                opportunityIds.add(opportunity.Id);
-            }
-            System.debug('opportunityIds ' + opportunity.RecordTypeId);
-        }
-        // Chamar ProposalService para as oportunidades que não são Contrato Mini, Micro e Outras Oportunidades
-        if (!opportunityIds.isEmpty()) {
-            ProposalService.updateOpportunityPhase(opportunityIds);
-        }
-
-        for(Integer endpointId : endpointIdToContextIds.keySet()){
-            if(endpointId == 1 && endpointIdToContextIds.get(1) != null){
-                
-                for(Id oppId : endpointIdToContextIds.get(1)){
-                    IntegracaoNivelloProposta.gerandoProposta(oppId);
-                }
-                
-                continue;
-            }
-
-            // if(endpointId == 9 && endpointIdToContextIds.get(9) != null){
-            //     IntegracaoNivelloAprovacaoDesconto.enviarStatusAprovacaoDesconto(endpointIdToContextIds.get(9));
-            //     continue;
-            // }
-
-            if(endpointId == 2 && endpointIdToContextIds.get(2) != null){
-                IntegracaoNivelloViabilidade.etapaViabilidade(endpointIdToContextIds.get(2));
-                continue;
-            }
-            
-            if(endpointId == 3 && endpointIdToContextIds.get(3) != null){
-                IntegracaoNivelloDataVisitaTecnica.sendTechnicalVisitDate(endpointIdToContextIds.get(3), false);
-                continue;
-            }
-
-            if(endpointId == 4 && endpointIdToContextIds.get(4) != null){
-                IntegracaoNivelloAnaliseVisitaTecnica.sendTechnicalVisitAnalysis(endpointIdToContextIds.get(4));
-                continue;
-            }
-
-            if(endpointId == 5 && endpointIdToContextIds.get(5) != null){
-                IntegracaoNivelloViabilidade.conclusaoViabilidade(endpointIdToContextIds.get(5));
-                continue;
-            }
-
-            // if(endpointId == 6 && endpointIdToContextIds.get(6) != null){
-            //     IntegracaoNivelloPagamento.pagamento(endpointIdToContextIds.get(6));
-            //     continue;
-            // }
-
-            if(endpointId == 7 && endpointIdToContextIds.get(7) != null){
-                IntegracaoNivelloContrato.enviarContrato(endpointIdToContextIds.get(7));
-                continue;
-            }
-
-            if(endpointId == 8 && endpointIdToContextIds.get(8) != null){
-                IntegracaoNivelloProposta.finalizacaoProposta(endpointIdToContextIds.get(8));
-                continue;
-            }
-
-        }
-    }
 
     public static void createAddContextIdToEndpointMap(Map<Integer, Set<Id>> endpointIdToContextIds, Integer key, Id opportunityId){
         if(!endpointIdToContextIds.containsKey(key)){
@@ -1977,12 +1757,12 @@ public class OpportunityBO {
                 (opp.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId() && areRequiredFieldsFilled(opp))) &&                    
                  opp.GrupoTarifario__c != 'Grupo A'
                 ){
-                System.debug('if 1 - generateProposalAsync - ');
+                System.debug('if 1 - generateProposalAsync - ' + formulaFieldsChanged(oldOpp, opp));
 
                 Boolean shouldGenerate = false;
-                if (opp.PropostaGerada__c == false) {
-                    shouldGenerate = true;
-                }
+                // if (opp.PropostaGerada__c == false) {
+                //     shouldGenerate = true;
+                // }
                 if (oldOpp != null && opp.ReadequacaoSolicitada__c != oldOpp.ReadequacaoSolicitada__c && opp.ReadequacaoSolicitada__c == true) {
                     shouldGenerate = true;
                 }
@@ -2644,6 +2424,33 @@ public class OpportunityBO {
         }
     }
 
+    public static void notifyAppOnStatusChange(List<Opportunity> newRecordList, Map<Id, Opportunity> oldRecordsMap) {
+        Set<Id> opportunityIds = new Set<Id>();
+
+        for (Opportunity opportunity : newRecordList) {
+            Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
+
+            if (oldOpportunity == null) {
+                continue;
+            }
+
+            Boolean stageChanged = opportunity.StageName != oldOpportunity.StageName;
+            Boolean subStatusChanged = opportunity.Status__c != oldOpportunity.Status__c;
+
+            if (stageChanged || subStatusChanged) {
+                opportunityIds.add(opportunity.Id);
+            }
+        }
+
+        if (!opportunityIds.isEmpty()) {
+            try {
+                ProposalService.updateOpportunityPhase(opportunityIds);
+            } catch (Exception ex) {
+                Utils.createLog('OpportunityBO', 'notifyAppOnStatusChange', ex);
+            }
+        }
+    }
+    
     public static void sendAprovalUpdate(List<Opportunity> newRecordList, Map<Id, Opportunity> oldRecordsMap) {
 
         for(Opportunity opportunity: newRecordList) {
@@ -2728,7 +2535,6 @@ public class OpportunityBO {
             }
         }
     }
-
 
     public static void closeActivitiesAndFlowsForClosedLost(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap) {
         if (newRecords == null || newRecords.isEmpty() || oldRecordsMap == null || oldRecordsMap.isEmpty()) {
@@ -2851,7 +2657,6 @@ public class OpportunityBO {
         }
     }
 
-
     //fields are != null
     public static Boolean areRequiredFieldsFilled(Opportunity opp) {
         return
@@ -2881,7 +2686,7 @@ public class OpportunityBO {
             opp.Amount != null;
     }
 
-        //fields are != null
+    //fields are != null
     public static Boolean areRequiredFieldsFilledConnect(Opportunity opp) {
         return
             opp.FaturaDescontoFixo__c != null &&
@@ -2889,7 +2694,6 @@ public class OpportunityBO {
             opp.PrazoContratoParceiro__c != null ;
     }
     
-
     public static Boolean formulaFieldsChanged(Opportunity oldOpp, Opportunity newOpp) {
         // A verificação de campos de fórmula em 'after update' deve ser feita nos campos de origem,
         // pois os campos de fórmula em Trigger.old são recalculados e refletem os novos valores.
@@ -2939,7 +2743,6 @@ public class OpportunityBO {
 
         return candidate.length() > maxLength ? candidate.substring(0, maxLength) : candidate;
     }
-
 
     private static void sendClosedLostAutomationEmail(List<Opportunity> opportunities, Set<Id> userIds, String note) {
         if (opportunities == null || opportunities.isEmpty() || userIds == null || userIds.isEmpty()) {

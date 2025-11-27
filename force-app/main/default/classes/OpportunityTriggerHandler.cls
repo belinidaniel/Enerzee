@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-23-2025
+ * @last modified on  : 11-27-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityTriggerHandler extends TriggerHandler {
@@ -67,7 +67,6 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.createSellBuyOrder((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.sendContractDataSAP((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.applyDiscountAndInitiateApproval( (Map<Id,Opportunity>) Trigger.newMap,(Map<Id, Opportunity>) Trigger.oldMap );
-        OpportunityBO.makeVirtualOfficeCalloutByStatusChange((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.createProjectRecords((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         //OpportunityBO.createWorkOrderTechnicalVisit((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.createRequiredFieldsReminderTasks((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
@@ -90,6 +89,7 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.createCaseCustomerJourney((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.sendClienteRecordToVirtualOffice((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.addPlanToUserInVirtualOffice((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
+        OpportunityBO.notifyAppOnStatusChange((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.sendAprovalUpdate((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.handleOpportunityLeadConversion((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.closeActivitiesAndFlowsForClosedLost((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
