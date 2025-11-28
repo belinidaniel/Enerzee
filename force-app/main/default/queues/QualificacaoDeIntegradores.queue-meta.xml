@@ -6,12 +6,11 @@
     <queueMembers>
         <users>
             <user>diogo.boas@enerzee.com.br</user>
+            <user>fernando.feitosa@eerzee.com.br</user>
+            <user>jonatha@enerzee.com.br</user>
         </users>
     </queueMembers>
     <queueSobject>
         <sobjectType>Case</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>SetupMessagingSession__c</sobjectType>
     </queueSobject>
 </Queue>

@@ -201,7 +201,7 @@
         <name>EzeeBot_V3</name>
     </botMlDomain>
     <botSource>None</botSource>
-    <botUser>kaique.mathias@lab065.com.br.enrz</botUser>
+    <botUser>kaique.mathias@lab065.com.br.enrz.qa</botUser>
     <contextVariables>
         <contextVariableMappings>
             <SObjectType>MessagingEndUser</SObjectType>

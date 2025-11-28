@@ -54,8 +54,8 @@
     <showSubTotals>true</showSubTotals>
     <timeFrameFilter>
         <dateColumn>LAST_STAGE_CHANGE_DATE</dateColumn>
-        <endDate>2025-07-09</endDate>
+        <endDate>2025-06-27</endDate>
         <interval>INTERVAL_CUSTOM</interval>
-        <startDate>2025-07-03</startDate>
+        <startDate>2025-01-01</startDate>
     </timeFrameFilter>
 </Report>

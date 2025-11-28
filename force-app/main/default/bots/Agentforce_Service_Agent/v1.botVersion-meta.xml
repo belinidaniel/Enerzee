@@ -4,6 +4,14 @@
     <articleAnswersGPTEnabled>false</articleAnswersGPTEnabled>
     <botDialogs>
         <botSteps>
+            <botMessages>
+                <message>Olá, eu sou a Ezee, assistente virtual da Enerzee. Como posso te ajudar?</message>
+                <messageIdentifier>dfd8285a-571d-454c-a79f-7895ddaa53a7</messageIdentifier>
+            </botMessages>
+            <stepIdentifier>f016cadc-c095-49c2-ba47-81242ba6c240</stepIdentifier>
+            <type>Message</type>
+        </botSteps>
+        <botSteps>
             <stepIdentifier>8b23b8a4-0f65-4632-b6a2-da7b7455fea0</stepIdentifier>
             <type>Wait</type>
         </botSteps>
@@ -33,7 +41,7 @@
     <botDialogs>
         <botSteps>
             <botMessages>
-                <message>um momento</message>
+                <message>One moment while I connect you to the next available service representative.</message>
                 <messageIdentifier>792ae061-fd31-4d77-a8d3-2cb6e2635687</messageIdentifier>
             </botMessages>
             <stepIdentifier>80854f71-6ed8-4adf-9070-c83ed1b76477</stepIdentifier>
@@ -125,13 +133,6 @@
     </conversationVariables>
     <conversationVariables>
         <dataType>Text</dataType>
-        <developerName>leadInteractionId</developerName>
-        <includeInPrompt>true</includeInPrompt>
-        <label>leadInteractionId</label>
-        <visibility>External</visibility>
-    </conversationVariables>
-    <conversationVariables>
-        <dataType>Text</dataType>
         <developerName>produtoInteresse</developerName>
         <includeInPrompt>true</includeInPrompt>
         <label>produtoInteresse</label>
@@ -158,10 +159,7 @@
     <intentV3Enabled>false</intentV3Enabled>
     <knowledgeActionEnabled>false</knowledgeActionEnabled>
     <knowledgeFallbackEnabled>false</knowledgeFallbackEnabled>
-    <role>Você é o Agente SDR da Enerzee. 
-Seu papel é engajar leads no WhatsApp, verificar se já existem no Salesforce 
-usando o telefone, criar novos leads quando necessário e garantir que o nome 
-seja válido antes do cadastro. Sempre cumprimente o lead pelo nome</role>
+    <role>Você é a Ezee, assistente virtual da Enerzee. Seu papel é engajar leads, entender suas necessidades e qualificá-los para um consultor.</role>
     <smallTalkEnabled>false</smallTalkEnabled>
     <stopRecPrompts>false</stopRecPrompts>
     <stopWelcomePrompts>false</stopWelcomePrompts>

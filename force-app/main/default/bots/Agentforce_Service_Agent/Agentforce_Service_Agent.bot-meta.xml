@@ -7,13 +7,8 @@
         <name>Agentforce_Service_Agent</name>
     </botMlDomain>
     <botSource>None</botSource>
-    <botUser>agentsdr@enerzee.com.br</botUser>
+    <botUser>agentsdr@enerzee.com.br.qa</botUser>
     <contextVariables>
-        <contextVariableMappings>
-            <SObjectType>MessagingEndUser</SObjectType>
-            <fieldName>MessagingEndUser.ContactId</fieldName>
-            <messageType>EmbeddedMessaging</messageType>
-        </contextVariableMappings>
         <contextVariableMappings>
             <SObjectType>MessagingEndUser</SObjectType>
             <fieldName>MessagingEndUser.ContactId</fieldName>
@@ -22,17 +17,12 @@
         <contextVariableMappings>
             <SObjectType>MessagingEndUser</SObjectType>
             <fieldName>MessagingEndUser.ContactId</fieldName>
-            <messageType>Line</messageType>
+            <messageType>EmbeddedMessaging</messageType>
         </contextVariableMappings>
         <contextVariableMappings>
             <SObjectType>MessagingEndUser</SObjectType>
             <fieldName>MessagingEndUser.ContactId</fieldName>
-            <messageType>Custom</messageType>
-        </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingEndUser</SObjectType>
-            <fieldName>MessagingEndUser.ContactId</fieldName>
-            <messageType>Text</messageType>
+            <messageType>WhatsApp</messageType>
         </contextVariableMappings>
         <contextVariableMappings>
             <SObjectType>MessagingEndUser</SObjectType>
@@ -42,7 +32,17 @@
         <contextVariableMappings>
             <SObjectType>MessagingEndUser</SObjectType>
             <fieldName>MessagingEndUser.ContactId</fieldName>
-            <messageType>WhatsApp</messageType>
+            <messageType>Text</messageType>
+        </contextVariableMappings>
+        <contextVariableMappings>
+            <SObjectType>MessagingEndUser</SObjectType>
+            <fieldName>MessagingEndUser.ContactId</fieldName>
+            <messageType>Custom</messageType>
+        </contextVariableMappings>
+        <contextVariableMappings>
+            <SObjectType>MessagingEndUser</SObjectType>
+            <fieldName>MessagingEndUser.ContactId</fieldName>
+            <messageType>Line</messageType>
         </contextVariableMappings>
         <dataType>Id</dataType>
         <description>This variable may also be referred to as MessagingEndUser ContactId</description>
@@ -137,88 +137,9 @@
     <contextVariables>
         <contextVariableMappings>
             <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LastMessageAgent__c</fieldName>
-            <messageType>Text</messageType>
-        </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LastMessageAgent__c</fieldName>
-            <messageType>Custom</messageType>
-        </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LastMessageAgent__c</fieldName>
+            <fieldName>MessagingSession.Id</fieldName>
             <messageType>EmbeddedMessaging</messageType>
         </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LastMessageAgent__c</fieldName>
-            <messageType>Line</messageType>
-        </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LastMessageAgent__c</fieldName>
-            <messageType>AppleBusinessChat</messageType>
-        </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LastMessageAgent__c</fieldName>
-            <messageType>WhatsApp</messageType>
-        </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LastMessageAgent__c</fieldName>
-            <messageType>Facebook</messageType>
-        </contextVariableMappings>
-        <dataType>Text</dataType>
-        <description>This variable may also be referred to as MessagingSession LastMessageAgent</description>
-        <developerName>LastMessageAgent</developerName>
-        <includeInPrompt>true</includeInPrompt>
-        <label>MessagingSession LastMessageAgent__c</label>
-    </contextVariables>
-    <contextVariables>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LeadId</fieldName>
-            <messageType>Custom</messageType>
-        </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LeadId</fieldName>
-            <messageType>Text</messageType>
-        </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LeadId</fieldName>
-            <messageType>Facebook</messageType>
-        </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LeadId</fieldName>
-            <messageType>WhatsApp</messageType>
-        </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LeadId</fieldName>
-            <messageType>AppleBusinessChat</messageType>
-        </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LeadId</fieldName>
-            <messageType>Line</messageType>
-        </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.LeadId</fieldName>
-            <messageType>EmbeddedMessaging</messageType>
-        </contextVariableMappings>
-        <dataType>Id</dataType>
-        <description>This variable may also be referred to as MessagingSession LeadId</description>
-        <developerName>LeadId</developerName>
-        <includeInPrompt>true</includeInPrompt>
-        <label>MessagingSession LeadId</label>
-    </contextVariables>
-    <contextVariables>
         <contextVariableMappings>
             <SObjectType>MessagingSession</SObjectType>
             <fieldName>MessagingSession.Id</fieldName>
@@ -248,11 +169,6 @@
             <SObjectType>MessagingSession</SObjectType>
             <fieldName>MessagingSession.Id</fieldName>
             <messageType>WhatsApp</messageType>
-        </contextVariableMappings>
-        <contextVariableMappings>
-            <SObjectType>MessagingSession</SObjectType>
-            <fieldName>MessagingSession.Id</fieldName>
-            <messageType>EmbeddedMessaging</messageType>
         </contextVariableMappings>
         <dataType>Id</dataType>
         <description>This variable may also be referred to as MessagingSession Id</description>
@@ -261,18 +177,7 @@
         <label>ID roteável</label>
     </contextVariables>
     <defaultOutboundFlow>Route_from_EzeeBot</defaultOutboundFlow>
-    <description>Prospete e qualifique leads 24/7 com um assistente virtual personalizado. 
-O Agente SDR da Enerzee atua principalmente via WhatsApp, capturando o 
-telefone e o nome exibido no aplicativo para identificar ou criar leads no Salesforce. 
-Ele verifica se já existe um lead com o telefone informado. 
-Se encontrar, saúda o lead pelo nome cadastrado e continua o atendimento. 
-Se não encontrar, confirma com o usuário se o nome exibido no WhatsApp 
-é o correto ou se prefere outro. Caso o nome seja válido, cria um novo lead 
-com os dados fornecidos (nome confirmado e telefone) e registra a origem como WhatsApp. 
-Se o nome for um apelido ou não parecer adequado, sempre pede confirmação antes de criar. 
-Depois de identificar ou criar o lead, o agente conduz a conversa para entender 
-as necessidades do cliente e qual solução Enerzee pode atendê-lo melhor 
-(Ezee Solar, Ezee Connect, Ezee Livre, baterias, carregadores de veículos, etc.).</description>
+    <description>Prospecte e qualifique leads 24/7 com um assistente virtual personalizado. A Ezee, agente SDR de IA da Enerzee, interage em tempo real com leads provenientes de campanhas de marketing, site e WhatsApp. Ela envia mensagens personalizadas com base no interesse do lead, coleta informações relevantes e agenda o encaminhamento para um consultor humano quando necessário.</description>
     <label>Agentforce Service Agent</label>
     <logPrivateConversationData>true</logPrivateConversationData>
     <richContentEnabled>true</richContentEnabled>

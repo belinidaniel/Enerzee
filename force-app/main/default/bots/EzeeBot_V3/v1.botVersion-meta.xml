@@ -3341,6 +3341,12 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
     </conversationVariables>
     <conversationVariables>
         <dataType>Text</dataType>
+        <developerName>None</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>None</label>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
         <developerName>Not_Exist</developerName>
         <includeInPrompt>false</includeInPrompt>
         <label>Not Exist</label>
@@ -3364,11 +3370,23 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
         <label>Proposal Number</label>
     </conversationVariables>
     <conversationVariables>
+        <dataType>Text</dataType>
+        <developerName>redirectTo</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>redirectTo</label>
+    </conversationVariables>
+    <conversationVariables>
         <SObjectType>FlowDefinition</SObjectType>
         <dataType>Id</dataType>
         <developerName>Rounting_to_queue_flow</developerName>
         <includeInPrompt>false</includeInPrompt>
         <label>Rounting_to_queue_flow</label>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <developerName>SessionId</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>SessionId</label>
     </conversationVariables>
     <conversationVariables>
         <dataType>Text</dataType>
@@ -3408,28 +3426,10 @@ Informamos que o nosso horário de atendimento é das 7:30 às 11:30 e das 13:00
         <label>Transfer Queue</label>
     </conversationVariables>
     <conversationVariables>
-        <dataType>Text</dataType>
-        <developerName>redirectTo</developerName>
-        <includeInPrompt>false</includeInPrompt>
-        <label>redirectTo</label>
-    </conversationVariables>
-    <conversationVariables>
         <dataType>Id</dataType>
         <developerName>userId</developerName>
         <includeInPrompt>false</includeInPrompt>
         <label>userId</label>
-    </conversationVariables>
-    <conversationVariables>
-        <dataType>Text</dataType>
-        <developerName>SessionId</developerName>
-        <includeInPrompt>false</includeInPrompt>
-        <label>SessionId</label>
-    </conversationVariables>
-    <conversationVariables>
-        <dataType>Text</dataType>
-        <developerName>None</developerName>
-        <includeInPrompt>false</includeInPrompt>
-        <label>None</label>
     </conversationVariables>
     <entryDialog>Welcome</entryDialog>
     <intentDisambiguationEnabled>false</intentDisambiguationEnabled>

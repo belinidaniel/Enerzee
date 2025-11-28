@@ -201,10 +201,6 @@
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.MainViability__c</fieldItem>
                 <identifier>RecordMainViability__cField</identifier>
             </fieldInstance>
@@ -1301,16 +1297,6 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>opportunityIntegrationLogs</componentName>
-                <identifier>c_opportunityIntegrationLogs</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>Facet-93c435dd-e109-4f32-a961-f0533076e6df</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
                     <value>Facet-68fc3147-69e8-457d-8ae8-52934b5a7826</value>
@@ -1321,27 +1307,6 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>flexipage_tab5</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-93c435dd-e109-4f32-a961-f0533076e6df</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>Logs</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>flexipage_tab4</identifier>
-                <visibilityRule>
-                    <criteria>
-                        <leftValue>{!$User.Profile.Name}</leftValue>
-                        <operator>CONTAINS</operator>
-                        <rightValue>Admin</rightValue>
-                    </criteria>
-                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <name>Facet-99477631-e758-4446-bfa3-97b815f97ac8</name>
@@ -1367,12 +1332,6 @@
         <type>Region</type>
     </flexiPageRegions>
     <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>opportunityProposalConsole</componentName>
-                <identifier>c_opportunityProposalConsole</identifier>
-            </componentInstance>
-        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
@@ -1416,16 +1375,6 @@
             </componentInstance>
         </itemInstances>
         <name>Facet-b711b479-f1e5-4c86-8923-5e321156e736</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>proposalPendingPanel</componentName>
-                <identifier>c_proposalPendingPanel</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>Facet-5a8f04b1-b8d2-4053-88cc-6d5f62fe3e9d</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -1490,6 +1439,16 @@
             </componentInstance>
         </itemInstances>
         <name>Facet-9a8e9493-6a99-4ad6-be40-f4c3005a32ca</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>proposalPendingPanel</componentName>
+                <identifier>c_proposalPendingPanel</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-5a8f04b1-b8d2-4053-88cc-6d5f62fe3e9d</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>

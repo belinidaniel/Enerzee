@@ -3,11 +3,9 @@
     <doesSendEmailToMembers>false</doesSendEmailToMembers>
     <name>Comercial</name>
     <queueMembers>
-        <roles>
-            <role>Assistente_Comercial</role>
-            <role>CSO</role>
-            <role>GerenteComercial</role>
-        </roles>
+        <users>
+            <user>consultor@enerzee.com.br</user>
+        </users>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>
     <queueSobject>
@@ -24,8 +22,5 @@
     </queueSobject>
     <queueSobject>
         <sobjectType>MessagingSession</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>SetupMessagingSession__c</sobjectType>
     </queueSobject>
 </Queue>

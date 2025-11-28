@@ -6,14 +6,15 @@
    ISCHANGED(StageName),
    OR(
       ISPICKVAL(PRIORVALUE(StageName), &apos;Viabilidade Técnica&apos;),
-      ISPICKVAL(PRIORVALUE(StageName), &apos;Viabilidade Tecnica&apos;)
+      ISPICKVAL(PRIORVALUE(StageName), &apos;Viabilidade Tecnica&apos;)						
    ),
    ISBLANK(TEXT(Categoria__c)),
    OR(
       RecordType.DeveloperName == &apos;Solar&apos;,
       RecordType.DeveloperName == &apos;EzeeSolarA&apos;,
       RecordType.DeveloperName == &apos;EzeeSolarB&apos;
-   )
+   ),
+				TEXT(StageName) != &apos;Fechado Perdido&apos;
 )</errorConditionFormula>
     <errorMessage>O campo &quot;Categoria&quot; deve ser preenchido na fase de Análise de viabilidade.</errorMessage>
 </ValidationRule>

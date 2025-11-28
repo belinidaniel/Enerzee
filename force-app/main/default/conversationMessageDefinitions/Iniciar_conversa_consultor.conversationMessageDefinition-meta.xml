@@ -22,7 +22,7 @@
         </primitiveValues>
     </constants>
     <description>Iniciar conversa - Consultores</description>
-    <label>1 - Iniciar conversa  - Consultor</label>
+    <label>Iniciar conversa  - Consultor</label>
     <language>pt_BR</language>
     <messageLayouts>
         <externalTemplates>

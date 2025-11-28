@@ -16,9 +16,9 @@
         <legendPosition>Right</legendPosition>
         <location>CHART_TOP</location>
         <showAxisLabels>true</showAxisLabels>
-        <showPercentage>true</showPercentage>
+        <showPercentage>false</showPercentage>
         <showTotal>false</showTotal>
-        <showValues>true</showValues>
+        <showValues>false</showValues>
         <size>Medium</size>
         <summaryAxisRange>Auto</summaryAxisRange>
         <textColor>#000000</textColor>
@@ -46,7 +46,7 @@
         <field>CLOSE_DATE</field>
     </columns>
     <columns>
-        <field>Opportunity.ConsultorOportunidade__c</field>
+        <field>FULL_NAME</field>
     </columns>
     <filter>
         <booleanFilter>(1 OR 2) AND 3</booleanFilter>
@@ -71,7 +71,6 @@
             <operator>notEqual</operator>
             <value>Opportunity.Bitrix</value>
         </criteriaItems>
-        <language>en_US</language>
     </filter>
     <format>Matrix</format>
     <groupingsAcross>

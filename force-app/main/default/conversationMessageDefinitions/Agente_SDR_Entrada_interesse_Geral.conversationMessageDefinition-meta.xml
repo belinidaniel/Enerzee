@@ -21,7 +21,7 @@
             <urlValue>https://www.example.com</urlValue>
         </primitiveValues>
     </constants>
-    <label>AUTOMAÇÂO - agent_sdr_entrada_interesse_geral</label>
+    <label>Agente SDR - Entrada interesse Geral</label>
     <language>pt_BR</language>
     <messageLayouts>
         <externalTemplates>

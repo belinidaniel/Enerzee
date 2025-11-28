@@ -62,35 +62,6 @@
     <columns>
         <field>OPPORTUNITY_NAME</field>
     </columns>
-    <columns>
-        <field>Opportunity.ConsultorOportunidade__c</field>
-    </columns>
-    <columns>
-        <field>CREATED_DATE</field>
-    </columns>
-    <columns>
-        <field>CLOSE_DATE</field>
-    </columns>
-    <columns>
-        <field>RECORDTYPE</field>
-    </columns>
-    <columns>
-        <field>STAGE_NAME</field>
-    </columns>
-    <columns>
-        <field>LAST_UPDATE</field>
-    </columns>
-    <columns>
-        <aggregateTypes>Sum</aggregateTypes>
-        <field>Opportunity.PotenciaPicoSistema__c</field>
-    </columns>
-    <columns>
-        <aggregateTypes>Sum</aggregateTypes>
-        <field>Opportunity.ValorTotalProdutos__c</field>
-    </columns>
-    <columns>
-        <field>LAST_UPDATE_BY</field>
-    </columns>
     <filter>
         <criteriaItems>
             <column>RECORDTYPE</column>
@@ -99,9 +70,13 @@
             <operator>notEqual</operator>
             <value>Opportunity.Bitrix</value>
         </criteriaItems>
-        <language>pt_BR</language>
     </filter>
-    <format>Summary</format>
+    <format>Matrix</format>
+    <groupingsAcross>
+        <dateGranularity>Day</dateGranularity>
+        <field>STAGE_NAME</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsAcross>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
         <field>BucketField_46964861</field>

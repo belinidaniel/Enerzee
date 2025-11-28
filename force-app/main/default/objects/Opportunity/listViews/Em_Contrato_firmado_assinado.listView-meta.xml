@@ -3,18 +3,19 @@
     <fullName>Em_Contrato_firmado_assinado</fullName>
     <columns>Numeroproposta__c</columns>
     <columns>OPPORTUNITY.NAME</columns>
-    <columns>ParentOpportunity__c</columns>
+    <columns>ACCOUNT.NAME</columns>
     <columns>ValorTotalProposta__c</columns>
-    <columns>ComentarioSolicitante__c</columns>
-    <columns>OPPORTUNITY.STAGE_NAME</columns>
     <columns>ConsultorOportunidade__c</columns>
     <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
     <columns>OPPORTUNITY.RECORDTYPE</columns>
+    <columns>CORE.USERS.FULL_NAME</columns>
+    <columns>OPPORTUNITY.CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>OPPORTUNITY.STAGE_NAME</field>
         <operation>equals</operation>
-        <value>Confirmação de pagamento,Confirmação de pagamento contrato,Confirmação de pagamento sinal</value>
+        <value>Contrato firmado / Assinado</value>
     </filters>
-    <label>Confirmação pagamento e Pagamento Sinal</label>
+    <label>Em Contrato firmado/assinado</label>
 </ListView>

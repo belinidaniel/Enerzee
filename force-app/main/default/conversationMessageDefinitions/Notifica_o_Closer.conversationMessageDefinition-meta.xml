@@ -21,7 +21,7 @@
             <urlValue>https://www.example.com</urlValue>
         </primitiveValues>
     </constants>
-    <label>AUTOMAÇÂO - Notificação - Closer</label>
+    <label>Notificação - Closer</label>
     <language>pt_BR</language>
     <messageLayouts>
         <externalTemplates>

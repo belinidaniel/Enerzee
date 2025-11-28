@@ -6,26 +6,7 @@
     <columns>
         <field>Contact$Account</field>
     </columns>
-    <columns>
-        <field>Contact.ActionCadenceTracker$ActionCadence</field>
-    </columns>
-    <columns>
-        <field>Contact.ActionCadenceTracker$RelatedToAttributionType</field>
-    </columns>
-    <columns>
-        <field>Contact.ActionCadenceTracker$LastCompletedStep.StepTitle</field>
-    </columns>
     <description>Quais contatos estão em ritmos?</description>
-    <filter>
-        <criteriaItems>
-            <column>Contact.ActionCadenceTracker$State</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>false</isUnlocked>
-            <operator>equals</operator>
-            <value>R</value>
-        </criteriaItems>
-        <language>en_US</language>
-    </filter>
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>

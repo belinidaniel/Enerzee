@@ -59,7 +59,7 @@
     <columns>
         <field>UserServicePresence$CreatedBy</field>
     </columns>
-    <description>Este relatório apresenta detalhes dos representantes, agrupados por representante. Inclui métricas como capacidade média, duração de ociosidade e duração dos status.</description>
+    <description>This report provides rep details, grouped by rep. Details include key metrics such as average capacity, idle duration, and status duration.</description>
     <format>Matrix</format>
     <groupingsAcross>
         <field>UserServicePresence$CreatedDate</field>
@@ -75,7 +75,7 @@
         <field>UserServicePresence$User</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Status de Presença dos Representantes</name>
+    <name>Rep Presence Status</name>
     <params>
         <name>co</name>
         <value>1</value>

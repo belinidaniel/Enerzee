@@ -472,7 +472,6 @@ public with sharing class PDFControllerExtension {
                 if (stageToSet != null && opp.StageName != stageToSet) {
                     System.debug('savePdfFileAsyncInternal early-exit: ajustando stage existente para ' + stageToSet);
                     update new Opportunity(Id = opp.Id, StageName = stageToSet);
-
                 }
             } catch (Exception eEarly) {
                 Utils.createLog('PDFControllerExtension', 'savePdfFileAsyncInternal.earlyExit', eEarly);

@@ -85,11 +85,6 @@
         <default>false</default>
         <label>Supervisor Comercial</label>
     </customValue>
-    <customValue>
-        <fullName>Comercial</fullName>
-        <default>false</default>
-        <label>Comercial</label>
-    </customValue>
     <masterLabel>Messaging Session Roles</masterLabel>
     <sorted>false</sorted>
 </GlobalValueSet>

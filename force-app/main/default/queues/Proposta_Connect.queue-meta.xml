@@ -4,7 +4,7 @@
     <name>Proposta - Connect</name>
     <queueMembers>
         <users>
-            <user>wellington.santos@enerzee.com.br</user>
+            <user>beatriz.santana@enerzee.com.br</user>
         </users>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>
@@ -16,8 +16,5 @@
     </queueSobject>
     <queueSobject>
         <sobjectType>MessagingSession</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>SetupMessagingSession__c</sobjectType>
     </queueSobject>
 </Queue>

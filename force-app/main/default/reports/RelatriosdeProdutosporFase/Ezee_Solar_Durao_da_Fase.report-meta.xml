@@ -64,8 +64,9 @@
         <backgroundColor2>#FFFFFF</backgroundColor2>
         <backgroundFadeDir>Diagonal</backgroundFadeDir>
         <chartSummaries>
+            <aggregate>Median</aggregate>
             <axisBinding>y</axisBinding>
-            <column>RowCount</column>
+            <column>STAGE_DURATION</column>
         </chartSummaries>
         <chartType>HorizontalBar</chartType>
         <enableHoverLabels>false</enableHoverLabels>
@@ -84,37 +85,24 @@
         <titleSize>18</titleSize>
     </chart>
     <columns>
-        <field>Opportunity.ReferenceIdRevo__c</field>
+        <field>CREATED_DATE</field>
     </columns>
     <columns>
-        <field>Opportunity.Numeroproposta__c</field>
-    </columns>
-    <columns>
-        <field>OPPORTUNITY_NAME</field>
-    </columns>
-    <columns>
-        <aggregateTypes>Sum</aggregateTypes>
+        <aggregateTypes>Median</aggregateTypes>
         <field>STAGE_DURATION</field>
     </columns>
     <columns>
-        <field>Opportunity.ConsultorOportunidade__c</field>
-    </columns>
-    <columns>
-        <field>RECORDTYPE</field>
-    </columns>
-    <columns>
-        <field>Opportunity.Parceiro__c</field>
-    </columns>
-    <columns>
-        <field>CREATED</field>
-    </columns>
-    <columns>
-        <field>CLOSE_DATE</field>
-    </columns>
-    <columns>
-        <field>Opportunity.DescricaoMotivoPerda__c</field>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>Opportunity.ValorTotalProposta__c</field>
     </columns>
     <filter>
+        <criteriaItems>
+            <column>BucketField_46964861</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>Ezee Solar</value>
+        </criteriaItems>
         <criteriaItems>
             <column>RECORDTYPE</column>
             <columnToColumn>false</columnToColumn>
@@ -123,13 +111,12 @@
             <value>Opportunity.Bitrix</value>
         </criteriaItems>
         <criteriaItems>
-            <column>RECORDTYPE</column>
+            <column>Opportunity.GrupoTarifario__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Opportunity.EzeeSolarB</value>
+            <value>Grupo B</value>
         </criteriaItems>
-        <language>pt_BR</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>
@@ -139,7 +126,11 @@
     </groupingsDown>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
-        <field>Opportunity.Status__c</field>
+        <field>OPPORTUNITY_NAME</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <field>CLOSE_DATE</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <name>Ezee Solar: Duração da Fase</name>
@@ -157,11 +148,9 @@
     </params>
     <reportType>Opportunity</reportType>
     <scope>organization</scope>
-    <showDetails>true</showDetails>
+    <showDetails>false</showDetails>
     <showGrandTotal>false</showGrandTotal>
-    <showSubTotals>true</showSubTotals>
-    <sortColumn>STAGE_DURATION</sortColumn>
-    <sortOrder>Asc</sortOrder>
+    <showSubTotals>false</showSubTotals>
     <timeFrameFilter>
         <dateColumn>CREATED_DATE</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>

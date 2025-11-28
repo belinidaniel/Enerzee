@@ -21,7 +21,7 @@
             <urlValue>https://www.example.com</urlValue>
         </primitiveValues>
     </constants>
-    <label>AUTOMAÇÂO - Jornada do Cliente - Entrega do Kit WEG</label>
+    <label>Jornada do Cliente - Entrega do Kit WEG</label>
     <language>pt_BR</language>
     <messageLayouts>
         <externalTemplates>

@@ -33,7 +33,7 @@
             <role>Analista_de_Engenharia_Viabilidade</role>
         </sharedTo>
         <sharedFrom>
-            <roleAndSubordinatesInternal>Supervisor_de_Viabilidade</roleAndSubordinatesInternal>
+            <roleAndSubordinatesInternal>CoordenadorViabilidade</roleAndSubordinatesInternal>
         </sharedFrom>
     </sharingOwnerRules>
 </SharingRules>

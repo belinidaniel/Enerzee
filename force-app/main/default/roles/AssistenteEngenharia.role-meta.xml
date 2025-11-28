@@ -5,5 +5,5 @@
     <mayForecastManagerShare>false</mayForecastManagerShare>
     <name>Assistente de Engenharia</name>
     <opportunityAccessLevel>Edit</opportunityAccessLevel>
-    <parentRole>Supervisor_de_Projetos</parentRole>
+    <parentRole>Supervisor_de_Engenharia</parentRole>
 </Role>

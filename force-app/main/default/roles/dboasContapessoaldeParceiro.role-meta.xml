@@ -6,5 +6,5 @@
     <mayForecastManagerShare>false</mayForecastManagerShare>
     <name>dboas Conta pessoal de Parceiro</name>
     <opportunityAccessLevel>None</opportunityAccessLevel>
-    <parentRole>Assistente_Assistencia_Tecnica</parentRole>
+    <parentRole>Estagiario_de_Engenharia_Obras</parentRole>
 </Role>

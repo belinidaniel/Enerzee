@@ -59,68 +59,25 @@
             <value>Ezee Livre</value>
         </values>
     </buckets>
-    <chart>
-        <backgroundColor1>#FFFFFF</backgroundColor1>
-        <backgroundColor2>#FFFFFF</backgroundColor2>
-        <backgroundFadeDir>Diagonal</backgroundFadeDir>
-        <chartSummaries>
-            <aggregate>Sum</aggregate>
-            <axisBinding>y</axisBinding>
-            <column>Opportunity.ValorTotalProposta__c</column>
-        </chartSummaries>
-        <chartType>HorizontalBar</chartType>
-        <enableHoverLabels>false</enableHoverLabels>
-        <expandOthers>true</expandOthers>
-        <groupingColumn>STAGE_NAME</groupingColumn>
-        <location>CHART_BOTTOM</location>
-        <showAxisLabels>true</showAxisLabels>
-        <showPercentage>false</showPercentage>
-        <showTotal>false</showTotal>
-        <showValues>false</showValues>
-        <size>Medium</size>
-        <summaryAxisRange>Auto</summaryAxisRange>
-        <textColor>#000000</textColor>
-        <textSize>12</textSize>
-        <titleColor>#000000</titleColor>
-        <titleSize>18</titleSize>
-    </chart>
     <columns>
         <field>CREATED_DATE</field>
     </columns>
     <columns>
-        <field>CLOSE_DATE</field>
-    </columns>
-    <columns>
-        <field>Opportunity.Numeroproposta__c</field>
-    </columns>
-    <columns>
-        <field>OPPORTUNITY_NAME</field>
-    </columns>
-    <columns>
-        <field>RECORDTYPE</field>
-    </columns>
-    <columns>
-        <field>Opportunity.Parceiro__c</field>
-    </columns>
-    <columns>
-        <field>Opportunity.ConsultorOportunidade__c</field>
-    </columns>
-    <columns>
-        <aggregateTypes>Sum</aggregateTypes>
-        <field>Opportunity.ExcedeuSLAPropostaEnviada__c</field>
+        <aggregateTypes>Median</aggregateTypes>
+        <field>STAGE_DURATION</field>
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
         <field>Opportunity.ValorTotalProposta__c</field>
     </columns>
-    <columns>
-        <aggregateTypes>Sum</aggregateTypes>
-        <field>STAGE_DURATION</field>
-    </columns>
-    <columns>
-        <field>Opportunity.DescricaoMotivoPerda__c</field>
-    </columns>
     <filter>
+        <criteriaItems>
+            <column>BucketField_46964861</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>Ezee Solar</value>
+        </criteriaItems>
         <criteriaItems>
             <column>RECORDTYPE</column>
             <columnToColumn>false</columnToColumn>
@@ -129,18 +86,22 @@
             <value>Opportunity.Bitrix</value>
         </criteriaItems>
         <criteriaItems>
-            <column>RECORDTYPE</column>
+            <column>Opportunity.GrupoTarifario__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Opportunity.EzeeSolarA</value>
+            <value>Grupo A</value>
         </criteriaItems>
-        <language>pt_BR</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
         <field>STAGE_NAME</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>OPPORTUNITY_NAME</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <name>Ezee Solar A: Duração da Fase</name>
@@ -158,11 +119,9 @@
     </params>
     <reportType>Opportunity</reportType>
     <scope>organization</scope>
-    <showDetails>true</showDetails>
+    <showDetails>false</showDetails>
     <showGrandTotal>false</showGrandTotal>
     <showSubTotals>false</showSubTotals>
-    <sortColumn>CREATED_DATE</sortColumn>
-    <sortOrder>Desc</sortOrder>
     <timeFrameFilter>
         <dateColumn>CLOSE_DATE</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>

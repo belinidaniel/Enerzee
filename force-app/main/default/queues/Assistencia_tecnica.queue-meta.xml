@@ -3,11 +3,11 @@
     <doesSendEmailToMembers>false</doesSendEmailToMembers>
     <name>Assistência tecnica</name>
     <queueMembers>
-        <roles>
-            <role>Analista_de_Engenharia</role>
-            <role>CoordenadorEngenharia</role>
-            <role>Supervisor_Assistencia_Tecnica</role>
-        </roles>
+        <users>
+            <user>ellen.vieira@enerzee.com.br</user>
+            <user>joao.souza@enerzee.com.br</user>
+            <user>mauro.paula@enerzee.com.br</user>
+        </users>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>
     <queueSobject>
@@ -24,8 +24,5 @@
     </queueSobject>
     <queueSobject>
         <sobjectType>MessagingSession</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>SetupMessagingSession__c</sobjectType>
     </queueSobject>
 </Queue>

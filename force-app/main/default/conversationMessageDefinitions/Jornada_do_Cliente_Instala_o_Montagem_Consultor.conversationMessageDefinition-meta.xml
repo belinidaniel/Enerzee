@@ -21,8 +21,7 @@
             <urlValue>https://www.example.com</urlValue>
         </primitiveValues>
     </constants>
-    <contentCategory>Reminder</contentCategory>
-    <label>AUTOMAÇÂO -  Jornada do Cliente - Instalação Montagem - Consultor</label>
+    <label>Jornada do Cliente - Instalação Montagem - Consultor</label>
     <language>pt_BR</language>
     <messageLayouts>
         <externalTemplates>

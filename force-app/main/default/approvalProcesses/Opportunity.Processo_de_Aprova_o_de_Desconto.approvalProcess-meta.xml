@@ -53,6 +53,10 @@
             <name>Atualiza_Status_do_Desconto</name>
             <type>FieldUpdate</type>
         </action>
+        <action>
+            <name>Proposta_Gerada</name>
+            <type>FieldUpdate</type>
+        </action>
     </finalApprovalActions>
     <finalApprovalRecordLock>false</finalApprovalRecordLock>
     <finalRejectionActions>

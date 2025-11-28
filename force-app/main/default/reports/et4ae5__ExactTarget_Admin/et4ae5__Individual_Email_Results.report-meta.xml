@@ -55,7 +55,6 @@
             <operator>notEqual</operator>
             <value></value>
         </criteriaItems>
-        <language>en_US</language>
     </filter>
     <format>Tabular</format>
     <name>IERs (for an Email Send)</name>

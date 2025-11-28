@@ -54,7 +54,6 @@
             <operator>contains</operator>
             <value>Parceiro</value>
         </criteriaItems>
-        <language>en_US</language>
     </filter>
     <format>Tabular</format>
     <name>Principais oportunidades</name>

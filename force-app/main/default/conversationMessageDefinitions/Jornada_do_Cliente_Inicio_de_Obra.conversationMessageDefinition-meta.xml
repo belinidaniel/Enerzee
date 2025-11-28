@@ -21,7 +21,7 @@
             <urlValue>https://www.example.com</urlValue>
         </primitiveValues>
     </constants>
-    <label>AUTOMAÇÂO - Jornada do Cliente - Início de Obra</label>
+    <label>Jornada do Cliente - Início de Obra</label>
     <language>pt_BR</language>
     <messageLayouts>
         <externalTemplates>

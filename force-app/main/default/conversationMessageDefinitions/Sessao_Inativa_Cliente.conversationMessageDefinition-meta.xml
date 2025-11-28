@@ -21,7 +21,7 @@
             <urlValue>https://www.example.com</urlValue>
         </primitiveValues>
     </constants>
-    <label>2 - Sessão Inativa - Cliente</label>
+    <label>Sessão Inativa - Cliente</label>
     <language>pt_BR</language>
     <messageLayouts>
         <externalTemplates>

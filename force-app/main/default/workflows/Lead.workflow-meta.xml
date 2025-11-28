@@ -8,6 +8,10 @@
             <field>EmailConsultor__c</field>
             <type>email</type>
         </recipients>
+        <recipients>
+            <recipient>kaique.mathias@lab065.com.br.enrz</recipient>
+            <type>user</type>
+        </recipients>
         <senderAddress>support@enerzee.com.br</senderAddress>
         <senderType>OrgWideEmailAddress</senderType>
         <template>unfiled$public/NotificacaoNovoPotencialCliente</template>
@@ -16,6 +20,10 @@
         <fullName>Notificar_novo_consultor</fullName>
         <description>Notificar novo consultor</description>
         <protected>false</protected>
+        <recipients>
+            <recipient>kaique.mathias@lab065.com.br.enrz</recipient>
+            <type>user</type>
+        </recipients>
         <recipients>
             <recipient>sperafico@enerzee.com.br</recipient>
             <type>user</type>
@@ -35,16 +43,5 @@
         <senderAddress>support@enerzee.com.br</senderAddress>
         <senderType>OrgWideEmailAddress</senderType>
         <template>unfiled$public/Notifica_o_de_novo_potencial_consultor</template>
-    </alerts>
-    <alerts>
-        <fullName>Send_Invite_Agent_Force</fullName>
-        <description>Send Invite Agent Force</description>
-        <protected>false</protected>
-        <recipients>
-            <field>Email</field>
-            <type>email</type>
-        </recipients>
-        <senderType>CurrentUser</senderType>
-        <template>unfiled$public/AgenteForce_emailTeste</template>
     </alerts>
 </Workflow>

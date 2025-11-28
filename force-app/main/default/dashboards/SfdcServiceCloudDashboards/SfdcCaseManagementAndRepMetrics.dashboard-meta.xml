@@ -58,6 +58,7 @@
                 <legendPosition>Bottom</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcRepWorkByCasePriorityAndOrigin</report>
                 <showPercentage>false</showPercentage>
+                <showPicturesOnCharts>false</showPicturesOnCharts>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
                 <sortLegendValues>false</sortLegendValues>
@@ -137,6 +138,7 @@
                 <legendPosition>Right</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcRepWorkByCaseType</report>
                 <showPercentage>false</showPercentage>
+                <showPicturesOnCharts>false</showPicturesOnCharts>
                 <showValues>false</showValues>
                 <sortBy>RowValueDescending</sortBy>
                 <sortLegendValues>false</sortLegendValues>
@@ -320,6 +322,7 @@
                 <legendPosition>Bottom</legendPosition>
                 <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcClosedCasesByRep</report>
                 <showPercentage>false</showPercentage>
+                <showPicturesOnCharts>false</showPicturesOnCharts>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
                 <sortLegendValues>false</sortLegendValues>

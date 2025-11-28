@@ -88,16 +88,7 @@
         <field>CREATED_DATE</field>
     </columns>
     <columns>
-        <field>Opportunity.Numeroproposta__c</field>
-    </columns>
-    <columns>
         <field>OPPORTUNITY_NAME</field>
-    </columns>
-    <columns>
-        <field>RECORDTYPE</field>
-    </columns>
-    <columns>
-        <field>Opportunity.SubTipo__c</field>
     </columns>
     <columns>
         <aggregateTypes>Median</aggregateTypes>
@@ -108,6 +99,13 @@
         <field>Opportunity.ValorTotalProposta__c</field>
     </columns>
     <filter>
+        <criteriaItems>
+            <column>BucketField_46964861</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>Solar</value>
+        </criteriaItems>
         <criteriaItems>
             <column>RECORDTYPE</column>
             <columnToColumn>false</columnToColumn>
@@ -120,16 +118,8 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Confirmação de pagamento sinal,Método de pagamento</value>
+            <value>Método de pagamento</value>
         </criteriaItems>
-        <criteriaItems>
-            <column>RECORDTYPE</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>equals</operator>
-            <value>Opportunity.OutrasOportunidades,Opportunity.Produtos,Opportunity.Servicos,Opportunity.Solar</value>
-        </criteriaItems>
-        <language>en_US</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>
@@ -137,7 +127,7 @@
         <field>STAGE_NAME</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Todos Produtos - Conf. Pagamento Sinal</name>
+    <name>Solar - Método de pagamento</name>
     <params>
         <name>open</name>
         <value>all</value>

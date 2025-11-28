@@ -68,9 +68,8 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>,Novo,Trabalhando,Distribuído,Remarketing,Aguardando Pagamento,Qualified</value>
+            <value>,Novo,Trabalhando,Distribuído,Remarketing,Aguardando Pagamento,Unqualified,Qualified</value>
         </criteriaItems>
-        <language>en_US</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>

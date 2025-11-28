@@ -24,7 +24,7 @@
     </values>
     <values>
         <field>URL__c</field>
-        <value xsi:type="xsd:string">https://voenerzeeapi.azurewebsites.net/api/Usuario/PreCadastro-Cliente</value>
+        <value xsi:type="xsd:string">https://voenerzeeapihomolog.azurewebsites.net/api/Usuario/PreCadastro-Cliente</value>
     </values>
     <values>
         <field>Validade_token__c</field>

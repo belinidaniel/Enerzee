@@ -5,5 +5,5 @@
     <mayForecastManagerShare>false</mayForecastManagerShare>
     <name>Eletricista de Manutenção / Viabilidade</name>
     <opportunityAccessLevel>Edit</opportunityAccessLevel>
-    <parentRole>Supervisor_de_Viabilidade</parentRole>
+    <parentRole>CoordenadorViabilidade</parentRole>
 </Role>

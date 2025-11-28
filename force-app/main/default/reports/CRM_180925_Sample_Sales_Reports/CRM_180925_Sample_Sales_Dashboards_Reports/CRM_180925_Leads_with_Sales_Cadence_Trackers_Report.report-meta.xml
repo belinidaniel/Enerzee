@@ -12,41 +12,7 @@
     <columns>
         <field>Lead$ConvertedOpportunity.Name</field>
     </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$ActionCadence</field>
-    </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$CreatedDate</field>
-    </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$State</field>
-    </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$CompletionReason</field>
-    </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$Owner</field>
-    </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$CurrentStep.StepTitle</field>
-    </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$LastCompletedStep.StepTitle</field>
-    </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$LastCompletedStep.LastModifiedDate</field>
-    </columns>
     <description>Quais leads estão em ritmos?</description>
-    <filter>
-        <criteriaItems>
-            <column>Lead.ActionCadenceTracker$State</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>false</isUnlocked>
-            <operator>equals</operator>
-            <value>R</value>
-        </criteriaItems>
-        <language>en_US</language>
-    </filter>
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>

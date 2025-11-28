@@ -22,24 +22,6 @@
     <columns>
         <field>Lead$ConvertedOpportunity.Amount</field>
     </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$CreatedDate</field>
-    </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$State</field>
-    </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$CompletionReason</field>
-    </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$CurrentStep.StepTitle</field>
-    </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$LastCompletedStep.StepTitle</field>
-    </columns>
-    <columns>
-        <field>Lead.ActionCadenceTracker$LastCompletedStep.LastModifiedDate</field>
-    </columns>
     <description>Quais representantes converteram mais leads nos últimos 30 dias com cada ritmo?</description>
     <filter>
         <criteriaItems>
@@ -63,19 +45,8 @@
             <operator>equals</operator>
             <value>LAST_N_DAYS:30</value>
         </criteriaItems>
-        <language>en_US</language>
     </filter>
     <format>Summary</format>
-    <groupingsDown>
-        <dateGranularity>Day</dateGranularity>
-        <field>Lead.ActionCadenceTracker$Owner</field>
-        <sortOrder>Asc</sortOrder>
-    </groupingsDown>
-    <groupingsDown>
-        <dateGranularity>Day</dateGranularity>
-        <field>Lead.ActionCadenceTracker$ActionCadence</field>
-        <sortOrder>Asc</sortOrder>
-    </groupingsDown>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
         <field>Lead$Id</field>

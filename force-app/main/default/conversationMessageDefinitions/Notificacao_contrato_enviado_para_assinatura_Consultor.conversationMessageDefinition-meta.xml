@@ -21,7 +21,7 @@
             <urlValue>https://www.example.com</urlValue>
         </primitiveValues>
     </constants>
-    <label>AUTOMAÇÂO - Notificação contrato enviado para assinatura - Consultor</label>
+    <label>Notificação contrato enviado para assinatura - Consultor</label>
     <language>pt_BR</language>
     <messageLayouts>
         <externalTemplates>

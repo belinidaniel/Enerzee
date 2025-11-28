@@ -21,7 +21,7 @@
             <urlValue>https://www.example.com</urlValue>
         </primitiveValues>
     </constants>
-    <label>AUTOMAÇÂO - Jornada do Cliente - Viabilidade Concluída</label>
+    <label>Jornada do Cliente - Viabilidade Concluída</label>
     <language>pt_BR</language>
     <messageLayouts>
         <externalTemplates>

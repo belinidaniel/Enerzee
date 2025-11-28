@@ -3,11 +3,9 @@
     <doesSendEmailToMembers>false</doesSendEmailToMembers>
     <name>Suporte ao Integrador</name>
     <queueMembers>
-        <roles>
-            <role>Analista_de_Engenharia</role>
-            <role>CoordenadorEngenharia</role>
-            <role>GerenteEngenharia</role>
-        </roles>
+        <users>
+            <user>diogo.boas@enerzee.com.br</user>
+        </users>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>
     <queueSobject>
@@ -24,8 +22,5 @@
     </queueSobject>
     <queueSobject>
         <sobjectType>MessagingSession</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>SetupMessagingSession__c</sobjectType>
     </queueSobject>
 </Queue>

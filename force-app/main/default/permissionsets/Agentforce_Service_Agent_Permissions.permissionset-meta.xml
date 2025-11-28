@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <dataspaceScopes>
+        <customizeActivationDefinitions>false</customizeActivationDefinitions>
+        <customizeAllDefinitions>false</customizeAllDefinitions>
+        <customizeCalculatedInsightDefinitions>false</customizeCalculatedInsightDefinitions>
+        <customizeDataActionDefinitions>false</customizeDataActionDefinitions>
+        <customizeDataApplicationDefinitions>false</customizeDataApplicationDefinitions>
+        <customizeDataObjSecondaryIndexDefinitions>false</customizeDataObjSecondaryIndexDefinitions>
+        <customizeDataShareDefinitions>false</customizeDataShareDefinitions>
+        <customizeFTestDataspaceScopedDefinition>false</customizeFTestDataspaceScopedDefinition>
+        <customizeIdentityResolutionDefinitions>false</customizeIdentityResolutionDefinitions>
+        <customizeMLPredictionDefinitions>false</customizeMLPredictionDefinitions>
+        <customizeSegmentationDefinitions>false</customizeSegmentationDefinitions>
+        <customizeSemanticSearchDefinitions>false</customizeSemanticSearchDefinitions>
+        <dataAccessLevel>ALL</dataAccessLevel>
+        <dataspaceScope>default</dataspaceScope>
+        <viewActivationDefinitions>false</viewActivationDefinitions>
+        <viewCalculatedInsightDefinitions>false</viewCalculatedInsightDefinitions>
+        <viewDataActionDefinitions>false</viewDataActionDefinitions>
+        <viewDataApplicationDefinitions>false</viewDataApplicationDefinitions>
+        <viewDataObjSecondaryIndexDefinitions>false</viewDataObjSecondaryIndexDefinitions>
+        <viewDataShareDefinitions>false</viewDataShareDefinitions>
+        <viewFTestDataspaceScopedDefinition>false</viewFTestDataspaceScopedDefinition>
+        <viewIdentityResolutionDefinitions>false</viewIdentityResolutionDefinitions>
+        <viewMLPredictionDefinitions>false</viewMLPredictionDefinitions>
+        <viewSegmentationDefinitions>false</viewSegmentationDefinitions>
+        <viewSemanticSearchDefinitions>false</viewSemanticSearchDefinitions>
+    </dataspaceScopes>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Agentforce_Service_Agent_Permissions</label>
     <license>Einstein Agent</license>
@@ -111,4 +138,16 @@
         <recordType>Lead.QualificacaodeConsultores</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>AllowViewKnowledge</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>ViewArchivedArticles</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>ViewDraftArticles</name>
+    </userPermissions>
 </PermissionSet>

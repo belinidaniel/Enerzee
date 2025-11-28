@@ -18,7 +18,6 @@
             <operator>equals</operator>
             <value>P</value>
         </criteriaItems>
-        <language>en_US</language>
     </filter>
     <format>Tabular</format>
     <name>Últimos logins do parceiro em todos os s</name>

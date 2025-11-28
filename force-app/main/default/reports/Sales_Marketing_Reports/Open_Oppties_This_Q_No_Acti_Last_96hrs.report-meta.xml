@@ -66,7 +66,6 @@
             <operator>greaterThan</operator>
             <value>LAST_N_DAYS:4</value>
         </criteriaItems>
-        <language>en_US</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>

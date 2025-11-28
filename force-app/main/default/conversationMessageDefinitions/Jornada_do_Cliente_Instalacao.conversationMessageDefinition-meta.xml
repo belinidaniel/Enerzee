@@ -22,7 +22,7 @@
         </primitiveValues>
     </constants>
     <contentCategory>OrderUpdate</contentCategory>
-    <label>AUTOMAÇÂO -  Jornada do Cliente - Instalação</label>
+    <label>Jornada do Cliente - Instalação</label>
     <language>pt_BR</language>
     <messageLayouts>
         <externalTemplates>

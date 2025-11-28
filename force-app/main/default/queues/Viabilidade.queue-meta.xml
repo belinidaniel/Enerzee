@@ -3,12 +3,9 @@
     <doesSendEmailToMembers>false</doesSendEmailToMembers>
     <name>Viabilidade</name>
     <queueMembers>
-        <roles>
-            <role>Analista_de_Engenharia</role>
-            <role>Assistente_Viabilidade</role>
-            <role>GerenteEngenharia</role>
-            <role>Supervisor_de_Viabilidade</role>
-        </roles>
+        <users>
+            <user>felipe.ramos@enerzee.com.br</user>
+        </users>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>
     <queueSobject>
@@ -25,8 +22,5 @@
     </queueSobject>
     <queueSobject>
         <sobjectType>MessagingSession</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>SetupMessagingSession__c</sobjectType>
     </queueSobject>
 </Queue>

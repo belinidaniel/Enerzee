@@ -5,5 +5,5 @@
     <mayForecastManagerShare>false</mayForecastManagerShare>
     <name>Supervisor de RLC</name>
     <opportunityAccessLevel>Edit</opportunityAccessLevel>
-    <parentRole>GerenteComercial</parentRole>
+    <parentRole>CSO</parentRole>
 </Role>

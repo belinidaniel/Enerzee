@@ -27,9 +27,8 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Opportunity.Ezee_Solar</value>
+            <value>Opportunity.EzeeSolarB</value>
         </criteriaItems>
-        <language>en_US</language>
     </filter>
     <format>Tabular</format>
     <name>Oportunidades, Consultor e Tipo de Oport</name>

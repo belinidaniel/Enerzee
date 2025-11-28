@@ -898,53 +898,6 @@
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>Loss_Reason__c</picklist>
-        <values>
-            <fullName>Cliente desistiu</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Cliente fechou com outra empresa</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Cliente prosseguiu com outra proposta%2C duplicata</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Cliente retomará a negociação em outra data</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Consultor%2FCliente recusou a proposta</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Inviabilidade Financeira</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Inviabilidade Técnica</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Outro</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Parado por 30 dias</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Sem contato com o cliente ou consultor</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Sem área para instalação</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
         <picklist>ModalidadeTarifaria__c</picklist>
         <values>
             <fullName>Comercial</fullName>
@@ -957,10 +910,6 @@
     </picklistValues>
     <picklistValues>
         <picklist>ModalidadeVenda__c</picklist>
-        <values>
-            <fullName>Convênio - Cocari</fullName>
-            <default>false</default>
-        </values>
         <values>
             <fullName>Venda Direta - Enerzee</fullName>
             <default>false</default>
@@ -1009,10 +958,6 @@
     </picklistValues>
     <picklistValues>
         <picklist>ParceiroRegistroOportunidade__c</picklist>
-        <values>
-            <fullName>Auren</fullName>
-            <default>false</default>
-        </values>
         <values>
             <fullName>Comerc</fullName>
             <default>false</default>
@@ -1104,12 +1049,8 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Não iniciado</fullName>
-            <default>true</default>
-        </values>
-        <values>
             <fullName>Pendente</fullName>
-            <default>false</default>
+            <default>true</default>
         </values>
         <values>
             <fullName>Rejeitado</fullName>
@@ -1213,6 +1154,10 @@
         </values>
         <values>
             <fullName>Estudo de Viabilidade</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fast Track</fullName>
             <default>false</default>
         </values>
         <values>
@@ -1334,18 +1279,6 @@
             <fullName>5</fullName>
             <default>false</default>
         </values>
-        <values>
-            <fullName>6</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>7</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>8</fullName>
-            <default>false</default>
-        </values>
     </picklistValues>
     <picklistValues>
         <picklist>TipoObraProjeto__c</picklist>
@@ -1390,10 +1323,6 @@
         <picklist>TipoTelhadoEstrutura__c</picklist>
         <values>
             <fullName>Ao Solo</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Car Port</fullName>
             <default>false</default>
         </values>
         <values>

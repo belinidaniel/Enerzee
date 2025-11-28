@@ -63,19 +63,7 @@
         <field>CREATED_DATE</field>
     </columns>
     <columns>
-        <field>CLOSE_DATE</field>
-    </columns>
-    <columns>
-        <field>Opportunity.Numeroproposta__c</field>
-    </columns>
-    <columns>
         <field>OPPORTUNITY_NAME</field>
-    </columns>
-    <columns>
-        <field>RECORDTYPE</field>
-    </columns>
-    <columns>
-        <field>Opportunity.Status__c</field>
     </columns>
     <columns>
         <field>Opportunity.ConsultorOportunidade__c</field>
@@ -90,20 +78,19 @@
     </columns>
     <filter>
         <criteriaItems>
+            <column>BucketField_46964861</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>Produtos e Serviços</value>
+        </criteriaItems>
+        <criteriaItems>
             <column>RECORDTYPE</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>notEqual</operator>
             <value>Opportunity.Bitrix</value>
         </criteriaItems>
-        <criteriaItems>
-            <column>RECORDTYPE</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>equals</operator>
-            <value>Opportunity.Servicos,Opportunity.ServicosEPC</value>
-        </criteriaItems>
-        <language>pt_BR</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>
@@ -111,7 +98,7 @@
         <field>STAGE_NAME</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Serviços - Duração da Fase</name>
+    <name>Produtos e Serviços - Duração da Fase</name>
     <params>
         <name>open</name>
         <value>all</value>

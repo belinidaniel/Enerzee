@@ -3,10 +3,9 @@
     <doesSendEmailToMembers>false</doesSendEmailToMembers>
     <name>Atendimento ao Cliente</name>
     <queueMembers>
-        <roles>
-            <role>Assistente_de_Atendimento_Cliente</role>
-            <role>Gerente_Administrativo</role>
-        </roles>
+        <users>
+            <user>ellen.vieira@enerzee.com.br</user>
+        </users>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>
     <queueSobject>
@@ -23,8 +22,5 @@
     </queueSobject>
     <queueSobject>
         <sobjectType>MessagingSession</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>SetupMessagingSession__c</sobjectType>
     </queueSobject>
 </Queue>

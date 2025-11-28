@@ -15,7 +15,7 @@
     <columns>
         <field>AgentWork.Case$Subject</field>
     </columns>
-    <description>Este relatório apresenta detalhes dos casos encerrados, agrupados por representante e status. Inclui nome, número, origem, tipo e assunto do caso.</description>
+    <description>This report provides details about closed cases, grouped by rep and status. Details include the case name, number, origin, type, and subject.</description>
     <filter>
         <criteriaItems>
             <column>AgentWork.Case$Status</column>
@@ -24,7 +24,6 @@
             <operator>equals</operator>
             <value>Closed</value>
         </criteriaItems>
-        <language>en_US</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>
@@ -37,7 +36,7 @@
         <field>AgentWork.Case$Status</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Casos Encerrados por Representante</name>
+    <name>Closed Cases by Rep</name>
     <params>
         <name>co</name>
         <value>1</value>

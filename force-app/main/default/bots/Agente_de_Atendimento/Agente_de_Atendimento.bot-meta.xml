@@ -7,7 +7,7 @@
         <name>Agente_de_Atendimento</name>
     </botMlDomain>
     <botSource>None</botSource>
-    <botUser>agentsdr@enerzee.com.br</botUser>
+    <botUser>agentsdr@enerzee.com.br.qa</botUser>
     <contextVariables>
         <contextVariableMappings>
             <SObjectType>MessagingEndUser</SObjectType>

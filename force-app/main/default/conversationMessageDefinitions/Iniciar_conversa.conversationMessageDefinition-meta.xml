@@ -21,7 +21,7 @@
             <urlValue>https://www.example.com</urlValue>
         </primitiveValues>
     </constants>
-    <label>1 - Iniciar conversa</label>
+    <label>Iniciar conversa</label>
     <language>pt_BR</language>
     <messageLayouts>
         <externalTemplates>

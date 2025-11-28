@@ -9,7 +9,7 @@
                         <valueListItems>
                             <value>Opportunity.Gerar_Proposta</value>
                             <visibilityRule>
-                                <booleanFilter>1 OR 2 OR 3 OR 4 OR 5</booleanFilter>
+                                <booleanFilter>1 OR 2 OR 3</booleanFilter>
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
@@ -24,16 +24,6 @@
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
                                     <rightValue>Readequação de Proposta</rightValue>
-                                </criteria>
-                                <criteria>
-                                    <leftValue>{!Record.StageName}</leftValue>
-                                    <operator>EQUAL</operator>
-                                    <rightValue>Viabilidade Técnica</rightValue>
-                                </criteria>
-                                <criteria>
-                                    <leftValue>{!Record.StageName}</leftValue>
-                                    <operator>EQUAL</operator>
-                                    <rightValue>Viabilidade Tecnica</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -2024,8 +2014,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.NotePaymentMethod__c</fieldItem>
-                <identifier>RecordNotePaymentMethod_cField</identifier>
+                <fieldItem>Record.NumeroOrigemContrato__c</fieldItem>
+                <identifier>RecordNumeroOrigemContrato_cField2</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -2034,8 +2024,18 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.NumeroOrigemContrato__c</fieldItem>
-                <identifier>RecordNumeroOrigemContrato_cField2</identifier>
+                <fieldItem>Record.ObservacaoPagamentoEsquerdo__c</fieldItem>
+                <identifier>RecordObservacaoPagamentoEsquerdo_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ObservacaoPagamentoDireito__c</fieldItem>
+                <identifier>RecordObservacaoPagamentoDireito_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-16e2bbdf-7733-43c8-83e7-2a1e1d07fa25</name>
@@ -2063,58 +2063,6 @@
             </componentInstance>
         </itemInstances>
         <name>Facet-acebbc04-72cd-4cef-bda3-574c02a9e914</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.ObservacaoPagamentoEsquerdo__c</fieldItem>
-                <identifier>RecordObservacaoPagamentoEsquerdo_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-a26a7f1c-d91c-4f24-b361-e2762d4eabbd</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.ObservacaoPagamentoDireito__c</fieldItem>
-                <identifier>RecordObservacaoPagamentoDireito_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-a29232f0-8c60-47be-b825-dc737788c594</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-a26a7f1c-d91c-4f24-b361-e2762d4eabbd</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:column</componentName>
-                <identifier>flexipage_column49</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-a29232f0-8c60-47be-b825-dc737788c594</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:column</componentName>
-                <identifier>flexipage_column50</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>Facet-875cde12-9373-4550-af28-9fec4ccbf728</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -3277,24 +3225,6 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>columns</name>
-                    <value>Facet-875cde12-9373-4550-af28-9fec4ccbf728</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>horizontalAlignment</name>
-                    <value>false</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>label</name>
-                    <value>Observações de Pagamento</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:fieldSection</componentName>
-                <identifier>flexipage_fieldSection25</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>columns</name>
                     <value>Facet-984bc7ce-f813-4514-a725-9946c5877d15</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -3731,7 +3661,7 @@
                 <identifier>c_opportunityIntegrationLogs</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-2c053d89-ed13-4c56-b1ed-3e441d775ba2</name>
+        <name>Facet-6fe96a9d-e3f2-440b-82ce-a308a483609d</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -3757,21 +3687,14 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-2c053d89-ed13-4c56-b1ed-3e441d775ba2</value>
+                    <value>Facet-6fe96a9d-e3f2-440b-82ce-a308a483609d</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
                     <value>Logs</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
-                <identifier>flexipage_tab6</identifier>
-                <visibilityRule>
-                    <criteria>
-                        <leftValue>{!$User.Profile.Name}</leftValue>
-                        <operator>CONTAINS</operator>
-                        <rightValue>Admin</rightValue>
-                    </criteria>
-                </visibilityRule>
+                <identifier>flexipage_tab4</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>

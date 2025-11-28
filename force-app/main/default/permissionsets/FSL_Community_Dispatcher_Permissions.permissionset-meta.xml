@@ -9,18 +9,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>FSL__BulkServiceBasedRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__FillResourceGapsRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__O2FetchFiles</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>FSL__OptInsightHealthCheckController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -41,27 +29,7 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>FSL__ResourceBasedRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>FSL__SchedulingAssistant</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__ServiceBasedRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__TerritoryBasedReadOnlyRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__TerritoryBasedRestRequest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FSL__UpdatePermissionsRestRequest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -891,11 +859,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>FSL__UserSetting__c.FSL__FirstDayOfWeek__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>FSL__UserSetting__c.FSL__Gantt_Palette__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -997,11 +960,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>FSL__UserSetting__c.FSL__Map_Reports__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>FSL__UserSetting__c.FSL__MatchGanttServiceTerritories__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -2552,10 +2510,6 @@
         <recordType>ResourceAbsence.FSL__Non_Availability</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
-    <tabSettings>
-        <tab>FSL__CapacityManagement</tab>
-        <visibility>Visible</visibility>
-    </tabSettings>
     <tabSettings>
         <tab>FSL__FieldService</tab>
         <visibility>Visible</visibility>

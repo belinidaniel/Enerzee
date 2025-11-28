@@ -1,11 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
+        <name>Rotear_para_agente</name>
+        <label>Rotear para agente</label>
+        <locationX>50</locationX>
+        <locationY>566</locationY>
+        <actionName>routeWork</actionName>
+        <actionType>routeWork</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>psrInteractionInfo</name>
+        </inputParameters>
+        <inputParameters>
+            <name>serviceChannelId</name>
+            <value>
+                <stringValue>0N95e000000pR15CAE</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>serviceChannelLabel</name>
+            <value>
+                <stringValue>LiveMessage</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>serviceChannelDevName</name>
+            <value>
+                <stringValue>sfdc_livemessage</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>routingType</name>
+            <value>
+                <stringValue>Agent</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>routingConfigId</name>
+            <value>
+                <stringValue>0K95e0000008YyACAU</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>routingConfigLabel</name>
+            <value>
+                <stringValue>Chat Enerzee</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>queueId</name>
+        </inputParameters>
+        <inputParameters>
+            <name>agentId</name>
+            <value>
+                <elementReference>Consultar_Agente.UserOrGroupId</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>agentLabel</name>
+        </inputParameters>
+        <inputParameters>
+            <name>isAgentRequired</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>queueLabel</name>
+            <value>
+                <stringValue>Proposta - Connect</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>skillOption</name>
+        </inputParameters>
+        <inputParameters>
+            <name>skillRequirementsResourceItem</name>
+        </inputParameters>
+        <inputParameters>
+            <name>isAgentVariable</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>botId</name>
+        </inputParameters>
+        <inputParameters>
+            <name>botLabel</name>
+        </inputParameters>
+        <inputParameters>
+            <name>copilotId</name>
+        </inputParameters>
+        <inputParameters>
+            <name>copilotLabel</name>
+        </inputParameters>
+        <inputParameters>
+            <name>isQueueVariable</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <nameSegment>routeWork</nameSegment>
+        <offset>0</offset>
+    </actionCalls>
+    <actionCalls>
         <description>Roteia todas as mensagens de seu bot aprimorado para uma fila.</description>
         <name>RoutingAction</name>
         <label>Rotear de EzeeBot</label>
-        <locationX>176</locationX>
-        <locationY>242</locationY>
+        <locationX>314</locationX>
+        <locationY>350</locationY>
         <actionName>routeWork</actionName>
         <actionType>routeWork</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -96,12 +206,12 @@
     <actionCalls>
         <name>Verificar_se_a_fila_possui_agentes_disponiveis</name>
         <label>Verificar se a fila possui agentes disponiveis</label>
-        <locationX>176</locationX>
+        <locationX>314</locationX>
         <locationY>134</locationY>
         <actionName>checkAvailabilityForRouting</actionName>
         <actionType>checkAvailabilityForRouting</actionType>
         <connector>
-            <targetReference>RoutingAction</targetReference>
+            <targetReference>Possui_agentes_disponiveis</targetReference>
         </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
@@ -164,6 +274,57 @@
     </actionCalls>
     <apiVersion>61.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>Possui_agentes_disponiveis</name>
+        <label>Possui agentes disponíveis?</label>
+        <locationX>314</locationX>
+        <locationY>242</locationY>
+        <defaultConnectorLabel>Resultado padrão</defaultConnectorLabel>
+        <rules>
+            <name>Nao</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>Verificar_se_a_fila_possui_agentes_disponiveis.onlineAgentsCount</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Verificar_se_a_fila_possui_agentes_disponiveis.onlineAgentsCount</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Verificar_se_a_fila_possui_agentes_disponiveis.onlineAgentsCount</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Consultar_fila_Proposta_Connect</targetReference>
+            </connector>
+            <label>Não</label>
+        </rules>
+        <rules>
+            <name>Sim</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Verificar_se_a_fila_possui_agentes_disponiveis.onlineAgentsCount</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>RoutingAction</targetReference>
+            </connector>
+            <label>Sim</label>
+        </rules>
+    </decisions>
     <environments>Default</environments>
     <interviewLabel>Rotear de EzeeBot - Propostas Connect {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Rotear de EzeeBot - Propostas Connect</label>
@@ -186,8 +347,59 @@
         </value>
     </processMetadataValues>
     <processType>RoutingFlow</processType>
-    <start>
+    <recordLookups>
+        <name>Consultar_Agente</name>
+        <label>Consultar Agente</label>
         <locationX>50</locationX>
+        <locationY>458</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Rotear_para_agente</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>GroupId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Consultar_fila_Proposta_Connect.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>GroupMember</object>
+        <sortField>SystemModstamp</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Consultar_fila_Proposta_Connect</name>
+        <label>Consultar fila Proposta Connect</label>
+        <locationX>50</locationX>
+        <locationY>350</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Consultar_Agente</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Type</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Queue</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Proposta_Connect</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Group</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>188</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Verificar_se_a_fila_possui_agentes_disponiveis</targetReference>

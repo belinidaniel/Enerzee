@@ -210,6 +210,26 @@
             <field>DateInspection__c</field>
             <table>Projeto__c</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>SolicitationInspectionDate__c</field>
+            <table>Projeto__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>InspectionDate__c</field>
+            <table>Projeto__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>CartaAprovacaoValidade__c</field>
+            <table>Projeto__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>CartaAprovacaoSinalizacao__c</field>
+            <table>Projeto__c</table>
+        </columns>
         <masterLabel>Projetos</masterLabel>
     </sections>
     <sections>

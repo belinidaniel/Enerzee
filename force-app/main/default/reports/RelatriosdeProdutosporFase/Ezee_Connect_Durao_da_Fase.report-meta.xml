@@ -64,9 +64,8 @@
         <backgroundColor2>#FFFFFF</backgroundColor2>
         <backgroundFadeDir>Diagonal</backgroundFadeDir>
         <chartSummaries>
-            <aggregate>Median</aggregate>
             <axisBinding>y</axisBinding>
-            <column>STAGE_DURATION</column>
+            <column>RowCount</column>
         </chartSummaries>
         <chartType>HorizontalBarGrouped</chartType>
         <enableHoverLabels>false</enableHoverLabels>
@@ -74,7 +73,7 @@
         <groupingColumn>STAGE_NAME</groupingColumn>
         <legendPosition>Right</legendPosition>
         <location>CHART_BOTTOM</location>
-        <secondaryGroupingColumn>Opportunity.Status__c</secondaryGroupingColumn>
+        <secondaryGroupingColumn>RECORDTYPE</secondaryGroupingColumn>
         <showAxisLabels>true</showAxisLabels>
         <showPercentage>false</showPercentage>
         <showTotal>false</showTotal>
@@ -90,29 +89,10 @@
         <field>CREATED_DATE</field>
     </columns>
     <columns>
-        <field>CLOSE_DATE</field>
-    </columns>
-    <columns>
-        <field>Opportunity.Numeroproposta__c</field>
-    </columns>
-    <columns>
         <field>OPPORTUNITY_NAME</field>
     </columns>
     <columns>
-        <aggregateTypes>Sum</aggregateTypes>
-        <field>Opportunity.Kwh__c</field>
-    </columns>
-    <columns>
-        <field>RECORDTYPE</field>
-    </columns>
-    <columns>
-        <field>Opportunity.Parceiro__c</field>
-    </columns>
-    <columns>
         <field>Opportunity.ConcessionariaEnergia__c</field>
-    </columns>
-    <columns>
-        <field>Opportunity.ConsultorOportunidade__c</field>
     </columns>
     <columns>
         <aggregateTypes>Median</aggregateTypes>
@@ -123,7 +103,10 @@
         <field>Opportunity.ValorTotalProposta__c</field>
     </columns>
     <columns>
-        <field>Opportunity.UF_Concessionaria__c</field>
+        <field>Account.Consultor__c</field>
+    </columns>
+    <columns>
+        <field>Opportunity.Numeroproposta__c</field>
     </columns>
     <filter>
         <criteriaItems>
@@ -133,14 +116,6 @@
             <operator>equals</operator>
             <value>Opportunity.EzeeConnect,Opportunity.BowE,Opportunity.Raizen,Opportunity.Origo,Opportunity.Nextron,Opportunity.Ultragaz,Opportunity.Simplifica,Opportunity.EzeeConnect_Solled</value>
         </criteriaItems>
-        <criteriaItems>
-            <column>STAGE_NAME</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>false</isUnlocked>
-            <operator>equals</operator>
-            <value>Prospecção,Elaboração de proposta,Simulação de Proposta,Proposta enviada,Proposta enviada / Aguardando Aceite,Aguardando Assinatura,Contrato,Validação,Aguardando Informação,Aguardando Pagamento,Finalizado,Ganho fechado</value>
-        </criteriaItems>
-        <language>pt_BR</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>
@@ -150,7 +125,7 @@
     </groupingsDown>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
-        <field>Opportunity.Status__c</field>
+        <field>RECORDTYPE</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <name>Ezee Connect - Duração da Fase</name>
@@ -171,8 +146,6 @@
     <showDetails>true</showDetails>
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
-    <sortColumn>Opportunity.ConsultorOportunidade__c</sortColumn>
-    <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>CLOSE_DATE</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>

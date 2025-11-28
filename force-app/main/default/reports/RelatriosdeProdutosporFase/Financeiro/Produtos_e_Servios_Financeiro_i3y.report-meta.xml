@@ -59,30 +59,6 @@
             <value>Ezee Livre</value>
         </values>
     </buckets>
-    <chart>
-        <backgroundColor1>#FFFFFF</backgroundColor1>
-        <backgroundColor2>#FFFFFF</backgroundColor2>
-        <backgroundFadeDir>Diagonal</backgroundFadeDir>
-        <chartSummaries>
-            <axisBinding>y</axisBinding>
-            <column>RowCount</column>
-        </chartSummaries>
-        <chartType>HorizontalBar</chartType>
-        <enableHoverLabels>false</enableHoverLabels>
-        <expandOthers>true</expandOthers>
-        <groupingColumn>STAGE_NAME</groupingColumn>
-        <location>CHART_BOTTOM</location>
-        <showAxisLabels>true</showAxisLabels>
-        <showPercentage>false</showPercentage>
-        <showTotal>false</showTotal>
-        <showValues>false</showValues>
-        <size>Medium</size>
-        <summaryAxisRange>Auto</summaryAxisRange>
-        <textColor>#000000</textColor>
-        <textSize>12</textSize>
-        <titleColor>#000000</titleColor>
-        <titleSize>18</titleSize>
-    </chart>
     <columns>
         <field>CREATED_DATE</field>
     </columns>
@@ -105,20 +81,19 @@
     <description>Contratos em cobrança ou para cobrança de Produtos e serviços</description>
     <filter>
         <criteriaItems>
+            <column>BucketField_46964861</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>Produtos e Serviços</value>
+        </criteriaItems>
+        <criteriaItems>
             <column>RECORDTYPE</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>notEqual</operator>
             <value>Opportunity.Bitrix</value>
         </criteriaItems>
-        <criteriaItems>
-            <column>STAGE_NAME</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>equals</operator>
-            <value>Confirmação de pagamento sinal,Confirmação de pagamento,Confirmação de pagamento contrato</value>
-        </criteriaItems>
-        <language>en_US</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>
@@ -126,7 +101,7 @@
         <field>STAGE_NAME</field>
         <sortOrder>Desc</sortOrder>
     </groupingsDown>
-    <name>Produtos e Serviços - Financeiro Cobranç</name>
+    <name>Produtos e Serviços - Financeiro</name>
     <params>
         <name>open</name>
         <value>open</value>

@@ -3,13 +3,8 @@
     <doesSendEmailToMembers>true</doesSendEmailToMembers>
     <name>Atendimento ao Consultor</name>
     <queueMembers>
-        <roles>
-            <role>Assistente_Comercial</role>
-            <role>CSO</role>
-            <role>GerenteComercial</role>
-        </roles>
         <users>
-            <user>dayane.silva@enerzee.com.br</user>
+            <user>consultor@enerzee.com.br</user>
         </users>
     </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>
@@ -27,9 +22,6 @@
     </queueSobject>
     <queueSobject>
         <sobjectType>MessagingSession</sobjectType>
-    </queueSobject>
-    <queueSobject>
-        <sobjectType>SetupMessagingSession__c</sobjectType>
     </queueSobject>
     <queueSobject>
         <sobjectType>Task</sobjectType>
