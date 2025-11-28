@@ -7,37 +7,6 @@
                     <name>actionNames</name>
                     <valueList>
                         <valueListItems>
-                            <value>Opportunity.Gerar_Proposta</value>
-                            <visibilityRule>
-                                <booleanFilter>1 OR 2 OR 3 OR 4 OR 5</booleanFilter>
-                                <criteria>
-                                    <leftValue>{!Record.StageName}</leftValue>
-                                    <operator>EQUAL</operator>
-                                    <rightValue>Elaboração de proposta</rightValue>
-                                </criteria>
-                                <criteria>
-                                    <leftValue>{!Record.StageName}</leftValue>
-                                    <operator>EQUAL</operator>
-                                    <rightValue>Proposta Gerada</rightValue>
-                                </criteria>
-                                <criteria>
-                                    <leftValue>{!Record.StageName}</leftValue>
-                                    <operator>EQUAL</operator>
-                                    <rightValue>Readequação de Proposta</rightValue>
-                                </criteria>
-                                <criteria>
-                                    <leftValue>{!Record.StageName}</leftValue>
-                                    <operator>EQUAL</operator>
-                                    <rightValue>Viabilidade Técnica</rightValue>
-                                </criteria>
-                                <criteria>
-                                    <leftValue>{!Record.StageName}</leftValue>
-                                    <operator>EQUAL</operator>
-                                    <rightValue>Viabilidade Tecnica</rightValue>
-                                </criteria>
-                            </visibilityRule>
-                        </valueListItems>
-                        <valueListItems>
                             <value>Opportunity.Enviar_Proposta_manualmente</value>
                             <visibilityRule>
                                 <criteria>

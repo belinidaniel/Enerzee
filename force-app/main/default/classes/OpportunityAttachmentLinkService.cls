@@ -4,6 +4,8 @@
 **/
 public with sharing class OpportunityAttachmentLinkService {
 
+    private static final Integer MAX_NAME_LENGTH = 80;
+
     public class AttachmentInput {
         public Id opportunityId;
         public String attachmentUrl;
@@ -23,9 +25,7 @@ public with sharing class OpportunityAttachmentLinkService {
         record.OpportunityId__c = input.opportunityId;
         record.AttachmentURL__c = input.attachmentUrl;
         record.Type__c = String.isNotBlank(input.type) ? input.type : 'Other';
-        record.Name = String.isNotBlank(input.description)
-            ? input.description
-            : 'Attachment ' + String.valueOf(DateTime.now().getTime());
+        record.Name = buildName(input.description);
 
         if (String.isNotBlank(input.description)) {
             record.AttachmentDescription__c = input.description;
@@ -39,5 +39,14 @@ public with sharing class OpportunityAttachmentLinkService {
         } else {
             insert record;
         }
+    }
+
+    private static String buildName(String description) {
+        String candidate = String.isNotBlank(description)
+            ? description.trim()
+            : 'Attachment ' + String.valueOf(DateTime.now().getTime());
+        return candidate.length() > MAX_NAME_LENGTH
+            ? candidate.substring(0, MAX_NAME_LENGTH)
+            : candidate;
     }
 }

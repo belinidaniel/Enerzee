@@ -24,7 +24,7 @@
     </values>
     <values>
         <field>URL__c</field>
-        <value xsi:type="xsd:string">https://geradorpropostashomolog.azurewebsites.net/api/Account/app/Login</value>
+        <value xsi:type="xsd:string">https://geradorpropostas.azurewebsites.net/api/Account/app/Login</value>
     </values>
     <values>
         <field>Validade_token__c</field>
@@ -32,7 +32,7 @@
     </values>
     <values>
         <field>login__c</field>
-        <value xsi:type="xsd:string">salesforce</value>
+        <value xsi:type="xsd:string">SalesForce</value>
     </values>
     <values>
         <field>senha__c</field>

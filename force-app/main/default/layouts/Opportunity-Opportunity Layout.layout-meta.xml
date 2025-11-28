@@ -141,14 +141,6 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>ObservacaoPagamentoEsquerdo__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>ObservacaoPagamentoDireito__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>Telefone__c</field>
             </layoutItems>
             <layoutItems>

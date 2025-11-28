@@ -85,9 +85,6 @@
         <titleSize>18</titleSize>
     </chart>
     <columns>
-        <field>CREATED_DATE</field>
-    </columns>
-    <columns>
         <field>LAST_UPDATE</field>
     </columns>
     <columns>
@@ -99,6 +96,9 @@
     </columns>
     <columns>
         <field>OPPORTUNITY_NAME</field>
+    </columns>
+    <columns>
+        <field>DESCRIPTION</field>
     </columns>
     <columns>
         <field>CON.PHONE</field>
@@ -122,6 +122,9 @@
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
         <field>Opportunity.PotenciaPicoSistema__c</field>
+    </columns>
+    <columns>
+        <field>CREATED_DATE</field>
     </columns>
     <filter>
         <criteriaItems>
@@ -171,7 +174,7 @@
     <showDetails>true</showDetails>
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
-    <sortColumn>CREATED_DATE</sortColumn>
+    <sortColumn>LAST_UPDATE</sortColumn>
     <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>CLOSE_DATE</dateColumn>

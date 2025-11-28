@@ -114,6 +114,9 @@
     <columns>
         <field>Opportunity.DescricaoMotivoPerda__c</field>
     </columns>
+    <columns>
+        <field>LAST_STAGE_CHANGE_DATE</field>
+    </columns>
     <filter>
         <criteriaItems>
             <column>RECORDTYPE</column>

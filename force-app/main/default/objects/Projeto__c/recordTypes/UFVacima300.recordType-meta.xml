@@ -4,29 +4,6 @@
     <active>true</active>
     <label>UFV Mini acima de 300</label>
     <picklistValues>
-        <picklist>CartaAprovacaoTipo__c</picklist>
-        <values>
-            <fullName>Disponibilidade_de_Energia</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Informacao_de_Acesso</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Microgeracao</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Minigeracao</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Posto_ou_Subestacao</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
         <picklist>Categoria__c</picklist>
         <values>
             <fullName>Fast Track</fullName>
@@ -503,6 +480,22 @@
     <picklistValues>
         <picklist>Status__c</picklist>
         <values>
+            <fullName>Obra concluída</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Obra concluída - Aguardando troca de medidor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Obra em execução</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Planejamento de Obra</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Planejamento de projeto</fullName>
             <default>false</default>
         </values>
@@ -515,11 +508,11 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Projeto em análise</fullName>
+            <fullName>Projetos em elaboração</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Projetos em elaboração</fullName>
+            <fullName>Usina operando</fullName>
             <default>false</default>
         </values>
     </picklistValues>

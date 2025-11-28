@@ -2,11 +2,10 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ObservacaoPagamentoDireito__c</fullName>
     <label>Observação Pagamento Direito</label>
-    <type>Html</type>
     <length>32768</length>
-    <visibleLines>10</visibleLines>
-    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
-    <externalId>false</externalId>
+    <type>Html</type>
+    <visibleLines>10</visibleLines>
 </CustomField>
