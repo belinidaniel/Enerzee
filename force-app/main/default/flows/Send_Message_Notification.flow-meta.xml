@@ -11,7 +11,7 @@
         <inputParameters>
             <name>messageDefinitionName</name>
             <value>
-                <stringValue>Notifica_o_inicial</stringValue>
+                <elementReference>messageDefinitionName</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -20,19 +20,25 @@
         <inputParameters>
             <name>requestType</name>
             <value>
-                <stringValue>SendNotificationMessages</stringValue>
+                <elementReference>requestType</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
             <name>isEnforceMessagingChannelConsent</name>
             <value>
-                <booleanValue>false</booleanValue>
+                <elementReference>isEnforceMessagingChannelConsent</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>channelConsentType</name>
+            <value>
+                <elementReference>channelConsentType</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
             <name>allowedSessionStatus</name>
             <value>
-                <stringValue>Any</stringValue>
+                <elementReference>allowedSessionStatus</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -47,22 +53,6 @@
     </actionCalls>
     <apiVersion>62.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
-    <assignments>
-        <name>Add_MessagingUserId</name>
-        <label>Add MessagingUserId</label>
-        <locationX>176</locationX>
-        <locationY>242</locationY>
-        <assignmentItems>
-            <assignToReference>messagingUserIds</assignToReference>
-            <operator>Add</operator>
-            <value>
-                <elementReference>Get_Messaging_User.Id</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Send_Conversation_Messages_Action_1</targetReference>
-        </connector>
-    </assignments>
     <environments>Default</environments>
     <interviewLabel>Send Message Notification {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Send Message Notification</label>
@@ -108,23 +98,138 @@
         <sortOrder>Desc</sortOrder>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
+    <assignments>
+        <name>Add_MessagingUserId</name>
+        <label>Add MessagingUserId</label>
+        <locationX>176</locationX>
+        <locationY>242</locationY>
+        <assignmentItems>
+            <assignToReference>messagingUserIds</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Get_Messaging_User.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Send_Conversation_Messages_Action_1</targetReference>
+        </connector>
+    </assignments>
+    <status>Active</status>
+    <assignments>
+        <name>Assign_MessageDefinition</name>
+        <label>Assign MessageDefinition</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <assignmentItems>
+            <assignToReference>messageDefinitionName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Notifica_o_inicial</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Messaging_User</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_MessageDefinition_ProjetoAprovado</name>
+        <label>Assign MessageDefinition Projeto Aprovado</label>
+        <locationX>352</locationX>
+        <locationY>134</locationY>
+        <assignmentItems>
+            <assignToReference>messageDefinitionName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Jornada_do_Cliente_Projeto_Aprovado</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Messaging_User</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Select_Message</name>
+        <label>Select Message</label>
+        <locationX>176</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Assign_MessageDefinition</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default</defaultConnectorLabel>
+        <rules>
+            <name>ProjetoAprovado</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>messageKey</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>ProjetoAprovado</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_MessageDefinition_ProjetoAprovado</targetReference>
+            </connector>
+            <label>Projeto Aprovado</label>
+        </rules>
+    </decisions>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Get_Messaging_User</targetReference>
+            <targetReference>Select_Message</targetReference>
         </connector>
     </start>
-    <status>Obsolete</status>
     <variables>
         <name>messagingUserIds</name>
         <dataType>String</dataType>
         <isCollection>true</isCollection>
-        <isInput>false</isInput>
+        <isInput>true</isInput>
         <isOutput>false</isOutput>
     </variables>
     <variables>
         <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>messageKey</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>messageDefinitionName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>requestType</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>isEnforceMessagingChannelConsent</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>channelConsentType</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>allowedSessionStatus</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
