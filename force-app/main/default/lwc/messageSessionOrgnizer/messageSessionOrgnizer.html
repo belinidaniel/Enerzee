@@ -2,26 +2,110 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 10-23-2025
+  @last modified on  : 11-28-2025
   @last modified by  : Daniel Belini
 -->
 <template>
-    <lightning-button label="Open Modal" onclick={openModal}></lightning-button>
-
-        <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
-            <div class="slds-modal__container">
-                <header class="slds-modal__header">
-                    <h2 class="slds-text-heading_medium">Alert</h2>
-                </header>
-
-                <div class="slds-modal__content slds-p-around_medium">
-                    <p>Hello!</p>
+    <lightning-card title="Organizador de Mensagens" icon-name="utility:send">
+        <div class="canvas">
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-title">Destinatário</span>
+                    <template if:true={sessionInfo}>
+                        <lightning-badge label="Sessão atual"></lightning-badge>
+                    </template>
                 </div>
 
-                <footer class="slds-modal__footer">
-                    <lightning-button variant="brand" label="Close" onclick={closeModal}></lightning-button>
-                </footer>
+                <div class="search-row">
+                    <lightning-input
+                        type="search"
+                        label="Buscar por telefone ou nome"
+                        value={recipientSearch}
+                        onchange={handleRecipientSearchChange}>
+                    </lightning-input>
+                    <lightning-button
+                        variant="brand"
+                        label="Buscar"
+                        onclick={handleRecipientSearch}>
+                    </lightning-button>
+                </div>
+
+                <template if:true={hasRecipients}>
+                    <div class="result-list">
+                        <template for:each={recipientList} for:item="rec">
+                            <article key={rec.id} class={rec.cssClass} data-id={rec.id} onclick={handleRecipientSelect}>
+                                <div class="tile-header">
+                                    <div>
+                                        <p class="muted">{rec.type}</p>
+                                        <p class="name">{rec.name}</p>
+                                    </div>
+                                    <template if:true={rec.detail}>
+                                        <lightning-badge label={rec.detail}></lightning-badge>
+                                    </template>
+                                </div>
+                                <p class="muted">{rec.phone}</p>
+                            </article>
+                        </template>
+                    </div>
+                </template>
+                <template if:false={hasRecipients}>
+                    <p class="muted">Comece a digitar para encontrar Contatos, Contas ou Messaging Users.</p>
+                </template>
             </div>
-        </section>
-        <div class="slds-backdrop slds-backdrop_open"></div>
+
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-title">Canal</span>
+                </div>
+                <lightning-combobox
+                    name="channel"
+                    label="Selecione o canal"
+                    value={selectedChannelId}
+                    options={channels}
+                    onchange={handleChannelChange}>
+                </lightning-combobox>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-title">Template</span>
+                </div>
+                <lightning-input
+                    type="search"
+                    label="Filtrar templates"
+                    value={templateSearch}
+                    onchange={handleTemplateSearchChange}>
+                </lightning-input>
+                <div class="result-list">
+                    <template for:each={filteredTemplates} for:item="tpl">
+                        <article key={tpl.fullName} class={tpl.cssClass} data-fullname={tpl.fullName} onclick={handleTemplateSelect}>
+                            <div class="tile-header">
+                                <div>
+                                    <p class="name">{tpl.fullName}</p>
+                                    <p class="muted">{tpl.fileName}</p>
+                                </div>
+                                <template if:true={tpl.namespacePrefix}>
+                                    <lightning-badge label={tpl.namespacePrefix}></lightning-badge>
+                                </template>
+                            </div>
+                        </article>
+                    </template>
+                </div>
+            </div>
+
+            <div class="footer">
+                <lightning-button
+                    variant="brand"
+                    label="Enviar mensagem"
+                    onclick={handleSend}
+                    disabled={isLoading}>
+                </lightning-button>
+            </div>
+            <template if:true={isLoading}>
+                <div class="overlay">
+                    <lightning-spinner alternative-text="Enviando" size="medium"></lightning-spinner>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
 </template>

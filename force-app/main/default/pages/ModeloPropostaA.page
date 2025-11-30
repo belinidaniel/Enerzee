@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 11-25-2025
+  @last modified on  : 11-28-2025
   @last modified by  : Daniel Belini
 -->
 <apex:page standardController="Opportunity" applyBodyTag="false" extensions="PDFControllerExtension,OpportunityDataController"  standardStylesheets="false" showHeader="false"  sidebar="false" renderAs="PDF"  action="{!salvarPDF}" cache="false">
@@ -363,7 +363,7 @@
 
         <!-- DADOS DO CLIENTE -->
         <!-- NOME -->
-        <div  style="position:relative; bottom:623px; left: 120px; right:120px;">
+        <div  style="position:relative; bottom:663px; left: 120px; right:120px;">
             {!IF(ISBLANK(Opportunity.Account.Name), '-', Opportunity.Account.Name)}
         </div>
         <!-- CPF/CNPJ -->
@@ -756,7 +756,7 @@
         <apex:image url="{!IF(AND(OR(NOT(ISBLANK(paymentMethodLeftHtml)), NOT(ISBLANK(paymentMethodRightHtml)), NOT(ISBLANK(Opportunity.NotePaymentMethod__c))), NOT(ISBLANK(paymentMethodNoteImageUrl))), paymentMethodNoteImageUrl, pdfUrls[5])}"  height="1131px" />
     </div>
     <!-- INVESTIMENTO TOTAL -->
-    <div style="position:relative; bottom:730px; left:75px; right:120px; font-size:28px !important; font-weight: bold;">
+    <div style="position:relative; bottom:630px; left:75px; right:120px; font-size:28px !important; font-weight: bold;">
         R$ 
         <apex:outputtext rendered="{!IF(Opportunity.ValorTotalProposta__c == null, true, false)}">
             -
