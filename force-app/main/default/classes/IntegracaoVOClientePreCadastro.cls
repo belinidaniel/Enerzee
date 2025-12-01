@@ -7,7 +7,19 @@ public with sharing class IntegracaoVOClientePreCadastro {
             FROM    Account
             WHERE   Id IN :triggerIds AND IdVirtualOffice2__c = null
         ];
-            
+
+        if(accountList.isEmpty()){
+            return;
+        }
+
+        processAccounts(accountList, 'sendCliente');
+    }
+
+    public static void processAccounts(List<Account> accountList, String logContext){
+        if(accountList == null || accountList.isEmpty()){
+            return;
+        }
+
         for (Account acc : accountList) {
             ClientRequest corpoRequisicao = new ClientRequest();
             corpoRequisicao.IdAccountSalesForce	= acc.Id;
@@ -31,7 +43,7 @@ public with sharing class IntegracaoVOClientePreCadastro {
                 
             try {
                 HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'ClienteVO');
-                Utils.createLog('IntegracaoVOClientePreCadastro', 'sendCliente ' + acc.Id, response);
+                Utils.createLog('IntegracaoVOClientePreCadastro', logContext + ' ' + acc.Id, response);
                 
                 if (response.getBody() != null && response.getBody() != '') {
                     
@@ -50,13 +62,13 @@ public with sharing class IntegracaoVOClientePreCadastro {
                 }
                 
             } catch (Exception e) {
-                Utils.createLog('IntegracaoVOClientePreCadastro', 'sendCliente ' + acc.Id, e);
+                Utils.createLog('IntegracaoVOClientePreCadastro', logContext + ' ' + acc.Id, e);
                 
                 acc.SucessoIntegracaoVO__c = false;
                 acc.StatusBodyIntegracaoVO__c = e.getMessage() + ' ' + e.getStackTraceString();
             }
         }
-                
+
         AccountTriggerHandler.disableTrigger();
         update accountList;
         AccountTriggerHandler.enableTrigger();
