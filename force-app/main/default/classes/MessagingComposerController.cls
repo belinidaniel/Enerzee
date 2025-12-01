@@ -2,12 +2,13 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-28-2025
+ * @last modified on  : 11-30-2025
  * @last modified by  : Daniel Belini
 **/
-public with sharing class MessagingComposerController {
+public without sharing class MessagingComposerController {
     private static final Integer MAX_RESULTS = 25;
     private static final Double METADATA_API_VERSION = 63.0;
+    private static final String API_VERSION_STRING = String.valueOf(METADATA_API_VERSION);
 
     public class RecipientDTO {
         @AuraEnabled public String id;
@@ -210,9 +211,6 @@ public with sharing class MessagingComposerController {
     public static List<MessageTemplateDTO> getMessageDefinitions(String searchTerm) {
         List<MessageTemplateDTO> templates = new List<MessageTemplateDTO>();
         MetadataService.FileProperties[] files = fetchMessageDefinitions();
-        if (files == null) {
-            return templates;
-        }
 
         String term = normalizeSearchTerm(searchTerm);
         for (MetadataService.FileProperties fp : files) {
@@ -296,18 +294,187 @@ public with sharing class MessagingComposerController {
             return new MetadataService.FileProperties[]{ fp };
         }
 
+        // 1) Tenta via Tooling REST com Named Credential (usa token do NC, não o sessionId do usuário)
+        List<MetadataService.FileProperties> viaRest = fetchMessageDefinitionsViaNamedCredentialRest();
+        if (!viaRest.isEmpty()) {
+            return viaRest;
+        }
+
+        // 2) Tenta via SOAP Metadata com Named Credential (sem usar sessionId do usuário)
+        List<MetadataService.FileProperties> viaNC = fetchMessageDefinitionsViaNamedCredential();
+        if (!viaNC.isEmpty()) {
+            return viaNC;
+        }
+
+        // 3) Última tentativa: sessão do usuário (pode falhar se o usuário não tiver API)
         try {
-            MetadataService.MetadataPort svc = new MetadataService.MetadataPort();
-            svc.SessionHeader = new MetadataService.SessionHeader_element();
-            svc.SessionHeader.sessionId = UserInfo.getSessionId();
+            MetadataService.MetadataPort svc = createMetadataPort();
 
             MetadataService.ListMetadataQuery query = new MetadataService.ListMetadataQuery();
             query.type_x = 'ConversationMessageDefinition';
 
-            return svc.listMetadata(new MetadataService.ListMetadataQuery[]{ query }, METADATA_API_VERSION);
+            MetadataService.FileProperties[] files =
+                svc.listMetadata(new MetadataService.ListMetadataQuery[]{ query }, METADATA_API_VERSION);
+
+            if (files == null) {
+                throw new AuraHandledException('Nenhum ConversationMessageDefinition encontrado.');
+            }
+            return files;
         } catch (Exception ex) {
-            System.debug('Falha ao listar ConversationMessageDefinition: ' + ex.getMessage());
-            return null;
+            throw new AuraHandledException(
+                'Falha ao listar ConversationMessageDefinition (Named Credential não retornou dados e a sessão do usuário é inválida para API): ' +
+                ex.getMessage()
+            );
+        }
+    }
+
+    private static MetadataService.MetadataPort createMetadataPort() {
+        MetadataService.MetadataPort svc = new MetadataService.MetadataPort();
+        svc.SessionHeader = new MetadataService.SessionHeader_element();
+        String sessionId = UserInfo.getSessionId();
+        if (String.isBlank(sessionId)) {
+            throw new AuraHandledException('Sessão indisponível para chamada de metadata (UserInfo.getSessionId() vazio). Verifique permissões de API.');
+        }
+        svc.SessionHeader.sessionId = sessionId;
+        svc.endpoint_x = resolveMetadataEndpoint();
+        return svc;
+    }
+
+    private static String resolveMetadataEndpoint() {
+        // Prioriza o domínio da requisição atual (Lightning) para evitar INVALID_SESSION_ID
+        try {
+            String current = URL.getCurrentRequestUrl().toExternalForm();
+            // extrai protocolo + host
+            Integer idx = current.indexOf('/', 8);
+            String host = idx > 0 ? current.substring(0, idx) : current;
+            return host + '/services/Soap/m/' + METADATA_API_VERSION;
+        } catch (Exception ex) {
+            // fallback para domínio da org
+            return URL.getOrgDomainUrl().toExternalForm() + '/services/Soap/m/' + METADATA_API_VERSION;
+        }
+    }
+
+    // Fallback usando Named Credential "Salesforce_PRD" (conforme exemplo em RemarketingRouter)
+    private static List<MetadataService.FileProperties> fetchMessageDefinitionsViaNamedCredential() {
+        List<MetadataService.FileProperties> results = new List<MetadataService.FileProperties>();
+        try {
+            HttpRequest req = new HttpRequest();
+            req.setMethod('POST');
+            req.setEndpoint('callout:Salesforce_PRD/services/Soap/m/' + METADATA_API_VERSION);
+            req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+            req.setHeader('SOAPAction', 'listMetadata');
+
+            String body =
+                '<?xml version="1.0" encoding="UTF-8"?>' +
+                '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:met="http://soap.sforce.com/2006/04/metadata">' +
+                '<soapenv:Header/>' +
+                '<soapenv:Body>' +
+                '<met:listMetadata>' +
+                '<met:queries>' +
+                '<met:type>ConversationMessageDefinition</met:type>' +
+                '</met:queries>' +
+                '<met:asOfVersion>' + METADATA_API_VERSION + '</met:asOfVersion>' +
+                '</met:listMetadata>' +
+                '</soapenv:Body>' +
+                '</soapenv:Envelope>';
+            req.setBody(body);
+
+            HttpResponse res = new Http().send(req);
+            if (res.getStatusCode() != 200) {
+                System.debug('Named Credential listMetadata falhou: ' + res.getStatusCode() + ' - ' + res.getBody());
+                return results;
+            }
+
+            Dom.Document doc = new Dom.Document();
+            doc.load(res.getBody());
+            Dom.XMLNode root = doc.getRootElement();
+            collectFileProperties(root, results);
+        } catch (Exception ex) {
+            System.debug('Erro no fallback via Named Credential: ' + ex.getMessage());
+        }
+        return results;
+    }
+
+    // Fallback via Tooling API usando Named Credential (evita usar o sessionId do usuário)
+    private static List<MetadataService.FileProperties> fetchMessageDefinitionsViaNamedCredentialRest() {
+        List<MetadataService.FileProperties> results = new List<MetadataService.FileProperties>();
+        try {
+            String soql = 'SELECT FullName, DeveloperName, NamespacePrefix, LastModifiedDate, CreatedBy.Name FROM ConversationMessageDefinition';
+            HttpRequest req = new HttpRequest();
+            req.setMethod('GET');
+            req.setEndpoint(
+                'callout:Salesforce_PRD/services/data/v' +
+                API_VERSION_STRING +
+                '/tooling/query?q=' +
+                EncodingUtil.urlEncode(soql, 'UTF-8')
+            );
+            req.setHeader('Accept', 'application/json');
+
+            HttpResponse res = new Http().send(req);
+            if (res.getStatusCode() != 200) {
+                System.debug('Named Credential Tooling query falhou: ' + res.getStatusCode() + ' - ' + res.getBody());
+                return results;
+            }
+
+            Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
+            List<Object> records = (List<Object>) payload.get('records');
+            for (Object recObj : records) {
+                Map<String, Object> rec = (Map<String, Object>) recObj;
+                MetadataService.FileProperties fp = new MetadataService.FileProperties();
+                fp.fullName = (String) rec.get('FullName');
+                String developerName = (String) rec.get('DeveloperName');
+                fp.fileName = developerName != null
+                    ? 'conversationMessageDefinitions/' + developerName + '.conversationMessageDefinition'
+                    : null;
+                fp.namespacePrefix = (String) rec.get('NamespacePrefix');
+                Object createdBy = rec.get('CreatedBy');
+                if (createdBy instanceof Map<String, Object>) {
+                    fp.createdByName = (String) ((Map<String, Object>) createdBy).get('Name');
+                }
+                Object lmd = rec.get('LastModifiedDate');
+                if (lmd != null) {
+                    try {
+                        fp.lastModifiedDate = (Datetime) JSON.deserialize('"' + (String) lmd + '"', Datetime.class);
+                    } catch (Exception ignore) {}
+                }
+                if (String.isNotBlank(fp.fullName)) {
+                    results.add(fp);
+                }
+            }
+        } catch (Exception ex) {
+            System.debug('Erro no fallback via Tooling API: ' + ex.getMessage());
+        }
+        return results;
+    }
+
+    // Percorre árvore XML para encontrar nós <result>
+    private static void collectFileProperties(Dom.XMLNode node, List<MetadataService.FileProperties> acc) {
+        if (node == null) {
+            return;
+        }
+        if ('result'.equalsIgnoreCase(node.getName())) {
+            MetadataService.FileProperties fp = new MetadataService.FileProperties();
+            for (Dom.XMLNode child : node.getChildElements()) {
+                if ('fullName'.equalsIgnoreCase(child.getName())) {
+                    fp.fullName = child.getText();
+                } else if ('fileName'.equalsIgnoreCase(child.getName())) {
+                    fp.fileName = child.getText();
+                } else if ('namespacePrefix'.equalsIgnoreCase(child.getName())) {
+                    fp.namespacePrefix = child.getText();
+                } else if ('createdByName'.equalsIgnoreCase(child.getName())) {
+                    fp.createdByName = child.getText();
+                } else if ('lastModifiedDate'.equalsIgnoreCase(child.getName())) {
+                    try {
+                        fp.lastModifiedDate = (Datetime) JSON.deserialize('"' + child.getText() + '"', Datetime.class);
+                    } catch (Exception ignore) {}
+                }
+            }
+            if (String.isNotBlank(fp.fullName)) {
+                acc.add(fp);
+            }
+        }
+        for (Dom.XMLNode child : node.getChildElements()) {
+            collectFileProperties(child, acc);
         }
     }
 

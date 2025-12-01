@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-27-2025
+ * @last modified on  : 12-01-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -1977,29 +1977,37 @@ public class OpportunityBO {
                 (opp.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId() && areRequiredFieldsFilled(opp))) &&                    
                  opp.GrupoTarifario__c != 'Grupo A'
                 ){
-                System.debug('if 1 - generateProposalAsync - ');
-
                 Boolean shouldGenerate = false;
-                if (opp.PropostaGerada__c == false) {
-                    shouldGenerate = true;
-                }
-                if (oldOpp != null && opp.ReadequacaoSolicitada__c != oldOpp.ReadequacaoSolicitada__c && opp.ReadequacaoSolicitada__c == true) {
-                    shouldGenerate = true;
-                }
-                if (oldOpp != null && opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c && opp.StatusAprovacaoDesconto__c == 'Aprovado') {
-                    shouldGenerate = true;
-                }
-                if (oldOpp != null && formulaFieldsChanged(oldOpp, opp)) {
-                    shouldGenerate = true;
-                }
-
-                if (shouldGenerate) {
-                    System.debug('if 2 - generateProposalAsync - ');
+                
+                if((opp.PropostaGerada__c == false && oldOpp.PropostaGerada__c == true)){
                     if (!queuedProposalOpps.contains(opp.Id)) {
                         queuedProposalOpps.add(opp.Id);
-                        System.enqueueJob(new PDFControllerExtension.SavePdfJob(opp.Id, true, false));
+                        System.enqueueJob(new PDFControllerExtension.SavePdfJob(opp.Id, true, true));
                     } else {
                         System.debug('generateProposalAsync - já enfileirado para opp ' + opp.Id);
+                    }
+                }else{
+                    if (opp.PropostaGerada__c == false) {
+                        shouldGenerate = true;
+                    }
+
+                    if (oldOpp != null && opp.ReadequacaoSolicitada__c != oldOpp.ReadequacaoSolicitada__c && opp.ReadequacaoSolicitada__c == true) {
+                        shouldGenerate = true;
+                    }
+                    if (oldOpp != null && opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c && opp.StatusAprovacaoDesconto__c == 'Aprovado') {
+                        shouldGenerate = true;
+                    }
+                    if (oldOpp != null && formulaFieldsChanged(oldOpp, opp)) {
+                        shouldGenerate = true;
+                    }
+
+                    if (shouldGenerate) {
+                        if (!queuedProposalOpps.contains(opp.Id)) {
+                            queuedProposalOpps.add(opp.Id);
+                            System.enqueueJob(new PDFControllerExtension.SavePdfJob(opp.Id, true, false));
+                        } else {
+                            System.debug('generateProposalAsync - já enfileirado para opp ' + opp.Id);
+                        }
                     }
                 }
             }
