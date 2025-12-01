@@ -11,7 +11,7 @@
     <filters>
         <field>Status__c</field>
         <operation>equals</operation>
-        <value>Planejamento de projeto,Projetos em elaboração,Projeto em análise,Projeto aprovado,Planejamento de Obra,Obra em execução,Obra concluída - Aguardando troca de medidor,Usina operando,Obra concluída</value>
+        <value>Planejamento de projeto,Projetos em elaboração,Projeto em análise,Projeto aprovado,Planejamento de Obra,Obra em execução,Obra concluída - Aguardando troca de medidor,Usina operando</value>
     </filters>
     <label>Todos os projetos</label>
 </ListView>

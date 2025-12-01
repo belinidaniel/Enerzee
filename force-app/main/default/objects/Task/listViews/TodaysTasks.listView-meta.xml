@@ -10,7 +10,7 @@
     <columns>CORE.USERS.ALIAS</columns>
     <columns>LAST_UPDATE</columns>
     <columns>UPDATEDBY_USER.ALIAS</columns>
-    <filterScope>Everything</filterScope>
+    <filterScope>Mine</filterScope>
     <filters>
         <field>IS_CLOSED</field>
         <operation>equals</operation>
@@ -26,10 +26,5 @@
         <operation>equals</operation>
         <value>TODAY,LAST_N_DAYS:30</value>
     </filters>
-    <filters>
-        <field>CORE.USERS.ALIAS</field>
-        <operation>equals</operation>
-        <value>lyuki</value>
-    </filters>
-    <label>Tarefas de hoje</label>
+    <label>ENCODED:{!FilterNames.z_TodaysTasks}</label>
 </ListView>

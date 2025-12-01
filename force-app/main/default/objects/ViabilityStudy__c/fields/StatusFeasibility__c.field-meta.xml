@@ -4,7 +4,7 @@
     <label>Status da Viabilidade</label>
     <required>false</required>
     <trackFeedHistory>true</trackFeedHistory>
-    <trackHistory>false</trackHistory>
+    <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
@@ -15,11 +15,6 @@
                 <fullName>Agendamento de Visita Técnica</fullName>
                 <default>true</default>
                 <label>Agendamento de Visita Técnica</label>
-            </value>
-            <value>
-                <fullName>Solicitação de Novo Integrador</fullName>
-                <default>false</default>
-                <label>Solicitação de Novo Integrador</label>
             </value>
             <value>
                 <fullName>Visita Agendada</fullName>
@@ -40,6 +35,12 @@
                 <fullName>Viabilidade Finalizada</fullName>
                 <default>false</default>
                 <label>Viabilidade Finalizada</label>
+            </value>
+            <value>
+                <fullName>Solicitação de Novo Integrador</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Solicitação de Novo Integrador</label>
             </value>
         </valueSetDefinition>
     </valueSet>

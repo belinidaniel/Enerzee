@@ -5,9 +5,8 @@
     <errorConditionFormula>AND(
   ISCHANGED(Status),
   ISPICKVAL(Status, &apos;Distribuído&apos;),
-  RecordType.DeveloperName = &apos;QualificacaodeClientes&apos;,
   OR(
-    ISNULL(State),
+    ISPICKVAL(Lb065_Estado__c, &apos;&apos;),
     ISPICKVAL(Rating, &apos;&apos;)
   )
 )</errorConditionFormula>

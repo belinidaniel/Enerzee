@@ -6,8 +6,8 @@
     ISBLANK(OportunidadeConcluida__r.CloseDate),
     NULL,
     CASE(TEXT(OportunidadeConcluida__r.Categoria__c),
-        "Fast Track", 45,
-        "SCEE", 60,
+        &quot;Fast Track&quot;, 45,
+        &quot;SCEE&quot;, 60,
         0
     ) - IF(
         ISBLANK(DataConclusao__c),

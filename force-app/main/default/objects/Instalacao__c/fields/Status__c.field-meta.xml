@@ -3,6 +3,7 @@
     <fullName>Status__c</fullName>
     <label>Status da Instalação</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
@@ -11,7 +12,7 @@
             <sorted>false</sorted>
             <value>
                 <fullName>Planejamento de Obra</fullName>
-                <default>false</default>
+                <default>true</default>
                 <label>Planejamento de Obra</label>
             </value>
             <value>

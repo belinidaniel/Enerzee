@@ -3,6 +3,7 @@
     <fullName>DataConclusao__c</fullName>
     <label>Data de Conclusão</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Date</type>
