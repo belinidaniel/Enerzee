@@ -18,6 +18,7 @@ public without sharing class MessagingComposerController {
         @AuraEnabled public String detail;
         @AuraEnabled public String messagingEndUserId;
         @AuraEnabled public String messagingChannelId;
+        @AuraEnabled public String leadId;
     }
 
     public class MessagingChannelDTO {
@@ -42,6 +43,7 @@ public without sharing class MessagingComposerController {
         @AuraEnabled public String messagingEndUserId;
         @AuraEnabled public String contactId;
         @AuraEnabled public String accountId;
+        @AuraEnabled public String leadId;
         @AuraEnabled public String messagingChannelId;
         @AuraEnabled public String messageDefinitionName;
         @AuraEnabled public String phone;
@@ -203,6 +205,27 @@ public without sharing class MessagingComposerController {
             results.add(dto);
         }
 
+        for (Lead leadRecord : [
+            SELECT Id, Name, Phone, MobilePhone, Telefone_Formatado__c, Company
+            FROM Lead
+            WHERE Name LIKE :likeTerm
+                OR Phone LIKE :likeTerm
+                OR MobilePhone LIKE :likeTerm
+                OR Telefone_Formatado__c LIKE :likeTerm
+            LIMIT :MAX_RESULTS
+        ]) {
+            RecipientDTO dto = new RecipientDTO();
+            dto.id = leadRecord.Id;
+            dto.name = leadRecord.Name;
+            dto.phone = String.isNotBlank(leadRecord.Telefone_Formatado__c)
+                ? leadRecord.Telefone_Formatado__c
+                : (String.isNotBlank(leadRecord.MobilePhone) ? leadRecord.MobilePhone : leadRecord.Phone);
+            dto.type = 'Lead';
+            dto.detail = leadRecord.Company;
+            dto.leadId = leadRecord.Id;
+            results.add(dto);
+        }
+
         return results;
     }
 
@@ -234,6 +257,25 @@ public without sharing class MessagingComposerController {
 
     @AuraEnabled
     public static SendMessageResponse sendMessage(SendMessageRequest request) {
+        return doSendMessage(request);
+    }
+
+    @AuraEnabled
+    public static SendMessageResponse sendMessageJson(String requestJson) {
+        if (String.isBlank(requestJson)) {
+            throw new AuraHandledException('Nenhum dado recebido para enviar a mensagem.');
+        }
+        SendMessageRequest request;
+        try {
+            request = (SendMessageRequest) JSON.deserialize(requestJson, SendMessageRequest.class);
+        } catch (Exception ex) {
+            throw new AuraHandledException('Payload de mensagem inválido: ' + ex.getMessage());
+        }
+        return doSendMessage(request);
+    }
+
+    // Mantém a lógica central em um único lugar para evitar duplicação.
+    private static SendMessageResponse doSendMessage(SendMessageRequest request) {
         if (request == null) {
             throw new AuraHandledException('Nenhum dado recebido para enviar a mensagem.');
         }
@@ -259,28 +301,45 @@ public without sharing class MessagingComposerController {
         Map<String, Object> params = new Map<String, Object>{
             'messageDefinitionName' => request.messageDefinitionName,
             'messagingEndUserIds' => new List<String>{ (String) messagingEndUserId },
+            'messagingEndUserId' => (String) messagingEndUserId,
             'allowedSessionStatus' => String.isNotBlank(request.allowedSessionStatus) ? request.allowedSessionStatus : 'Any',
             'requestType' => String.isNotBlank(request.requestType) ? request.requestType : 'SendNotificationMessages',
             'isEnforceMessagingChannelConsent' => request.enforceConsent == null ? true : request.enforceConsent,
-            'channelConsentType' => String.isNotBlank(request.channelConsentType) ? request.channelConsentType : 'MessagingEndUser'
+            'channelConsentType' => String.isNotBlank(request.channelConsentType) ? request.channelConsentType : 'MessagingEndUser',
+            'messagingChannelId' => request.messagingChannelId
         };
 
-        // try {
-        //     Flow.Interview.LWC_Send_Conversation_Message flow = new Flow.Interview.LWC_Send_Conversation_Message(params);
-        //     flow.start();
-        // } catch (Exception ex) {
-        //     throw new AuraHandledException('Erro ao acionar o envio: ' + ex.getMessage());
-        // }
+        try {
+            Flow.Interview.LWC_Send_Conversation_Message flow = new Flow.Interview.LWC_Send_Conversation_Message(params);
+            flow.start();
+            Object flowSessionId = flow.getVariableValue('messagingSessionId');
+            if (flowSessionId != null) {
+                return new SendMessageResponse(
+                    messagingEndUserId,
+                    (String) flowSessionId,
+                    request.messageDefinitionName,
+                    'Enviado',
+                    'Mensagem enviada para o cliente.'
+                );
+            }
+        } catch (Exception ex) {
+            // Propaga o erro real para o LWC em vez de mascarar sucesso.
+            throw new AuraHandledException('Falha ao executar o fluxo LWC_Send_Conversation_Message: ' + ex.getMessage());
+        }
 
         MessagingSession session = findLatestSession(messagingEndUserId, request.messagingChannelId);
         String sessionId = session != null ? session.Id : null;
 
+        // Se não recuperamos a sessão imediatamente, ainda retornamos sucesso
+        // indicando que a mensagem foi acionada, mas a sessão pode ser criada assíncronamente.
         return new SendMessageResponse(
             messagingEndUserId,
             sessionId,
             request.messageDefinitionName,
-            'Enviado',
-            'Mensagem enviada para o cliente.'
+            sessionId == null ? 'Processando' : 'Enviado',
+            sessionId == null
+                ? 'Mensagem acionada. A sessão pode aparecer em instantes; se não aparecer, verifique status/aprovação do template e permissões do canal.'
+                : 'Mensagem enviada para o cliente.'
         );
     }
 
@@ -490,25 +549,39 @@ public without sharing class MessagingComposerController {
             return existing;
         }
 
-        if (String.isBlank(request.phone)) {
+        String phone = request.phone;
+        String derivedName = 'Cliente';
+
+        if (String.isBlank(phone) && String.isNotBlank(request.contactId)) {
+            Contact contactRecord = [SELECT Id, Name, Phone, MobilePhone, Telefone_Formatado__c FROM Contact WHERE Id = :request.contactId LIMIT 1];
+            phone = pickPhone(contactRecord);
+            derivedName = contactRecord.Name;
+        } else if (String.isBlank(phone) && String.isNotBlank(request.accountId)) {
+            Account accountRecord = [SELECT Id, Name, Phone, Telefone_Formatado__c FROM Account WHERE Id = :request.accountId LIMIT 1];
+            phone = pickPhone(accountRecord);
+            derivedName = accountRecord.Name;
+        } else if (String.isBlank(phone) && String.isNotBlank(request.leadId)) {
+            Lead leadRecord = [SELECT Id, Name, Phone, MobilePhone, Telefone_Formatado__c FROM Lead WHERE Id = :request.leadId LIMIT 1];
+            phone = String.isNotBlank(leadRecord.Telefone_Formatado__c)
+                ? leadRecord.Telefone_Formatado__c
+                : (String.isNotBlank(leadRecord.MobilePhone) ? leadRecord.MobilePhone : leadRecord.Phone);
+            derivedName = leadRecord.Name;
+        }
+
+        if (String.isBlank(phone)) {
             throw new AuraHandledException('Nenhum telefone encontrado para criar o usuário de mensagens.');
         }
 
         MessagingEndUser endUser = new MessagingEndUser();
         endUser.MessagingChannelId = channelId;
-        endUser.MessagingPlatformKey = request.phone;
+        endUser.MessagingPlatformKey = phone;
         endUser.MessagingConsentStatus = 'ImplicitlyOptedIn';
         if (String.isNotBlank(request.contactId)) {
-            Contact contactRecord = [SELECT Id, Name FROM Contact WHERE Id = :request.contactId LIMIT 1];
-            endUser.ContactId = contactRecord.Id;
-            endUser.Name = contactRecord.Name;
+            endUser.ContactId = request.contactId;
         } else if (String.isNotBlank(request.accountId)) {
-            Account accountRecord = [SELECT Id, Name FROM Account WHERE Id = :request.accountId LIMIT 1];
-            endUser.AccountId = accountRecord.Id;
-            endUser.Name = accountRecord.Name;
-        } else {
-            endUser.Name = 'Cliente';
+            endUser.AccountId = request.accountId;
         }
+        endUser.Name = derivedName;
 
         insert endUser;
         return endUser.Id;

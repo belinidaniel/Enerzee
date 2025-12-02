@@ -21,7 +21,8 @@
                         type="search"
                         label="Buscar por telefone ou nome"
                         value={recipientSearch}
-                        onchange={handleRecipientSearchChange}>
+                        oninput={handleRecipientSearchInput}
+                        onchange={handleRecipientSearchInput}>
                     </lightning-input>
                     <lightning-button
                         variant="brand"
@@ -68,29 +69,21 @@
 
             <div class="section">
                 <div class="section-header">
-                    <span class="section-title">Template</span>
+                    <span class="section-title">Mensagem</span>
                 </div>
-                <lightning-input
-                    type="search"
-                    label="Filtrar templates"
-                    value={templateSearch}
-                    onchange={handleTemplateSearchChange}>
-                </lightning-input>
-                <div class="result-list">
-                    <template for:each={filteredTemplates} for:item="tpl">
-                        <article key={tpl.fullName} class={tpl.cssClass} data-fullname={tpl.fullName} onclick={handleTemplateSelect}>
-                            <div class="tile-header">
-                                <div>
-                                    <p class="name">{tpl.fullName}</p>
-                                    <p class="muted">{tpl.fileName}</p>
-                                </div>
-                                <template if:true={tpl.namespacePrefix}>
-                                    <lightning-badge label={tpl.namespacePrefix}></lightning-badge>
-                                </template>
-                            </div>
-                        </article>
-                    </template>
-                </div>
+                <lightning-combobox
+                    name="messageTemplate"
+                    label="Selecione a mensagem"
+                    value={selectedTemplateValue}
+                    options={templates}
+                    onchange={handleTemplateChange}>
+                </lightning-combobox>
+                <template if:true={selectedTemplateText}>
+                    <div class="preview">
+                        <p class="muted">Texto da mensagem</p>
+                        <p class="preview-text">{selectedTemplateText}</p>
+                    </div>
+                </template>
             </div>
 
             <div class="footer">
