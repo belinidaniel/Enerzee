@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-24-2025
+ * @last modified on  : 12-01-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class PDFControllerExtension {
@@ -401,36 +401,6 @@ public with sharing class PDFControllerExtension {
         }
     }
     
-    // Método para determinar os nomes de registro e arquivo
-    /*private static Map<String, String> determineFileNames(Id opportunityId, String descricao) {
-        Map<String, String> fileNames = new Map<String, String>();
-        String nomeRegistro;
-        String nomeArquivo;
-
-        if(opportunityId.getSObjectType() == Opportunity.SObjectType){
-            Opportunity opp = [SELECT Name,Numeroproposta__c, account.Name FROM Opportunity WHERE Id = :opportunityId];
-            nomeRegistro = opp.Numeroproposta__c + ' ' + opp.Account.Name;
-        } else {
-            // Lógica para outros tipos de registros, se necessário
-            nomeRegistro = 'DefaultName';
-        }
-
-        if(descricao == 'ModeloPropostaA'){
-            nomeArquivo = 'Proposta A ' + nomeRegistro;
-        } else if(descricao == 'ModeloPropostaB'){
-            nomeArquivo = 'Proposta B ' + nomeRegistro;
-        } else if(descricao == 'ModeloPropostaEzeeConnect' || descricao == 'ModeloPropostaBowe') {
-            nomeArquivo = nomeRegistro;
-        } else {
-            nomeArquivo = descricao + ' ' + nomeRegistro;
-        }
-
-        fileNames.put('nomeRegistro', nomeRegistro);
-        fileNames.put('nomeArquivo', nomeArquivo);
-
-        return fileNames;
-    }*/
-
     // Executor central: usado pelo Queueable e pelo @future (fallback)
     private static void savePdfFileAsyncInternal(Id opportunityId, Boolean autoIntegrate, Boolean forceNewFile) {
         System.debug('--------------------------------- savePdfFileAsyncInternal ---------------------------------------');
@@ -554,7 +524,7 @@ public with sharing class PDFControllerExtension {
             }
             if (autoIntegrate == true) {
                 try {
-                    System.debug('savePdfFileAsyncInternal calling integration (existing file) for opp: ' + opportunityId);
+                    System.debug('savePdfFileAsyncInternal calling integration (existing file) for opp11: ' + opportunityId);
                     IntegracaoNivelloProposta.gerandoProposta(opportunityId);
                 } catch (Exception eIntExisting) {
                     Utils.createLog('PDFControllerExtension', 'savePdfFileAsyncInternal.IntegracaoExisting', eIntExisting);
@@ -601,7 +571,7 @@ public with sharing class PDFControllerExtension {
             }
             if (autoIntegrate == true) {
                 try {
-                    System.debug('savePdfFileAsyncInternal calling integration (new file) for opp: ' + opportunityId);
+                    System.debug('savePdfFileAsyncInternal calling integration (new file) for op22: ' + opportunityId);
                     IntegracaoNivelloProposta.gerandoProposta(opportunityId);
                 } catch (Exception eInt) {
                     Utils.createLog('PDFControllerExtension', 'savePdfFileAsyncInternal.IntegracaoNivelloProposta', eInt);

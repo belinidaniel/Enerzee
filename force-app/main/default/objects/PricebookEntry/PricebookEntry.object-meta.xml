@@ -142,20 +142,11 @@
     </actionOverrides>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <enableFeeds>false</enableFeeds>
-    <profileSearchLayouts>
-        <fields>PRODUCT.NAME</fields>
-        <fields>PRODUCT.CUSTOMER_PRODUCT_ID</fields>
-        <fields>PRODUCT.DEFAULT_PRICE</fields>
-        <fields>PRODUCT2.DESCRIPTION</fields>
-        <fields>PRODUCT2.FAMILY_ENUM</fields>
-        <profileName>System Administrator</profileName>
-    </profileSearchLayouts>
     <searchLayouts>
         <searchResultsAdditionalFields>PRODUCT.NAME</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>PRODUCT.CUSTOMER_PRODUCT_ID</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>PRODUCT.DEFAULT_PRICE</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>PRODUCT2.DESCRIPTION</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>PRODUCT2.FAMILY_ENUM</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Product2.Category__c</searchResultsAdditionalFields>
     </searchLayouts>
 </CustomObject>

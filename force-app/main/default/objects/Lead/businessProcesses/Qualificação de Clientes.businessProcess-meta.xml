@@ -3,10 +3,6 @@
     <fullName>Qualificação de Clientes</fullName>
     <isActive>true</isActive>
     <values>
-        <fullName>Convertido</fullName>
-        <default>false</default>
-    </values>
-    <values>
         <fullName>Distribuído</fullName>
         <default>false</default>
     </values>
@@ -15,7 +11,7 @@
         <default>true</default>
     </values>
     <values>
-        <fullName>Não Qualificado</fullName>
+        <fullName>Não Convertido</fullName>
         <default>false</default>
     </values>
     <values>

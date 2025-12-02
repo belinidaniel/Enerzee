@@ -24,17 +24,6 @@
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>Distributiontype__c</picklist>
-        <values>
-            <fullName>Email</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Graduação</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
         <picklist>GenderIdentity</picklist>
         <values>
             <fullName>Homem</fullName>
@@ -617,10 +606,6 @@
     </picklistValues>
     <picklistValues>
         <picklist>TipoDeImovel__c</picklist>
-        <values>
-            <fullName>Não sei%21 Preciso da ajuda de um especialista</fullName>
-            <default>false</default>
-        </values>
         <values>
             <fullName>com laje</fullName>
             <default>false</default>

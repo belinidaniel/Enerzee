@@ -10,7 +10,7 @@
     <columns>CORE.USERS.ALIAS</columns>
     <columns>LAST_UPDATE</columns>
     <columns>UPDATEDBY_USER.ALIAS</columns>
-    <filterScope>Team</filterScope>
+    <filterScope>Mine</filterScope>
     <filters>
         <field>STATUS</field>
         <operation>equals</operation>
@@ -20,6 +20,11 @@
         <field>STATUS</field>
         <operation>equals</operation>
         <value>Open</value>
+    </filters>
+    <filters>
+        <field>DUE_DATE</field>
+        <operation>lessThan</operation>
+        <value>6/20/2025 12:00 AM</value>
     </filters>
     <label>Todas as Tarefas do meu time</label>
 </ListView>

@@ -1,52 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
-		<members>Agente_SDR_Entrada_interesse_Geral</members>
-		<members>Canal_de_Atendimento_P_s_Vendas_11_4003_8852</members>
-		<members>Contrato_enviado_REVO</members>
-		<members>Iniciar_conversa</members>
-		<members>Iniciar_conversa_consultor</members>
-		<members>Jornada_do_Cliente_Entrega_do_Kit_WEG</members>
-		<members>Jornada_do_Cliente_Informa_es_Iniciais</members>
-		<members>Jornada_do_Cliente_Informa_es_Iniciais_Consultor</members>
-		<members>Jornada_do_Cliente_Inicio_de_Obra</members>
-		<members>Jornada_do_Cliente_Instala_o_Materiais</members>
-		<members>Jornada_do_Cliente_Instala_o_Materiais_Consultor</members>
-		<members>Jornada_do_Cliente_Instala_o_Montagem</members>
-		<members>Jornada_do_Cliente_Instala_o_Montagem_Consultor</members>
-		<members>Jornada_do_Cliente_Instala_o_Vistoria</members>
-		<members>Jornada_do_Cliente_Instala_o_Vistoria_Consultor</members>
-		<members>Jornada_do_Cliente_Instala_o_Vistoria_Importante</members>
-		<members>Jornada_do_Cliente_Instalacao</members>
-		<members>Jornada_do_Cliente_Instalacao_Geral</members>
-		<members>Jornada_do_Cliente_Liga_o_Conclu_da</members>
-		<members>Jornada_do_Cliente_Liga_o_Conclu_da_Consultor</members>
-		<members>Jornada_do_Cliente_Monitoramento</members>
-		<members>Jornada_do_Cliente_Onboarding</members>
-		<members>Jornada_do_Cliente_Onboarding_Consultor</members>
-		<members>Jornada_do_Cliente_Projeto_Aprovado</members>
-		<members>Jornada_do_Cliente_Projeto_Aprovado_Consultor</members>
-		<members>Jornada_do_Cliente_Start</members>
-		<members>Jornada_do_Cliente_Start_2</members>
-		<members>Jornada_do_Cliente_Start_Consultor</members>
-		<members>Jornada_do_Cliente_Viabilidade_Concluida</members>
-		<members>Jornada_do_Cliente_Vistoria</members>
-		<members>Notifica_o_Closer</members>
-		<members>Notifica_o_inicial</members>
-		<members>Notificacao_contrato_enviado_para_assinatura_Consultor</members>
-		<members>Notificacao_de_envio_de_contrato_Consultor</members>
-		<members>Resultado_pos_viabilidade_REVO</members>
-		<members>Sessao_Inativa</members>
-		<members>Sessao_Inativa_Cliente</members>
-		<members>agent_sdr_carregador_veicular</members>
-		<members>agent_sdr_entrada_baterias</members>
-		<members>agent_sdr_entrada_ezee_connect</members>
-		<members>agent_sdr_entrada_ezee_livre</members>
-		<members>agent_sdr_entrada_interesse_ezee_solar</members>
-		<members>agent_sdr_entrada_solar</members>
-		<members>sessao_inativa_agente_consultor</members>
-		<members>sessao_inativa_cliente_consultor</members>
-		<name>ConversationMessageDefinition</name>
+		<members>Administrador</members>
+		<name>Profile</name>
 	</types>
 	<version>65.0</version>
 </Package>

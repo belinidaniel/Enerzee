@@ -10,15 +10,5 @@
     <columns>OPPORTUNITY.LAST_STAGE_CHANGE</columns>
     <columns>PotenciaPicoSistema__c</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>OPPORTUNITY.RECORDTYPE</field>
-        <operation>equals</operation>
-        <value>Opportunity.ContratoMicro,Opportunity.MicroGrupoBElaboracao,Opportunity.MiniGrupoBElaboracao</value>
-    </filters>
-    <filters>
-        <field>OPPORTUNITY.STAGE_NAME</field>
-        <operation>equals</operation>
-        <value>Proposta enviada / Aguardando Aceite</value>
-    </filters>
     <label>Proposta Enviada</label>
 </ListView>

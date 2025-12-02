@@ -5,16 +5,15 @@
     <description>Valida se o consultor da oportunidade possui id do virtual office, em seu cadastro</description>
     <errorConditionFormula>AND(
     NOT(ISBLANK(ConsultorOportunidade__c)),
+    ISBLANK(ConsultorOportunidade__r.IdVirtualOffice2__c),
     OR(
-        ISPICKVAL(StageName, &quot;Geração de contrato&quot;),
-        ISPICKVAL(StageName, &quot;Minuta Gerada&quot;),
-        ISPICKVAL(StageName, &quot;Análise de viabilidade&quot;),
-        ISPICKVAL(StageName, &quot;Aguardando Assinatura&quot;),
-        ISPICKVAL(StageName, &quot;Aguardando Informação&quot;),
+        ISPICKVAL(StageName, &quot;Contrato&quot;),
+        ISPICKVAL(StageName, &quot;Viabilidade Técnica&quot;),
+        ISPICKVAL(StageName, &quot;Viabilidade Tecnica&quot;),
+        ISPICKVAL(StageName, &quot;Validação&quot;),
         ISPICKVAL(StageName, &quot;Parecer de acesso&quot;),
         ISPICKVAL(StageName, &quot;Ganho fechado&quot;)
-    ),
-    ISBLANK(ConsultorOportunidade__r.IdVirtualOffice2__c)
+    )
 )</errorConditionFormula>
     <errorMessage>O consultor vinculado à oportunidade não possui o ID do Virtual Office preenchido em seu cadastro. Atualize o cadastro do consultor antes de continuar.</errorMessage>
 </ValidationRule>

@@ -10,10 +10,39 @@ public with sharing class IntegracaoVOPlano {
     @future(callout=true)
     public static void sendPlano(Set<Id> triggerIds) {
         List<Opportunity> oportunidades = [ 
-        	SELECT Id, Numeroproposta__c, Account.IdVirtualOffice2__c,PotenciaPicoSistema__c,Account.Name, SubTipo__c, RecordType.DeveloperName, RecordType.Name, paymentMethod__c, StageName, ValorTotalProposta__c, Rede__c, Kwh__c, ConsultorOportunidade__r.Login_no_virtual__c, ConsultorOportunidade__r.IdVirtualOffice2__c, ParceiroRegistroOportunidade__c,Parceiro__r.Name
+        	SELECT Id, AccountId, Numeroproposta__c, Account.IdVirtualOffice2__c, Account.Name, Account.Email__c, Account.DataNascimento__c, Account.SeCPFouCNPJ__c, Account.ShippingStreet, Account.NumeroRuaEntrega__c, Account.ShippingPostalCode, Account.ComplementoEntrega__c, Account.Consultor__r.Login_no_virtual__c, Account.Consultor__r.IdVirtualOffice2__c,PotenciaPicoSistema__c, SubTipo__c, RecordType.DeveloperName, RecordType.Name, paymentMethod__c, StageName, ValorTotalProposta__c, Rede__c, Kwh__c, ConsultorOportunidade__r.Login_no_virtual__c, ConsultorOportunidade__r.IdVirtualOffice2__c, ParceiroRegistroOportunidade__c,Parceiro__r.Name
             FROM Opportunity 
             WHERE Id IN :triggerIds 
         ];
+
+        Set<Id> accountsWithoutVOId = new Set<Id>();
+        for (Opportunity opp : oportunidades) {
+            if (opp.AccountId != null && (opp.Account == null || String.isBlank(opp.Account.IdVirtualOffice2__c))) {
+                accountsWithoutVOId.add(opp.AccountId);
+            }
+        }
+
+        Map<Id, Account> accountIdToAccount = new Map<Id, Account>();
+
+        if(!accountsWithoutVOId.isEmpty()){
+            List<Account> accountsToReprocess = [
+                SELECT  Id, IdVirtualOffice2__c, Name, Email__c, DataNascimento__c, SeCPFouCNPJ__c, Consultor__r.Login_no_virtual__c, Consultor__r.IdVirtualOffice2__c, ShippingStreet, NumeroRuaEntrega__c, ShippingPostalCode, ComplementoEntrega__c
+                FROM    Account
+                WHERE   Id IN :accountsWithoutVOId
+            ];
+
+            IntegracaoVOClientePreCadastro.processAccounts(accountsToReprocess, 'sendClienteFromPlano');
+
+            for(Account acc : accountsToReprocess){
+                accountIdToAccount.put(acc.Id, acc);
+            }
+        }
+
+        for(Opportunity opp : oportunidades){
+            if(opp.AccountId != null && !accountIdToAccount.containsKey(opp.AccountId) && opp.Account != null){
+                accountIdToAccount.put(opp.AccountId, opp.Account);
+            }
+        }
 
         for (Opportunity opp : oportunidades) {
 
@@ -22,13 +51,19 @@ public with sharing class IntegracaoVOPlano {
             }
             
             String plano = plano.get(opp.RecordType.DeveloperName);
+            Account relatedAccount = opp.AccountId != null ? accountIdToAccount.get(opp.AccountId) : null;
+
+            if (relatedAccount == null || String.isBlank(relatedAccount.IdVirtualOffice2__c)) {
+                Utils.createLog('IntegracaoVOPlano', 'skipSendPlanoMissingVOId ' + opp.Id, 'Conta sem IdVirtualOffice2__c. Fluxo não prosseguiu para envio do plano.');
+                continue;
+            }
             
             PlanoRequest corpoRequisicao = new PlanoRequest();
             corpoRequisicao.IdOportunidade	= opp.Numeroproposta__c;
-            corpoRequisicao.idusuario		= opp.Account.IdVirtualOffice2__c != null ? Integer.valueOf(opp.Account.IdVirtualOffice2__c) : 0;
-            corpoRequisicao.nomeCliente 	= opp.Account.Name;
+            corpoRequisicao.idusuario		= Integer.valueOf(relatedAccount.IdVirtualOffice2__c);
+            corpoRequisicao.nomeCliente 	= relatedAccount.Name;
         	corpoRequisicao.idplano			= planoId.get(plano);
-        	corpoRequisicao.parceiro		= parceiro(opp.Parceiro__r.Name); //parceiro(opp);
+        	corpoRequisicao.parceiro		= parceiro(opp.Parceiro__r != null ? opp.Parceiro__r.Name : null); //parceiro(opp);
             corpoRequisicao.etapaSalesForce = opp.StageName;
         	corpoRequisicao.tipopagamento	= formPag.get(opp.paymentMethod__c);
             corpoRequisicao.kw				= opp.PotenciaPicoSistema__c;
@@ -53,7 +88,7 @@ public with sharing class IntegracaoVOPlano {
 
             try {
                 HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'PlanoVO');
-                Utils.createLog('IntegracaoVOPlano', 'sendPlano ' + lead.Id, response);
+                Utils.createLog('IntegracaoVOPlano', 'sendPlano ' + opp.Id, response);
 
                 if (response.getBody() != null && response.getBody() != '') {
                     Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
@@ -61,7 +96,7 @@ public with sharing class IntegracaoVOPlano {
                 }
 
             } catch (Exception e) {
-                Utils.createLog('IntegracaoVOPlano', 'sendPlano ' + lead.Id, e);
+                Utils.createLog('IntegracaoVOPlano', 'sendPlano ' + opp.Id, e);
             }
         }
     }

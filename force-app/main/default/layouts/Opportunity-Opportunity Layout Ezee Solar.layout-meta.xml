@@ -62,6 +62,14 @@
                 <behavior>Edit</behavior>
                 <field>ParentOpportunity__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>DiscountLoyalty__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>DiscountNotLoyalty__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

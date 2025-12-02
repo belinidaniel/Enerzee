@@ -4,6 +4,29 @@
     <active>false</active>
     <label>Posto de transformação</label>
     <picklistValues>
+        <picklist>CartaAprovacaoTipo__c</picklist>
+        <values>
+            <fullName>Disponibilidade_de_Energia</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Informacao_de_Acesso</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Microgeracao</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Minigeracao</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Posto_ou_Subestacao</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Categoria__c</picklist>
         <values>
             <fullName>Fast Track</fullName>
@@ -480,31 +503,23 @@
     <picklistValues>
         <picklist>Status__c</picklist>
         <values>
-            <fullName>Aguardando vistoria</fullName>
+            <fullName>Planejamento de projeto</fullName>
             <default>false</default>
-        </values>
-        <values>
-            <fullName>Elaboração de projeto</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Ligação solicitada</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Obra concluída</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Obra em execução</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Planejamento</fullName>
-            <default>true</default>
         </values>
         <values>
             <fullName>Projeto aprovado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Projeto cancelado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Projeto em análise</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Projetos em elaboração</fullName>
             <default>false</default>
         </values>
     </picklistValues>

@@ -1,13 +1,17 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 12-01-2025
+ * @last modified by  : Daniel Belini
+**/
+
 @isTest
 private class IntegracaoVOPlanoTest {
     
     @isTest
-    static void testSendPlano() {
+    static void testSendPlanoReprocessesAccountWithoutVirtualOfficeId() {
         Test.setMock(HttpCalloutMock.class, new MockVirtualOfficeWS());
-        
-        Test.startTest();
-        
-        Set<Id> opportunityIds = new Set<Id>();
             
         Consultor__c consultor = new Consultor__c(
             Name = 'Consultor Teste',
@@ -26,14 +30,13 @@ private class IntegracaoVOPlanoTest {
             NumeroRuaEntrega__c = '123',
             ShippingPostalCode = '12345000',
             ComplementoEntrega__c = 'Apto 101',
-            Consultor__c = consultor.id,
-            IdVirtualOffice2__c = '12345'
+            Consultor__c = consultor.id
         );
         
         insert acc;
-        
-        Opportunity opp1 = new Opportunity(
-            IdVirtualOffice__c = 'TESTEVO1',
+
+        Opportunity opp = new Opportunity(
+            IdVirtualOffice__c = '123456789',
             Name = 'Oportunidade Teste',
             AccountId = acc.Id,
             RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId(),
@@ -44,86 +47,100 @@ private class IntegracaoVOPlanoTest {
             CloseDate = Date.today()
         );
         
-        insert opp1;
-        opportunityIds.add(opp1.Id);
-        
-        Opportunity opp2 = new Opportunity(
-            IdVirtualOffice__c = 'TESTEVO2',
-            Name = 'Oportunidade Teste',
-            AccountId = acc.Id,
-            RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('EzeeLivre').getRecordTypeId(),
-            paymentMethod__c = 'PIX',
-            ParceiroRegistroOportunidade__c = 'Auren',
-            ValorTotalProdutos__c = 5000.00,
-            Kwh__c = 200.00,
-            StageName = 'Ganho fechado',
-            CloseDate = Date.today()
-        );
-        
-        insert opp2;
-        opportunityIds.add(opp2.Id);
-        
-        Opportunity opp3 = new Opportunity(
-            IdVirtualOffice__c = 'TESTEVO3',
-            Name = 'Oportunidade Teste',
-            AccountId = acc.Id,
-            RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('EzeeConnect').getRecordTypeId(),
-            paymentMethod__c = 'PIX',
-            ValorTotalProdutos__c = 5000.00,
-            Kwh__c = 200.00,
-            StageName = 'Ganho fechado',
-            CloseDate = Date.today()
-        );
-        
-        insert opp3;
-        opportunityIds.add(opp3.Id);
-        
-        IntegracaoVOPlano.sendPlano(opportunityIds);
+        insert opp;
+
+        Test.startTest();
+        IntegracaoVOPlano.sendPlano(new Set<Id>{ opp.Id });
         Test.stopTest();
         
-        System.assertNotEquals(null, opportunity.Id, 'A integração não foi bem-sucedida');
+        acc = [SELECT IdVirtualOffice2__c FROM Account WHERE Id = :acc.Id];
+        Log__c planLog = [
+            SELECT Id, Method__c FROM Log__c 
+            WHERE Class__c = 'IntegracaoVOPlano' AND Method__c = :('sendPlano ' + opp.Id)
+            LIMIT 1
+        ];
+
+        System.assertNotEquals(null, acc.IdVirtualOffice2__c, 'IdVirtualOffice2__c deve ser preenchido antes do envio.');
+        System.assertNotEquals(null, planLog, 'Envio do plano não foi registrado.');
     }
     
     @isTest
-    static void testSendPlanoWithException() {
+    static void testSendPlanoSkipsReprocessWhenAccountAlreadyHasId() {
 		Test.setMock(HttpCalloutMock.class, new MockVirtualOfficeWS());
         
-        Test.startTest();
         Account acc = new Account(
-            Name = 'Cliente Teste Erro'
+            Name = 'Cliente Teste Erro',
+            IdVirtualOffice2__c = '2222'
         );
         insert acc;
         
-        ProposalCover__c ProposalCover = (ProposalCover__c) TestFactory.createSObject(new ProposalCover__c(), true);
-        Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(new Parceiro__c(
-            CapaProposta__c = ProposalCover.id,
-            Produto__c = 'Solar'
-        ), true);
-        
         Opportunity opportunity = new Opportunity(
-            IdVirtualOffice__c = 'TESTEVO123456',
+            IdVirtualOffice__c = '12345678923456',
             Name = 'Oportunidade Teste',
             AccountId = acc.Id,
             RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId(),
             paymentMethod__c = 'PIX',
             ValorTotalProdutos__c = 5000.00,
             Kwh__c = 200.00,
-            StageName = 'Elaboração de proposta',
-            CloseDate = Date.today(),
-            Parceiro__c = parceiro.id
+            StageName = 'Ganho fechado',
+            CloseDate = Date.today()
         );
         insert opportunity;
         
-        Set<Id> triggerIds = new Set<Id>{ opportunity.Id };
-        
-        try {
-            opportunity.StageName = 'Ganho fechado';
-            update opportunity;
-            
-            IntegracaoVOPlano.sendPlano(triggerIds);
-        } catch (Exception e) {
-            System.debug('Erro esperado: ' + e.getMessage());
-        }
+        Test.startTest();
+        IntegracaoVOPlano.sendPlano(new Set<Id>{ opportunity.Id });
         Test.stopTest();
+
+        Integer reprocessLogs = [SELECT COUNT() FROM Log__c WHERE Class__c = 'IntegracaoVOClientePreCadastro' AND Method__c LIKE 'sendClienteFromPlano%'];
+        Integer planLogs = [SELECT COUNT() FROM Log__c WHERE Class__c = 'IntegracaoVOPlano' AND Method__c = :('sendPlano ' + opportunity.Id)];
+
+        System.assertEquals(0, reprocessLogs, 'Não deveria reprocessar pré-cadastro quando IdVirtualOffice2__c já existe.');
+        System.assertEquals(1, planLogs, 'Envio de plano deveria ter sido executado.');
+    }
+
+    @isTest
+    static void testSendPlanoNotSentWhenPreCadastroFails() {
+        Test.setMock(HttpCalloutMock.class, new ErrorMockVO());
+
+        Account acc = new Account(
+            Name = 'Cliente Sem ID'
+        );
+        insert acc;
+
+        Opportunity opportunity = new Opportunity(
+            IdVirtualOffice__c = 'TESTEVO999',
+            Name = 'Oportunidade Teste Erro',
+            AccountId = acc.Id,
+            RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId(),
+            paymentMethod__c = 'PIX',
+            ValorTotalProdutos__c = 5000.00,
+            Kwh__c = 200.00,
+            StageName = 'Ganho fechado',
+            CloseDate = Date.today()
+        );
+        insert opportunity;
+
+        Test.startTest();
+        IntegracaoVOPlano.sendPlano(new Set<Id>{ opportunity.Id });
+        Test.stopTest();
+
+        acc = [SELECT IdVirtualOffice2__c, SucessoIntegracaoVO__c FROM Account WHERE Id = :acc.Id];
+
+        Integer planLogs = [SELECT COUNT() FROM Log__c WHERE Class__c = 'IntegracaoVOPlano' AND Method__c = :('sendPlano ' + opportunity.Id)];
+        Integer skipLogs = [SELECT COUNT() FROM Log__c WHERE Class__c = 'IntegracaoVOPlano' AND Method__c LIKE 'skipSendPlanoMissingVOId%'];
+
+        System.assertEquals(null, acc.IdVirtualOffice2__c, 'IdVirtualOffice2__c não deve ser preenchido em caso de falha.');
+        System.assertEquals(0, planLogs, 'Não deve enviar plano sem ID do VO.');
+        System.assertEquals(1, skipLogs, 'Deve registrar log de bloqueio de envio sem ID.');
+    }
+
+    private class ErrorMockVO implements HttpCalloutMock {
+        public HttpResponse respond(HttpRequest req) {
+            HttpResponse res = new HttpResponse();
+            res.setHeader('Content-Type', 'application/json');
+            res.setBody('{"erro": true}');
+            res.setStatusCode(200);
+            return res;
+        }
     }
 }

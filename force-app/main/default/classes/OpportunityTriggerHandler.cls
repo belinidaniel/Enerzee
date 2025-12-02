@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-23-2025
+ * @last modified on  : 12-01-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityTriggerHandler extends TriggerHandler {
@@ -81,7 +81,6 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.updateFinancingProcessSimulationInExternalSystem((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.updateOpportunityTotalValueIfNeeded((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         //OpportunityBO.validateStageChange((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
-        OpportunityBO.generateProposalAsync((Map<Id,Opportunity>) Trigger.newMap, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.processUpdatedOpportunitiesForSimulation((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.checksAndClosesTaskFollowUpCall((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.checkAndSendToRevo((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
@@ -94,7 +93,7 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.handleOpportunityLeadConversion((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.closeActivitiesAndFlowsForClosedLost((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityShareHandler.gerenciarCompartilhamentoOportunidade((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
-
+        OpportunityBO.generateProposalAsync((Map<Id,Opportunity>) Trigger.newMap, (Map<Id, Opportunity>) Trigger.oldMap);
     }
 
     public override void beforeDelete(){}

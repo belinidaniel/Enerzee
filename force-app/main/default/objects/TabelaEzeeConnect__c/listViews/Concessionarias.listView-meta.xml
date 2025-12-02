@@ -6,6 +6,9 @@
     <columns>Distribuidora__c</columns>
     <columns>Estado__c</columns>
     <columns>Tarifa__c</columns>
+    <columns>Parceiro1__c</columns>
+    <columns>Parceiro2__c</columns>
+    <columns>Parceiro3__c</columns>
     <columns>LAST_UPDATE</columns>
     <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>

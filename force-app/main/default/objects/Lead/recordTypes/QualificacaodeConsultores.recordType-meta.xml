@@ -24,17 +24,6 @@
         </values>
     </picklistValues>
     <picklistValues>
-        <picklist>Distributiontype__c</picklist>
-        <values>
-            <fullName>Email</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Graduação</fullName>
-            <default>false</default>
-        </values>
-    </picklistValues>
-    <picklistValues>
         <picklist>GenderIdentity</picklist>
         <values>
             <fullName>Homem</fullName>

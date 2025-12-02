@@ -2,12 +2,13 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-28-2025
+ * @last modified on  : 11-30-2025
  * @last modified by  : Daniel Belini
 **/
-public with sharing class MessagingComposerController {
+public without sharing class MessagingComposerController {
     private static final Integer MAX_RESULTS = 25;
     private static final Double METADATA_API_VERSION = 63.0;
+    private static final String API_VERSION_STRING = String.valueOf(METADATA_API_VERSION);
 
     public class RecipientDTO {
         @AuraEnabled public String id;
@@ -17,6 +18,7 @@ public with sharing class MessagingComposerController {
         @AuraEnabled public String detail;
         @AuraEnabled public String messagingEndUserId;
         @AuraEnabled public String messagingChannelId;
+        @AuraEnabled public String leadId;
     }
 
     public class MessagingChannelDTO {
@@ -41,6 +43,7 @@ public with sharing class MessagingComposerController {
         @AuraEnabled public String messagingEndUserId;
         @AuraEnabled public String contactId;
         @AuraEnabled public String accountId;
+        @AuraEnabled public String leadId;
         @AuraEnabled public String messagingChannelId;
         @AuraEnabled public String messageDefinitionName;
         @AuraEnabled public String phone;
@@ -202,6 +205,27 @@ public with sharing class MessagingComposerController {
             results.add(dto);
         }
 
+        for (Lead leadRecord : [
+            SELECT Id, Name, Phone, MobilePhone, Telefone_Formatado__c, Company
+            FROM Lead
+            WHERE Name LIKE :likeTerm
+                OR Phone LIKE :likeTerm
+                OR MobilePhone LIKE :likeTerm
+                OR Telefone_Formatado__c LIKE :likeTerm
+            LIMIT :MAX_RESULTS
+        ]) {
+            RecipientDTO dto = new RecipientDTO();
+            dto.id = leadRecord.Id;
+            dto.name = leadRecord.Name;
+            dto.phone = String.isNotBlank(leadRecord.Telefone_Formatado__c)
+                ? leadRecord.Telefone_Formatado__c
+                : (String.isNotBlank(leadRecord.MobilePhone) ? leadRecord.MobilePhone : leadRecord.Phone);
+            dto.type = 'Lead';
+            dto.detail = leadRecord.Company;
+            dto.leadId = leadRecord.Id;
+            results.add(dto);
+        }
+
         return results;
     }
 
@@ -210,9 +234,6 @@ public with sharing class MessagingComposerController {
     public static List<MessageTemplateDTO> getMessageDefinitions(String searchTerm) {
         List<MessageTemplateDTO> templates = new List<MessageTemplateDTO>();
         MetadataService.FileProperties[] files = fetchMessageDefinitions();
-        if (files == null) {
-            return templates;
-        }
 
         String term = normalizeSearchTerm(searchTerm);
         for (MetadataService.FileProperties fp : files) {
@@ -236,6 +257,25 @@ public with sharing class MessagingComposerController {
 
     @AuraEnabled
     public static SendMessageResponse sendMessage(SendMessageRequest request) {
+        return doSendMessage(request);
+    }
+
+    @AuraEnabled
+    public static SendMessageResponse sendMessageJson(String requestJson) {
+        if (String.isBlank(requestJson)) {
+            throw new AuraHandledException('Nenhum dado recebido para enviar a mensagem.');
+        }
+        SendMessageRequest request;
+        try {
+            request = (SendMessageRequest) JSON.deserialize(requestJson, SendMessageRequest.class);
+        } catch (Exception ex) {
+            throw new AuraHandledException('Payload de mensagem inválido: ' + ex.getMessage());
+        }
+        return doSendMessage(request);
+    }
+
+    // Mantém a lógica central em um único lugar para evitar duplicação.
+    private static SendMessageResponse doSendMessage(SendMessageRequest request) {
         if (request == null) {
             throw new AuraHandledException('Nenhum dado recebido para enviar a mensagem.');
         }
@@ -261,28 +301,45 @@ public with sharing class MessagingComposerController {
         Map<String, Object> params = new Map<String, Object>{
             'messageDefinitionName' => request.messageDefinitionName,
             'messagingEndUserIds' => new List<String>{ (String) messagingEndUserId },
+            'messagingEndUserId' => (String) messagingEndUserId,
             'allowedSessionStatus' => String.isNotBlank(request.allowedSessionStatus) ? request.allowedSessionStatus : 'Any',
             'requestType' => String.isNotBlank(request.requestType) ? request.requestType : 'SendNotificationMessages',
             'isEnforceMessagingChannelConsent' => request.enforceConsent == null ? true : request.enforceConsent,
-            'channelConsentType' => String.isNotBlank(request.channelConsentType) ? request.channelConsentType : 'MessagingEndUser'
+            'channelConsentType' => String.isNotBlank(request.channelConsentType) ? request.channelConsentType : 'MessagingEndUser',
+            'messagingChannelId' => request.messagingChannelId
         };
 
-        // try {
-        //     Flow.Interview.LWC_Send_Conversation_Message flow = new Flow.Interview.LWC_Send_Conversation_Message(params);
-        //     flow.start();
-        // } catch (Exception ex) {
-        //     throw new AuraHandledException('Erro ao acionar o envio: ' + ex.getMessage());
-        // }
+        try {
+            Flow.Interview.LWC_Send_Conversation_Message flow = new Flow.Interview.LWC_Send_Conversation_Message(params);
+            flow.start();
+            Object flowSessionId = flow.getVariableValue('messagingSessionId');
+            if (flowSessionId != null) {
+                return new SendMessageResponse(
+                    messagingEndUserId,
+                    (String) flowSessionId,
+                    request.messageDefinitionName,
+                    'Enviado',
+                    'Mensagem enviada para o cliente.'
+                );
+            }
+        } catch (Exception ex) {
+            // Propaga o erro real para o LWC em vez de mascarar sucesso.
+            throw new AuraHandledException('Falha ao executar o fluxo LWC_Send_Conversation_Message: ' + ex.getMessage());
+        }
 
         MessagingSession session = findLatestSession(messagingEndUserId, request.messagingChannelId);
         String sessionId = session != null ? session.Id : null;
 
+        // Se não recuperamos a sessão imediatamente, ainda retornamos sucesso
+        // indicando que a mensagem foi acionada, mas a sessão pode ser criada assíncronamente.
         return new SendMessageResponse(
             messagingEndUserId,
             sessionId,
             request.messageDefinitionName,
-            'Enviado',
-            'Mensagem enviada para o cliente.'
+            sessionId == null ? 'Processando' : 'Enviado',
+            sessionId == null
+                ? 'Mensagem acionada. A sessão pode aparecer em instantes; se não aparecer, verifique status/aprovação do template e permissões do canal.'
+                : 'Mensagem enviada para o cliente.'
         );
     }
 
@@ -296,18 +353,187 @@ public with sharing class MessagingComposerController {
             return new MetadataService.FileProperties[]{ fp };
         }
 
+        // 1) Tenta via Tooling REST com Named Credential (usa token do NC, não o sessionId do usuário)
+        List<MetadataService.FileProperties> viaRest = fetchMessageDefinitionsViaNamedCredentialRest();
+        if (!viaRest.isEmpty()) {
+            return viaRest;
+        }
+
+        // 2) Tenta via SOAP Metadata com Named Credential (sem usar sessionId do usuário)
+        List<MetadataService.FileProperties> viaNC = fetchMessageDefinitionsViaNamedCredential();
+        if (!viaNC.isEmpty()) {
+            return viaNC;
+        }
+
+        // 3) Última tentativa: sessão do usuário (pode falhar se o usuário não tiver API)
         try {
-            MetadataService.MetadataPort svc = new MetadataService.MetadataPort();
-            svc.SessionHeader = new MetadataService.SessionHeader_element();
-            svc.SessionHeader.sessionId = UserInfo.getSessionId();
+            MetadataService.MetadataPort svc = createMetadataPort();
 
             MetadataService.ListMetadataQuery query = new MetadataService.ListMetadataQuery();
             query.type_x = 'ConversationMessageDefinition';
 
-            return svc.listMetadata(new MetadataService.ListMetadataQuery[]{ query }, METADATA_API_VERSION);
+            MetadataService.FileProperties[] files =
+                svc.listMetadata(new MetadataService.ListMetadataQuery[]{ query }, METADATA_API_VERSION);
+
+            if (files == null) {
+                throw new AuraHandledException('Nenhum ConversationMessageDefinition encontrado.');
+            }
+            return files;
         } catch (Exception ex) {
-            System.debug('Falha ao listar ConversationMessageDefinition: ' + ex.getMessage());
-            return null;
+            throw new AuraHandledException(
+                'Falha ao listar ConversationMessageDefinition (Named Credential não retornou dados e a sessão do usuário é inválida para API): ' +
+                ex.getMessage()
+            );
+        }
+    }
+
+    private static MetadataService.MetadataPort createMetadataPort() {
+        MetadataService.MetadataPort svc = new MetadataService.MetadataPort();
+        svc.SessionHeader = new MetadataService.SessionHeader_element();
+        String sessionId = UserInfo.getSessionId();
+        if (String.isBlank(sessionId)) {
+            throw new AuraHandledException('Sessão indisponível para chamada de metadata (UserInfo.getSessionId() vazio). Verifique permissões de API.');
+        }
+        svc.SessionHeader.sessionId = sessionId;
+        svc.endpoint_x = resolveMetadataEndpoint();
+        return svc;
+    }
+
+    private static String resolveMetadataEndpoint() {
+        // Prioriza o domínio da requisição atual (Lightning) para evitar INVALID_SESSION_ID
+        try {
+            String current = URL.getCurrentRequestUrl().toExternalForm();
+            // extrai protocolo + host
+            Integer idx = current.indexOf('/', 8);
+            String host = idx > 0 ? current.substring(0, idx) : current;
+            return host + '/services/Soap/m/' + METADATA_API_VERSION;
+        } catch (Exception ex) {
+            // fallback para domínio da org
+            return URL.getOrgDomainUrl().toExternalForm() + '/services/Soap/m/' + METADATA_API_VERSION;
+        }
+    }
+
+    // Fallback usando Named Credential "Salesforce_PRD" (conforme exemplo em RemarketingRouter)
+    private static List<MetadataService.FileProperties> fetchMessageDefinitionsViaNamedCredential() {
+        List<MetadataService.FileProperties> results = new List<MetadataService.FileProperties>();
+        try {
+            HttpRequest req = new HttpRequest();
+            req.setMethod('POST');
+            req.setEndpoint('callout:Salesforce_PRD/services/Soap/m/' + METADATA_API_VERSION);
+            req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+            req.setHeader('SOAPAction', 'listMetadata');
+
+            String body =
+                '<?xml version="1.0" encoding="UTF-8"?>' +
+                '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:met="http://soap.sforce.com/2006/04/metadata">' +
+                '<soapenv:Header/>' +
+                '<soapenv:Body>' +
+                '<met:listMetadata>' +
+                '<met:queries>' +
+                '<met:type>ConversationMessageDefinition</met:type>' +
+                '</met:queries>' +
+                '<met:asOfVersion>' + METADATA_API_VERSION + '</met:asOfVersion>' +
+                '</met:listMetadata>' +
+                '</soapenv:Body>' +
+                '</soapenv:Envelope>';
+            req.setBody(body);
+
+            HttpResponse res = new Http().send(req);
+            if (res.getStatusCode() != 200) {
+                System.debug('Named Credential listMetadata falhou: ' + res.getStatusCode() + ' - ' + res.getBody());
+                return results;
+            }
+
+            Dom.Document doc = new Dom.Document();
+            doc.load(res.getBody());
+            Dom.XMLNode root = doc.getRootElement();
+            collectFileProperties(root, results);
+        } catch (Exception ex) {
+            System.debug('Erro no fallback via Named Credential: ' + ex.getMessage());
+        }
+        return results;
+    }
+
+    // Fallback via Tooling API usando Named Credential (evita usar o sessionId do usuário)
+    private static List<MetadataService.FileProperties> fetchMessageDefinitionsViaNamedCredentialRest() {
+        List<MetadataService.FileProperties> results = new List<MetadataService.FileProperties>();
+        try {
+            String soql = 'SELECT FullName, DeveloperName, NamespacePrefix, LastModifiedDate, CreatedBy.Name FROM ConversationMessageDefinition';
+            HttpRequest req = new HttpRequest();
+            req.setMethod('GET');
+            req.setEndpoint(
+                'callout:Salesforce_PRD/services/data/v' +
+                API_VERSION_STRING +
+                '/tooling/query?q=' +
+                EncodingUtil.urlEncode(soql, 'UTF-8')
+            );
+            req.setHeader('Accept', 'application/json');
+
+            HttpResponse res = new Http().send(req);
+            if (res.getStatusCode() != 200) {
+                System.debug('Named Credential Tooling query falhou: ' + res.getStatusCode() + ' - ' + res.getBody());
+                return results;
+            }
+
+            Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
+            List<Object> records = (List<Object>) payload.get('records');
+            for (Object recObj : records) {
+                Map<String, Object> rec = (Map<String, Object>) recObj;
+                MetadataService.FileProperties fp = new MetadataService.FileProperties();
+                fp.fullName = (String) rec.get('FullName');
+                String developerName = (String) rec.get('DeveloperName');
+                fp.fileName = developerName != null
+                    ? 'conversationMessageDefinitions/' + developerName + '.conversationMessageDefinition'
+                    : null;
+                fp.namespacePrefix = (String) rec.get('NamespacePrefix');
+                Object createdBy = rec.get('CreatedBy');
+                if (createdBy instanceof Map<String, Object>) {
+                    fp.createdByName = (String) ((Map<String, Object>) createdBy).get('Name');
+                }
+                Object lmd = rec.get('LastModifiedDate');
+                if (lmd != null) {
+                    try {
+                        fp.lastModifiedDate = (Datetime) JSON.deserialize('"' + (String) lmd + '"', Datetime.class);
+                    } catch (Exception ignore) {}
+                }
+                if (String.isNotBlank(fp.fullName)) {
+                    results.add(fp);
+                }
+            }
+        } catch (Exception ex) {
+            System.debug('Erro no fallback via Tooling API: ' + ex.getMessage());
+        }
+        return results;
+    }
+
+    // Percorre árvore XML para encontrar nós <result>
+    private static void collectFileProperties(Dom.XMLNode node, List<MetadataService.FileProperties> acc) {
+        if (node == null) {
+            return;
+        }
+        if ('result'.equalsIgnoreCase(node.getName())) {
+            MetadataService.FileProperties fp = new MetadataService.FileProperties();
+            for (Dom.XMLNode child : node.getChildElements()) {
+                if ('fullName'.equalsIgnoreCase(child.getName())) {
+                    fp.fullName = child.getText();
+                } else if ('fileName'.equalsIgnoreCase(child.getName())) {
+                    fp.fileName = child.getText();
+                } else if ('namespacePrefix'.equalsIgnoreCase(child.getName())) {
+                    fp.namespacePrefix = child.getText();
+                } else if ('createdByName'.equalsIgnoreCase(child.getName())) {
+                    fp.createdByName = child.getText();
+                } else if ('lastModifiedDate'.equalsIgnoreCase(child.getName())) {
+                    try {
+                        fp.lastModifiedDate = (Datetime) JSON.deserialize('"' + child.getText() + '"', Datetime.class);
+                    } catch (Exception ignore) {}
+                }
+            }
+            if (String.isNotBlank(fp.fullName)) {
+                acc.add(fp);
+            }
+        }
+        for (Dom.XMLNode child : node.getChildElements()) {
+            collectFileProperties(child, acc);
         }
     }
 
@@ -323,25 +549,39 @@ public with sharing class MessagingComposerController {
             return existing;
         }
 
-        if (String.isBlank(request.phone)) {
+        String phone = request.phone;
+        String derivedName = 'Cliente';
+
+        if (String.isBlank(phone) && String.isNotBlank(request.contactId)) {
+            Contact contactRecord = [SELECT Id, Name, Phone, MobilePhone, Telefone_Formatado__c FROM Contact WHERE Id = :request.contactId LIMIT 1];
+            phone = pickPhone(contactRecord);
+            derivedName = contactRecord.Name;
+        } else if (String.isBlank(phone) && String.isNotBlank(request.accountId)) {
+            Account accountRecord = [SELECT Id, Name, Phone, Telefone_Formatado__c FROM Account WHERE Id = :request.accountId LIMIT 1];
+            phone = pickPhone(accountRecord);
+            derivedName = accountRecord.Name;
+        } else if (String.isBlank(phone) && String.isNotBlank(request.leadId)) {
+            Lead leadRecord = [SELECT Id, Name, Phone, MobilePhone, Telefone_Formatado__c FROM Lead WHERE Id = :request.leadId LIMIT 1];
+            phone = String.isNotBlank(leadRecord.Telefone_Formatado__c)
+                ? leadRecord.Telefone_Formatado__c
+                : (String.isNotBlank(leadRecord.MobilePhone) ? leadRecord.MobilePhone : leadRecord.Phone);
+            derivedName = leadRecord.Name;
+        }
+
+        if (String.isBlank(phone)) {
             throw new AuraHandledException('Nenhum telefone encontrado para criar o usuário de mensagens.');
         }
 
         MessagingEndUser endUser = new MessagingEndUser();
         endUser.MessagingChannelId = channelId;
-        endUser.MessagingPlatformKey = request.phone;
+        endUser.MessagingPlatformKey = phone;
         endUser.MessagingConsentStatus = 'ImplicitlyOptedIn';
         if (String.isNotBlank(request.contactId)) {
-            Contact contactRecord = [SELECT Id, Name FROM Contact WHERE Id = :request.contactId LIMIT 1];
-            endUser.ContactId = contactRecord.Id;
-            endUser.Name = contactRecord.Name;
+            endUser.ContactId = request.contactId;
         } else if (String.isNotBlank(request.accountId)) {
-            Account accountRecord = [SELECT Id, Name FROM Account WHERE Id = :request.accountId LIMIT 1];
-            endUser.AccountId = accountRecord.Id;
-            endUser.Name = accountRecord.Name;
-        } else {
-            endUser.Name = 'Cliente';
+            endUser.AccountId = request.accountId;
         }
+        endUser.Name = derivedName;
 
         insert endUser;
         return endUser.Id;
