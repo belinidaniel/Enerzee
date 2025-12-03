@@ -1,7 +1,7 @@
 /**
  * @description       : Detecta se uma conversa é remarketing usando Named Credential
  * @author            : Daniel Belini
- * @last modified on  : 09-29-2025
+ * @last modified on  : 12-03-2025
  * @last modified by  : Daniel Belini
 **/
 public without sharing class RemarketingRouter {
@@ -28,6 +28,7 @@ public without sharing class RemarketingRouter {
         @InvocableVariable public String lastMessage;
         @InvocableVariable public List<MessageDetail> messages;
         @InvocableVariable public List<String> messagesString; // mensagens como JSON
+        @InvocableVariable public String messagesStringSimple; // mensagens como texto simples
     }
 
     @InvocableMethod(label='Detect Remarketing in Conversation')
@@ -85,6 +86,7 @@ public without sharing class RemarketingRouter {
                         md.appType = appType;
                         out.messages.add(md);
                         out.messagesString.add(JSON.serializePretty(md));
+                        out.messagesStringSimple += msg + '\n\n';
 
                         if (out.lastMessage == null) {
                             out.lastMessage = msg;

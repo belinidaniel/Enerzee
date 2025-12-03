@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>InstalacaoTaskBO</members>
+        <members>InstalacaoTriggerHandler</members>
+        <members>ProjetoBO</members>
+        <members>TaskDeadlineNotificationBatch</members>
+        <members>TaskDeadlineNotificationScheduler</members>
+        <members>TaskTemplateFlowTest</members>
+        <members>TaskTemplateUtils</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>InstalacaoTrigger</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <members>TabelaTarefasInstalacao</members>
+        <members>TabelaTarefasProjetos</members>
+        <name>StaticResource</name>
+    </types>
+    <types>
+        <members>Activity.HoraVencimento__c</members>
+        <members>Activity.NotificadoAntesVencer__c</members>
+        <members>Activity.NotificadoAposVencer__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Engenharia</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>Task-Task Layout</members>
+        <members>Task-Jornada do Cliente</members>
+        <name>Layout</name>
+    </types>
+    <version>59.0</version>
+</Package>

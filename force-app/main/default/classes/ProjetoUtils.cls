@@ -101,12 +101,26 @@ public class ProjetoUtils {
     public static Map<String,Group> getQueueIdByName(){
         Map<String,Group> queueIdByName = new Map<String,Group>();
         for(Group g : [ 
-            SELECT  Id, DeveloperName 
+            SELECT  Id, DeveloperName, Name 
             FROM    Group
         ]){
-            queueIdByName.put(g.DeveloperName, g);
+            addKeyToQueueMap(queueIdByName, normalizeKey(g.DeveloperName), g);
+            addKeyToQueueMap(queueIdByName, normalizeKey(g.Name), g);
         }
         return queueIdByName;
+    }
+
+    private static String normalizeKey(String value){
+        if(String.isBlank(value)){
+            return null;
+        }
+        return value.trim().replace(' ', '_').toUpperCase();
+    }
+
+    private static void addKeyToQueueMap(Map<String, Group> target, String key, Group g){
+        if(!String.isBlank(key) && target != null && g != null){
+            target.put(key, g);
+        }
     }
 
     public static boolean hasEngineerCoordinatorSetProjectResponsibles(Projeto__c newProject, Projeto__c oldProject){

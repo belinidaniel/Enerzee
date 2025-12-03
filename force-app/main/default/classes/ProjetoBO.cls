@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 12-03-2025
+ * @last modified by  : Daniel Belini
+**/
 public class ProjetoBO {
 
     public static Map<String, User> userEmailToUser = new Map<String, User>();
@@ -24,70 +31,26 @@ public class ProjetoBO {
     }
     
     public static void createTasks(List<Projeto__c> newRecordList, Map<Id, Projeto__c> oldMap){
+        Map<String, Id> recordTypeStringCodeToId = getRecordTypeCodeToIdMap();
+        Map<Id, String> recordTypeIdToStringCode = getRecordTypeIdToCodeMap();
+        Map<String, String> statusCodeToStatus = getStatusCodeToStatusMap();
+        Map<String, String> statusToStatusCode = getStatusToStatusCodeMap();
+        Map<String, Group> queueMap = ProjetoUtils.getQueueIdByName();
 
-        Map<String, Id> recordTypeStringCodeToId = new Map<String, Id>{
-            'RT_BOMBEAMENTO'            => ProjetoUtils.RT_BOMBEAMENTO,
-            'RT_ESTACAO_DE_RECARGA'     => ProjetoUtils.RT_ESTACAO_DE_RECARGA,
-            'RT_FINANCIAMENTO'          => ProjetoUtils.RT_FINANCIAMENTO,
-            'RT_PADRAO_DE_ENTRADA'      => ProjetoUtils.RT_PADRAO_DE_ENTRADA,
-            'RT_POSTO_DE_TRANSFORMACAO' => ProjetoUtils.RT_POSTO_DE_TRANSFORMACAO,
-            'RT_SUBESTACAO'             => ProjetoUtils.RT_SUBESTACAO,
-            'RT_UFV_MICRO'              => ProjetoUtils.RT_UFV_MICRO,
-            'RT_UFV_MINI_ACIMA_DE_300'  => ProjetoUtils.RT_UFV_MINI_ACIMA_DE_300,
-            'RT_UFV_MINI_ATE_300'       => ProjetoUtils.RT_UFV_MINI_ATE_300
-        };
+        Set<Id> userIds = new Set<Id>();
+        for(Projeto__c project : newRecordList){
+            if(project.GestorObra__c != null){
+                userIds.add(project.GestorObra__c);
+            }
+            if(project.Projetista__c != null){
+                userIds.add(project.Projetista__c);
+            }
+        }
 
-        Map<Id, String> recordTypeIdToStringCode = new Map<ID, String>{
-            ProjetoUtils.RT_BOMBEAMENTO            => 'RT_BOMBEAMENTO',
-            ProjetoUtils.RT_ESTACAO_DE_RECARGA     => 'RT_ESTACAO_DE_RECARGA',
-            ProjetoUtils.RT_FINANCIAMENTO          => 'RT_FINANCIAMENTO',
-            ProjetoUtils.RT_PADRAO_DE_ENTRADA      => 'RT_PADRAO_DE_ENTRADA',
-            ProjetoUtils.RT_POSTO_DE_TRANSFORMACAO => 'RT_POSTO_DE_TRANSFORMACAO',
-            ProjetoUtils.RT_SUBESTACAO             => 'RT_SUBESTACAO',
-            ProjetoUtils.RT_UFV_MICRO              => 'RT_UFV_MICRO',
-            ProjetoUtils.RT_UFV_MINI_ACIMA_DE_300  => 'RT_UFV_MINI_ACIMA_DE_300',
-            ProjetoUtils.RT_UFV_MINI_ATE_300       => 'RT_UFV_MINI_ATE_300'
-        };
-
-        Map<String, String> statusCodeToStatus = new Map<String, String>{
-            'STATUS_NAO_DEFINIDO'                               => ProjetoUtils.STATUS_NAO_DEFINIDO,
-            'STATUS_PLANEJAMENTO'                               => ProjetoUtils.STATUS_PLANEJAMENTO,
-            'STATUS_ELABORACAO_DE_PROJETO'                      => ProjetoUtils.STATUS_ELABORACAO_DE_PROJETO,
-            'STATUS_PROJETO_EM_ANALISE'                         => ProjetoUtils.STATUS_PROJETO_EM_ANALISE,
-            'STATUS_PROJETO_APROVADO'                           => ProjetoUtils.STATUS_PROJETO_APROVADO,
-            'STATUS_PROJETOS_EM_ELABORACAO'                     => ProjetoUtils.STATUS_PROJETOS_EM_ELABORACAO,
-            'STATUS_OBRA_EM_EXECUCAO'                           => ProjetoUtils.STATUS_OBRA_EM_EXECUCAO,
-            'STATUS_OBRA_CONCLUIDA'                             => ProjetoUtils.STATUS_OBRA_CONCLUIDA,
-            'STATUS_USINA_OPERANDO'                             => ProjetoUtils.STATUS_USINA_OPERANDO,
-            'STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR' => ProjetoUtils.STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR,
-            'STATUS_LIGACAO_SOLICITADA'                         => ProjetoUtils.STATUS_LIGACAO_SOLICITADA,
-            'STATUS_PROJETO_PROTOCOLADO'                        => ProjetoUtils.STATUS_PROJETO_PROTOCOLADO,
-            'STATUS_PLANEJAMENTO_DE_PROJETO'                    => ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
-            'STATUS_PLANEJAMENTO_DE_OBRA'                       => ProjetoUtils.STATUS_PLANEJAMENTO_DE_OBRA,
-            'STATUS_AGUARDANDO_VISTORIA'                        => ProjetoUtils.STATUS_AGUARDANDO_VISTORIA
-        };
-
-        Map<String, String> statusToStatusCode = new Map<String, String>{
-            ProjetoUtils.STATUS_NAO_DEFINIDO                               => 'STATUS_NAO_DEFINIDO',
-            ProjetoUtils.STATUS_PLANEJAMENTO                               => 'STATUS_PLANEJAMENTO',
-            ProjetoUtils.STATUS_ELABORACAO_DE_PROJETO                      => 'STATUS_ELABORACAO_DE_PROJETO',
-            ProjetoUtils.STATUS_PROJETO_EM_ANALISE                         => 'STATUS_PROJETO_EM_ANALISE',
-            ProjetoUtils.STATUS_PROJETO_APROVADO                           => 'STATUS_PROJETO_APROVADO',
-            ProjetoUtils.STATUS_PROJETOS_EM_ELABORACAO                     => 'STATUS_PROJETOS_EM_ELABORACAO',
-            ProjetoUtils.STATUS_OBRA_EM_EXECUCAO                           => 'STATUS_OBRA_EM_EXECUCAO',
-            ProjetoUtils.STATUS_OBRA_CONCLUIDA                             => 'STATUS_OBRA_CONCLUIDA',
-            ProjetoUtils.STATUS_USINA_OPERANDO                             => 'STATUS_USINA_OPERANDO',
-            ProjetoUtils.STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR => 'STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR',
-            ProjetoUtils.STATUS_LIGACAO_SOLICITADA                         => 'STATUS_LIGACAO_SOLICITADA',
-            ProjetoUtils.STATUS_PROJETO_PROTOCOLADO                        => 'STATUS_PROJETO_PROTOCOLADO',
-            ProjetoUtils.STATUS_AGUARDANDO_VISTORIA                        => 'STATUS_AGUARDANDO_VISTORIA',
-            ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO                    => 'STATUS_PLANEJAMENTO_DE_PROJETO',
-            ProjetoUtils.STATUS_PLANEJAMENTO_DE_OBRA                       => 'STATUS_PLANEJAMENTO_DE_OBRA'
-        };
+        Map<Id, User> userById = fetchUsers(userIds);
 
         //  Recupera a tabela do Recurso Estático
         TaskProjectTable taskProjectTable = getTaskProjectTableFromStaticResource();
-
         //  [Nome do Record Type -> (Nome do Status -> Tasks)]
         Map<String, Map<String, List<TaskProjectTableLine>>> mapRecordTypesToStatusTasks = new Map<String, Map<String, List<TaskProjectTableLine>>>();
         
@@ -117,7 +80,6 @@ public class ProjetoBO {
 
             mapStatusToTasksTemplate.get(status).add(line);
         }
-
         //  Tipos de Registro que precisam da validação do Gestor e do Projetista
         Set<Id> recordTypesToValidateTwoResponsibles = new Set<Id>{
             ProjetoUtils.RT_UFV_MICRO,
@@ -156,11 +118,31 @@ public class ProjetoBO {
         List<Task> tasksToInsert = new List<Task>();
         for(Projeto__c project : newRecordList){
 
-            //  Nome do tipo de registro do Projeto
-            String recordTypeName = Schema.getGlobalDescribe().get('Projeto__c').getDescribe().getRecordTypeInfosById().get(project.RecordTypeId).getName();
+            if(isInactive(userById.get(project.GestorObra__c))){
+                project.addError('Usuário GESTOR DE OBRA está inativo.');
+                continue;
+            }
+
+            if(isInactive(userById.get(project.Projetista__c))){
+                project.addError('Usuário PROJETISTA está inativo.');
+                continue;
+            }
+
+            Map<String, User> roleToUser = buildRoleUserMap(project, userById);
+
+            String recordTypeCode = recordTypeIdToStringCode.get(project.RecordTypeId);
+            if(String.isBlank(recordTypeCode)){
+                String recordTypeName = Schema.getGlobalDescribe().get('Projeto__c').getDescribe().getRecordTypeInfosById().get(project.RecordTypeId).getName();
+                Id resolvedId = ProjetoUtils.getRecordTypeIdByName(recordTypeName);
+                recordTypeCode = recordTypeIdToStringCode.get(resolvedId);
+            }
 
             //  Map com os Templates das Tasks a serem criadas de acordo com o Status do Projeto atual
-            Map<String, List<TaskProjectTableLine>> mapStatusToTasksTemplate = mapRecordTypesToStatusTasks.get(recordTypeIdToStringCode.get(ProjetoUtils.getRecordTypeIdByName(recordTypeName)));
+            Map<String, List<TaskProjectTableLine>> mapStatusToTasksTemplate = mapRecordTypesToStatusTasks.get(recordTypeCode);
+            System.debug('mapStatusToTasksTemplate '+ mapStatusToTasksTemplate);
+            if(mapStatusToTasksTemplate == null){
+                continue;
+            }
 			
             //  Lista dos nomes dos usuários "interessados" no projeto, a serem citados em campo da Task
             List<String> interessadosList = new List<String>();
@@ -177,8 +159,11 @@ public class ProjetoBO {
                 System.debug('key '+ key);
 
                 list<TaskProjectTableLine> lines = mapStatusToTasksTemplate == null || mapStatusToTasksTemplate.get(key) == null ? new list<TaskProjectTableLine>() : mapStatusToTasksTemplate.get(key);
-                
+                System.debug('lines '+ lines);
+
                 for(TaskProjectTableLine line : lines){
+                    System.debug('line '+ line);
+
                     if(
                         (
                             line.Assunto.contains('DELEGAR PROJETISTA') ||
@@ -189,13 +174,19 @@ public class ProjetoBO {
                         interessadosList = line == null ? null : line.Interessados != null && line.Interessados != '' ? line.Interessados.split(';') : null;
                         System.debug('interessadosList '+ interessadosList);
                         if(line != null){
-                            tasksToInsert.add(createTask(line, project, interessadosList, true));
+                            Task generated = createTask(line, project, interessadosList, true, roleToUser, queueMap);
+                            if(generated != null){
+                                tasksToInsert.add(generated);
+                            }
                         }
                         if(interessadosList != null && recordTypesToValidateTwoResponsibles.contains(project.RecordTypeId)){
                             line = mapStatusToTasksTemplate.get(key)[1];
                             interessadosList = line.Interessados != null && line.Interessados != '' ? line.Interessados.split(';') : null;
 
-                            tasksToInsert.add(createTask(line, project, interessadosList, true));
+                            Task generatedTwo = createTask(line, project, interessadosList, true, roleToUser, queueMap);
+                            if(generatedTwo != null){
+                                tasksToInsert.add(generatedTwo);
+                            }
                         }
                     }
                 }
@@ -232,7 +223,10 @@ public class ProjetoBO {
                             if(shouldUFVPhaseBeCreated(project, line.Assunto, recordTypesUFV, financimentoProjectOpportunityIdsToSkipPhasesUFV)){
                                 interessadosList = line.Interessados != null && line.Interessados != '' ? line.Interessados.split(';') : null;
 
-                                tasksToInsert.add(createTask(line, project, interessadosList, false));
+                                Task generatedPlanning = createTask(line, project, interessadosList, false, roleToUser, queueMap);
+                                if(generatedPlanning != null){
+                                    tasksToInsert.add(generatedPlanning);
+                                }
                             }
                         }
                     }
@@ -245,7 +239,7 @@ public class ProjetoBO {
 
                     //  Itera sobre o Map que relaciona o tipo de registro com os Status que geram criação de Tasks,
                     //  baseando-se no tipo de registro do Projeto atual
-                    for(String statusToCreateTaskOnChanging : recordTypeToStatusChangesList.get(recordTypeIdToStringCode.get(ProjetoUtils.getRecordTypeIdByName(recordTypeName)))){
+                    for(String statusToCreateTaskOnChanging : recordTypeToStatusChangesList.get(recordTypeCode)){
 
                         //  Verifica se algum dos Status sendo iterados é o Status que foi atribuído no Projeto
                         String status;
@@ -267,7 +261,10 @@ public class ProjetoBO {
                                 if(shouldUFVPhaseBeCreated(project, line.Assunto, recordTypesUFV, financimentoProjectOpportunityIdsToSkipPhasesUFV)){
                                     interessadosList = line.Interessados != null && line.Interessados != '' ? line.Interessados.split(';') : null;
 
-                                    tasksToInsert.add(createTask(line, project, interessadosList, false));
+                                    Task generatedStatus = createTask(line, project, interessadosList, false, roleToUser, queueMap);
+                                    if(generatedStatus != null){
+                                        tasksToInsert.add(generatedStatus);
+                                    }
                                 }
                             }
                             break;
@@ -280,33 +277,35 @@ public class ProjetoBO {
         insert tasksToInsert;
     }
 
-    public static Task createTask(TaskProjectTableLine line, Projeto__c projeto, List<String> interessadosList, Boolean isFirst){
-        Map<String, User> userRoleToUser = new Map<String, User>{
-            'PROJETISTA'                 => ProjetoUtils.getProjetistaById(projeto.Projetista__c),
-            'GESTOR_DE_OBRAS'            => ProjetoUtils.getGestorObrasById(projeto.GestorObra__c)
+    public static Task createTask(
+        TaskProjectTableLine line,
+        Projeto__c projeto,
+        List<String> interessadosList,
+        Boolean isFirst,
+        Map<String, User> roleToUser,
+        Map<String, Group> queueMap
+    ){
+        Map<String, User> userRoleToUser = roleToUser != null ? roleToUser : new Map<String, User>{
+            'PROJETISTA'      => ProjetoUtils.getProjetistaById(projeto.Projetista__c),
+            'GESTOR_DE_OBRAS' => ProjetoUtils.getGestorObrasById(projeto.GestorObra__c)
         };
             
-        Map<String, Group> groupRoleToGroup = ProjetoUtils.getQueueIdByName();
-        sObject taskOwner;
-        if(line.Responsavel =='PROJETISTA' ||line.Responsavel =='GESTOR_DE_OBRAS' ){
-            taskOwner = userRoleToUser.get(line.Responsavel);
-            if(taskOwner == null){
-                string role = line.Responsavel == 'PROJETISTA' ? 'Projetista' : 'Gestor de Obras';
-                projeto.addError('É necessário informar um ' + role + ' para o projeto!');
-            }
-        }else{
-            taskOwner = groupRoleToGroup.get(line.Responsavel);
-        }
+        Map<String, Group> groupRoleToGroup = queueMap != null ? queueMap : ProjetoUtils.getQueueIdByName();
+        Id ownerId = TaskTemplateUtils.resolveOwner(line, userRoleToUser, groupRoleToGroup, projeto);
      
         System.debug('line ' + line);
 
-        if(taskOwner == null){
+        if(ownerId == null){
             populateUserEmailMap(); 
-            projeto.addError('É necessário informar um usuário/fila ativo!');
-            //taskOwner = userEmailToUser.get('integracao@lab065.com');
+            String msg = 'Não foi possível definir o proprietário da tarefa "' + line.Assunto + '" (Responsável: ' +
+                (line.Responsavel != null ? line.Responsavel : 'não informado') +
+                ' | TipoProprietario: ' + (line.TipoDeProprietario != null ? line.TipoDeProprietario : 'não informado') +
+                '). Verifique se o usuário/fila está ativo ou existe na org.';
+            projeto.addError(msg);
+            return null;
         }
 
-        System.debug('taskOwner ' + taskOwner);
+        System.debug('taskOwner ' + ownerId);
         Task task = new Task(
             TipoObraProjeto__c     = Schema.getGlobalDescribe().get('Projeto__c').getDescribe().getRecordTypeInfosById().get(projeto.RecordTypeId).getName(),
             StatusProjeto__c       = projeto.Status__c,
@@ -314,7 +313,7 @@ public class ProjetoBO {
             Description            = line.Acoes,
             WhatId                 = projeto.Id,
             PrazoDiasUteis__c      = line.PrazoDiasUteis,
-            OwnerId                = taskOwner.Id
+            OwnerId                = ownerId
         );
 
         if(
@@ -331,15 +330,27 @@ public class ProjetoBO {
             }
         }
 
-        Integer daysToConsiderActivity = 
-            line.DataVencimentoDMais != null && line.DataVencimentoDMais != '' && line.DataVencimentoDMais != '\r' ? 
-            Integer.valueOf(line.DataVencimentoDMais.replaceAll('\n', '').replaceAll('\t', '').replaceAll('\r', '')) : 10;
+        Integer daysToConsiderActivity = TaskTemplateUtils.parseInteger(
+            String.valueOf(task.PrazoDiasUteis__c),
+            TaskTemplateUtils.parseInteger(line.DataVencimentoDMais, 0)
+        );
 
-        task.ActivityDate = 
-        task.Subject.equalsIgnoreCase('RECEBIMENTO DOS MATERIAIS COMPLEMENTARES') || 
-        task.Subject.equalsIgnoreCase('RECEBIMENTO DO KIT WEG') ?
-        TaskBO.getActivityDateBasedOnWorkingDays(Date.valueOf(projeto.CreatedDate), 60) :
-        TaskBO.getActivityDateBasedOnWorkingDays(System.today(), daysToConsiderActivity);
+        Date baseDate = System.today();
+        if(
+            projeto != null &&
+            projeto.CreatedDate != null &&
+            (
+                task.Subject.equalsIgnoreCase('RECEBIMENTO DOS MATERIAIS COMPLEMENTARES') || 
+                task.Subject.equalsIgnoreCase('RECEBIMENTO DO KIT WEG')
+            )
+        ){
+            baseDate = Date.valueOf(projeto.CreatedDate);
+        }
+
+        task.ActivityDate = TaskBO.getActivityDateBasedOnWorkingDays(baseDate, daysToConsiderActivity);
+        if(Schema.SObjectType.Task.fields.getMap().containsKey('HoraVencimento__c')){
+            task.put('HoraVencimento__c', TaskTemplateUtils.defaultDueTime());
+        }
 
         if(interessadosList != null && userRoleToUser != null){
             for(Integer i = 0; i < interessadosList.size(); i++){
@@ -436,60 +447,181 @@ public class ProjetoBO {
     }
 
     public static TaskProjectTable getTaskProjectTableFromStaticResource(){
+        return getTaskTableFromStaticResource('TabelaTarefasProjetos');
+    }
+
+    public static TaskProjectTable getTaskTableFromStaticResource(String staticResourceName){
+        TaskProjectTable table = new TaskProjectTable();
+        table.tableLines = new List<TaskProjectTableLine>();
+
+        if(String.isBlank(staticResourceName)){
+            return table;
+        }
+
         StaticResource taskProjectTable = [
             SELECT  Id, Body 
             FROM    StaticResource 
-            WHERE   Name = 'TabelaTarefasProjetos'
+            WHERE   Name = :staticResourceName
             LIMIT   1
         ];
         String tableBody = taskProjectTable.Body.toString();
 
         CSVReader tableBodyCSVReader = new CSVReader(tableBody, ';');
 
-        tableBodyCSVReader.readLine();
+        // read header
+        String[] header = tableBodyCSVReader.readLine();
+        Map<String, Integer> headerIndex = new Map<String, Integer>();
+        if(header != null){
+            for(Integer i = 0; i < header.size(); i++){
+                String col = normalizeHeader(header[i]);
+                if(!String.isBlank(col)){
+                    headerIndex.put(col, i);
+                }
+            }
+        }
 
         String[] tableBodyLine = tableBodyCSVReader.readLine();
-
-        TaskProjectTable table = new TaskProjectTable();
-        table.tableLines = new List<TaskProjectTableLine>();
 
         while (tableBodyLine != null){
             TaskProjectTableLine line = new TaskProjectTableLine();
 
-            line.TipoProjetoObra     = String.valueOf(tableBodyLine[0]);
-            line.Status              = String.valueOf(tableBodyLine[1]);
-            line.Assunto             = String.valueOf(tableBodyLine[2]);
-            line.Acoes               = String.valueOf(tableBodyLine[3]);
-            line.Observacoes         = String.valueOf(tableBodyLine[4]);
-            line.Responsavel         = String.valueOf(tableBodyLine[5]);
-            line.Interessados        = String.valueOf(tableBodyLine[6]);
-            line.PrazoDiasUteis      = String.valueOf(tableBodyLine[7]);
-            line.DataVencimentoDMais = String.valueOf(tableBodyLine[8]);
-            line.TipoDeProprietario  = String.valueOf(tableBodyLine[9]);
+            line.TipoProjetoObra     = getCsvValue(headerIndex, tableBodyLine, 'TIPOPROJETOOBRA');
+            line.Status              = getCsvValue(headerIndex, tableBodyLine, 'STATUS');
+            line.Assunto             = getCsvValue(headerIndex, tableBodyLine, 'ASSUNTO');
+            line.Acoes               = getCsvValue(headerIndex, tableBodyLine, 'ACOES');
+            line.Observacoes         = getCsvValue(headerIndex, tableBodyLine, 'OBSERVACOES');
+            line.Responsavel         = getCsvValue(headerIndex, tableBodyLine, 'RESPONSAVEL');
+            line.Interessados        = getCsvValue(headerIndex, tableBodyLine, 'INTERESSADOS');
+            line.PrazoDiasUteis      = getCsvValue(headerIndex, tableBodyLine, 'PRAZODIASUTEIS');
+            line.DataVencimentoDMais = getCsvValue(headerIndex, tableBodyLine, 'DATAVENCIMENTODMAIS');
+            line.TipoDeProprietario  = getCsvValue(headerIndex, tableBodyLine, 'TIPOPROPRIETARIO');
+
+            if(String.isBlank(line.TipoProjetoObra) || line.TipoProjetoObra.equalsIgnoreCase('EXCLUIR')){
+                tableBodyLine = tableBodyCSVReader.readLine();
+                continue;
+            }
 
             table.tableLines.add(line);
 
             tableBodyLine = tableBodyCSVReader.readLine();
         }
-        
-        if(tableBodyLine != null){
-            TaskProjectTableLine line = new TaskProjectTableLine();
-
-            line.TipoProjetoObra     = String.valueOf(tableBodyLine[0]);
-            line.Status              = String.valueOf(tableBodyLine[1]);
-            line.Assunto             = String.valueOf(tableBodyLine[2]);
-            line.Acoes               = String.valueOf(tableBodyLine[3]);
-            line.Observacoes         = String.valueOf(tableBodyLine[4]);
-            line.Responsavel         = String.valueOf(tableBodyLine[5]);
-            line.Interessados        = String.valueOf(tableBodyLine[6]);
-            line.PrazoDiasUteis      = String.valueOf(tableBodyLine[7]);
-            line.DataVencimentoDMais = String.valueOf(tableBodyLine[8]);
-            line.TipoDeProprietario  = String.valueOf(tableBodyLine[9]);
-
-            table.tableLines.add(line);
-        }
         return table;
     }
+
+    private static String normalizeHeader(String headerValue){
+        if(String.isBlank(headerValue)){
+            return '';
+        }
+        String clean = headerValue.replace('\ufeff', '').trim().toUpperCase();
+        return clean;
+    }
+
+    private static String getCsvValue(Map<String, Integer> headerIndex, String[] row, String columnKey){
+        if(row == null || headerIndex == null){
+            return '';
+        }
+        Integer idx = headerIndex.get(columnKey);
+        if(idx == null || idx >= row.size()){
+            return '';
+        }
+        return String.valueOf(row[idx]).trim();
+    }
+
+    public static Map<String, Id> getRecordTypeCodeToIdMap(){
+        return new Map<String, Id>{
+            'RT_BOMBEAMENTO'            => ProjetoUtils.RT_BOMBEAMENTO,
+            'RT_ESTACAO_DE_RECARGA'     => ProjetoUtils.RT_ESTACAO_DE_RECARGA,
+            'RT_FINANCIAMENTO'          => ProjetoUtils.RT_FINANCIAMENTO,
+            'RT_PADRAO_DE_ENTRADA'      => ProjetoUtils.RT_PADRAO_DE_ENTRADA,
+            'RT_POSTO_DE_TRANSFORMACAO' => ProjetoUtils.RT_POSTO_DE_TRANSFORMACAO,
+            'RT_SUBESTACAO'             => ProjetoUtils.RT_SUBESTACAO,
+            'RT_UFV_MICRO'              => ProjetoUtils.RT_UFV_MICRO,
+            'RT_UFV_MINI_ACIMA_DE_300'  => ProjetoUtils.RT_UFV_MINI_ACIMA_DE_300,
+            'RT_UFV_MINI_ATE_300'       => ProjetoUtils.RT_UFV_MINI_ATE_300
+        };
+    }
+
+    public static Map<Id, String> getRecordTypeIdToCodeMap(){
+        return new Map<ID, String>{
+            ProjetoUtils.RT_BOMBEAMENTO            => 'RT_BOMBEAMENTO',
+            ProjetoUtils.RT_ESTACAO_DE_RECARGA     => 'RT_ESTACAO_DE_RECARGA',
+            ProjetoUtils.RT_FINANCIAMENTO          => 'RT_FINANCIAMENTO',
+            ProjetoUtils.RT_PADRAO_DE_ENTRADA      => 'RT_PADRAO_DE_ENTRADA',
+            ProjetoUtils.RT_POSTO_DE_TRANSFORMACAO => 'RT_POSTO_DE_TRANSFORMACAO',
+            ProjetoUtils.RT_SUBESTACAO             => 'RT_SUBESTACAO',
+            ProjetoUtils.RT_UFV_MICRO              => 'RT_UFV_MICRO',
+            ProjetoUtils.RT_UFV_MINI_ACIMA_DE_300  => 'RT_UFV_MINI_ACIMA_DE_300',
+            ProjetoUtils.RT_UFV_MINI_ATE_300       => 'RT_UFV_MINI_ATE_300'
+        };
+    }
+
+    public static Map<String, String> getStatusCodeToStatusMap(){
+        return new Map<String, String>{
+            'STATUS_NAO_DEFINIDO'                               => ProjetoUtils.STATUS_NAO_DEFINIDO,
+            'STATUS_PLANEJAMENTO'                               => ProjetoUtils.STATUS_PLANEJAMENTO,
+            'STATUS_ELABORACAO_DE_PROJETO'                      => ProjetoUtils.STATUS_ELABORACAO_DE_PROJETO,
+            'STATUS_PROJETO_EM_ANALISE'                         => ProjetoUtils.STATUS_PROJETO_EM_ANALISE,
+            'STATUS_PROJETO_APROVADO'                           => ProjetoUtils.STATUS_PROJETO_APROVADO,
+            'STATUS_PROJETOS_EM_ELABORACAO'                     => ProjetoUtils.STATUS_PROJETOS_EM_ELABORACAO,
+            'STATUS_OBRA_EM_EXECUCAO'                           => ProjetoUtils.STATUS_OBRA_EM_EXECUCAO,
+            'STATUS_OBRA_CONCLUIDA'                             => ProjetoUtils.STATUS_OBRA_CONCLUIDA,
+            'STATUS_USINA_OPERANDO'                             => ProjetoUtils.STATUS_USINA_OPERANDO,
+            'STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR' => ProjetoUtils.STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR,
+            'STATUS_LIGACAO_SOLICITADA'                         => ProjetoUtils.STATUS_LIGACAO_SOLICITADA,
+            'STATUS_PROJETO_PROTOCOLADO'                        => ProjetoUtils.STATUS_PROJETO_PROTOCOLADO,
+            'STATUS_PLANEJAMENTO_DE_PROJETO'                    => ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+            'STATUS_PLANEJAMENTO_DE_OBRA'                       => ProjetoUtils.STATUS_PLANEJAMENTO_DE_OBRA,
+            'STATUS_AGUARDANDO_VISTORIA'                        => ProjetoUtils.STATUS_AGUARDANDO_VISTORIA
+        };
+    }
+
+    public static Map<String, String> getStatusToStatusCodeMap(){
+        return new Map<String, String>{
+            ProjetoUtils.STATUS_NAO_DEFINIDO                               => 'STATUS_NAO_DEFINIDO',
+            ProjetoUtils.STATUS_PLANEJAMENTO                               => 'STATUS_PLANEJAMENTO',
+            ProjetoUtils.STATUS_ELABORACAO_DE_PROJETO                      => 'STATUS_ELABORACAO_DE_PROJETO',
+            ProjetoUtils.STATUS_PROJETO_EM_ANALISE                         => 'STATUS_PROJETO_EM_ANALISE',
+            ProjetoUtils.STATUS_PROJETO_APROVADO                           => 'STATUS_PROJETO_APROVADO',
+            ProjetoUtils.STATUS_PROJETOS_EM_ELABORACAO                     => 'STATUS_PROJETOS_EM_ELABORACAO',
+            ProjetoUtils.STATUS_OBRA_EM_EXECUCAO                           => 'STATUS_OBRA_EM_EXECUCAO',
+            ProjetoUtils.STATUS_OBRA_CONCLUIDA                             => 'STATUS_OBRA_CONCLUIDA',
+            ProjetoUtils.STATUS_USINA_OPERANDO                             => 'STATUS_USINA_OPERANDO',
+            ProjetoUtils.STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR => 'STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR',
+            ProjetoUtils.STATUS_LIGACAO_SOLICITADA                         => 'STATUS_LIGACAO_SOLICITADA',
+            ProjetoUtils.STATUS_PROJETO_PROTOCOLADO                        => 'STATUS_PROJETO_PROTOCOLADO',
+            ProjetoUtils.STATUS_AGUARDANDO_VISTORIA                        => 'STATUS_AGUARDANDO_VISTORIA',
+            ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO                    => 'STATUS_PLANEJAMENTO_DE_PROJETO',
+            ProjetoUtils.STATUS_PLANEJAMENTO_DE_OBRA                       => 'STATUS_PLANEJAMENTO_DE_OBRA'
+        };
+    }
+
+    private static Map<Id, User> fetchUsers(Set<Id> userIds){
+        Map<Id, User> result = new Map<Id, User>();
+        if(userIds == null || userIds.isEmpty()){
+            return result;
+        }
+
+        for(User userRecord : [
+            SELECT Id, Email, Name, IsActive
+            FROM User
+            WHERE Id IN :userIds
+        ]){
+            result.put(userRecord.Id, userRecord);
+        }
+        return result;
+    }
+
+    private static Boolean isInactive(User userRecord){
+        return userRecord != null && !userRecord.IsActive;
+    }
+
+    private static Map<String, User> buildRoleUserMap(Projeto__c projeto, Map<Id, User> userById){
+        return new Map<String, User>{
+            'PROJETISTA'      => userById != null ? userById.get(projeto.Projetista__c) : null,
+            'GESTOR_DE_OBRAS' => userById != null ? userById.get(projeto.GestorObra__c) : null
+        };
+    }
+
     
     public static void createTaskOnboarding(List<Projeto__c> projects, Map<Id, Projeto__c> oldMap){
         
@@ -575,6 +707,16 @@ public class ProjetoBO {
             System.debug('##Stack: ' + ex.getStackTraceString());
             System.debug('##Line: ' + ex.getLineNumber());
         }
+    }
+
+    // Mantém compatibilidade com classes que chamam essa rotina; hoje não executa lógica adicional.
+    public static void initializeStatusStartDate(List<Projeto__c> projects){
+        // no-op
+    }
+
+    // Compatibilidade com chamadas existentes; implementação poderá ser adicionada conforme necessário.
+    public static void updateStageDurations(List<Projeto__c> newList, Map<Id, Projeto__c> oldMap){
+        // no-op
     }
 
     public static void createTaskProjectApproved(List<Projeto__c> projects, Map<Id, Projeto__c> oldMap){

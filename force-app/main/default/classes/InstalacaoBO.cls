@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-23-2025
+ * @last modified on  : 12-03-2025
  * @last modified by  : Daniel Belini
 **/
 public class InstalacaoBO {
@@ -142,6 +142,7 @@ public class InstalacaoBO {
 
     private static Instalacao__c buildInstallation(Projeto__c project){
         String installationName = project.Name != null ? 'Instalação - ' + project.Name : 'Instalação';
+        installationName = truncateString(installationName, 80);
 
         return new Instalacao__c(
             Name                = installationName,
@@ -214,5 +215,12 @@ public class InstalacaoBO {
         if(!installationsToUpdate.isEmpty()){
             update installationsToUpdate;
         }
+    }
+
+    private static String truncateString(String value, Integer maxLength){
+        if(value == null || maxLength == null || maxLength <= 0){
+            return value;
+        }
+        return value.length() > maxLength ? value.substring(0, maxLength) : value;
     }
 }
