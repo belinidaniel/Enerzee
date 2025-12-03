@@ -26,7 +26,5 @@
     <queueSobject>
         <sobjectType>MessagingSession</sobjectType>
     </queueSobject>
-    <queueSobject>
-        <sobjectType>SetupMessagingSession__c</sobjectType>
-    </queueSobject>
+
 </Queue>
