@@ -2015,52 +2015,43 @@ public class OpportunityBO {
     }
 
     public static void processPaymentMethodApproval(Map<Id,Opportunity> newMap, Map<Id, Opportunity> oldOpportunityMap) {
-        List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
         List<Approval.ProcessSubmitRequest> approvalRequests = new List<Approval.ProcessSubmitRequest>();
 
         for (Opportunity opp : newMap.values()) {
             Opportunity oldOpp = oldOpportunityMap.get(opp.Id);
-            Opportunity oppToUpdate = new Opportunity(Id = opp.Id);
+            Boolean eligibleStage = OpportunityUtils.isStatusProposalGenerated(opp) || OpportunityUtils.isStatusAwaitingAcceptance(opp);
+
+            if (Approval.isLocked(opp.Id)) {
+                continue;
+            }
+
             if (
-                OpportunityUtils.isStatusAwaitingAcceptance(opp) && 
-                opp.CondicoesPagamento__c == 'Negociação' 
-                && (    
-                    oldOpp == null || 
-                    oldOpp.StageName != opp.StageName || 
-                    oldOpp.CondicoesPagamento__c != opp.CondicoesPagamento__c
+                eligibleStage &&
+                opp.FormaPagamento__c == 'Negociação' &&
+                (
+                    oldOpp == null ||
+                    oldOpp.StageName != opp.StageName ||
+                    oldOpp.FormaPagamento__c != opp.FormaPagamento__c
                 )
             ) {
-                //oppToUpdate.StageName = OpportunityUtils.STATUS_VALIDACAO_DO_METODO_DE_PAGAMENTO; //'Validação de Método de pagamento';
-                // Inicia o processo de aprovação aqui, se necessário
-                //opportunitiesToUpdate.add(oppToUpdate);
-
-                // Criando a solicitação de envio para o processo de aprovação
                 Approval.ProcessSubmitRequest req = new Approval.ProcessSubmitRequest();
-                req.setComments('Iniciando processo de aprovação automaticamente para condição de pagamento negociável.');
+                req.setComments('Envio automático para aprovação de forma de pagamento (Negociação).');
                 req.setObjectId(opp.Id);
                 req.setSubmitterId(UserInfo.getUserId());
-                req.setProcessDefinitionNameOrId('Validacao_de_pagamento');
+                req.setProcessDefinitionNameOrId('Aprovacao_Forma_de_Pagamento');
                 approvalRequests.add(req);
-                
             }
         }
-    
-        //if (!opportunitiesToUpdate.isEmpty()) {
-        //    update opportunitiesToUpdate;
-        //}
 
-        // Enviando solicitações de aprovação
         if (!approvalRequests.isEmpty()) {
             for (Approval.ProcessSubmitRequest req : approvalRequests) {
                 try {
-                    Approval.ProcessResult result = Approval.process(req);
-                    // Trate o resultado aqui, se necessário
+                    Approval.process(req);
                 } catch(Exception e) {
-                    // Tratamento de exceção adequado
+                    Utils.createLog('OpportunityBO', 'processPaymentMethodApproval', e, req.getObjectId());
                 }
             }
         }
-
     }
 
     public static void scheduleTechnicalVisit( Map<Id,Opportunity> newMap , Map<Id, Opportunity> oldOpportunityMap) {

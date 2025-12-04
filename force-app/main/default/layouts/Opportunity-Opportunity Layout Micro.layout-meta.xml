@@ -706,6 +706,10 @@
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>FormaPagamento__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>CondicoesPagamento__c</field>
             </layoutItems>
             <layoutItems>
@@ -743,7 +747,8 @@
                 <field>UCBeneficiadora__c</field>
             </layoutItems>
             <layoutItems>
-                <emptySpace>true</emptySpace>
+                <behavior>Edit</behavior>
+                <field>isPromotional__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>

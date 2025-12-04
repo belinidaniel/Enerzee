@@ -8,6 +8,7 @@
 public class ProjetoBO {
 
     public static Map<String, User> userEmailToUser = new Map<String, User>();
+    private static Map<Id, User> ownerUserCache = new Map<Id, User>();
     
     public static void populateUserEmailMap(){
         if(userEmailToUser.isEmpty()){
@@ -119,12 +120,14 @@ public class ProjetoBO {
         for(Projeto__c project : newRecordList){
 
             if(isInactive(userById.get(project.GestorObra__c))){
-                project.addError('Usuário GESTOR DE OBRA está inativo.');
+                String gestorName = userById.get(project.GestorObra__c) != null ? userById.get(project.GestorObra__c).Name : 'selecionado';
+                project.addError('Não foi possível salvar o projeto porque o Gestor de Obra ' + gestorName + ' está inativo. Altere o responsável ou reative o usuário.');
                 continue;
             }
 
             if(isInactive(userById.get(project.Projetista__c))){
-                project.addError('Usuário PROJETISTA está inativo.');
+                String projetistaName = userById.get(project.Projetista__c) != null ? userById.get(project.Projetista__c).Name : 'selecionado';
+                project.addError('Não foi possível salvar o projeto porque o Projetista ' + projetistaName + ' está inativo. Altere o responsável ou reative o usuário.');
                 continue;
             }
 
@@ -302,6 +305,10 @@ public class ProjetoBO {
                 ' | TipoProprietario: ' + (line.TipoDeProprietario != null ? line.TipoDeProprietario : 'não informado') +
                 '). Verifique se o usuário/fila está ativo ou existe na org.';
             projeto.addError(msg);
+            return null;
+        }
+
+        if(!ensureActiveOwner(ownerId, projeto, line != null ? line.Assunto : '', userRoleToUser)){
             return null;
         }
 
@@ -620,6 +627,59 @@ public class ProjetoBO {
             'PROJETISTA'      => userById != null ? userById.get(projeto.Projetista__c) : null,
             'GESTOR_DE_OBRAS' => userById != null ? userById.get(projeto.GestorObra__c) : null
         };
+    }
+
+    private static Boolean ensureActiveOwner(Id ownerId, Projeto__c projeto, String subject, Map<String, User> roleToUser){
+        if(ownerId == null){
+            return false;
+        }
+
+        if(ownerId.getSObjectType() != User.SObjectType){
+            return true;
+        }
+
+        User ownerUser = getOwnerUser(ownerId, roleToUser);
+        if(ownerUser == null){
+            projeto.addError('Não foi possível criar a tarefa "' + subject + '" porque o proprietário configurado não foi encontrado. Atualize o responsável ou reative o usuário.');
+            return false;
+        }
+
+        if(!ownerUser.IsActive){
+            projeto.addError('Não foi possível criar a tarefa "' + subject + '" porque o proprietário configurado está inativo (' + ownerUser.Name + '). Altere o responsável ou reative o usuário antes de salvar o projeto.');
+            return false;
+        }
+
+        return true;
+    }
+
+    private static User getOwnerUser(Id ownerId, Map<String, User> roleToUser){
+        if(ownerId == null || ownerId.getSObjectType() != User.SObjectType){
+            return null;
+        }
+
+        if(ownerUserCache.containsKey(ownerId)){
+            return ownerUserCache.get(ownerId);
+        }
+
+        if(roleToUser != null){
+            for(User candidate : roleToUser.values()){
+                if(candidate != null && candidate.Id == ownerId){
+                    ownerUserCache.put(ownerId, candidate);
+                    return candidate;
+                }
+            }
+        }
+
+        List<User> users = [
+            SELECT Id, Name, IsActive
+            FROM User
+            WHERE Id = :ownerId
+            LIMIT 1
+        ];
+
+        User resolved = users.isEmpty() ? null : users[0];
+        ownerUserCache.put(ownerId, resolved);
+        return resolved;
     }
 
     
