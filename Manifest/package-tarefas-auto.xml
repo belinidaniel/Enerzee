@@ -23,6 +23,13 @@
         <members>Activity.HoraVencimento__c</members>
         <members>Activity.NotificadoAntesVencer__c</members>
         <members>Activity.NotificadoAposVencer__c</members>
+        <members>Projeto__c.BeneficiariasCadastradasProtocolo__c</members>
+        <members>Projeto__c.InversaoFluxo__c</members>
+        <members>Projeto__c.NecessarioObraNaRede__c</members>
+        <members>Projeto__c.NecessarioPFC__c</members>
+        <members>Projeto__c.ObservacaoHomologacao__c</members>
+        <members>Projeto__c.PrazoObraNaRede__c</members>
+        <members>Projeto__c.ValorPFC__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -33,6 +40,10 @@
         <members>Task-Task Layout</members>
         <members>Task-Jornada do Cliente</members>
         <name>Layout</name>
+    </types>
+    <types>
+        <members>Projeto_Pagina_de_registro</members>
+        <name>FlexiPage</name>
     </types>
     <version>59.0</version>
 </Package>

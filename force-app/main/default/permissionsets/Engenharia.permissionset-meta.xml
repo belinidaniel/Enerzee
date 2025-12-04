@@ -62,4 +62,39 @@
         <field>Task.NotificadoAposVencer__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Projeto__c.BeneficiariasCadastradasProtocolo__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Projeto__c.NecessarioObraNaRede__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Projeto__c.NecessarioPFC__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Projeto__c.InversaoFluxo__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Projeto__c.ObservacaoHomologacao__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Projeto__c.PrazoObraNaRede__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Projeto__c.ValorPFC__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
 </PermissionSet>

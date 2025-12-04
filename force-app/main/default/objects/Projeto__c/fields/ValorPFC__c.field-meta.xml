@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ValorPFC__c</fullName>
+    <description>Valor PFC informado pela concessionária.</description>
+    <label>Valor PFC</label>
+    <length>100</length>
+    <type>Text</type>
+</CustomField>
