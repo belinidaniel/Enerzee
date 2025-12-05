@@ -25,6 +25,7 @@ public class ProjetoTriggerHandler extends TriggerHandler {
     
     public override void beforeInsert(){
         ProjetoBO.populateFromOpportunity((List<Projeto__c>) newRecordList);
+        ProjetoBO.setDefaultStatus((List<Projeto__c>) newRecordList);
         ProjetoBO.initializeStatusStartDate((List<Projeto__c>) newRecordList);
     }
 

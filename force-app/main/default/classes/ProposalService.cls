@@ -16,7 +16,7 @@ public class ProposalService {
         }
 
         List<Opportunity> opportunities = [ 
-            SELECT IdVirtualOffice__c, StageName, Observacoes__c, recordType.Name, Status__c, Categoria__c, ValorTotalProposta__c, Rede__c, DataHoraAgendamento__c
+            SELECT IdVirtualOffice__c, StageName, Observacoes__c, recordType.Name, Status__c, Categoria__c, ValorTotalProposta__c, Rede__c, DataHoraAgendamento__c, Loss_Reason__c, DescricaoMotivoPerda__c
             FROM Opportunity 
             WHERE Id IN :opportunityIds
         ];
@@ -37,6 +37,11 @@ public class ProposalService {
             request.Category            = opportunity.Categoria__c;
             request.AppointmentDateTime = opportunity.DataHoraAgendamento__c;
             request.Value                = opportunity.ValorTotalProposta__c;
+
+            if (OpportunityUtils.SUB_STATUS_REPROVADO.equalsIgnoreCase(opportunity.Status__c)) {
+                request.LossReason = getLossReasonAsInteger(opportunity.Loss_Reason__c);
+                request.DescriptionReasonLoss = opportunity.DescricaoMotivoPerda__c;
+            }
 
 
             if (OpportunityUtils.isRecordTypeEzeeLivre(opportunity)){
@@ -115,6 +120,18 @@ public class ProposalService {
         Utils.createLog(logDTO);
 
         return response;
+    }
+
+    private static Integer getLossReasonAsInteger(String lossReasonValue) {
+        if (String.isBlank(lossReasonValue)) {
+            return null;
+        }
+
+        try {
+            return Integer.valueOf(lossReasonValue);
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     /*private static integer getStatusEnum(String stageName){

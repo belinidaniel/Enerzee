@@ -4,6 +4,12 @@
     <description>Dias até a validade da carta (valor negativo indica vencimento).</description>
     <externalId>false</externalId>
     <label>Dias Restantes para a Carta</label>
+    <formula>IF(
+    ISBLANK(CartaAprovacaoValidade__c),
+    NULL,
+    CartaAprovacaoValidade__c - TODAY()
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <precision>18</precision>
     <required>false</required>
     <scale>0</scale>

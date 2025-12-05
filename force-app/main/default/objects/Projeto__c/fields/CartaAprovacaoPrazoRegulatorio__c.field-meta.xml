@@ -6,11 +6,13 @@
     NULL,
     CASE(
         TEXT(CartaAprovacaoTipo__c),
-        &quot;Informação de Acesso&quot;, 60,
-        &quot;Disponibilidade de Energia&quot;, 90,
-        &quot;Microgeração&quot;, 120,
-        &quot;Minigeração&quot;, 365,
-        &quot;Posto de Transformação / Subestação&quot;, 730,
+        &quot;Orcamento_Conexao_Microgeracao&quot;, 120,
+        &quot;Orcamento_Conexao_Minigeracao&quot;, 365,
+        &quot;Microgeracao&quot;, 120,
+        &quot;Minigeracao&quot;, 365,
+        &quot;Informacao_de_Acesso&quot;, 60,
+        &quot;Disponibilidade_de_Energia&quot;, 90,
+        &quot;Posto_ou_Subestacao&quot;, 730,
         NULL
     )
 )</formula>

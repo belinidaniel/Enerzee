@@ -12,14 +12,14 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Informacao_de_Acesso</fullName>
+                <fullName>Orcamento_Conexao_Microgeracao</fullName>
                 <default>false</default>
-                <label>Informação de Acesso</label>
+                <label>Orçamento de Conexão - Microgeração</label>
             </value>
             <value>
-                <fullName>Disponibilidade_de_Energia</fullName>
+                <fullName>Orcamento_Conexao_Minigeracao</fullName>
                 <default>false</default>
-                <label>Disponibilidade de Energia</label>
+                <label>Orçamento de Conexão - Minigeração</label>
             </value>
             <value>
                 <fullName>Microgeracao</fullName>
@@ -30,6 +30,16 @@
                 <fullName>Minigeracao</fullName>
                 <default>false</default>
                 <label>Minigeração</label>
+            </value>
+            <value>
+                <fullName>Informacao_de_Acesso</fullName>
+                <default>false</default>
+                <label>Informação de Acesso</label>
+            </value>
+            <value>
+                <fullName>Disponibilidade_de_Energia</fullName>
+                <default>false</default>
+                <label>Disponibilidade de Energia</label>
             </value>
             <value>
                 <fullName>Posto_ou_Subestacao</fullName>
