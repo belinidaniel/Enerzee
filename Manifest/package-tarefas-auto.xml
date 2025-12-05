@@ -32,6 +32,7 @@
         <members>Projeto__c.NecessarioPFC__c</members>
         <members>Projeto__c.ObservacaoHomologacao__c</members>
         <members>Projeto__c.PrazoObraNaRede__c</members>
+        <members>Projeto__c.CartaAprovacaoPrazoRegulatorio__c</members>
         <members>Projeto__c.ValorPFC__c</members>
         <name>CustomField</name>
     </types>

@@ -355,6 +355,12 @@
     <flexiPageRegions>
         <itemInstances>
             <fieldInstance>
+                <fieldItem>Record.CartaAprovacaoPrazoRegulatorio__c</fieldItem>
+                <identifier>RecordCartaAprovacaoPrazoRegulatorio__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
                 <fieldItem>Record.CartaAprovacaoValidade__c</fieldItem>
                 <identifier>RecordCartaAprovacaoValidade__cField</identifier>
             </fieldInstance>
@@ -416,28 +422,6 @@
     </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.PrazoContratoDias__c</fieldItem>
-                <identifier>RecordPrazoContratoDias__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.DataContagemPrazo__c</fieldItem>
-                <identifier>RecordDataContagemPrazo__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.DiasFaltantes__c</fieldItem>
-                <identifier>RecordDiasFaltantes__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-duracao-col2</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
@@ -445,16 +429,6 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
                 <identifier>flexipage_columnDuracaoLeft</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-duracao-col2</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:column</componentName>
-                <identifier>flexipage_columnDuracaoRight</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-duracao-columns</name>

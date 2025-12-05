@@ -3,7 +3,7 @@
     <fullName>ContagemPrazoProjetoAnalise__c</fullName>
     <description>Dias corridos manuais para a fase Projeto em Análise.</description>
     <externalId>false</externalId>
-    <label>Contagem do Prazo - Projeto em Análise</label>
+    <label>Projeto em análise</label>
     <precision>18</precision>
     <required>false</required>
     <scale>0</scale>
