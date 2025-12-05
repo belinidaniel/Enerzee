@@ -24,6 +24,7 @@ public class ProjetoTriggerHandler extends TriggerHandler {
     }
     
     public override void beforeInsert(){
+        ProjetoBO.populateFromOpportunity((List<Projeto__c>) newRecordList);
         ProjetoBO.initializeStatusStartDate((List<Projeto__c>) newRecordList);
     }
 
@@ -33,6 +34,7 @@ public class ProjetoTriggerHandler extends TriggerHandler {
     }
 
     public override void beforeUpdate(){
+        ProjetoBO.populateFromOpportunity((List<Projeto__c>) newRecordList);
         ProjetoBO.updateStatusDurations((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
         ProjetoBO.checkTasksConclusionBeforeStatusChange((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
     }

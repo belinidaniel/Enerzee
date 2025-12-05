@@ -40,6 +40,41 @@ public class ProjetoBO {
         }
     }
 
+    public static void populateFromOpportunity(List<Projeto__c> projects){
+        if(projects == null || projects.isEmpty()){
+            return;
+        }
+
+        Set<Id> oppIds = new Set<Id>();
+        for(Projeto__c project : projects){
+            if(project.Oportunidade__c != null){
+                oppIds.add(project.Oportunidade__c);
+            }
+        }
+        if(oppIds.isEmpty()){
+            return;
+        }
+
+        Map<Id, Opportunity> oppById = new Map<Id, Opportunity>(
+            [SELECT Id, AccountId, PotenciaNominalSistema__c FROM Opportunity WHERE Id IN :oppIds]
+        );
+
+        for(Projeto__c project : projects){
+            Opportunity opp = oppById.get(project.Oportunidade__c);
+            if(opp == null){
+                continue;
+            }
+
+            if(project.Conta__c == null && opp.AccountId != null){
+                project.Conta__c = opp.AccountId;
+            }
+
+            if(String.isBlank(project.PotenciaSistema__c) && opp.PotenciaNominalSistema__c != null){
+                project.PotenciaSistema__c = String.valueOf(opp.PotenciaNominalSistema__c);
+            }
+        }
+    }
+
     public static void updateStatusDurations(List<Projeto__c> newRecordList, Map<Id, Projeto__c> oldMap){
         if(oldMap == null || newRecordList == null){
             return;
