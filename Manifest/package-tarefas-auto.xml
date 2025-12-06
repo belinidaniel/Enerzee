@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+        <members>IntegracaoFormaPagamentoNegociacao</members>
         <members>InstalacaoTaskBO</members>
         <members>InstalacaoTriggerHandler</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityTriggerHandler</members>
         <members>ProjetoBO</members>
         <members>TaskDeadlineNotificationBatch</members>
         <members>TaskDeadlineNotificationScheduler</members>
@@ -23,7 +26,19 @@
         <members>Activity.HoraVencimento__c</members>
         <members>Activity.NotificadoAntesVencer__c</members>
         <members>Activity.NotificadoAposVencer__c</members>
+        <members>Projeto__c.BeneficiariasCadastradasProtocolo__c</members>
+        <members>Projeto__c.InversaoFluxo__c</members>
+        <members>Projeto__c.NecessarioObraNaRede__c</members>
+        <members>Projeto__c.NecessarioPFC__c</members>
+        <members>Projeto__c.ObservacaoHomologacao__c</members>
+        <members>Projeto__c.PrazoObraNaRede__c</members>
+        <members>Projeto__c.CartaAprovacaoPrazoRegulatorio__c</members>
+        <members>Projeto__c.ValorPFC__c</members>
         <name>CustomField</name>
+    </types>
+    <types>
+        <members>Opportunity.Aprovacao_Forma_de_Pagamento</members>
+        <name>ApprovalProcess</name>
     </types>
     <types>
         <members>Engenharia</members>
@@ -32,7 +47,17 @@
     <types>
         <members>Task-Task Layout</members>
         <members>Task-Jornada do Cliente</members>
+        <members>Opportunity-Opportunity Layout Micro</members>
+        <members>Opportunity-Opportunity Layout Mini</members>
         <name>Layout</name>
+    </types>
+    <types>
+        <members>Opportunity</members>
+        <name>Workflow</name>
+    </types>
+    <types>
+        <members>Projeto_Pagina_de_registro</members>
+        <name>FlexiPage</name>
     </types>
     <version>59.0</version>
 </Package>

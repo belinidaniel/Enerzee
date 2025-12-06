@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NecessarioObraNaRede__c</fullName>
+    <description>Indica se é necessária obra na rede.</description>
+    <defaultValue>false</defaultValue>
+    <label>Necessário Obra na Rede</label>
+    <type>Checkbox</type>
+</CustomField>

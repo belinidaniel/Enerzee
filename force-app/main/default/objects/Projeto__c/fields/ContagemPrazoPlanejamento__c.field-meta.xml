@@ -3,7 +3,7 @@
     <fullName>ContagemPrazoPlanejamento__c</fullName>
     <description>Dias corridos registrados enquanto o projeto está em Planejamento.</description>
     <externalId>false</externalId>
-    <label>Contagem Prazo Planejamento de Projeto</label>
+    <label>Planejamento de projeto</label>
     <precision>18</precision>
     <required>false</required>
     <scale>0</scale>

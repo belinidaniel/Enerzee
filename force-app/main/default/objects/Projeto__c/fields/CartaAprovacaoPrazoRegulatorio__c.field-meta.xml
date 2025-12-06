@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CartaAprovacaoPrazoRegulatorio__c</fullName>
+    <formula>IF(
+    ISBLANK(TEXT(CartaAprovacaoTipo__c)),
+    NULL,
+    CASE(
+        TEXT(CartaAprovacaoTipo__c),
+        &quot;Informação de Acesso&quot;, 60,
+        &quot;Disponibilidade de Energia&quot;, 90,
+        &quot;Microgeração&quot;, 120,
+        &quot;Minigeração&quot;, 365,
+        &quot;Posto de Transformação / Subestação&quot;, 730,
+        NULL
+    )
+)</formula>
+    <label>Prazo Regulatório</label>
+    <precision>5</precision>
+    <scale>0</scale>
+    <type>Number</type>
+</CustomField>

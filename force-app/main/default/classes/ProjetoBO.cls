@@ -2,12 +2,14 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-03-2025
+ * @last modified on  : 12-04-2025
  * @last modified by  : Daniel Belini
 **/
 public class ProjetoBO {
 
     public static Map<String, User> userEmailToUser = new Map<String, User>();
+    private static Map<Id, User> ownerUserCache = new Map<Id, User>();
+    private static final Date TODAY = Date.today();
     
     public static void populateUserEmailMap(){
         if(userEmailToUser.isEmpty()){
@@ -28,6 +30,55 @@ public class ProjetoBO {
         }
 
         IntegracaoNivelloProjetos.sendProjetos(projectIds, Trigger.isInsert);
+    }
+
+    public static void initializeStatusStartDate(List<Projeto__c> newRecordList){
+        for(Projeto__c project : newRecordList){
+            if(project.StatusAtualDesde__c == null){
+                project.StatusAtualDesde__c = TODAY;
+            }
+        }
+    }
+
+    public static void updateStatusDurations(List<Projeto__c> newRecordList, Map<Id, Projeto__c> oldMap){
+        if(oldMap == null || newRecordList == null){
+            return;
+        }
+
+        for(Projeto__c project : newRecordList){
+            Projeto__c oldProject = oldMap.get(project.Id);
+            if(oldProject == null){
+                continue;
+            }
+
+            Boolean statusChanged = oldProject.Status__c != project.Status__c;
+            if(!statusChanged){
+                continue;
+            }
+
+            Date statusStart = oldProject.StatusAtualDesde__c;
+            if(statusStart == null){
+                project.StatusAtualDesde__c = TODAY;
+                continue;
+            }
+
+            Integer elapsedDays = Math.max(1, statusStart.daysBetween(TODAY) + 1);
+
+            // Atualiza contagem total
+            project.ContagemPrazo__c = (oldProject.ContagemPrazo__c == null ? 0 : oldProject.ContagemPrazo__c) + elapsedDays;
+
+            // Atualiza contagem por fase conforme status anterior
+            if(oldProject.Status__c == ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO || oldProject.Status__c == ProjetoUtils.STATUS_PLANEJAMENTO){
+                project.ContagemPrazoPlanejamento__c = (oldProject.ContagemPrazoPlanejamento__c == null ? 0 : oldProject.ContagemPrazoPlanejamento__c) + elapsedDays;
+            } else if(oldProject.Status__c == ProjetoUtils.STATUS_ELABORACAO_DE_PROJETO || oldProject.Status__c == ProjetoUtils.STATUS_PROJETOS_EM_ELABORACAO){
+                project.ContagemPrazoProjetoElaboracao__c = (oldProject.ContagemPrazoProjetoElaboracao__c == null ? 0 : oldProject.ContagemPrazoProjetoElaboracao__c) + elapsedDays;
+            } else if(oldProject.Status__c == ProjetoUtils.STATUS_PROJETO_EM_ANALISE){
+                project.ContagemPrazoProjetoAnalise__c = (oldProject.ContagemPrazoProjetoAnalise__c == null ? 0 : oldProject.ContagemPrazoProjetoAnalise__c) + elapsedDays;
+            }
+
+            // Reinicia contador para o novo status
+            project.StatusAtualDesde__c = TODAY;
+        }
     }
     
     public static void createTasks(List<Projeto__c> newRecordList, Map<Id, Projeto__c> oldMap){
@@ -119,12 +170,14 @@ public class ProjetoBO {
         for(Projeto__c project : newRecordList){
 
             if(isInactive(userById.get(project.GestorObra__c))){
-                project.addError('Usuário GESTOR DE OBRA está inativo.');
+                String gestorName = userById.get(project.GestorObra__c) != null ? userById.get(project.GestorObra__c).Name : 'selecionado';
+                project.addError('Não foi possível salvar o projeto porque o Gestor de Obra ' + gestorName + ' está inativo. Altere o responsável ou reative o usuário.');
                 continue;
             }
 
             if(isInactive(userById.get(project.Projetista__c))){
-                project.addError('Usuário PROJETISTA está inativo.');
+                String projetistaName = userById.get(project.Projetista__c) != null ? userById.get(project.Projetista__c).Name : 'selecionado';
+                project.addError('Não foi possível salvar o projeto porque o Projetista ' + projetistaName + ' está inativo. Altere o responsável ou reative o usuário.');
                 continue;
             }
 
@@ -302,6 +355,10 @@ public class ProjetoBO {
                 ' | TipoProprietario: ' + (line.TipoDeProprietario != null ? line.TipoDeProprietario : 'não informado') +
                 '). Verifique se o usuário/fila está ativo ou existe na org.';
             projeto.addError(msg);
+            return null;
+        }
+
+        if(!ensureActiveOwner(ownerId, projeto, line != null ? line.Assunto : '', userRoleToUser)){
             return null;
         }
 
@@ -622,6 +679,59 @@ public class ProjetoBO {
         };
     }
 
+    private static Boolean ensureActiveOwner(Id ownerId, Projeto__c projeto, String subject, Map<String, User> roleToUser){
+        if(ownerId == null){
+            return false;
+        }
+
+        if(ownerId.getSObjectType() != User.SObjectType){
+            return true;
+        }
+
+        User ownerUser = getOwnerUser(ownerId, roleToUser);
+        if(ownerUser == null){
+            projeto.addError('Não foi possível criar a tarefa "' + subject + '" porque o proprietário configurado não foi encontrado. Atualize o responsável ou reative o usuário.');
+            return false;
+        }
+
+        if(!ownerUser.IsActive){
+            projeto.addError('Não foi possível criar a tarefa "' + subject + '" porque o proprietário configurado está inativo (' + ownerUser.Name + '). Altere o responsável ou reative o usuário antes de salvar o projeto.');
+            return false;
+        }
+
+        return true;
+    }
+
+    private static User getOwnerUser(Id ownerId, Map<String, User> roleToUser){
+        if(ownerId == null || ownerId.getSObjectType() != User.SObjectType){
+            return null;
+        }
+
+        if(ownerUserCache.containsKey(ownerId)){
+            return ownerUserCache.get(ownerId);
+        }
+
+        if(roleToUser != null){
+            for(User candidate : roleToUser.values()){
+                if(candidate != null && candidate.Id == ownerId){
+                    ownerUserCache.put(ownerId, candidate);
+                    return candidate;
+                }
+            }
+        }
+
+        List<User> users = [
+            SELECT Id, Name, IsActive
+            FROM User
+            WHERE Id = :ownerId
+            LIMIT 1
+        ];
+
+        User resolved = users.isEmpty() ? null : users[0];
+        ownerUserCache.put(ownerId, resolved);
+        return resolved;
+    }
+
     
     public static void createTaskOnboarding(List<Projeto__c> projects, Map<Id, Projeto__c> oldMap){
         
@@ -709,15 +819,7 @@ public class ProjetoBO {
         }
     }
 
-    // Mantém compatibilidade com classes que chamam essa rotina; hoje não executa lógica adicional.
-    public static void initializeStatusStartDate(List<Projeto__c> projects){
-        // no-op
-    }
 
-    // Compatibilidade com chamadas existentes; implementação poderá ser adicionada conforme necessário.
-    public static void updateStageDurations(List<Projeto__c> newList, Map<Id, Projeto__c> oldMap){
-        // no-op
-    }
 
     public static void createTaskProjectApproved(List<Projeto__c> projects, Map<Id, Projeto__c> oldMap){
         
