@@ -82,9 +82,19 @@
                 <label>Em Análise</label>
             </value>
             <value>
+                <fullName>Análise</fullName>
+                <default>false</default>
+                <label>Análise</label>
+            </value>
+            <value>
                 <fullName>Aprovado</fullName>
                 <default>false</default>
                 <label>Aprovado</label>
+            </value>
+            <value>
+                <fullName>Reprovado</fullName>
+                <default>false</default>
+                <label>Reprovado</label>
             </value>
             <value>
                 <fullName>Entrega de materiais</fullName>
@@ -200,6 +210,18 @@
         <valueSettings>
             <controllingFieldValue>Equipamento</controllingFieldValue>
             <valueName>Entrega de materiais</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
+            <valueName>Análise</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
+            <valueName>Aprovado</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
+            <valueName>Reprovado</valueName>
         </valueSettings>
     </valueSet>
 </CustomField>

@@ -62,9 +62,11 @@ public class OpportunityUtils {
     public static String SUB_STATUS_CONTRATO_ASSINADO           = 'Contrato Assinado';
     public static String SUB_STATUS_EM_ANDAMENTO                = 'Em Andamento';
     public static String SUB_STATUS_PENDENCIA                   = 'Pendência';
+    public static String SUB_STATUS_ANALISE_CREDITO             = 'Análise';
     public static String SUB_STATUS_FAST_TRACK                  = 'Fast Track';
     public static String SUB_STATUS_EM_ANALISE                  = 'Em Análise';
     public static String SUB_STATUS_APROVADO                    = 'Aprovado';
+    public static String SUB_STATUS_REPROVADO                   = 'Reprovado';
     public static String SUB_STATUS_ENTREGA_DE_MATERIAIS        = 'Entrega de materiais';
     public static String SUB_STATUS_EM_INSTALACAO               = 'Em instalação';
     public static String SUB_STATUS_VALIDANDO_BONIFICACAO       = 'Validando Bonificação';

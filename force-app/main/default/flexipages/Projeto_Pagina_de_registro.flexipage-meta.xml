@@ -119,6 +119,16 @@
         </itemInstances>
         <itemInstances>
             <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>readonly</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Conta__c</fieldItem>
+                <identifier>RecordConta__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
                 <fieldItem>Record.Oportunidade__r.Numeroproposta__c</fieldItem>
                 <identifier>RecordOportunidade_rNumeroproposta_cField</identifier>
             </fieldInstance>
@@ -401,20 +411,20 @@
     <flexiPageRegions>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.ContagemPrazoPlanejamento__c</fieldItem>
-                <identifier>RecordContagemPrazoPlanejamento__cField</identifier>
+                <fieldItem>Record.ContagemPrazoPlanejamentoFmt__c</fieldItem>
+                <identifier>RecordContagemPrazoPlanejamentoFmt__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.ContagemPrazoProjetoElaboracao__c</fieldItem>
-                <identifier>RecordContagemPrazoProjetoElaboracao__cField</identifier>
+                <fieldItem>Record.ContagemPrazoProjetoElaboracaoFmt__c</fieldItem>
+                <identifier>RecordContagemPrazoProjetoElaboracaoFmt__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.ContagemPrazoProjetoAnalise__c</fieldItem>
-                <identifier>RecordContagemPrazoProjetoAnalise__cField</identifier>
+                <fieldItem>Record.ContagemPrazoProjetoAnaliseFmt__c</fieldItem>
+                <identifier>RecordContagemPrazoProjetoAnaliseFmt__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-duracao-col1</name>

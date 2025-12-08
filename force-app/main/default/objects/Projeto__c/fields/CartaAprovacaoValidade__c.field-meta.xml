@@ -9,11 +9,13 @@
     NULL,
     CASE(
         TEXT(CartaAprovacaoTipo__c),
-        &quot;Informação de Acesso&quot;, CartaAprovacaoData__c + 60,
-        &quot;Disponibilidade de Energia&quot;, CartaAprovacaoData__c + 90,
-        &quot;Microgeração&quot;, CartaAprovacaoData__c + 120,
-        &quot;Minigeração&quot;, CartaAprovacaoData__c + 365,
-        &quot;Posto de Transformação / Subestação&quot;, CartaAprovacaoData__c + 730,
+        &quot;Orcamento_Conexao_Microgeracao&quot;, CartaAprovacaoData__c + 120,
+        &quot;Orcamento_Conexao_Minigeracao&quot;, CartaAprovacaoData__c + 365,
+        &quot;Microgeracao&quot;, CartaAprovacaoData__c + 120,
+        &quot;Minigeracao&quot;, CartaAprovacaoData__c + 365,
+        &quot;Informacao_de_Acesso&quot;, CartaAprovacaoData__c + 60,
+        &quot;Disponibilidade_de_Energia&quot;, CartaAprovacaoData__c + 90,
+        &quot;Posto_ou_Subestacao&quot;, CartaAprovacaoData__c + 730,
         NULL
     )
 )</formula>

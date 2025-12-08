@@ -77,7 +77,6 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.updateKitsOnPotenciaChange((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.applyApprovedDiscounts((Map<Id, Opportunity>) Trigger.newMap,(Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.scheduleTechnicalVisit( (Map<Id,Opportunity>) Trigger.newMap, (Map<Id, Opportunity>) Trigger.oldMap);
-        OpportunityBO.processPaymentMethodApproval( (Map<Id,Opportunity>) Trigger.newMap , (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.updateFinancingProcessSimulationInExternalSystem((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.updateOpportunityTotalValueIfNeeded((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         //OpportunityBO.validateStageChange((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);

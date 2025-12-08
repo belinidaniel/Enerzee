@@ -13,7 +13,7 @@
                 <field>RecordTypeId</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>Conta__c</field>
             </layoutItems>
             <layoutItems>

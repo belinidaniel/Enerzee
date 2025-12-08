@@ -40,6 +40,52 @@ public class ProjetoBO {
         }
     }
 
+    public static void populateFromOpportunity(List<Projeto__c> projects){
+        if(projects == null || projects.isEmpty()){
+            return;
+        }
+
+        Set<Id> oppIds = new Set<Id>();
+        for(Projeto__c project : projects){
+            if(project.Oportunidade__c != null){
+                oppIds.add(project.Oportunidade__c);
+            }
+        }
+        if(oppIds.isEmpty()){
+            return;
+        }
+
+        Map<Id, Opportunity> oppById = new Map<Id, Opportunity>(
+            [SELECT Id, AccountId, PotenciaNominalSistema__c FROM Opportunity WHERE Id IN :oppIds]
+        );
+
+        for(Projeto__c project : projects){
+            Opportunity opp = oppById.get(project.Oportunidade__c);
+            if(opp == null){
+                continue;
+            }
+
+            if(project.Conta__c == null && opp.AccountId != null){
+                project.Conta__c = opp.AccountId;
+            }
+
+            if(String.isBlank(project.PotenciaSistema__c) && opp.PotenciaNominalSistema__c != null){
+                project.PotenciaSistema__c = String.valueOf(opp.PotenciaNominalSistema__c);
+            }
+        }
+    }
+
+    public static void setDefaultStatus(List<Projeto__c> projects){
+        if(projects == null){
+            return;
+        }
+        for(Projeto__c project : projects){
+            if(String.isBlank(project.Status__c)){
+                project.Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO;
+            }
+        }
+    }
+
     public static void updateStatusDurations(List<Projeto__c> newRecordList, Map<Id, Projeto__c> oldMap){
         if(oldMap == null || newRecordList == null){
             return;
@@ -56,28 +102,33 @@ public class ProjetoBO {
                 continue;
             }
 
-            Date statusStart = oldProject.StatusAtualDesde__c;
+            DateTime statusStart = oldProject.StatusAtualDesde__c;
             if(statusStart == null){
-                project.StatusAtualDesde__c = TODAY;
+                project.StatusAtualDesde__c = System.now();
                 continue;
             }
 
-            Integer elapsedDays = Math.max(1, statusStart.daysBetween(TODAY) + 1);
+            Long elapsedSeconds = Math.max(0L, (System.now().getTime() - statusStart.getTime())/1000);
+            Decimal elapsedDaysDecimal = (Decimal)elapsedSeconds / 86400;
+            if(elapsedDaysDecimal <= 0){
+                project.StatusAtualDesde__c = System.now();
+                continue;
+            }
 
-            // Atualiza contagem total
-            project.ContagemPrazo__c = (oldProject.ContagemPrazo__c == null ? 0 : oldProject.ContagemPrazo__c) + elapsedDays;
+            // Atualiza contagem total em dias (com fração)
+            project.ContagemPrazo__c = (oldProject.ContagemPrazo__c == null ? 0 : oldProject.ContagemPrazo__c) + elapsedDaysDecimal;
 
             // Atualiza contagem por fase conforme status anterior
             if(oldProject.Status__c == ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO || oldProject.Status__c == ProjetoUtils.STATUS_PLANEJAMENTO){
-                project.ContagemPrazoPlanejamento__c = (oldProject.ContagemPrazoPlanejamento__c == null ? 0 : oldProject.ContagemPrazoPlanejamento__c) + elapsedDays;
+                project.ContagemPrazoPlanejamento__c = (oldProject.ContagemPrazoPlanejamento__c == null ? 0 : oldProject.ContagemPrazoPlanejamento__c) + elapsedDaysDecimal;
             } else if(oldProject.Status__c == ProjetoUtils.STATUS_ELABORACAO_DE_PROJETO || oldProject.Status__c == ProjetoUtils.STATUS_PROJETOS_EM_ELABORACAO){
-                project.ContagemPrazoProjetoElaboracao__c = (oldProject.ContagemPrazoProjetoElaboracao__c == null ? 0 : oldProject.ContagemPrazoProjetoElaboracao__c) + elapsedDays;
+                project.ContagemPrazoProjetoElaboracao__c = (oldProject.ContagemPrazoProjetoElaboracao__c == null ? 0 : oldProject.ContagemPrazoProjetoElaboracao__c) + elapsedDaysDecimal;
             } else if(oldProject.Status__c == ProjetoUtils.STATUS_PROJETO_EM_ANALISE){
-                project.ContagemPrazoProjetoAnalise__c = (oldProject.ContagemPrazoProjetoAnalise__c == null ? 0 : oldProject.ContagemPrazoProjetoAnalise__c) + elapsedDays;
+                project.ContagemPrazoProjetoAnalise__c = (oldProject.ContagemPrazoProjetoAnalise__c == null ? 0 : oldProject.ContagemPrazoProjetoAnalise__c) + elapsedDaysDecimal;
             }
 
             // Reinicia contador para o novo status
-            project.StatusAtualDesde__c = TODAY;
+            project.StatusAtualDesde__c = System.now();
         }
     }
     
@@ -327,7 +378,14 @@ public class ProjetoBO {
                 }
             }
         }
-        insert tasksToInsert;
+        if(!tasksToInsert.isEmpty()){
+            try{
+                insert tasksToInsert;
+            } catch(Exception ex){
+                // Não bloquear o salvamento do Projeto se processos externos (Flow/Process Builder) falharem na criação de tarefas
+                Utils.createLog('ProjetoBO', 'createTasks', ex, newRecordList.isEmpty() ? null : newRecordList[0].Id);
+            }
+        }
     }
 
     public static Task createTask(
@@ -338,6 +396,10 @@ public class ProjetoBO {
         Map<String, User> roleToUser,
         Map<String, Group> queueMap
     ){
+        if(line == null || String.isBlank(line.Assunto)){
+            return null;
+        }
+
         Map<String, User> userRoleToUser = roleToUser != null ? roleToUser : new Map<String, User>{
             'PROJETISTA'      => ProjetoUtils.getProjetistaById(projeto.Projetista__c),
             'GESTOR_DE_OBRAS' => ProjetoUtils.getGestorObrasById(projeto.GestorObra__c)

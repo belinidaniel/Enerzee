@@ -5,6 +5,8 @@ public class GORecordsTO {
     public Integer  Status;
     public Integer  SubStatus;
     public String   Obs;
+    public Integer  LossReason;
+    public String   DescriptionReasonLoss;
 
     // - IntegracaoNivelloProjetos
     public String   StatusProjeto;

@@ -51,7 +51,6 @@
     </entryCriteria>
     <finalApprovalRecordLock>false</finalApprovalRecordLock>
     <finalRejectionRecordLock>false</finalRejectionRecordLock>
-    <initialSubmissionActions/>
     <label>Aprovação Forma de Pagamento</label>
     <processOrder>3</processOrder>
     <recordEditability>AdminOrCurrentApprover</recordEditability>

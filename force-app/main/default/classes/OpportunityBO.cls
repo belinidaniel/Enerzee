@@ -2015,43 +2015,8 @@ public class OpportunityBO {
     }
 
     public static void processPaymentMethodApproval(Map<Id,Opportunity> newMap, Map<Id, Opportunity> oldOpportunityMap) {
-        List<Approval.ProcessSubmitRequest> approvalRequests = new List<Approval.ProcessSubmitRequest>();
-
-        for (Opportunity opp : newMap.values()) {
-            Opportunity oldOpp = oldOpportunityMap.get(opp.Id);
-            Boolean eligibleStage = OpportunityUtils.isStatusProposalGenerated(opp) || OpportunityUtils.isStatusAwaitingAcceptance(opp);
-
-            if (Approval.isLocked(opp.Id)) {
-                continue;
-            }
-
-            if (
-                eligibleStage &&
-                opp.FormaPagamento__c == 'Negociação' &&
-                (
-                    oldOpp == null ||
-                    oldOpp.StageName != opp.StageName ||
-                    oldOpp.FormaPagamento__c != opp.FormaPagamento__c
-                )
-            ) {
-                Approval.ProcessSubmitRequest req = new Approval.ProcessSubmitRequest();
-                req.setComments('Envio automático para aprovação de forma de pagamento (Negociação).');
-                req.setObjectId(opp.Id);
-                req.setSubmitterId(UserInfo.getUserId());
-                req.setProcessDefinitionNameOrId('Aprovacao_Forma_de_Pagamento');
-                approvalRequests.add(req);
-            }
-        }
-
-        if (!approvalRequests.isEmpty()) {
-            for (Approval.ProcessSubmitRequest req : approvalRequests) {
-                try {
-                    Approval.process(req);
-                } catch(Exception e) {
-                    Utils.createLog('OpportunityBO', 'processPaymentMethodApproval', e, req.getObjectId());
-                }
-            }
-        }
+        // Desabilitado: auto-envio de aprovação de forma de pagamento removido para evitar falha de preferência de lock/unlock
+        return;
     }
 
     public static void scheduleTechnicalVisit( Map<Id,Opportunity> newMap , Map<Id, Opportunity> oldOpportunityMap) {
@@ -2591,7 +2556,10 @@ public class OpportunityBO {
             if (opportunity.StageName == oldOpportunity.StageName) continue;
             
             if (OpportunityUtils.isStatusChanging(opportunity, oldOpportunity)){
-                if (OpportunityUtils.isStatusCommercialPresentation(opportunity)){
+                if (OpportunityUtils.isStatusCreditAnalysis(opportunity) && OpportunityUtils.isRecordTypeEzeeSolarB(opportunity)){
+                    opportunity.Status__c = OpportunityUtils.SUB_STATUS_ANALISE_CREDITO;
+
+                } else if (OpportunityUtils.isStatusCommercialPresentation(opportunity)){
                     opportunity.Status__c = OpportunityUtils.SUB_STATUS_EM_AGENDAMENTO;
 
                 } else if (OpportunityUtils.isStatusPaymentConfirmationSinal(opportunity)){
