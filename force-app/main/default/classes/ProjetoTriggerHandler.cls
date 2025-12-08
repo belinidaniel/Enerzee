@@ -46,6 +46,8 @@ public class ProjetoTriggerHandler extends TriggerHandler {
         ProjetoBO.createTaskOnboarding((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
         ProjetoBO.createTaskProjectApproved((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
         ProjetoBO.createTaskFinishProject((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
+        // Garantir criação de instalação ao aprovar projeto
+        InstalacaoBO.ensureInstallationOnProjectApproved((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
     }
 
     public override void beforeDelete(){}

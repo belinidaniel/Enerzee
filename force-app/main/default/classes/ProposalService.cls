@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 08-18-2025
+ * @last modified on  : 12-08-2025
  * @last modified by  : Daniel Belini
 **/
 public class ProposalService {
@@ -38,7 +38,7 @@ public class ProposalService {
             request.AppointmentDateTime = opportunity.DataHoraAgendamento__c;
             request.Value                = opportunity.ValorTotalProposta__c;
 
-            if (OpportunityUtils.SUB_STATUS_REPROVADO.equalsIgnoreCase(opportunity.Status__c)) {
+            if (OpportunityUtils.STATUS_FECHADO_PERDIDO.equalsIgnoreCase(opportunity.StageName)) {
                 request.LossReason = getLossReasonAsInteger(opportunity.Loss_Reason__c);
                 request.DescriptionReasonLoss = opportunity.DescricaoMotivoPerda__c;
             }
@@ -122,16 +122,27 @@ public class ProposalService {
         return response;
     }
 
+    private static final Map<String, Integer> LOSS_REASON_MAP = new Map<String, Integer>{
+        'inviabilidade financeira' => 1,
+        'inviabilidade técnica' => 2,
+        'sem área para instalação' => 3,
+        'parado por 30 dias' => 4,
+        'sem contato com o cliente ou consultor' => 5,
+        'cliente fechou com outra empresa' => 6,
+        'consultor/cliente recusou a proposta' => 7,
+        'cliente desistiu' => 8,
+        'cliente retomará a negociação em outra data' => 9,
+        'cliente prosseguiu com outra proposta, duplicata' => 10,
+        'outro' => 11
+    };
+
     private static Integer getLossReasonAsInteger(String lossReasonValue) {
         if (String.isBlank(lossReasonValue)) {
             return null;
         }
 
-        try {
-            return Integer.valueOf(lossReasonValue);
-        } catch (Exception ex) {
-            return null;
-        }
+        String normalizedValue = lossReasonValue.trim().toLowerCase();
+        return LOSS_REASON_MAP.get(normalizedValue);
     }
 
     /*private static integer getStatusEnum(String stageName){
