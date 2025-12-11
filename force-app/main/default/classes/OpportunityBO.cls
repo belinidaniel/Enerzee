@@ -770,232 +770,23 @@ public class OpportunityBO {
     }
 
 
-    public static void makeVirtualOfficeCalloutByStatusChange(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
-        System.debug('newRecords ' + newRecords);
-        /*
-            1 -> Gerando Proposta
-            2 -> Etapa Viabilidade
-            3 -> Enviar Data de Visita Técnica
-            4 -> Enviar Análise da Visita Técnica
-            5 -> Conclusão Viabilidade
-            6 -> Pagamento
-            7 -> Finalização Proposta
-        */
-        Map<Integer, Set<Id>> endpointIdToContextIds = new Map<Integer, Set<Id>>();
+    public static void updateOpportunityPhaseOnStageChange(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
         Set<Id> opportunityIds = new Set<Id>();
-        
-        for(Opportunity opportunity : newRecords){
-            Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
 
-            if(
-                OpportunityUtils.isStatusChanging(opportunity, oldOpportunity)
-            )
-            // {
-            //     if(
-            //         (
-            //              OpportunityUtils.isStatusProposalGenerated(opportunity) ||
-            //              OpportunityUtils.isStatusProposalSent(opportunity)
-            //          )
-            //          ||
-            //          (
-            //              OpportunityUtils.isStatusAwaitingAcceptance(opportunity)
-            //              && OpportunityUtils.hasProposalReadjustment(opportunity)
-            //          )
-            //      ){
-            //          createAddContextIdToEndpointMap(endpointIdToContextIds, 1, opportunity.Id);
-            //      }
-            // }
-            if(
-                OpportunityUtils.isRecordTypeSolar(opportunity)
-            ) {
-                
-                /*
-                    1 - GERANDO PROPOSTA
-                    Enviar PDF da Proposta após geração no Salesforce
-                */
-
-                /*
-                    2 - ETAPA VIABILIDADE
-                    Enviar atualização da etapa de viabilidade a cada mudança
-                */
-                if(OpportunityUtils.isViabilityStepChanging(opportunity, oldOpportunity) || OpportunityUtils.isChangingToViabilityAnalysis(opportunity, oldOpportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 2, opportunity.Id);
-                }
-
-
-                /*  
-                    3 - ENVIAR DATA DA VISITA TÉCNICA
-                    Enviar valor do prazo de aprovação da viabilidade quando for preenchido
-                */
-                if(OpportunityUtils.isViabilityDeadlineBeingAssigned(opportunity, oldOpportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 3, opportunity.Id);
-                    //continue;
-                }
-
-
-                /*  
-                    4 - ENVIAR ANÁLISE DA VISITA TÉCNICA
-                Enviar status da análise da visita vécnica quando for preenchido
-                */
-                if(OpportunityUtils.isViabilityStatusBeingAssigned(opportunity, oldOpportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 4, opportunity.Id);
-                    //continue;
-                }
-
-
-                /*
-                    5 - CONCLUSÃO VIABILIDADE
-                    Enviar atualização de fim da viabilidade ao chegar no último status
-                */
-                if(OpportunityUtils.isViabilityAnalysisOver(opportunity, oldOpportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 5, opportunity.Id);
-
-                    //continue;
-                }
-
-                /*
-                    6 - PAGAMENTO
-                    Enviar atualização quando status for modificado para o de pagamento
-                */
-                /*
-                if(OpportunityUtils.isChangingToPaymentWay(opportunity, oldOpportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 6, opportunity.Id);
-                    continue;
-                }
-                */
-
-                /* 
-                    7 - CONTRATO
-                    Enviar atualização quando contrato for fechado
-                */
-
-                if(OpportunityUtils.isSubStatusContractGenerating(opportunity)){
-                    opportunityIds.add(opportunity.Id);
-                    //continue;
-                }
-                
-                if(OpportunityUtils.isSubStatusContractSent(opportunity)){
-                    opportunityIds.add(opportunity.Id);
-                    //continue;
-                }
-
-                if(OpportunityUtils.isSubStatusContractFirmedSigned(opportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 7, opportunity.Id);
-                    //continue;
-                }
-
-                /* 
-                    8 - FINALIZAÇÃO PROPOSTA
-                    Enviar atualização quando oportunidade for fechada como ganha
-                */
-
-                if(OpportunityUtils.isChangingToClosedWon(opportunity, oldOpportunity)){
-                    createAddContextIdToEndpointMap(endpointIdToContextIds, 8, opportunity.Id);
-                    //continue;
-                }
-
-                if(
-                    (OpportunityUtils.isStatusProposalElaboration(opportunity) ||
-                    OpportunityUtils.isStatusProposalSimulation(opportunity) ) &&
-                    (
-                        (
-                            (
-                                OpportunityUtils.isSubTypeMiniContract(opportunity) ||
-                                OpportunityUtils.isRecordTypeOtherOpportunities(opportunity)
-                            )
-                        ) || 
-                            !OpportunityUtils.isSubTypeMiniContract(opportunity)
-                    )
-                ){
-                    opportunityIds.add(opportunity.Id);
-                    //continue;
-                }
-
-                if(OpportunityUtils.isStatusAwaitingAcceptance(opportunity)){
-                    opportunityIds.add(opportunity.Id);
-                    //continue;
-                }
-
-                if(OpportunityUtils.isSubStatusTechnicalVisitScheduling(opportunity)){
-                    opportunityIds.add(opportunity.Id);
-                    //continue;
-                }
+        for (Opportunity opportunity : newRecords) {
+            Opportunity oldOpportunity = oldRecordsMap != null ? oldRecordsMap.get(opportunity.Id) : null;
+            if (oldOpportunity == null) {
+                continue;
             }
 
-            if(
-                OpportunityUtils.isStatusProposalElaboration(opportunity)
-                || OpportunityUtils.isStatusProposalSimulation(opportunity)
-                || (oldOpportunity.StageName != opportunity.StageName)
-                || (oldOpportunity.Status__c != opportunity.Status__c && opportunity.Status__c != null)
-                || (oldOpportunity.DataHoraAgendamento__c != opportunity.DataHoraAgendamento__c && opportunity.DataHoraAgendamento__c != null)
-            ){
+            if (opportunity.StageName != oldOpportunity.StageName) {
                 opportunityIds.add(opportunity.Id);
             }
-            System.debug('opportunityIds ' + opportunity.RecordTypeId);
         }
-        // Chamar ProposalService para as oportunidades que não são Contrato Mini, Micro e Outras Oportunidades
+
         if (!opportunityIds.isEmpty()) {
             ProposalService.updateOpportunityPhase(opportunityIds);
         }
-
-        for(Integer endpointId : endpointIdToContextIds.keySet()){
-            if(endpointId == 1 && endpointIdToContextIds.get(1) != null){
-                
-                for(Id oppId : endpointIdToContextIds.get(1)){
-                    IntegracaoNivelloProposta.gerandoProposta(oppId);
-                }
-                
-                continue;
-            }
-
-            // if(endpointId == 9 && endpointIdToContextIds.get(9) != null){
-            //     IntegracaoNivelloAprovacaoDesconto.enviarStatusAprovacaoDesconto(endpointIdToContextIds.get(9));
-            //     continue;
-            // }
-
-            if(endpointId == 2 && endpointIdToContextIds.get(2) != null){
-                IntegracaoNivelloViabilidade.etapaViabilidade(endpointIdToContextIds.get(2));
-                continue;
-            }
-            
-            if(endpointId == 3 && endpointIdToContextIds.get(3) != null){
-                IntegracaoNivelloDataVisitaTecnica.sendTechnicalVisitDate(endpointIdToContextIds.get(3), false);
-                continue;
-            }
-
-            if(endpointId == 4 && endpointIdToContextIds.get(4) != null){
-                IntegracaoNivelloAnaliseVisitaTecnica.sendTechnicalVisitAnalysis(endpointIdToContextIds.get(4));
-                continue;
-            }
-
-            if(endpointId == 5 && endpointIdToContextIds.get(5) != null){
-                IntegracaoNivelloViabilidade.conclusaoViabilidade(endpointIdToContextIds.get(5));
-                continue;
-            }
-
-            // if(endpointId == 6 && endpointIdToContextIds.get(6) != null){
-            //     IntegracaoNivelloPagamento.pagamento(endpointIdToContextIds.get(6));
-            //     continue;
-            // }
-
-            if(endpointId == 7 && endpointIdToContextIds.get(7) != null){
-                IntegracaoNivelloContrato.enviarContrato(endpointIdToContextIds.get(7));
-                continue;
-            }
-
-            if(endpointId == 8 && endpointIdToContextIds.get(8) != null){
-                IntegracaoNivelloProposta.finalizacaoProposta(endpointIdToContextIds.get(8));
-                continue;
-            }
-
-        }
-    }
-
-    public static void createAddContextIdToEndpointMap(Map<Integer, Set<Id>> endpointIdToContextIds, Integer key, Id opportunityId){
-        if(!endpointIdToContextIds.containsKey(key)){
-            endpointIdToContextIds.put(key, new Set<Id>());
-        }
-        endpointIdToContextIds.get(key).add(opportunityId);
     }
 
     //Envia contratos (PDF) vinculados à Oportunidades se (e somente se) eles foram aprovados
