@@ -67,7 +67,7 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.createSellBuyOrder((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.sendContractDataSAP((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.applyDiscountAndInitiateApproval( (Map<Id,Opportunity>) Trigger.newMap,(Map<Id, Opportunity>) Trigger.oldMap );
-        OpportunityBO.makeVirtualOfficeCalloutByStatusChange((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
+        OpportunityBO.updateOpportunityPhaseOnStageChange((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.createProjectRecords((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         //OpportunityBO.createWorkOrderTechnicalVisit((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.createRequiredFieldsReminderTasks((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);

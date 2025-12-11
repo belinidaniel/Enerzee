@@ -4,5 +4,18 @@
 		<members>Administrador</members>
 		<name>Profile</name>
 	</types>
+	<types>
+		<members>OpportunityBO</members>
+		<members>OpportunityTriggerHandler</members>
+		<members>PDFControllerExtension</members>
+		<members>ProposalConsoleController</members>
+		<members>ProposalService</members>
+		<members>OpportunityTriggerTest</members>
+		<members>OpportunityUtils</members>
+		<members>GORecordsTO</members>
+		<members>OpportunityBOCoverageTest</members>
+		<name>ApexClass</name>
+	</types>
 	<version>65.0</version>
 </Package>
+	

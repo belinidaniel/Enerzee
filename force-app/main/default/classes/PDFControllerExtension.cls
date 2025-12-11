@@ -328,11 +328,6 @@ public with sharing class PDFControllerExtension {
             }
 
             if (this.isChanged) {
-                try {
-                    ProposalService.updateOpportunityPhase(new Set<Id>{ opp.Id });
-                } catch (Exception ex2) {
-                    Utils.createLog('PDFControllerExtension', 'ProposalService.updateOpportunityPhase', ex2);
-                }
             }
 
         } catch (Exception postEx) {
