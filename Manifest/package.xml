@@ -13,6 +13,7 @@
 		<members>OpportunityTriggerTest</members>
 		<members>OpportunityUtils</members>
 		<members>GORecordsTO</members>
+		<members>OpportunityBOCoverageTest</members>
 		<name>ApexClass</name>
 	</types>
 	<version>65.0</version>

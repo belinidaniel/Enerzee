@@ -1618,10 +1618,17 @@ public class OpportunityBO {
             // Verifique se o desconto foi alterado
             if (opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c && opp.StatusAprovacaoDesconto__c == 'Pendente') {
                 // Calculando a porcentagem de desconto em relação ao valor total da proposta
-                Decimal discountPercentage = (opp.DescontoUFV__c / opp.ValorTotalProposta__c) * 100;
+                Decimal totalProposalValue = opp.ValorTotalProposta__c != null ? opp.ValorTotalProposta__c : opp.ValorTotalProdutos__c;
+                Decimal discountPercentage = 0;
+                if (totalProposalValue != null && totalProposalValue != 0) {
+                    discountPercentage = (opp.DescontoUFV__c / totalProposalValue) * 100;
+                }
 
                 // Calcular a porcentagem de BDI em relação à soma de BDI e campos de Rede
-                Decimal totalValue = opp.BDI__c + opp.Rede3750__c + opp.Pontos__c + opp.Direct__c;
+                Decimal totalValue = (opp.BDI__c != null ? opp.BDI__c : 0) +
+                    (opp.Rede3750__c != null ? opp.Rede3750__c : 0) +
+                    (opp.Pontos__c != null ? opp.Pontos__c : 0) +
+                    (opp.Direct__c != null ? opp.Direct__c : 0);
                 Decimal BDI_Percentage = 0;
                 Decimal Rede_Percentage = 0;
                 if(totalValue > 0){
@@ -1641,14 +1648,19 @@ public class OpportunityBO {
                 // updateOpp.ValorPropostoPontos__c = opp.Pontos__c - (Rede_Discount * (opp.Pontos__c / opp.rede__c));
                 // updateOpp.ValorPropostoDirect__c = opp.Direct__c - (Rede_Discount * (opp.Direct__c / opp.rede__c));
 
-                if(opp.rede__c > 0 && opp.Rede3750__c > 0 ){
-                    updateOpp.ValorPropostoRede3750__c = opp.Rede3750__c - (Rede_Discount * (opp.Rede3750__c / opp.rede__c));
+                Decimal redeTotal = opp.rede__c != null ? opp.rede__c :
+                    (opp.Rede3750__c != null ? opp.Rede3750__c : 0) +
+                    (opp.Pontos__c != null ? opp.Pontos__c : 0) +
+                    (opp.Direct__c != null ? opp.Direct__c : 0);
+
+                if(redeTotal != null && redeTotal > 0 && opp.Rede3750__c > 0 ){
+                    updateOpp.ValorPropostoRede3750__c = opp.Rede3750__c - (Rede_Discount * (opp.Rede3750__c / redeTotal));
                 }
-                if(opp.Pontos__c > 0 && opp.rede__c > 0 ){
-                    updateOpp.ValorPropostoPontos__c = opp.Pontos__c - (Rede_Discount * (opp.Pontos__c / opp.rede__c));
+                if(opp.Pontos__c > 0 && redeTotal != null && redeTotal > 0 ){
+                    updateOpp.ValorPropostoPontos__c = opp.Pontos__c - (Rede_Discount * (opp.Pontos__c / redeTotal));
                 }
-                if(opp.Direct__c > 0 && opp.rede__c > 0 ){
-                    updateOpp.ValorPropostoDirect__c = opp.Direct__c - (Rede_Discount * (opp.Direct__c / opp.rede__c));
+                if(opp.Direct__c > 0 && redeTotal != null && redeTotal > 0 ){
+                    updateOpp.ValorPropostoDirect__c = opp.Direct__c - (Rede_Discount * (opp.Direct__c / redeTotal));
                 }
 
                 //fields original to approve
