@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>VALIDAR_LISTA_DE_MATERIAS</fullName>
+    <description>Finalização por check da validação da lista de materiais.</description>
+    <label>VALIDAR LISTA DE MATERIAS</label>
+</FieldSet>

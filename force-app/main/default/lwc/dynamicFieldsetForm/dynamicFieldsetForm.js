@@ -3,6 +3,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getConfiguration from '@salesforce/apex/FieldSetConfigurationService.getConfiguration';
 import getConfigurationForTask from '@salesforce/apex/FieldSetConfigurationService.getConfigurationForTask';
 import publishAttachmentNote from '@salesforce/apex/AttachmentFeedService.publishAttachmentNote';
+import completeTask from '@salesforce/apex/TaskCompletionService.completeWithComment';
 import { getRecord, refreshApex } from 'lightning/uiRecordApi';
 
 const TASK_FIELDS = ['Task.IsClosed', 'Task.Status', 'Activity.Status'];
@@ -21,10 +22,13 @@ export default class DynamicFieldsetForm extends LightningElement {
     wiredTaskResult;
     pollHandle;
     requiresAttachment = false;
+    requiresComment = false;
     showAttachmentModal = false;
     attachmentUploading = false;
     attachmentSectionLabel;
     uploadedFilePills = [];
+    showCommentModal = false;
+    commentText = '';
 
     _recordId;
 
@@ -49,7 +53,13 @@ export default class DynamicFieldsetForm extends LightningElement {
     }
 
     get showActions() {
-        return this.showForm && !this.formReadOnly && !this.onlyAttachmentMode;
+        return this.showForm && !this.formReadOnly && !this.onlyAttachmentMode && !this.onlyCommentMode;
+    }
+
+    get hasRenderableSections() {
+        return (this.sections || []).some(
+            (section) => (section.fields && section.fields.length > 0) || section.requiresAttachment
+        );
     }
 
     get formReadOnly() {
@@ -131,6 +141,7 @@ export default class DynamicFieldsetForm extends LightningElement {
         this.isReadOnly = Boolean(readOnly);
         this.activeSectionNames = this.sections.map((section) => section.key);
         this.requiresAttachment = this.sections.some((section) => section.requiresAttachment);
+        this.requiresComment = this.sections.some((section) => section.requiresComment);
         const firstAttachmentSection = this.sections.find((section) => section.requiresAttachment);
         this.attachmentSectionLabel = firstAttachmentSection ? firstAttachmentSection.label : null;
         this.uploadedFilePills = [];
@@ -293,6 +304,10 @@ export default class DynamicFieldsetForm extends LightningElement {
         return this.requiresAttachment && this.showForm;
     }
 
+    get showCommentAction() {
+        return this.requiresComment && this.showForm;
+    }
+
     get disableAttachmentAction() {
         return this.formReadOnly || this.attachmentUploading;
     }
@@ -300,6 +315,10 @@ export default class DynamicFieldsetForm extends LightningElement {
     get onlyAttachmentMode() {
         // Se todas as seções são apenas de anexo (sem campos), esconder salvar/cancelar
         return this.requiresAttachment && (!this.sections || this.sections.every((s) => (s.fields || []).length === 0));
+    }
+
+    get onlyCommentMode() {
+        return this.requiresComment && !this.requiresAttachment && (!this.sections || this.sections.every((s) => (s.fields || []).length === 0));
     }
 
     openAttachmentModal() {
@@ -334,6 +353,52 @@ export default class DynamicFieldsetForm extends LightningElement {
         } finally {
             this.attachmentUploading = false;
         }
+    }
+
+    openCommentModal() {
+        if (this.formReadOnly) {
+            return;
+        }
+        this.showCommentModal = true;
+    }
+
+    closeCommentModal() {
+        this.showCommentModal = false;
+        this.commentText = '';
+    }
+
+    async handleCompleteWithComment() {
+        if (this.formReadOnly) {
+            return;
+        }
+        try {
+            await completeTask({
+                taskId: this._recordId,
+                commentBody: this.commentText
+            });
+            this.showToast('Sucesso', 'Atividade finalizada com comentário.', 'success');
+            this.closeCommentModal();
+            this.isClosed = true;
+            this.loadConfiguration();
+            this.refreshRecordView();
+        } catch (error) {
+            this.handleError('Falha ao finalizar a atividade.', error);
+        }
+    }
+
+    handleCommentChange(event) {
+        this.commentText = event.target.value;
+    }
+
+    refreshRecordView() {
+        window.setTimeout(() => {
+            try {
+                // eslint-disable-next-line no-restricted-globals
+                location.reload();
+            } catch (e) {
+                // ignore
+            }
+        }, 300);
     }
 
     showToast(title, message, variant) {

@@ -40,6 +40,19 @@
     align-items: center;
 }
 
+.comment-inline {
+    display: flex;
+    justify-content: center;
+}
+
+.comment-inline--inside {
+    padding: 1rem 0 0.5rem;
+}
+
+.attachment-list .slds-pill__remove {
+    display: none;
+}
+
 .accordion .slds-accordion__summary {
     background: #f3f3f3;
     border-radius: var(--lwc-borderRadiusMedium, 0rem);

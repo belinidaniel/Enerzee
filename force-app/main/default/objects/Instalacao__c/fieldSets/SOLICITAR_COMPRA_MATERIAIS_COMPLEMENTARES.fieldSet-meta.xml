@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SOLICITAR_COMPRA_MATERIAIS_COMPLEMENTARES</fullName>
+    <description>Anexo da solicitação de compra de materiais complementares (print SAP).</description>
+    <label>SOLICITAR COMPRA DE MATERIAIS COMPLEMENTARES</label>
+</FieldSet>
