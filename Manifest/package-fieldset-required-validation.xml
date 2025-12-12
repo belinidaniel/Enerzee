@@ -2,6 +2,8 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>FieldSetMapping.DelegarGestorDeObras</members>
+        <members>FieldSetMapping.PlanejamentoDeObra</members>
+        <members>FieldSetMapping.ProspectarIntegrador</members>
         <name>CustomMetadata</name>
     </types>
     <types>
@@ -10,13 +12,30 @@
     </types>
     <types>
         <members>Instalacao__c.DELEGAR_GESTOR_DE_OBRAS</members>
+        <members>Instalacao__c.PLANEJAMENTO_DE_OBRA</members>
+        <members>Instalacao__c.PROSPECTAR_INTEGRADOR</members>
         <name>FieldSet</name>
     </types>
     <types>
+        <members>Instalacao__c.AdequacaoPadraoPlanejamento__c</members>
+        <members>Instalacao__c.ElaborarLaudoPlanejamento__c</members>
+        <members>Instalacao__c.ExecutivoPlanejamento__c</members>
+        <members>Instalacao__c.IntegradorPlanejamento__c</members>
+        <members>Instalacao__c.ListaComplementarPlanejamento__c</members>
+        <members>Instalacao__c.SolicTrafoPlanejamento__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>AttachmentFeedService</members>
         <members>FieldSetConfigurationService</members>
+        <members>TaskStateService</members>
         <members>TaskBO</members>
         <members>TaskTriggerHandler</members>
         <name>ApexClass</name>
+    </types>
+    <types>
+        <members>FieldSetMapping__mdt.RequiresAttachment__c</members>
+        <name>CustomField</name>
     </types>
     <version>64.0</version>
 </Package>

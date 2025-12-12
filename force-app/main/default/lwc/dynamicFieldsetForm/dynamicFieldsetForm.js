@@ -2,6 +2,7 @@ import { LightningElement, api, track, wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getConfiguration from '@salesforce/apex/FieldSetConfigurationService.getConfiguration';
 import getConfigurationForTask from '@salesforce/apex/FieldSetConfigurationService.getConfigurationForTask';
+import publishAttachmentNote from '@salesforce/apex/AttachmentFeedService.publishAttachmentNote';
 import { getRecord, refreshApex } from 'lightning/uiRecordApi';
 
 const TASK_FIELDS = ['Task.IsClosed', 'Task.Status', 'Activity.Status'];
@@ -19,6 +20,11 @@ export default class DynamicFieldsetForm extends LightningElement {
     isClosed = false;
     wiredTaskResult;
     pollHandle;
+    requiresAttachment = false;
+    showAttachmentModal = false;
+    attachmentUploading = false;
+    attachmentSectionLabel;
+    uploadedFilePills = [];
 
     _recordId;
 
@@ -43,7 +49,7 @@ export default class DynamicFieldsetForm extends LightningElement {
     }
 
     get showActions() {
-        return this.showForm && !this.formReadOnly;
+        return this.showForm && !this.formReadOnly && !this.onlyAttachmentMode;
     }
 
     get formReadOnly() {
@@ -124,6 +130,10 @@ export default class DynamicFieldsetForm extends LightningElement {
         this.targetRecordId = targetRecordId || null;
         this.isReadOnly = Boolean(readOnly);
         this.activeSectionNames = this.sections.map((section) => section.key);
+        this.requiresAttachment = this.sections.some((section) => section.requiresAttachment);
+        const firstAttachmentSection = this.sections.find((section) => section.requiresAttachment);
+        this.attachmentSectionLabel = firstAttachmentSection ? firstAttachmentSection.label : null;
+        this.uploadedFilePills = [];
     }
 
     clearConfiguration() {
@@ -277,6 +287,53 @@ export default class DynamicFieldsetForm extends LightningElement {
     handleAccordionToggle(event) {
         const { openSections } = event.detail;
         this.activeSectionNames = Array.isArray(openSections) ? openSections : [openSections];
+    }
+
+    get showAttachmentAction() {
+        return this.requiresAttachment && this.showForm;
+    }
+
+    get disableAttachmentAction() {
+        return this.formReadOnly || this.attachmentUploading;
+    }
+
+    get onlyAttachmentMode() {
+        // Se todas as seções são apenas de anexo (sem campos), esconder salvar/cancelar
+        return this.requiresAttachment && (!this.sections || this.sections.every((s) => (s.fields || []).length === 0));
+    }
+
+    openAttachmentModal() {
+        if (this.disableAttachmentAction) {
+            return;
+        }
+        this.showAttachmentModal = true;
+    }
+
+    closeAttachmentModal() {
+        this.showAttachmentModal = false;
+    }
+
+    async handleUploadFinished(event) {
+        this.attachmentUploading = true;
+        try {
+            const files = event.detail.files || [];
+            const fileNames = files.map((f) => f.name);
+            this.uploadedFilePills = fileNames.map((name, index) => ({
+                label: name,
+                name: `${index}-${name}`
+            }));
+            await publishAttachmentNote({
+                parentId: this.targetRecordId,
+                fileNames,
+                activityLabel: this.attachmentSectionLabel
+            });
+            this.showToast('Sucesso', 'Arquivo(s) anexado(s) e comentário publicado.', 'success');
+            this.showAttachmentModal = false;
+        } catch (error) {
+            this.handleError('Falha ao processar o anexo.', error);
+        } finally {
+            this.attachmentUploading = false;
+        }
     }
 
     showToast(title, message, variant) {

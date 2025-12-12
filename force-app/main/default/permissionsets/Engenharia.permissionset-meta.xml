@@ -102,4 +102,34 @@
         <field>Projeto__c.CartaAprovacaoPrazoRegulatorio__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Instalacao__c.IntegradorPlanejamento__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Instalacao__c.ExecutivoPlanejamento__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Instalacao__c.ListaComplementarPlanejamento__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Instalacao__c.SolicTrafoPlanejamento__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Instalacao__c.ElaborarLaudoPlanejamento__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Instalacao__c.AdequacaoPadraoPlanejamento__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
 </PermissionSet>

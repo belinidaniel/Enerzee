@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 12-11-2025
+  @last modified on  : 12-12-2025
   @last modified by  : Daniel Belini
 -->
 <template>
@@ -76,7 +76,38 @@
                                 onclick={handleSave}
                                 class="actions__primary"
                             ></lightning-button>
+                            <template if:true={showAttachmentAction}>
+                                <lightning-button
+                                    variant="neutral"
+                                    label="Anexar arquivo"
+                                    onclick={openAttachmentModal}
+                                    disabled={disableAttachmentAction}
+                                ></lightning-button>
+                                <template if:true={uploadedFilePills.length}>
+                                    <div class="attachment-list">
+                                        <lightning-pill-container items={uploadedFilePills}></lightning-pill-container>
+                                    </div>
+                                </template>
+                            </template>
                         </div>
+                    </template>
+
+                    <template if:false={showActions}>
+                        <template if:true={showAttachmentAction}>
+                            <div class="attachment-inline">
+                                <lightning-button
+                                    variant="neutral"
+                                    label="Anexar arquivo"
+                                    onclick={openAttachmentModal}
+                                    disabled={disableAttachmentAction}
+                                ></lightning-button>
+                                <template if:true={uploadedFilePills.length}>
+                                    <div class="attachment-list">
+                                        <lightning-pill-container items={uploadedFilePills}></lightning-pill-container>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
                     </template>
                 </div>
             </lightning-record-edit-form>
@@ -92,5 +123,29 @@
                 </template>
             </div>
         </template>
+    </template>
+
+    <template if:true={showAttachmentModal}>
+        <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning-button-icon icon-name="utility:close" class="slds-modal__close" onclick={closeAttachmentModal}></lightning-button-icon>
+                    <h2 class="slds-text-heading_medium">Anexar arquivo</h2>
+                    <p class="slds-text-body_small">Os arquivos serão anexados ao registro relacionado.</p>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <lightning-file-upload
+                        record-id={targetRecordId}
+                        multiple
+                        accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.txt"
+                        onuploadfinished={handleUploadFinished}
+                    ></lightning-file-upload>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="neutral" label="Fechar" onclick={closeAttachmentModal}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
     </template>
 </template>

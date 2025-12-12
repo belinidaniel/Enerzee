@@ -116,8 +116,9 @@ public with sharing class FieldSetConfigurationService {
             section.required = mapping.IsSectionRequired__c == true;
             section.sortOrder = mapping.SortOrder__c == null ? 0 : mapping.SortOrder__c.intValue();
             section.fields = buildFieldConfigurations(fieldSet, fieldMap, section.required);
+            section.requiresAttachment = mapping.RequiresAttachment__c == true;
 
-            if (!section.fields.isEmpty()) {
+            if (!section.fields.isEmpty() || section.requiresAttachment) {
                 sections.add(section);
             }
         }
@@ -165,7 +166,7 @@ public with sharing class FieldSetConfigurationService {
         } else {
             mappings = [
                 SELECT DeveloperName, FieldSetName__c, SectionLabel__c, IsSectionRequired__c, SortOrder__c,
-                    RecordTypeDeveloperName__c, Subject__c
+                    RecordTypeDeveloperName__c, Subject__c, RequiresAttachment__c
                 FROM FieldSetMapping__mdt
                 WHERE ObjectApiName__c = :objectApiName
                 ORDER BY SortOrder__c, DeveloperName
@@ -235,6 +236,7 @@ public with sharing class FieldSetConfigurationService {
         @AuraEnabled public Integer sortOrder;
         @AuraEnabled public String fieldSetName;
         @AuraEnabled public List<FieldConfiguration> fields;
+        @AuraEnabled public Boolean requiresAttachment;
     }
 
     public class FieldConfiguration {
