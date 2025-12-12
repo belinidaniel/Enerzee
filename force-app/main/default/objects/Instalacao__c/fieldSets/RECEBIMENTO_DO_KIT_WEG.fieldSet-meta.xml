@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RECEBIMENTO_DO_KIT_WEG</fullName>
+    <description>Confirmação de recebimento do KIT WEG.</description>
+    <label>RECEBIMENTO DO KIT WEG</label>
+</FieldSet>

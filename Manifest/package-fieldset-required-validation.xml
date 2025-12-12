@@ -9,9 +9,10 @@
         <members>FieldSetMapping.SolicitarPagamentoIntegrador</members>
         <members>FieldSetMapping.ValidarListaComplementar</members>
         <members>FieldSetMapping.ValidarListaMaterias</members>
+        <members>FieldSetMapping.RecebimentoKitWeg</members>
         <name>CustomMetadata</name>
     </types>
-    <types>
+    <types> 
         <members>dynamicFieldsetForm</members>
         <name>LightningComponentBundle</name>
     </types>
@@ -20,10 +21,11 @@
         <members>Instalacao__c.PLANEJAMENTO_DE_OBRA</members>
         <members>Instalacao__c.PROSPECTAR_INTEGRADOR</members>
         <members>Instalacao__c.CONTRATAR_ANEXAR_ASSINATURA</members>
-        <members>Instalacao__c.SOLICITAR_COMPRA_MATERIAIS_COMPLEMENTARES</members>
+        <members>Instalacao__c.SOLICITAR_COMPRA_MAT_COMPLEMENTARES</members>
         <members>Instalacao__c.SOLICITAR_PAGAMENTO_INTEGRADOR</members>
         <members>Instalacao__c.VALIDAR_LISTA_COMPLEMENTAR</members>
         <members>Instalacao__c.VALIDAR_LISTA_DE_MATERIAS</members>
+        <members>Instalacao__c.RECEBIMENTO_DO_KIT_WEG</members>
         <name>FieldSet</name>
     </types>
     <types>
