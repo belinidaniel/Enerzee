@@ -68,6 +68,12 @@ public with sharing class FieldSetConfigurationService {
         return response;
     }
 
+    // Exposed for server-side validations (e.g., before closing tasks).
+    @TestVisible
+    public static List<SectionConfiguration> getConfigurationForValidation(String objectApiName, Id recordId, String subject) {
+        return getConfigurationInternal(objectApiName, recordId, subject);
+    }
+
     private static List<SectionConfiguration> getConfigurationInternal(String objectApiName, Id recordId, String overrideSubject) {
         if (String.isBlank(objectApiName)) {
             throw new AuraHandledException('Object API name is required.');

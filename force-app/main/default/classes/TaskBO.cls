@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-10-2025
+ * @last modified on  : 12-11-2025
  * @last modified by  : Daniel Belini
 **/
 public class TaskBO {
@@ -554,6 +554,161 @@ public class TaskBO {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(messageList);
         }
 
+    }
+
+    // Impede concluir tarefas enquanto houver campos obrigatórios de seções marcadas como required no Field Set.
+    public static void validateRequiredFieldSetsOnCompletion(List<Task> taskList, Map<Id, Task> oldMap) {
+        if (taskList == null || taskList.isEmpty()) {
+            return;
+        }
+
+        for (Task taskRecord : taskList) {
+            Task oldTask = oldMap != null ? oldMap.get(taskRecord.Id) : null;
+            if (!TaskUtils.isTaskBeingConcluded(oldTask, taskRecord) || taskRecord.WhatId == null) {
+                continue;
+            }
+
+            List<FieldRequirement> requiredFields = new List<FieldRequirement>();
+
+            try {
+                Schema.SObjectType targetType = taskRecord.WhatId.getSObjectType();
+                Schema.DescribeSObjectResult describeResult = targetType.getDescribe();
+                String objectApiName = describeResult.getName();
+                Map<String, Schema.SObjectField> fieldMap = describeResult.fields.getMap();
+
+                List<FieldSetConfigurationService.SectionConfiguration> sections =
+                    FieldSetConfigurationService.getConfigurationForValidation(objectApiName, taskRecord.WhatId, taskRecord.Subject);
+
+                for (FieldSetConfigurationService.SectionConfiguration section : sections) {
+                    if (section == null || section.required != true || section.fields == null) {
+                        continue;
+                    }
+                    for (FieldSetConfigurationService.FieldConfiguration fieldConfig : section.fields) {
+                        if (fieldConfig == null || fieldConfig.updateable != true) {
+                            continue;
+                        }
+
+                        Schema.SObjectField fieldToken = fieldMap.get(fieldConfig.apiName);
+                        if (fieldToken == null) {
+                            continue;
+                        }
+
+                        Schema.DescribeFieldResult fieldDescribe = fieldToken.getDescribe();
+                        if (!fieldDescribe.isAccessible()) {
+                            continue;
+                        }
+
+                        FieldRequirement req = new FieldRequirement();
+                        req.apiName = fieldConfig.apiName;
+                        req.label = fieldConfig.label;
+                        req.sectionLabel = section.label;
+                        requiredFields.add(req);
+                    }
+                }
+
+                if (requiredFields.isEmpty()) {
+                    continue;
+                }
+
+                Set<String> queryFields = new Set<String>();
+                for (FieldRequirement req : requiredFields) {
+                    if (String.isNotBlank(req.apiName)) {
+                        queryFields.add(req.apiName);
+                    }
+                }
+
+                if (queryFields.isEmpty()) {
+                    continue;
+                }
+
+                String query = 'SELECT ' + String.join(new List<String>(queryFields), ', ')
+                    + ' FROM ' + objectApiName + ' WHERE Id = \'' + String.escapeSingleQuotes((String)taskRecord.WhatId) + '\'';
+
+                SObject targetRecord = Database.query(query);
+
+                Map<String, List<String>> missingBySection = new Map<String, List<String>>();
+
+                for (FieldRequirement req : requiredFields) {
+                    Object value = resolveFieldValue(targetRecord, req.apiName);
+                    if (isEmptyValue(value)) {
+                        String label = String.isNotBlank(req.label) ? req.label : req.apiName;
+                        String sectionLabel = String.isNotBlank(req.sectionLabel) ? req.sectionLabel : 'Seção';
+
+                        if (!missingBySection.containsKey(sectionLabel)) {
+                            missingBySection.put(sectionLabel, new List<String>());
+                        }
+                        missingBySection.get(sectionLabel).add(label);
+                    }
+                }
+
+                if (!missingBySection.isEmpty()) {
+                    List<String> messages = new List<String>();
+                    for (String sectionName : missingBySection.keySet()) {
+                        messages.add('Preencha os campos obrigatórios na seção \"' + sectionName + '\": ' + String.join(missingBySection.get(sectionName), ', '));
+                    }
+                    taskRecord.addError(String.join(messages, ' | '));
+                }
+            } catch (Exception ex) {
+                String message = 'Não foi possível finalizar pois não foi preenchida a seção de campos obrigatórios.';
+                try {
+                    if (!requiredFields.isEmpty()) {
+                        Set<String> sections = new Set<String>();
+                        for (FieldRequirement r : requiredFields) {
+                            if (r != null && String.isNotBlank(r.sectionLabel)) {
+                                sections.add(r.sectionLabel);
+                            }
+                        }
+                        if (!sections.isEmpty()) {
+                            message = 'Não foi possível finalizar. Preencha os campos obrigatórios nas seções: ' + String.join(new List<String>(sections), ', ') + '.';
+                        }
+                    }
+                    if (String.isBlank(message) || message.contains('seções')) {
+                        // Adiciona o erro original para facilitar diagnóstico em QA
+                        message += ' (Detalhe técnico: ' + ex.getMessage() + ')';
+                    }
+                } catch (Exception ignore) {
+                    // keep fallback message
+                }
+                taskRecord.addError(message);
+            }
+        }
+    }
+
+    private static Object resolveFieldValue(SObject record, String fieldPath) {
+        if (record == null || String.isBlank(fieldPath)) {
+            return null;
+        }
+
+        List<String> parts = fieldPath.split('\\.');
+        Object current = record;
+
+        for (String part : parts) {
+            if (!(current instanceof SObject)) {
+                return null;
+            }
+            current = ((SObject) current).get(part);
+            if (current == null) {
+                return null;
+            }
+        }
+
+        return current;
+    }
+
+    private static Boolean isEmptyValue(Object value) {
+        if (value == null) {
+            return true;
+        }
+        if (value instanceof String) {
+            return String.isBlank((String) value);
+        }
+        return false;
+    }
+
+    private class FieldRequirement {
+        String apiName;
+        String label;
+        String sectionLabel;
     }
 
     public static void notifyViabilityInvoiceAttachment(Task taskRecord, ContentDocumentLink link){

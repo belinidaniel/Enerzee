@@ -1,3 +1,10 @@
+<!--
+  @description       : 
+  @author            : Daniel Belini
+  @group             : 
+  @last modified on  : 12-11-2025
+  @last modified by  : Daniel Belini
+-->
 <template>
     <template if:true={isLoading}>
         <div class="spinner-wrapper">
@@ -16,13 +23,13 @@
                 onerror={handleFormError}
             >
                 <lightning-messages></lightning-messages>
-
-                <div class="slds-card form-card">
-                    <div class="slds-card__body slds-card__body_inner">
+                <div class="form-surface">
+                    <div class="section-card">
                         <lightning-accordion
                             class="accordion"
                             allow-multiple-sections-open
                             active-section-name={activeSectionNames}
+                            onsectiontoggle={handleAccordionToggle}
                         >
                             <template for:each={sections} for:item="section">
                                 <lightning-accordion-section
@@ -31,9 +38,8 @@
                                     label={section.label}
                                 >
                                     <template if:true={section.required}>
-                                        <div class="section__note">Obrigatória</div>
+                                        <div class="section__note section__note--required">Seção obrigatória</div>
                                     </template>
-
                                     <lightning-layout class="section__layout" multiple-rows>
                                         <template for:each={section.fields} for:item="field">
                                             <lightning-layout-item
@@ -42,15 +48,15 @@
                                                 size="6"
                                             >
                                                 <lightning-input-field
-                                                    field-name={field.apiName}
-                                                    data-field-api={field.apiName}
-                                                    data-required={field.required}
-                                                    data-updateable={field.updateable}
-                                                    disabled={isReadOnly}
-                                                    onchange={handleFieldChange}
-                                                ></lightning-input-field>
-                                            </lightning-layout-item>
-                                        </template>
+                                            field-name={field.apiName}
+                                            data-field-api={field.apiName}
+                                            data-required={field.required}
+                                            data-updateable={field.updateable}
+                                            disabled={formReadOnly}
+                                            onchange={handleFieldChange}
+                                        ></lightning-input-field>
+                                    </lightning-layout-item>
+                                </template>
                                     </lightning-layout>
                                 </lightning-accordion-section>
                             </template>
@@ -58,7 +64,7 @@
                     </div>
 
                     <template if:true={showActions}>
-                        <div class="slds-card__footer actions">
+                        <div class="actions">
                             <lightning-button
                                 variant="neutral"
                                 label="Cancelar"

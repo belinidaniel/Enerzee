@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>FieldSetMapping.DelegarGestorDeObras</members>
+        <name>CustomMetadata</name>
+    </types>
+    <types>
+        <members>dynamicFieldsetForm</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>Instalacao__c.DELEGAR_GESTOR_DE_OBRAS</members>
+        <name>FieldSet</name>
+    </types>
+    <types>
+        <members>FieldSetConfigurationService</members>
+        <members>TaskBO</members>
+        <members>TaskTriggerHandler</members>
+        <name>ApexClass</name>
+    </types>
+    <version>64.0</version>
+</Package>

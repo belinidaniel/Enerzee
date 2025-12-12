@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-01-2025
+ * @last modified on  : 12-11-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -779,7 +779,7 @@ public class OpportunityBO {
                 continue;
             }
 
-            if (opportunity.StageName != oldOpportunity.StageName) {
+            if (opportunity.StageName != oldOpportunity.StageName || opportunity.status__c != oldOpportunity.status__c) {
                 opportunityIds.add(opportunity.Id);
             }
         }

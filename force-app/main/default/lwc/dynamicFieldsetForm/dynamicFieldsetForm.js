@@ -1,7 +1,10 @@
-import { LightningElement, api, track } from 'lwc';
+import { LightningElement, api, track, wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getConfiguration from '@salesforce/apex/FieldSetConfigurationService.getConfiguration';
 import getConfigurationForTask from '@salesforce/apex/FieldSetConfigurationService.getConfigurationForTask';
+import { getRecord, refreshApex } from 'lightning/uiRecordApi';
+
+const TASK_FIELDS = ['Task.IsClosed', 'Task.Status', 'Activity.Status'];
 
 export default class DynamicFieldsetForm extends LightningElement {
     @api objectApiName;
@@ -13,6 +16,9 @@ export default class DynamicFieldsetForm extends LightningElement {
     targetRecordId;
     targetObjectApiName;
     isReadOnly = false;
+    isClosed = false;
+    wiredTaskResult;
+    pollHandle;
 
     _recordId;
 
@@ -37,13 +43,22 @@ export default class DynamicFieldsetForm extends LightningElement {
     }
 
     get showActions() {
-        return this.showForm && !this.isReadOnly;
+        return this.showForm && !this.formReadOnly;
+    }
+
+    get formReadOnly() {
+        return this.isReadOnly || this.isClosed;
     }
 
     connectedCallback() {
         if (this.recordId) {
             this.loadConfiguration();
         }
+        this.startPollingForClosure();
+    }
+
+    disconnectedCallback() {
+        this.stopPollingForClosure();
     }
 
     loadConfiguration() {
@@ -185,6 +200,44 @@ export default class DynamicFieldsetForm extends LightningElement {
         this.handleError('Falha ao salvar o registro.', event.detail);
     }
 
+    @wire(getRecord, { recordId: '$recordId', fields: TASK_FIELDS })
+    wiredTask(value) {
+        console.log('wiredTask called with value:', value); // Debug log
+        this.wiredTaskResult = value;
+        this.applyTaskState(value?.data);
+    }
+
+    startPollingForClosure() {
+        this.stopPollingForClosure();
+        this.pollHandle = window.setInterval(() => {
+            if (this.wiredTaskResult) {
+                refreshApex(this.wiredTaskResult);
+            }
+        }, 1500);
+    }
+
+    stopPollingForClosure() {
+        if (this.pollHandle) {
+            window.clearInterval(this.pollHandle);
+            this.pollHandle = null;
+        }
+    }
+
+    applyTaskState(taskData) {
+        if (!taskData) {
+            return;
+        }
+
+        const wasClosed = this.isClosed;
+        const isClosedFlag = Boolean(taskData.fields?.IsClosed?.value);
+        const statusValue = taskData.fields?.Status?.value || '';
+        this.isClosed = isClosedFlag || statusValue.toLowerCase() === 'completed';
+
+        if (this.isClosed && !wasClosed) {
+            this.loadConfiguration();
+        }
+    }
+
     validateRequiredFields() {
         if (!this.showForm) {
             return true;
@@ -219,6 +272,11 @@ export default class DynamicFieldsetForm extends LightningElement {
 
     isEmpty(value) {
         return value === null || value === undefined || value === '';
+    }
+
+    handleAccordionToggle(event) {
+        const { openSections } = event.detail;
+        this.activeSectionNames = Array.isArray(openSections) ? openSections : [openSections];
     }
 
     showToast(title, message, variant) {
