@@ -10,6 +10,7 @@
         <members>FieldSetMapping.ValidarListaComplementar</members>
         <members>FieldSetMapping.ValidarListaMaterias</members>
         <members>FieldSetMapping.RecebimentoKitWeg</members>
+        <members>FieldSetMapping.AgendamentoInicioObra</members>
         <name>CustomMetadata</name>
     </types>
     <types> 
@@ -26,6 +27,7 @@
         <members>Instalacao__c.VALIDAR_LISTA_COMPLEMENTAR</members>
         <members>Instalacao__c.VALIDAR_LISTA_DE_MATERIAS</members>
         <members>Instalacao__c.RECEBIMENTO_DO_KIT_WEG</members>
+        <members>Instalacao__c.AGENDAMENTO_DO_INICIO_DE_OBRA</members>
         <name>FieldSet</name>
     </types>
     <types>
