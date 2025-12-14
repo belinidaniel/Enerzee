@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PROSPECTAR_INTEGRADOR</fullName>
+    <description>Checklist para Prospectar Integrador</description>
+    <label>PROSPECTAR INTEGRADOR</label>
+</FieldSet>

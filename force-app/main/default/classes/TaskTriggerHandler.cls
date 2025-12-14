@@ -28,7 +28,7 @@ public class TaskTriggerHandler extends TriggerHandler {
     public override void afterInsert(){}
 
     public override void beforeUpdate(){
-        //TaskBO.reassignTaskOwner((List<Task>) Trigger.new);
+        TaskBO.validateRequiredFieldSetsOnCompletion((List<Task>) Trigger.new, (Map<Id, Task>) Trigger.oldMap);
     }
 
     public override void afterUpdate(){
