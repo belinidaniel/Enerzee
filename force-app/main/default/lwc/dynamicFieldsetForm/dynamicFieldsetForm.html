@@ -91,6 +91,14 @@
                                 onclick={handleSave}
                                 class="actions__primary"
                             ></lightning-button>
+                            <template if:true={showCompleteAction}>
+                                <lightning-button
+                                    variant="neutral"
+                                    label="Finalizar atividade"
+                                    onclick={handleSaveAndComplete}
+                                    disabled={formReadOnly}
+                                ></lightning-button>
+                            </template>
                             <template if:true={showCommentAction}>
                                 <lightning-button
                                     variant="neutral"

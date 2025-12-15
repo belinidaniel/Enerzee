@@ -29,6 +29,7 @@ export default class DynamicFieldsetForm extends LightningElement {
     uploadedFilePills = [];
     showCommentModal = false;
     commentText = '';
+    completeAfterSave = false;
 
     _recordId;
 
@@ -198,6 +199,20 @@ export default class DynamicFieldsetForm extends LightningElement {
             return;
         }
 
+        this.completeAfterSave = false;
+        this.submitForm();
+    }
+
+    handleSaveAndComplete() {
+        if (!this.showForm) {
+            return;
+        }
+
+        this.completeAfterSave = true;
+        this.submitForm();
+    }
+
+    submitForm() {
         const form = this.template.querySelector('lightning-record-edit-form');
         if (form) {
             form.submit();
@@ -213,6 +228,11 @@ export default class DynamicFieldsetForm extends LightningElement {
 
     handleSuccess() {
         this.hasChanges = false;
+        if (this.completeAfterSave) {
+            this.handleCompleteWithComment();
+            return;
+        }
+
         this.showToast('Sucesso', 'Registro atualizado com sucesso.', 'success');
         this.loadConfiguration();
     }
@@ -308,6 +328,10 @@ export default class DynamicFieldsetForm extends LightningElement {
         return this.requiresComment && this.showForm;
     }
 
+    get showCompleteAction() {
+        return this.showForm && !this.formReadOnly && !this.requiresComment;
+    }
+
     get disableAttachmentAction() {
         return this.formReadOnly || this.attachmentUploading;
     }
@@ -371,6 +395,8 @@ export default class DynamicFieldsetForm extends LightningElement {
         if (this.formReadOnly) {
             return;
         }
+        const wasCompletingAfterSave = this.completeAfterSave;
+        this.completeAfterSave = false;
         try {
             await completeTask({
                 taskId: this._recordId,
@@ -382,7 +408,12 @@ export default class DynamicFieldsetForm extends LightningElement {
             this.loadConfiguration();
             this.refreshRecordView();
         } catch (error) {
-            this.handleError('Falha ao finalizar a atividade.', error);
+            const message = this.getErrorMessage(error) || 'Falha ao finalizar a atividade.';
+            this.handleError(message, error);
+        } finally {
+            if (wasCompletingAfterSave) {
+                this.hasChanges = false;
+            }
         }
     }
 
@@ -414,6 +445,30 @@ export default class DynamicFieldsetForm extends LightningElement {
     handleError(message, detail) {
         // eslint-disable-next-line no-console
         console.error(message, detail);
-        this.showToast('Erro', message, 'error');
+        const detailMessage = this.getErrorMessage(detail);
+        const finalMessage = detailMessage && detailMessage !== message ? `${message} (${detailMessage})` : message;
+        this.showToast('Erro', finalMessage, 'error');
+    }
+
+    getErrorMessage(error) {
+        if (!error) {
+            return null;
+        }
+        if (typeof error === 'string') {
+            return error;
+        }
+        if (error.body && error.body.message) {
+            return error.body.message;
+        }
+        if (error.body && error.body.pageErrors && error.body.pageErrors.length) {
+            const first = error.body.pageErrors[0];
+            if (first && first.message) {
+                return first.message;
+            }
+        }
+        if (error.message) {
+            return error.message;
+        }
+        return null;
     }
 }

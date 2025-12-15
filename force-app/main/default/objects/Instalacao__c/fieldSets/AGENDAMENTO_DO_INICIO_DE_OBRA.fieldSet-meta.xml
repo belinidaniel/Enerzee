@@ -10,7 +10,7 @@
     <displayedFields>
         <field>InstallDate__c</field>
         <isFieldManaged>false</isFieldManaged>
-        <isRequired>false</isRequired>
+        <isRequired>true</isRequired>
     </displayedFields>
     <label>AGENDAMENTO DO INICIO DE OBRA</label>
 </FieldSet>
