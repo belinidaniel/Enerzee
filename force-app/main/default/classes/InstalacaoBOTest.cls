@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 12-15-2025
+ * @last modified by  : Daniel Belini
+**/
 @isTest
 public class InstalacaoBOTest {
 
@@ -241,5 +248,43 @@ public class InstalacaoBOTest {
         ];
 
         System.assertEquals(1, installationCount, 'Instalação deve ser criada para projeto inserido já aprovado');
+    }
+
+    @isTest
+    static void trimsInstallationNameToFieldLength(){
+        Account account = (Account) TestFactory.createSObject(new Account(), true);
+        Opportunity opportunityOld = (Opportunity) TestFactory.createSObject(new Opportunity(
+            AccountId      = account.Id,
+            StageName      = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
+            CloseDate      = System.today(),
+            Name           = 'UNIVERSAL AGÊNCIA DE VIAGENS E TURISMO LTDA 2025-12-11 05:29:32 - UFV Micro',
+            Categoria__c   = 'Fast Track',
+            RecordTypeId   = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId()
+        ), true);
+
+        ViabilityStudy__c viability = new ViabilityStudy__c(
+            Opportunity__c = opportunityOld.Id,
+            TypeWorkProjectFeasibility__c = 'UFV Micro'
+        );
+        insert viability;
+
+        Opportunity opportunityNew = opportunityOld.clone(true, true, false, false);
+        opportunityNew.StageName = OpportunityUtils.STATUS_PARECER_DE_ACESSO;
+
+        Test.startTest();
+        OpportunityBO.createProjectRecords(
+            new List<Opportunity>{ opportunityNew },
+            new Map<Id, Opportunity>{ opportunityOld.Id => opportunityOld }
+        );
+        Test.stopTest();
+
+        Instalacao__c installation = [
+            SELECT Name
+            FROM   Instalacao__c
+            WHERE  Oportunidade__c = :opportunityOld.Id
+            LIMIT  1
+        ];
+
+        Integer maxLength = Schema.SObjectType.Instalacao__c.fields.Name.getLength();
     }
 }

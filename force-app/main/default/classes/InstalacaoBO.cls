@@ -7,6 +7,8 @@
 **/
 public class InstalacaoBO {
 
+    private static final Integer INSTALLATION_NAME_MAX_LENGTH = Schema.SObjectType.Instalacao__c.fields.Name.getLength();
+
     public static void createInstallationsForFastTrackProjects(
         List<Projeto__c> projects,
         Map<Id, Opportunity> opportunityById
@@ -141,8 +143,7 @@ public class InstalacaoBO {
     }
 
     private static Instalacao__c buildInstallation(Projeto__c project){
-        String installationName = project.Name != null ? 'Instalação - ' + project.Name : 'Instalação';
-        installationName = truncateString(installationName, 80);
+        String installationName = buildInstallationName(project != null ? project.Name : null);
 
         return new Instalacao__c(
             Name                = installationName,
@@ -215,6 +216,14 @@ public class InstalacaoBO {
         if(!installationsToUpdate.isEmpty()){
             update installationsToUpdate;
         }
+    }
+
+    private static String buildInstallationName(String projectName){
+        String baseName = 'Instalação';
+        if(String.isNotBlank(projectName)){
+            baseName += ' - ' + projectName.trim();
+        }
+        return truncateString(baseName, INSTALLATION_NAME_MAX_LENGTH);
     }
 
     private static String truncateString(String value, Integer maxLength){
