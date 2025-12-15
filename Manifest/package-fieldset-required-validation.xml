@@ -12,6 +12,9 @@
         <members>FieldSetMapping.RecebimentoKitWeg</members>
         <members>FieldSetMapping.AgendamentoInicioObra</members>
         <members>FieldSetMapping.RecebimentoMateriaisComplementares</members>
+        <members>FieldSetMapping.DelegarProjetistaProjeto</members>
+        <members>FieldSetMapping.VerificarDocumentacaoComercial</members>
+        <members>FieldSetMapping.FollowUpVerificarDocCom</members>
         <name>CustomMetadata</name>
     </types>
     <types> 
@@ -30,6 +33,9 @@
         <members>Instalacao__c.RECEBIMENTO_DO_KIT_WEG</members>
         <members>Instalacao__c.AGENDAMENTO_DO_INICIO_DE_OBRA</members>
         <members>Instalacao__c.RECEBIMENTO_MATERIAIS_COMPLEMENTARES</members>
+        <members>Projeto__c.DELEGAR_PROJETISTA</members>
+        <members>Projeto__c.VERIFICAR_DOCUMENTACAO_COMERCIAL</members>
+        <members>Task.FOLLOWUP_VERIFICAR_DOC_COM</members>
         <name>FieldSet</name>
     </types>
     <types>
@@ -39,6 +45,7 @@
         <members>Instalacao__c.IntegradorPlanejamento__c</members>
         <members>Instalacao__c.ListaComplementarPlanejamento__c</members>
         <members>Instalacao__c.SolicTrafoPlanejamento__c</members>
+        <members>Projeto__c.DocumentacaoComercialPendencia__c</members>
         <name>CustomField</name>
     </types>
     <types>

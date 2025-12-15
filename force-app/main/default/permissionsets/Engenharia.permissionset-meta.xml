@@ -99,6 +99,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Projeto__c.Projetista__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Projeto__c.DocumentacaoComercialPendencia__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Projeto__c.CartaAprovacaoPrazoRegulatorio__c</field>
         <readable>true</readable>
     </fieldPermissions>

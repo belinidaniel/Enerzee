@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-11-2025
+ * @last modified on  : 12-15-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -2387,7 +2387,7 @@ public class OpportunityBO {
                     opportunity.Status__c = OpportunityUtils.SUB_STATUS_EM_ANDAMENTO;
             
                 } else if (OpportunityUtils.isStatusAccessOpinion(opportunity)){
-                    opportunity.Status__c = OpportunityUtils.isRecordTypeSolar(opportunity) || OpportunityUtils.isRecordTypeProdutos(opportunity) ? OpportunityUtils.SUB_STATUS_FAST_TRACK : OpportunityUtils.SUB_STATUS_EM_ANALISE;
+                    opportunity.Status__c = OpportunityUtils.isRecordTypeSolar(opportunity) || OpportunityUtils.isRecordTypeProdutos(opportunity) ? OpportunityUtils.SUB_STATUS_EM_ANALISE : OpportunityUtils.SUB_STATUS_EM_ANALISE;
 
                 } else if (OpportunityUtils.isStatusCompleted(opportunity)){
                     opportunity.Status__c = OpportunityUtils.SUB_STATUS_VALIDANDO_BONIFICACAO;
