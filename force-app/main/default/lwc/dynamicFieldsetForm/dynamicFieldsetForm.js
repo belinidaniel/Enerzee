@@ -1,12 +1,10 @@
-import { LightningElement, api, track, wire } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getConfiguration from '@salesforce/apex/FieldSetConfigurationService.getConfiguration';
 import getConfigurationForTask from '@salesforce/apex/FieldSetConfigurationService.getConfigurationForTask';
 import publishAttachmentNote from '@salesforce/apex/AttachmentFeedService.publishAttachmentNote';
 import completeTask from '@salesforce/apex/TaskCompletionService.completeWithComment';
-import { getRecord, refreshApex } from 'lightning/uiRecordApi';
-
-const TASK_FIELDS = ['Task.IsClosed', 'Task.Status', 'Activity.Status'];
+import isTaskClosed from '@salesforce/apex/TaskCompletionService.isTaskClosed';
 
 export default class DynamicFieldsetForm extends LightningElement {
     @api objectApiName;
@@ -42,6 +40,7 @@ export default class DynamicFieldsetForm extends LightningElement {
         this._recordId = value;
         if (value) {
             this.loadConfiguration();
+            this.checkTaskClosed();
         }
     }
 
@@ -64,18 +63,14 @@ export default class DynamicFieldsetForm extends LightningElement {
     }
 
     get formReadOnly() {
-        return this.isReadOnly || this.isClosed;
+        return this.isReadOnly || this.isClosed || this.isCompletedStatus;
     }
 
     connectedCallback() {
         if (this.recordId) {
             this.loadConfiguration();
+            this.checkTaskClosed();
         }
-        this.startPollingForClosure();
-    }
-
-    disconnectedCallback() {
-        this.stopPollingForClosure();
     }
 
     loadConfiguration() {
@@ -238,43 +233,7 @@ export default class DynamicFieldsetForm extends LightningElement {
     }
 
 
-    @wire(getRecord, { recordId: '$recordId', fields: TASK_FIELDS })
-    wiredTask(value) {
-        console.log('wiredTask called with value:', value); // Debug log
-        this.wiredTaskResult = value;
-        this.applyTaskState(value?.data);
-    }
-
-    startPollingForClosure() {
-        this.stopPollingForClosure();
-        this.pollHandle = window.setInterval(() => {
-            if (this.wiredTaskResult) {
-                refreshApex(this.wiredTaskResult);
-            }
-        }, 1500);
-    }
-
-    stopPollingForClosure() {
-        if (this.pollHandle) {
-            window.clearInterval(this.pollHandle);
-            this.pollHandle = null;
-        }
-    }
-
-    applyTaskState(taskData) {
-        if (!taskData) {
-            return;
-        }
-
-        const wasClosed = this.isClosed;
-        const isClosedFlag = Boolean(taskData.fields?.IsClosed?.value);
-        const statusValue = taskData.fields?.Status?.value || '';
-        this.isClosed = isClosedFlag || statusValue.toLowerCase() === 'completed';
-
-        if (this.isClosed && !wasClosed) {
-            this.loadConfiguration();
-        }
-    }
+    // UI API para Task não é suportado; removido o wire para evitar erro.
 
     validateRequiredFields() {
         if (!this.showForm) {
@@ -437,6 +396,24 @@ export default class DynamicFieldsetForm extends LightningElement {
                 variant,
             })
         );
+    }
+
+    get isCompletedStatus() {
+        return false;
+    }
+
+    async checkTaskClosed() {
+        if (!this._recordId) {
+            return;
+        }
+        try {
+            const closed = await isTaskClosed({ taskId: this._recordId });
+            this.isClosed = Boolean(closed);
+        } catch (error) {
+            // não bloqueia uso; mantém estado atual
+            // eslint-disable-next-line no-console
+            console.error('Erro ao verificar status da tarefa', error);
+        }
     }
 
     handleError(message, detail) {
