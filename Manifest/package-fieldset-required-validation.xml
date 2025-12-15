@@ -14,6 +14,7 @@
         <members>FieldSetMapping.RecebimentoMateriaisComplementares</members>
         <members>FieldSetMapping.DelegarProjetistaProjeto</members>
         <members>FieldSetMapping.VerificarDocumentacaoComercial</members>
+        <members>FieldSetMapping.VerificarViabilidadeTecnica</members>
         <members>FieldSetMapping.FollowUpVerificarDocCom</members>
         <name>CustomMetadata</name>
     </types>
@@ -35,6 +36,7 @@
         <members>Instalacao__c.RECEBIMENTO_MATERIAIS_COMPLEMENTARES</members>
         <members>Projeto__c.DELEGAR_PROJETISTA</members>
         <members>Projeto__c.VERIFICAR_DOCUMENTACAO_COMERCIAL</members>
+        <members>Projeto__c.VERIFICAR_VIABILIDADE_TECNICA</members>
         <members>Task.FOLLOWUP_VERIFICAR_DOC_COM</members>
         <name>FieldSet</name>
     </types>
@@ -46,6 +48,9 @@
         <members>Instalacao__c.ListaComplementarPlanejamento__c</members>
         <members>Instalacao__c.SolicTrafoPlanejamento__c</members>
         <members>Projeto__c.DocumentacaoComercialPendencia__c</members>
+        <members>Projeto__c.DocumentacaoCriarAtividadeContratos__c</members>
+        <members>Projeto__c.ViabilidadeTecnicaPendencia__c</members>
+        <members>Projeto__c.CriarAtividadeViabilidadeTecnica__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -61,6 +66,10 @@
         <members>FieldSetMapping__mdt.RequiresAttachment__c</members>
         <members>FieldSetMapping__mdt.RequiresComment__c</members>
         <name>CustomField</name>
+    </types>
+    <types>
+        <members>TaskUtils</members>
+        <name>ApexClass</name>
     </types>
     <version>64.0</version>
 </Package>

@@ -237,9 +237,6 @@ export default class DynamicFieldsetForm extends LightningElement {
         this.loadConfiguration();
     }
 
-    handleFormError(event) {
-        this.handleError('Falha ao salvar o registro.', event.detail);
-    }
 
     @wire(getRecord, { recordId: '$recordId', fields: TASK_FIELDS })
     wiredTask(value) {

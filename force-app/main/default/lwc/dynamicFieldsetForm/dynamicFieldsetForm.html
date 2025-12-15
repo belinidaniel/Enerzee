@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 12-12-2025
+  @last modified on  : 12-15-2025
   @last modified by  : Daniel Belini
 -->
 <template>
@@ -20,9 +20,7 @@
                 record-id={targetRecordId}
                 onsubmit={handleSubmit}
                 onsuccess={handleSuccess}
-                onerror={handleFormError}
             >
-                <lightning-messages></lightning-messages>
                 <div class="form-surface">
                     <div class="section-card">
                         <template if:true={hasRenderableSections}>
