@@ -23,7 +23,9 @@ public class TaskTriggerHandler extends TriggerHandler {
         enabled = false;
     }
     
-    public override void beforeInsert(){}
+    public override void beforeInsert(){
+        TaskBO.preventDuplicateOpenTasks((List<Task>) newRecordList);
+    }
 
     public override void afterInsert(){}
 

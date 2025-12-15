@@ -557,8 +557,8 @@ public class ProjetoBO {
                 }
                 for(Task task : projectIdToTaskList.get(project.Id)){
                     if(!task.Status.equalsIgnoreCase(TaskUtils.STATUS_CONCLUIDO)){
-                        // project.addError('Todas as tarefas existentes para esse projeto precisam estar concluídas antes de avançar de fase!');
-                        // break;
+                        project.addError('Todas as tarefas existentes para esse projeto precisam estar concluídas antes de avançar de fase!');
+                        break;
                     }
                 }
             }

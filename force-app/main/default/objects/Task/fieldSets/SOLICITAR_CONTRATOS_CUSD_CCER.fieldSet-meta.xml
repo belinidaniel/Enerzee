@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SOLICITAR_CONTRATOS_CUSD_CCER</fullName>
+    <description>Anexar protocolo da solicitação de contratos CUSD/CCER.</description>
+    <label>SOLICITAR CONTRATOS CUSD/CCER</label>
+</FieldSet>

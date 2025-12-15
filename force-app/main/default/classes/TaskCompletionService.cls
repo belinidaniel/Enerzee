@@ -58,6 +58,27 @@ public with sharing class TaskCompletionService {
             insert post;
         }
 
+        // Se atividade foi dispensada, registrar motivo e não criar follow-up
+        if (Schema.sObjectType.Task.fields.getMap().containsKey('DispensarAtividade__c')) {
+            Boolean dispensa = (Boolean)t.get('DispensarAtividade__c');
+            if (dispensa == true) {
+                String motivo = '';
+                if (Schema.sObjectType.Task.fields.getMap().containsKey('MotivoDispensa__c')) {
+                    motivo = (String)t.get('MotivoDispensa__c');
+                }
+                if (t.WhatId != null && !String.isBlank(motivo)) {
+                    FeedItem dispenseNote = new FeedItem();
+                    dispenseNote.ParentId = t.WhatId;
+                    dispenseNote.Body = 'Atividade "' + (t.Subject == null ? '' : t.Subject) + '" dispensada. Motivo: ' + motivo;
+                    insert dispenseNote;
+                }
+
+                result.success = true;
+                result.message = 'Atividade dispensada.';
+                return result;
+            }
+        }
+
         if (t.WhatId != null) {
             try {
                 String whatType = t.WhatId.getSObjectType().getDescribe().getName();

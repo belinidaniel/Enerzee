@@ -17,6 +17,57 @@ public class TaskBO {
             PrazoDiasUteis__c = deadline
         );
     }
+    
+    public static void preventDuplicateOpenTasks(List<Task> newTasks) {
+        if (newTasks == null || newTasks.isEmpty()) {
+            return;
+        }
+
+        Map<String, List<Task>> keyToTasks = new Map<String, List<Task>>();
+        for (Task t : newTasks) {
+            if (t.WhatId == null || String.isBlank(t.Subject)) {
+                continue;
+            }
+            String key = String.valueOf(t.WhatId) + '::' + t.Subject.toLowerCase().trim();
+            if (!keyToTasks.containsKey(key)) {
+                keyToTasks.put(key, new List<Task>());
+            }
+            keyToTasks.get(key).add(t);
+        }
+
+        if (keyToTasks.isEmpty()) {
+            return;
+        }
+
+        Set<Id> whatIds = new Set<Id>();
+        Set<String> subjectsRaw = new Set<String>();
+        for (Task t : newTasks) {
+            if (t.WhatId != null && !String.isBlank(t.Subject)) {
+                whatIds.add(t.WhatId);
+                subjectsRaw.add(t.Subject.trim());
+            }
+        }
+
+        Map<String, Task> existingMap = new Map<String, Task>();
+        for (Task existing : [
+            SELECT Id, WhatId, Subject, Status
+            FROM Task
+            WHERE WhatId IN :whatIds
+                AND Subject IN :subjectsRaw
+                AND Status != :TaskUtils.STATUS_CONCLUIDO
+        ]) {
+            String key = String.valueOf(existing.WhatId) + '::' + existing.Subject.toLowerCase().trim();
+            existingMap.put(key, existing);
+        }
+
+        for (String key : keyToTasks.keySet()) {
+            if (existingMap.containsKey(key)) {
+                for (Task t : keyToTasks.get(key)) {
+                    t.addError('Já existe uma atividade em aberto com este assunto para o mesmo registro.');
+                }
+            }
+        }
+    }
 
     public static Date getActivityDateBasedOnWorkingDays(Date startDate, Integer days){        
         Integer daysToAdd = days;
@@ -565,6 +616,11 @@ public class TaskBO {
         for (Task taskRecord : taskList) {
             Task oldTask = oldMap != null ? oldMap.get(taskRecord.Id) : null;
             if (!TaskUtils.isTaskBeingConcluded(oldTask, taskRecord) || taskRecord.WhatId == null) {
+                continue;
+            }
+
+            if (Schema.sObjectType.Task.fields.getMap().containsKey('DispensarAtividade__c')
+                && (Boolean)taskRecord.get('DispensarAtividade__c') == true) {
                 continue;
             }
 

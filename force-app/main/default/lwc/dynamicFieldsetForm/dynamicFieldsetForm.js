@@ -28,6 +28,8 @@ export default class DynamicFieldsetForm extends LightningElement {
     showCommentModal = false;
     commentText = '';
     completeAfterSave = false;
+    silentSave = false;
+    completing = false;
 
     _recordId;
 
@@ -179,6 +181,14 @@ export default class DynamicFieldsetForm extends LightningElement {
         this.hasChanges = true;
     }
 
+    handleFieldBlur() {
+        if (!this.showForm || this.formReadOnly) {
+            return;
+        }
+        this.silentSave = true;
+        this.submitForm();
+    }
+
     handleCancel() {
         const form = this.template.querySelector('lightning-record-edit-form');
         if (form) {
@@ -223,7 +233,14 @@ export default class DynamicFieldsetForm extends LightningElement {
 
     handleSuccess() {
         this.hasChanges = false;
+        if (this.silentSave) {
+            this.silentSave = false;
+            return;
+        }
         if (this.completeAfterSave) {
+            if (this.completing) {
+                return;
+            }
             this.handleCompleteWithComment();
             return;
         }
@@ -292,6 +309,10 @@ export default class DynamicFieldsetForm extends LightningElement {
         return this.formReadOnly || this.attachmentUploading;
     }
 
+    get disableCompleteButton() {
+        return this.formReadOnly || this.completing;
+    }
+
     get onlyAttachmentMode() {
         // Se todas as seções são apenas de anexo (sem campos), esconder salvar/cancelar
         return this.requiresAttachment && (!this.sections || this.sections.every((s) => (s.fields || []).length === 0));
@@ -351,6 +372,10 @@ export default class DynamicFieldsetForm extends LightningElement {
         if (this.formReadOnly) {
             return;
         }
+        if (this.completing) {
+            return;
+        }
+        this.completing = true;
         const wasCompletingAfterSave = this.completeAfterSave;
         this.completeAfterSave = false;
         try {
@@ -370,6 +395,7 @@ export default class DynamicFieldsetForm extends LightningElement {
             if (wasCompletingAfterSave) {
                 this.hasChanges = false;
             }
+            this.completing = false;
         }
     }
 
@@ -378,14 +404,7 @@ export default class DynamicFieldsetForm extends LightningElement {
     }
 
     refreshRecordView() {
-        window.setTimeout(() => {
-            try {
-                // eslint-disable-next-line no-restricted-globals
-                location.reload();
-            } catch (e) {
-                // ignore
-            }
-        }, 300);
+        // Reload removido por solicitação; mantemos estado local.
     }
 
     showToast(title, message, variant) {
@@ -419,6 +438,8 @@ export default class DynamicFieldsetForm extends LightningElement {
     handleError(message, detail) {
         // eslint-disable-next-line no-console
         console.error(message, detail);
+        this.silentSave = false;
+        this.completing = false;
         const detailMessage = this.getErrorMessage(detail);
         const finalMessage = detailMessage && detailMessage !== message ? `${message} (${detailMessage})` : message;
         this.showToast('Erro', finalMessage, 'error');

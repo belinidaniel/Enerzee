@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>APROVACAO_DO_PROJETO_UFV</fullName>
+    <description>Anexar cartas de aprovação do projeto UFV.</description>
+    <label>APROVAÇÃO DO PROJETO UFV</label>
+</FieldSet>

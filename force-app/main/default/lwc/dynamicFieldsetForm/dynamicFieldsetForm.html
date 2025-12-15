@@ -54,6 +54,7 @@
                                                             data-updateable={field.updateable}
                                                             disabled={formReadOnly}
                                                             onchange={handleFieldChange}
+                                                            onblur={handleFieldBlur}
                                                         ></lightning-input-field>
                                                     </lightning-layout-item>
                                                 </template>
@@ -83,23 +84,18 @@
                                 label="Cancelar"
                                 onclick={handleCancel}
                             ></lightning-button>
-                            <lightning-button
-                                variant="brand"
-                                label="Salvar"
-                                onclick={handleSave}
-                                class="actions__primary"
-                            ></lightning-button>
                             <template if:true={showCompleteAction}>
                                 <lightning-button
-                                    variant="neutral"
+                                    variant="brand"
                                     label="Finalizar atividade"
                                     onclick={handleSaveAndComplete}
                                     disabled={formReadOnly}
+                                    class="actions__primary"
                                 ></lightning-button>
                             </template>
                             <template if:true={showCommentAction}>
                                 <lightning-button
-                                    variant="neutral"
+                                    variant="brand"
                                     label="Finalizar atividade"
                                     onclick={openCommentModal}
                                     disabled={formReadOnly}
@@ -186,7 +182,7 @@
 
     <template if:true={showCommentModal}>
         <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
-            <div class="slds-modal__container">
+            <div class="slds-modal__container modal-relative">
                 <header class="slds-modal__header">
                     <lightning-button-icon icon-name="utility:close" class="slds-modal__close" onclick={closeCommentModal}></lightning-button-icon>
                     <h2 class="slds-text-heading_medium">Finalizar atividade</h2>
@@ -201,8 +197,18 @@
                 </div>
                 <footer class="slds-modal__footer">
                     <lightning-button variant="neutral" label="Cancelar" onclick={closeCommentModal}></lightning-button>
-                    <lightning-button variant="brand" label="Concluir" onclick={handleCompleteWithComment}></lightning-button>
+                    <lightning-button
+                        variant="brand"
+                        label="Concluir"
+                        onclick={handleCompleteWithComment}
+                        disabled={disableCompleteButton}
+                    ></lightning-button>
                 </footer>
+                <template if:true={completing}>
+                    <div class="modal-spinner">
+                        <lightning-spinner alternative-text="Concluindo" size="small"></lightning-spinner>
+                    </div>
+                </template>
             </div>
         </section>
         <div class="slds-backdrop slds-backdrop_open"></div>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PROTOCOLAR_PROJETO_UFV</fullName>
+    <description>Anexar protocolo do projeto UFV.</description>
+    <label>PROTOCOLAR PROJETO UFV</label>
+</FieldSet>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ANEXAR_PROJETO_EXECUTIVO_LISTA_MATERIAIS</fullName>
+    <description>Anexar projeto executivo e lista de materiais.</description>
+    <label>ANEXAR PROJETO EXECUTIVO E LISTA DE MATERIAIS</label>
+</FieldSet>

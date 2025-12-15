@@ -16,6 +16,20 @@
         <members>FieldSetMapping.VerificarDocumentacaoComercial</members>
         <members>FieldSetMapping.VerificarViabilidadeTecnica</members>
         <members>FieldSetMapping.FollowUpVerificarDocCom</members>
+        <members>FieldSetMapping.InserirBoletoArt</members>
+        <members>FieldSetMapping.LancarBoletoArt</members>
+        <members>FieldSetMapping.RealizarPagamentoArt</members>
+        <members>FieldSetMapping.SolicitarProtocoloProjeto</members>
+        <members>FieldSetMapping.ProtocolarProjetoUfv</members>
+        <members>FieldSetMapping.AprovacaoProjetoUfv</members>
+        <members>FieldSetMapping.AnexarProjetoExecutivo</members>
+        <members>FieldSetMapping.SolicitarContratosCusdCcer</members>
+        <members>FieldSetMapping.RecebimentoAssinaturaCusdCcer</members>
+        <members>FieldSetMapping.ProtocolarEstudosEletricos</members>
+        <members>FieldSetMapping.AprovacaoEstudosEletricos</members>
+        <members>FieldSetMapping.SolicitarDadosEstudosEletricos</members>
+        <members>FieldSetMapping.SolicitarDisponibilidadeEnergia</members>
+        <members>FieldSetMapping.AprovacaoProjetoSe</members>
         <name>CustomMetadata</name>
     </types>
     <types> 
@@ -38,9 +52,27 @@
         <members>Projeto__c.VERIFICAR_DOCUMENTACAO_COMERCIAL</members>
         <members>Projeto__c.VERIFICAR_VIABILIDADE_TECNICA</members>
         <members>Task.FOLLOWUP_VERIFICAR_DOC_COM</members>
+        <members>Task.INSERIR_BOLETO_ART</members>
+        <members>Task.LANCAR_BOLETO_ART</members>
+        <members>Task.REALIZAR_PAGAMENTO_ART</members>
+        <members>Projeto__c.VALIDACAO_BENEFICIARIAS</members>
+        <members>Task.SOLICITAR_PROTOCOLO_DE_PROJETO</members>
+        <members>Task.PROTOCOLAR_PROJETO_UFV</members>
+        <members>Task.APROVACAO_DO_PROJETO_UFV</members>
+        <members>Task.ANEXAR_PROJETO_EXECUTIVO_LISTA_MATERIAIS</members>
+        <members>Task.SOLICITAR_CONTRATOS_CUSD_CCER</members>
+        <members>Task.RECEBIMENTO_ASSINATURA_CUSD_CCER</members>
+        <members>Task.PROTOCOLAR_ESTUDOS_ELETRICOS</members>
+        <members>Task.APROVACAO_ESTUDOS_ELETRICOS</members>
+        <members>Task.SOLICITAR_DADOS_ESTUDOS_ELETRICOS</members>
+        <members>Task.SOLICITAR_DISPONIBILIDADE_ENERGIA</members>
+        <members>Task.APROVACAO_PROJETO_SE</members>
         <name>FieldSet</name>
     </types>
     <types>
+        <members>Activity.DispensarAtividade__c</members>
+        <members>Activity.MotivoDispensa__c</members>
+        <members>Activity.PrazoCongelado__c</members>
         <members>Instalacao__c.AdequacaoPadraoPlanejamento__c</members>
         <members>Instalacao__c.ElaborarLaudoPlanejamento__c</members>
         <members>Instalacao__c.ExecutivoPlanejamento__c</members>

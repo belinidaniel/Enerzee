@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PROTOCOLAR_ESTUDOS_ELETRICOS</fullName>
+    <description>Anexar protocolo da solicitação de estudos elétricos.</description>
+    <label>PROTOCOLAR ESTUDOS ELÉTRICOS</label>
+</FieldSet>

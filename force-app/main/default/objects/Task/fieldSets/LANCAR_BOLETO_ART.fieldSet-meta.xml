@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LANCAR_BOLETO_ART</fullName>
+    <description>Registrar lançamento do boleto ART (sem campos adicionais).</description>
+    <label>LANÇAR BOLETO ART</label>
+</FieldSet>
