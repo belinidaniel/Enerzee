@@ -30,12 +30,13 @@ public with sharing class TaskCompletionService {
             throw new AuraHandledException('Task Id is required.');
         }
 
-        Task t = [
-            SELECT Id, WhatId, Status, IsClosed, Subject, OwnerId
-            FROM Task
-            WHERE Id = :taskId
-            LIMIT 1
-        ];
+        Boolean hasDispensaFields = Schema.sObjectType.Task.fields.getMap().containsKey('DispensarAtividade__c');
+        String query = 'SELECT Id, WhatId, Status, IsClosed, Subject, OwnerId';
+        if (hasDispensaFields) {
+            query += ', DispensarAtividade__c, MotivoDispensa__c';
+        }
+        query += ' FROM Task WHERE Id = :taskId';
+        Task t = (Task)Database.query(query);
 
         CompletionResult result = new CompletionResult();
         Boolean shouldCreateFollowUp = createFollowUp == true;
@@ -59,13 +60,10 @@ public with sharing class TaskCompletionService {
         }
 
         // Se atividade foi dispensada, registrar motivo e não criar follow-up
-        if (Schema.sObjectType.Task.fields.getMap().containsKey('DispensarAtividade__c')) {
+        if (hasDispensaFields) {
             Boolean dispensa = (Boolean)t.get('DispensarAtividade__c');
             if (dispensa == true) {
-                String motivo = '';
-                if (Schema.sObjectType.Task.fields.getMap().containsKey('MotivoDispensa__c')) {
-                    motivo = (String)t.get('MotivoDispensa__c');
-                }
+                String motivo = (String)t.get('MotivoDispensa__c');
                 if (t.WhatId != null && !String.isBlank(motivo)) {
                     FeedItem dispenseNote = new FeedItem();
                     dispenseNote.ParentId = t.WhatId;

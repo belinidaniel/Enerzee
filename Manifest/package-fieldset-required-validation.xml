@@ -24,7 +24,7 @@
         <members>FieldSetMapping.AprovacaoProjetoUfv</members>
         <members>FieldSetMapping.AnexarProjetoExecutivo</members>
         <members>FieldSetMapping.SolicitarContratosCusdCcer</members>
-        <members>FieldSetMapping.RecebimentoAssinaturaCusdCcer</members>
+        <members> FieldSetMapping.RecebimentoAssinaturaCusdCcer</members>
         <members>FieldSetMapping.ProtocolarEstudosEletricos</members>
         <members>FieldSetMapping.AprovacaoEstudosEletricos</members>
         <members>FieldSetMapping.SolicitarDadosEstudosEletricos</members>

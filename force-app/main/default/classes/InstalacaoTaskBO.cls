@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-03-2025
+ * @last modified on  : 12-16-2025
  * @last modified by  : Daniel Belini
 **/
 public class InstalacaoTaskBO {
@@ -71,6 +71,27 @@ public class InstalacaoTaskBO {
             }
         }
 
+        // Mapeia assuntos já existentes por instalação (case-insensitive)
+        Map<Id, Set<String>> existingSubjectsByInst = new Map<Id, Set<String>>();
+        if (!newRecords.isEmpty()) {
+            Set<Id> instIds = new Set<Id>();
+            for (Instalacao__c inst : newRecords) {
+                instIds.add(inst.Id);
+            }
+            for (Task t : [
+                SELECT Id, Subject, WhatId
+                FROM Task
+                WHERE WhatId IN :instIds
+                    AND IsDeleted = false
+            ]) {
+                String norm = t.Subject == null ? '' : t.Subject.trim().toLowerCase();
+                if (!existingSubjectsByInst.containsKey(t.WhatId)) {
+                    existingSubjectsByInst.put(t.WhatId, new Set<String>());
+                }
+                existingSubjectsByInst.get(t.WhatId).add(norm);
+            }
+        }
+
         Map<Id, User> userById = fetchUsers(userIds);
 
         List<Task> tasksToInsert = new List<Task>();
@@ -94,13 +115,26 @@ public class InstalacaoTaskBO {
 
             if(statusesToWatch.contains(statusKey)){
                 List<ProjetoBO.TaskProjectTableLine> templates = statusToTemplates.get(statusKey) != null ? statusToTemplates.get(statusKey) : new List<ProjetoBO.TaskProjectTableLine>();
+                templates.sort(new ProjetoBO.TaskProjectTableLineComparator());
                 Map<String, User> roleMap = buildRoleMap(inst, relatedProject, userById);
+                Set<String> existingSubjects = existingSubjectsByInst.containsKey(inst.Id) ? existingSubjectsByInst.get(inst.Id) : new Set<String>();
 
                 for(ProjetoBO.TaskProjectTableLine line : templates){
+                    if(line == null || String.isBlank(line.Assunto)){
+                        continue;
+                    }
+
+                    String normSubject = line.Assunto.trim().toLowerCase();
+                    if (existingSubjects.contains(normSubject)) {
+                        continue;
+                    }
+
                     List<String> interestedList = parseInterested(line.Interessados);
                     Task newTask = createTask(line, inst, relatedProject, interestedList, roleMap, queueMap);
                     if(newTask != null){
                         tasksToInsert.add(newTask);
+                        existingSubjects.add(normSubject);
+                        existingSubjectsByInst.put(inst.Id, existingSubjects);
                     }
                 }
             }
@@ -148,7 +182,7 @@ public class InstalacaoTaskBO {
             TaskTemplateUtils.parseInteger(line.DataVencimentoDMais, 0)
         );
 
-        Date baseDate = inst.CreatedDate != null ? Date.valueOf(inst.CreatedDate) : System.today();
+        Date baseDate = System.today();
         task.ActivityDate = TaskBO.getActivityDateBasedOnWorkingDays(baseDate, daysToConsiderActivity);
         if(Schema.SObjectType.Task.fields.getMap().containsKey('HoraVencimento__c')){
             task.put('HoraVencimento__c', TaskTemplateUtils.defaultDueTime());

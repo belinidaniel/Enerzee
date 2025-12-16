@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-11-2025
+ * @last modified on  : 12-16-2025
  * @last modified by  : Daniel Belini
 **/
 public class TaskBO {
@@ -16,6 +16,37 @@ public class TaskBO {
             ActivityDate      = dueDate,
             PrazoDiasUteis__c = deadline
         );
+    }
+
+    public static Boolean hasOpenTasks(Id whatId) {
+        if (whatId == null) {
+            return false;
+        }
+
+        String query = 'SELECT Id, Status';
+        Boolean hasDispensa = Schema.sObjectType.Task.fields.getMap().containsKey('DispensarAtividade__c');
+        if (hasDispensa) {
+            query += ', DispensarAtividade__c';
+        }
+        String statusConcluido = TaskUtils.STATUS_CONCLUIDO;
+        query += ' FROM Task WHERE WhatId = :whatId AND IsDeleted = false AND Status != :statusConcluido LIMIT 50';
+
+        List<Task> tasks = Database.query(query);
+        if (tasks.isEmpty()) {
+            return false;
+        }
+
+        for (Task t : tasks) {
+            if (hasDispensa) {
+                Boolean dispensa = (Boolean)t.get('DispensarAtividade__c');
+                if (dispensa == true) {
+                    continue;
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
     
     public static void preventDuplicateOpenTasks(List<Task> newTasks) {
@@ -758,6 +789,28 @@ public class TaskBO {
         if (value instanceof String) {
             return String.isBlank((String) value);
         }
+        return false;
+    }
+
+    public static Boolean taskSubjectExists(Id whatId, String subject) {
+        if (whatId == null || String.isBlank(subject)) {
+            return false;
+        }
+
+        String normalized = subject.trim().toLowerCase();
+
+        for (Task existing : [
+            SELECT Subject
+            FROM Task
+            WHERE WhatId = :whatId
+                AND IsDeleted = false
+        ]) {
+            String existingNorm = existing.Subject == null ? '' : existing.Subject.trim().toLowerCase();
+            if (existingNorm == normalized) {
+                return true;
+            }
+        }
+
         return false;
     }
 

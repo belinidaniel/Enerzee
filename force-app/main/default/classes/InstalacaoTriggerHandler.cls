@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 12-16-2025
+ * @last modified by  : Daniel Belini
+**/
 public class InstalacaoTriggerHandler extends TriggerHandler {
     
     public InstalacaoTriggerHandler(){
@@ -27,7 +34,9 @@ public class InstalacaoTriggerHandler extends TriggerHandler {
     public override void afterInsert(){
         InstalacaoTaskBO.createTasks((List<Instalacao__c>) newRecordList, new Map<Id, Instalacao__c>());
     }
-    public override void beforeUpdate(){}
+    public override void beforeUpdate(){
+        InstalacaoBO.checkTasksConclusionBeforeStatusChange( (List<Instalacao__c>) newRecordList, (Map<Id, Instalacao__c>) oldMap);
+    }
     public override void afterUpdate(){
         InstalacaoTaskBO.createTasks((List<Instalacao__c>) newRecordList, (Map<Id, Instalacao__c>) oldMap);
     }

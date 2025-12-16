@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-03-2025
+ * @last modified on  : 12-16-2025
  * @last modified by  : Daniel Belini
 **/
 public class InstalacaoBO {
@@ -53,6 +53,25 @@ public class InstalacaoBO {
 
         insert toInsert;
         relateProjectsToInstallations(fastTrackProjects, toInsert);
+    }
+
+    public static void checkTasksConclusionBeforeStatusChange(List<Instalacao__c> newRecordList, Map<Id, Instalacao__c> oldMap){
+            System.debug('### InstalacaoBO.checkTasksConclusionBeforeStatusChange - newRecordList: ' + newRecordList);
+        if (newRecordList == null || newRecordList.isEmpty()) {
+            return;
+        }
+        System.debug('### InstalacaoBO.checkTasksConclusionBeforeStatusChange - Start');
+        for (Instalacao__c inst : newRecordList) {
+        System.debug('### InstalacaoBO.checkTasksConclusionBeforeStatusChange - looping inst: ' + inst);
+            Instalacao__c oldInst = oldMap != null ? oldMap.get(inst.Id) : null;
+            if (oldInst == null || inst.Status__c == oldInst.Status__c) {
+                continue;
+            }
+
+            if (TaskBO.hasOpenTasks(inst.Id)) {
+                inst.addError('Todas as tarefas existentes para esta instalação precisam estar concluídas antes de avançar de fase.');
+            }
+        }
     }
 
     public static void ensureInstallationOnProjectApproved(List<Projeto__c> newProjects, Map<Id, Projeto__c> oldMap){

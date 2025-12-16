@@ -38,6 +38,13 @@ public class ViabilityStudyTriggerHandler extends TriggerHandler {
     }
 
     public override void beforeUpdate(){}
+    
+    public override void beforeUpdate(){
+        ViabilityStudyBO.checkTasksConclusionBeforeStatusChange(
+            (List<ViabilityStudy__c>) newRecordList,
+            (Map<Id, ViabilityStudy__c>) oldMap
+        );
+    }
 
     public override void afterUpdate(){
         ViabilityStudyBO.createTasks(
