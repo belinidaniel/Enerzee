@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 12-17-2025
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class TaskCompletionService {
     private static final String QUEUE_DEVELOPER_NAME_CONTRATOS = 'Contratos';
     private static final String QUEUE_DEVELOPER_NAME_VIABILIDADE = 'AnalistaViabilidade';
@@ -32,9 +39,6 @@ public with sharing class TaskCompletionService {
 
         Boolean hasDispensaFields = Schema.sObjectType.Task.fields.getMap().containsKey('DispensarAtividade__c');
         String query = 'SELECT Id, WhatId, Status, IsClosed, Subject, OwnerId';
-        if (hasDispensaFields) {
-            query += ', DispensarAtividade__c, MotivoDispensa__c';
-        }
         query += ' FROM Task WHERE Id = :taskId';
         Task t = (Task)Database.query(query);
 
@@ -57,24 +61,6 @@ public with sharing class TaskCompletionService {
             post.ParentId = t.WhatId;
             post.Body = UserInfo.getName() + ' comentou na atividade \"' + (t.Subject == null ? '' : t.Subject) + '\": ' + commentBody;
             insert post;
-        }
-
-        // Se atividade foi dispensada, registrar motivo e não criar follow-up
-        if (hasDispensaFields) {
-            Boolean dispensa = (Boolean)t.get('DispensarAtividade__c');
-            if (dispensa == true) {
-                String motivo = (String)t.get('MotivoDispensa__c');
-                if (t.WhatId != null && !String.isBlank(motivo)) {
-                    FeedItem dispenseNote = new FeedItem();
-                    dispenseNote.ParentId = t.WhatId;
-                    dispenseNote.Body = 'Atividade "' + (t.Subject == null ? '' : t.Subject) + '" dispensada. Motivo: ' + motivo;
-                    insert dispenseNote;
-                }
-
-                result.success = true;
-                result.message = 'Atividade dispensada.';
-                return result;
-            }
         }
 
         if (t.WhatId != null) {

@@ -30,6 +30,8 @@ export default class DynamicFieldsetForm extends LightningElement {
     completeAfterSave = false;
     silentSave = false;
     completing = false;
+    subStatusValue = null;
+    subStatusInitialized = false;
 
     _recordId;
 
@@ -72,6 +74,18 @@ export default class DynamicFieldsetForm extends LightningElement {
         if (this.recordId) {
             this.loadConfiguration();
             this.checkTaskClosed();
+        }
+    }
+
+    renderedCallback() {
+        if (this.subStatusInitialized || !this.showForm) {
+            return;
+        }
+        const input = this.template.querySelector('lightning-input-field[data-field-api="SubStatus__c"]');
+        if (input) {
+            this.subStatusValue = input.value;
+            this.subStatusInitialized = true;
+            this.refreshMotivoVisibility();
         }
     }
 
@@ -143,6 +157,8 @@ export default class DynamicFieldsetForm extends LightningElement {
         const firstAttachmentSection = this.sections.find((section) => section.requiresAttachment);
         this.attachmentSectionLabel = firstAttachmentSection ? firstAttachmentSection.label : null;
         this.uploadedFilePills = [];
+        this.subStatusValue = null;
+        this.subStatusInitialized = false;
     }
 
     clearConfiguration() {
@@ -151,6 +167,8 @@ export default class DynamicFieldsetForm extends LightningElement {
         this.targetRecordId = null;
         this.isReadOnly = false;
         this.activeSectionNames = [];
+        this.subStatusValue = null;
+        this.subStatusInitialized = false;
     }
 
     isTaskContext() {
@@ -171,14 +189,21 @@ export default class DynamicFieldsetForm extends LightningElement {
             normalizedSection.fields = (section.fields || []).map((field, fieldIndex) => ({
                 ...field,
                 domKey: `${normalizedSection.key}-${field.apiName}-${fieldIndex}`,
+                isVisible: this.resolveFieldVisibility(field.apiName),
             }));
 
             return normalizedSection;
         });
     }
 
-    handleFieldChange() {
+    handleFieldChange(event) {
         this.hasChanges = true;
+        const input = event?.target;
+        const apiName = input?.fieldName || input?.dataset?.fieldApi;
+        if (apiName === 'SubStatus__c') {
+            this.subStatusValue = input.value;
+            this.refreshMotivoVisibility();
+        }
     }
 
     handleFieldBlur() {
@@ -261,6 +286,10 @@ export default class DynamicFieldsetForm extends LightningElement {
         const inputs = this.template.querySelectorAll('lightning-input-field');
 
         inputs.forEach((input) => {
+            if (!this.isFieldVisibleByApi(input.dataset.fieldApi)) {
+                input.setCustomValidity('');
+                return;
+            }
             const required = input.dataset.required === 'true';
             const updateable = input.dataset.updateable !== 'false';
 
@@ -286,6 +315,52 @@ export default class DynamicFieldsetForm extends LightningElement {
 
     isEmpty(value) {
         return value === null || value === undefined || value === '';
+    }
+
+    get shouldShowMotivoSubStatus() {
+        if (!this.subStatusValue) {
+            return false;
+        }
+        const normalized = String(this.subStatusValue).toLowerCase();
+        return normalized === 'aprovado parcialmente'
+            || normalized === 'cancelado'
+            || normalized === 'reprovado';
+    }
+
+    resolveFieldVisibility(apiName) {
+        if (apiName === 'MotivoSubStatus__c') {
+            return this.shouldShowMotivoSubStatus;
+        }
+        return true;
+    }
+
+    refreshMotivoVisibility() {
+        if (!Array.isArray(this.sections) || !this.sections.length) {
+            return;
+        }
+        this.sections = this.sections.map((section) => {
+            const updatedFields = (section.fields || []).map((field) => {
+                if (field.apiName === 'MotivoSubStatus__c') {
+                    return { ...field, isVisible: this.shouldShowMotivoSubStatus };
+                }
+                return field;
+            });
+            return { ...section, fields: updatedFields };
+        });
+    }
+
+    isFieldVisibleByApi(apiName) {
+        if (!apiName) {
+            return true;
+        }
+        for (const section of this.sections || []) {
+            for (const field of section.fields || []) {
+                if (field.apiName === apiName) {
+                    return field.isVisible !== false;
+                }
+            }
+        }
+        return true;
     }
 
     handleAccordionToggle(event) {

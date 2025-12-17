@@ -47,15 +47,17 @@
                                                         class="section__layout-item"
                                                         size="6"
                                                     >
-                                                        <lightning-input-field
-                                                            field-name={field.apiName}
-                                                            data-field-api={field.apiName}
-                                                            data-required={field.required}
-                                                            data-updateable={field.updateable}
-                                                            disabled={formReadOnly}
-                                                            onchange={handleFieldChange}
-                                                            onblur={handleFieldBlur}
-                                                        ></lightning-input-field>
+                                                        <template if:true={field.isVisible}>
+                                                            <lightning-input-field
+                                                                field-name={field.apiName}
+                                                                data-field-api={field.apiName}
+                                                                data-required={field.required}
+                                                                data-updateable={field.updateable}
+                                                                disabled={formReadOnly}
+                                                                onchange={handleFieldChange}
+                                                                onblur={handleFieldBlur}
+                                                            ></lightning-input-field>
+                                                        </template>
                                                     </lightning-layout-item>
                                                 </template>
                                             </lightning-layout>

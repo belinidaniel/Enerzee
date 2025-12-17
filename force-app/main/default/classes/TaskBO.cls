@@ -442,7 +442,7 @@ public class TaskBO {
     }
 
      // Método para atualizar a fase do projeto com base nas tarefas concluídas
-     public static void updateProjectPhase(List<Task> newRecordList, Map<Id, Task> oldMap) {
+    public static void updateProjectPhase(List<Task> newRecordList, Map<Id, Task> oldMap) {
         Set<Id> projectIds = new Set<Id>();  // Conjunto para armazenar IDs de projetos
 
         // Coleta IDs de projetos dos registros de Task novos ou atualizados
@@ -471,6 +471,75 @@ public class TaskBO {
 
         if (!projectsToUpdate.isEmpty()) {
             update projectsToUpdate;  // Atualiza os projetos cujas fases foram alteradas
+        }
+    }
+
+    // Atualiza o status do projeto e fase da oportunidade ao concluir "APROVAÇÃO DO PROJETO UFV"
+    public static void handleAprovacaoProjetoUfv(List<Task> newRecordList, Map<Id, Task> oldMap) {
+        if (newRecordList == null || newRecordList.isEmpty()) {
+            return;
+        }
+
+        Set<Id> projectIds = new Set<Id>();
+        for (Task task : newRecordList) {
+            if (task.WhatId == null || !isValidProjectId(task.WhatId)) {
+                continue;
+            }
+            if (TaskUtils.isTaskBeingConcluded(oldMap != null ? oldMap.get(task.Id) : null, task)
+                && task.Subject != null
+                && task.Subject.trim().equalsIgnoreCase(TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV)) {
+                projectIds.add(task.WhatId);
+            }
+        }
+
+        if (projectIds.isEmpty()) {
+            return;
+        }
+
+        List<Projeto__c> projectsToUpdate = new List<Projeto__c>();
+        Set<Id> opportunityIds = new Set<Id>();
+
+        Boolean hasSubStatus = Schema.SObjectType.Projeto__c.fields.getMap().containsKey('SubStatus__c');
+        String query = 'SELECT Id, Status__c, Oportunidade__c';
+        if (hasSubStatus) {
+            query += ', SubStatus__c';
+        }
+        query += ' FROM Projeto__c WHERE Id IN :projectIds';
+
+        for (Projeto__c project : Database.query(query)) {
+            String subStatusValue = hasSubStatus ? (String)project.get('SubStatus__c') : null;
+            if (subStatusValue != null && subStatusValue.equalsIgnoreCase('Aprovado')) {
+                if (project.Status__c != ProjetoUtils.STATUS_PROJETO_APROVADO) {
+                    project.Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO;
+                    projectsToUpdate.add(project);
+                }
+                if (project.Oportunidade__c != null) {
+                    opportunityIds.add(project.Oportunidade__c);
+                }
+            }
+        }
+
+        if (!projectsToUpdate.isEmpty()) {
+            update projectsToUpdate;
+        }
+
+        if (!opportunityIds.isEmpty()) {
+            List<Opportunity> oppsToUpdate = new List<Opportunity>();
+            for (Opportunity opp : [
+                SELECT Id, StageName
+                FROM Opportunity
+                WHERE Id IN :opportunityIds
+            ]) {
+                if (opp.StageName == null
+                    || !opp.StageName.equalsIgnoreCase(OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO)) {
+                    opp.StageName = OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO;
+                    oppsToUpdate.add(opp);
+                }
+            }
+
+            if (!oppsToUpdate.isEmpty()) {
+                update oppsToUpdate;
+            }
         }
     }
 
@@ -704,6 +773,17 @@ public class TaskBO {
                     }
                 }
 
+                if (objectApiName == 'Projeto__c'
+                    && taskRecord.Subject != null
+                    && taskRecord.Subject.trim().equalsIgnoreCase(TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV)) {
+                    if (fieldMap.containsKey('SubStatus__c')) {
+                        queryFields.add('SubStatus__c');
+                    }
+                    if (fieldMap.containsKey('MotivoSubStatus__c')) {
+                        queryFields.add('MotivoSubStatus__c');
+                    }
+                }
+
                 if (queryFields.isEmpty()) {
                     continue;
                 }
@@ -714,6 +794,25 @@ public class TaskBO {
                 SObject targetRecord = Database.query(query);
 
                 Map<String, List<String>> missingBySection = new Map<String, List<String>>();
+
+                // Regra específica: Motivo Sub-Status obrigatório quando Sub-Status é Aprovado Parcialmente ou Cancelado
+                if (objectApiName == 'Projeto__c'
+                    && taskRecord.Subject != null
+                    && taskRecord.Subject.trim().equalsIgnoreCase(TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV)) {
+                    if (fieldMap.containsKey('SubStatus__c') && fieldMap.containsKey('MotivoSubStatus__c')) {
+                        String subStatusValue = (String)targetRecord.get('SubStatus__c');
+                        String motivoValue = (String)targetRecord.get('MotivoSubStatus__c');
+                        if (!String.isBlank(subStatusValue)) {
+                            Boolean requiresMotivo = subStatusValue.equalsIgnoreCase('Aprovado Parcialmente')
+                                || subStatusValue.equalsIgnoreCase('Cancelado')
+                                || subStatusValue.equalsIgnoreCase('Reprovado');
+                            if (requiresMotivo && String.isBlank(motivoValue)) {
+                                taskRecord.addError('Motivo Sub-Status é obrigatório quando Sub-Status é Aprovado Parcialmente ou Cancelado.');
+                                continue;
+                            }
+                        }
+                    }
+                }
 
                 for (FieldRequirement req : requiredFields) {
                     Object value = resolveFieldValue(targetRecord, req.apiName);

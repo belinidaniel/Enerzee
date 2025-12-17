@@ -131,6 +131,70 @@ public class ProjetoBO {
             project.StatusAtualDesde__c = System.now();
         }
     }
+
+    public static void syncOpportunityStatusFromProject(List<Projeto__c> newRecordList, Map<Id, Projeto__c> oldMap) {
+        if (newRecordList == null || newRecordList.isEmpty()) {
+            return;
+        }
+
+        Boolean hasProjectStatusReason = Schema.SObjectType.Opportunity.fields.getMap().containsKey('ProjectStatusReason__c');
+        Set<Id> opportunityIds = new Set<Id>();
+        Map<Id, Projeto__c> projectByOpportunity = new Map<Id, Projeto__c>();
+
+        for (Projeto__c project : newRecordList) {
+            Projeto__c oldProject = oldMap != null ? oldMap.get(project.Id) : null;
+            if (project.Oportunidade__c == null || oldProject == null) {
+                continue;
+            }
+
+            Boolean statusChanged = oldProject.Status__c != project.Status__c;
+            Boolean motivoChanged = oldProject.MotivoSubStatus__c != project.MotivoSubStatus__c;
+
+            if (!statusChanged && !motivoChanged) {
+                continue;
+            }
+
+            opportunityIds.add(project.Oportunidade__c);
+            projectByOpportunity.put(project.Oportunidade__c, project);
+        }
+
+        if (opportunityIds.isEmpty()) {
+            return;
+        }
+
+        String query = 'SELECT Id, Status__c';
+        if (hasProjectStatusReason) {
+            query += ', ProjectStatusReason__c';
+        }
+        query += ' FROM Opportunity WHERE Id IN :opportunityIds';
+
+        List<Opportunity> oppsToUpdate = new List<Opportunity>();
+        for (Opportunity opp : Database.query(query)) {
+            Projeto__c project = projectByOpportunity.get(opp.Id);
+            if (project == null) {
+                continue;
+            }
+
+            Boolean changed = false;
+            if (project.Status__c != null && opp.Status__c != project.Status__c) {
+                opp.Status__c = project.Status__c;
+                changed = true;
+            }
+
+            if (hasProjectStatusReason && opp.get('ProjectStatusReason__c') != project.MotivoSubStatus__c) {
+                opp.put('ProjectStatusReason__c', project.MotivoSubStatus__c);
+                changed = true;
+            }
+
+            if (changed) {
+                oppsToUpdate.add(opp);
+            }
+        }
+
+        if (!oppsToUpdate.isEmpty()) {
+            update oppsToUpdate;
+        }
+    }
     
     public static void createTasks(List<Projeto__c> newRecordList, Map<Id, Projeto__c> oldMap){
         Map<String, Id> recordTypeStringCodeToId = getRecordTypeCodeToIdMap();

@@ -39,7 +39,10 @@
         <members>Projeto__c.PrazoObraNaRede__c</members>
         <members>Projeto__c.CartaAprovacaoPrazoRegulatorio__c</members>
         <members>Projeto__c.ValorPFC__c</members>
+        <members>Projeto__c.SubStatus__c</members>
+        <members>Projeto__c.MotivoSubStatus__c</members>
         <members>Opportunity.Status__c</members>
+        <members>Opportunity.ProjectStatusReason__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -49,6 +52,16 @@
     <types>
         <members>Engenharia</members>
         <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>Projeto__c.APROVACAO_DO_PROJETO_UFV</members>
+        <members>Projeto__c.STATUS_APROVACAO_PROJETO_UFV</members>
+        <name>FieldSet</name>
+    </types>
+    <types>
+        <members>FieldSetMapping.AprovacaoProjetoUfv</members>
+        <members>FieldSetMapping.StatusAprovacaoProjetoUfv</members>
+        <name>CustomMetadata</name>
     </types>
     <types>
         <members>Task-Task Layout</members>
@@ -65,6 +78,10 @@
     <types>
         <members>Projeto_Pagina_de_registro</members>
         <name>FlexiPage</name>
+    </types>
+    <types>
+        <members>dynamicFieldsetForm</members>
+        <name>LightningComponentBundle</name>
     </types>
     <types>
         <members>Opportunity.EzeeSolarB</members>
