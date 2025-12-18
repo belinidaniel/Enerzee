@@ -129,6 +129,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Projeto__c.Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Projeto__c.SubStatus__c</field>
         <readable>true</readable>
     </fieldPermissions>

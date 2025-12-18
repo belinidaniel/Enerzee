@@ -2,5 +2,13 @@
 <FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>STATUS_APROVACAO_PROJETO_UFV</fullName>
     <description>Campos de status e sub-status para aprovação do projeto UFV.</description>
+    <displayedFields>
+        <field>SubStatus__c</field>
+        <isRequired>true</isRequired>
+    </displayedFields>
+    <displayedFields>
+        <field>MotivoSubStatus__c</field>
+        <isRequired>false</isRequired>
+    </displayedFields>
     <label>Status do Projeto UFV</label>
 </FieldSet>

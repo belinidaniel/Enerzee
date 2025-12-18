@@ -130,6 +130,7 @@ export default class DynamicFieldsetForm extends LightningElement {
     fetchRelatedConfiguration() {
         return getConfigurationForTask({ taskId: this._recordId })
             .then((response) => {
+                console.log('Configuração relacionada obtida para Task:', JSON.stringify(response));
                 this.applyConfiguration({
                     sections: this.decorateSections(response?.sections),
                     targetObjectApiName: response?.targetObjectApiName,

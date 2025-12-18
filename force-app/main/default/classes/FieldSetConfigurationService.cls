@@ -109,7 +109,7 @@ public with sharing class FieldSetConfigurationService {
             if (fieldSet == null) {
                 continue;
             }
-
+     
             SectionConfiguration section = new SectionConfiguration();
             section.fieldSetName = fieldSet.getName();
             section.label = String.isNotBlank(mapping.SectionLabel__c) ? mapping.SectionLabel__c : fieldSet.getLabel();
@@ -118,12 +118,13 @@ public with sharing class FieldSetConfigurationService {
             section.fields = buildFieldConfigurations(fieldSet, fieldMap, section.required);
             section.requiresAttachment = mapping.RequiresAttachment__c == true;
             section.requiresComment = mapping.RequiresComment__c == true;
+            System.debug('Final sections fields: ' + section.fields);
 
             if (!section.fields.isEmpty() || section.requiresAttachment || section.requiresComment) {
                 sections.add(section);
             }
         }
-
+        System.debug('Final sections count: ' + sections.size());
         return sections;
     }
 
@@ -173,9 +174,9 @@ public with sharing class FieldSetConfigurationService {
                 ORDER BY SortOrder__c, DeveloperName
             ];
         }
-
         List<FieldSetMapping__mdt> filtered = new List<FieldSetMapping__mdt>();
         for (FieldSetMapping__mdt mapping : mappings) {
+
             if (matchesCriterion(recordContext.recordTypeDeveloperName, mapping.RecordTypeDeveloperName__c)
                 && matchesCriterion(recordContext.subject, mapping.Subject__c)) {
                 filtered.add(mapping);
