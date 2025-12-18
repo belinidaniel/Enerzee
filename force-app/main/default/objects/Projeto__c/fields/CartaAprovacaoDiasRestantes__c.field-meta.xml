@@ -7,7 +7,12 @@
     <formula>IF(
     ISBLANK(CartaAprovacaoValidade__c),
     NULL,
-    CartaAprovacaoValidade__c - TODAY()
+    CartaAprovacaoValidade__c -
+    IF(
+        NOT(ISBLANK(Instalacao__r.DateInspection__c)),
+        DATEVALUE(Instalacao__r.DateInspection__c),
+        TODAY()
+    )
 )</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <precision>18</precision>

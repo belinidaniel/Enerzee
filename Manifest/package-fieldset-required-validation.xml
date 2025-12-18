@@ -60,7 +60,7 @@
         <members>Task.REALIZAR_PAGAMENTO_ART</members>
         <members>Projeto__c.VALIDACAO_BENEFICIARIAS</members>
         <members>Task.SOLICITAR_PROTOCOLO_DE_PROJETO</members>
-        <members>Task.PROTOCOLAR_PROJETO_UFV</members>
+        <members>Projeto__c.PROTOCOLAR_PROJETO_UFV</members>
         <members>Task.APROVACAO_DO_PROJETO_UFV</members>
         <members>Task.ANEXAR_PROJETO_EXECUTIVO_LISTA_MATERIAIS</members>
         <members>Task.SOLICITAR_CONTRATOS_CUSD_CCER</members>
@@ -88,6 +88,7 @@
         <members>Projeto__c.CriarAtividadeViabilidadeTecnica__c</members>
         <members>Projeto__c.SubStatus__c</members>
         <members>Projeto__c.MotivoSubStatus__c</members>
+        <members>Projeto__c.CartaAprovacaoDiasRestantes__c</members>
         <members>Opportunity.Status__c</members>
         <members>Opportunity.ProjectStatusReason__c</members>
         <name>CustomField</name>

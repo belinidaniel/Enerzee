@@ -7,5 +7,10 @@
         <isFieldManaged>false</isFieldManaged>
         <isRequired>false</isRequired>
     </displayedFields>
+    <displayedFields>
+        <field>ObservacaoHomologacao__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>false</isRequired>
+    </displayedFields>
     <label>VALIDAÇÃO DAS BENEFICIARIAS</label>
 </FieldSet>
