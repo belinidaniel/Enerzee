@@ -10,6 +10,7 @@ public with sharing class TaskCompletionService {
     private static final String QUEUE_DEVELOPER_NAME_VIABILIDADE = 'AnalistaViabilidade';
     private static final String SUBJECT_DOC_COM = 'VERIFICAR DOCUMENTAÇÃO COMERCIAL';
     private static final String SUBJECT_VIABILIDADE = 'VERIFICAR VIABILIDADE TÉCNICA';
+    private static final String SUBJECT_DELEGAR_GESTOR_OBRAS = 'DELEGAR GESTOR DE OBRAS';
     private static Map<String, Id> queueCache = new Map<String, Id>();
 
     public class CompletionResult {
@@ -92,6 +93,9 @@ public with sharing class TaskCompletionService {
                             resolvedFollowUpOwnerId = getQueueId(QUEUE_DEVELOPER_NAME_VIABILIDADE);
                         }
                     }
+                }
+                if (whatType == 'Instalacao__c' && subjectEquals(t.Subject, SUBJECT_DELEGAR_GESTOR_OBRAS)) {
+                    InstalacaoTaskBO.createPlanningTasksAfterDelegar(t.WhatId);
                 }
             } catch (Exception ignore) {
                 // não bloqueia a criação da tarefa de follow-up
