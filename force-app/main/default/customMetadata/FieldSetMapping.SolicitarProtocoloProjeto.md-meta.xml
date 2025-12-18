@@ -12,7 +12,7 @@
     </values>
     <values>
         <field>ObjectApiName__c</field>
-        <value xsi:type="xsd:string">Task</value>
+        <value xsi:type="xsd:string">Projeto__c</value>
     </values>
     <values>
         <field>RecordTypeDeveloperName__c</field>

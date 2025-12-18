@@ -54,22 +54,21 @@
         <members>Projeto__c.VERIFICAR_VIABILIDADE_TECNICA</members>
         <members>Projeto__c.APROVACAO_DO_PROJETO_UFV</members>
         <members>Projeto__c.STATUS_APROVACAO_PROJETO_UFV</members>
-        <members>Task.FOLLOWUP_VERIFICAR_DOC_COM</members>
-        <members>Task.INSERIR_BOLETO_ART</members>
-        <members>Task.LANCAR_BOLETO_ART</members>
-        <members>Task.REALIZAR_PAGAMENTO_ART</members>
+        <members>Projeto__c.FOLLOWUP_VERIFICAR_DOC_COM</members>
+        <members>Projeto__c.INSERIR_BOLETO_ART</members>
+        <members>Projeto__c.LANCAR_BOLETO_ART</members>
+        <members>Projeto__c.REALIZAR_PAGAMENTO_ART</members>
         <members>Projeto__c.VALIDACAO_BENEFICIARIAS</members>
-        <members>Task.SOLICITAR_PROTOCOLO_DE_PROJETO</members>
+        <members>Projeto__c.SOLICITAR_PROTOCOLO_DE_PROJETO</members>
         <members>Projeto__c.PROTOCOLAR_PROJETO_UFV</members>
-        <members>Task.APROVACAO_DO_PROJETO_UFV</members>
-        <members>Task.ANEXAR_PROJETO_EXECUTIVO_LISTA_MATERIAIS</members>
-        <members>Task.SOLICITAR_CONTRATOS_CUSD_CCER</members>
-        <members>Task.RECEBIMENTO_ASSINATURA_CUSD_CCER</members>
-        <members>Task.PROTOCOLAR_ESTUDOS_ELETRICOS</members>
-        <members>Task.APROVACAO_ESTUDOS_ELETRICOS</members>
-        <members>Task.SOLICITAR_DADOS_ESTUDOS_ELETRICOS</members>
-        <members>Task.SOLICITAR_DISPONIBILIDADE_ENERGIA</members>
-        <members>Task.APROVACAO_PROJETO_SE</members>
+        <members>Projeto__c.ANEXAR_PROJETO_EXECUTIVO_LISTA_MATERIAIS</members>
+        <members>Projeto__c.SOLICITAR_CONTRATOS_CUSD_CCER</members>
+        <members>Projeto__c.RECEBIMENTO_ASSINATURA_CUSD_CCER</members>
+        <members>Projeto__c.PROTOCOLAR_ESTUDOS_ELETRICOS</members>
+        <members>Projeto__c.APROVACAO_ESTUDOS_ELETRICOS</members>
+        <members>Projeto__c.SOLICITAR_DADOS_ESTUDOS_ELETRICOS</members>
+        <members>Projeto__c.SOLICITAR_DISPONIBILIDADE_ENERGIA</members>
+        <members>Projeto__c.APROVACAO_PROJETO_SE</members>
         <name>FieldSet</name>
     </types>
     <types>
