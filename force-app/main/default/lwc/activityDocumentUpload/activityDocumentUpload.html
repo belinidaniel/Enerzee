@@ -23,9 +23,6 @@
                                 <td>{row.observation}</td>
                                 <td>
                                     <input type="file" data-index={row.id} onchange={handleFileChange} />
-                                    <template if:true={row.fileName}>
-                                        <div class="slds-text-color_weak slds-m-top_x-small">{row.fileName}</div>
-                                    </template>
                                 </td>
                                 <td>
                                     <lightning-button label="Enviar" data-index={row.id} onclick={handleUpload} variant="brand"></lightning-button>

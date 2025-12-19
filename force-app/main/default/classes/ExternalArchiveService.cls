@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 12-19-2025
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class ExternalArchiveService {
 
     public class UploadResult {
@@ -34,24 +41,33 @@ public with sharing class ExternalArchiveService {
             throw new AuraHandledException('IdVirtualOffice__c não está preenchido na oportunidade.');
         }
 
-        // Chamada ao endpoint externo
-        HttpRequest req = new HttpRequest();
-        req.setEndpoint('callout:IntegracaoNivello/proposal/ExternalArchive');
-        req.setMethod('POST');
+        Integrador__mdt integracao = [
+            SELECT URL__c
+            FROM Integrador__mdt
+            WHERE DeveloperName = 'ExternalArchive'
+            LIMIT 1
+        ];
+
         Map<String, Object> body = new Map<String, Object>{
             'IdProposal' => opp.IdVirtualOffice__c,
-            'FileBase64' => base64File
+            'FileBase64' => base64File,
+            'FileName'   => fileName
         };
+
+        System.debug('Body: ' + JSON.serialize(body));
+        HttpRequest req = new HttpRequest();
+        System.debug('Endpoint: ' + integracao.URL__c);
+        req.setEndpoint(integracao.URL__c);
+        req.setMethod('POST');
         req.setHeader('Content-Type', 'application/json');
         req.setBody(JSON.serialize(body));
 
-        Http http = new Http();
-        HttpResponse res = http.send(req);
+        HttpResponse res = Utils.callIntegrationNivello(req);
 
-        if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
+        if (res == null || res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
             UploadResult result = new UploadResult();
             result.success = false;
-            result.message = 'Erro ao enviar arquivo: ' + res.getStatusCode() + ' - ' + res.getBody();
+            result.message = 'Erro ao enviar arquivo: ' + (res != null ? res.getStatusCode() + ' - ' + res.getBody() : 'sem resposta');
             return result;
         }
 

@@ -1,12 +1,15 @@
 import { LightningElement, api, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getConfiguration from '@salesforce/apex/FieldSetConfigurationService.getConfiguration';
 import getConfigurationForTask from '@salesforce/apex/FieldSetConfigurationService.getConfigurationForTask';
+import getTaskContext from '@salesforce/apex/ActivityDocumentController.getTaskContext';
+import getRequiredDocuments from '@salesforce/apex/ActivityDocumentController.getRequiredDocuments';
 import publishAttachmentNote from '@salesforce/apex/AttachmentFeedService.publishAttachmentNote';
 import completeTask from '@salesforce/apex/TaskCompletionService.completeWithComment';
 import isTaskClosed from '@salesforce/apex/TaskCompletionService.isTaskClosed';
 
-export default class DynamicFieldsetForm extends LightningElement {
+export default class DynamicFieldsetForm extends NavigationMixin(LightningElement) {
     @api objectApiName;
 
     @track sections = [];
@@ -32,6 +35,12 @@ export default class DynamicFieldsetForm extends LightningElement {
     completing = false;
     subStatusValue = null;
     subStatusInitialized = false;
+    showDocUpload = false;
+    taskContext;
+    lastFollowUpId;
+    autoSaving = false;
+    autoSaveQueued = false;
+    autoSaveTimeout;
 
     _recordId;
 
@@ -49,11 +58,11 @@ export default class DynamicFieldsetForm extends LightningElement {
     }
 
     get hasSections() {
-        return Array.isArray(this.sections) && this.sections.length > 0;
+        return (Array.isArray(this.sections) && this.sections.length > 0) || this.showDocUpload;
     }
 
     get showForm() {
-        return this.hasSections && this.targetRecordId && this.targetObjectApiName;
+        return this.targetRecordId && this.targetObjectApiName && this.hasSections;
     }
 
     get showActions() {
@@ -74,6 +83,7 @@ export default class DynamicFieldsetForm extends LightningElement {
         if (this.recordId) {
             this.loadConfiguration();
             this.checkTaskClosed();
+            this.loadTaskContext();
         }
     }
 
@@ -115,6 +125,7 @@ export default class DynamicFieldsetForm extends LightningElement {
                         targetRecordId: this._recordId,
                         readOnly: false,
                     });
+                    this.loadTaskContext();
                     return null;
                 })
                 .catch((error) => {
@@ -124,6 +135,30 @@ export default class DynamicFieldsetForm extends LightningElement {
                 .finally(() => {
                     this.isLoading = false;
                 });
+        } else if (this.isTaskContext()) {
+            this.fetchRelatedConfiguration()
+                .then(() => this.loadTaskContext())
+                .finally(() => {
+                    this.isLoading = false;
+                });
+        } else {
+            this.isLoading = false;
+        }
+    }
+
+    async loadTaskContext() {
+        try {
+            this.taskContext = await getTaskContext({ taskId: this._recordId });
+            const subject = this.taskContext ? this.taskContext.subject : null;
+            if (subject) {
+                const docs = await getRequiredDocuments({ activitySubject: subject });
+                this.showDocUpload = docs && docs.length > 0;
+            } else {
+                this.showDocUpload = false;
+            }
+        } catch (e) {
+            console.warn('Erro ao carregar contexto da task', e);
+            this.showDocUpload = false;
         }
     }
 
@@ -205,12 +240,46 @@ export default class DynamicFieldsetForm extends LightningElement {
             this.subStatusValue = input.value;
             this.refreshMotivoVisibility();
         }
+        this.queueAutoSave();
     }
 
     handleFieldBlur() {
         if (!this.showForm || this.formReadOnly) {
             return;
         }
+        this.queueAutoSave();
+    }
+
+    queueAutoSave() {
+        if (!this.showForm || this.formReadOnly) {
+            return;
+        }
+
+        this.autoSaveQueued = true;
+
+        if (this.autoSaveTimeout) {
+            clearTimeout(this.autoSaveTimeout);
+        }
+
+        this.autoSaveTimeout = window.setTimeout(() => {
+            this.runAutoSave();
+        }, 200);
+    }
+
+    runAutoSave() {
+        if (!this.autoSaveQueued || !this.showForm || this.formReadOnly) {
+            return;
+        }
+
+        if (this.autoSaving) {
+            this.autoSaveTimeout = window.setTimeout(() => {
+                this.runAutoSave();
+            }, 200);
+            return;
+        }
+
+        this.autoSaveQueued = false;
+        this.autoSaving = true;
         this.silentSave = true;
         this.submitForm();
     }
@@ -253,12 +322,17 @@ export default class DynamicFieldsetForm extends LightningElement {
     handleSubmit(event) {
         if (!this.validateRequiredFields()) {
             event.preventDefault();
-            this.showToast('Erro', 'Preencha os campos obrigatórios antes de salvar.', 'error');
+            if (!this.silentSave) {
+                this.showToast('Erro', 'Preencha os campos obrigatórios antes de salvar.', 'error');
+            }
+            this.autoSaving = false;
+            this.silentSave = false;
         }
     }
 
     handleSuccess() {
         this.hasChanges = false;
+        this.autoSaving = false;
         if (this.silentSave) {
             this.silentSave = false;
             return;
@@ -451,11 +525,16 @@ export default class DynamicFieldsetForm extends LightningElement {
         if (this.completing) {
             return;
         }
+        // Validação apenas no fluxo via modal
+        if (this.showCommentModal && (!this.commentText || !this.commentText.trim())) {
+            this.showToast('Aviso', 'Comentário é obrigatório para finalizar.', 'warning');
+            return;
+        }
         this.completing = true;
         const wasCompletingAfterSave = this.completeAfterSave;
         this.completeAfterSave = false;
         try {
-            await completeTask({
+            const result = await completeTask({
                 taskId: this._recordId,
                 commentBody: this.commentText
             });
@@ -464,6 +543,7 @@ export default class DynamicFieldsetForm extends LightningElement {
             this.isClosed = true;
             this.loadConfiguration();
             this.refreshRecordView();
+            this.navigateToFollowUp(result);
         } catch (error) {
             const message = this.getErrorMessage(error) || 'Falha ao finalizar a atividade.';
             this.handleError(message, error);
@@ -472,6 +552,19 @@ export default class DynamicFieldsetForm extends LightningElement {
                 this.hasChanges = false;
             }
             this.completing = false;
+        }
+    }
+
+    navigateToFollowUp(result) {
+        if (result && result.followUpId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: {
+                    recordId: result.followUpId,
+                    objectApiName: 'Task',
+                    actionName: 'view'
+                }
+            });
         }
     }
 
@@ -516,6 +609,7 @@ export default class DynamicFieldsetForm extends LightningElement {
         console.error(message, detail);
         this.silentSave = false;
         this.completing = false;
+        this.autoSaving = false;
         const detailMessage = this.getErrorMessage(detail);
         const finalMessage = detailMessage && detailMessage !== message ? `${message} (${detailMessage})` : message;
         this.showToast('Erro', finalMessage, 'error');

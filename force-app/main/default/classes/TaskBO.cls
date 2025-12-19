@@ -18,6 +18,74 @@ public class TaskBO {
         );
     }
 
+    // Valida anexos obrigatórios configurados no CMDT ActivityRequiredDocument__mdt
+    @TestVisible
+    private static void validateRequiredDocuments(Task taskRecord) {
+        if (taskRecord == null || String.isBlank(taskRecord.Subject) || taskRecord.WhatId == null) {
+            return;
+        }
+
+        List<ActivityRequiredDocument__mdt> configs = [
+            SELECT ActivitySubject__c, RequiredFiles__c
+            FROM ActivityRequiredDocument__mdt
+            WHERE ActivitySubject__c = :taskRecord.Subject
+        ];
+        if (configs.isEmpty()) {
+            return;
+        }
+
+        Set<String> required = new Set<String>();
+        for (ActivityRequiredDocument__mdt cfg : configs) {
+            if (String.isBlank(cfg.RequiredFiles__c)) continue;
+            for (String name : cfg.RequiredFiles__c.split(';')) {
+                String norm = normalizeName(name);
+                if (!String.isBlank(norm)) {
+                    required.add(norm);
+                }
+            }
+        }
+        if (required.isEmpty()) {
+            return;
+        }
+
+        Set<String> uploaded = new Set<String>();
+        for (OpportunityAttachmentLink__c link : [
+            SELECT AttachmentDescription__c
+            FROM OpportunityAttachmentLink__c
+            WHERE SObjectId__c = :String.valueOf(taskRecord.WhatId)
+                AND ActivityName__c = :taskRecord.Subject
+        ]) {
+            String norm = normalizeName(link.AttachmentDescription__c);
+            if (!String.isBlank(norm)) {
+                uploaded.add(norm);
+            }
+        }
+
+        Set<String> missing = required.clone();
+        missing.removeAll(uploaded);
+        if (!missing.isEmpty()) {
+            taskRecord.addError('Ainda faltam anexar os documentos obrigatórios: ' + String.join(new List<String>(missing), ', '));
+        }
+    }
+
+    @TestVisible
+    private static String normalizeName(String value) {
+        if (String.isBlank(value)) {
+            return '';
+        }
+        String normalized = value.toLowerCase();
+        normalized = normalized
+            .replaceAll('[áàãâä]', 'a')
+            .replaceAll('[éèêë]', 'e')
+            .replaceAll('[íìîï]', 'i')
+            .replaceAll('[óòõôö]', 'o')
+            .replaceAll('[úùûü]', 'u')
+            .replaceAll('[ç]', 'c');
+        normalized = normalized.replaceAll('[^a-z0-9]+', '_');
+        normalized = normalized.replaceAll('^_+|_+$', '');
+        return normalized;
+    }
+
     public static Boolean hasOpenTasks(Id whatId) {
         if (whatId == null) {
             return false;
@@ -723,6 +791,8 @@ public class TaskBO {
                 && (Boolean)taskRecord.get('DispensarAtividade__c') == true) {
                 continue;
             }
+
+            validateRequiredDocuments(taskRecord);
 
             List<FieldRequirement> requiredFields = new List<FieldRequirement>();
 

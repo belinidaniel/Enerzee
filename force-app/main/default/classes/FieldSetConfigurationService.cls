@@ -53,6 +53,7 @@ public with sharing class FieldSetConfigurationService {
         Id relatedRecordId = taskRecord.WhatId;
         Schema.SObjectType relatedSObjectType = relatedRecordId.getSObjectType();
         Schema.DescribeSObjectResult relatedDescribe = relatedSObjectType.getDescribe();
+
         if (!relatedDescribe.isAccessible()) {
             throw new AuraHandledException('You do not have access to view ' + relatedDescribe.getLabel() + ' records.');
         }

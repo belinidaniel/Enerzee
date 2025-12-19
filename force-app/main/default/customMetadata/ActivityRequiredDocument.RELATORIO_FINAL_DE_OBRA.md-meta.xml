@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>RequiredFiles__c</field>
-        <value xsi:type="xsd:string">preencher o formulário de check list final da obra ( Aprovado, Reprovado, Ressalvas): MOBILIZAÇÃO/CONFERÊNCIA DE MATERIAIS (Fotos);INSTALAÇÃO DE ESTRUTURA DE FIXAÇÃO (Fotos);MONTAGEM DOS MÓDULOS (Fotos);EXECUÇÃO DE ATERRAMENTO (Fotos);CONEXÕES CC  (Fotos);MONTAGEM DOS INVERSORES  (Fotos);CONEXÕES CA  (Fotos);ACABAMENTOS (Fotos);COMISSIONAMENTO (Fotos);RELATÓRIO DE CONCLUSÃO DE OBRA (Fotos)</value>
+        <value xsi:type="xsd:string"> MOBILIZAÇÃO/CONFERÊNCIA DE MATERIAIS;INSTALAÇÃO DE ESTRUTURA DE FIXAÇÃO;MONTAGEM DOS MÓDULOS;EXECUÇÃO DE ATERRAMENTO;CONEXÕES CC ;MONTAGEM DOS INVERSORES ;CONEXÕES CA ;ACABAMENTOS;COMISSIONAMENTO;RELATÓRIO DE CONCLUSÃO DE OBRA</value>
     </values>
     <values>
         <field>Observation__c</field>

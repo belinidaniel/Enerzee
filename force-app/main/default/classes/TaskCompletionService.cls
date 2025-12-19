@@ -16,6 +16,7 @@ public with sharing class TaskCompletionService {
     public class CompletionResult {
         @AuraEnabled public Boolean success;
         @AuraEnabled public String message;
+        @AuraEnabled public Id followUpId;
     }
 
     @AuraEnabled(cacheable=true)
@@ -43,6 +44,9 @@ public with sharing class TaskCompletionService {
         query += ' FROM Task WHERE Id = :taskId';
         Task t = (Task)Database.query(query);
 
+        // Validação de documentos obrigatórios por atividade (via CMDT)
+        ensureRequiredDocuments(t);
+
         CompletionResult result = new CompletionResult();
         Boolean shouldCreateFollowUp = createFollowUp == true;
         Boolean autoFollowUpContratos = false;
@@ -67,30 +71,64 @@ public with sharing class TaskCompletionService {
         if (t.WhatId != null) {
             try {
                 String whatType = t.WhatId.getSObjectType().getDescribe().getName();
-                if (whatType == 'Projeto__c') {
-                    Projeto__c proj = [
-                        SELECT DocumentacaoComercialPendencia__c,
-                            DocumentacaoCriarAtividadeContratos__c,
-                            ViabilidadeTecnicaPendencia__c,
-                            CriarAtividadeViabilidadeTecnica__c
-                        FROM Projeto__c
-                        WHERE Id = :t.WhatId
-                        LIMIT 1
-                    ];
+                Boolean flagDocTask = false;
+                Boolean flagViabTask = false;
+                String pendDocTask = null;
+                String pendViabTask = null;
+                if (Schema.sObjectType.Task.fields.getMap().containsKey('DocumentacaoComercialCriarAtividadeContratos__c')) {
+                    flagDocTask = (Boolean)t.get('DocumentacaoComercialCriarAtividadeContratos__c');
+                }
+                if (Schema.sObjectType.Task.fields.getMap().containsKey('CriarAtividadeViabilidadeTecnica__c')) {
+                    flagViabTask = (Boolean)t.get('CriarAtividadeViabilidadeTecnica__c');
+                }
+                if (Schema.sObjectType.Task.fields.getMap().containsKey('DocumentacaoComercialPendencia__c')) {
+                    pendDocTask = (String)t.get('DocumentacaoComercialPendencia__c');
+                }
+                if (Schema.sObjectType.Task.fields.getMap().containsKey('ViabilidadeTecnicaPendencia__c')) {
+                    pendViabTask = (String)t.get('ViabilidadeTecnicaPendencia__c');
+                }
 
-                    Boolean isDocComSubject = subjectEquals(t.Subject, SUBJECT_DOC_COM);
-                    Boolean isViabilidadeSubject = subjectEquals(t.Subject, SUBJECT_VIABILIDADE);
+                if (whatType == 'Projeto__c' || whatType == 'Instalacao__c') {
+                    Projeto__c proj = null;
+                    if (whatType == 'Projeto__c') {
+                        proj = [
+                            SELECT DocumentacaoComercialPendencia__c,
+                                DocumentacaoCriarAtividadeContratos__c,
+                                ViabilidadeTecnicaPendencia__c,
+                                CriarAtividadeViabilidadeTecnica__c
+                            FROM Projeto__c
+                            WHERE Id = :t.WhatId
+                            LIMIT 1
+                        ];
+                    } else {
+                        proj = [
+                            SELECT DocumentacaoComercialPendencia__c,
+                                DocumentacaoCriarAtividadeContratos__c,
+                                ViabilidadeTecnicaPendencia__c,
+                                CriarAtividadeViabilidadeTecnica__c
+                            FROM Projeto__c
+                            WHERE Id IN (
+                                SELECT Projeto__c FROM Instalacao__c WHERE Id = :t.WhatId
+                            )
+                            LIMIT 1
+                        ];
+                    }
 
-                    docPendencia = proj.DocumentacaoComercialPendencia__c;
-                    viabilidadePendencia = proj.ViabilidadeTecnicaPendencia__c;
-                    autoFollowUpContratos = isDocComSubject && proj.DocumentacaoCriarAtividadeContratos__c;
-                    autoFollowUpViabilidade = isViabilidadeSubject && proj.CriarAtividadeViabilidadeTecnica__c;
+                    if (proj != null) {
+                        Boolean isDocComSubject = subjectEquals(t.Subject, SUBJECT_DOC_COM);
+                        Boolean isViabilidadeSubject = subjectEquals(t.Subject, SUBJECT_VIABILIDADE);
 
-                    if (resolvedFollowUpOwnerId == null) {
-                        if (autoFollowUpContratos) {
-                            resolvedFollowUpOwnerId = getQueueId(QUEUE_DEVELOPER_NAME_CONTRATOS);
-                        } else if (autoFollowUpViabilidade) {
-                            resolvedFollowUpOwnerId = getQueueId(QUEUE_DEVELOPER_NAME_VIABILIDADE);
+                        docPendencia = String.isNotBlank(pendDocTask) ? pendDocTask : proj.DocumentacaoComercialPendencia__c;
+                        viabilidadePendencia = String.isNotBlank(pendViabTask) ? pendViabTask : proj.ViabilidadeTecnicaPendencia__c;
+                        autoFollowUpContratos = isDocComSubject && (flagDocTask || proj.DocumentacaoCriarAtividadeContratos__c);
+                        autoFollowUpViabilidade = isViabilidadeSubject && (flagViabTask || proj.CriarAtividadeViabilidadeTecnica__c);
+
+                        if (resolvedFollowUpOwnerId == null) {
+                            if (autoFollowUpContratos) {
+                                resolvedFollowUpOwnerId = getQueueId(QUEUE_DEVELOPER_NAME_CONTRATOS);
+                            } else if (autoFollowUpViabilidade) {
+                                resolvedFollowUpOwnerId = getQueueId(QUEUE_DEVELOPER_NAME_VIABILIDADE);
+                            }
                         }
                     }
                 }
@@ -121,6 +159,7 @@ public with sharing class TaskCompletionService {
             followUp.Priority = 'Normal';
             followUp.ActivityDate = Date.today();
             insert followUp;
+            result.followUpId = followUp.Id;
         }
 
         result.success = true;
@@ -133,6 +172,84 @@ public with sharing class TaskCompletionService {
             return false;
         }
         return value.trim().toLowerCase() == expected.trim().toLowerCase();
+    }
+
+    /**
+     * Garante que todos os documentos configurados para o Subject da atividade foram anexados
+     * (OpportunityAttachmentLink__c) com ActivityName__c = Subject e SObjectId__c = WhatId.
+     */
+    @TestVisible
+    private static void ensureRequiredDocuments(Task t) {
+        if (t == null || String.isBlank(t.Subject) || t.WhatId == null) {
+            return;
+        }
+
+        List<ActivityRequiredDocument__mdt> configs = [
+            SELECT ActivitySubject__c, RequiredFiles__c
+            FROM ActivityRequiredDocument__mdt
+            WHERE ActivitySubject__c = :t.Subject
+        ];
+        if (configs.isEmpty()) {
+            return;
+        }
+
+        // Normaliza nomes requeridos
+        Set<String> required = new Set<String>();
+        for (ActivityRequiredDocument__mdt cfg : configs) {
+            if (String.isBlank(cfg.RequiredFiles__c)) {
+                continue;
+            }
+            for (String name : cfg.RequiredFiles__c.split(';')) {
+                String norm = normalizeName(name);
+                if (!String.isBlank(norm)) {
+                    required.add(norm);
+                }
+            }
+        }
+        if (required.isEmpty()) {
+            return;
+        }
+
+        // Recupera anexos já enviados
+        Set<String> uploaded = new Set<String>();
+        for (OpportunityAttachmentLink__c link : [
+            SELECT AttachmentDescription__c
+            FROM OpportunityAttachmentLink__c
+            WHERE SObjectId__c = :String.valueOf(t.WhatId)
+                AND ActivityName__c = :t.Subject
+        ]) {
+            String norm = normalizeName(link.AttachmentDescription__c);
+            if (!String.isBlank(norm)) {
+                uploaded.add(norm);
+            }
+        }
+
+        Set<String> missing = required.clone();
+        missing.removeAll(uploaded);
+        if (!missing.isEmpty()) {
+            String msg = 'Ainda faltam anexar os documentos obrigatórios: ' + String.join(new List<String>(missing), ', ');
+            throw new AuraHandledException(msg);
+        }
+    }
+
+    @TestVisible
+    private static String normalizeName(String value) {
+        if (String.isBlank(value)) {
+            return '';
+        }
+        String normalized = value.toLowerCase();
+        // remove acentos comuns
+        normalized = normalized
+            .replaceAll('[áàãâä]', 'a')
+            .replaceAll('[éèêë]', 'e')
+            .replaceAll('[íìîï]', 'i')
+            .replaceAll('[óòõôö]', 'o')
+            .replaceAll('[úùûü]', 'u')
+            .replaceAll('[ç]', 'c');
+        // substitui não alfanuméricos por underscore e remove underscores nas bordas
+        normalized = normalized.replaceAll('[^a-z0-9]+', '_');
+        normalized = normalized.replaceAll('^_+|_+$', '');
+        return normalized;
     }
 
     private static String appendNote(String baseText, String note) {

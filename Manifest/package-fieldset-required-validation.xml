@@ -31,6 +31,7 @@
         <members>FieldSetMapping.SolicitarDadosEstudosEletricos</members>
         <members>FieldSetMapping.SolicitarDisponibilidadeEnergia</members>
         <members>FieldSetMapping.AprovacaoProjetoSe</members>
+        <members>ActivityRequiredDocument.RELATORIO_FINAL_DE_OBRA.md-meta</members>
         <name>CustomMetadata</name>
     </types>
     <types> 
@@ -123,6 +124,8 @@
         <members>TaskTemplateUtils</members>
         <members>ActivityDocumentController</members>
         <members>ExternalArchiveService</members>
+        <members>TaskCompletionServiceDocTest</members>
+        <members>TaskBO</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -150,12 +153,6 @@
     <types>
         <members>Opportunity</members>
         <name>Workflow</name>
-    </types>
-    <types>
-        <members>Projeto_Pagina_de_registro</members>
-        <members>Instala_o_P_gina_de_registro</members>
-        <members>Estudo_de_Viabilidade_Record_Page</members>
-        <name>FlexiPage</name>
     </types>
     <types>
         <members>Opportunity.EzeeSolarB</members>

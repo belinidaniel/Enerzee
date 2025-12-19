@@ -1,28 +1,40 @@
-import { LightningElement, api, track } from 'lwc';
+import { LightningElement, api, track, wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getRequiredDocuments from '@salesforce/apex/ActivityDocumentController.getRequiredDocuments';
 import uploadExternalArchive from '@salesforce/apex/ExternalArchiveService.uploadExternalArchive';
+import getTaskContext from '@salesforce/apex/ActivityDocumentController.getTaskContext';
+import { getRecord } from 'lightning/uiRecordApi';
 
 export default class ActivityDocumentUpload extends LightningElement {
-    @api activitySubject; // texto do subject da atividade
-    @api activityName; // nome para salvar no Attachment
-    @api sobjectId; // projeto/instalacao/viabilidade
-    @api opportunityId; // necessário para IdProposal
+    @api recordId; // Task Id
+    @api activitySubject; // override opcional
+    @api activityName; // override opcional
+    @track sobjectId; // projeto/instalacao/viabilidade
+    @track opportunityId; // para IdProposal
+    @track subject;
 
     @track rows = [];
     @track loading = false;
 
-    connectedCallback() {
-        this.loadDocs();
+    @wire(getTaskContext, { taskId: '$recordId' })
+    wiredContext({ error, data }) {
+        if (data) {
+            this.subject = this.activitySubject || data.subject;
+            this.sobjectId = data.whatId;
+            this.opportunityId = data.opportunityId;
+            this.loadDocs();
+        } else if (error) {
+            this.showToast('Erro', this.normalizeError(error), 'error');
+        }
     }
 
     async loadDocs() {
-        if (!this.activitySubject) {
+        if (!this.subject) {
             return;
         }
         this.loading = true;
         try {
-            const docs = await getRequiredDocuments({ activitySubject: this.activitySubject });
+            const docs = await getRequiredDocuments({ activitySubject: this.subject });
             this.rows = (docs || []).map((d, index) => ({
                 id: index,
                 name: d.name,
@@ -45,10 +57,26 @@ export default class ActivityDocumentUpload extends LightningElement {
 
         const reader = new FileReader();
         reader.onload = () => {
-            const base64 = reader.result.split(',')[1];
-            this.rows = this.rows.map(r => r.id == idx ? { ...r, fileName: file.name, base64, status: 'Pronto para enviar' } : r);
+            const base64Body = reader.result.split(',')[1];
+            const prefix = file.type ? `data:${file.type};base64,` : 'data:application/octet-stream;base64,';
+            const base64 = prefix + base64Body;
+            this.rows = this.rows.map(r => r.id == idx ? { ...r, fileName: this.buildServerFileName(r.name, file.name), base64, status: 'Pronto para enviar' } : r);
         };
         reader.readAsDataURL(file);
+    }
+
+    buildServerFileName(requiredName, originalName) {
+        // Normaliza o nome configurado (remove acentos, espaços e pontuação básica)
+        const normalize = (str) => str
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\\u0300-\\u036f]/g, '') // acentos
+            .replace(/[^a-z0-9]+/g, '_') // não alfanumérico para underscore
+            .replace(/^_+|_+$/g, ''); // trim underscores
+
+        const requiredNormalized = normalize(requiredName || 'documento');
+        const extMatch = originalName && originalName.includes('.') ? originalName.substring(originalName.lastIndexOf('.')) : '';
+        return `${requiredNormalized}${extMatch || ''}`;
     }
 
     async handleUpload(event) {
@@ -69,7 +97,7 @@ export default class ActivityDocumentUpload extends LightningElement {
                 fileName: row.fileName,
                 base64File: row.base64,
                 sobjectId: this.sobjectId,
-                activityName: this.activityName || this.activitySubject
+                activityName: this.activityName || this.subject
             });
             if (result && result.success) {
                 this.rows = this.rows.map(r => r.id == idx ? { ...r, status: 'Enviado' } : r);

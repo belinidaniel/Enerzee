@@ -142,20 +142,37 @@
                             </div>
                         </template>
                     </template>
+
+                    <template if:true={showDocUpload}>
+                        <div class="slds-m-top_medium">
+                            <c-activity-document-upload record-id={recordId}></c-activity-document-upload>
+                        </div>
+                    </template>
                 </div>
             </lightning-record-edit-form>
         </template>
 
         <template if:false={showForm}>
             <div class="empty-state">
-                <template if:true={hasSections}>
-                    <p>Registro relacionado não disponível para edição.</p>
+                <template if:true={showDocUpload}>
+                    <p></p>
                 </template>
-                <template if:false={hasSections}>
-                    <p>Nenhuma seção configurada para este registro.</p>
+                <template if:false={showDocUpload}>
+                    <template if:true={hasSections}>
+                        <p>Registro relacionado não disponível para edição.</p>
+                    </template>
+                    <template if:false={hasSections}>
+                        <p>Nenhuma seção configurada para este registro.</p>
+                    </template>
                 </template>
             </div>
         </template>
+    </template>
+
+    <template if:true={showDocUpload}>
+        <div class="slds-m-top_medium">
+            <c-activity-document-upload record-id={recordId}></c-activity-document-upload>
+        </div>
     </template>
 
     <template if:true={showAttachmentModal}>
