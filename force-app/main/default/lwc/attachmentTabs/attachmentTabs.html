@@ -1,0 +1,25 @@
+<template>
+    <template if:true={loading}>
+        <lightning-spinner alternative-text="Carregando"></lightning-spinner>
+    </template>
+
+    <template if:true={hasData}>
+        <lightning-tabset>
+            <template for:each={groups} for:item="group">
+                <lightning-tab key={group.name} label={group.name}>
+                    <div class="slds-p-around_small">
+                        <template for:each={group.items} for:item="item">
+                            <div key={item.id} class="slds-box slds-m-bottom_small">
+                                <div class="slds-text-heading_small">{item.name}</div>
+                                <div class="slds-text-color_weak">{item.createdDate}</div>
+                            </div>
+                        </template>
+                    </div>
+                </lightning-tab>
+            </template>
+        </lightning-tabset>
+    </template>
+    <template if:false={hasData}>
+        <p class="slds-p-around_small">Nenhum documento disponível.</p>
+    </template>
+</template>

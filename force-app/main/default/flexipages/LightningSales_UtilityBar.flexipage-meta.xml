@@ -19,6 +19,10 @@
                     <value>1</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>icon</name>
+                    <type>decorator</type>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>label</name>
                     <type>decorator</type>
                     <value>Omni-Channel Auto Connect</value>

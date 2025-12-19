@@ -1,0 +1,41 @@
+<template>
+    <template if:true={loading}>
+        <lightning-spinner alternative-text="Carregando"></lightning-spinner>
+    </template>
+
+    <template if:true={showTable}>
+        <lightning-card title="Documentos obrigatórios">
+            <div class="slds-p-horizontal_small slds-p-vertical_x-small">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Documento</th>
+                            <th scope="col">Observação</th>
+                            <th scope="col">Arquivo</th>
+                            <th scope="col"></th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={rows} for:item="row">
+                            <tr key={row.id}>
+                                <td>{row.name}</td>
+                                <td>{row.observation}</td>
+                                <td>
+                                    <input type="file" data-index={row.id} onchange={handleFileChange} />
+                                    <template if:true={row.fileName}>
+                                        <div class="slds-text-color_weak slds-m-top_x-small">{row.fileName}</div>
+                                    </template>
+                                </td>
+                                <td>
+                                    <lightning-button label="Enviar" data-index={row.id} onclick={handleUpload} variant="brand"></lightning-button>
+                                </td>
+                                <td>{row.status}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </lightning-card>
+    </template>
+</template>

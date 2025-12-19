@@ -38,6 +38,11 @@
         <name>LightningComponentBundle</name>
     </types>
     <types>
+        <members>ActivityRequiredDocument__mdt</members>
+        <members>OpportunityAttachmentLink__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
         <members>Instalacao__c.DELEGAR_GESTOR_DE_OBRAS</members>
         <members>Instalacao__c.PLANEJAMENTO_DE_OBRA</members>
         <members>Instalacao__c.PROSPECTAR_INTEGRADOR</members>
@@ -90,6 +95,8 @@
         <members>Projeto__c.CartaAprovacaoDiasRestantes__c</members>
         <members>Opportunity.Status__c</members>
         <members>Opportunity.ProjectStatusReason__c</members>
+        <members>OpportunityAttachmentLink__c.ActivityName__c</members>
+        <members>OpportunityAttachmentLink__c.SObjectId__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -114,6 +121,8 @@
         <members>TaskDeadlineNotificationScheduler</members>
         <members>TaskTemplateFlowTest</members>
         <members>TaskTemplateUtils</members>
+        <members>ActivityDocumentController</members>
+        <members>ExternalArchiveService</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -144,6 +153,8 @@
     </types>
     <types>
         <members>Projeto_Pagina_de_registro</members>
+        <members>Instala_o_P_gina_de_registro</members>
+        <members>Estudo_de_Viabilidade_Record_Page</members>
         <name>FlexiPage</name>
     </types>
     <types>
@@ -154,6 +165,15 @@
         <members>FieldSetMapping__mdt.RequiresAttachment__c</members>
         <members>FieldSetMapping__mdt.RequiresComment__c</members>
         <name>CustomField</name>
+    </types>
+    <types>
+        <members>activityDocumentUpload</members>
+        <members>attachmentTabs</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>Analista_de_Qualidade</members>
+        <name>Queue</name>
     </types>
     <version>64.0</version>
 </Package>

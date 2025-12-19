@@ -115,11 +115,10 @@ public class InstalacaoTaskBO {
                 continue;
             }
 
-            String statusKey = statusToStatusCode.get(inst.Status__c);
+            String statusKey = resolveStatusKey(inst.Status__c, statusToStatusCode);
             if(String.isBlank(statusKey)){
                 continue;
             }
-            statusKey = normalizeKey(statusKey);
 
             if(statusesToWatch.contains(statusKey)){
                 List<ProjetoBO.TaskProjectTableLine> templates = statusToTemplates.get(statusKey) != null ? statusToTemplates.get(statusKey) : new List<ProjetoBO.TaskProjectTableLine>();
@@ -272,7 +271,7 @@ public class InstalacaoTaskBO {
         }
 
         Map<String, String> statusToStatusCode = ProjetoBO.getStatusToStatusCodeMap();
-        String statusKey = statusToStatusCode.get(inst.Status__c);
+        String statusKey = resolveStatusKey(inst.Status__c, statusToStatusCode);
         if (String.isBlank(statusKey)) {
             return;
         }
@@ -352,6 +351,23 @@ public class InstalacaoTaskBO {
         return normalizedSubject == TaskUtils.SUBJECT_DELEGAR_GESTOR_DE_OBRAS.toLowerCase();
     }
 
+    private static String resolveStatusKey(String statusLabel, Map<String, String> statusToStatusCode) {
+        if (String.isBlank(statusLabel) || statusToStatusCode == null) {
+            return null;
+        }
+        String direct = statusToStatusCode.get(statusLabel);
+        if (!String.isBlank(direct)) {
+            return normalizeKey(direct);
+        }
+        String normLabel = normalizeKey(statusLabel);
+        for (String key : statusToStatusCode.keySet()) {
+            if (normalizeKey(key) == normLabel) {
+                return normalizeKey(statusToStatusCode.get(key));
+            }
+        }
+        return null;
+    }
+
     private static List<String> parseInterested(String interested){
         if(String.isBlank(interested)){
             return new List<String>();
@@ -370,7 +386,8 @@ public class InstalacaoTaskBO {
         if(String.isBlank(value)){
             return '';
         }
-        return value.trim().replace(' ', '_').toUpperCase();
+        // Normaliza espaços e hifens para tratar variações de rótulo (ex.: "Obra concluída - Aguardando troca de medidor")
+        return value.trim().replaceAll('[\\s-]+', '_').toUpperCase();
     }
 
     private static Map<Id, User> fetchUsers(Set<Id> userIds){
