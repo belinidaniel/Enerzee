@@ -7,6 +7,7 @@ export default class AttachmentTabs extends LightningElement {
     @track groups = [];
     @track loading = false;
     activeTab;
+    selectedGroupName;
     isFileModalOpen = false;
     filePreviewName;
     filePreviewUrl;
@@ -44,6 +45,7 @@ export default class AttachmentTabs extends LightningElement {
                 }));
             if (!this.activeTab && this.groups.length) {
                 this.activeTab = this.groups[0].name;
+                this.selectedGroupName = this.groups[0].name;
             }
         } catch (error) {
             // eslint-disable-next-line no-console
@@ -62,6 +64,17 @@ export default class AttachmentTabs extends LightningElement {
         this.activeTab = event.detail.value;
     }
 
+    handleNavSelect(event) {
+        this.selectedGroupName = event.detail.name;
+    }
+
+    get selectedGroup() {
+        if (!this.selectedGroupName) {
+            return null;
+        }
+        return (this.groups || []).find((g) => g.name === this.selectedGroupName) || null;
+    }
+
     handlePreviewFile(event) {
         const recordId = event.currentTarget?.dataset?.id;
         const group = event.currentTarget?.dataset?.group;
@@ -78,11 +91,8 @@ export default class AttachmentTabs extends LightningElement {
         }
 
         this.filePreviewName = file.name;
-        const previewSupported = this.prepareAttachmentPreview(file.url);
-        if (!previewSupported && file.url) {
-            // Se não suportar preview, ainda abrimos a modal com instrução e mantemos botão para abrir em outra aba.
-            this.filePreviewUrl = file.url;
-        }
+        this.prepareAttachmentPreview(file.url);
+        console.log('Opening file preview for', file.name, file.url);
         this.isFileModalOpen = true;
     }
 
@@ -114,7 +124,7 @@ export default class AttachmentTabs extends LightningElement {
             id: record.id,
             name: record.name,
             activityName: record.activityName || 'Outros',
-            url: record.url,
+            url: record.url || record.downloadUrl,
             displayMeta,
             iconName
         };
@@ -126,39 +136,28 @@ export default class AttachmentTabs extends LightningElement {
         this.filePreviewIsPdf = false;
         this.filePreviewUrl = null;
 
-        let previewSupported = false;
-
         try {
             const rawUrl = (url || '').trim();
-            if (!rawUrl) {
-                return false;
-            }
+            this.filePreviewUrl = rawUrl || null;
 
-            const normalized = rawUrl.toLowerCase();
-            const cleanUrl = normalized.includes('?')
-                ? normalized.substring(0, normalized.indexOf('?'))
-                : normalized;
+            if (rawUrl) {
+                const normalized = rawUrl.toLowerCase();
+                const cleanUrl = normalized.includes('?')
+                    ? normalized.substring(0, normalized.indexOf('?'))
+                    : normalized;
 
-            this.filePreviewIsImage =
-                cleanUrl.endsWith('.png') ||
-                cleanUrl.endsWith('.jpg') ||
-                cleanUrl.endsWith('.jpeg') ||
-                cleanUrl.endsWith('.gif');
-            this.filePreviewIsPdf = cleanUrl.endsWith('.pdf');
-
-            if (this.filePreviewIsPdf || this.filePreviewIsImage) {
-                this.filePreviewUrl = rawUrl;
-                previewSupported = !!this.filePreviewUrl;
-            } else {
-                this.filePreviewUrl = rawUrl; // mantém para botão "Abrir em nova aba"
+                this.filePreviewIsImage =
+                    cleanUrl.endsWith('.png') ||
+                    cleanUrl.endsWith('.jpg') ||
+                    cleanUrl.endsWith('.jpeg') ||
+                    cleanUrl.endsWith('.gif');
+                this.filePreviewIsPdf = cleanUrl.endsWith('.pdf');
             }
         } catch (error) {
             this.filePreviewUrl = null;
         } finally {
             this.isAttachmentPreviewLoading = false;
         }
-
-        return previewSupported;
     }
 
     get filePreviewIsUnsupported() {

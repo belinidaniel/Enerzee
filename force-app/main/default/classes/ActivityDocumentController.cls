@@ -11,6 +11,7 @@ public with sharing class ActivityDocumentController {
         @AuraEnabled public String activityName;
         @AuraEnabled public DateTime createdDate;
         @AuraEnabled public String url;
+        @AuraEnabled public String downloadUrl;
     }
 
     public class TaskContext {
@@ -64,6 +65,7 @@ public with sharing class ActivityDocumentController {
             item.activityName = link.ActivityName__c;
             item.createdDate = link.CreatedDate;
             item.url = link.AttachmentURL__c;
+            item.downloadUrl = link.AttachmentURL__c;
             results.add(item);
         }
         return results;

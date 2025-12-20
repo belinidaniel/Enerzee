@@ -6,11 +6,20 @@
     </template>
 
     <template if:true={hasData}>
-        <lightning-tabset variant="scoped" active-tab-value={activeTab} onactive={handleTabChange}>
-            <template for:each={groups} for:item="group">
-                <lightning-tab key={group.name} label={group.name} value={group.name}>
+        <lightning-layout multiple-rows="true">
+            <lightning-layout-item size="3" class="nav-pane">
+                <lightning-vertical-navigation selected-item={selectedGroupName} onselect={handleNavSelect}>
+                    <template for:each={groups} for:item="group">
+                        <lightning-vertical-navigation-item key={group.name}
+                                                            label={group.name}
+                                                            name={group.name}></lightning-vertical-navigation-item>
+                    </template>
+                </lightning-vertical-navigation>
+            </lightning-layout-item>
+            <lightning-layout-item size="9">
+                <template if:true={selectedGroup}>
                     <div class="slds-p-around_medium file-list">
-                        <template for:each={group.items} for:item="item">
+                        <template for:each={selectedGroup.items} for:item="item">
                             <article key={item.id} class="file-card slds-media">
                                 <div class="file-thumb slds-media__figure">
                                     <lightning-icon icon-name={item.iconName} size="small" alternative-text="Arquivo"></lightning-icon>
@@ -18,7 +27,7 @@
                                 <button class="slds-media__body file-body slds-button_reset"
                                         type="button"
                                         data-id={item.id}
-                                        data-group={group.name}
+                                        data-group={selectedGroup.name}
                                         onclick={handlePreviewFile}>
                                     <span class="file-title">{item.name}</span>
                                     <p class="file-meta slds-text-body_small slds-text-color_weak">
@@ -34,9 +43,9 @@
                             </article>
                         </template>
                     </div>
-                </lightning-tab>
-            </template>
-        </lightning-tabset>
+                </template>
+            </lightning-layout-item>
+        </lightning-layout>
     </template>
 
     <template if:false={hasData}>
