@@ -148,6 +148,31 @@
                             <c-activity-document-upload record-id={recordId}></c-activity-document-upload>
                         </div>
                     </template>
+
+                    <template if:true={attachments.length}>
+                        <div class="slds-m-top_medium">
+                            <lightning-card title="Arquivos anexados">
+                                <div class="slds-p-horizontal_small slds-p-vertical_x-small">
+                                    <ul class="slds-list_dotted">
+                                        <template for:each={attachments} for:item="file">
+                                            <li key={file.id}>
+                                                <span class="slds-text-title_bold">{file.name}</span>
+                                                <template if:true={file.activityName}>
+                                                    <span class="slds-text-color_weak"> — {file.activityName}</span>
+                                                </template>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </lightning-card>
+                        </div>
+                    </template>
+
+                    <template if:true={attachmentsLoading}>
+                        <div class="slds-m-top_medium slds-align_absolute-center">
+                            <lightning-spinner alternative-text="Carregando anexos" size="small"></lightning-spinner>
+                        </div>
+                    </template>
                 </div>
             </lightning-record-edit-form>
         </template>
@@ -181,19 +206,43 @@
                 <header class="slds-modal__header">
                     <lightning-button-icon icon-name="utility:close" class="slds-modal__close" onclick={closeAttachmentModal}></lightning-button-icon>
                     <h2 class="slds-text-heading_medium">Anexar arquivo</h2>
-                    <p class="slds-text-body_small">Os arquivos serão anexados ao registro relacionado.</p>
+                    <p class="slds-text-body_small">Os arquivos serão enviados para o repositório externo e vinculados à oportunidade.</p>
                 </header>
                 <div class="slds-modal__content slds-p-around_medium">
-                    <lightning-file-upload
-                        record-id={targetRecordId}
+                    <lightning-input
+                        type="file"
                         multiple
                         accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.txt"
-                        onuploadfinished={handleUploadFinished}
-                    ></lightning-file-upload>
+                        onchange={handleAttachmentFileChange}
+                        disabled={attachmentUploading}
+                        label="Selecione arquivo(s)"
+                    ></lightning-input>
+
+                    <template if:true={selectedFiles.length}>
+                        <div class="slds-m-top_small">
+                            <p class="slds-text-title_caps slds-text-color_weak slds-m-bottom_x-small">Pronto para envio</p>
+                            <ul class="slds-list_dotted">
+                                <template for:each={selectedFiles} for:item="file">
+                                    <li key={file.name}>{file.name}</li>
+                                </template>
+                            </ul>
+                        </div>
+                    </template>
                 </div>
                 <footer class="slds-modal__footer">
-                    <lightning-button variant="neutral" label="Fechar" onclick={closeAttachmentModal}></lightning-button>
+                    <lightning-button variant="neutral" label="Fechar" onclick={closeAttachmentModal} disabled={attachmentUploading}></lightning-button>
+                    <lightning-button
+                        variant="brand"
+                        label="Enviar"
+                        onclick={uploadSelectedFiles}
+                        disabled={disableAttachmentUploadButton}
+                    ></lightning-button>
                 </footer>
+                <template if:true={attachmentUploading}>
+                    <div class="modal-spinner">
+                        <lightning-spinner alternative-text="Enviando" size="small"></lightning-spinner>
+                    </div>
+                </template>
             </div>
         </section>
         <div class="slds-backdrop slds-backdrop_open"></div>

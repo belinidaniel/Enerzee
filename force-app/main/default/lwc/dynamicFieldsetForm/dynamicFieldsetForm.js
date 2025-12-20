@@ -5,7 +5,8 @@ import getConfiguration from '@salesforce/apex/FieldSetConfigurationService.getC
 import getConfigurationForTask from '@salesforce/apex/FieldSetConfigurationService.getConfigurationForTask';
 import getTaskContext from '@salesforce/apex/ActivityDocumentController.getTaskContext';
 import getRequiredDocuments from '@salesforce/apex/ActivityDocumentController.getRequiredDocuments';
-import publishAttachmentNote from '@salesforce/apex/AttachmentFeedService.publishAttachmentNote';
+import getAttachments from '@salesforce/apex/ActivityDocumentController.getAttachments';
+import uploadExternalArchive from '@salesforce/apex/ExternalArchiveService.uploadExternalArchive';
 import completeTask from '@salesforce/apex/TaskCompletionService.completeWithComment';
 import isTaskClosed from '@salesforce/apex/TaskCompletionService.isTaskClosed';
 
@@ -41,6 +42,9 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
     autoSaving = false;
     autoSaveQueued = false;
     autoSaveTimeout;
+    attachments = [];
+    attachmentsLoading = false;
+    selectedFiles = [];
 
     _recordId;
 
@@ -156,9 +160,11 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
             } else {
                 this.showDocUpload = false;
             }
+            await this.loadAttachments();
         } catch (e) {
             console.warn('Erro ao carregar contexto da task', e);
             this.showDocUpload = false;
+            this.attachments = [];
         }
     }
 
@@ -205,6 +211,7 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
         this.activeSectionNames = [];
         this.subStatusValue = null;
         this.subStatusInitialized = false;
+        this.attachments = [];
     }
 
     isTaskContext() {
@@ -281,10 +288,20 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
         this.autoSaveQueued = false;
         this.autoSaving = true;
         this.silentSave = true;
+        this.autoSaveTimeout = null;
         this.submitForm();
     }
 
+    clearAutoSaveQueue() {
+        if (this.autoSaveTimeout) {
+            clearTimeout(this.autoSaveTimeout);
+            this.autoSaveTimeout = null;
+        }
+        this.autoSaveQueued = false;
+    }
+
     handleCancel() {
+        this.clearAutoSaveQueue();
         const form = this.template.querySelector('lightning-record-edit-form');
         if (form) {
             form.reset();
@@ -299,6 +316,7 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
             return;
         }
 
+        this.clearAutoSaveQueue();
         this.completeAfterSave = false;
         this.submitForm();
     }
@@ -308,6 +326,7 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
             return;
         }
 
+        this.clearAutoSaveQueue();
         this.completeAfterSave = true;
         this.submitForm();
     }
@@ -438,6 +457,30 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
         return true;
     }
 
+    get attachmentTargetId() {
+        return this.taskContext?.whatId || this.targetRecordId || this._recordId;
+    }
+
+    async loadAttachments() {
+        const targetId = this.attachmentTargetId;
+        if (!targetId) {
+            this.attachments = [];
+            return;
+        }
+
+        this.attachmentsLoading = true;
+        try {
+            const items = await getAttachments({ sobjectId: targetId });
+            this.attachments = items || [];
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.warn('Erro ao carregar anexos', error);
+            this.attachments = [];
+        } finally {
+            this.attachmentsLoading = false;
+        }
+    }
+
     handleAccordionToggle(event) {
         const { openSections } = event.detail;
         this.activeSectionNames = Array.isArray(openSections) ? openSections : [openSections];
@@ -453,6 +496,10 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
 
     get showCompleteAction() {
         return this.showForm && !this.formReadOnly && !this.requiresComment;
+    }
+
+    get disableAttachmentUploadButton() {
+        return this.attachmentUploading || !this.selectedFiles || this.selectedFiles.length === 0;
     }
 
     get disableAttachmentAction() {
@@ -476,34 +523,112 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
         if (this.disableAttachmentAction) {
             return;
         }
+        this.clearSelectedFiles();
         this.showAttachmentModal = true;
     }
 
     closeAttachmentModal() {
         this.showAttachmentModal = false;
+        this.clearSelectedFiles();
     }
 
-    async handleUploadFinished(event) {
+    handleAttachmentFileChange(event) {
+        const files = event.target.files;
+        if (!files || !files.length) {
+            this.selectedFiles = [];
+            return;
+        }
+
+        const readers = Array.from(files).map((file) => this.readFileAsBase64(file));
+        Promise.all(readers)
+            .then((results) => {
+                this.selectedFiles = results;
+            })
+            .catch((error) => {
+                this.selectedFiles = [];
+                this.handleError('Falha ao ler arquivo(s).', error);
+            });
+    }
+
+    readFileAsBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const base64Body = reader.result.split(',')[1];
+                    const prefix = file.type ? `data:${file.type};base64,` : 'data:application/octet-stream;base64,';
+                    resolve({ name: file.name, base64: prefix + base64Body });
+                } catch (e) {
+                    reject(e);
+                }
+            };
+            reader.onerror = (e) => reject(e);
+            reader.readAsDataURL(file);
+        });
+    }
+
+    clearSelectedFiles() {
+        this.selectedFiles = [];
+    }
+
+    async uploadSelectedFiles() {
+        if (!this.selectedFiles || !this.selectedFiles.length) {
+            this.showToast('Aviso', 'Selecione ao menos um arquivo para enviar.', 'warning');
+            return;
+        }
+        if (!this.taskContext || !this.taskContext.opportunityId) {
+            this.showToast('Erro', 'Oportunidade não identificada para anexar o arquivo.', 'error');
+            return;
+        }
+        const targetId = this.attachmentTargetId;
+        if (!targetId) {
+            this.showToast('Erro', 'Registro relacionado não identificado para anexar o arquivo.', 'error');
+            return;
+        }
+
         this.attachmentUploading = true;
         try {
-            const files = event.detail.files || [];
-            const fileNames = files.map((f) => f.name);
-            this.uploadedFilePills = fileNames.map((name, index) => ({
+            const uploadedNames = [];
+            for (const file of this.selectedFiles) {
+                const cleanedName = this.stripExtension(file.name);
+                const result = await uploadExternalArchive({
+                    opportunityId: this.taskContext.opportunityId,
+                    fileName: cleanedName,
+                    base64File: file.base64,
+                    sobjectId: targetId,
+                    activityName: this.taskContext?.subject
+                });
+
+                if (!result || !result.success) {
+                    const message = (result && result.message) || 'Falha ao enviar arquivo.';
+                    throw new Error(message);
+                }
+                uploadedNames.push(cleanedName);
+            }
+
+            this.uploadedFilePills = uploadedNames.map((name, index) => ({
                 label: name,
                 name: `${index}-${name}`
             }));
-            await publishAttachmentNote({
-                parentId: this.targetRecordId,
-                fileNames,
-                activityLabel: this.attachmentSectionLabel
-            });
-            this.showToast('Sucesso', 'Arquivo(s) anexado(s) e comentário publicado.', 'success');
-            this.showAttachmentModal = false;
+            this.showToast('Sucesso', 'Arquivo(s) enviado(s) com sucesso.', 'success');
+            this.closeAttachmentModal();
+            await this.loadAttachments();
         } catch (error) {
             this.handleError('Falha ao processar o anexo.', error);
         } finally {
             this.attachmentUploading = false;
         }
+    }
+
+    stripExtension(fileName) {
+        if (!fileName) {
+            return fileName;
+        }
+        const lastDot = fileName.lastIndexOf('.');
+        if (lastDot <= 0) {
+            return fileName;
+        }
+        return fileName.substring(0, lastDot);
     }
 
     openCommentModal() {
