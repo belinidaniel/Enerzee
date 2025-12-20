@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-19-2025
+ * @last modified on  : 12-20-2025
  * @last modified by  : Daniel Belini
 **/
 public with sharing class ExternalArchiveService {
@@ -48,10 +48,12 @@ public with sharing class ExternalArchiveService {
             LIMIT 1
         ];
 
+        String fileNameWithExtension = ensureExtension(fileName);
+
         Map<String, Object> body = new Map<String, Object>{
             'IdProposal' => opp.IdVirtualOffice__c,
             'FileBase64' => base64File,
-            'FileName'   => fileName
+            'FileName'   => fileNameWithExtension
         };
 
         System.debug('Body: ' + JSON.serialize(body));
@@ -61,6 +63,7 @@ public with sharing class ExternalArchiveService {
         req.setMethod('POST');
         req.setHeader('Content-Type', 'application/json');
         req.setBody(JSON.serialize(body));
+        System.debug('body: ' + JSON.serialize(body));
 
         HttpResponse res = Utils.callIntegrationNivello(req);
 
@@ -72,10 +75,12 @@ public with sharing class ExternalArchiveService {
         }
 
         OpportunityAttachmentLink__c link = new OpportunityAttachmentLink__c();
-        link.OpportunityId__c = opportunityId;
+        // link.OpportunityId__c = opportunityId;
         link.ActivityName__c = activityName;
         link.SObjectId__c = sobjectId;
-        link.AttachmentDescription__c = fileName;
+        link.AttachmentDescription__c = fileNameWithExtension;
+        Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
+        link.AttachmentURL__c = (String) responseBody.get('data');
         insert link;
 
         UploadResult ok = new UploadResult();
@@ -83,5 +88,15 @@ public with sharing class ExternalArchiveService {
         ok.attachmentId = link.Id;
         ok.message = 'Arquivo enviado com sucesso.';
         return ok;
+    }
+
+    private static String ensureExtension(String name) {
+        if (String.isBlank(name)) {
+            return 'arquivo.pdf';
+        }
+        if (name.contains('.')) {
+            return name;
+        }
+        return name + '.pdf';
     }
 }

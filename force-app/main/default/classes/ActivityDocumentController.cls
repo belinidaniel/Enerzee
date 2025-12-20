@@ -10,6 +10,7 @@ public with sharing class ActivityDocumentController {
         @AuraEnabled public String name;
         @AuraEnabled public String activityName;
         @AuraEnabled public DateTime createdDate;
+        @AuraEnabled public String url;
     }
 
     public class TaskContext {
@@ -52,7 +53,7 @@ public with sharing class ActivityDocumentController {
         }
         List<AttachmentItem> results = new List<AttachmentItem>();
         for (OpportunityAttachmentLink__c link : [
-            SELECT Id, AttachmentDescription__c, ActivityName__c, CreatedDate
+            SELECT Id, AttachmentDescription__c, ActivityName__c, AttachmentURL__c, CreatedDate
             FROM OpportunityAttachmentLink__c
             WHERE SObjectId__c = :String.valueOf(sobjectId)
             ORDER BY CreatedDate DESC
@@ -62,6 +63,7 @@ public with sharing class ActivityDocumentController {
             item.name = link.AttachmentDescription__c;
             item.activityName = link.ActivityName__c;
             item.createdDate = link.CreatedDate;
+            item.url = link.AttachmentURL__c;
             results.add(item);
         }
         return results;

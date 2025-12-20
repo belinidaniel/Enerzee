@@ -3,7 +3,6 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getRequiredDocuments from '@salesforce/apex/ActivityDocumentController.getRequiredDocuments';
 import uploadExternalArchive from '@salesforce/apex/ExternalArchiveService.uploadExternalArchive';
 import getTaskContext from '@salesforce/apex/ActivityDocumentController.getTaskContext';
-import { getRecord } from 'lightning/uiRecordApi';
 
 export default class ActivityDocumentUpload extends LightningElement {
     @api recordId; // Task Id
@@ -60,23 +59,9 @@ export default class ActivityDocumentUpload extends LightningElement {
             const base64Body = reader.result.split(',')[1];
             const prefix = file.type ? `data:${file.type};base64,` : 'data:application/octet-stream;base64,';
             const base64 = prefix + base64Body;
-            this.rows = this.rows.map(r => r.id == idx ? { ...r, fileName: this.buildServerFileName(r.name, file.name), base64, status: 'Pronto para enviar' } : r);
+            this.rows = this.rows.map(r => r.id == idx ? { ...r, fileName: file.name, base64, status: 'Pronto para enviar' } : r);
         };
         reader.readAsDataURL(file);
-    }
-
-    buildServerFileName(requiredName, originalName) {
-        // Normaliza o nome configurado (remove acentos, espaços e pontuação básica)
-        const normalize = (str) => str
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\\u0300-\\u036f]/g, '') // acentos
-            .replace(/[^a-z0-9]+/g, '_') // não alfanumérico para underscore
-            .replace(/^_+|_+$/g, ''); // trim underscores
-
-        const requiredNormalized = normalize(requiredName || 'documento');
-        const extMatch = originalName && originalName.includes('.') ? originalName.substring(originalName.lastIndexOf('.')) : '';
-        return `${requiredNormalized}${extMatch || ''}`;
     }
 
     async handleUpload(event) {

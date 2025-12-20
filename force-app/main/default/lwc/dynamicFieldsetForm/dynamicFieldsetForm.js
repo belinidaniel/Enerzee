@@ -5,7 +5,6 @@ import getConfiguration from '@salesforce/apex/FieldSetConfigurationService.getC
 import getConfigurationForTask from '@salesforce/apex/FieldSetConfigurationService.getConfigurationForTask';
 import getTaskContext from '@salesforce/apex/ActivityDocumentController.getTaskContext';
 import getRequiredDocuments from '@salesforce/apex/ActivityDocumentController.getRequiredDocuments';
-import getAttachments from '@salesforce/apex/ActivityDocumentController.getAttachments';
 import uploadExternalArchive from '@salesforce/apex/ExternalArchiveService.uploadExternalArchive';
 import completeTask from '@salesforce/apex/TaskCompletionService.completeWithComment';
 import isTaskClosed from '@salesforce/apex/TaskCompletionService.isTaskClosed';
@@ -42,8 +41,6 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
     autoSaving = false;
     autoSaveQueued = false;
     autoSaveTimeout;
-    attachments = [];
-    attachmentsLoading = false;
     selectedFiles = [];
 
     _recordId;
@@ -155,18 +152,16 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
             this.taskContext = await getTaskContext({ taskId: this._recordId });
             const subject = this.taskContext ? this.taskContext.subject : null;
             if (subject) {
-                const docs = await getRequiredDocuments({ activitySubject: subject });
-                this.showDocUpload = docs && docs.length > 0;
-            } else {
-                this.showDocUpload = false;
-            }
-            await this.loadAttachments();
-        } catch (e) {
-            console.warn('Erro ao carregar contexto da task', e);
+            const docs = await getRequiredDocuments({ activitySubject: subject });
+            this.showDocUpload = docs && docs.length > 0;
+        } else {
             this.showDocUpload = false;
-            this.attachments = [];
         }
+    } catch (e) {
+        console.warn('Erro ao carregar contexto da task', e);
+        this.showDocUpload = false;
     }
+}
 
     fetchRelatedConfiguration() {
         return getConfigurationForTask({ taskId: this._recordId })
@@ -211,7 +206,6 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
         this.activeSectionNames = [];
         this.subStatusValue = null;
         this.subStatusInitialized = false;
-        this.attachments = [];
     }
 
     isTaskContext() {
@@ -457,29 +451,6 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
         return true;
     }
 
-    get attachmentTargetId() {
-        return this.taskContext?.whatId || this.targetRecordId || this._recordId;
-    }
-
-    async loadAttachments() {
-        const targetId = this.attachmentTargetId;
-        if (!targetId) {
-            this.attachments = [];
-            return;
-        }
-
-        this.attachmentsLoading = true;
-        try {
-            const items = await getAttachments({ sobjectId: targetId });
-            this.attachments = items || [];
-        } catch (error) {
-            // eslint-disable-next-line no-console
-            console.warn('Erro ao carregar anexos', error);
-            this.attachments = [];
-        } finally {
-            this.attachmentsLoading = false;
-        }
-    }
 
     handleAccordionToggle(event) {
         const { openSections } = event.detail;
@@ -556,6 +527,7 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
             reader.onload = () => {
                 try {
                     const base64Body = reader.result.split(',')[1];
+                    console.log('Arquivos selecionados para anexo:2', file);
                     const prefix = file.type ? `data:${file.type};base64,` : 'data:application/octet-stream;base64,';
                     resolve({ name: file.name, base64: prefix + base64Body });
                 } catch (e) {
@@ -590,10 +562,9 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
         try {
             const uploadedNames = [];
             for (const file of this.selectedFiles) {
-                const cleanedName = this.stripExtension(file.name);
                 const result = await uploadExternalArchive({
                     opportunityId: this.taskContext.opportunityId,
-                    fileName: cleanedName,
+                    fileName: file.name,
                     base64File: file.base64,
                     sobjectId: targetId,
                     activityName: this.taskContext?.subject
@@ -603,7 +574,7 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
                     const message = (result && result.message) || 'Falha ao enviar arquivo.';
                     throw new Error(message);
                 }
-                uploadedNames.push(cleanedName);
+                uploadedNames.push(file.name);
             }
 
             this.uploadedFilePills = uploadedNames.map((name, index) => ({
@@ -618,17 +589,6 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
         } finally {
             this.attachmentUploading = false;
         }
-    }
-
-    stripExtension(fileName) {
-        if (!fileName) {
-            return fileName;
-        }
-        const lastDot = fileName.lastIndexOf('.');
-        if (lastDot <= 0) {
-            return fileName;
-        }
-        return fileName.substring(0, lastDot);
     }
 
     openCommentModal() {

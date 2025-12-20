@@ -149,30 +149,6 @@
                         </div>
                     </template>
 
-                    <template if:true={attachments.length}>
-                        <div class="slds-m-top_medium">
-                            <lightning-card title="Arquivos anexados">
-                                <div class="slds-p-horizontal_small slds-p-vertical_x-small">
-                                    <ul class="slds-list_dotted">
-                                        <template for:each={attachments} for:item="file">
-                                            <li key={file.id}>
-                                                <span class="slds-text-title_bold">{file.name}</span>
-                                                <template if:true={file.activityName}>
-                                                    <span class="slds-text-color_weak"> — {file.activityName}</span>
-                                                </template>
-                                            </li>
-                                        </template>
-                                    </ul>
-                                </div>
-                            </lightning-card>
-                        </div>
-                    </template>
-
-                    <template if:true={attachmentsLoading}>
-                        <div class="slds-m-top_medium slds-align_absolute-center">
-                            <lightning-spinner alternative-text="Carregando anexos" size="small"></lightning-spinner>
-                        </div>
-                    </template>
                 </div>
             </lightning-record-edit-form>
         </template>

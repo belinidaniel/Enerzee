@@ -166,6 +166,7 @@
     <types>
         <members>activityDocumentUpload</members>
         <members>attachmentTabs</members>
+        <members>dynamicFieldsetForm</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
