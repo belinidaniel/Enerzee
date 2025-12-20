@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RECEBIMENTO_MATERIAIS_COMPLEMENTARES</fullName>
+    <description>Recebimento dos materiais complementares - sem campos, apenas comentário obrigatório.</description>
+    <label>RECEBIMENTO MATERIAIS COMPLEMENTARES</label>
+</FieldSet>

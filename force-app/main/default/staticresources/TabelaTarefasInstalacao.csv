@@ -1,18 +1,18 @@
-TipoProjetoObra;Status;Assunto;Acoes;Observacoes;Responsavel;Interessados;PrazoDiasUteis;DataVencimentoDMais;TipoProprietario
-RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;DELEGAR GESTOR DE OBRAS;Definir Gestor da obra;;SUPERVISOR_DE_OBRAS;;1;1;QUEUE
-RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;PLANEJAMENTO DE OBRA;Verificar as documentações e informações da instalação. Preencher o formulário da obra. Abrir atividades conforme o formulário para adequação de padrão, laudos, transofmrador e placa de geração de acordo com CC;;SUPERVISOR_DE_OBRAS;;3;4;QUEUE
-RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;Prospectar Integrador;Buscar por integradores - Caso não encontre neste prazo aciona a gerencia;;GESTOR_DE_OBRAS;;5;9;LOOKUP
-RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;CONTRATAR/ANEXAR ASSINATURA DA PROPOSTA COMERCIAL;"Anexar o comprovante de assinatura da proposta comercial do integrador;";;GESTOR_DE_OBRAS;FINANCEIRO;2;11;LOOKUP
-RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;SOLICITAR PAGAMENTO DE INTEGRADOR;Solicitar a emissão de 3 NF - Criar pedido de compra das 2 primeiras NF e segura a 3 para o final caso tenha algum ajuste. Anexa a NF para pagamento conforme o andamento da obra.;;GESTOR_DE_OBRAS;FINANCEIRO;1;12;LOOKUP
-RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;Informar faturamento KIT WEG;Logistica Informar o Faturamento;;Analista_de_Logistica;;1;13;ROLE
-RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;VALIDAR LISTA DE MATERIAS;Volta para o passo anterior no caso de uma negativa com as correções. Após validade deve cair para o setor de Compras (Integração SAP);;GESTOR_DE_OBRAS;"PROJETISTA;COORDENADOR_DE_ENGENHARIA";1;14;LOOKUP
-RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;SOLICITAR COMPRA DE MATERIAIS COMPLEMENTARES;Informar número da solicitação do SAP;;GESTOR_DE_OBRAS;"ALMOXARIFADO E COMPRAS;COORDENADOR_DE_ENGENHARIA";1;15;LOOKUP
-RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;RECEBIMENTO DOS MATERIAIS COMPLEMENTARES;Anexar fotos dos materiais entregue;;GESTOR_DE_OBRAS;";Analista_de_Logistica";10;25;LOOKUP
-RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;RECEBIMENTO DO KIT WEG;Anexar Fotos do Kit Entregue;;GESTOR_DE_OBRAS;"COORDENADOR_DE_VIABILIDADE;Analista_de_Logistica";10;35;LOOKUP
-RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;AGENDAMENTO DO INÍCIO DE OBRA;"Informar a data agendada para o início das atividades; Essa atividade deverá ser aberta após a conclusão de todas as annteriores desse Etapa;";;GESTOR_DE_OBRAS;"COORDENADOR_DE_ENGENHARIA;GESTOR_DE_OBRAS";1;36;LOOKUP
-RT_UFV_MICRO;STATUS_OBRA_EM_EXECUCAO;EXECUÇÃO DA OBRA;Informar inicio e previsão de término, inserir nota com as datas e comentários pertinentes;;GESTOR_DE_OBRAS;"COORDENADOR_DE_ENGENHARIA;GESTOR_DE_OBRAS";5;41;LOOKUP
-RT_UFV_MICRO;STATUS_OBRA_EM_EXECUCAO;EXECUÇÃO DA OBRA;"Gerar atividade a cada dia enquanto o Status estiver em ""Execução da Obra"". A Atividade entra em atraso a partir de D+1 da criação gerando aviso aos interessados;";;GESTOR_DE_OBRAS;"COORDENADOR_DE_ENGENHARIA;GESTOR_DE_OBRAS;";0;41;LOOKUP
-RT_UFV_MICRO;STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR;VALIDAÇÃO DA OBRA;"preencher o formulário de check list final da obra ( Aprovado, Reprovado, Ressalvas): MOBILIZAÇÃO/CONFERÊNCIA DE MATERIAIS (Fotos)
+TipoProjetoObra;Status;ORDEM;Assunto;Acoes;Observacoes;Responsavel;Interessados;PrazoDiasUteis;DataVencimentoDMais;TipoProprietario
+RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;1;DELEGAR GESTOR DE OBRAS;Definir Gestor da obra;;SUPERVISOR_DE_OBRAS;;1;1;QUEUE
+RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;2;PLANEJAMENTO DE OBRA;Verificar as documentações e informações da instalação. Preencher o formulário da obra. Abrir atividades conforme o formulário para adequação de padrão, laudos, transofmrador e placa de geração de acordo com CC;;SUPERVISOR_DE_OBRAS;;3;4;QUEUE
+RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;3;Prospectar Integrador;Buscar por integradores - Caso não encontre neste prazo aciona a gerencia;;GESTOR_DE_OBRAS;;5;9;LOOKUP
+RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;4;CONTRATAR/ANEXAR ASSINATURA DA PROPOSTA COMERCIAL;"Anexar o comprovante de assinatura da proposta comercial do integrador;";;GESTOR_DE_OBRAS;FINANCEIRO;2;11;LOOKUP
+RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;4;SOLICITAR PAGAMENTO DE INTEGRADOR;Solicitar a emissão de 3 NF - Criar pedido de compra das 2 primeiras NF e segura a 3 para o final caso tenha algum ajuste. Anexa a NF para pagamento conforme o andamento da obra.;;GESTOR_DE_OBRAS;FINANCEIRO;1;12;LOOKUP
+RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;5;Informar faturamento KIT WEG;Logistica Informar o Faturamento;;Analista_de_Logistica;;1;13;ROLE
+RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;6;VALIDAR LISTA DE MATERIAS;Volta para o passo anterior no caso de uma negativa com as correções. Após validade deve cair para o setor de Compras (Integração SAP);;GESTOR_DE_OBRAS;"PROJETISTA;COORDENADOR_DE_ENGENHARIA";1;14;LOOKUP
+RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;7;SOLICITAR COMPRA DE MATERIAIS COMPLEMENTARES;Informar número da solicitação do SAP;;GESTOR_DE_OBRAS;"ALMOXARIFADO E COMPRAS;COORDENADOR_DE_ENGENHARIA";1;15;LOOKUP
+RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;8;RECEBIMENTO DOS MATERIAIS COMPLEMENTARES;Anexar fotos dos materiais entregue;;GESTOR_DE_OBRAS;";Analista_de_Logistica";10;25;LOOKUP
+RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;9;RECEBIMENTO DO KIT WEG;Anexar Fotos do Kit Entregue;;GESTOR_DE_OBRAS;"COORDENADOR_DE_VIABILIDADE;Analista_de_Logistica";10;35;LOOKUP
+RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;10;AGENDAMENTO DO INÍCIO DE OBRA;"Informar a data agendada para o início das atividades; Essa atividade deverá ser aberta após a conclusão de todas as annteriores desse Etapa;";;GESTOR_DE_OBRAS;"COORDENADOR_DE_ENGENHARIA;GESTOR_DE_OBRAS";1;36;LOOKUP
+RT_UFV_MICRO;STATUS_OBRA_EM_EXECUCAO;11;EXECUÇÃO DA OBRA;Informar inicio e previsão de término, inserir nota com as datas e comentários pertinentes;;GESTOR_DE_OBRAS;"COORDENADOR_DE_ENGENHARIA;GESTOR_DE_OBRAS";5;41;LOOKUP
+RT_UFV_MICRO;STATUS_OBRA_EM_EXECUCAO;11;EXECUÇÃO DA OBRA;"Gerar atividade a cada dia enquanto o Status estiver em ""Execução da Obra"". A Atividade entra em atraso a partir de D+1 da criação gerando aviso aos interessados;";;GESTOR_DE_OBRAS;"COORDENADOR_DE_ENGENHARIA;GESTOR_DE_OBRAS;";0;41;LOOKUP
+RT_UFV_MICRO;STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR;12;VALIDAÇÃO DA OBRA;"preencher o formulário de check list final da obra ( Aprovado, Reprovado, Ressalvas): MOBILIZAÇÃO/CONFERÊNCIA DE MATERIAIS (Fotos)
 INSTALAÇÃO DE ESTRUTURA DE FIXAÇÃO (Fotos)
 MONTAGEM DOS MÓDULOS (Fotos)
 EXECUÇÃO DE ATERRAMENTO (Fotos)
@@ -21,8 +21,8 @@ MONTAGEM DOS INVERSORES  (Fotos)
 CONEXÕES CA  (Fotos)
 ACABAMENTOS (Fotos)
 COMISSIONAMENTO (Fotos)
-RELATÓRIO DE CONCLUSÃO DE OBRA (Fotos)";;ANALISTE_DE_QUALIDADE;"SUPERVISOR_DE_ASSISTENCIA TÉCNICA, COORDENADOR_DE_ENGENHARIA,GERENTE DE ENGENHARIA;";1;42;QUEUE
-RT_UFV_MICRO;STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR;SOLICITAR VISTORIA/TROCA DE MEDIDOR;Anexar comprovante da solicitação;;HOMOLOGACAO;"HOMOLOGACAO;COORDENADOR_DE_ENGENHARIA";1;43;QUEUE
-RT_UFV_MICRO;STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR;RELATÓRIO FINAL DE OBRA;"Anexar o relatório final de obra para análise do analista de qualidade;";;GESTOR_DE_OBRAS;"ANALISTA_DE_POS_VENDAS;COORDENADOR_DE_ENGENHARIA;COORDENADOR_DE_POS_VENDA";1;44;LOOKUP
-RT_UFV_MICRO;STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR;Envio TERMO DE CONCLUSÃO;Criar e enviar para contratos;;GESTOR_DE_OBRAS;;1;45;LOOKUP
-RT_UFV_MICRO;STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR;ASSINATURA DO TERMO;Anexar termo assinado;;GESTOR_DE_OBRAS;;1;46;LOOKUP
+RELATÓRIO DE CONCLUSÃO DE OBRA (Fotos)";;ANALISTA_DE_QUALIDADE;"SUPERVISOR_DE_ASSISTENCIA TÉCNICA, COORDENADOR_DE_ENGENHARIA,GERENTE DE ENGENHARIA;";1;42;QUEUE
+RT_UFV_MICRO;STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR;13;SOLICITAR VISTORIA/TROCA DE MEDIDOR;Anexar comprovante da solicitação;;HOMOLOGACAO;"HOMOLOGACAO;COORDENADOR_DE_ENGENHARIA";1;43;QUEUE
+RT_UFV_MICRO;STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR;12;RELATÓRIO FINAL DE OBRA;"Anexar o relatório final de obra para análise do analista de qualidade;";;GESTOR_DE_OBRAS;"ANALISTA_DE_POS_VENDAS;COORDENADOR_DE_ENGENHARIA;COORDENADOR_DE_POS_VENDA";1;44;LOOKUP
+RT_UFV_MICRO;STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR;15;Envio TERMO DE CONCLUSÃO;Criar e enviar para contratos;;GESTOR_DE_OBRAS;;1;45;LOOKUP
+RT_UFV_MICRO;STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR;16;ASSINATURA DO TERMO;Anexar termo assinado;;GESTOR_DE_OBRAS;;1;46;LOOKUP

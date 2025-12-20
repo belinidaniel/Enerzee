@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>VERIFICAR_VIABILIDADE_TECNICA</fullName>
+    <description>Verificação e pendências da viabilidade técnica.</description>
+    <displayedFields>
+        <field>ViabilidadeTecnicaPendencia__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>false</isRequired>
+    </displayedFields>
+    <displayedFields>
+        <field>CriarAtividadeViabilidadeTecnica__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>false</isRequired>
+    </displayedFields>
+    <label>VERIFICAR VIABILIDADE TÉCNICA</label>
+</FieldSet>

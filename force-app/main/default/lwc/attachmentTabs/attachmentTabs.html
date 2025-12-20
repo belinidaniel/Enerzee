@@ -1,0 +1,103 @@
+<template>
+    <template if:true={loading}>
+        <div class="spinner-wrapper">
+            <lightning-spinner alternative-text="Carregando"></lightning-spinner>
+        </div>
+    </template>
+
+    <template if:true={hasData}>
+        <lightning-tabset variant="scoped" active-tab-value={activeTab} onactive={handleTabChange}>
+            <template for:each={groups} for:item="group">
+                <lightning-tab key={group.name} label={group.name} value={group.name}>
+                    <div class="slds-p-around_medium file-list">
+                        <template for:each={group.items} for:item="item">
+                            <article key={item.id} class="file-card slds-media">
+                                <div class="file-thumb slds-media__figure">
+                                    <lightning-icon icon-name={item.iconName} size="small" alternative-text="Arquivo"></lightning-icon>
+                                </div>
+                                <button class="slds-media__body file-body slds-button_reset"
+                                        type="button"
+                                        data-id={item.id}
+                                        data-group={group.name}
+                                        onclick={handlePreviewFile}>
+                                    <span class="file-title">{item.name}</span>
+                                    <p class="file-meta slds-text-body_small slds-text-color_weak">
+                                        {item.displayMeta}
+                                    </p>
+                                </button>
+                                <div class="file-actions">
+                                    <lightning-button-icon icon-name="utility:new_window"
+                                                           alternative-text="Abrir"
+                                                           onclick={openFile}
+                                                           data-url={item.url}></lightning-button-icon>
+                                </div>
+                            </article>
+                        </template>
+                    </div>
+                </lightning-tab>
+            </template>
+        </lightning-tabset>
+    </template>
+
+    <template if:false={hasData}>
+        <div class="empty">
+            Nenhum documento disponível ainda.
+        </div>
+    </template>
+
+    <template if:true={isFileModalOpen}>
+        <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container file-preview__container">
+                <header class="slds-modal__header">
+                    <lightning-button-icon icon-name="utility:close"
+                                           alternative-text="Fechar"
+                                           onclick={closeFileModal}
+                                           variant="bare-inverse"
+                                           class="slds-modal__close"></lightning-button-icon>
+                    <h2 class="slds-text-heading_medium">{filePreviewName}</h2>
+                </header>
+                <div class="slds-modal__content slds-var-p-around_medium file-preview__content">
+                    <template if:true={isAttachmentPreviewLoading}>
+                        <div class="spinner-wrapper">
+                            <lightning-spinner alternative-text="Carregando documento" size="medium"></lightning-spinner>
+                        </div>
+                    </template>
+                    <template if:false={isAttachmentPreviewLoading}>
+                        <template if:true={hasPreviewUrl}>
+                            <template if:true={filePreviewIsImage}>
+                                <img src={filePreviewUrl} alt="Pré-visualização" class="file-preview__image" />
+                            </template>
+                            <template if:true={filePreviewIsPdf}>
+                                <iframe src={filePreviewUrl}
+                                        title="Documento em PDF"
+                                        class="file-preview__frame"
+                                        style="width: 100%; height: 1000px;"></iframe>
+                            </template>
+                            <template if:true={filePreviewIsUnsupported}>
+                                <p>Visualização não suportada. Utilize o botão abaixo para abrir o arquivo.</p>
+                                <div class="slds-text-align_center slds-p-top_medium">
+                                    <lightning-button label="Abrir em nova aba"
+                                                      variant="neutral"
+                                                      onclick={openFile}
+                                                      data-url={filePreviewUrl}></lightning-button>
+                                </div>
+                            </template>
+                        </template>
+                        <template if:false={hasPreviewUrl}>
+                            <p>Arquivo não disponível para visualização.</p>
+                        </template>
+                    </template>
+                </div>
+                <footer class="slds-modal__footer file-preview__footer">
+                    <lightning-button label="Fechar" variant="neutral" onclick={closeFileModal}></lightning-button>
+                    <lightning-button label="Abrir em nova aba"
+                                      variant="brand"
+                                      class="slds-m-left_small"
+                                      onclick={openFile}
+                                      data-url={filePreviewUrl}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

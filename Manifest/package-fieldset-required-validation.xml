@@ -11,11 +11,37 @@
         <members>FieldSetMapping.ValidarListaMaterias</members>
         <members>FieldSetMapping.RecebimentoKitWeg</members>
         <members>FieldSetMapping.AgendamentoInicioObra</members>
+        <members>FieldSetMapping.RecebimentoMateriaisComplementares</members>
+        <members>FieldSetMapping.DelegarProjetistaProjeto</members>
+        <members>FieldSetMapping.VerificarDocumentacaoComercial</members>
+        <members>FieldSetMapping.VerificarViabilidadeTecnica</members>
+        <members>FieldSetMapping.FollowUpVerificarDocCom</members>
+        <members>FieldSetMapping.InserirBoletoArt</members>
+        <members>FieldSetMapping.LancarBoletoArt</members>
+        <members>FieldSetMapping.RealizarPagamentoArt</members>
+        <members>FieldSetMapping.SolicitarProtocoloProjeto</members>
+        <members>FieldSetMapping.ProtocolarProjetoUfv</members>
+        <members>FieldSetMapping.AprovacaoProjetoUfv</members>
+        <members>FieldSetMapping.StatusAprovacaoProjetoUfv</members>
+        <members>FieldSetMapping.AnexarProjetoExecutivo</members>
+        <members>FieldSetMapping.SolicitarContratosCusdCcer</members>
+        <members>FieldSetMapping.RecebimentoAssinaturaCusdCcer</members>
+        <members>FieldSetMapping.ProtocolarEstudosEletricos</members>
+        <members>FieldSetMapping.AprovacaoEstudosEletricos</members>
+        <members>FieldSetMapping.SolicitarDadosEstudosEletricos</members>
+        <members>FieldSetMapping.SolicitarDisponibilidadeEnergia</members>
+        <members>FieldSetMapping.AprovacaoProjetoSe</members>
+        <members>ActivityRequiredDocument.RELATORIO_FINAL_DE_OBRA.md-meta</members>
         <name>CustomMetadata</name>
     </types>
     <types> 
         <members>dynamicFieldsetForm</members>
         <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>ActivityRequiredDocument__mdt</members>
+        <members>OpportunityAttachmentLink__c</members>
+        <name>CustomObject</name>
     </types>
     <types>
         <members>Instalacao__c.DELEGAR_GESTOR_DE_OBRAS</members>
@@ -28,30 +54,124 @@
         <members>Instalacao__c.VALIDAR_LISTA_DE_MATERIAS</members>
         <members>Instalacao__c.RECEBIMENTO_DO_KIT_WEG</members>
         <members>Instalacao__c.AGENDAMENTO_DO_INICIO_DE_OBRA</members>
+        <members>Instalacao__c.RECEBIMENTO_MATERIAIS_COMPLEMENTARES</members>
+        <members>Projeto__c.DELEGAR_PROJETISTA</members>
+        <members>Projeto__c.VERIFICAR_DOCUMENTACAO_COMERCIAL</members>
+        <members>Projeto__c.VERIFICAR_VIABILIDADE_TECNICA</members>
+        <members>Projeto__c.APROVACAO_DO_PROJETO_UFV</members>
+        <members>Projeto__c.STATUS_APROVACAO_PROJETO_UFV</members>
+        <members>Projeto__c.FOLLOWUP_VERIFICAR_DOC_COM</members>
+        <members>Projeto__c.INSERIR_BOLETO_ART</members>
+        <members>Projeto__c.LANCAR_BOLETO_ART</members>
+        <members>Projeto__c.REALIZAR_PAGAMENTO_ART</members>
+        <members>Projeto__c.VALIDACAO_BENEFICIARIAS</members>
+        <members>Projeto__c.SOLICITAR_PROTOCOLO_DE_PROJETO</members>
+        <members>Projeto__c.PROTOCOLAR_PROJETO_UFV</members>
+        <members>Projeto__c.ANEXAR_PROJETO_EXECUTIVO_LISTA_MATERIAIS</members>
+        <members>Projeto__c.SOLICITAR_CONTRATOS_CUSD_CCER</members>
+        <members>Projeto__c.RECEBIMENTO_ASSINATURA_CUSD_CCER</members>
+        <members>Projeto__c.PROTOCOLAR_ESTUDOS_ELETRICOS</members>
+        <members>Projeto__c.APROVACAO_ESTUDOS_ELETRICOS</members>
+        <members>Projeto__c.SOLICITAR_DADOS_ESTUDOS_ELETRICOS</members>
+        <members>Projeto__c.SOLICITAR_DISPONIBILIDADE_ENERGIA</members>
+        <members>Projeto__c.APROVACAO_PROJETO_SE</members>
         <name>FieldSet</name>
     </types>
     <types>
+        <members>Activity.DispensarAtividade__c</members>
+        <members>Activity.MotivoDispensa__c</members>
+        <members>Activity.PrazoCongelado__c</members>
         <members>Instalacao__c.AdequacaoPadraoPlanejamento__c</members>
         <members>Instalacao__c.ElaborarLaudoPlanejamento__c</members>
         <members>Instalacao__c.ExecutivoPlanejamento__c</members>
         <members>Instalacao__c.IntegradorPlanejamento__c</members>
         <members>Instalacao__c.ListaComplementarPlanejamento__c</members>
         <members>Instalacao__c.SolicTrafoPlanejamento__c</members>
+        <members>Projeto__c.DocumentacaoComercialPendencia__c</members>
+        <members>Projeto__c.DocumentacaoCriarAtividadeContratos__c</members>
+        <members>Projeto__c.ViabilidadeTecnicaPendencia__c</members>
+        <members>Projeto__c.CriarAtividadeViabilidadeTecnica__c</members>
+        <members>Projeto__c.SubStatus__c</members>
+        <members>Projeto__c.MotivoSubStatus__c</members>
+        <members>Projeto__c.CartaAprovacaoDiasRestantes__c</members>
+        <members>Opportunity.Status__c</members>
+        <members>Opportunity.ProjectStatusReason__c</members>
+        <members>OpportunityAttachmentLink__c.ActivityName__c</members>
+        <members>OpportunityAttachmentLink__c.SObjectId__c</members>
         <name>CustomField</name>
     </types>
     <types>
+        <members>IntegracaoFormaPagamentoNegociacao</members>
+        <members>InstalacaoTaskBO</members>
+        <members>InstalacaoTriggerHandler</members>
+        <members>GORecordsTO</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityUtils</members>
+        <members>OpportunityTriggerHandler</members>
+        <members>ProposalService</members>
+        <members>ProjetoBO</members>
+        <members>StatusEnumMap</members>
         <members>AttachmentFeedService</members>
         <members>FieldSetConfigurationService</members>
         <members>TaskStateService</members>
         <members>TaskCompletionService</members>
         <members>TaskBO</members>
         <members>TaskTriggerHandler</members>
+        <members>TaskUtils</members>
+        <members>TaskDeadlineNotificationBatch</members>
+        <members>TaskDeadlineNotificationScheduler</members>
+        <members>TaskTemplateFlowTest</members>
+        <members>TaskTemplateUtils</members>
+        <members>ActivityDocumentController</members>
+        <members>ExternalArchiveService</members>
+        <members>TaskCompletionServiceDocTest</members>
+        <members>TaskBO</members>
         <name>ApexClass</name>
+    </types>
+    <types>
+        <members>ProjetoTrigger</members>
+        <members>InstalacaoTrigger</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <members>TabelaTarefasInstalacao</members>
+        <members>TabelaTarefasProjetos</members>
+        <name>StaticResource</name>
+    </types>
+    <types>
+        <members>Opportunity.Aprovacao_Forma_de_Pagamento</members>
+        <name>ApprovalProcess</name>
+    </types>
+    <types>
+        <members>Task-Task Layout</members>
+        <members>Task-Jornada do Cliente</members>
+        <members>Opportunity-Opportunity Layout Micro</members>
+        <members>Opportunity-Opportunity Layout Mini</members>
+        <members>Projeto__c-Layout de Projeto</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>Opportunity</members>
+        <name>Workflow</name>
+    </types>
+    <types>
+        <members>Opportunity.EzeeSolarB</members>
+        <name>RecordType</name>
     </types>
     <types>
         <members>FieldSetMapping__mdt.RequiresAttachment__c</members>
         <members>FieldSetMapping__mdt.RequiresComment__c</members>
         <name>CustomField</name>
+    </types>
+    <types>
+        <members>activityDocumentUpload</members>
+        <members>attachmentTabs</members>
+        <members>dynamicFieldsetForm</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>Analista_de_Qualidade</members>
+        <name>Queue</name>
     </types>
     <version>64.0</version>
 </Package>

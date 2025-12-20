@@ -23,7 +23,9 @@ public class TaskTriggerHandler extends TriggerHandler {
         enabled = false;
     }
     
-    public override void beforeInsert(){}
+    public override void beforeInsert(){
+        TaskBO.preventDuplicateOpenTasks((List<Task>) newRecordList);
+    }
 
     public override void afterInsert(){}
 
@@ -36,6 +38,7 @@ public class TaskTriggerHandler extends TriggerHandler {
         TaskBO.createWorkOrderRequestMaterialBuy((List<Task>) newRecordList, (Map<Id, Task>) oldMap);
         TaskBO.notifyAfterTaskConclusion((List<Task>) newRecordList, (Map<Id, Task>) oldMap);
         TaskBO.updateProjectPhase((List<Task>) newRecordList, (Map<Id, Task>) oldMap);
+        TaskBO.handleAprovacaoProjetoUfv((List<Task>) newRecordList, (Map<Id, Task>) oldMap);
         TaskBO.checkTaskCloser((List<Task>) newRecordList, (Map<Id, Task>) oldMap);
         TaskBO.updateViabilityStatusOnTaskCompletion((List<Task>) newRecordList, (Map<Id, Task>) oldMap);
     }

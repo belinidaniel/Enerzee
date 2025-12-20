@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-11-2025
+ * @last modified on  : 12-15-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -997,7 +997,31 @@ public class OpportunityBO {
             }
         }
 
+        // Controle de assuntos já existentes (tarefas em aberto) para evitar duplicidade
+        Map<Id, Set<String>> existingSubjectsByOpp = new Map<Id, Set<String>>();
+        Set<Id> opportunityIds = new Set<Id>();
+        for (Opportunity oppIdCollector : newList) {
+            opportunityIds.add(oppIdCollector.Id);
+            existingSubjectsByOpp.put(oppIdCollector.Id, new Set<String>());
+        }
+        if (!opportunityIds.isEmpty()) {
+            for (Task t : [
+                SELECT WhatId, Subject
+                FROM Task
+                WHERE WhatId IN :opportunityIds
+                    AND IsDeleted = false
+                    AND Status != :TaskUtils.STATUS_CONCLUIDO
+            ]) {
+                String norm = t.Subject == null ? '' : t.Subject.trim().toLowerCase();
+                if (!existingSubjectsByOpp.containsKey(t.WhatId)) {
+                    existingSubjectsByOpp.put(t.WhatId, new Set<String>());
+                }
+                existingSubjectsByOpp.get(t.WhatId).add(norm);
+            }
+        }
+
         List<Task> taskstoInsert = new List<Task>();
+        Map<Id, Set<String>> newSubjectsByOpp = new Map<Id, Set<String>>();
         for(Opportunity opportunity : newList){
             
             if(opportunity.OwnerId == integrationUserId) { continue; }
@@ -1017,32 +1041,39 @@ public class OpportunityBO {
                         //         SELECT Id FROM User WHERE Email LIKE 'amanda@enerzee.com.br%' LIMIT 1
                         //     ]);
                         // }
-                        taskstoInsert.add(TaskBO.createTask(
-                            opportunity.Id,
+                        String subjectGrupoA = 'Informe os dados da proposta - Grupo A - ' + accountName;
+                        String normSubjectGrupoA = subjectGrupoA.trim().toLowerCase();
+                        if (!existingSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoA)
+                            && !newSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoA)) {
+                            taskstoInsert.add(TaskBO.createTask(
+                                opportunity.Id,
 
-                            'Informe os dados da proposta - Grupo A - ' + accountName,
+                                subjectGrupoA,
 
-                            'PREENCHER OS CAMPOS:\n\n Modalidade de Venda\n Tipo da venda\n ' +
-                            'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
-                            'Tipo do telhado - Estrutura de fixação\n Logradouro\n ' +
-                            'Município Instalação\n Consumo Anual\n ' +
-                            'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
-                            'Validade da proposta (dias)\n Demanda Contratada - Fora Ponta\n ' +
-                            'Tarifa Demanda - Fora Ponta\n Consumo Médio - Fora Ponta\n ' +
-                            'Tarifa - Fora Ponta\n Consumo Médio - Ponta\n Tarifa - Ponta\n ' +
-                            'Tensão de Alimentação\n Potência Pico do Sistema (kWp)\n ' +
-                            'Geração mensal estimada\n Geração anual estimada\n ' +
-                            'Número de Módulos\n Potência Nominal do Módulo\n Fabricante Módulos\n ' +
-                            'Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
-                            'Potência Nominal do Sistema (kW)\n' +
-                            'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
+                                'PREENCHER OS CAMPOS:\n\n Modalidade de Venda\n Tipo da venda\n ' +
+                                'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
+                                'Tipo do telhado - Estrutura de fixação\n Logradouro\n ' +
+                                'Município Instalação\n Consumo Anual\n ' +
+                                'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
+                                'Validade da proposta (dias)\n Demanda Contratada - Fora Ponta\n ' +
+                                'Tarifa Demanda - Fora Ponta\n Consumo Médio - Fora Ponta\n ' +
+                                'Tarifa - Fora Ponta\n Consumo Médio - Ponta\n Tarifa - Ponta\n ' +
+                                'Tensão de Alimentação\n Potência Pico do Sistema (kWp)\n ' +
+                                'Geração mensal estimada\n Geração anual estimada\n ' +
+                                'Número de Módulos\n Potência Nominal do Módulo\n Fabricante Módulos\n ' +
+                                'Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
+                                'Potência Nominal do Sistema (kW)\n' +
+                                'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
 
-                            (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
+                                (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
 
-                            TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
-                            
-                            '1'
-                        ));
+                                TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
+                                
+                                '1'
+                            ));
+                            existingSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoA);
+                            newSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoA);
+                        }
                         continue;
                     }
 
@@ -1053,30 +1084,37 @@ public class OpportunityBO {
                         //         SELECT Id FROM User WHERE Email LIKE 'amanda@enerzee.com.br%' LIMIT 1
                         //     ]);
                         // }
-                        taskstoInsert.add(TaskBO.createTask(
-                            opportunity.Id,
+                        String subjectGrupoB = 'Informe os dados da proposta - Grupo B - ' + accountName;
+                        String normSubjectGrupoB = subjectGrupoB.trim().toLowerCase();
+                        if (!existingSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoB)
+                            && !newSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoB)) {
+                            taskstoInsert.add(TaskBO.createTask(
+                                opportunity.Id,
 
-                            'Informe os dados da proposta - Grupo B - ' + accountName,
+                                subjectGrupoB,
 
-                            'PREENCHER OS CAMPOS: \n\nModalidade de Venda\n Tipo da venda\n ' +
-                            'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
-                            'Tipo do telhado - Estrutura de fixação\n ' +
-                            'Logradouro\n Município Instalação\n Consumo Anual\n ' +
-                            'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
-                            'Validade da proposta (dias)\n' +
-                            'Tarifa com tributos - B\n Tensão de Alimentação\n ' +
-                            'Potência Pico do Sistema (kWp)\n Geração mensal estimada\n ' +
-                            'Geração anual estimada\n Número de Módulos\n Potência Nominal do Módulo\n ' +
-                            'Fabricante Módulos\n Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
-                            'Potência Nominal do Sistema (kW)\n' +
-                            'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
+                                'PREENCHER OS CAMPOS: \n\nModalidade de Venda\n Tipo da venda\n ' +
+                                'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
+                                'Tipo do telhado - Estrutura de fixação\n ' +
+                                'Logradouro\n Município Instalação\n Consumo Anual\n ' +
+                                'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
+                                'Validade da proposta (dias)\n' +
+                                'Tarifa com tributos - B\n Tensão de Alimentação\n ' +
+                                'Potência Pico do Sistema (kWp)\n Geração mensal estimada\n ' +
+                                'Geração anual estimada\n Número de Módulos\n Potência Nominal do Módulo\n ' +
+                                'Fabricante Módulos\n Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
+                                'Potência Nominal do Sistema (kW)\n' +
+                                'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
 
-                            (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
-                            
-                            TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
+                                (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
+                                
+                                TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
 
-                            '1'
-                        ));
+                                '1'
+                            ));
+                            existingSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoB);
+                            newSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoB);
+                        }
                         continue;
                     }
                 }
@@ -1216,19 +1254,35 @@ public class OpportunityBO {
             }
 
             if(OpportunityUtils.isFinancingSimulation(opportunity,oldMap.get(opportunity.Id))){
-                taskstoInsert.add(TaskBO.createTask(
-                            opportunity.Id,
-                            'Anexar Simulações de Financiamento - ' + accountName,
-                            'PREENCHER OS CAMPOS: \n\nDetalhes do Processo de Financiamento\n',
-                            financeiroQueue,
-                            TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
-                            '1'
-                        ));
-                        continue;
+                String subjectFin = 'Anexar Simulações de Financiamento - ' + accountName;
+                String normSubjectFin = subjectFin.trim().toLowerCase();
+                if (!existingSubjectsByOpp.get(opportunity.Id).contains(normSubjectFin)
+                    && !newSubjectsByOpp.get(opportunity.Id).contains(normSubjectFin)) {
+                    taskstoInsert.add(TaskBO.createTask(
+                                opportunity.Id,
+                                subjectFin,
+                                'PREENCHER OS CAMPOS: \n\nDetalhes do Processo de Financiamento\n',
+                                financeiroQueue,
+                                TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
+                                '1'
+                            ));
+                    existingSubjectsByOpp.get(opportunity.Id).add(normSubjectFin);
+                    newSubjectsByOpp.get(opportunity.Id).add(normSubjectFin);
+                }
+                continue;
             }
         }
-
-        insert tasksToInsert;
+        if (!taskstoInsert.isEmpty()) {
+            try {
+                insert tasksToInsert;
+            } catch (DmlException dmle) {
+                // Ignora duplicidade/validação de tarefa aberta e não bloqueia a oportunidade
+                if (dmle.getMessage() == null
+                    || !dmle.getMessage().contains('Já existe uma atividade em aberto com este assunto')) {
+                    throw dmle;
+                }
+            }
+        }
     }
 
     public static void validateSellBuyOrderAndContractRequiredFields(List<Opportunity> newList, Map<Id, Opportunity> oldMap){
@@ -2387,7 +2441,7 @@ public class OpportunityBO {
                     opportunity.Status__c = OpportunityUtils.SUB_STATUS_EM_ANDAMENTO;
             
                 } else if (OpportunityUtils.isStatusAccessOpinion(opportunity)){
-                    opportunity.Status__c = OpportunityUtils.isRecordTypeSolar(opportunity) || OpportunityUtils.isRecordTypeProdutos(opportunity) ? OpportunityUtils.SUB_STATUS_FAST_TRACK : OpportunityUtils.SUB_STATUS_EM_ANALISE;
+                    opportunity.Status__c = OpportunityUtils.isRecordTypeSolar(opportunity) || OpportunityUtils.isRecordTypeProdutos(opportunity) ? OpportunityUtils.SUB_STATUS_EM_ANALISE : OpportunityUtils.SUB_STATUS_EM_ANALISE;
 
                 } else if (OpportunityUtils.isStatusCompleted(opportunity)){
                     opportunity.Status__c = OpportunityUtils.SUB_STATUS_VALIDANDO_BONIFICACAO;

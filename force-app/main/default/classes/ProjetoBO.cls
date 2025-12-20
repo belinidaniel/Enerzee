@@ -131,6 +131,70 @@ public class ProjetoBO {
             project.StatusAtualDesde__c = System.now();
         }
     }
+
+    public static void syncOpportunityStatusFromProject(List<Projeto__c> newRecordList, Map<Id, Projeto__c> oldMap) {
+        if (newRecordList == null || newRecordList.isEmpty()) {
+            return;
+        }
+
+        Boolean hasProjectStatusReason = Schema.SObjectType.Opportunity.fields.getMap().containsKey('ProjectStatusReason__c');
+        Set<Id> opportunityIds = new Set<Id>();
+        Map<Id, Projeto__c> projectByOpportunity = new Map<Id, Projeto__c>();
+
+        for (Projeto__c project : newRecordList) {
+            Projeto__c oldProject = oldMap != null ? oldMap.get(project.Id) : null;
+            if (project.Oportunidade__c == null || oldProject == null) {
+                continue;
+            }
+
+            Boolean statusChanged = oldProject.Status__c != project.Status__c;
+            Boolean motivoChanged = oldProject.MotivoSubStatus__c != project.MotivoSubStatus__c;
+
+            if (!statusChanged && !motivoChanged) {
+                continue;
+            }
+
+            opportunityIds.add(project.Oportunidade__c);
+            projectByOpportunity.put(project.Oportunidade__c, project);
+        }
+
+        if (opportunityIds.isEmpty()) {
+            return;
+        }
+
+        String query = 'SELECT Id, Status__c';
+        if (hasProjectStatusReason) {
+            query += ', ProjectStatusReason__c';
+        }
+        query += ' FROM Opportunity WHERE Id IN :opportunityIds';
+
+        List<Opportunity> oppsToUpdate = new List<Opportunity>();
+        for (Opportunity opp : Database.query(query)) {
+            Projeto__c project = projectByOpportunity.get(opp.Id);
+            if (project == null) {
+                continue;
+            }
+
+            Boolean changed = false;
+            if (project.Status__c != null && opp.Status__c != project.Status__c) {
+                opp.Status__c = project.Status__c;
+                changed = true;
+            }
+
+            if (hasProjectStatusReason && opp.get('ProjectStatusReason__c') != project.MotivoSubStatus__c) {
+                opp.put('ProjectStatusReason__c', project.MotivoSubStatus__c);
+                changed = true;
+            }
+
+            if (changed) {
+                oppsToUpdate.add(opp);
+            }
+        }
+
+        if (!oppsToUpdate.isEmpty()) {
+            update oppsToUpdate;
+        }
+    }
     
     public static void createTasks(List<Projeto__c> newRecordList, Map<Id, Projeto__c> oldMap){
         Map<String, Id> recordTypeStringCodeToId = getRecordTypeCodeToIdMap();
@@ -263,34 +327,36 @@ public class ProjetoBO {
                 System.debug('key '+ key);
 
                 list<TaskProjectTableLine> lines = mapStatusToTasksTemplate == null || mapStatusToTasksTemplate.get(key) == null ? new list<TaskProjectTableLine>() : mapStatusToTasksTemplate.get(key);
+                lines = sortByOrder(lines);
                 System.debug('lines '+ lines);
 
                 for(TaskProjectTableLine line : lines){
                     System.debug('line '+ line);
 
-                    if(
-                        (
-                            line.Assunto.contains('DELEGAR PROJETISTA') ||
-                            line.Assunto.contains('DELEGAR GESTOR DE OBRAS')
-                        )
-                     ){
-                        System.debug('line '+ line);
-                        interessadosList = line == null ? null : line.Interessados != null && line.Interessados != '' ? line.Interessados.split(';') : null;
-                        System.debug('interessadosList '+ interessadosList);
-                        if(line != null){
-                            Task generated = createTask(line, project, interessadosList, true, roleToUser, queueMap);
-                            if(generated != null){
-                                tasksToInsert.add(generated);
-                            }
-                        }
-                        if(interessadosList != null && recordTypesToValidateTwoResponsibles.contains(project.RecordTypeId)){
-                            line = mapStatusToTasksTemplate.get(key)[1];
-                            interessadosList = line.Interessados != null && line.Interessados != '' ? line.Interessados.split(';') : null;
+                    if (line == null || String.isBlank(line.Assunto)) {
+                        continue;
+                    }
+                    if (TaskBO.taskSubjectExists(project.Id, line.Assunto)) {
+                        continue;
+                    }
 
-                            Task generatedTwo = createTask(line, project, interessadosList, true, roleToUser, queueMap);
-                            if(generatedTwo != null){
-                                tasksToInsert.add(generatedTwo);
-                            }
+                    Boolean isDelegar = line.Assunto.contains('DELEGAR PROJETISTA') || line.Assunto.contains('DELEGAR GESTOR DE OBRAS');
+                    interessadosList = line.Interessados != null && line.Interessados != '' ? line.Interessados.split(';') : null;
+
+                    Task generated = createTask(line, project, interessadosList, isDelegar, roleToUser, queueMap);
+                    if(generated != null){
+                        tasksToInsert.add(generated);
+                    }
+
+                    if(isDelegar && interessadosList != null && recordTypesToValidateTwoResponsibles.contains(project.RecordTypeId)){
+                        // cria segunda task de delegação quando há dois responsáveis
+                        TaskProjectTableLine secondLine = (mapStatusToTasksTemplate.get(key) != null && mapStatusToTasksTemplate.get(key).size() > 1)
+                            ? mapStatusToTasksTemplate.get(key)[1]
+                            : null;
+                        List<String> interestedTwo = secondLine != null && secondLine.Interessados != null && secondLine.Interessados != '' ? secondLine.Interessados.split(';') : null;
+                        Task generatedTwo = createTask(secondLine != null ? secondLine : line, project, interestedTwo, true, roleToUser, queueMap);
+                        if(generatedTwo != null){
+                            tasksToInsert.add(generatedTwo);
                         }
                     }
                 }
@@ -316,8 +382,16 @@ public class ProjetoBO {
 
 
                     TaskProjectTableLine[] lines = mapStatusToTasksTemplate == null ? new List<TaskProjectTableLine>() :  mapStatusToTasksTemplate.get(key) != null ? mapStatusToTasksTemplate.get(key) : new List<TaskProjectTableLine>();
+                    lines = sortByOrder(lines);
 
                     for(TaskProjectTableLine line : lines){
+                        if (line == null || String.isBlank(line.Assunto)) {
+                            continue;
+                        }
+                        if (TaskBO.taskSubjectExists(project.Id, line.Assunto)) {
+                            continue;
+                        }
+
                         if(
                             (
                                 !line.Assunto.contains('DELEGAR PROJETISTA') && 
@@ -357,15 +431,23 @@ public class ProjetoBO {
                         key = statusToStatusCode.get(status);
                         key +=  project.RecordTypeId == ProjetoUtils.RT_PADRAO_DE_ENTRADA ? '_SIM' : '';
 
-                        if(project.Status__c == status){
+                if(project.Status__c == status){
 
-                            //  Pega os templates de Task para o Status que foi atribuído na transação atual
-                            TaskProjectTableLine[] lines = mapStatusToTasksTemplate.get(key) != null ? mapStatusToTasksTemplate.get(key) : new List<TaskProjectTableLine>();
-                            for(TaskProjectTableLine line : lines){
-                                if(shouldUFVPhaseBeCreated(project, line.Assunto, recordTypesUFV, financimentoProjectOpportunityIdsToSkipPhasesUFV)){
-                                    interessadosList = line.Interessados != null && line.Interessados != '' ? line.Interessados.split(';') : null;
+                    //  Pega os templates de Task para o Status que foi atribuído na transação atual
+                    TaskProjectTableLine[] lines = mapStatusToTasksTemplate.get(key) != null ? mapStatusToTasksTemplate.get(key) : new List<TaskProjectTableLine>();
+                    lines = sortByOrder(lines);
+                    for(TaskProjectTableLine line : lines){
+                        if (line == null || String.isBlank(line.Assunto)) {
+                            continue;
+                        }
+                        if (TaskBO.taskSubjectExists(project.Id, line.Assunto)) {
+                            continue;
+                        }
 
-                                    Task generatedStatus = createTask(line, project, interessadosList, false, roleToUser, queueMap);
+                        if(shouldUFVPhaseBeCreated(project, line.Assunto, recordTypesUFV, financimentoProjectOpportunityIdsToSkipPhasesUFV)){
+                            interessadosList = line.Interessados != null && line.Interessados != '' ? line.Interessados.split(';') : null;
+
+                            Task generatedStatus = createTask(line, project, interessadosList, false, roleToUser, queueMap);
                                     if(generatedStatus != null){
                                         tasksToInsert.add(generatedStatus);
                                     }
@@ -538,28 +620,14 @@ public class ProjetoBO {
     }
 
     public static void checkTasksConclusionBeforeStatusChange(List<Projeto__c> newRecordList, Map<Id, Projeto__c> oldMap){
-        Map<Id, List<Task>> projectIdToTaskList = new Map<Id, List<Task>>();
-        for(Task task : [
-            SELECT  Id, Status, WhatId
-            FROM    Task
-            WHERE   WhatId IN :Collection.of(newRecordList).pluckNotNullStrings(Projeto__c.Id)
-        ]){
-            if(!projectIdToTaskList.containsKey(task.WhatId)){
-                projectIdToTaskList.put(task.WhatId, new List<Task>());
-            }
-            projectIdToTaskList.get(task.WhatId).add(task);
+        if (newRecordList == null || newRecordList.isEmpty()) {
+            return;
         }
 
-        for(Projeto__c project : newRecordList){
+        for (Projeto__c project : newRecordList){
             if(ProjetoUtils.isStatusChanging(project, oldMap.get(project.Id))){
-                if(project == null || projectIdToTaskList.get(project.Id) == null){
-                    continue;
-                }
-                for(Task task : projectIdToTaskList.get(project.Id)){
-                    if(!task.Status.equalsIgnoreCase(TaskUtils.STATUS_CONCLUIDO)){
-                        // project.addError('Todas as tarefas existentes para esse projeto precisam estar concluídas antes de avançar de fase!');
-                        // break;
-                    }
+                if (TaskBO.hasOpenTasks(project.Id)) {
+                    project.addError('Todas as tarefas existentes para esse projeto precisam estar concluídas antes de avançar de fase.');
                 }
             }
         }
@@ -614,6 +682,14 @@ public class ProjetoBO {
             line.PrazoDiasUteis      = getCsvValue(headerIndex, tableBodyLine, 'PRAZODIASUTEIS');
             line.DataVencimentoDMais = getCsvValue(headerIndex, tableBodyLine, 'DATAVENCIMENTODMAIS');
             line.TipoDeProprietario  = getCsvValue(headerIndex, tableBodyLine, 'TIPOPROPRIETARIO');
+            String ordemStr          = getCsvValue(headerIndex, tableBodyLine, 'ORDEM');
+            if (!String.isBlank(ordemStr)) {
+                try {
+                    line.Ordem = Integer.valueOf(ordemStr);
+                } catch (Exception ignore) {
+                    line.Ordem = null;
+                }
+            }
 
             if(String.isBlank(line.TipoProjetoObra) || line.TipoProjetoObra.equalsIgnoreCase('EXCLUIR')){
                 tableBodyLine = tableBodyCSVReader.readLine();
@@ -625,6 +701,15 @@ public class ProjetoBO {
             tableBodyLine = tableBodyCSVReader.readLine();
         }
         return table;
+    }
+
+    // Ordena linhas pelo campo Ordem (asc), mantendo nulos no fim
+    private static List<TaskProjectTableLine> sortByOrder(List<TaskProjectTableLine> lines) {
+        if (lines == null || lines.isEmpty()) {
+            return lines;
+        }
+        lines.sort(new TaskProjectTableLineComparator());
+        return lines;
     }
 
     private static String normalizeHeader(String headerValue){
@@ -1035,9 +1120,22 @@ public class ProjetoBO {
         public String PrazoDiasUteis;
         public String DataVencimentoDMais;
         public String TipoDeProprietario;
+        public Integer Ordem;
     }
 
     public class TaskProjectTable{
         public TaskProjectTableLine[] tableLines;
+    }
+
+    // Comparador por Ordem (nulls por último)
+    public class TaskProjectTableLineComparator implements System.Comparator<TaskProjectTableLine> {
+        public Integer compare(TaskProjectTableLine a, TaskProjectTableLine b) {
+            Integer ao = a != null ? a.Ordem : null;
+            Integer bo = b != null ? b.Ordem : null;
+            if (ao == null && bo == null) return 0;
+            if (ao == null) return 1;
+            if (bo == null) return -1;
+            return ao > bo ? 1 : (ao < bo ? -1 : 0);
+        }
     }
 }

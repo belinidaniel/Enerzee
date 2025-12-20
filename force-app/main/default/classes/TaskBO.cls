@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-11-2025
+ * @last modified on  : 12-16-2025
  * @last modified by  : Daniel Belini
 **/
 public class TaskBO {
@@ -16,6 +16,156 @@ public class TaskBO {
             ActivityDate      = dueDate,
             PrazoDiasUteis__c = deadline
         );
+    }
+
+    // Valida anexos obrigatórios configurados no CMDT ActivityRequiredDocument__mdt
+    @TestVisible
+    private static void validateRequiredDocuments(Task taskRecord) {
+        if (taskRecord == null || String.isBlank(taskRecord.Subject) || taskRecord.WhatId == null) {
+            return;
+        }
+
+        List<ActivityRequiredDocument__mdt> configs = [
+            SELECT ActivitySubject__c, RequiredFiles__c
+            FROM ActivityRequiredDocument__mdt
+            WHERE ActivitySubject__c = :taskRecord.Subject
+        ];
+        if (configs.isEmpty()) {
+            return;
+        }
+
+        Set<String> required = new Set<String>();
+        for (ActivityRequiredDocument__mdt cfg : configs) {
+            if (String.isBlank(cfg.RequiredFiles__c)) continue;
+            for (String name : cfg.RequiredFiles__c.split(';')) {
+                String norm = normalizeName(name);
+                if (!String.isBlank(norm)) {
+                    required.add(norm);
+                }
+            }
+        }
+        if (required.isEmpty()) {
+            return;
+        }
+
+        Set<String> uploaded = new Set<String>();
+        for (OpportunityAttachmentLink__c link : [
+            SELECT AttachmentDescription__c
+            FROM OpportunityAttachmentLink__c
+            WHERE SObjectId__c = :String.valueOf(taskRecord.WhatId)
+                AND ActivityName__c = :taskRecord.Subject
+        ]) {
+            String norm = normalizeName(link.AttachmentDescription__c);
+            if (!String.isBlank(norm)) {
+                uploaded.add(norm);
+            }
+        }
+
+        Set<String> missing = required.clone();
+        missing.removeAll(uploaded);
+        if (!missing.isEmpty()) {
+            taskRecord.addError('Ainda faltam anexar os documentos obrigatórios: ' + String.join(new List<String>(missing), ', '));
+        }
+    }
+
+    @TestVisible
+    private static String normalizeName(String value) {
+        if (String.isBlank(value)) {
+            return '';
+        }
+        String normalized = value.toLowerCase();
+        normalized = normalized
+            .replaceAll('[áàãâä]', 'a')
+            .replaceAll('[éèêë]', 'e')
+            .replaceAll('[íìîï]', 'i')
+            .replaceAll('[óòõôö]', 'o')
+            .replaceAll('[úùûü]', 'u')
+            .replaceAll('[ç]', 'c');
+        normalized = normalized.replaceAll('[^a-z0-9]+', '_');
+        normalized = normalized.replaceAll('^_+|_+$', '');
+        return normalized;
+    }
+
+    public static Boolean hasOpenTasks(Id whatId) {
+        if (whatId == null) {
+            return false;
+        }
+
+        String query = 'SELECT Id, Status';
+        Boolean hasDispensa = Schema.sObjectType.Task.fields.getMap().containsKey('DispensarAtividade__c');
+        if (hasDispensa) {
+            query += ', DispensarAtividade__c';
+        }
+        String statusConcluido = TaskUtils.STATUS_CONCLUIDO;
+        query += ' FROM Task WHERE WhatId = :whatId AND IsDeleted = false AND Status != :statusConcluido LIMIT 50';
+
+        List<Task> tasks = Database.query(query);
+        if (tasks.isEmpty()) {
+            return false;
+        }
+
+        for (Task t : tasks) {
+            if (hasDispensa) {
+                Boolean dispensa = (Boolean)t.get('DispensarAtividade__c');
+                if (dispensa == true) {
+                    continue;
+                }
+            }
+            return true;
+        }
+
+        return false;
+    }
+    
+    public static void preventDuplicateOpenTasks(List<Task> newTasks) {
+        if (newTasks == null || newTasks.isEmpty()) {
+            return;
+        }
+
+        Map<String, List<Task>> keyToTasks = new Map<String, List<Task>>();
+        for (Task t : newTasks) {
+            if (t.WhatId == null || String.isBlank(t.Subject)) {
+                continue;
+            }
+            String key = String.valueOf(t.WhatId) + '::' + t.Subject.toLowerCase().trim();
+            if (!keyToTasks.containsKey(key)) {
+                keyToTasks.put(key, new List<Task>());
+            }
+            keyToTasks.get(key).add(t);
+        }
+
+        if (keyToTasks.isEmpty()) {
+            return;
+        }
+
+        Set<Id> whatIds = new Set<Id>();
+        Set<String> subjectsRaw = new Set<String>();
+        for (Task t : newTasks) {
+            if (t.WhatId != null && !String.isBlank(t.Subject)) {
+                whatIds.add(t.WhatId);
+                subjectsRaw.add(t.Subject.trim());
+            }
+        }
+
+        Map<String, Task> existingMap = new Map<String, Task>();
+        for (Task existing : [
+            SELECT Id, WhatId, Subject, Status
+            FROM Task
+            WHERE WhatId IN :whatIds
+                AND Subject IN :subjectsRaw
+                AND Status != :TaskUtils.STATUS_CONCLUIDO
+        ]) {
+            String key = String.valueOf(existing.WhatId) + '::' + existing.Subject.toLowerCase().trim();
+            existingMap.put(key, existing);
+        }
+
+        for (String key : keyToTasks.keySet()) {
+            if (existingMap.containsKey(key)) {
+                for (Task t : keyToTasks.get(key)) {
+                    t.addError('Já existe uma atividade em aberto com este assunto para o mesmo registro.');
+                }
+            }
+        }
     }
 
     public static Date getActivityDateBasedOnWorkingDays(Date startDate, Integer days){        
@@ -360,7 +510,7 @@ public class TaskBO {
     }
 
      // Método para atualizar a fase do projeto com base nas tarefas concluídas
-     public static void updateProjectPhase(List<Task> newRecordList, Map<Id, Task> oldMap) {
+    public static void updateProjectPhase(List<Task> newRecordList, Map<Id, Task> oldMap) {
         Set<Id> projectIds = new Set<Id>();  // Conjunto para armazenar IDs de projetos
 
         // Coleta IDs de projetos dos registros de Task novos ou atualizados
@@ -389,6 +539,75 @@ public class TaskBO {
 
         if (!projectsToUpdate.isEmpty()) {
             update projectsToUpdate;  // Atualiza os projetos cujas fases foram alteradas
+        }
+    }
+
+    // Atualiza o status do projeto e fase da oportunidade ao concluir "APROVAÇÃO DO PROJETO UFV"
+    public static void handleAprovacaoProjetoUfv(List<Task> newRecordList, Map<Id, Task> oldMap) {
+        if (newRecordList == null || newRecordList.isEmpty()) {
+            return;
+        }
+
+        Set<Id> projectIds = new Set<Id>();
+        for (Task task : newRecordList) {
+            if (task.WhatId == null || !isValidProjectId(task.WhatId)) {
+                continue;
+            }
+            if (TaskUtils.isTaskBeingConcluded(oldMap != null ? oldMap.get(task.Id) : null, task)
+                && task.Subject != null
+                && task.Subject.trim().equalsIgnoreCase(TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV)) {
+                projectIds.add(task.WhatId);
+            }
+        }
+
+        if (projectIds.isEmpty()) {
+            return;
+        }
+
+        List<Projeto__c> projectsToUpdate = new List<Projeto__c>();
+        Set<Id> opportunityIds = new Set<Id>();
+
+        Boolean hasSubStatus = Schema.SObjectType.Projeto__c.fields.getMap().containsKey('SubStatus__c');
+        String query = 'SELECT Id, Status__c, Oportunidade__c';
+        if (hasSubStatus) {
+            query += ', SubStatus__c';
+        }
+        query += ' FROM Projeto__c WHERE Id IN :projectIds';
+
+        for (Projeto__c project : Database.query(query)) {
+            String subStatusValue = hasSubStatus ? (String)project.get('SubStatus__c') : null;
+            if (subStatusValue != null && subStatusValue.equalsIgnoreCase('Aprovado')) {
+                if (project.Status__c != ProjetoUtils.STATUS_PROJETO_APROVADO) {
+                    project.Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO;
+                    projectsToUpdate.add(project);
+                }
+                if (project.Oportunidade__c != null) {
+                    opportunityIds.add(project.Oportunidade__c);
+                }
+            }
+        }
+
+        if (!projectsToUpdate.isEmpty()) {
+            update projectsToUpdate;
+        }
+
+        if (!opportunityIds.isEmpty()) {
+            List<Opportunity> oppsToUpdate = new List<Opportunity>();
+            for (Opportunity opp : [
+                SELECT Id, StageName
+                FROM Opportunity
+                WHERE Id IN :opportunityIds
+            ]) {
+                if (opp.StageName == null
+                    || !opp.StageName.equalsIgnoreCase(OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO)) {
+                    opp.StageName = OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO;
+                    oppsToUpdate.add(opp);
+                }
+            }
+
+            if (!oppsToUpdate.isEmpty()) {
+                update oppsToUpdate;
+            }
         }
     }
 
@@ -568,6 +787,13 @@ public class TaskBO {
                 continue;
             }
 
+            if (Schema.sObjectType.Task.fields.getMap().containsKey('DispensarAtividade__c')
+                && (Boolean)taskRecord.get('DispensarAtividade__c') == true) {
+                continue;
+            }
+
+            validateRequiredDocuments(taskRecord);
+
             List<FieldRequirement> requiredFields = new List<FieldRequirement>();
 
             try {
@@ -617,6 +843,17 @@ public class TaskBO {
                     }
                 }
 
+                if (objectApiName == 'Projeto__c'
+                    && taskRecord.Subject != null
+                    && taskRecord.Subject.trim().equalsIgnoreCase(TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV)) {
+                    if (fieldMap.containsKey('SubStatus__c')) {
+                        queryFields.add('SubStatus__c');
+                    }
+                    if (fieldMap.containsKey('MotivoSubStatus__c')) {
+                        queryFields.add('MotivoSubStatus__c');
+                    }
+                }
+
                 if (queryFields.isEmpty()) {
                     continue;
                 }
@@ -627,6 +864,25 @@ public class TaskBO {
                 SObject targetRecord = Database.query(query);
 
                 Map<String, List<String>> missingBySection = new Map<String, List<String>>();
+
+                // Regra específica: Motivo Sub-Status obrigatório quando Sub-Status é Aprovado Parcialmente ou Cancelado
+                if (objectApiName == 'Projeto__c'
+                    && taskRecord.Subject != null
+                    && taskRecord.Subject.trim().equalsIgnoreCase(TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV)) {
+                    if (fieldMap.containsKey('SubStatus__c') && fieldMap.containsKey('MotivoSubStatus__c')) {
+                        String subStatusValue = (String)targetRecord.get('SubStatus__c');
+                        String motivoValue = (String)targetRecord.get('MotivoSubStatus__c');
+                        if (!String.isBlank(subStatusValue)) {
+                            Boolean requiresMotivo = subStatusValue.equalsIgnoreCase('Aprovado Parcialmente')
+                                || subStatusValue.equalsIgnoreCase('Cancelado')
+                                || subStatusValue.equalsIgnoreCase('Reprovado');
+                            if (requiresMotivo && String.isBlank(motivoValue)) {
+                                taskRecord.addError('Motivo Sub-Status é obrigatório quando Sub-Status é Aprovado Parcialmente ou Cancelado.');
+                                continue;
+                            }
+                        }
+                    }
+                }
 
                 for (FieldRequirement req : requiredFields) {
                     Object value = resolveFieldValue(targetRecord, req.apiName);
@@ -702,6 +958,28 @@ public class TaskBO {
         if (value instanceof String) {
             return String.isBlank((String) value);
         }
+        return false;
+    }
+
+    public static Boolean taskSubjectExists(Id whatId, String subject) {
+        if (whatId == null || String.isBlank(subject)) {
+            return false;
+        }
+
+        String normalized = subject.trim().toLowerCase();
+
+        for (Task existing : [
+            SELECT Subject
+            FROM Task
+            WHERE WhatId = :whatId
+                AND IsDeleted = false
+        ]) {
+            String existingNorm = existing.Subject == null ? '' : existing.Subject.trim().toLowerCase();
+            if (existingNorm == normalized) {
+                return true;
+            }
+        }
+
         return false;
     }
 

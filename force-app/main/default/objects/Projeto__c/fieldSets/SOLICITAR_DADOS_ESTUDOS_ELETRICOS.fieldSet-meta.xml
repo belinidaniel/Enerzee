@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SOLICITAR_DADOS_ESTUDOS_ELETRICOS</fullName>
+    <description>Anexar protocolo da solicitação de dados para estudos elétricos.</description>
+    <label>SOLICITAR DADOS PARA ESTUDOS ELETRICOS</label>
+</FieldSet>

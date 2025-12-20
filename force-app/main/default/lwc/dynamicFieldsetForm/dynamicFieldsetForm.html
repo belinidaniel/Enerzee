@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 12-12-2025
+  @last modified on  : 12-15-2025
   @last modified by  : Daniel Belini
 -->
 <template>
@@ -20,9 +20,7 @@
                 record-id={targetRecordId}
                 onsubmit={handleSubmit}
                 onsuccess={handleSuccess}
-                onerror={handleFormError}
             >
-                <lightning-messages></lightning-messages>
                 <div class="form-surface">
                     <div class="section-card">
                         <template if:true={hasRenderableSections}>
@@ -49,14 +47,17 @@
                                                         class="section__layout-item"
                                                         size="6"
                                                     >
-                                                        <lightning-input-field
-                                                            field-name={field.apiName}
-                                                            data-field-api={field.apiName}
-                                                            data-required={field.required}
-                                                            data-updateable={field.updateable}
-                                                            disabled={formReadOnly}
-                                                            onchange={handleFieldChange}
-                                                        ></lightning-input-field>
+                                                        <template if:true={field.isVisible}>
+                                                            <lightning-input-field
+                                                                field-name={field.apiName}
+                                                                data-field-api={field.apiName}
+                                                                data-required={field.required}
+                                                                data-updateable={field.updateable}
+                                                                disabled={formReadOnly}
+                                                                onchange={handleFieldChange}
+                                                                onblur={handleFieldBlur}
+                                                            ></lightning-input-field>
+                                                        </template>
                                                     </lightning-layout-item>
                                                 </template>
                                             </lightning-layout>
@@ -85,15 +86,18 @@
                                 label="Cancelar"
                                 onclick={handleCancel}
                             ></lightning-button>
-                            <lightning-button
-                                variant="brand"
-                                label="Salvar"
-                                onclick={handleSave}
-                                class="actions__primary"
-                            ></lightning-button>
+                            <template if:true={showCompleteAction}>
+                                <lightning-button
+                                    variant="brand"
+                                    label="Finalizar atividade"
+                                    onclick={handleSaveAndComplete}
+                                    disabled={formReadOnly}
+                                    class="actions__primary"
+                                ></lightning-button>
+                            </template>
                             <template if:true={showCommentAction}>
                                 <lightning-button
-                                    variant="neutral"
+                                    variant="brand"
                                     label="Finalizar atividade"
                                     onclick={openCommentModal}
                                     disabled={formReadOnly}
@@ -138,20 +142,38 @@
                             </div>
                         </template>
                     </template>
+
+                    <template if:true={showDocUpload}>
+                        <div class="slds-m-top_medium">
+                            <c-activity-document-upload record-id={recordId}></c-activity-document-upload>
+                        </div>
+                    </template>
+
                 </div>
             </lightning-record-edit-form>
         </template>
 
         <template if:false={showForm}>
             <div class="empty-state">
-                <template if:true={hasSections}>
-                    <p>Registro relacionado não disponível para edição.</p>
+                <template if:true={showDocUpload}>
+                    <p></p>
                 </template>
-                <template if:false={hasSections}>
-                    <p>Nenhuma seção configurada para este registro.</p>
+                <template if:false={showDocUpload}>
+                    <template if:true={hasSections}>
+                        <p>Registro relacionado não disponível para edição.</p>
+                    </template>
+                    <template if:false={hasSections}>
+                        <p>Nenhuma seção configurada para este registro.</p>
+                    </template>
                 </template>
             </div>
         </template>
+    </template>
+
+    <template if:true={showDocUpload}>
+        <div class="slds-m-top_medium">
+            <c-activity-document-upload record-id={recordId}></c-activity-document-upload>
+        </div>
     </template>
 
     <template if:true={showAttachmentModal}>
@@ -160,19 +182,43 @@
                 <header class="slds-modal__header">
                     <lightning-button-icon icon-name="utility:close" class="slds-modal__close" onclick={closeAttachmentModal}></lightning-button-icon>
                     <h2 class="slds-text-heading_medium">Anexar arquivo</h2>
-                    <p class="slds-text-body_small">Os arquivos serão anexados ao registro relacionado.</p>
+                    <p class="slds-text-body_small">Os arquivos serão enviados para o repositório externo e vinculados à oportunidade.</p>
                 </header>
                 <div class="slds-modal__content slds-p-around_medium">
-                    <lightning-file-upload
-                        record-id={targetRecordId}
+                    <lightning-input
+                        type="file"
                         multiple
                         accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.txt"
-                        onuploadfinished={handleUploadFinished}
-                    ></lightning-file-upload>
+                        onchange={handleAttachmentFileChange}
+                        disabled={attachmentUploading}
+                        label="Selecione arquivo(s)"
+                    ></lightning-input>
+
+                    <template if:true={selectedFiles.length}>
+                        <div class="slds-m-top_small">
+                            <p class="slds-text-title_caps slds-text-color_weak slds-m-bottom_x-small">Pronto para envio</p>
+                            <ul class="slds-list_dotted">
+                                <template for:each={selectedFiles} for:item="file">
+                                    <li key={file.name}>{file.name}</li>
+                                </template>
+                            </ul>
+                        </div>
+                    </template>
                 </div>
                 <footer class="slds-modal__footer">
-                    <lightning-button variant="neutral" label="Fechar" onclick={closeAttachmentModal}></lightning-button>
+                    <lightning-button variant="neutral" label="Fechar" onclick={closeAttachmentModal} disabled={attachmentUploading}></lightning-button>
+                    <lightning-button
+                        variant="brand"
+                        label="Enviar"
+                        onclick={uploadSelectedFiles}
+                        disabled={disableAttachmentUploadButton}
+                    ></lightning-button>
                 </footer>
+                <template if:true={attachmentUploading}>
+                    <div class="modal-spinner">
+                        <lightning-spinner alternative-text="Enviando" size="small"></lightning-spinner>
+                    </div>
+                </template>
             </div>
         </section>
         <div class="slds-backdrop slds-backdrop_open"></div>
@@ -180,7 +226,7 @@
 
     <template if:true={showCommentModal}>
         <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
-            <div class="slds-modal__container">
+            <div class="slds-modal__container modal-relative">
                 <header class="slds-modal__header">
                     <lightning-button-icon icon-name="utility:close" class="slds-modal__close" onclick={closeCommentModal}></lightning-button-icon>
                     <h2 class="slds-text-heading_medium">Finalizar atividade</h2>
@@ -195,8 +241,18 @@
                 </div>
                 <footer class="slds-modal__footer">
                     <lightning-button variant="neutral" label="Cancelar" onclick={closeCommentModal}></lightning-button>
-                    <lightning-button variant="brand" label="Concluir" onclick={handleCompleteWithComment}></lightning-button>
+                    <lightning-button
+                        variant="brand"
+                        label="Concluir"
+                        onclick={handleCompleteWithComment}
+                        disabled={disableCompleteButton}
+                    ></lightning-button>
                 </footer>
+                <template if:true={completing}>
+                    <div class="modal-spinner">
+                        <lightning-spinner alternative-text="Concluindo" size="small"></lightning-spinner>
+                    </div>
+                </template>
             </div>
         </section>
         <div class="slds-backdrop slds-backdrop_open"></div>
