@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>PagamentoEtapa__c</fullName>
-    <description>Identifica a etapa à qual o pagamento do integrador se refere.</description>
+    <fullName>PagamentoNumero__c</fullName>
+    <description>Sequência/identificação da parcela de pagamento do integrador.</description>
     <externalId>false</externalId>
-    <label>Etapa do Pagamento</label>
+    <label>Parcela do Pagamento</label>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
@@ -11,19 +11,19 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Planejamento de Obra</fullName>
+                <fullName>1a Parcela - Planejamento de Obra</fullName>
                 <default>true</default>
-                <label>Planejamento de Obra</label>
+                <label>1ª Parcela - Planejamento de Obra</label>
             </value>
             <value>
-                <fullName>Execucao de Obra</fullName>
+                <fullName>2a Parcela - Execucao de Obra</fullName>
                 <default>false</default>
-                <label>Execução de Obra</label>
+                <label>2ª Parcela - Execução de Obra</label>
             </value>
             <value>
-                <fullName>Outro</fullName>
+                <fullName>Parcela Adicional - Financeiro</fullName>
                 <default>false</default>
-                <label>Outro</label>
+                <label>Parcela Adicional - Financeiro</label>
             </value>
         </valueSetDefinition>
     </valueSet>
