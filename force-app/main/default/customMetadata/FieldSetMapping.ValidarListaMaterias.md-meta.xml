@@ -34,4 +34,8 @@
         <field>RequiresComment__c</field>
         <value xsi:type="xsd:boolean">true</value>
     </values>
+    <values>
+        <field>RequiresAttachment__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
 </CustomMetadata>
