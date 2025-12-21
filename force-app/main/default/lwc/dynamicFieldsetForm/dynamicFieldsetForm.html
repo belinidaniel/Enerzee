@@ -112,7 +112,19 @@
                                 ></lightning-button>
                                 <template if:true={uploadedFilePills.length}>
                                     <div class="attachment-list">
-                                        <lightning-pill-container items={uploadedFilePills}></lightning-pill-container>
+                                        <template for:each={uploadedFilePills} for:item="file">
+                                            <lightning-button
+                                                key={file.name}
+                                                variant="base"
+                                                class="attachment-chip"
+                                                data-url={file.url}
+                                                data-label={file.label}
+                                                onclick={handleOpenAttachment}
+                                                icon-name="utility:preview"
+                                                icon-position="right"
+                                                label={file.label}
+                                            ></lightning-button>
+                                        </template>
                                     </div>
                                 </template>
                             </template>
@@ -136,16 +148,40 @@
                                 ></lightning-button>
                                 <template if:true={uploadedFilePills.length}>
                                     <div class="attachment-list">
-                                        <lightning-pill-container items={uploadedFilePills}></lightning-pill-container>
+                                        <template for:each={uploadedFilePills} for:item="file">
+                                            <lightning-button
+                                                key={file.name}
+                                                variant="base"
+                                                class="attachment-chip"
+                                                data-url={file.url}
+                                                data-label={file.label}
+                                                onclick={handleOpenAttachment}
+                                                icon-name="utility:preview"
+                                                icon-position="right"
+                                                label={file.label}
+                                            ></lightning-button>
+                                        </template>
                                     </div>
                                 </template>
                             </div>
                         </template>
                     </template>
 
+                    <template if:true={previewOpen}>
+                        <c-attachment-preview-modal
+                            open={previewOpen}
+                            url={previewUrl}
+                            title={previewTitle}
+                            onclose={handleClosePreview}
+                        ></c-attachment-preview-modal>
+                    </template>
+
                     <template if:true={showDocUpload}>
                         <div class="slds-m-top_medium">
-                            <c-activity-document-upload record-id={recordId}></c-activity-document-upload>
+                            <c-activity-document-upload
+                                record-id={recordId}
+                                onuploaded={handleDocUpload}
+                            ></c-activity-document-upload>
                         </div>
                     </template>
 
@@ -172,7 +208,10 @@
 
     <template if:true={showDocUpload}>
         <div class="slds-m-top_medium">
-            <c-activity-document-upload record-id={recordId}></c-activity-document-upload>
+            <c-activity-document-upload
+                record-id={recordId}
+                onuploaded={handleDocUpload}
+            ></c-activity-document-upload>
         </div>
     </template>
 

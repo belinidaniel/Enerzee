@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-04-2025
+ * @last modified on  : 12-21-2025
  * @last modified by  : Daniel Belini
 **/
 public class ProjetoBO {
@@ -671,6 +671,7 @@ public class ProjetoBO {
 
         while (tableBodyLine != null){
             TaskProjectTableLine line = new TaskProjectTableLine();
+            line.RowNumber = table.tableLines.size();
 
             line.TipoProjetoObra     = getCsvValue(headerIndex, tableBodyLine, 'TIPOPROJETOOBRA');
             line.Status              = getCsvValue(headerIndex, tableBodyLine, 'STATUS');
@@ -1121,6 +1122,7 @@ public class ProjetoBO {
         public String DataVencimentoDMais;
         public String TipoDeProprietario;
         public Integer Ordem;
+        public Integer RowNumber;
     }
 
     public class TaskProjectTable{

@@ -28,7 +28,7 @@ export default class AttachmentTabs extends LightningElement {
         if (!this.targetId) return;
         this.loading = true;
         try {
-            const items = await getAttachments({ sobjectId: this.targetId });
+            const items = await getAttachments({ sobjectId: this.targetId, activitySubject: null });
             const mapGroups = {};
             (items || []).forEach((it) => {
                 const key = it.activityName || 'Outros';

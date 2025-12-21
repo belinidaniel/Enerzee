@@ -38,6 +38,15 @@
 .attachment-list {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.attachment-chip {
+    --slds-c-button-text-color: #1b5297;
+    --slds-c-button-color-background: #f0f4ff;
+    --slds-c-button-radius-border: 999px;
+    --slds-c-button-font-weight: 600;
 }
 
 .comment-inline {

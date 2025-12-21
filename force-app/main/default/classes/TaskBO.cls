@@ -865,22 +865,31 @@ public class TaskBO {
 
                 Map<String, List<String>> missingBySection = new Map<String, List<String>>();
 
-                // Regra específica: Motivo Sub-Status obrigatório quando Sub-Status é Aprovado Parcialmente ou Cancelado
+                // Regra específica: Motivo Sub-Status obrigatório apenas quando Sub-Status é Aprovado Parcialmente / Cancelado / Reprovado.
                 if (objectApiName == 'Projeto__c'
                     && taskRecord.Subject != null
-                    && taskRecord.Subject.trim().equalsIgnoreCase(TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV)) {
-                    if (fieldMap.containsKey('SubStatus__c') && fieldMap.containsKey('MotivoSubStatus__c')) {
-                        String subStatusValue = (String)targetRecord.get('SubStatus__c');
-                        String motivoValue = (String)targetRecord.get('MotivoSubStatus__c');
-                        if (!String.isBlank(subStatusValue)) {
-                            Boolean requiresMotivo = subStatusValue.equalsIgnoreCase('Aprovado Parcialmente')
-                                || subStatusValue.equalsIgnoreCase('Cancelado')
-                                || subStatusValue.equalsIgnoreCase('Reprovado');
-                            if (requiresMotivo && String.isBlank(motivoValue)) {
-                                taskRecord.addError('Motivo Sub-Status é obrigatório quando Sub-Status é Aprovado Parcialmente ou Cancelado.');
+                    && taskRecord.Subject.trim().equalsIgnoreCase(TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV)
+                    && fieldMap.containsKey('SubStatus__c')
+                    && fieldMap.containsKey('MotivoSubStatus__c')) {
+                    String subStatusValue = (String)targetRecord.get('SubStatus__c');
+                    String motivoValue = (String)targetRecord.get('MotivoSubStatus__c');
+                    Boolean requiresMotivo = !String.isBlank(subStatusValue)
+                        && (subStatusValue.equalsIgnoreCase('Aprovado Parcialmente')
+                            || subStatusValue.equalsIgnoreCase('Cancelado')
+                            || subStatusValue.equalsIgnoreCase('Reprovado'));
+
+                    if (!requiresMotivo) {
+                        List<FieldRequirement> filtered = new List<FieldRequirement>();
+                        for (FieldRequirement r : requiredFields) {
+                            if (r == null || r.apiName == 'MotivoSubStatus__c') {
                                 continue;
                             }
+                            filtered.add(r);
                         }
+                        requiredFields = filtered;
+                    } else if (String.isBlank(motivoValue)) {
+                        taskRecord.addError('Motivo Sub-Status é obrigatório quando Sub-Status é Aprovado Parcialmente ou Cancelado ou Reprovado.');
+                        continue;
                     }
                 }
 

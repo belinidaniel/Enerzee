@@ -31,10 +31,11 @@
         <members>FieldSetMapping.SolicitarDadosEstudosEletricos</members>
         <members>FieldSetMapping.SolicitarDisponibilidadeEnergia</members>
         <members>FieldSetMapping.AprovacaoProjetoSe</members>
-        <members>ActivityRequiredDocument.RELATORIO_FINAL_DE_OBRA.md-meta</members>
+        <members>FieldSetMapping.ValidacaoBeneficiarias</members>
+        <members>ActivityRequiredDocument.RELATORIO_FINAL_DE_OBRA</members>
         <name>CustomMetadata</name>
     </types>
-    <types> 
+    <types> §
         <members>dynamicFieldsetForm</members>
         <name>LightningComponentBundle</name>
     </types>
@@ -167,6 +168,7 @@
         <members>activityDocumentUpload</members>
         <members>attachmentTabs</members>
         <members>dynamicFieldsetForm</members>
+        <members>attachmentPreviewModal</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
