@@ -3,6 +3,10 @@
     <fullName>NecessarioPFC__c</fullName>
     <description>Indica se é necessário PFC.</description>
     <label>Necessário PFC</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
         <valueSetDefinition>
