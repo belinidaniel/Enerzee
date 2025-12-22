@@ -175,6 +175,31 @@
         <name>CustomField</name>
     </types>
     <types>
+        <members>Instalacao__c.ValorInstalacaoRealizado__c</members>
+        <members>Instalacao__c.Integrador__c</members>
+        <members>Instalacao__c.EnvioNotasConfirmado__c</members>
+        <members>Instalacao__c.PagamentoEtapa__c</members>
+        <members>Instalacao__c.PagamentoNumero__c</members>
+        <members>Instalacao__c.ObservacaoPagamento__c</members>
+        <members>Instalacao__c.NumeroSolicitacaoSAP__c</members>
+        <members>Instalacao__c.SolicitarNovaAtividadePagamento__c</members>
+        <members>Instalacao__c.DataPrevisaoConclusao__c</members>
+        <members>Opportunity.DiscountLoyalty__c</members>
+        <members>Task.HoraVencimento__c</members>
+        <members>Task.NotificadoAntesVencer__c</members>
+        <members>Task.NotificadoAposVencer__c</members>
+        <members>Projeto__c.StatusAtualDesde__c</members>
+        <members>Projeto__c.ContagemPrazo__c</members>
+        <members>Projeto__c.ContagemPrazoPlanejamento__c</members>
+        <members>Projeto__c.ContagemPrazoProjetoElaboracao__c</members>
+        <members>Projeto__c.ContagemPrazoProjetoAnalise__c</members>
+        <members>Projeto__c.NecessarioObraNaRede__c</members>
+        <members>Projeto__c.CartaAprovacaoValidade__c</members>
+        <members>Projeto__c.DataProtocoloProjeto__c</members>
+        <members>Projeto__c.BeneficiariasCadastradasProtocolo__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
         <members>activityDocumentUpload</members>
         <members>attachmentTabs</members>
         <members>dynamicFieldsetForm</members>
