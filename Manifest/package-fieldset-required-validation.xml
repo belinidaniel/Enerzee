@@ -35,10 +35,6 @@
         <members>ActivityRequiredDocument.RELATORIO_FINAL_DE_OBRA</members>
         <name>CustomMetadata</name>
     </types>
-    <types> §
-        <members>dynamicFieldsetForm</members>
-        <name>LightningComponentBundle</name>
-    </types>
     <types>
         <members>ActivityRequiredDocument__mdt</members>
         <members>OpportunityAttachmentLink__c</members>
@@ -104,6 +100,10 @@
         <members>Projeto__c.CartaAprovacaoDiasRestantes__c</members>
         <members>Opportunity.Status__c</members>
         <members>Opportunity.ProjectStatusReason__c</members>
+        <members>Projeto__c.PrazoObraNaRede__c</members>
+        <members>Projeto__c.ObservacaoHomologacao__c</members>
+        <members>Projeto__c.CartaAprovacaoTipo__c</members>
+        <members>Opportunity.DiscountNotLoyalty__c</members>
         <members>OpportunityAttachmentLink__c.ActivityName__c</members>
         <members>OpportunityAttachmentLink__c.SObjectId__c</members>
         <members>OpportunityAttachmentLink__c.DocRequiredName__c</members>

@@ -3,7 +3,6 @@
     <fullName>MotivoDispensa__c</fullName>
     <description>Motivo pelo qual a atividade foi dispensada.</description>
     <label>Motivo da dispensa</label>
-    <trackHistory>false</trackHistory>
-    <trackTrending>false</trackTrending>
+    <required>false</required>
     <type>TextArea</type>
 </CustomField>

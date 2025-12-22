@@ -3,8 +3,8 @@
     <fullName>EnvioNotasConfirmado__c</fullName>
     <defaultValue>false</defaultValue>
     <description>Confirma que as notas foram enviadas para pagamento do integrador.</description>
-    <externalId>false</externalId>
     <label>Envio de Notas Confirmado</label>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Checkbox</type>

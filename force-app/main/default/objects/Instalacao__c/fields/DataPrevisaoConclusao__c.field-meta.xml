@@ -2,9 +2,9 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>DataPrevisaoConclusao__c</fullName>
     <description>Data prevista para conclusão da obra.</description>
-    <externalId>false</externalId>
     <label>Data de Previsão de Conclusão</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Date</type>

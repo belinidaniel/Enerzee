@@ -3,11 +3,8 @@
     <fullName>RequiresComment__c</fullName>
     <defaultValue>false</defaultValue>
     <description>Indica se a atividade exige comentário para conclusão (sem campos).</description>
-    <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
     <inlineHelpText>Quando marcado, o formulário exibirá opção para finalizar a atividade com comentário.</inlineHelpText>
     <label>Requires Comment</label>
-    <required>false</required>
-    <trackTrending>false</trackTrending>
     <type>Checkbox</type>
 </CustomField>

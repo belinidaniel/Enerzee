@@ -19,6 +19,14 @@
         <value xsi:nil="true"/>
     </values>
     <values>
+        <field>RequiresAttachment__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>RequiresComment__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
         <field>SectionLabel__c</field>
         <value xsi:type="xsd:string">DELEGAR GESTOR DE OBRAS</value>
     </values>

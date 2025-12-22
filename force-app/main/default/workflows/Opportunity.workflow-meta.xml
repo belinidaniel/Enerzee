@@ -227,6 +227,17 @@
         <reevaluateOnChange>false</reevaluateOnChange>
     </fieldUpdates>
     <fieldUpdates>
+        <fullName>Atualiza_Etapa_Forma_Pagto</fullName>
+        <description>Avança a fase conforme etapa corrente após aprovação da forma de pagamento em negociação.</description>
+        <field>StageName</field>
+        <formula>IF(TEXT(StageName) = &apos;Aguardando aceite&apos;, &apos;Contrato&apos;, &apos;Confirmação de pagamento sinal&apos;)</formula>
+        <name>Avanca etapa forma de pagamento</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
         <fullName>Atualiza_Fase_p_Gera_o_de_Contrato</fullName>
         <field>StageName</field>
         <literalValue>Geração de contrato</literalValue>
@@ -328,23 +339,22 @@
         <reevaluateOnChange>false</reevaluateOnChange>
     </fieldUpdates>
     <fieldUpdates>
-        <fullName>Proposta_aprovada</fullName>
-        <field>Proposta_aprovada__c</field>
-        <literalValue>1</literalValue>
-        <name>Proposta aprovada</name>
+        <fullName>Proposta_Gerada</fullName>
+        <field>PropostaGerada__c</field>
+        <literalValue>0</literalValue>
+        <name>Proposta Gerada</name>
         <notifyAssignee>false</notifyAssignee>
         <operation>Literal</operation>
         <protected>false</protected>
         <reevaluateOnChange>false</reevaluateOnChange>
     </fieldUpdates>
     <fieldUpdates>
-        <fullName>Atualiza_Etapa_Forma_Pagto</fullName>
-        <description>Avança a fase conforme etapa corrente após aprovação da forma de pagamento em negociação.</description>
-        <field>StageName</field>
-        <formula>IF(TEXT(StageName) = 'Aguardando aceite', 'Contrato', 'Confirmação de pagamento sinal')</formula>
-        <name>Avanca etapa forma de pagamento</name>
+        <fullName>Proposta_aprovada</fullName>
+        <field>Proposta_aprovada__c</field>
+        <literalValue>1</literalValue>
+        <name>Proposta aprovada</name>
         <notifyAssignee>false</notifyAssignee>
-        <operation>Formula</operation>
+        <operation>Literal</operation>
         <protected>false</protected>
         <reevaluateOnChange>false</reevaluateOnChange>
     </fieldUpdates>

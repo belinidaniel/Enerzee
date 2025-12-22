@@ -3,6 +3,10 @@
     <fullName>NecessarioObraNaRede__c</fullName>
     <description>Indica se é necessária obra na rede.</description>
     <label>Necessário Obra na Rede</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
         <valueSetDefinition>
