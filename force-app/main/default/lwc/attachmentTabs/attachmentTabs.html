@@ -31,7 +31,12 @@
                                         onclick={handlePreviewFile}>
                                     <span class="file-title">{item.name}</span>
                                     <p class="file-meta slds-text-body_small slds-text-color_weak">
-                                        {item.displayMeta}
+                                        <template if:true={item.docRequiredName}>
+                                            {item.docRequiredName} · {item.displayMeta}
+                                        </template>
+                                        <template if:false={item.docRequiredName}>
+                                            {item.displayMeta}
+                                        </template>
                                     </p>
                                 </button>
                                 <div class="file-actions">

@@ -106,6 +106,7 @@
         <members>Opportunity.ProjectStatusReason__c</members>
         <members>OpportunityAttachmentLink__c.ActivityName__c</members>
         <members>OpportunityAttachmentLink__c.SObjectId__c</members>
+        <members>OpportunityAttachmentLink__c.DocRequiredName__c</members>
         <name>CustomField</name>
     </types>
     <types>

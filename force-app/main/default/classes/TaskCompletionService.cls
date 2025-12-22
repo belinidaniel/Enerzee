@@ -44,8 +44,8 @@ public with sharing class TaskCompletionService {
         query += ' FROM Task WHERE Id = :taskId';
         Task t = (Task)Database.query(query);
 
-        // Validação de documentos obrigatórios por atividade (via CMDT)
-        ensureRequiredDocuments(t);
+        // Validação de documentos obrigatórios por atividade (via CMDT) - desabilitada a pedido.
+        // ensureRequiredDocuments(t);
 
         CompletionResult result = new CompletionResult();
         Boolean shouldCreateFollowUp = createFollowUp == true;

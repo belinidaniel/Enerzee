@@ -35,12 +35,16 @@ public class TaskBO {
         }
 
         Set<String> required = new Set<String>();
+        Map<String, String> requiredRawByNorm = new Map<String, String>();
         for (ActivityRequiredDocument__mdt cfg : configs) {
             if (String.isBlank(cfg.RequiredFiles__c)) continue;
             for (String name : cfg.RequiredFiles__c.split(';')) {
                 String norm = normalizeName(name);
                 if (!String.isBlank(norm)) {
                     required.add(norm);
+                    if (!requiredRawByNorm.containsKey(norm)) {
+                        requiredRawByNorm.put(norm, name.trim());
+                    }
                 }
             }
         }
@@ -50,12 +54,14 @@ public class TaskBO {
 
         Set<String> uploaded = new Set<String>();
         for (OpportunityAttachmentLink__c link : [
-            SELECT AttachmentDescription__c
+            SELECT AttachmentDescription__c, DocRequiredName__c
             FROM OpportunityAttachmentLink__c
             WHERE SObjectId__c = :String.valueOf(taskRecord.WhatId)
-                AND ActivityName__c = :taskRecord.Subject
         ]) {
-            String norm = normalizeName(link.AttachmentDescription__c);
+            String sourceName = String.isNotBlank(link.DocRequiredName__c)
+                ? link.DocRequiredName__c
+                : link.AttachmentDescription__c;
+            String norm = normalizeName(sourceName);
             if (!String.isBlank(norm)) {
                 uploaded.add(norm);
             }
@@ -64,7 +70,15 @@ public class TaskBO {
         Set<String> missing = required.clone();
         missing.removeAll(uploaded);
         if (!missing.isEmpty()) {
-            taskRecord.addError('Ainda faltam anexar os documentos obrigatórios: ' + String.join(new List<String>(missing), ', '));
+            List<String> missingLabels = new List<String>();
+            for (String key : missing) {
+                if (requiredRawByNorm.containsKey(key)) {
+                    missingLabels.add(requiredRawByNorm.get(key));
+                } else {
+                    missingLabels.add(key);
+                }
+            }
+            taskRecord.addError('Ainda faltam anexar os documentos obrigatórios: ' + String.join(missingLabels, ', '));
         }
     }
 

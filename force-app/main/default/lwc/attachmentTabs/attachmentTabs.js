@@ -118,6 +118,7 @@ export default class AttachmentTabs extends LightningElement {
             timeStyle: 'medium'
         });
         const displayMeta = date ? formatter.format(date) : '';
+        const docRequiredName = record.docRequiredName;
         const iconName = 'doctype:attachment';
 
         return {
@@ -126,7 +127,8 @@ export default class AttachmentTabs extends LightningElement {
             activityName: record.activityName || 'Outros',
             url: record.url || record.downloadUrl,
             displayMeta,
-            iconName
+            iconName,
+            docRequiredName
         };
     }
 

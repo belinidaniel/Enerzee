@@ -9,6 +9,7 @@ public with sharing class ActivityDocumentController {
         @AuraEnabled public Id id;
         @AuraEnabled public String name;
         @AuraEnabled public String activityName;
+        @AuraEnabled public String docRequiredName;
         @AuraEnabled public DateTime createdDate;
         @AuraEnabled public String url;
         @AuraEnabled public String downloadUrl;
@@ -57,14 +58,14 @@ public with sharing class ActivityDocumentController {
         List<OpportunityAttachmentLink__c> links;
         if (normalizedSubject == null) {
             links = [
-                SELECT Id, AttachmentDescription__c, ActivityName__c, AttachmentURL__c, CreatedDate
+                SELECT Id, AttachmentDescription__c, ActivityName__c, AttachmentURL__c, CreatedDate, DocRequiredName__c
                 FROM OpportunityAttachmentLink__c
                 WHERE SObjectId__c = :String.valueOf(sobjectId)
                 ORDER BY CreatedDate DESC
             ];
         } else {
             links = [
-                SELECT Id, AttachmentDescription__c, ActivityName__c, AttachmentURL__c, CreatedDate
+                SELECT Id, AttachmentDescription__c, ActivityName__c, AttachmentURL__c, CreatedDate, DocRequiredName__c
                 FROM OpportunityAttachmentLink__c
                 WHERE SObjectId__c = :String.valueOf(sobjectId)
                 AND ActivityName__c = :normalizedSubject
@@ -77,6 +78,7 @@ public with sharing class ActivityDocumentController {
             item.id = link.Id;
             item.name = link.AttachmentDescription__c;
             item.activityName = link.ActivityName__c;
+            item.docRequiredName = link.DocRequiredName__c;
             item.createdDate = link.CreatedDate;
             item.url = link.AttachmentURL__c;
             item.downloadUrl = link.AttachmentURL__c;

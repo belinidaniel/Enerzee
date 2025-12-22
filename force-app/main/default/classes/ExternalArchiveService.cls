@@ -22,7 +22,8 @@ public with sharing class ExternalArchiveService {
         String fileName,
         String base64File,
         String sobjectId,
-        String activityName
+        String activityName,
+        String docRequiredName
     ) {
         if (String.isBlank(base64File)) {
             throw new AuraHandledException('Arquivo inválido.');
@@ -79,6 +80,7 @@ public with sharing class ExternalArchiveService {
         link.ActivityName__c = activityName;
         link.SObjectId__c = sobjectId;
         link.AttachmentDescription__c = fileNameWithExtension;
+        link.DocRequiredName__c = docRequiredName;
         Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
         link.AttachmentURL__c = (String) responseBody.get('data');
         insert link;

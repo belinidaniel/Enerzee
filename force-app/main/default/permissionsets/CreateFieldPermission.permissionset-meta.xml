@@ -42,4 +42,9 @@
         <field>Instalacao__c.DataPrevisaoConclusao__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>OpportunityAttachmentLink__c.DocRequiredName__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
 </PermissionSet>
