@@ -135,6 +135,8 @@
         <members>ExternalArchiveService</members>
         <members>TaskCompletionServiceDocTest</members>
         <members>TaskBO</members>
+        <members>ProjetoStatusIntegrationService</members>
+        <members>ProjetoStatusIntegrationServiceTest</members>
         <name>ApexClass</name>
     </types>
     <types>
