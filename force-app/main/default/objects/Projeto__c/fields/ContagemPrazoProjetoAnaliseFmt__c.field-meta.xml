@@ -6,9 +6,9 @@
     <formula>IF(
     ISBLANK(ContagemPrazoProjetoAnalise__c),
     NULL,
-    TEXT(FLOOR(ContagemPrazoProjetoAnalise__c)) &amp; &quot;d &quot; &
-    TEXT(FLOOR(MOD(ContagemPrazoProjetoAnalise__c * 24, 24))) &amp; &quot;h &quot; &
-    TEXT(FLOOR(MOD(ContagemPrazoProjetoAnalise__c * 24 * 60, 60))) &amp; &quot;m &quot; &
+    TEXT(FLOOR(ContagemPrazoProjetoAnalise__c)) &amp; &quot;d &quot; &amp;
+    TEXT(FLOOR(MOD(ContagemPrazoProjetoAnalise__c * 24, 24))) &amp; &quot;h &quot; &amp;
+    TEXT(FLOOR(MOD(ContagemPrazoProjetoAnalise__c * 24 * 60, 60))) &amp; &quot;m &quot; &amp;
     TEXT(FLOOR(MOD(ContagemPrazoProjetoAnalise__c * 24 * 60 * 60, 60))) &amp; &quot;s&quot;
 )</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>

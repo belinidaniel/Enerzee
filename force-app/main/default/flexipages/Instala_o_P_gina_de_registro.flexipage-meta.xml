@@ -4,81 +4,16 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>actionNames</name>
-                    <valueList>
-                        <valueListItems>
-                            <value>Edit</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Delete</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Global.FSL__NewEvent</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>ChangeOwnerOne</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Global.Nova_Tarefa</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Global.NewTask</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>FeedItem.ContentNote</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Global.NewEvent</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>FeedItem.ContentPost</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>FeedItem.PollPost</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>FeedItem.TextPost</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Global.NewContact</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Global.NewOpportunity</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Global.NewLead</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Global.LogACall</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Global.FSL__NewTask</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Clone</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>ChangeRecordType</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>PrintableView</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Submit</value>
-                        </valueListItems>
-                    </valueList>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
                     <name>collapsed</name>
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>enableActionsConfiguration</name>
-                    <value>true</value>
+                    <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>enableActionsInNative</name>
-                    <value>true</value>
+                    <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>hideChatterActions</name>
@@ -117,76 +52,6 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Oportunidade__c</fieldItem>
-                <identifier>RecordOportunidade_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>readonly</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Conta__c</fieldItem>
-                <identifier>RecordConta__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.Oportunidade__r.Numeroproposta__c</fieldItem>
-                <identifier>RecordOportunidade_rNumeroproposta_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.Oportunidade__r.ConsultorOportunidade__c</fieldItem>
-                <identifier>RecordOportunidade_rConsultorOportunidade_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.TipoRegistroOportunidade__c</fieldItem>
-                <identifier>RecordTipoRegistroOportunidade__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.Oportunidade__r.MainViability__c</fieldItem>
-                <identifier>RecordOportunidade_rMainViability__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.Oportunidade__r.FormaPagamento__c</fieldItem>
-                <identifier>RecordOportunidade_rFormaPagamento__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.Oportunidade__r.NecessarioProtocolarProjetoCCSS__c</fieldItem>
-                <identifier>RecordOportunidade_rNecessarioProtocolarProjetoCCSS__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.Oportunidade__r.NumeroPedido__c</fieldItem>
-                <identifier>RecordOportunidade_rNumeroPedido__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-detalhes-col1</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.Name</fieldItem>
                 <identifier>RecordNameField</identifier>
             </fieldInstance>
@@ -197,8 +62,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Projetista__c</fieldItem>
-                <identifier>RecordProjetista__cField</identifier>
+                <fieldItem>Record.OportunidadeConcluida__c</fieldItem>
+                <identifier>RecordOportunidadeConcluida_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -207,8 +72,42 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Instalacao__c</fieldItem>
-                <identifier>RecordInstalacao__cField</identifier>
+                <fieldItem>Record.Oportunidade__c</fieldItem>
+                <identifier>RecordOportunidade_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ClienteConta__c</fieldItem>
+                <identifier>RecordClienteConta_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>DadosGeraisCol1</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Projeto__c</fieldItem>
+                <identifier>RecordProjeto_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ConsultorInstalacao__c</fieldItem>
+                <identifier>RecordConsultorInstalacao_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -218,7 +117,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.GestorObra__c</fieldItem>
-                <identifier>RecordGestorObra__cField</identifier>
+                <identifier>RecordGestorObra_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -227,33 +126,11 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.PotenciaSistema__c</fieldItem>
-                <identifier>RecordPotenciaSistema__cField</identifier>
+                <fieldItem>Record.OwnerId</fieldItem>
+                <identifier>RecordOwnerIdField</identifier>
             </fieldInstance>
         </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.PotenciaPicoSistemakWp__c</fieldItem>
-                <identifier>RecordPotenciaPicoSistemakWp__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.Oportunidade__r.UCGeradora__c</fieldItem>
-                <identifier>RecordOportunidade_rUCGeradora__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.Oportunidade__r.UCBeneficiadora__c</fieldItem>
-                <identifier>RecordOportunidade_rUCBeneficiadora__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-detalhes-col2</name>
+        <name>DadosGeraisCol2</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -261,145 +138,97 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-detalhes-col1</value>
+                    <value>DadosGeraisCol1</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
-                <identifier>flexipage_columnDetalhesLeft</identifier>
+                <identifier>DadosGeraisColumn1</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-detalhes-col2</value>
+                    <value>DadosGeraisCol2</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
-                <identifier>flexipage_columnDetalhesRight</identifier>
+                <identifier>DadosGeraisColumn2</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-detalhes-columns</name>
+        <name>DadosGeraisColumns</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.Oportunidade__r.ConcessionariaEnergia__c</fieldItem>
-                <identifier>RecordOportunidade_rConcessionariaEnergia__cField</identifier>
+                <fieldItem>Record.OportunidadeConcluida__r.AccountId</fieldItem>
+                <identifier>RecordOportunidade_rAccountIdField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.DataProtocoloProjeto__c</fieldItem>
-                <identifier>RecordDataProtocoloProjeto__cField</identifier>
+                <fieldItem>Record.OportunidadeConcluida__r.Categoria__c</fieldItem>
+                <identifier>RecordOportunidade_rCategoria_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-homologacao-col1</name>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.OportunidadeConcluida__r.TipoTelhadoEstrutura__c</fieldItem>
+                <identifier>RecordOportunidade_rTipoTelhadoEstrutura_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.OportunidadeConcluida__r.PotenciaPicoSistema__c</fieldItem>
+                <identifier>RecordOportunidade_rPotenciaPicoSistema_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.OportunidadeConcluida__r.PotenciaModulos__c</fieldItem>
+                <identifier>RecordOportunidade_rPotenciaModulos_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.OportunidadeConcluida__r.MainViability__r.StandardAdequacyCost__c</fieldItem>
+                <identifier>RecordOportunidade_rMainViability_rStandardAdequacyCost_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>DadosOportunidadeCol1</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.Oportunidade__r.UF_Concessionaria__c</fieldItem>
-                <identifier>RecordOportunidade_rUF_Concessionaria__cField</identifier>
+                <fieldItem>Record.OportunidadeConcluida__r.NumeroModulos__c</fieldItem>
+                <identifier>RecordOportunidade_rNumeroModulos_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.DataAprovacaoProjeto__c</fieldItem>
-                <identifier>RecordDataAprovacaoProjeto__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-homologacao-col2</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-homologacao-col1</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:column</componentName>
-                <identifier>flexipage_columnHomologacaoLeft</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-homologacao-col2</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:column</componentName>
-                <identifier>flexipage_columnHomologacaoRight</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>Facet-homologacao-columns</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.NecessarioObraNaRede__c</fieldItem>
-                <identifier>RecordNecessarioObraNaRede__cField</identifier>
+                <fieldItem>Record.OportunidadeConcluida__r.NumeroInversores__c</fieldItem>
+                <identifier>RecordOportunidade_rNumeroInversores_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.NecessarioPFC__c</fieldItem>
-                <identifier>RecordNecessarioPFC__cField</identifier>
+                <fieldItem>Record.OportunidadeConcluida__r.Inversor_1_Potencia_Nominal__c</fieldItem>
+                <identifier>RecordOportunidade_rInversor_1_Potencia_Nominal_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.InversaoFluxo__c</fieldItem>
-                <identifier>RecordInversaoFluxo__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-aprovacao-col1</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.PrazoObraNaRede__c</fieldItem>
-                <identifier>RecordPrazoObraNaRede__cField</identifier>
+                <fieldItem>Record.OportunidadeConcluida__r.PotenciaNominalSistema__c</fieldItem>
+                <identifier>RecordOportunidade_rPotenciaNominalSistema_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.ValorPFC__c</fieldItem>
-                <identifier>RecordValorPFC__cField</identifier>
+                <fieldItem>Record.OportunidadeConcluida__r.Acoplamento__c</fieldItem>
+                <identifier>RecordOportunidade_rAcoplamento_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-aprovacao-col2</name>
+        <name>DadosOportunidadeCol2</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -407,23 +236,23 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-aprovacao-col1</value>
+                    <value>DadosOportunidadeCol1</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
-                <identifier>flexipage_columnAprovacaoLeft</identifier>
+                <identifier>DadosOportunidadeColumn1</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-aprovacao-col2</value>
+                    <value>DadosOportunidadeCol2</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
-                <identifier>flexipage_columnAprovacaoRight</identifier>
+                <identifier>DadosOportunidadeColumn2</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-aprovacao-columns</name>
+        <name>DadosOportunidadeColumns</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -433,11 +262,29 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.BeneficiariasCadastradasProtocolo__c</fieldItem>
-                <identifier>RecordBeneficiariasCadastradasProtocolo__cField</identifier>
+                <fieldItem>Record.Integrador__c</fieldItem>
+                <identifier>RecordIntegrador_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-validacao-col1</name>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Integrador__r.Cidade__c</fieldItem>
+                <identifier>RecordIntegrador_rCidade_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Integrador__r.Estado__c</fieldItem>
+                <identifier>RecordIntegrador_rEstado_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Integrador__r.Telefone__c</fieldItem>
+                <identifier>RecordIntegrador_rTelefone_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>PrestadorCol1</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -447,46 +294,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ObservacaoHomologacao__c</fieldItem>
-                <identifier>RecordObservacaoHomologacao__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-validacao-col2</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-validacao-col1</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:column</componentName>
-                <identifier>flexipage_columnValidacaoLeft</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-validacao-col2</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:column</componentName>
-                <identifier>flexipage_columnValidacaoRight</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>Facet-validacao-columns</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.CartaAprovacaoTipo__c</fieldItem>
-                <identifier>RecordCartaAprovacaoTipo__cField</identifier>
+                <fieldItem>Record.PrecoPorModulo__c</fieldItem>
+                <identifier>RecordPrecoPorModulo_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -495,22 +304,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.CartaAprovacaoData__c</fieldItem>
-                <identifier>RecordCartaAprovacaoData__cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-prazo-col1</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.CartaAprovacaoPrazoRegulatorio__c</fieldItem>
-                <identifier>RecordCartaAprovacaoPrazoRegulatorio__cField</identifier>
+                <fieldItem>Record.PrecoPorInversor__c</fieldItem>
+                <identifier>RecordPrecoPorInversor_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -519,8 +314,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.CartaAprovacaoValidade__c</fieldItem>
-                <identifier>RecordCartaAprovacaoValidade__cField</identifier>
+                <fieldItem>Record.CustosAdicionaisPrestador__c</fieldItem>
+                <identifier>RecordCustosAdicionaisPrestador_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -529,11 +324,21 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.CartaAprovacaoDiasRestantes__c</fieldItem>
-                <identifier>RecordCartaAprovacaoDiasRestantes__cField</identifier>
+                <fieldItem>Record.TotalInstalacaoPrestador__c</fieldItem>
+                <identifier>RecordTotalInstalacaoPrestador_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-prazo-col2</name>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.PrazoExecucaoServico__c</fieldItem>
+                <identifier>RecordPrazoExecucaoServico_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>PrestadorCol2</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -541,23 +346,23 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-prazo-col1</value>
+                    <value>PrestadorCol1</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
-                <identifier>flexipage_columnPrazoLeft</identifier>
+                <identifier>PrestadorColumn1</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-prazo-col2</value>
+                    <value>PrestadorCol2</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
-                <identifier>flexipage_columnPrazoRight</identifier>
+                <identifier>PrestadorColumn2</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-prazo-columns</name>
+        <name>PrestadorColumns</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -567,8 +372,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ContagemPrazoPlanejamentoFmt__c</fieldItem>
-                <identifier>RecordContagemPrazoPlanejamentoFmt__cField</identifier>
+                <fieldItem>Record.InstallDate__c</fieldItem>
+                <identifier>RecordInstallDate_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -577,8 +382,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ContagemPrazoProjetoElaboracaoFmt__c</fieldItem>
-                <identifier>RecordContagemPrazoProjetoElaboracaoFmt__cField</identifier>
+                <fieldItem>Record.DataConclusao__c</fieldItem>
+                <identifier>RecordDataConclusao_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -587,11 +392,45 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ContagemPrazoProjetoAnaliseFmt__c</fieldItem>
-                <identifier>RecordContagemPrazoProjetoAnaliseFmt__cField</identifier>
+                <fieldItem>Record.ContagemPrazoContrato__c</fieldItem>
+                <identifier>RecordContagemPrazoContrato_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <name>Facet-duracao-col1</name>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Status__c</fieldItem>
+                <identifier>RecordStatus_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>PrazosCol1</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.DateInspection__c</fieldItem>
+                <identifier>RecordDateInspection_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.CasoInstalacao__c</fieldItem>
+                <identifier>RecordCasoInstalacao_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>PrazosCol2</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -599,13 +438,167 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-duracao-col1</value>
+                    <value>PrazosCol1</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
-                <identifier>flexipage_columnDuracaoLeft</identifier>
+                <identifier>PrazosColumn1</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-duracao-columns</name>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>PrazosCol2</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>PrazosColumn2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>PrazosColumns</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ValorInstalacaoPlanejado__c</fieldItem>
+                <identifier>RecordValorInstalacaoPlanejado_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ValorMaterialComplementarPlanejado__c</fieldItem>
+                <identifier>RecordValorMaterialComplementarPlanejado_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.CustosAdicionaisPlanejado__c</fieldItem>
+                <identifier>RecordCustosAdicionaisPlanejado_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>CustoColPlanejado</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ValorInstalacaoRealizado__c</fieldItem>
+                <identifier>RecordValorInstalacaoRealizado_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ValorMaterialComplementarRealizado__c</fieldItem>
+                <identifier>RecordValorMaterialComplementarRealizado_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.CustosAdicionaisRealizado__c</fieldItem>
+                <identifier>RecordCustosAdicionaisRealizado_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>CustoColRealizado</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>CustoColPlanejado</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>CustoColumnPlanejado</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>CustoColRealizado</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>CustoColumnRealizado</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>CustoColumns</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.CreatedById</fieldItem>
+                <identifier>RecordCreatedByIdField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>SistemaCol1</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.LastModifiedById</fieldItem>
+                <identifier>RecordLastModifiedByIdField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>SistemaCol2</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>SistemaCol1</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>SistemaColumn1</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>SistemaCol2</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>SistemaColumn2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>SistemaColumns</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -613,7 +606,7 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>columns</name>
-                    <value>Facet-detalhes-columns</value>
+                    <value>DadosGeraisColumns</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>horizontalAlignment</name>
@@ -621,17 +614,17 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Detalhes do Projeto</value>
+                    <value>Dados Gerais</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
-                <identifier>flexipage_fieldSectionDetalhes</identifier>
+                <identifier>sectionDadosGerais</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>columns</name>
-                    <value>Facet-homologacao-columns</value>
+                    <value>DadosOportunidadeColumns</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>horizontalAlignment</name>
@@ -639,17 +632,17 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Homologação</value>
+                    <value>Dados da Oportunidade</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
-                <identifier>flexipage_fieldSectionHomologacao</identifier>
+                <identifier>sectionDadosOportunidade</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>columns</name>
-                    <value>Facet-aprovacao-columns</value>
+                    <value>PrestadorColumns</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>horizontalAlignment</name>
@@ -657,17 +650,17 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Aprovação do Projeto UFV</value>
+                    <value>Dados do Integrador</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
-                <identifier>flexipage_fieldSectionAprovacaoProjetoUfv</identifier>
+                <identifier>sectionPrestador</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>columns</name>
-                    <value>Facet-validacao-columns</value>
+                    <value>PrazosColumns</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>horizontalAlignment</name>
@@ -675,17 +668,17 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Validação das Beneficiarias</value>
+                    <value>Prazos da Instalação</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
-                <identifier>flexipage_fieldSectionValidacaoBeneficiarias</identifier>
+                <identifier>sectionPrazos</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>columns</name>
-                    <value>Facet-prazo-columns</value>
+                    <value>CustoColumns</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>horizontalAlignment</name>
@@ -693,17 +686,17 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Prazo - Carta</value>
+                    <value>Custo de Obra (Planejado x Realizado)</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
-                <identifier>flexipage_fieldSectionPrazo</identifier>
+                <identifier>sectionCusto</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>columns</name>
-                    <value>Facet-duracao-columns</value>
+                    <value>SistemaColumns</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>horizontalAlignment</name>
@@ -711,10 +704,16 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Duração - Fases do Projeto</value>
+                    <value>Informações do Sistema</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
-                <identifier>flexipage_fieldSectionDuracao</identifier>
+                <identifier>sectionSistema</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>force:recordDetailPanelMobile</componentName>
+                <identifier>force_recordDetailPanelMobile</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
@@ -724,36 +723,35 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>showLegacyActivityComposer</name>
-                    <value>false</value>
-                </componentInstanceProperties>
-                <componentName>runtime_sales_activities:activityPanel</componentName>
-                <identifier>runtime_sales_activities_activityPanel2</identifier>
+                <componentName>forceChatter:recordFeedContainer</componentName>
+                <identifier>forceChatter_recordFeedContainer</identifier>
             </componentInstance>
         </itemInstances>
-        <mode>Replace</mode>
-        <name>relatedTabContent</name>
+        <name>Facet-f256eba0-6a1e-4bca-b446-af476b4ad3ea</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>forceChatter:recordFeedContainer</componentName>
-                <identifier>forceChatter_recordFeedContainer</identifier>
+                <componentInstanceProperties>
+                    <name>showLegacyActivityComposer</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentName>runtime_sales_activities:activityPanel</componentName>
+                <identifier>runtime_sales_activities_activityPanel</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-37651eac-9ad9-4db2-a08b-cb31e0c3d07f</name>
+        <name>Facet-e25e67ce-9c1c-414f-a88a-119f570fe3c7</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
                 <componentName>attachmentTabs</componentName>
-                <identifier>c_attachmentTabs</identifier>
+                <identifier>c_attachmentTabs2</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-0a4f9b33-4edf-4d75-9381-e2fbe4105d4a</name>
+        <name>Facet-df2e782a-e15d-4f4a-aa4e-412a0ec4348d</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -779,35 +777,35 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>relatedTabContent</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>Standard.Tab.activity</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>relatedListsTab</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-37651eac-9ad9-4db2-a08b-cb31e0c3d07f</value>
+                    <value>Facet-f256eba0-6a1e-4bca-b446-af476b4ad3ea</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
                     <value>Standard.Tab.collaborate</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
-                <identifier>flexipage_tab</identifier>
+                <identifier>flexipage_tab3</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-0a4f9b33-4edf-4d75-9381-e2fbe4105d4a</value>
+                    <value>Facet-e25e67ce-9c1c-414f-a88a-119f570fe3c7</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Standard.Tab.activity</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>flexipage_tab4</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-df2e782a-e15d-4f4a-aa4e-412a0ec4348d</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
@@ -843,36 +841,69 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>clickSignTemplateButton</componentName>
-                <identifier>c_clickSignTemplateButton</identifier>
-                <visibilityRule>
-                    <booleanFilter>1 OR 2</booleanFilter>
-                    <criteria>
-                        <leftValue>{!$User.Email}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>contrato@enerzee.com.br</rightValue>
-                    </criteria>
-                    <criteria>
-                        <leftValue>{!$User.Email}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>jonatha@enerzee.com.br</rightValue>
-                    </criteria>
-                </visibilityRule>
+                <componentInstanceProperties>
+                    <name>relatedListComponentOverride</name>
+                    <value>NONE</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>rowsToDisplay</name>
+                    <value>10</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showActionBar</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListContainer</componentName>
+                <identifier>force_relatedListContainer2</identifier>
             </componentInstance>
         </itemInstances>
+        <name>Facet-9f9f83dd-0176-46a2-9962-6429bf7a3926</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>clickSignRelatedList</componentName>
-                <identifier>c_clickSignRelatedList</identifier>
+                <componentInstanceProperties>
+                    <name>active</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-9f9f83dd-0176-46a2-9962-6429bf7a3926</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Standard.Tab.relatedLists</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>flexipage_tab</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-c729f1d5-fdb1-45a6-a0ef-31bf99955585</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Tabs</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>tabs</name>
+                    <value>Facet-c729f1d5-fdb1-45a6-a0ef-31bf99955585</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tabset</componentName>
+                <identifier>flexipage_tabset2</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <masterLabel>Projeto Página de registro</masterLabel>
+    <masterLabel>Instalação Página de registro</masterLabel>
     <parentFlexiPage>flexipage__default_rec_L</parentFlexiPage>
-    <sobjectType>Projeto__c</sobjectType>
+    <sobjectType>Instalacao__c</sobjectType>
     <template>
         <name>flexipage:recordHomeTemplateDesktop</name>
     </template>

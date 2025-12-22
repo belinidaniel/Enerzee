@@ -41,6 +41,11 @@
         <name>CustomObject</name>
     </types>
     <types>
+        <members>Instala_o_P_gina_de_registro</members>
+        <members>Projeto_Pagina_de_registro</members>
+        <name>FlexiPage</name>
+    </types>
+    <types>
         <members>Instalacao__c.DELEGAR_GESTOR_DE_OBRAS</members>
         <members>Instalacao__c.PLANEJAMENTO_DE_OBRA</members>
         <members>Instalacao__c.PROSPECTAR_INTEGRADOR</members>
@@ -72,6 +77,7 @@
         <members>Projeto__c.SOLICITAR_DADOS_ESTUDOS_ELETRICOS</members>
         <members>Projeto__c.SOLICITAR_DISPONIBILIDADE_ENERGIA</members>
         <members>Projeto__c.APROVACAO_PROJETO_SE</members>
+        <members>Instalacao__c.INFORMAR_FATURAMENTO_KIT_WEG</members>
         <name>FieldSet</name>
     </types>
     <types>
@@ -105,10 +111,22 @@
         <members>Projeto__c.CartaAprovacaoTipo__c</members>
         <members>Projeto__c.NecessarioPFC__c</members>
         <members>Projeto__c.CartaAprovacaoData__c</members>
+        <members>Projeto__c.CartaAprovacaoPrazoRegulatorio__c</members>
+        <members>Projeto__c.ContagemPrazoPlanejamentoFmt__c</members>
+        <members>Projeto__c.ContagemPrazoProjetoAnaliseFmt__c</members>
+        <members>Projeto__c.ContagemPrazoProjetoElaboracaoFmt__c</members>
+        <members>Projeto__c.InversaoFluxo__c</members>
+        <members>Projeto__c.Sub_Status__c</members>
+        <members>Projeto__c.ValorPFC__c</members>
+        <members>Projeto__c.DataProtocoloProjeto__c</members>
         <members>Opportunity.DiscountNotLoyalty__c</members>
         <members>OpportunityAttachmentLink__c.ActivityName__c</members>
         <members>OpportunityAttachmentLink__c.SObjectId__c</members>
         <members>OpportunityAttachmentLink__c.DocRequiredName__c</members>
+        <members>Instalacao__c.PrecoPorModulo__c</members>
+        <members>Projeto__c.DataAprovacaoProjeto__c</members>
+        <members>Instalacao__c.PrecoPorInversor__c</members>
+        <members>Instalacao__c.TotalInstalacaoPrestador__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -139,6 +157,7 @@
         <members>TaskBO</members>
         <members>ProjetoStatusIntegrationService</members>
         <members>ProjetoStatusIntegrationServiceTest</members>
+        <members>InstalacaoBO</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -156,8 +175,6 @@
         <name>ApprovalProcess</name>
     </types>
     <types>
-        <members>Task-Task Layout</members>
-        <members>Task-Jornada do Cliente</members>
         <members>Opportunity-Opportunity Layout Micro</members>
         <members>Opportunity-Opportunity Layout Mini</members>
         <members>Projeto__c-Layout de Projeto</members>
@@ -169,6 +186,15 @@
     </types>
     <types>
         <members>Opportunity.EzeeSolarB</members>
+        <members>Projeto__c.Bombeamento</members>
+        <members>Projeto__c.EstacaoRecarga</members>
+        <members>Projeto__c.Financiamento</members>
+        <members>Projeto__c.PadraoEntrada</members>
+        <members>Projeto__c.PostoTransformacao</members>
+        <members>Projeto__c.Subestacao</members>
+        <members>Projeto__c.UFVacima300</members>
+        <members>Projeto__c.UFVMicro</members>
+        <members>Projeto__c.UFVmini300</members>
         <name>RecordType</name>
     </types>
     <types>
@@ -186,10 +212,45 @@
         <members>Instalacao__c.NumeroSolicitacaoSAP__c</members>
         <members>Instalacao__c.SolicitarNovaAtividadePagamento__c</members>
         <members>Instalacao__c.DataPrevisaoConclusao__c</members>
+        <members>Instalacao__c.PrecoPorInversor__c</members>
+        <members>Instalacao__c.CustosAdicionaisPrestador__c</members>
+        <members>Instalacao__c.AdequacaoPadraoPlanejamento__c</members>
+        <members>Instalacao__c.CasoInstalacao__c</members>
+        <members>Instalacao__c.ClienteConta__c</members>
+        <members>Instalacao__c.ConsultorInstalacao__c</members>
+        <members>Instalacao__c.ContagemPrazoContrato__c</members>
+        <members>Instalacao__c.CustosAdicionaisPlanejado__c</members>
+        <members>Instalacao__c.CustosAdicionaisRealizado__c</members>
+        <members>Instalacao__c.DataConclusao__c</members>
+        <members>Instalacao__c.DateInspection__c</members>
+        <members>Instalacao__c.ElaborarLaudoPlanejamento__c</members>
+        <members>Instalacao__c.ExecutivoPlanejamento__c</members>
+        <members>Instalacao__c.GestorObra__c</members>
+        <members>Instalacao__c.InstallDate__c</members>
+        <members>Instalacao__c.IntegradorEstado__c</members>
+        <members>Instalacao__c.IntegradorMunicipio__c</members>
+        <members>Instalacao__c.IntegradorPlanejamento__c</members>
+        <members>Instalacao__c.ListaComplementarPlanejamento__c</members>
+        <members>Instalacao__c.OportunidadeConcluida__c</members>
+        <members>Instalacao__c.Oportunidade__c</members>
+        <members>Instalacao__c.PrazoExecucaoServico__c</members>
+        <members>Instalacao__c.PrestadorDeServico__c</members>
+        <members>Instalacao__c.PrestadorEstado__c</members>
+        <members>Instalacao__c.PrestadorMunicipio__c</members>
+        <members>Instalacao__c.PrestadorTelefone__c</members>
+        <members>Instalacao__c.Projeto__c</members>
+        <members>Instalacao__c.SolicTrafoPlanejamento__c</members>
+        <members>Instalacao__c.Status__c</members>
+        <members>Instalacao__c.TipoPrestadorServico__c</members>
+        <members>Instalacao__c.TotalInstalacaoPrestador__c</members>
+        <members>Instalacao__c.ValorInstalacaoPlanejado__c</members>
+        <members>Instalacao__c.ValorInstalacaoRealizado__c</members>
+        <members>Instalacao__c.ValorMaterialComplementarPlanejado__c</members>
+        <members>Instalacao__c.ValorMaterialComplementarRealizado__c</members>
         <members>Opportunity.DiscountLoyalty__c</members>
-        <members>Task.HoraVencimento__c</members>
-        <members>Task.NotificadoAntesVencer__c</members>
-        <members>Task.NotificadoAposVencer__c</members>
+        <members>Activity.HoraVencimento__c</members>
+        <members>Activity.NotificadoAntesVencer__c</members>
+        <members>Activity.NotificadoAposVencer__c</members>
         <members>Projeto__c.StatusAtualDesde__c</members>
         <members>Projeto__c.ContagemPrazo__c</members>
         <members>Projeto__c.ContagemPrazoPlanejamento__c</members>
@@ -199,6 +260,8 @@
         <members>Projeto__c.CartaAprovacaoValidade__c</members>
         <members>Projeto__c.DataProtocoloProjeto__c</members>
         <members>Projeto__c.BeneficiariasCadastradasProtocolo__c</members>
+        <members>Projeto__c.DataAprovacaoProjeto__c</members>
+        <members>Projeto__c.ValorPFC__c</members>
         <name>CustomField</name>
     </types>
     <types>

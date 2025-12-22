@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>InversaoFluxo__c</fullName>
-    <description>Indica se há inversão de fluxo.</description>
-    <label>Inversão de Fluxo</label>
+    <fullName>Sub_Status__c</fullName>
+    <label>Sub-Status</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
+        <restricted>true</restricted>
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Sim</fullName>
+                <fullName>Aprovado</fullName>
                 <default>false</default>
-                <label>Sim</label>
+                <label>Aprovado</label>
             </value>
             <value>
-                <fullName>Não</fullName>
+                <fullName>Aprovado Parcialmente</fullName>
                 <default>false</default>
-                <label>Não</label>
+                <label>Aprovado Parcialmente</label>
+            </value>
+            <value>
+                <fullName>Cancelado</fullName>
+                <default>false</default>
+                <label>Cancelado</label>
             </value>
         </valueSetDefinition>
     </valueSet>
