@@ -36,11 +36,20 @@ public class TaskTemplateFlowTest {
         ProjetoBO.createTasks(new List<Projeto__c>{ project }, new Map<Id, Projeto__c>());
         Test.stopTest();
 
-        List<Task> tasks = [
-            SELECT Id, Subject, OwnerId, ActivityDate
-            FROM Task
-            WHERE WhatId = :project.Id
-        ];
+        List<Task> tasks;
+        if (hasHoraVencimento) {
+            tasks = [
+                SELECT Id, Subject, OwnerId, ActivityDate, HoraVencimento__c
+                FROM Task
+                WHERE WhatId = :project.Id
+            ];
+        } else {
+            tasks = [
+                SELECT Id, Subject, OwnerId, ActivityDate
+                FROM Task
+                WHERE WhatId = :project.Id
+            ];
+        }
 
         Task queueTask;
         for(Task t : tasks){

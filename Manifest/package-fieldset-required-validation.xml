@@ -148,16 +148,31 @@
         <members>TaskTriggerHandler</members>
         <members>TaskUtils</members>
         <members>TaskDeadlineNotificationBatch</members>
+        <members>TaskDeadlineNotificationBatchTest</members>
         <members>TaskDeadlineNotificationScheduler</members>
+        <members>TaskDeadlineNotificationSchedulerTest</members>
+        <members>TaskTemplateUtilsTest</members>
+        <members>TaskStateServiceTest</members>
+        <members>StatusEnumTest</members>
+        <members>StatusEnumMapTest</members>
+        <members>ActivityDocumentControllerTest</members>
+        <members>DataSourceControllerTest</members>
+        <members>OpportunityBOAdditionalTest</members>
+        <members>OpportunityBOEmailTest</members>
         <members>TaskTemplateFlowTest</members>
         <members>TaskTemplateUtils</members>
         <members>ActivityDocumentController</members>
         <members>ExternalArchiveService</members>
         <members>TaskCompletionServiceDocTest</members>
-        <members>TaskBO</members>
         <members>ProjetoStatusIntegrationService</members>
         <members>ProjetoStatusIntegrationServiceTest</members>
         <members>InstalacaoBO</members>
+        <members>InstalacaoBOTest</members>
+        <members>ProjetoTriggerTest</members>
+        <members>TaskTriggerTest</members>
+        <members>ServiceAppointmentTriggerTest</members>
+        <members>PDFControllerExtensionExtraTest</members>
+        <members>PDFControllerExtensionTest</members>
         <name>ApexClass</name>
     </types>
     <types>

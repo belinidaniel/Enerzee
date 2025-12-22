@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 09-09-2025
+ * @last modified on  : 12-22-2025
  * @last modified by  : Daniel Belini
 **/
 @isTest
@@ -199,7 +199,9 @@ public with sharing class PDFControllerExtensionTest {
 
         ViabilityStudy__c viability = new ViabilityStudy__c(
             Opportunity__c = opp.Id,
-            TextStudy__c = 'Linha 1\nLinha 2'
+            TextStudy__c = 'Linha 1\nLinha 2',
+            AdequacyCostEnerzee__c = 'Ramal CC;Ramal CA;Laudo Estrutural;Adequação Padrão;Cobertura;Outros Custos',
+            AdequacyCostClient__c = 'Ramal CC'
         );
         insert viability;
 

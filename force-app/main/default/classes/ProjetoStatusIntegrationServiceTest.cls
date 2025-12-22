@@ -10,8 +10,11 @@ private class ProjetoStatusIntegrationServiceTest implements HttpCalloutMock {
     @IsTest(SeeAllData=true)
     static void shouldSendWhenStatusChanges() {
         // Fila necessária para validações de tarefas disparadas por projeto
-        Group analistaQueue = new Group(Type = 'Queue', Name = 'AnalistaViabilidade', DeveloperName = 'AnalistaViabilidade');
-        insert analistaQueue;
+        Group analistaQueue = [SELECT Id FROM Group WHERE DeveloperName = 'AnalistaViabilidade' AND Type = 'Queue' LIMIT 1];
+        if (analistaQueue == null) {
+            analistaQueue = new Group(Type = 'Queue', Name = 'AnalistaViabilidade', DeveloperName = 'AnalistaViabilidade');
+            insert analistaQueue;
+        }
         insert new QueueSobject(QueueId = analistaQueue.Id, SobjectType = 'Task');
 
         // Preparar dados mínimos

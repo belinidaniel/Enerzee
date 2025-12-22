@@ -33,12 +33,16 @@ public with sharing class ProjetoStatusIntegrationService {
             return;
         }
 
-        Integrador__mdt integracao = [
+        List<Integrador__mdt> integracoes = [
             SELECT URL__c
             FROM Integrador__mdt
             WHERE DeveloperName = :INTEGRATOR_NAME
             LIMIT 1
         ];
+        if (integracoes.isEmpty()) {
+            return;
+        }
+        Integrador__mdt integracao = integracoes[0];
 
         List<Projeto__c> projects = [
             SELECT Id, Status__c, SubStatus__c, MotivoSubStatus__c,

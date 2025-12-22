@@ -1,49 +1,34 @@
-@isTest
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 12-22-2025
+ * @last modified by  : Daniel Belini
+**/
+@IsTest
 private class CustomerAssignMessagingSessionBatchTest {
 
-    @TestSetup
-    static void setupTestData() {
-        // Create test MessagingEndUser records
-        MessagingChannel channel = [SELECT Id FROM MessagingChannel WHERE MasterLabel LIKE '%+55 11 4003-8852%'];
+    @IsTest
+    static void shouldLinkCaseOnBatch() {
+        // Cria Contact/Case com RecordType Jornada_do_Cliente
+        Contact c = new Contact(LastName = 'Test');
+        insert c;
+        Id rtId = [SELECT Id FROM RecordType WHERE SObjectType='Case' AND DeveloperName='Jornada_do_Cliente' LIMIT 1].Id;
+        Case cs = new Case(Status='New', Origin='Web', RecordTypeId=rtId, ContactId=c.Id, Subject='Teste');
+        insert cs;
 
-        List<MessagingEndUser> endUsers = new List<MessagingEndUser>{
-            new MessagingEndUser(ContactId = null, MessagingPlatformKey = '1234567890', Name = 'Test User 1', MessageType = 'WhatsApp', MessagingChannelId = channel.Id),
-            new MessagingEndUser(ContactId = null, MessagingPlatformKey = '0987654321',  Name = 'Test User 2', MessageType = 'WhatsApp', MessagingChannelId = channel.Id)
-        };
-        insert endUsers;
+        // EndUser com telefone e contact
+        MessagingEndUser endUser = new MessagingEndUser(ContactId=c.Id);
+        insert endUser;
 
-        // Create test MessagingSession records
-        List<MessagingSession> sessions = new List<MessagingSession>{
-            new MessagingSession(MessagingEndUserId = endUsers[0].Id, MessagingChannelId = channel.Id, Status = 'New', ConversationId = '0dwU50000034lLBIAY'),
-            new MessagingSession(MessagingEndUserId = endUsers[1].Id, MessagingChannelId = channel.Id, Status = 'New', ConversationId = '0dwU50000034lLBIAY')
-        };
-        insert sessions;
+        MessagingSession session = new MessagingSession(MessagingEndUserId=endUser.Id);
+        insert session;
 
-        // Create test Contact and Case records
-        Contact contact = new Contact(LastName = 'Test Contact');
-        insert contact;
-
-        Case caseRecord = new Case(ContactId = contact.Id, RecordTypeId = Schema.SObjectType.Case.getRecordTypeInfosByDeveloperName().get('Jornada_do_Cliente').getRecordTypeId());
-        insert caseRecord;
-
-        // Update MessagingEndUser with ContactId
-        endUsers[0].ContactId = contact.Id;
-        update endUsers;
-    }
-
-    @isTest
-    static void testExecuteMethod() {
-        // Test the execute method
-        List<MessagingSession> sessions = [SELECT Id, CaseId FROM MessagingSession];
         Test.startTest();
-        try{
-            CustomerAssignMessagingSessionBatch batch = new CustomerAssignMessagingSessionBatch();
-            Database.executeBatch(batch, 2);
-        }catch(Exception ex){
-            System.debug('Exception: ' + ex.getMessage());
-        }
-        
+        Database.executeBatch(new CustomerAssignMessagingSessionBatch(), 1);
         Test.stopTest();
 
+        MessagingSession updated = [SELECT CaseId FROM MessagingSession WHERE Id = :session.Id];
+        System.assertEquals(cs.Id, updated.CaseId);
     }
 }
