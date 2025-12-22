@@ -94,6 +94,7 @@
         <members>Instalacao__c.NumeroSolicitacaoSAP__c</members>
         <members>Instalacao__c.PagamentoNumero__c</members>
         <members>Instalacao__c.SolicitarNovaAtividadePagamento__c</members>
+        <members>Instalacao__c.DataPrevisaoConclusao__c</members>
         <members>Projeto__c.DocumentacaoComercialPendencia__c</members>
         <members>Projeto__c.DocumentacaoCriarAtividadeContratos__c</members>
         <members>Projeto__c.ViabilidadeTecnicaPendencia__c</members>

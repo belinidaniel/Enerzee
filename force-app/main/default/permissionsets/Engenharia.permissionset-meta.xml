@@ -192,4 +192,14 @@
         <field>Instalacao__c.AdequacaoPadraoPlanejamento__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Instalacao__c.DataPrevisaoConclusao__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Instalacao__c.NumeroSolicitacaoSAP__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
 </PermissionSet>
