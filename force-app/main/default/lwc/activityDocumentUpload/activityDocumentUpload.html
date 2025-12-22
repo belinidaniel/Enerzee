@@ -22,7 +22,12 @@
                                 <td>{row.name}</td>
                                 <td>{row.observation}</td>
                                 <td>
-                                    <input type="file" data-index={row.id} onchange={handleFileChange} />
+                                    <input
+                                        type="file"
+                                        accept=".pdf,application/pdf"
+                                        data-index={row.id}
+                                        onchange={handleFileChange}
+                                    />
                                 </td>
                                 <td>
                                     <lightning-button label="Enviar" data-index={row.id} onclick={handleUpload} variant="brand"></lightning-button>

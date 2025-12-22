@@ -54,6 +54,15 @@ export default class ActivityDocumentUpload extends LightningElement {
         const file = event.target.files && event.target.files[0];
         if (!file) return;
 
+        const isPdf =
+            (file.type && file.type.toLowerCase() === 'application/pdf') ||
+            (file.name && file.name.toLowerCase().endsWith('.pdf'));
+        if (!isPdf) {
+            this.showToast('Aviso', 'Apenas arquivos PDF são aceitos para este envio.', 'warning');
+            event.target.value = null; // limpa seleção
+            return;
+        }
+
         const reader = new FileReader();
         reader.onload = () => {
             const base64Body = reader.result.split(',')[1];
