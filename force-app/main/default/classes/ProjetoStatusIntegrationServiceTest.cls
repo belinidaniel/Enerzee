@@ -9,6 +9,11 @@ private class ProjetoStatusIntegrationServiceTest implements HttpCalloutMock {
 
     @IsTest(SeeAllData=true)
     static void shouldSendWhenStatusChanges() {
+        // Fila necessária para validações de tarefas disparadas por projeto
+        Group analistaQueue = new Group(Type = 'Queue', Name = 'AnalistaViabilidade', DeveloperName = 'AnalistaViabilidade');
+        insert analistaQueue;
+        insert new QueueSobject(QueueId = analistaQueue.Id, SobjectType = 'Task');
+
         // Preparar dados mínimos
         Account acc = new Account(Name = 'Teste');
         insert acc;
@@ -25,17 +30,17 @@ private class ProjetoStatusIntegrationServiceTest implements HttpCalloutMock {
         Projeto__c projOld = new Projeto__c(
             Name = 'Projeto Teste',
             Oportunidade__c = opp.Id,
-            Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO
+            Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+            Conta__c = acc.Id
         );
         insert projOld;
 
-        Projeto__c projNew = projOld.clone(false, true, false, false);
+        Projeto__c projNew = [SELECT Id, Status__c, SubStatus__c, MotivoSubStatus__c FROM Projeto__c WHERE Id = :projOld.Id];
+        Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>{ projNew.Id => projNew.clone(false, true, false, false) };
         projNew.Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO;
         projNew.SubStatus__c = 'Aprovado Parcialmente';
         projNew.MotivoSubStatus__c = 'motivo teste';
         update projNew;
-
-        Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>{ projNew.Id => projOld };
 
         Test.startTest();
         Test.setMock(HttpCalloutMock.class, new ProjetoStatusIntegrationServiceTest());

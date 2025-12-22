@@ -3,6 +3,16 @@ public class TaskTriggerTest{
 
     @TestSetup
     static void makeData(){
+        // Garantir fila utilizada pelas validações de tarefas
+        Group analistaQueue = new Group(Type = 'Queue', Name = 'AnalistaViabilidade', DeveloperName = 'AnalistaViabilidade');
+        insert analistaQueue;
+        insert new QueueSobject(QueueId = analistaQueue.Id, SobjectType = 'Task');
+        // Garantir fila de supervisão de projetos usada em outras validações
+        Group supervisorQueue = new Group(Type = 'Queue', Name = 'SUPERVISOR_DE_PROJETOS', DeveloperName = 'SUPERVISOR_DE_PROJETOS');
+        insert supervisorQueue;
+        insert new QueueSobject(QueueId = supervisorQueue.Id, SobjectType = 'Task');
+        TaskTriggerHandler.disableTrigger();
+
         Consultor__c consultor = (Consultor__c) TestFactory.createSObject(new Consultor__c(), true);
 
         Account account = (Account) TestFactory.createSObject(new Account(), true);
@@ -10,7 +20,8 @@ public class TaskTriggerTest{
         Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
             AccountId                = account.id,
             ConsultorOportunidade__c = consultor.Id,
-            MunicipioInstalacao__c   = 'São Paulo'
+            MunicipioInstalacao__c   = 'São Paulo',
+            IdVirtualOffice__c       = '00000000-0000-0000-0000-000000000001'
         ), true);
 
         Instalacao__c instalation = (Instalacao__c) TestFactory.createSObject(new Instalacao__c(

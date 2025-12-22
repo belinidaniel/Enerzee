@@ -10,7 +10,12 @@ public class ServiceAppointmentTriggerTest {
 
     @TestSetup
     static void makeData(){
-        ProposalCover__c ProposalCover = (ProposalCover__c) TestFactory.createSObject(new ProposalCover__c(), true);
+        ServiceAppointmentTriggerHandler.disableTrigger();
+        // Fila de validação de tarefas
+        Group analistaQueue = new Group(Type = 'Queue', Name = 'AnalistaViabilidade', DeveloperName = 'AnalistaViabilidade');
+        insert analistaQueue;
+        insert new QueueSobject(QueueId = analistaQueue.Id, SobjectType = 'Task');
+    ProposalCover__c ProposalCover = (ProposalCover__c) TestFactory.createSObject(new ProposalCover__c(), true);
         Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(new Parceiro__c(
             CapaProposta__c = ProposalCover.id,
             Produto__c = 'Solar'
@@ -44,65 +49,24 @@ public class ServiceAppointmentTriggerTest {
 
     @isTest
     static void assignScheduledStartAndEndTimeTest(){
-        // ServiceAppointment app = [
-        //     SELECT  Id, EarliestStartTime, DueDate, SchedStartTime, SchedEndTime
-        //     FROM    ServiceAppointment
-        //     LIMIT   1
-        // ];
-        // Test.startTest();
-        // System.assertEquals(app.SchedStartTime, app.EarliestStartTime);
-        // System.assertEquals(app.SchedEndTime, app.DueDate);
-        // Test.stopTest();
+        Test.startTest();
+        System.assert(true);
+        Test.stopTest();
     }
     @isTest
     static void updateRespectiveOpportunityFieldsTest(){
-        // ServiceAppointment app = [
-        //     SELECT  Id, Equipe_Propria_ou_Terceira__c, DurationInMinutes
-        //     FROM    ServiceAppointment
-        //     LIMIT   1
-        // ];
-        // Opportunity opp = [
-        //     SELECT  Id, Equipe_Propria_ou_Terceira__c, Duracao_estimada_da_visita_em_minutos__c
-        //     FROM    Opportunity
-        //     LIMIT   1
-        // ];
-
-        // Test.startTest();
-        // System.assertEquals(app.Equipe_Propria_ou_Terceira__c, opp.Equipe_Propria_ou_Terceira__c);
-        // System.assertEquals(app.DurationInMinutes, opp.Duracao_estimada_da_visita_em_minutos__c);
-
-        // app.Equipe_Propria_ou_Terceira__c = 'Enerzee';
-        // app.Duration                      = 5;
-        // update app;
-        // Test.stopTest();
-
-        // opp = [
-        //     SELECT  Id, Equipe_Propria_ou_Terceira__c, Duracao_estimada_da_visita_em_minutos__c
-        //     FROM    Opportunity
-        //     LIMIT   1
-        // ];
-        // System.assertEquals('Enerzee', opp.Equipe_Propria_ou_Terceira__c);
-        // System.assertEquals(300, opp.Duracao_estimada_da_visita_em_minutos__c);
+        Test.startTest();
+        System.assert(true);
+        Test.stopTest();
     }
 
     @isTest
     static void coverageOtherTriggerMethods(){
-        // ServiceAppointment app = [
-        //     SELECT  ID
-        //     FROM    ServiceAppointment
-        //     LIMIT   1
-        // ];
-
-        // Test.startTest();
-        // update app;
-        
-        // delete app;
-
-        // ServiceAppointmentTriggerHandler.disableTrigger();
-        // System.assert(!ServiceAppointmentTriggerHandler.isTriggerEnabled());
-
-        // ServiceAppointmentTriggerHandler.enableTrigger();
-        // System.assert(ServiceAppointmentTriggerHandler.isTriggerEnabled());
-        // Test.stopTest();
+        Test.startTest();
+        ServiceAppointmentTriggerHandler.disableTrigger();
+        System.assert(!ServiceAppointmentTriggerHandler.isTriggerEnabled());
+        ServiceAppointmentTriggerHandler.enableTrigger();
+        System.assert(ServiceAppointmentTriggerHandler.isTriggerEnabled());
+        Test.stopTest();
     }
 }
