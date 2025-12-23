@@ -4,18 +4,18 @@
     <active>true</active>
     <description>Valida campo &quot;Parceiro de registro de oportunidade&quot; para produtos Ezee Livre e Ezee Solar</description>
     <errorConditionFormula>AND(
-					OR(
-									RecordType.DeveloperName == &apos;Solar&apos;,
-									RecordType.DeveloperName == &apos;EzeeConnect&apos;,
-									RecordType.DeveloperName == &apos;EzeeLivre&apos;,
-									RecordType.DeveloperName == &apos;EzeeSolarA&apos;,
-									RecordType.DeveloperName == &apos;EzeeSolarB&apos;
-					),
-					OR(
-									ISPICKVAL(StageName, &quot;Elaboração de proposta&quot;),
-									ISPICKVAL(StageName, &quot;Simulação de proposta&quot;)
-					),
-					ISBLANK(Parceiro__c)
-	)</errorConditionFormula>
+OR(
+RecordType.DeveloperName == &apos;Solar&apos;,
+RecordType.DeveloperName == &apos;EzeeConnect&apos;,
+RecordType.DeveloperName == &apos;EzeeLivre&apos;,
+RecordType.DeveloperName == &apos;EzeeSolarA&apos;,
+RecordType.DeveloperName == &apos;EzeeSolarB&apos;
+),
+OR(
+ISPICKVAL(StageName, &quot;Elaboração de proposta&quot;),
+ISPICKVAL(StageName, &quot;Simulação de proposta&quot;)
+),
+ISBLANK(Parceiro__c)
+)</errorConditionFormula>
     <errorMessage>O campo &quot;Parceiro de registro de oportunidade&quot; não foi preenchido. Atualize a oportunidade antes de continuar.</errorMessage>
 </ValidationRule>

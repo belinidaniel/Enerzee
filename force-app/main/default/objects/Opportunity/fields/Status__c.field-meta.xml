@@ -153,116 +153,172 @@
             </value>
         </valueSetDefinition>
         <valueSettings>
-            <controllingFieldValue>Finalizado</controllingFieldValue>
-            <valueName>Validando Bonificação</valueName>
+            <controllingFieldValue>Contrato</controllingFieldValue>
+            <valueName>Aguardando Documentos</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Finalizado</controllingFieldValue>
-            <controllingFieldValue>Ganho fechado</controllingFieldValue>
-            <controllingFieldValue>Fechado Perdido</controllingFieldValue>
-            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
-            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
-            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
-            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
-            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
-            <controllingFieldValue>Instalação</controllingFieldValue>
+            <controllingFieldValue>Contrato</controllingFieldValue>
+            <valueName>Geração do Contrato</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Contrato</controllingFieldValue>
+            <valueName>Contrato Enviado</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Contrato</controllingFieldValue>
+            <valueName>Contrato Assinado</valueName>
+        </valueSettings>
+        <valueSettings>
             <controllingFieldValue>Contrato</controllingFieldValue>
             <controllingFieldValue>Validação</controllingFieldValue>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
             <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Parecer de acesso</controllingFieldValue>
             <controllingFieldValue>Equipamento</controllingFieldValue>
+            <controllingFieldValue>Finalizado</controllingFieldValue>
+            <controllingFieldValue>Ganho fechado</controllingFieldValue>
+            <controllingFieldValue>Fechado Perdido</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Instalação</controllingFieldValue>
+            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
+            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
             <valueName>Não definido</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Finalizado</controllingFieldValue>
-            <controllingFieldValue>Ganho fechado</controllingFieldValue>
-            <controllingFieldValue>Fechado Perdido</controllingFieldValue>
-            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
-            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
-            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
-            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
-            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
-            <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Contrato</controllingFieldValue>
             <controllingFieldValue>Validação</controllingFieldValue>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
             <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Parecer de acesso</controllingFieldValue>
             <controllingFieldValue>Equipamento</controllingFieldValue>
+            <controllingFieldValue>Finalizado</controllingFieldValue>
+            <controllingFieldValue>Ganho fechado</controllingFieldValue>
+            <controllingFieldValue>Fechado Perdido</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Instalação</controllingFieldValue>
+            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
+            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
             <valueName>Planejamento de projeto</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Finalizado</controllingFieldValue>
-            <controllingFieldValue>Ganho fechado</controllingFieldValue>
-            <controllingFieldValue>Fechado Perdido</controllingFieldValue>
-            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
-            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
-            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
-            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
-            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
-            <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Contrato</controllingFieldValue>
             <controllingFieldValue>Validação</controllingFieldValue>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
             <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Parecer de acesso</controllingFieldValue>
             <controllingFieldValue>Equipamento</controllingFieldValue>
+            <controllingFieldValue>Finalizado</controllingFieldValue>
+            <controllingFieldValue>Ganho fechado</controllingFieldValue>
+            <controllingFieldValue>Fechado Perdido</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Instalação</controllingFieldValue>
+            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
+            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
             <valueName>Projetos em elaboração</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Finalizado</controllingFieldValue>
-            <controllingFieldValue>Ganho fechado</controllingFieldValue>
-            <controllingFieldValue>Fechado Perdido</controllingFieldValue>
-            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
-            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
-            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
-            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
-            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
-            <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Contrato</controllingFieldValue>
             <controllingFieldValue>Validação</controllingFieldValue>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
             <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Parecer de acesso</controllingFieldValue>
             <controllingFieldValue>Equipamento</controllingFieldValue>
+            <controllingFieldValue>Finalizado</controllingFieldValue>
+            <controllingFieldValue>Ganho fechado</controllingFieldValue>
+            <controllingFieldValue>Fechado Perdido</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Instalação</controllingFieldValue>
+            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
+            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
             <valueName>Projeto em análise</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Finalizado</controllingFieldValue>
-            <controllingFieldValue>Ganho fechado</controllingFieldValue>
-            <controllingFieldValue>Fechado Perdido</controllingFieldValue>
-            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
-            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
-            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
-            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
-            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
-            <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Contrato</controllingFieldValue>
             <controllingFieldValue>Validação</controllingFieldValue>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
             <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Parecer de acesso</controllingFieldValue>
             <controllingFieldValue>Equipamento</controllingFieldValue>
+            <controllingFieldValue>Finalizado</controllingFieldValue>
+            <controllingFieldValue>Ganho fechado</controllingFieldValue>
+            <controllingFieldValue>Fechado Perdido</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Instalação</controllingFieldValue>
+            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
+            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
             <valueName>Projeto aprovado</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Finalizado</controllingFieldValue>
-            <controllingFieldValue>Ganho fechado</controllingFieldValue>
-            <controllingFieldValue>Fechado Perdido</controllingFieldValue>
-            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
-            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
-            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
-            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
-            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
-            <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Contrato</controllingFieldValue>
             <controllingFieldValue>Validação</controllingFieldValue>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
             <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Parecer de acesso</controllingFieldValue>
             <controllingFieldValue>Equipamento</controllingFieldValue>
+            <controllingFieldValue>Finalizado</controllingFieldValue>
+            <controllingFieldValue>Ganho fechado</controllingFieldValue>
+            <controllingFieldValue>Fechado Perdido</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Instalação</controllingFieldValue>
+            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
+            <controllingFieldValue>Análise de Crédito</controllingFieldValue>
             <valueName>Projeto cancelado</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Validação</controllingFieldValue>
+            <valueName>Em Andamento</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Validação</controllingFieldValue>
+            <valueName>Pendência</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
+            <valueName>Aguardando Pagamento</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
+            <valueName>Agendamento de Visita</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
+            <valueName>Estudo de Viabilidade</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Parecer de acesso</controllingFieldValue>
+            <valueName>Fast Track</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Parecer de acesso</controllingFieldValue>
+            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <valueName>Em Análise</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Equipamento</controllingFieldValue>
+            <valueName>Entrega de materiais</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Finalizado</controllingFieldValue>
+            <valueName>Validando Bonificação</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Ganho fechado</controllingFieldValue>
@@ -282,31 +338,11 @@
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
-            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
-            <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
-            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
-            <valueName>Aguardando Pagamento</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
             <valueName>Pago</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
-            <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
-            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
-            <valueName>Agendamento de Visita</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
-            <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
-            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
-            <valueName>Estudo de Viabilidade</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Aguardando aceite</controllingFieldValue>
-            <controllingFieldValue>Parecer de acesso</controllingFieldValue>
-            <valueName>Em Análise</valueName>
+            <controllingFieldValue>Instalação</controllingFieldValue>
+            <valueName>Em instalação</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Análise de Crédito</controllingFieldValue>
@@ -319,42 +355,6 @@
         <valueSettings>
             <controllingFieldValue>Análise de Crédito</controllingFieldValue>
             <valueName>Reprovado</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Instalação</controllingFieldValue>
-            <valueName>Em instalação</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Contrato</controllingFieldValue>
-            <valueName>Aguardando Documentos</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Contrato</controllingFieldValue>
-            <valueName>Geração do Contrato</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Contrato</controllingFieldValue>
-            <valueName>Contrato Enviado</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Contrato</controllingFieldValue>
-            <valueName>Contrato Assinado</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Validação</controllingFieldValue>
-            <valueName>Em Andamento</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Validação</controllingFieldValue>
-            <valueName>Pendência</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Parecer de acesso</controllingFieldValue>
-            <valueName>Fast Track</valueName>
-        </valueSettings>
-        <valueSettings>
-            <controllingFieldValue>Equipamento</controllingFieldValue>
-            <valueName>Entrega de materiais</valueName>
         </valueSettings>
     </valueSet>
 </CustomField>

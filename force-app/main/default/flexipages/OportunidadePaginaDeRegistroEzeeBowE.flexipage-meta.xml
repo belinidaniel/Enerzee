@@ -703,26 +703,6 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.DiscountLoyalty__c</fieldItem>
-                <identifier>RecordDiscountLoyalty_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.DiscountNotLoyalty__c</fieldItem>
-                <identifier>RecordDiscountNotLoyalty_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.EconomiaAnual__c</fieldItem>
                 <identifier>RecordEconomiaAnual_cField</identifier>
             </fieldInstance>

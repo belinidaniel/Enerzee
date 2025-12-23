@@ -4,12 +4,15 @@
     <columns>OPPORTUNITY.NAME</columns>
     <columns>ConsultorOportunidade__c</columns>
     <columns>OPPORTUNITY.STAGE_NAME</columns>
-    <columns>OPPORTUNITY.AMOUNT</columns>
+    <columns>ValorTotalProposta__c</columns>
     <columns>OPPORTUNITY.CREATED_DATE</columns>
     <columns>OPPORTUNITY.LAST_STAGE_CHANGE</columns>
     <columns>PotenciaPicoSistema__c</columns>
     <columns>GrupoTarifario__c</columns>
     <columns>OPPORTUNITY.RECORDTYPE</columns>
+    <columns>SubTipo__c</columns>
+    <columns>PartnerName__c</columns>
+    <columns>TipoKitPromocional__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>OPPORTUNITY.RECORDTYPE</field>

@@ -3,7 +3,6 @@
     <fullName>Status__c</fullName>
     <label>Status da Instalação</label>
     <required>false</required>
-    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>

@@ -35,6 +35,10 @@
         <default>false</default>
     </values>
     <values>
+        <fullName>Lead</fullName>
+        <default>false</default>
+    </values>
+    <values>
         <fullName>Parecer de acesso</fullName>
         <default>false</default>
     </values>

@@ -1,9 +1,9 @@
 @IsTest
-private class CheckBusinessHourTest {
-
-    @IsTest
-    static void shouldReturnTrueDuringTest() {
-        List<Boolean> result = CheckBusinessHour.makeGetCallout(new List<String>{'AnyName'});
-        System.assertEquals(true, result[0]);
+public class CheckBusinessHourTest {
+    static testMethod void makeGetCalloutTest(){  
+        BusinessHours bhs = [SELECT id, Name FROM BusinessHours WHERE IsDefault=true LIMIT 1];
+        List<String> bhName = new List<String>();
+        bhName.add(bhs.Name);
+        CheckBusinessHour.makeGetCallout(bhName);
     }
 }

@@ -4,7 +4,6 @@
     <defaultValue>false</defaultValue>
     <description>Indica se o usuário solicita abertura de nova atividade de pagamento após esta.</description>
     <label>Solicitar Nova Atividade de Pagamento</label>
-    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Checkbox</type>

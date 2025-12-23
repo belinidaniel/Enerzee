@@ -18,5 +18,10 @@
         <operation>equals</operation>
         <value>Ganho fechado</value>
     </filters>
+    <filters>
+        <field>OPPORTUNITY.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Opportunity.Solar</value>
+    </filters>
     <label>Oportunidades Fechado Ganho Solar</label>
 </ListView>

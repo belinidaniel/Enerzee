@@ -7,7 +7,6 @@
     <relationshipLabel>Instalações</relationshipLabel>
     <relationshipName>InstalacoesIntegrador</relationshipName>
     <required>false</required>
-    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Lookup</type>

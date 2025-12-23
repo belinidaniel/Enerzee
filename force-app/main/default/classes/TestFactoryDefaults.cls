@@ -689,7 +689,7 @@ public  class TestFactoryDefaults{
                 Projeto__c.PotenciaSistema__c                 => '12',
                 Projeto__c.PrazoContratoDias__c               => 1,
                 Projeto__c.Status__c                          => 'Planejamento',
-                Projeto__c.TipoObra__c                        => 'UFV Mini Até 300',
+                Projeto__c.TipoObra__c                        => 'UFV Mini até 300',
                 Projeto__c.TipoUsina__c                       => 'Solo'
             };
         }

@@ -3,6 +3,10 @@
     <fullName>Padrão</fullName>
     <isActive>true</isActive>
     <values>
+        <fullName>Convertido</fullName>
+        <default>false</default>
+    </values>
+    <values>
         <fullName>Distribuído</fullName>
         <default>false</default>
     </values>
@@ -11,15 +15,11 @@
         <default>true</default>
     </values>
     <values>
-        <fullName>Não qualificado</fullName>
+        <fullName>Não Qualificado</fullName>
         <default>false</default>
     </values>
     <values>
         <fullName>Qualificado</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Remarketing</fullName>
         <default>false</default>
     </values>
     <values>

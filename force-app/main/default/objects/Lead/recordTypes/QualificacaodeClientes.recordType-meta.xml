@@ -24,6 +24,17 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>Distributiontype__c</picklist>
+        <values>
+            <fullName>Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Graduação</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>GenderIdentity</picklist>
         <values>
             <fullName>Homem</fullName>
@@ -607,6 +618,10 @@
     </picklistValues>
     <picklistValues>
         <picklist>Sub_Status__c</picklist>
+        <values>
+            <fullName>Email Agente Enviado</fullName>
+            <default>false</default>
+        </values>
         <values>
             <fullName>Não Convertido</fullName>
             <default>false</default>

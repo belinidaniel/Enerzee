@@ -115,7 +115,7 @@
             <targetReference>Get_Messaging_User</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <variables>
         <name>messagingUserIds</name>
         <dataType>String</dataType>

@@ -68,6 +68,10 @@
                 <behavior>Edit</behavior>
                 <field>Distributiontype__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>NotFinishMessaging__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

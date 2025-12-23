@@ -10,14 +10,19 @@
     <columns>OPPORTUNITY.LAST_STAGE_CHANGE</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>OPPORTUNITY.STAGE_NAME</field>
+        <field>GrupoTarifario__c</field>
         <operation>equals</operation>
-        <value>Prospecção,Solicitação de Proposta,Elaboração de proposta,Readequação de Proposta</value>
+        <value>Grupo A</value>
     </filters>
     <filters>
         <field>OPPORTUNITY.RECORDTYPE</field>
         <operation>equals</operation>
-        <value>Opportunity.ContratoMini,Opportunity.MicroGrupoAElaboracao,Opportunity.MiniGrupoAElaboracao</value>
+        <value>Opportunity.Solar</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>equals</operation>
+        <value>Elaboração de proposta</value>
     </filters>
     <label>Elaboração de propostas (Mini)</label>
 </ListView>

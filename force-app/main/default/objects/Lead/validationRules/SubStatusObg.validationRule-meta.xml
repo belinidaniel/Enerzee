@@ -3,15 +3,15 @@
     <fullName>SubStatusObg</fullName>
     <active>false</active>
     <errorConditionFormula>AND(
-ISCHANGED(Status),
-ISPICKVAL(Status, &apos;Não Convertido&apos;),
-OR(
-RecordType.DeveloperName = &apos;Cliente&apos;,
-RecordType.DeveloperName = &apos;QualificacaodeClientes&apos;
-),
-OR(
-ISPICKVAL(Sub_Status__c, &apos;&apos;)
-)
+    ISCHANGED(Status),
+    ISPICKVAL(Status, &apos;Não Convertido&apos;),
+    OR(
+        RecordType.DeveloperName = &apos;Cliente&apos;,
+        RecordType.DeveloperName = &apos;QualificacaodeClientes&apos;
+    ),
+    OR(
+        ISPICKVAL(Sub_Status__c, &apos;&apos;)
+    )
 )</errorConditionFormula>
     <errorMessage>Campo Sub-Status precisa ser preenchido antes de mudar a fase do Lead para Não Convertido.</errorMessage>
 </ValidationRule>
