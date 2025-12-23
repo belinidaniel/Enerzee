@@ -35,12 +35,16 @@ public class TaskBO {
         }
 
         Set<String> required = new Set<String>();
+        Map<String, String> requiredRawByNorm = new Map<String, String>();
         for (ActivityRequiredDocument__mdt cfg : configs) {
             if (String.isBlank(cfg.RequiredFiles__c)) continue;
             for (String name : cfg.RequiredFiles__c.split(';')) {
                 String norm = normalizeName(name);
                 if (!String.isBlank(norm)) {
                     required.add(norm);
+                    if (!requiredRawByNorm.containsKey(norm)) {
+                        requiredRawByNorm.put(norm, name.trim());
+                    }
                 }
             }
         }
@@ -50,12 +54,14 @@ public class TaskBO {
 
         Set<String> uploaded = new Set<String>();
         for (OpportunityAttachmentLink__c link : [
-            SELECT AttachmentDescription__c
+            SELECT AttachmentDescription__c, DocRequiredName__c
             FROM OpportunityAttachmentLink__c
             WHERE SObjectId__c = :String.valueOf(taskRecord.WhatId)
-                AND ActivityName__c = :taskRecord.Subject
         ]) {
-            String norm = normalizeName(link.AttachmentDescription__c);
+            String sourceName = String.isNotBlank(link.DocRequiredName__c)
+                ? link.DocRequiredName__c
+                : link.AttachmentDescription__c;
+            String norm = normalizeName(sourceName);
             if (!String.isBlank(norm)) {
                 uploaded.add(norm);
             }
@@ -64,7 +70,15 @@ public class TaskBO {
         Set<String> missing = required.clone();
         missing.removeAll(uploaded);
         if (!missing.isEmpty()) {
-            taskRecord.addError('Ainda faltam anexar os documentos obrigatórios: ' + String.join(new List<String>(missing), ', '));
+            List<String> missingLabels = new List<String>();
+            for (String key : missing) {
+                if (requiredRawByNorm.containsKey(key)) {
+                    missingLabels.add(requiredRawByNorm.get(key));
+                } else {
+                    missingLabels.add(key);
+                }
+            }
+            taskRecord.addError('Ainda faltam anexar os documentos obrigatórios: ' + String.join(missingLabels, ', '));
         }
     }
 
@@ -865,22 +879,31 @@ public class TaskBO {
 
                 Map<String, List<String>> missingBySection = new Map<String, List<String>>();
 
-                // Regra específica: Motivo Sub-Status obrigatório quando Sub-Status é Aprovado Parcialmente ou Cancelado
+                // Regra específica: Motivo Sub-Status obrigatório apenas quando Sub-Status é Aprovado Parcialmente / Cancelado / Reprovado.
                 if (objectApiName == 'Projeto__c'
                     && taskRecord.Subject != null
-                    && taskRecord.Subject.trim().equalsIgnoreCase(TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV)) {
-                    if (fieldMap.containsKey('SubStatus__c') && fieldMap.containsKey('MotivoSubStatus__c')) {
-                        String subStatusValue = (String)targetRecord.get('SubStatus__c');
-                        String motivoValue = (String)targetRecord.get('MotivoSubStatus__c');
-                        if (!String.isBlank(subStatusValue)) {
-                            Boolean requiresMotivo = subStatusValue.equalsIgnoreCase('Aprovado Parcialmente')
-                                || subStatusValue.equalsIgnoreCase('Cancelado')
-                                || subStatusValue.equalsIgnoreCase('Reprovado');
-                            if (requiresMotivo && String.isBlank(motivoValue)) {
-                                taskRecord.addError('Motivo Sub-Status é obrigatório quando Sub-Status é Aprovado Parcialmente ou Cancelado.');
+                    && taskRecord.Subject.trim().equalsIgnoreCase(TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV)
+                    && fieldMap.containsKey('SubStatus__c')
+                    && fieldMap.containsKey('MotivoSubStatus__c')) {
+                    String subStatusValue = (String)targetRecord.get('SubStatus__c');
+                    String motivoValue = (String)targetRecord.get('MotivoSubStatus__c');
+                    Boolean requiresMotivo = !String.isBlank(subStatusValue)
+                        && (subStatusValue.equalsIgnoreCase('Aprovado Parcialmente')
+                            || subStatusValue.equalsIgnoreCase('Cancelado')
+                            || subStatusValue.equalsIgnoreCase('Reprovado'));
+
+                    if (!requiresMotivo) {
+                        List<FieldRequirement> filtered = new List<FieldRequirement>();
+                        for (FieldRequirement r : requiredFields) {
+                            if (r == null || r.apiName == 'MotivoSubStatus__c') {
                                 continue;
                             }
+                            filtered.add(r);
                         }
+                        requiredFields = filtered;
+                    } else if (String.isBlank(motivoValue)) {
+                        taskRecord.addError('Motivo Sub-Status é obrigatório quando Sub-Status é Aprovado Parcialmente ou Cancelado ou Reprovado.');
+                        continue;
                     }
                 }
 

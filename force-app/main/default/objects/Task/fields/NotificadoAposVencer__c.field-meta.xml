@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NotificadoAposVencer__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Indica se o responsável foi notificado após o vencimento.</description>
+    <externalId>false</externalId>
+    <label>Notificado Após Vencer</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

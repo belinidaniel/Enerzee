@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-15-2025
+ * @last modified on  : 12-22-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -632,33 +632,6 @@ public class OpportunityBO {
             }
         }
         insert tasksToInsert;
-    }
-
-    public static void validateContractStatusChanging(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
-        User runningUser = [
-            SELECT  Id, Name, Profile.Name
-            FROM    User
-            WHERE   Id =: UserInfo.getUserId()
-        ];
-        String[] allowedProfiles = new String[]{
-            'Administrador',
-            'Administrador API',
-            'Administrador do sistema', 
-            'System Administrator'
-        };
-        for(Opportunity opp : newRecords){
-            Opportunity oldOpp = oldRecordsMap.get(opp.Id);
-            if(
-                OpportunityUtils.isStatusChanging(opp, oldOpp) && 
-                (
-                    OpportunityUtils.isSubStatusContractSent(opp) ||
-                    OpportunityUtils.isSubStatusContractFirmedSigned(opp)
-                ) &&
-                !allowedProfiles.contains(runningUser.Profile.Name)
-            ){
-                opp.addError('Essa alteração de status não pode ser feita de forma manual!');
-            }
-        }
     }
     
     public static Map<String, Id> getOpportunitiesSellers(Set<String> sellerIds){
@@ -2744,8 +2717,8 @@ public class OpportunityBO {
         }
         
     }
-
-    private static String appendAutomationNote(String currentValue, String note, Integer maxLength) {
+	
+    public static String appendAutomationNote(String currentValue, String note, Integer maxLength) {
         if (String.isBlank(note) || maxLength == null || maxLength <= 0) {
             return currentValue;
         }
@@ -2765,7 +2738,7 @@ public class OpportunityBO {
     }
 
 
-    private static void sendClosedLostAutomationEmail(List<Opportunity> opportunities, Set<Id> userIds, String note) {
+    public static void sendClosedLostAutomationEmail(List<Opportunity> opportunities, Set<Id> userIds, String note) {
         if (opportunities == null || opportunities.isEmpty() || userIds == null || userIds.isEmpty()) {
             return;
         }
@@ -2788,7 +2761,7 @@ public class OpportunityBO {
             }
         }
 
-        if (recipientEmails.isEmpty() || Test.isRunningTest()) {
+        if (recipientEmails.isEmpty()) {
             return;
         }
 
@@ -2815,7 +2788,10 @@ public class OpportunityBO {
         email.setToAddresses(recipientEmails);
         email.setSubject('Encerramento automático de atividades - Fechado Perdido');
         email.setHtmlBody(body);
-
+	
+        if( Test.isRunningTest()){
+            return;
+        }
         Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ email });
     }
 

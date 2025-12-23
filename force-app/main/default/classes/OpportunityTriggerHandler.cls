@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-01-2025
+ * @last modified on  : 12-22-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityTriggerHandler extends TriggerHandler {
@@ -44,15 +44,11 @@ public class OpportunityTriggerHandler extends TriggerHandler {
     }
     
     public override void beforeUpdate(){
-        //OpportunityBO.validateContractStatusChanging((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
-        //OpportunityBO.validateOpportunityUpdatesInSentProposalStage((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.validateViabilityTexts((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.resetReadjustmentFieldsOnStatusChanging((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
-        //OpportunityBO.resetProposalGenerated((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.calculateDataToProposalGraphic25Years((List<Opportunity>) Trigger.new);
         OpportunityBO.setContractSendingDate((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.changeOpportunityStageOnViabilityChanging((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
-        //OpportunityBO.ChangeRecordTypeStage((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.revertStageForNivelloAPIUser((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.updateOwnerOnFirstModification((List<Opportunity>) Trigger.new);
         OpportunityBO.controlsSubstatus((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
@@ -69,17 +65,13 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.applyDiscountAndInitiateApproval( (Map<Id,Opportunity>) Trigger.newMap,(Map<Id, Opportunity>) Trigger.oldMap );
         OpportunityBO.updateOpportunityPhaseOnStageChange((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.createProjectRecords((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
-        //OpportunityBO.createWorkOrderTechnicalVisit((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.createRequiredFieldsReminderTasks((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
-        //OpportunityBO.ChangeRecordTypeStage((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.sendContractToExternalSystem((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
-        //essa linha aqui
         OpportunityBO.updateKitsOnPotenciaChange((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.applyApprovedDiscounts((Map<Id, Opportunity>) Trigger.newMap,(Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.scheduleTechnicalVisit( (Map<Id,Opportunity>) Trigger.newMap, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.updateFinancingProcessSimulationInExternalSystem((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.updateOpportunityTotalValueIfNeeded((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
-        //OpportunityBO.validateStageChange((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.processUpdatedOpportunitiesForSimulation((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.checksAndClosesTaskFollowUpCall((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.checkAndSendToRevo((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);

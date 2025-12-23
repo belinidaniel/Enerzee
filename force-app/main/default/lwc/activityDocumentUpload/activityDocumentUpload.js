@@ -2,6 +2,7 @@ import { LightningElement, api, track, wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getRequiredDocuments from '@salesforce/apex/ActivityDocumentController.getRequiredDocuments';
 import uploadExternalArchive from '@salesforce/apex/ExternalArchiveService.uploadExternalArchive';
+import getAttachments from '@salesforce/apex/ActivityDocumentController.getAttachments';
 import getTaskContext from '@salesforce/apex/ActivityDocumentController.getTaskContext';
 
 export default class ActivityDocumentUpload extends LightningElement {
@@ -14,6 +15,10 @@ export default class ActivityDocumentUpload extends LightningElement {
 
     @track rows = [];
     @track loading = false;
+    @track existingAttachments = [];
+    previewOpen = false;
+    previewUrl = null;
+    previewTitle = null;
 
     @wire(getTaskContext, { taskId: '$recordId' })
     wiredContext({ error, data }) {
@@ -22,6 +27,7 @@ export default class ActivityDocumentUpload extends LightningElement {
             this.sobjectId = data.whatId;
             this.opportunityId = data.opportunityId;
             this.loadDocs();
+            this.loadExistingAttachments();
         } else if (error) {
             this.showToast('Erro', this.normalizeError(error), 'error');
         }
@@ -40,7 +46,8 @@ export default class ActivityDocumentUpload extends LightningElement {
                 observation: d.observation,
                 fileName: null,
                 base64: null,
-                status: 'Pendente'
+                status: 'Pendente',
+                existingUrl: null
             }));
         } catch (error) {
             this.showToast('Erro', this.normalizeError(error), 'error');
@@ -49,10 +56,63 @@ export default class ActivityDocumentUpload extends LightningElement {
         }
     }
 
+    async loadExistingAttachments() {
+        if (!this.sobjectId) return;
+        try {
+            const attachments = await getAttachments({
+                sobjectId: this.sobjectId,
+                activitySubject: this.subject
+            });
+            this.existingAttachments = attachments || [];
+            this.rows = (this.rows || []).map((r) => {
+                const match = this.existingAttachments.find(
+                    (att) =>
+                        (att.docRequiredName && att.docRequiredName === r.name) ||
+                        att.name === r.name
+                );
+                if (match) {
+                    return { ...r, status: 'Enviado', fileName: match.name, existingUrl: match.url || match.downloadUrl };
+                }
+                return r;
+            });
+        } catch (error) {
+            // não bloqueia UI
+            // eslint-disable-next-line no-console
+            console.error('Erro ao carregar anexos existentes', error);
+        }
+    }
+
+    handleOpenPreview(event) {
+        event.preventDefault();
+        const url = event.currentTarget?.dataset?.url;
+        const label = event.currentTarget?.dataset?.label;
+        if (!url) {
+            return;
+        }
+        this.previewUrl = url;
+        this.previewTitle = label || 'Documento';
+        this.previewOpen = true;
+    }
+
+    handleClosePreview() {
+        this.previewOpen = false;
+        this.previewUrl = null;
+        this.previewTitle = null;
+    }
+
     handleFileChange(event) {
         const idx = event.target.dataset.index;
         const file = event.target.files && event.target.files[0];
         if (!file) return;
+
+        const isPdf =
+            (file.type && file.type.toLowerCase() === 'application/pdf') ||
+            (file.name && file.name.toLowerCase().endsWith('.pdf'));
+        if (!isPdf) {
+            this.showToast('Aviso', 'Apenas arquivos PDF são aceitos para este envio.', 'warning');
+            event.target.value = null; // limpa seleção
+            return;
+        }
 
         const reader = new FileReader();
         reader.onload = () => {
@@ -82,12 +142,14 @@ export default class ActivityDocumentUpload extends LightningElement {
                 fileName: row.fileName,
                 base64File: row.base64,
                 sobjectId: this.sobjectId,
-                activityName: this.activityName || this.subject
+                activityName: this.activityName || this.subject,
+                docRequiredName: row.name
             });
             if (result && result.success) {
                 this.rows = this.rows.map(r => r.id == idx ? { ...r, status: 'Enviado' } : r);
                 this.showToast('Sucesso', 'Arquivo enviado com sucesso.', 'success');
                 this.dispatchEvent(new CustomEvent('uploaded'));
+                await this.loadExistingAttachments();
             } else {
                 this.showToast('Erro', (result && result.message) || 'Falha ao enviar.', 'error');
             }

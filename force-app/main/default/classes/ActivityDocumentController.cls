@@ -9,8 +9,10 @@ public with sharing class ActivityDocumentController {
         @AuraEnabled public Id id;
         @AuraEnabled public String name;
         @AuraEnabled public String activityName;
+        @AuraEnabled public String docRequiredName;
         @AuraEnabled public DateTime createdDate;
         @AuraEnabled public String url;
+        @AuraEnabled public String downloadUrl;
     }
 
     public class TaskContext {
@@ -46,24 +48,40 @@ public with sharing class ActivityDocumentController {
         return docs;
     }
 
-    @AuraEnabled(cacheable=true)
-    public static List<AttachmentItem> getAttachments(Id sobjectId) {
+    @AuraEnabled
+    public static List<AttachmentItem> getAttachments(Id sobjectId, String activitySubject) {
         if (sobjectId == null) {
             return new List<AttachmentItem>();
         }
+        String normalizedSubject = String.isNotBlank(activitySubject) ? activitySubject.trim() : null;
         List<AttachmentItem> results = new List<AttachmentItem>();
-        for (OpportunityAttachmentLink__c link : [
-            SELECT Id, AttachmentDescription__c, ActivityName__c, AttachmentURL__c, CreatedDate
-            FROM OpportunityAttachmentLink__c
-            WHERE SObjectId__c = :String.valueOf(sobjectId)
-            ORDER BY CreatedDate DESC
-        ]) {
+        List<OpportunityAttachmentLink__c> links;
+        if (normalizedSubject == null) {
+            links = [
+                SELECT Id, AttachmentDescription__c, ActivityName__c, AttachmentURL__c, CreatedDate, DocRequiredName__c
+                FROM OpportunityAttachmentLink__c
+                WHERE SObjectId__c = :String.valueOf(sobjectId)
+                ORDER BY CreatedDate DESC
+            ];
+        } else {
+            links = [
+                SELECT Id, AttachmentDescription__c, ActivityName__c, AttachmentURL__c, CreatedDate, DocRequiredName__c
+                FROM OpportunityAttachmentLink__c
+                WHERE SObjectId__c = :String.valueOf(sobjectId)
+                AND ActivityName__c = :normalizedSubject
+                ORDER BY CreatedDate DESC
+            ];
+        }
+
+        for (OpportunityAttachmentLink__c link : links) {
             AttachmentItem item = new AttachmentItem();
             item.id = link.Id;
             item.name = link.AttachmentDescription__c;
             item.activityName = link.ActivityName__c;
+            item.docRequiredName = link.DocRequiredName__c;
             item.createdDate = link.CreatedDate;
             item.url = link.AttachmentURL__c;
+            item.downloadUrl = link.AttachmentURL__c;
             results.add(item);
         }
         return results;

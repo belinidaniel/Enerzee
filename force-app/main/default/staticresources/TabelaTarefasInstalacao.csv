@@ -12,7 +12,7 @@ RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;9;RECEBIMENTO DO KIT WEG;Anexar Fotos d
 RT_UFV_MICRO;STATUS_PLANEJAMENTO_DE_OBRA;10;AGENDAMENTO DO INÍCIO DE OBRA;"Informar a data agendada para o início das atividades; Essa atividade deverá ser aberta após a conclusão de todas as annteriores desse Etapa;";;GESTOR_DE_OBRAS;"COORDENADOR_DE_ENGENHARIA;GESTOR_DE_OBRAS";1;36;LOOKUP
 RT_UFV_MICRO;STATUS_OBRA_EM_EXECUCAO;11;EXECUÇÃO DA OBRA;Informar inicio e previsão de término, inserir nota com as datas e comentários pertinentes;;GESTOR_DE_OBRAS;"COORDENADOR_DE_ENGENHARIA;GESTOR_DE_OBRAS";5;41;LOOKUP
 RT_UFV_MICRO;STATUS_OBRA_EM_EXECUCAO;11;EXECUÇÃO DA OBRA;"Gerar atividade a cada dia enquanto o Status estiver em ""Execução da Obra"". A Atividade entra em atraso a partir de D+1 da criação gerando aviso aos interessados;";;GESTOR_DE_OBRAS;"COORDENADOR_DE_ENGENHARIA;GESTOR_DE_OBRAS;";0;41;LOOKUP
-RT_UFV_MICRO;STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR;12;VALIDAÇÃO DA OBRA;"preencher o formulário de check list final da obra ( Aprovado, Reprovado, Ressalvas): MOBILIZAÇÃO/CONFERÊNCIA DE MATERIAIS (Fotos)
+RT_UFV_MICRO;STATUS_OBRA_CONCLUIDA_AGUARDANDO_TROCA_DE_MEDIDOR;14;VALIDAÇÃO DA OBRA;"preencher o formulário de check list final da obra ( Aprovado, Reprovado, Ressalvas): MOBILIZAÇÃO/CONFERÊNCIA DE MATERIAIS (Fotos)
 INSTALAÇÃO DE ESTRUTURA DE FIXAÇÃO (Fotos)
 MONTAGEM DOS MÓDULOS (Fotos)
 EXECUÇÃO DE ATERRAMENTO (Fotos)

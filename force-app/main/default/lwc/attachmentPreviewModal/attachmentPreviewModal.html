@@ -1,0 +1,30 @@
+<template>
+    <template if:true={open}>
+        <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open preview-modal">
+            <div class="slds-modal__container preview-modal__container">
+                <header class="slds-modal__header preview-modal__header">
+                    <lightning-button-icon icon-name="utility:close" class="slds-modal__close" onclick={handleClose}></lightning-button-icon>
+                    <h2 class="slds-text-heading_medium preview-modal__title">{title}</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_none preview-modal__content">
+                    <template if:true={isImage}>
+                        <img class="preview-modal__media" src={url} alt={title} />
+                    </template>
+                    <template if:true={isPdf}>
+                        <iframe class="preview-modal__media" src={url}></iframe>
+                    </template>
+                    <template if:true={isUnsupported}>
+                        <div class="preview-modal__unsupported">
+                            <p>Não é possível visualizar este tipo de arquivo. Abra em nova aba.</p>
+                        </div>
+                    </template>
+                </div>
+                <footer class="slds-modal__footer preview-modal__footer">
+                    <lightning-button variant="neutral" label="Fechar" onclick={handleClose}></lightning-button>
+                    <lightning-button variant="brand" label="Abrir em nova aba" onclick={handleOpenNewTab}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

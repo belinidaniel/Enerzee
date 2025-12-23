@@ -19,6 +19,14 @@
         <value xsi:nil="true"/>
     </values>
     <values>
+        <field>RequiresAttachment__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>RequiresComment__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
         <field>SectionLabel__c</field>
         <value xsi:type="xsd:string">PROTOCOLAR PROJETO UFV</value>
     </values>
@@ -29,13 +37,5 @@
     <values>
         <field>Subject__c</field>
         <value xsi:type="xsd:string">PROTOCOLAR PROJETO UFV</value>
-    </values>
-    <values>
-        <field>RequiresAttachment__c</field>
-        <value xsi:type="xsd:boolean">true</value>
-    </values>
-    <values>
-        <field>RequiresComment__c</field>
-        <value xsi:type="xsd:boolean">false</value>
     </values>
 </CustomMetadata>

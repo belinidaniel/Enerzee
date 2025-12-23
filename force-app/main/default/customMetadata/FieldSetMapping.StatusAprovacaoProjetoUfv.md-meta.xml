@@ -19,23 +19,23 @@
         <value xsi:nil="true"/>
     </values>
     <values>
-        <field>SectionLabel__c</field>
-        <value xsi:type="xsd:string">Status do Projeto</value>
-    </values>
-    <values>
-        <field>SortOrder__c</field>
-        <value xsi:type="xsd:double">2</value>
-    </values>
-    <values>
-        <field>Subject__c</field>
-        <value xsi:type="xsd:string">APROVAÇÃO DO PROJETO UFV</value>
-    </values>
-    <values>
         <field>RequiresAttachment__c</field>
         <value xsi:type="xsd:boolean">false</value>
     </values>
     <values>
         <field>RequiresComment__c</field>
         <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>SectionLabel__c</field>
+        <value xsi:type="xsd:string">Status do Projeto</value>
+    </values>
+    <values>
+        <field>SortOrder__c</field>
+        <value xsi:type="xsd:double">2.0</value>
+    </values>
+    <values>
+        <field>Subject__c</field>
+        <value xsi:type="xsd:string">APROVAÇÃO DO PROJETO UFV</value>
     </values>
 </CustomMetadata>

@@ -501,6 +501,50 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>DocumentacaoComercialPendencia__c</picklist>
+        <values>
+            <fullName>Proposta</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Proposta concorrente</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>InversaoFluxo__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>NecessarioObraNaRede__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>NecessarioPFC__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Status__c</picklist>
         <values>
             <fullName>Planejamento de projeto</fullName>
@@ -520,6 +564,36 @@
         </values>
         <values>
             <fullName>Projetos em elaboração</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>SubStatus__c</picklist>
+        <values>
+            <fullName>Aprovado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aprovado Parcialmente</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cancelado</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Sub_Status__c</picklist>
+        <values>
+            <fullName>Aprovado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aprovado Parcialmente</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cancelado</fullName>
             <default>false</default>
         </values>
     </picklistValues>

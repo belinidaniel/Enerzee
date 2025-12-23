@@ -3,11 +3,8 @@
     <fullName>RequiresAttachment__c</fullName>
     <defaultValue>false</defaultValue>
     <description>Indica se a atividade deve exibir opção para anexar arquivo.</description>
-    <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
     <inlineHelpText>Quando marcado, o formulário exibirá opção para anexar arquivo ao registro relacionado.</inlineHelpText>
     <label>Requires Attachment</label>
-    <required>false</required>
-    <trackTrending>false</trackTrending>
     <type>Checkbox</type>
 </CustomField>

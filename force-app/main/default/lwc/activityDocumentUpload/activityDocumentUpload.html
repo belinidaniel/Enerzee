@@ -22,7 +22,22 @@
                                 <td>{row.name}</td>
                                 <td>{row.observation}</td>
                                 <td>
-                                    <input type="file" data-index={row.id} onchange={handleFileChange} />
+                                    <template if:true={row.existingUrl}>
+                                        <a href={row.existingUrl}
+                                           data-url={row.existingUrl}
+                                           data-label={row.fileName}
+                                           onclick={handleOpenPreview}>
+                                            {row.fileName}
+                                        </a>
+                                    </template>
+                                    <template if:false={row.existingUrl}>
+                                        <input
+                                            type="file"
+                                            accept=".pdf,application/pdf"
+                                            data-index={row.id}
+                                            onchange={handleFileChange}
+                                        />
+                                    </template>
                                 </td>
                                 <td>
                                     <lightning-button label="Enviar" data-index={row.id} onclick={handleUpload} variant="brand"></lightning-button>
@@ -34,6 +49,15 @@
                 </table>
             </div>
         </lightning-card>
+    </template>
+
+    <template if:true={previewOpen}>
+        <c-attachment-preview-modal
+            open={previewOpen}
+            url={previewUrl}
+            title={previewTitle}
+            onclose={handleClosePreview}
+        ></c-attachment-preview-modal>
     </template>
 
 </template>

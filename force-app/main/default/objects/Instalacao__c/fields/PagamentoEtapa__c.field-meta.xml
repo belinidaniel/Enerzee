@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PagamentoEtapa__c</fullName>
+    <description>Identifica a etapa à qual o pagamento do integrador se refere.</description>
+    <label>Etapa do Pagamento</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Planejamento de Obra</fullName>
+                <default>true</default>
+                <label>Planejamento de Obra</label>
+            </value>
+            <value>
+                <fullName>Execucao de Obra</fullName>
+                <default>false</default>
+                <label>Execução de Obra</label>
+            </value>
+            <value>
+                <fullName>Outro</fullName>
+                <default>false</default>
+                <label>Outro</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

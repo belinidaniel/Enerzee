@@ -15,21 +15,18 @@
         <members>Opportunity.UC1MarcoForaPonta__c</members>
         <members>Opportunity.UC1MarcoPonta__c</members>
         <members>Opportunity.UC1Marco__c</members>
-        <members>Opportunity.UC1NovembroForaPonta__c</members>
         <members>Opportunity.UC1NovembroPonta__c</members>
         <members>Opportunity.UC1Novembro__c</members>
         <members>Opportunity.UC1OutubroForaPonta__c</members>
         <members>Opportunity.UC1Outubro__c</members>
         <members>Opportunity.UC1Ponta__c</members>
         <members>Opportunity.UC1Setembro__c</members>
-        <members>Opportunity.UC1__c</members>
         <members>Opportunity.UC2AbrilForaPonta__c</members>
         <members>Opportunity.UC2AbrilPonta__c</members>
         <members>Opportunity.UC2Abril__c</members>
         <members>Opportunity.UC2AgostoForaPonta__c</members>
         <members>Opportunity.UC2AgostoPonta__c</members>
         <members>Opportunity.UC2Agosto__c</members>
-        <members>Opportunity.UC2DezembroForaPonta__c</members>
         <members>Opportunity.UC2DezembroPonta__c</members>
         <members>Opportunity.UC2Dezembro__c</members>
         <members>Opportunity.UC2FevereiroForaPonta__c</members>

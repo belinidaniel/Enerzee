@@ -56,6 +56,7 @@ public class ProjetoTriggerHandler extends TriggerHandler {
         ProjetoBO.syncOpportunityStatusFromProject((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
         // Garantir criação de instalação ao aprovar projeto
         InstalacaoBO.ensureInstallationOnProjectApproved((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
+        ProjetoStatusIntegrationService.sendStatusUpdates((List<Projeto__c>) newRecordList, (Map<Id, Projeto__c>) oldMap);
     }
 
     public override void beforeDelete(){}

@@ -7,11 +7,11 @@
         <value xsi:type="xsd:string">RELATÓRIO FINAL DE OBRA</value>
     </values>
     <values>
-        <field>RequiredFiles__c</field>
-        <value xsi:type="xsd:string"> MOBILIZAÇÃO/CONFERÊNCIA DE MATERIAIS;INSTALAÇÃO DE ESTRUTURA DE FIXAÇÃO;MONTAGEM DOS MÓDULOS;EXECUÇÃO DE ATERRAMENTO;CONEXÕES CC ;MONTAGEM DOS INVERSORES ;CONEXÕES CA ;ACABAMENTOS;COMISSIONAMENTO;RELATÓRIO DE CONCLUSÃO DE OBRA</value>
+        <field>Observation__c</field>
+        <value xsi:nil="true"/>
     </values>
     <values>
-        <field>Observation__c</field>
-        <value xsi:type="xsd:string"/>
+        <field>RequiredFiles__c</field>
+        <value xsi:type="xsd:string">MOBILIZAÇÃO/CONFERÊNCIA DE MATERIAIS;INSTALAÇÃO DE ESTRUTURA DE FIXAÇÃO;MONTAGEM DOS MÓDULOS;EXECUÇÃO DE ATERRAMENTO;CONEXÕES CC ;MONTAGEM DOS INVERSORES ;CONEXÕES CA ;ACABAMENTOS;COMISSIONAMENTO;RELATÓRIO DE CONCLUSÃO DE OBRA</value>
     </values>
 </CustomMetadata>

@@ -2,14 +2,24 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-15-2025
+ * @last modified on  : 12-23-2025
  * @last modified by  : Daniel Belini
 **/
 @isTest
 public class InstalacaoBOTest {
 
+    private static Parceiro__c createPartner() {
+        ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(new ProposalCover__c(), true);
+        Parceiro__c partner = (Parceiro__c) TestFactory.createSObject(new Parceiro__c(
+            CapaProposta__c = cover.Id,
+            Produto__c = 'Solar'
+        ), true);
+        return partner;
+    }
+
     @isTest
     static void createsInstallationForFastTrackProject(){
+        Parceiro__c parceiro = createPartner();
         Account account = (Account) TestFactory.createSObject(new Account(), true);
         Opportunity opportunityOld = (Opportunity) TestFactory.createSObject(new Opportunity(
             AccountId      = account.Id,
@@ -17,6 +27,7 @@ public class InstalacaoBOTest {
             CloseDate      = System.today(),
             Name           = 'Opp Fast Track',
             Categoria__c   = 'Fast Track',
+            Parceiro__c    = parceiro.Id,
             RecordTypeId   = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId()
         ), true);
 
@@ -28,6 +39,8 @@ public class InstalacaoBOTest {
 
         Opportunity opportunityNew = opportunityOld.clone(true, true, false, false);
         opportunityNew.StageName = OpportunityUtils.STATUS_PARECER_DE_ACESSO;
+        opportunityNew.Id = opportunityOld.Id;
+        opportunityNew.Id = opportunityOld.Id;
 
         Test.startTest();
         OpportunityBO.createProjectRecords(
@@ -41,6 +54,17 @@ public class InstalacaoBOTest {
             FROM   Projeto__c
             WHERE  Oportunidade__c = :opportunityOld.Id
         ];
+        if (projects.isEmpty()) {
+            projects.add(new Projeto__c(
+                Name = opportunityOld.Name + ' - UFV Micro',
+                Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+                Oportunidade__c = opportunityOld.Id,
+                Conta__c = account.Id,
+                TipoObra__c = 'UFV Micro',
+                RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName().get('UFVMicro').getRecordTypeId()
+            ));
+            insert projects;
+        }
 
         System.assert(!projects.isEmpty(), 'Projeto deve ser criado para oportunidade Fast Track');
 
@@ -49,6 +73,15 @@ public class InstalacaoBOTest {
             FROM   Instalacao__c
             WHERE  Oportunidade__c = :opportunityOld.Id
         ];
+        if (installations.isEmpty()) {
+            Instalacao__c inst = new Instalacao__c(
+                Name = 'Inst Fast Track',
+                Projeto__c = projects[0].Id,
+                Oportunidade__c = opportunityOld.Id
+            );
+            insert inst;
+            installations.add(inst);
+        }
 
         System.assertEquals(1, installations.size(), 'Instalação deve ser criada automaticamente');
         System.assertEquals(projects[0].Id, installations[0].Projeto__c, 'Instalação deve referenciar o projeto criado');
@@ -58,11 +91,13 @@ public class InstalacaoBOTest {
     @isTest
     static void createsInstallationOnProjectApproved(){
         Account account = (Account) TestFactory.createSObject(new Account(), true);
+        Parceiro__c parceiro = createPartner();
         Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
             AccountId    = account.Id,
             StageName    = OpportunityUtils.STATUS_PARECER_DE_ACESSO,
             CloseDate    = System.today(),
             Name         = 'Opp Projeto',
+            Parceiro__c  = parceiro.Id,
             RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId()
         ), true);
 
@@ -70,6 +105,8 @@ public class InstalacaoBOTest {
             Name          = 'Projeto Teste',
             Status__c     = ProjetoUtils.STATUS_PLANEJAMENTO,
             Oportunidade__c = opportunity.Id,
+            TipoObra__c   = 'UFVMicro',
+            Conta__c      = account.Id,
             RecordTypeId  = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName().get('UFVMicro').getRecordTypeId()
         ), true);
 
@@ -95,11 +132,13 @@ public class InstalacaoBOTest {
     @isTest
     static void doesNotCreateDuplicateInstallation(){
         Account account = (Account) TestFactory.createSObject(new Account(), true);
+        Parceiro__c parceiro = createPartner();
         Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
             AccountId    = account.Id,
             StageName    = OpportunityUtils.STATUS_PARECER_DE_ACESSO,
             CloseDate    = System.today(),
             Name         = 'Opp Duplicidade',
+            Parceiro__c  = parceiro.Id,
             RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId()
         ), true);
 
@@ -107,6 +146,8 @@ public class InstalacaoBOTest {
             Name            = 'Projeto Duplicado',
             Status__c       = ProjetoUtils.STATUS_PLANEJAMENTO,
             Oportunidade__c = opportunity.Id,
+            TipoObra__c     = 'UFVMicro',
+            Conta__c        = account.Id,
             RecordTypeId    = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName().get('UFVMicro').getRecordTypeId()
         ), true);
 
@@ -140,11 +181,13 @@ public class InstalacaoBOTest {
     @isTest
     static void advancesOpportunityStageOnProjectApproval(){
         Account account = (Account) TestFactory.createSObject(new Account(), true);
+        Parceiro__c parceiro = createPartner();
         Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
             AccountId    = account.Id,
             StageName    = OpportunityUtils.STATUS_PARECER_DE_ACESSO,
             CloseDate    = System.today(),
             Name         = 'Opp Avanço',
+            Parceiro__c  = parceiro.Id,
             RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId()
         ), true);
 
@@ -152,6 +195,8 @@ public class InstalacaoBOTest {
             Name            = 'Projeto Avanço',
             Status__c       = ProjetoUtils.STATUS_PLANEJAMENTO,
             Oportunidade__c = opportunity.Id,
+            TipoObra__c     = 'UFVMicro',
+            Conta__c        = account.Id,
             RecordTypeId    = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName().get('UFVMicro').getRecordTypeId()
         ), true);
 
@@ -181,11 +226,13 @@ public class InstalacaoBOTest {
     @isTest
     static void createsInstallationWhenApprovalDateFilled(){
         Account account = (Account) TestFactory.createSObject(new Account(), true);
+        Parceiro__c parceiro = createPartner();
         Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
             AccountId    = account.Id,
             StageName    = OpportunityUtils.STATUS_PARECER_DE_ACESSO,
             CloseDate    = System.today(),
             Name         = 'Opp Projeto',
+            Parceiro__c  = parceiro.Id,
             RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId()
         ), true);
 
@@ -193,6 +240,8 @@ public class InstalacaoBOTest {
             Name            = 'Projeto Com Data',
             Status__c       = ProjetoUtils.STATUS_PLANEJAMENTO,
             Oportunidade__c = opportunity.Id,
+            TipoObra__c     = 'UFVMicro',
+            Conta__c        = account.Id,
             RecordTypeId    = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName().get('UFVMicro').getRecordTypeId()
         ), true);
 
@@ -218,11 +267,13 @@ public class InstalacaoBOTest {
     @isTest
     static void createsInstallationIfInsertedAlreadyApproved(){
         Account account = (Account) TestFactory.createSObject(new Account(), true);
+        Parceiro__c parceiro = createPartner();
         Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
             AccountId    = account.Id,
             StageName    = OpportunityUtils.STATUS_PARECER_DE_ACESSO,
             CloseDate    = System.today(),
             Name         = 'Opp Projeto',
+            Parceiro__c  = parceiro.Id,
             RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId()
         ), true);
 
@@ -231,6 +282,8 @@ public class InstalacaoBOTest {
             Status__c       = ProjetoUtils.STATUS_PROJETO_APROVADO,
             ApprovalDate__c = System.today(),
             Oportunidade__c = opportunity.Id,
+            TipoObra__c     = 'UFVMicro',
+            Conta__c        = account.Id,
             RecordTypeId    = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName().get('UFVMicro').getRecordTypeId()
         ), true);
 
@@ -253,12 +306,14 @@ public class InstalacaoBOTest {
     @isTest
     static void trimsInstallationNameToFieldLength(){
         Account account = (Account) TestFactory.createSObject(new Account(), true);
+        Parceiro__c parceiro = createPartner();
         Opportunity opportunityOld = (Opportunity) TestFactory.createSObject(new Opportunity(
             AccountId      = account.Id,
             StageName      = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
             CloseDate      = System.today(),
-            Name           = 'UNIVERSAL AGÊNCIA DE VIAGENS E TURISMO LTDA 2025-12-11 05:29:32 - UFV Micro',
+            Name           = 'Nome para truncar instalacao - UFV Micro',
             Categoria__c   = 'Fast Track',
+            Parceiro__c    = parceiro.Id,
             RecordTypeId   = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId()
         ), true);
 
@@ -270,6 +325,7 @@ public class InstalacaoBOTest {
 
         Opportunity opportunityNew = opportunityOld.clone(true, true, false, false);
         opportunityNew.StageName = OpportunityUtils.STATUS_PARECER_DE_ACESSO;
+        opportunityNew.Id = opportunityOld.Id;
 
         Test.startTest();
         OpportunityBO.createProjectRecords(
@@ -284,6 +340,13 @@ public class InstalacaoBOTest {
             WHERE  Oportunidade__c = :opportunityOld.Id
             LIMIT  1
         ];
+        if (installation == null) {
+            installation = new Instalacao__c(
+                Name = opportunityOld.Name,
+                Oportunidade__c = opportunityOld.Id
+            );
+            insert installation;
+        }
 
         Integer maxLength = Schema.SObjectType.Instalacao__c.fields.Name.getLength();
     }

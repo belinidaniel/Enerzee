@@ -1,8 +1,17 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 12-22-2025
+ * @last modified by  : Daniel Belini
+**/
 @isTest
 public class ProjetoTriggerTest {
     
     @TestSetup
     static void makeData(){
+        TaskTriggerHandler.disableTrigger();
+
         Consultor__c consultor = (Consultor__c) TestFactory.createSObject(new Consultor__c(), true);
 
         Account account = (Account) TestFactory.createSObject(new Account(), true);
@@ -12,13 +21,15 @@ public class ProjetoTriggerTest {
         Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
             AccountId                = account.id,
             ConsultorOportunidade__c = consultor.Id,
-            MunicipioInstalacao__c   = 'São Paulo'
+            MunicipioInstalacao__c   = 'São Paulo',
+            IdVirtualOffice__c       = '00000000-0000-0000-0000-000000000010'
         ), true);
 
         Instalacao__c instalation = (Instalacao__c) TestFactory.createSObject(new Instalacao__c(
             ClienteConta__c          = account.Id,
             ConsultorInstalacao__c   = consultor.Id,
-            OportunidadeConcluida__c = opportunity.Id
+            OportunidadeConcluida__c = opportunity.Id,
+            GestorObra__c            = UserInfo.getUserId()
         ), true);
 
         opportunity.Instalacao__c = instalation.Id;
@@ -66,7 +77,18 @@ public class ProjetoTriggerTest {
         insert viability;
 
         update opportunity;
-        
+
+        Projeto__c projeto = [
+            SELECT  Status__c, Projetista__c, GestorObra__c
+            FROM    Projeto__c
+            LIMIT   1
+        ];
+
+        // Preencher responsáveis antes de concluir tarefas de delegação
+        projeto.Projetista__c = UserInfo.getUserId();
+        projeto.GestorObra__c = UserInfo.getUserId();
+        update projeto;
+
         List<Task> tasks = [
             SELECT  Id, Subject 
             FROM    Task
@@ -78,15 +100,7 @@ public class ProjetoTriggerTest {
         }
         update tasks;
 
-        Projeto__c projeto = [
-            SELECT  Status__c, Projetista__c, GestorObra__c
-            FROM    Projeto__c
-            LIMIT   1
-        ];
-
         projeto.Status__c = ProjetoUtils.STATUS_PROJETOS_EM_ELABORACAO;
-        projeto.Projetista__c = UserInfo.getUserId();
-        projeto.GestorObra__c = UserInfo.getUserId();
         
         update projeto;
 
@@ -119,11 +133,6 @@ public class ProjetoTriggerTest {
         opportunity.Parceiro__c = parceiro.id;
         update opportunity;
 
-        Task task = (Task) TestFactory.createSObject(new Task(
-            WhatId = c.Id,
-            Subject = 'Instalação - Vistoria'
-        ), true);
-
         Projeto__c projeto = [
             SELECT  Status__c, Projetista__c, GestorObra__c
             FROM    Projeto__c
@@ -132,9 +141,24 @@ public class ProjetoTriggerTest {
 
         Test.startTest();
 
-        projeto.Status__c = ProjetoUtils.STATUS_PROJETOS_EM_ELABORACAO;
+        // Preencher responsáveis antes de concluir tarefas de delegação
         projeto.Projetista__c = UserInfo.getUserId();
         projeto.GestorObra__c = UserInfo.getUserId();
+        update projeto;
+
+        List<Task> projectTasks = [
+            SELECT Id, Status
+            FROM   Task
+            WHERE  WhatId = :projeto.Id
+        ];
+        for (Task t : projectTasks) {
+            t.Status = TaskUtils.STATUS_CONCLUIDO;
+        }
+        if (!projectTasks.isEmpty()) {
+            update projectTasks;
+        }
+
+        projeto.Status__c = ProjetoUtils.STATUS_PROJETOS_EM_ELABORACAO;
         projeto.ApprovalDate__c = System.today();
         projeto.FinishProjectDate__c = System.today();
         

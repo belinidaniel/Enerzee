@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 09-09-2025
+ * @last modified on  : 12-23-2025
  * @last modified by  : Daniel Belini
 **/
 @isTest
@@ -194,12 +194,17 @@ public with sharing class PDFControllerExtensionTest {
         ), true);
 
         Opportunity opp = (Opportunity) TestFactory.createSObject(new Opportunity(
-            Parceiro__c = parceiro.id
+            Parceiro__c = parceiro.id, 
+            observacaoPagamentoEsquerdo__c = 'Teste',
+            observacaoPagamentoDireito__c = 'Teste',
+            NotePaymentMethod__c = 'Boleto'
         ), true);
 
         ViabilityStudy__c viability = new ViabilityStudy__c(
             Opportunity__c = opp.Id,
-            TextStudy__c = 'Linha 1\nLinha 2'
+            TextStudy__c = 'Linha 1\nLinha 2',
+            AdequacyCostEnerzee__c = 'Ramal CC;Ramal CA;Laudo Estrutural;Adequação Padrão;Cobertura;Outros Custos',
+            AdequacyCostClient__c = 'Ramal CC'
         );
         insert viability;
 

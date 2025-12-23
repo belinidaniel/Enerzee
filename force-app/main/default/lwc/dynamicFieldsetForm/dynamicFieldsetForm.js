@@ -5,6 +5,7 @@ import getConfiguration from '@salesforce/apex/FieldSetConfigurationService.getC
 import getConfigurationForTask from '@salesforce/apex/FieldSetConfigurationService.getConfigurationForTask';
 import getTaskContext from '@salesforce/apex/ActivityDocumentController.getTaskContext';
 import getRequiredDocuments from '@salesforce/apex/ActivityDocumentController.getRequiredDocuments';
+import getAttachments from '@salesforce/apex/ActivityDocumentController.getAttachments';
 import uploadExternalArchive from '@salesforce/apex/ExternalArchiveService.uploadExternalArchive';
 import completeTask from '@salesforce/apex/TaskCompletionService.completeWithComment';
 import isTaskClosed from '@salesforce/apex/TaskCompletionService.isTaskClosed';
@@ -42,6 +43,9 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
     autoSaveQueued = false;
     autoSaveTimeout;
     selectedFiles = [];
+    previewOpen = false;
+    previewUrl = null;
+    previewTitle = null;
 
     _recordId;
 
@@ -196,6 +200,11 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
         this.uploadedFilePills = [];
         this.subStatusValue = null;
         this.subStatusInitialized = false;
+        if (this.requiresAttachment) {
+            this.loadAttachments();
+        } else {
+            this.uploadedFilePills = [];
+        }
     }
 
     clearConfiguration() {
@@ -490,6 +499,11 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
         return this.requiresComment && !this.requiresAttachment && (!this.sections || this.sections.every((s) => (s.fields || []).length === 0));
     }
 
+    get attachmentTargetId() {
+        // Prioriza o registro que está sendo editado; em último caso usa o contexto da tarefa.
+        return this.targetRecordId || this.taskContext?.whatId || this._recordId || null;
+    }
+
     openAttachmentModal() {
         if (this.disableAttachmentAction) {
             return;
@@ -543,6 +557,11 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
         this.selectedFiles = [];
     }
 
+    handleDocUpload() {
+        // Atualiza a lista de anexos quando o componente filho sinaliza upload concluído.
+        this.loadAttachments();
+    }
+
     async uploadSelectedFiles() {
         if (!this.selectedFiles || !this.selectedFiles.length) {
             this.showToast('Aviso', 'Selecione ao menos um arquivo para enviar.', 'warning');
@@ -589,6 +608,48 @@ export default class DynamicFieldsetForm extends NavigationMixin(LightningElemen
         } finally {
             this.attachmentUploading = false;
         }
+    }
+
+    async loadAttachments() {
+        const targetId = this.attachmentTargetId;
+        if (!targetId) {
+            this.uploadedFilePills = [];
+            return;
+        }
+
+        try {
+            const attachments = await getAttachments({
+                sobjectId: targetId,
+                activitySubject: this.taskContext?.subject || null
+            });
+            this.uploadedFilePills = (attachments || []).map((att, index) => ({
+                label: att.name,
+                name: att.id || `${index}-${att.name}`,
+                url: att.url || att.downloadUrl
+            }));
+        } catch (error) {
+            // Falha ao carregar anexos não bloqueia o uso do formulário.
+            // eslint-disable-next-line no-console
+            console.error('Erro ao carregar anexos', error);
+            this.uploadedFilePills = [];
+        }
+    }
+
+    handleOpenAttachment(event) {
+        const url = event.currentTarget?.dataset?.url;
+        const label = event.currentTarget?.dataset?.label;
+        if (!url) {
+            return;
+        }
+        this.previewUrl = url;
+        this.previewTitle = label || 'Arquivo';
+        this.previewOpen = true;
+    }
+
+    handleClosePreview() {
+        this.previewOpen = false;
+        this.previewUrl = null;
+        this.previewTitle = null;
     }
 
     openCommentModal() {
