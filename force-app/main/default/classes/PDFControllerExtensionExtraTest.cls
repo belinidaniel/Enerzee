@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-22-2025
+ * @last modified on  : 12-23-2025
  * @last modified by  : Daniel Belini
 **/
 @IsTest
@@ -33,6 +33,12 @@ private class PDFControllerExtensionExtraTest {
     static void hasKitReturnsTrueWhenLineItemsExist() {
         Opportunity opp = createOpp();
         insert opp;
+        opp.PropostaGerada__c = true;
+        opp.ReadequacaoSolicitada__c = false;
+        opp.StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA;
+        opp.ObservacaoPagamentoEsquerdo__c = 'Teste';
+        opp.ObservacaoPagamentoDireito__c = 'Teste';
+        update opp;
 
         Pricebook2 pb = new Pricebook2(Name = 'Test PB', IsActive = true);
         insert pb;
@@ -58,8 +64,20 @@ private class PDFControllerExtensionExtraTest {
         OpportunityLineItem oli = new OpportunityLineItem(OpportunityId = opp.Id, PricebookEntryId = pbe.Id, Quantity = 1, TotalPrice = 1);
         insert oli;
 
+        // Insere um ContentVersion marcado como proposta para acionar caminho existingCount>0
+        ContentVersion cv = new ContentVersion(
+            Title = 'PROPOSTA_TESTE',
+            PathOnClient = 'PROPOSTA_TESTE.pdf',
+            FirstPublishLocationId = opp.Id,
+            IsMajorVersion = true,
+            VersionData = Blob.valueOf('pdf'),
+            IsProposal__c = true
+        );
+        insert cv;
+
         Test.startTest();
         Boolean result = PDFControllerExtension.hasKit(opp);
+        PDFControllerExtension.savePdfFileAsync(opp.Id, true);
         Test.stopTest();
 
         System.assertEquals(true, result);
@@ -80,8 +98,18 @@ private class PDFControllerExtensionExtraTest {
 
     @IsTest
     static void shouldFormatCurrencyBRAndAccessGetters() {
+        ProposalCover__c ProposalCover = (ProposalCover__c) TestFactory.createSObject(new ProposalCover__c(), true);
+        Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(new Parceiro__c(
+            CapaProposta__c = ProposalCover.id,
+            Produto__c = 'Solar'
+        ), true);
+        
         Opportunity opp = createOpp();
+        opp.Parceiro__c = parceiro.id;
+        
         insert opp;
+        opp.MainViability__c = null;
+        update opp;
 
         PageReference pref = new PageReference('/apex/dummy');
         pref.getParameters().put('id', opp.Id);
@@ -98,6 +126,11 @@ private class PDFControllerExtensionExtraTest {
         System.assertNotEquals(null, ext.getEconomiaXMesesPromocionalFormatada());
         System.assertNotEquals(null, ext.getEconomiaXMesesFixaFormatada());
         System.assertNotEquals(null, ext.getEconomiaAnualFormatada());
+        System.assertNotEquals(null, ext.getHasViabilityEnerzeeCosts());
+        System.assertNotEquals(null, ext.getHasViabilityClientCosts());
+        System.assertNotEquals(null, ext.getMainViabilityChunkCount());
+        ext.getActiveCovers();
+        ext.getLogoUrl();
     }
 
     @IsTest
@@ -125,6 +158,38 @@ private class PDFControllerExtensionExtraTest {
         ext = new PDFControllerExtension(new ApexPages.StandardController(opp));
         System.assertEquals(2, ext.getMainViabilityTextLineCount());
         System.assert(!ext.getMainViabilityStudyChunks().isEmpty());
+    }
+
+    @IsTest
+    static void shouldLoadPdfUrlsWithSelectedCoverAndPaymentNote() {
+        ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(new ProposalCover__c(), true);
+        Parceiro__c partner = (Parceiro__c) TestFactory.createSObject(new Parceiro__c(
+            CapaProposta__c = cover.Id,
+            Produto__c = 'Solar'
+        ), true);
+
+        Opportunity opp = createOpp();
+        opp.Parceiro__c = partner.Id;
+        opp.NotePaymentMethod__c = 'nota';
+        insert opp;
+
+        ContentVersion cv = new ContentVersion(
+            Title = 'SEMPAGAMENTOS',
+            PathOnClient = 'SEMPAGAMENTOS.pdf',
+            FirstPublishLocationId = cover.Id,
+            IsMajorVersion = true,
+            VersionData = Blob.valueOf('pdf')
+        );
+        insert cv;
+        // FirstPublishLocationId already links the document to the cover; no extra link needed.
+
+        PageReference pref = new PageReference('/apex/dummy');
+        pref.getParameters().put('id', opp.Id);
+        pref.getParameters().put('selectedCoverId', cover.Id);
+        Test.setCurrentPage(pref);
+
+        PDFControllerExtension ext = new PDFControllerExtension(new ApexPages.StandardController(opp));
+        System.assert(!String.isBlank(ext.paymentMethodNoteImageUrl));
     }
 
 }

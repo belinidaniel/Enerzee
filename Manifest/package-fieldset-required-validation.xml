@@ -159,6 +159,7 @@
         <members>DataSourceControllerTest</members>
         <members>OpportunityBOAdditionalTest</members>
         <members>OpportunityBOEmailTest</members>
+        <members>AdditionalCoverageNewClassesTest</members>
         <members>TaskTemplateFlowTest</members>
         <members>TaskTemplateUtils</members>
         <members>ActivityDocumentController</members>
@@ -173,6 +174,8 @@
         <members>ServiceAppointmentTriggerTest</members>
         <members>PDFControllerExtensionExtraTest</members>
         <members>PDFControllerExtensionTest</members>
+        <membemrs>AdditionalCoverageNewClassesTest</membemrs>
+        <members>PDFControllerExtension</members>
         <name>ApexClass</name>
     </types>
     <types>

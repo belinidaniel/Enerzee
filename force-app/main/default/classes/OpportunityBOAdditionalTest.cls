@@ -60,4 +60,33 @@ private class OpportunityBOAdditionalTest {
         Task updated = [SELECT Status, MetodoDeFollowup__c FROM Task WHERE Id = :t.Id];
     }
 
+    @IsTest
+    static void handleLeadConversionNoActions() {
+        Lead lead = new Lead(LastName = 'Lead', Company = 'Company');
+        insert lead;
+
+        Account acc = new Account(Name = 'Lead Acc');
+        insert acc;
+
+        Opportunity oppOld = new Opportunity(
+            Name = 'Opp Lead',
+            StageName = OpportunityUtils.STATUS_PROPOSTA_GERADA,
+            CloseDate = Date.today().addDays(5),
+            AccountId = acc.Id,
+            IdVirtualOffice__c = 'vo-lead',
+            Lead__c = lead.Id
+        );
+        insert oppOld;
+        Opportunity oppNew = oppOld.clone(false, true, true, true);
+        oppNew.StageName = OpportunityUtils.STATUS_PROPOSTA_ENVIADA;
+
+        Test.startTest();
+        OpportunityBO.handleOpportunityLeadConversion(
+            new List<Opportunity>{ oppNew },
+            new Map<Id, Opportunity>{ oppNew.Id => oppOld }
+        );
+        Test.stopTest();
+
+        System.assert(true, 'Method executed without errors.');
+    }
 }

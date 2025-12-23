@@ -13,8 +13,8 @@ private class TaskDeadlineNotificationBatchTest {
         Task t = new Task(Subject = 'Fechada', Status = TaskUtils.STATUS_CONCLUIDO, ActivityDate = Date.today());
         insert t;
 
-        Test.startTest();
         Test.setCreatedDate(t.Id, System.now().addDays(-1));
+        Test.startTest();
         Database.executeBatch(new TaskDeadlineNotificationBatch(), 1);
         Test.stopTest();
 
