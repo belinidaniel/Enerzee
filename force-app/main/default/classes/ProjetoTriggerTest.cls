@@ -69,6 +69,9 @@ public class ProjetoTriggerTest {
             LIMIT   1
         ];
 
+        // Evita estouro de SOQL pelo gatilho de Opportunity durante o teste
+        OpportunityTriggerHandler.disableTrigger();
+
         Test.startTest();
 
         ViabilityStudy__c viability = new ViabilityStudy__c();
@@ -105,6 +108,8 @@ public class ProjetoTriggerTest {
         update projeto;
 
         Test.stopTest();
+
+        OpportunityTriggerHandler.enableTrigger();
     }
 
     @isTest
