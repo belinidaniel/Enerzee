@@ -22,6 +22,11 @@
                 <label>Enerzee</label>
             </value>
             <value>
+                <fullName>Consultor</fullName>
+                <default>false</default>
+                <label>Consultor</label>
+            </value>
+            <value>
                 <fullName>Nao_cadastrado</fullName>
                 <default>false</default>
                 <label>Não cadastrado</label>

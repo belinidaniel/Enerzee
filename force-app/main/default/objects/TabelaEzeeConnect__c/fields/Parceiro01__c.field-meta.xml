@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Parceiro01__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
-    <label>Parceiro 1</label>
+    <label>Parceiro1</label>
     <referenceTo>Parceiro__c</referenceTo>
     <relationshipLabel>Tabelas Ezee Connect</relationshipLabel>
     <relationshipName>Tabelas_Ezee_Connect</relationshipName>
