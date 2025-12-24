@@ -2,6 +2,11 @@
 <Queue xmlns="http://soap.sforce.com/2006/04/metadata">
     <doesSendEmailToMembers>false</doesSendEmailToMembers>
     <name>Proposta - Connect</name>
+    <queueMembers>
+        <users>
+            <user>wellington.santos@enerzee.com.br</user>
+        </users>
+    </queueMembers>
     <queueRoutingConfig>Chat_Enerzee</queueRoutingConfig>
     <queueSobject>
         <sobjectType>Case</sobjectType>
@@ -12,5 +17,7 @@
     <queueSobject>
         <sobjectType>MessagingSession</sobjectType>
     </queueSobject>
-
+    <queueSobject>
+        <sobjectType>SetupMessagingSession__c</sobjectType>
+    </queueSobject>
 </Queue>

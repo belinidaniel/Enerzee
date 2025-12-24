@@ -472,13 +472,21 @@ public class ProjetoBO {
             }
         }
         if(!tasksToInsert.isEmpty()){
-            // try{
+            try{
                 System.debug('tasksToInsert size=' + tasksToInsert.size());
                 insert tasksToInsert;
-            // } catch(Exception ex){
-            //     // Não bloquear o salvamento do Projeto se processos externos (Flow/Process Builder) falharem na criação de tarefas
-            //     Utils.createLog('ProjetoBO', 'createTasks', ex, newRecordList.isEmpty() ? null : newRecordList[0].Id);
-            // }
+            } catch(Exception ex){
+                // Não bloquear o salvamento do Projeto se processos externos (Flow/Process Builder) falharem na criação de tarefas
+                Id relatedOpportunityId;
+                for (Projeto__c project : newRecordList) {
+                    if (project.Oportunidade__c != null) {
+                        relatedOpportunityId = project.Oportunidade__c;
+                        break;
+                    }
+                }
+                Id relatedId = relatedOpportunityId != null ? relatedOpportunityId : (newRecordList.isEmpty() ? null : newRecordList[0].Id);
+                Utils.createLog('ProjetoBO', 'createTasks', ex, relatedId);
+            }
         }
     }
 
