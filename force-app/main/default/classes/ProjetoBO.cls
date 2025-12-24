@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-21-2025
+ * @last modified on  : 12-23-2025
  * @last modified by  : Daniel Belini
 **/
 public class ProjetoBO {
@@ -337,6 +337,7 @@ public class ProjetoBO {
                         continue;
                     }
                     if (TaskBO.taskSubjectExists(project.Id, line.Assunto)) {
+                        System.debug('skip subjectExists (new project) ' + line.Assunto + ' proj ' + project.Id);
                         continue;
                     }
 
@@ -389,6 +390,7 @@ public class ProjetoBO {
                             continue;
                         }
                         if (TaskBO.taskSubjectExists(project.Id, line.Assunto)) {
+                            System.debug('skip subjectExists (planning) ' + line.Assunto + ' proj ' + project.Id);
                             continue;
                         }
 
@@ -431,26 +433,35 @@ public class ProjetoBO {
                         key = statusToStatusCode.get(status);
                         key +=  project.RecordTypeId == ProjetoUtils.RT_PADRAO_DE_ENTRADA ? '_SIM' : '';
 
+                System.debug('testeeeeeeeeeee');
+                        System.debug('project.Status__c '+ project.Status__c);
+                        System.debug('status '+ status);
+                        
                 if(project.Status__c == status){
 
                     //  Pega os templates de Task para o Status que foi atribuído na transação atual
-                    TaskProjectTableLine[] lines = mapStatusToTasksTemplate.get(key) != null ? mapStatusToTasksTemplate.get(key) : new List<TaskProjectTableLine>();
-                    lines = sortByOrder(lines);
-                    for(TaskProjectTableLine line : lines){
-                        if (line == null || String.isBlank(line.Assunto)) {
-                            continue;
-                        }
-                        if (TaskBO.taskSubjectExists(project.Id, line.Assunto)) {
-                            continue;
-                        }
+                            TaskProjectTableLine[] lines = mapStatusToTasksTemplate.get(key) != null ? mapStatusToTasksTemplate.get(key) : new List<TaskProjectTableLine>();
+                            lines = sortByOrder(lines);
+                            for(TaskProjectTableLine line : lines){
+                                if (line == null || String.isBlank(line.Assunto)) {
+                                    continue;
+                                }
+                                if (TaskBO.taskSubjectExists(project.Id, line.Assunto)) {
+                                    System.debug('skip subjectExists (status change) ' + line.Assunto + ' proj ' + project.Id);
+                                    continue;
+                                }
 
-                        if(shouldUFVPhaseBeCreated(project, line.Assunto, recordTypesUFV, financimentoProjectOpportunityIdsToSkipPhasesUFV)){
-                            interessadosList = line.Interessados != null && line.Interessados != '' ? line.Interessados.split(';') : null;
+                                if(shouldUFVPhaseBeCreated(project, line.Assunto, recordTypesUFV, financimentoProjectOpportunityIdsToSkipPhasesUFV)){
+                                    interessadosList = line.Interessados != null && line.Interessados != '' ? line.Interessados.split(';') : null;
 
-                            Task generatedStatus = createTask(line, project, interessadosList, false, roleToUser, queueMap);
+                                    Task generatedStatus = createTask(line, project, interessadosList, false, roleToUser, queueMap);
                                     if(generatedStatus != null){
                                         tasksToInsert.add(generatedStatus);
+                                    } else {
+                                        System.debug('skip createTask null (status change) ' + line.Assunto + ' proj ' + project.Id);
                                     }
+                                } else {
+                                    System.debug('skip financingPhase (status change) ' + line.Assunto + ' proj ' + project.Id);
                                 }
                             }
                             break;
@@ -461,12 +472,13 @@ public class ProjetoBO {
             }
         }
         if(!tasksToInsert.isEmpty()){
-            try{
+            // try{
+                System.debug('tasksToInsert size=' + tasksToInsert.size());
                 insert tasksToInsert;
-            } catch(Exception ex){
-                // Não bloquear o salvamento do Projeto se processos externos (Flow/Process Builder) falharem na criação de tarefas
-                Utils.createLog('ProjetoBO', 'createTasks', ex, newRecordList.isEmpty() ? null : newRecordList[0].Id);
-            }
+            // } catch(Exception ex){
+            //     // Não bloquear o salvamento do Projeto se processos externos (Flow/Process Builder) falharem na criação de tarefas
+            //     Utils.createLog('ProjetoBO', 'createTasks', ex, newRecordList.isEmpty() ? null : newRecordList[0].Id);
+            // }
         }
     }
 
@@ -502,11 +514,13 @@ public class ProjetoBO {
                     ' | TipoProprietario: ' + (line.TipoDeProprietario != null ? line.TipoDeProprietario : 'não informado') +
                     '). Verifique se o usuário/fila está ativo ou existe na org.';
                 projeto.addError(msg);
+                System.debug('skip owner null ' + line.Assunto + ' proj ' + projeto.Id);
                 return null;
             }
         }
 
         if(!ensureActiveOwner(ownerId, projeto, line != null ? line.Assunto : '', userRoleToUser)){
+            System.debug('skip owner inactive ' + line.Assunto + ' owner ' + ownerId);
             return null;
         }
 
