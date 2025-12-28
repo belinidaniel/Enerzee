@@ -198,6 +198,8 @@
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>ViabilityStudy__c</object>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Desc</sortOrder>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
@@ -331,7 +333,7 @@
         <connector>
             <targetReference>get_Viability_Study</targetReference>
         </connector>
-        <filterLogic>1 AND (2 OR 3)</filterLogic>
+        <filterLogic>1 AND 2</filterLogic>
         <filters>
             <field>StageName</field>
             <operator>IsChanged</operator>
@@ -344,13 +346,6 @@
             <operator>EqualTo</operator>
             <value>
                 <stringValue>Viabilidade Técnica</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>StageName</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Viabilidade Tecnica</stringValue>
             </value>
         </filters>
         <object>Opportunity</object>

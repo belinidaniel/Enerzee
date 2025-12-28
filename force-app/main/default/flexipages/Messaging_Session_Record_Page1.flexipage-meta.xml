@@ -208,6 +208,19 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>messageSessionOrgnizer</componentName>
+                <identifier>c_messageSessionOrgnizer2</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue>{!$User.Profile.Name}</leftValue>
+                        <operator>CONTAINS</operator>
+                        <rightValue>Admin</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>lookupFieldName</name>
                     <value>MessagingEndUserId</value>

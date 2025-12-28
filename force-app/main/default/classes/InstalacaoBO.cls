@@ -2,10 +2,12 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-23-2025
+ * @last modified on  : 12-16-2025
  * @last modified by  : Daniel Belini
 **/
 public class InstalacaoBO {
+
+    private static final Integer INSTALLATION_NAME_MAX_LENGTH = Schema.SObjectType.Instalacao__c.fields.Name.getLength();
 
     public static void createInstallationsForFastTrackProjects(
         List<Projeto__c> projects,
@@ -51,6 +53,25 @@ public class InstalacaoBO {
 
         insert toInsert;
         relateProjectsToInstallations(fastTrackProjects, toInsert);
+    }
+
+    public static void checkTasksConclusionBeforeStatusChange(List<Instalacao__c> newRecordList, Map<Id, Instalacao__c> oldMap){
+            System.debug('### InstalacaoBO.checkTasksConclusionBeforeStatusChange - newRecordList: ' + newRecordList);
+        if (newRecordList == null || newRecordList.isEmpty()) {
+            return;
+        }
+        System.debug('### InstalacaoBO.checkTasksConclusionBeforeStatusChange - Start');
+        for (Instalacao__c inst : newRecordList) {
+        System.debug('### InstalacaoBO.checkTasksConclusionBeforeStatusChange - looping inst: ' + inst);
+            Instalacao__c oldInst = oldMap != null ? oldMap.get(inst.Id) : null;
+            if (oldInst == null || inst.Status__c == oldInst.Status__c) {
+                continue;
+            }
+
+            if (TaskBO.hasOpenTasks(inst.Id)) {
+                inst.addError('Todas as tarefas existentes para esta instalação precisam estar concluídas antes de avançar de fase.');
+            }
+        }
     }
 
     public static void ensureInstallationOnProjectApproved(List<Projeto__c> newProjects, Map<Id, Projeto__c> oldMap){
@@ -141,7 +162,7 @@ public class InstalacaoBO {
     }
 
     private static Instalacao__c buildInstallation(Projeto__c project){
-        String installationName = project.Name != null ? 'Instalação - ' + project.Name : 'Instalação';
+        String installationName = buildInstallationName(project != null ? project.Name : null);
 
         return new Instalacao__c(
             Name                = installationName,
@@ -214,5 +235,20 @@ public class InstalacaoBO {
         if(!installationsToUpdate.isEmpty()){
             update installationsToUpdate;
         }
+    }
+
+    private static String buildInstallationName(String projectName){
+        String baseName = 'Instalação';
+        if(String.isNotBlank(projectName)){
+            baseName += ' - ' + projectName.trim();
+        }
+        return truncateString(baseName, INSTALLATION_NAME_MAX_LENGTH);
+    }
+
+    private static String truncateString(String value, Integer maxLength){
+        if(value == null || maxLength == null || maxLength <= 0){
+            return value;
+        }
+        return value.length() > maxLength ? value.substring(0, maxLength) : value;
     }
 }

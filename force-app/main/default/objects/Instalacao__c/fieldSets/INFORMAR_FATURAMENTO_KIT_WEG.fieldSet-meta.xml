@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>INFORMAR_FATURAMENTO_KIT_WEG</fullName>
+    <description>Finalização com confirmação de faturamento do KIT WEG.</description>
+    <label>INFORMAR FATURAMENTO KIT WEG</label>
+</FieldSet>

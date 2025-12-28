@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 12-28-2025
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class IntegracaoNivelloViabilidade {
     @future(callout=true)
     public static void etapaViabilidade(Set<Id> triggerIds){

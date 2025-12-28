@@ -11,7 +11,7 @@
             <sorted>false</sorted>
             <value>
                 <fullName>Planejamento de Obra</fullName>
-                <default>false</default>
+                <default>true</default>
                 <label>Planejamento de Obra</label>
             </value>
             <value>

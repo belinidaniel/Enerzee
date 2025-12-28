@@ -267,11 +267,6 @@ public with sharing class ProposalConsoleController {
         }
 
         if (sourceOpp.PropostaAlterada__c) {
-            try {
-                ProposalService.updateOpportunityPhase(new Set<Id>{ sourceOpp.Id });
-            } catch (Exception proposalEx) {
-                Utils.createLog('ProposalConsoleController', 'ProposalService.updateOpportunityPhase', proposalEx);
-            }
         }
 
         return integrationResult;

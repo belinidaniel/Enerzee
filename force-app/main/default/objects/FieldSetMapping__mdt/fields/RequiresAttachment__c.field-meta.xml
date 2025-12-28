@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RequiresAttachment__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Indica se a atividade deve exibir opção para anexar arquivo.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>Quando marcado, o formulário exibirá opção para anexar arquivo ao registro relacionado.</inlineHelpText>
+    <label>Requires Attachment</label>
+    <type>Checkbox</type>
+</CustomField>

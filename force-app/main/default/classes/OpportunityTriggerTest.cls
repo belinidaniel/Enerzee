@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 12-11-2025
+ * @last modified by  : Daniel Belini
+**/
 @isTest
 public class OpportunityTriggerTest {
     @TestSetup
@@ -202,14 +209,10 @@ public class OpportunityTriggerTest {
             RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('OutrasOportunidades').getRecordTypeId()
         ), true);
 
-        //System.assert(OpportunityUtils.isRecordTypeMicroContract(oppt1));
-        //System.assert(OpportunityUtils.isRecordTypeMiniContract(oppt2));
         System.assert(OpportunityUtils.isRecordTypeSolar(oppt1));
         System.assert(OpportunityUtils.isRecordTypeSolar(oppt2));
         System.assert(OpportunityUtils.isRecordTypeOtherOpportunities(oppt3));
 
-        //oppt1.StageName = OpportunityUtils.STATUS_PROSPECCAO;
-        //System.assert(OpportunityUtils.isStatusProspecting(oppt1));
 
         oppt1.StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA;
         System.assert(OpportunityUtils.isStatusProposalElaboration(oppt1));
@@ -219,29 +222,20 @@ public class OpportunityTriggerTest {
 
         //oppt1.StageName = OpportunityUtils.STATUS_METODO_DE_PAGAMENTO;
         oppt1.StageName = OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_SINAL;
-        //System.assert(OpportunityUtils.isStatusPaymentWay(oppt1));
         System.assert(OpportunityUtils.isStatusPaymentConfirmationSinal(oppt1));
-
-        //oppt1.StageName = OpportunityUtils.STATUS_PROSPECCAO;
-        //oppt2.StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA;
-        //System.assert(OpportunityUtils.isChangingToProposalElaboration(oppt2, oppt1));
 
         oppt1.StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA;
         oppt2.StageName = OpportunityUtils.STATUS_ANALISE_DE_VIABILIDADE;
         System.assert(OpportunityUtils.isChangingToViabilityAnalysis(oppt2, oppt1));
 
         oppt1.StageName = OpportunityUtils.STATUS_ANALISE_DE_VIABILIDADE;
-        //oppt2.StageName = OpportunityUtils.STATUS_METODO_DE_PAGAMENTO;
         oppt2.StageName = OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_SINAL;
-        //System.assert(OpportunityUtils.isChangingToPaymentWay(oppt2, oppt1));
         System.assert(OpportunityUtils.isChangingToPaymentConfirmationSinal(oppt2, oppt1));
 
-        //oppt1.StageName = OpportunityUtils.STATUS_METODO_DE_PAGAMENTO;
         oppt1.StageName = OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_SINAL;
         oppt2.StageName = OpportunityUtils.STATUS_GANHO_FECHADO;
         System.assert(OpportunityUtils.isChangingToClosedWon(oppt2, oppt1));
 
-        //oppt1.StageName = OpportunityUtils.STATUS_METODO_DE_PAGAMENTO;
         oppt1.StageName = OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_SINAL;
         oppt2.StageName = OpportunityUtils.STATUS_FECHADO_PERDIDO;
         System.assert(OpportunityUtils.isChangingToClosedLost(oppt2, oppt1));
@@ -276,76 +270,6 @@ public class OpportunityTriggerTest {
         System.assert(OpportunityUtils.isContractApproved(oppt1));
         Test.stopTest();
     }
-
-    // @isTest
-    // static void createRequiredFieldsReminderTasksTest(){
-    //     Test.startTest();
-    //     Account account = (Account) TestFactory.createSObject(new Account(), true);
-
-    //     Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
-    //         AccountId = account.id
-    //     ), true);
-
-    //     ViabilityStudy__c viability = new ViabilityStudy__c();
-    //     viability.Opportunity__c = opportunity.Id;
-    //     viability.TypeWorkProjectFeasibility__c = 'UFV Micro';
-    //     insert viability;
-
-    //     // Elaboração de proposta - Grupo A
-    //     opportunity.ViabilityStudyFinished__c = true;
-    //     opportunity.StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA;
-    //     update opportunity;
-
-    //     Task task = [
-    //         SELECT      Id, WhatId, Subject, PrazoDiasUteis__c
-    //         FROM        Task
-    //         ORDER BY    CreatedDate DESC
-    //         LIMIT       1
-    //     ];
-
-    //     System.assertEquals(opportunity.Id, task.WhatId);
-    //     System.assert(task.Subject.contains('Informe os dados da proposta - Grupo A'));
-    //     System.assertEquals('1', task.PrazoDiasUteis__c);
-
-    //     delete [SELECT Id FROM Task];
-
-
-    //     // Elaboração de proposta - Grupo B
-    //     opportunity.GrupoTarifario__c = 'Grupo B';
-    //     opportunity.StageName = OpportunityUtils.STATUS_PROSPECCAO;
-    //     update opportunity;
-
-    //     // Agendamento da visita técnica
-    //     opportunity.StageName = OpportunityUtils.STATUS_AGENDAMENTO_DA_VISITA_TECNICA;
-    //     update opportunity;
-
-    //     task = [
-    //         SELECT      Id, WhatId, Subject, PrazoDiasUteis__c
-    //         FROM        Task
-    //         ORDER BY    CreatedDate DESC
-    //         LIMIT       1
-    //     ];
-
-    //     System.assertEquals(opportunity.Id, task.WhatId);
-    //     // System.assert(task.Subject.contains('Defina quem executará a visita técnica do negócio'));
-    //     System.assertEquals('1', task.PrazoDiasUteis__c);
-
-    //     delete [SELECT Id FROM Task];
-
-
-    //     // Aguardando dados da visita
-    //     opportunity.StageName = OpportunityUtils.STATUS_AGUARDANDO_DADOS_DA_VISITA;
-    //     opportunity.PrazoAprovacaoViabilidade__c = System.today().addDays(3);
-    //     update opportunity;
-
-    //     task = [
-    //         SELECT      Id, WhatId, Subject, ActivityDate
-    //         FROM        Task
-    //         ORDER BY    CreatedDate DESC
-    //         LIMIT       1
-    //     ];
-    //     Test.stopTest();
-    // }
 
     @isTest
     static void coverageOtherTriggerMethods(){

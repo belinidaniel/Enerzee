@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-27-2025
+ * @last modified on  : 12-28-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -633,33 +633,6 @@ public class OpportunityBO {
         }
         insert tasksToInsert;
     }
-
-    public static void validateContractStatusChanging(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
-        User runningUser = [
-            SELECT  Id, Name, Profile.Name
-            FROM    User
-            WHERE   Id =: UserInfo.getUserId()
-        ];
-        String[] allowedProfiles = new String[]{
-            'Administrador',
-            'Administrador API',
-            'Administrador do sistema', 
-            'System Administrator'
-        };
-        for(Opportunity opp : newRecords){
-            Opportunity oldOpp = oldRecordsMap.get(opp.Id);
-            if(
-                OpportunityUtils.isStatusChanging(opp, oldOpp) && 
-                (
-                    OpportunityUtils.isSubStatusContractSent(opp) ||
-                    OpportunityUtils.isSubStatusContractFirmedSigned(opp)
-                ) &&
-                !allowedProfiles.contains(runningUser.Profile.Name)
-            ){
-                opp.addError('Essa alteração de status não pode ser feita de forma manual!');
-            }
-        }
-    }
     
     public static Map<String, Id> getOpportunitiesSellers(Set<String> sellerIds){
         Map<String, Id> sellerIdsByExternalIds = new Map<String, Id>();
@@ -770,12 +743,23 @@ public class OpportunityBO {
     }
 
 
+    public static void updateOpportunityPhaseOnStageChange(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
+        Set<Id> opportunityIds = new Set<Id>();
 
-    public static void createAddContextIdToEndpointMap(Map<Integer, Set<Id>> endpointIdToContextIds, Integer key, Id opportunityId){
-        if(!endpointIdToContextIds.containsKey(key)){
-            endpointIdToContextIds.put(key, new Set<Id>());
+        for (Opportunity opportunity : newRecords) {
+            Opportunity oldOpportunity = oldRecordsMap != null ? oldRecordsMap.get(opportunity.Id) : null;
+            if (oldOpportunity == null) {
+                continue;
+            }
+
+            if (opportunity.StageName != oldOpportunity.StageName || opportunity.status__c != oldOpportunity.status__c) {
+                opportunityIds.add(opportunity.Id);
+            }
         }
-        endpointIdToContextIds.get(key).add(opportunityId);
+
+        if (!opportunityIds.isEmpty()) {
+            ProposalService.updateOpportunityPhase(opportunityIds);
+        }
     }
 
     //Envia contratos (PDF) vinculados à Oportunidades se (e somente se) eles foram aprovados
@@ -986,7 +970,31 @@ public class OpportunityBO {
             }
         }
 
+        // Controle de assuntos já existentes (tarefas em aberto) para evitar duplicidade
+        Map<Id, Set<String>> existingSubjectsByOpp = new Map<Id, Set<String>>();
+        Set<Id> opportunityIds = new Set<Id>();
+        for (Opportunity oppIdCollector : newList) {
+            opportunityIds.add(oppIdCollector.Id);
+            existingSubjectsByOpp.put(oppIdCollector.Id, new Set<String>());
+        }
+        if (!opportunityIds.isEmpty()) {
+            for (Task t : [
+                SELECT WhatId, Subject
+                FROM Task
+                WHERE WhatId IN :opportunityIds
+                    AND IsDeleted = false
+                    AND Status != :TaskUtils.STATUS_CONCLUIDO
+            ]) {
+                String norm = t.Subject == null ? '' : t.Subject.trim().toLowerCase();
+                if (!existingSubjectsByOpp.containsKey(t.WhatId)) {
+                    existingSubjectsByOpp.put(t.WhatId, new Set<String>());
+                }
+                existingSubjectsByOpp.get(t.WhatId).add(norm);
+            }
+        }
+
         List<Task> taskstoInsert = new List<Task>();
+        Map<Id, Set<String>> newSubjectsByOpp = new Map<Id, Set<String>>();
         for(Opportunity opportunity : newList){
             
             if(opportunity.OwnerId == integrationUserId) { continue; }
@@ -1006,32 +1014,39 @@ public class OpportunityBO {
                         //         SELECT Id FROM User WHERE Email LIKE 'amanda@enerzee.com.br%' LIMIT 1
                         //     ]);
                         // }
-                        taskstoInsert.add(TaskBO.createTask(
-                            opportunity.Id,
+                        String subjectGrupoA = 'Informe os dados da proposta - Grupo A - ' + accountName;
+                        String normSubjectGrupoA = subjectGrupoA.trim().toLowerCase();
+                        if (!existingSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoA)
+                            && !newSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoA)) {
+                            taskstoInsert.add(TaskBO.createTask(
+                                opportunity.Id,
 
-                            'Informe os dados da proposta - Grupo A - ' + accountName,
+                                subjectGrupoA,
 
-                            'PREENCHER OS CAMPOS:\n\n Modalidade de Venda\n Tipo da venda\n ' +
-                            'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
-                            'Tipo do telhado - Estrutura de fixação\n Logradouro\n ' +
-                            'Município Instalação\n Consumo Anual\n ' +
-                            'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
-                            'Validade da proposta (dias)\n Demanda Contratada - Fora Ponta\n ' +
-                            'Tarifa Demanda - Fora Ponta\n Consumo Médio - Fora Ponta\n ' +
-                            'Tarifa - Fora Ponta\n Consumo Médio - Ponta\n Tarifa - Ponta\n ' +
-                            'Tensão de Alimentação\n Potência Pico do Sistema (kWp)\n ' +
-                            'Geração mensal estimada\n Geração anual estimada\n ' +
-                            'Número de Módulos\n Potência Nominal do Módulo\n Fabricante Módulos\n ' +
-                            'Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
-                            'Potência Nominal do Sistema (kW)\n' +
-                            'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
+                                'PREENCHER OS CAMPOS:\n\n Modalidade de Venda\n Tipo da venda\n ' +
+                                'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
+                                'Tipo do telhado - Estrutura de fixação\n Logradouro\n ' +
+                                'Município Instalação\n Consumo Anual\n ' +
+                                'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
+                                'Validade da proposta (dias)\n Demanda Contratada - Fora Ponta\n ' +
+                                'Tarifa Demanda - Fora Ponta\n Consumo Médio - Fora Ponta\n ' +
+                                'Tarifa - Fora Ponta\n Consumo Médio - Ponta\n Tarifa - Ponta\n ' +
+                                'Tensão de Alimentação\n Potência Pico do Sistema (kWp)\n ' +
+                                'Geração mensal estimada\n Geração anual estimada\n ' +
+                                'Número de Módulos\n Potência Nominal do Módulo\n Fabricante Módulos\n ' +
+                                'Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
+                                'Potência Nominal do Sistema (kW)\n' +
+                                'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
 
-                            (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
+                                (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
 
-                            TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
-                            
-                            '1'
-                        ));
+                                TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
+                                
+                                '1'
+                            ));
+                            existingSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoA);
+                            newSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoA);
+                        }
                         continue;
                     }
 
@@ -1042,30 +1057,37 @@ public class OpportunityBO {
                         //         SELECT Id FROM User WHERE Email LIKE 'amanda@enerzee.com.br%' LIMIT 1
                         //     ]);
                         // }
-                        taskstoInsert.add(TaskBO.createTask(
-                            opportunity.Id,
+                        String subjectGrupoB = 'Informe os dados da proposta - Grupo B - ' + accountName;
+                        String normSubjectGrupoB = subjectGrupoB.trim().toLowerCase();
+                        if (!existingSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoB)
+                            && !newSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoB)) {
+                            taskstoInsert.add(TaskBO.createTask(
+                                opportunity.Id,
 
-                            'Informe os dados da proposta - Grupo B - ' + accountName,
+                                subjectGrupoB,
 
-                            'PREENCHER OS CAMPOS: \n\nModalidade de Venda\n Tipo da venda\n ' +
-                            'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
-                            'Tipo do telhado - Estrutura de fixação\n ' +
-                            'Logradouro\n Município Instalação\n Consumo Anual\n ' +
-                            'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
-                            'Validade da proposta (dias)\n' +
-                            'Tarifa com tributos - B\n Tensão de Alimentação\n ' +
-                            'Potência Pico do Sistema (kWp)\n Geração mensal estimada\n ' +
-                            'Geração anual estimada\n Número de Módulos\n Potência Nominal do Módulo\n ' +
-                            'Fabricante Módulos\n Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
-                            'Potência Nominal do Sistema (kW)\n' +
-                            'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
+                                'PREENCHER OS CAMPOS: \n\nModalidade de Venda\n Tipo da venda\n ' +
+                                'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
+                                'Tipo do telhado - Estrutura de fixação\n ' +
+                                'Logradouro\n Município Instalação\n Consumo Anual\n ' +
+                                'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
+                                'Validade da proposta (dias)\n' +
+                                'Tarifa com tributos - B\n Tensão de Alimentação\n ' +
+                                'Potência Pico do Sistema (kWp)\n Geração mensal estimada\n ' +
+                                'Geração anual estimada\n Número de Módulos\n Potência Nominal do Módulo\n ' +
+                                'Fabricante Módulos\n Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
+                                'Potência Nominal do Sistema (kW)\n' +
+                                'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
 
-                            (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
-                            
-                            TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
+                                (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
+                                
+                                TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
 
-                            '1'
-                        ));
+                                '1'
+                            ));
+                            existingSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoB);
+                            newSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoB);
+                        }
                         continue;
                     }
                 }
@@ -1205,19 +1227,35 @@ public class OpportunityBO {
             }
 
             if(OpportunityUtils.isFinancingSimulation(opportunity,oldMap.get(opportunity.Id))){
-                taskstoInsert.add(TaskBO.createTask(
-                            opportunity.Id,
-                            'Anexar Simulações de Financiamento - ' + accountName,
-                            'PREENCHER OS CAMPOS: \n\nDetalhes do Processo de Financiamento\n',
-                            financeiroQueue,
-                            TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
-                            '1'
-                        ));
-                        continue;
+                String subjectFin = 'Anexar Simulações de Financiamento - ' + accountName;
+                String normSubjectFin = subjectFin.trim().toLowerCase();
+                if (!existingSubjectsByOpp.get(opportunity.Id).contains(normSubjectFin)
+                    && !newSubjectsByOpp.get(opportunity.Id).contains(normSubjectFin)) {
+                    taskstoInsert.add(TaskBO.createTask(
+                                opportunity.Id,
+                                subjectFin,
+                                'PREENCHER OS CAMPOS: \n\nDetalhes do Processo de Financiamento\n',
+                                financeiroQueue,
+                                TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
+                                '1'
+                            ));
+                    existingSubjectsByOpp.get(opportunity.Id).add(normSubjectFin);
+                    newSubjectsByOpp.get(opportunity.Id).add(normSubjectFin);
+                }
+                continue;
             }
         }
-
-        insert tasksToInsert;
+        if (!taskstoInsert.isEmpty()) {
+            try {
+                insert tasksToInsert;
+            } catch (DmlException dmle) {
+                // Ignora duplicidade/validação de tarefa aberta e não bloqueia a oportunidade
+                if (dmle.getMessage() == null
+                    || !dmle.getMessage().contains('Já existe uma atividade em aberto com este assunto')) {
+                    throw dmle;
+                }
+            }
+        }
     }
 
     public static void validateSellBuyOrderAndContractRequiredFields(List<Opportunity> newList, Map<Id, Opportunity> oldMap){
@@ -1607,10 +1645,17 @@ public class OpportunityBO {
             // Verifique se o desconto foi alterado
             if (opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c && opp.StatusAprovacaoDesconto__c == 'Pendente') {
                 // Calculando a porcentagem de desconto em relação ao valor total da proposta
-                Decimal discountPercentage = (opp.DescontoUFV__c / opp.ValorTotalProposta__c) * 100;
+                Decimal totalProposalValue = opp.ValorTotalProposta__c != null ? opp.ValorTotalProposta__c : opp.ValorTotalProdutos__c;
+                Decimal discountPercentage = 0;
+                if (totalProposalValue != null && totalProposalValue != 0) {
+                    discountPercentage = (opp.DescontoUFV__c / totalProposalValue) * 100;
+                }
 
                 // Calcular a porcentagem de BDI em relação à soma de BDI e campos de Rede
-                Decimal totalValue = opp.BDI__c + opp.Rede3750__c + opp.Pontos__c + opp.Direct__c;
+                Decimal totalValue = (opp.BDI__c != null ? opp.BDI__c : 0) +
+                    (opp.Rede3750__c != null ? opp.Rede3750__c : 0) +
+                    (opp.Pontos__c != null ? opp.Pontos__c : 0) +
+                    (opp.Direct__c != null ? opp.Direct__c : 0);
                 Decimal BDI_Percentage = 0;
                 Decimal Rede_Percentage = 0;
                 if(totalValue > 0){
@@ -1630,14 +1675,19 @@ public class OpportunityBO {
                 // updateOpp.ValorPropostoPontos__c = opp.Pontos__c - (Rede_Discount * (opp.Pontos__c / opp.rede__c));
                 // updateOpp.ValorPropostoDirect__c = opp.Direct__c - (Rede_Discount * (opp.Direct__c / opp.rede__c));
 
-                if(opp.rede__c > 0 && opp.Rede3750__c > 0 ){
-                    updateOpp.ValorPropostoRede3750__c = opp.Rede3750__c - (Rede_Discount * (opp.Rede3750__c / opp.rede__c));
+                Decimal redeTotal = opp.rede__c != null ? opp.rede__c :
+                    (opp.Rede3750__c != null ? opp.Rede3750__c : 0) +
+                    (opp.Pontos__c != null ? opp.Pontos__c : 0) +
+                    (opp.Direct__c != null ? opp.Direct__c : 0);
+
+                if(redeTotal != null && redeTotal > 0 && opp.Rede3750__c > 0 ){
+                    updateOpp.ValorPropostoRede3750__c = opp.Rede3750__c - (Rede_Discount * (opp.Rede3750__c / redeTotal));
                 }
-                if(opp.Pontos__c > 0 && opp.rede__c > 0 ){
-                    updateOpp.ValorPropostoPontos__c = opp.Pontos__c - (Rede_Discount * (opp.Pontos__c / opp.rede__c));
+                if(opp.Pontos__c > 0 && redeTotal != null && redeTotal > 0 ){
+                    updateOpp.ValorPropostoPontos__c = opp.Pontos__c - (Rede_Discount * (opp.Pontos__c / redeTotal));
                 }
-                if(opp.Direct__c > 0 && opp.rede__c > 0 ){
-                    updateOpp.ValorPropostoDirect__c = opp.Direct__c - (Rede_Discount * (opp.Direct__c / opp.rede__c));
+                if(opp.Direct__c > 0 && redeTotal != null && redeTotal > 0 ){
+                    updateOpp.ValorPropostoDirect__c = opp.Direct__c - (Rede_Discount * (opp.Direct__c / redeTotal));
                 }
 
                 //fields original to approve
@@ -1757,29 +1807,37 @@ public class OpportunityBO {
                 (opp.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId() && areRequiredFieldsFilled(opp))) &&                    
                  opp.GrupoTarifario__c != 'Grupo A'
                 ){
-                System.debug('if 1 - generateProposalAsync - ' + formulaFieldsChanged(oldOpp, opp));
-
                 Boolean shouldGenerate = false;
-                // if (opp.PropostaGerada__c == false) {
-                //     shouldGenerate = true;
-                // }
-                if (oldOpp != null && opp.ReadequacaoSolicitada__c != oldOpp.ReadequacaoSolicitada__c && opp.ReadequacaoSolicitada__c == true) {
-                    shouldGenerate = true;
-                }
-                if (oldOpp != null && opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c && opp.StatusAprovacaoDesconto__c == 'Aprovado') {
-                    shouldGenerate = true;
-                }
-                if (oldOpp != null && formulaFieldsChanged(oldOpp, opp)) {
-                    shouldGenerate = true;
-                }
-
-                if (shouldGenerate) {
-                    System.debug('if 2 - generateProposalAsync - ');
+                
+                if((opp.PropostaGerada__c == false && oldOpp.PropostaGerada__c == true)){
                     if (!queuedProposalOpps.contains(opp.Id)) {
                         queuedProposalOpps.add(opp.Id);
-                        System.enqueueJob(new PDFControllerExtension.SavePdfJob(opp.Id, true, false));
+                        System.enqueueJob(new PDFControllerExtension.SavePdfJob(opp.Id, true, true));
                     } else {
                         System.debug('generateProposalAsync - já enfileirado para opp ' + opp.Id);
+                    }
+                }else{
+                    if (opp.PropostaGerada__c == false) {
+                        shouldGenerate = true;
+                    }
+
+                    if (oldOpp != null && opp.ReadequacaoSolicitada__c != oldOpp.ReadequacaoSolicitada__c && opp.ReadequacaoSolicitada__c == true) {
+                        shouldGenerate = true;
+                    }
+                    if (oldOpp != null && opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c && opp.StatusAprovacaoDesconto__c == 'Aprovado') {
+                        shouldGenerate = true;
+                    }
+                    if (oldOpp != null && formulaFieldsChanged(oldOpp, opp)) {
+                        shouldGenerate = true;
+                    }
+
+                    if (shouldGenerate) {
+                        if (!queuedProposalOpps.contains(opp.Id)) {
+                            queuedProposalOpps.add(opp.Id);
+                            System.enqueueJob(new PDFControllerExtension.SavePdfJob(opp.Id, true, false));
+                        } else {
+                            System.debug('generateProposalAsync - já enfileirado para opp ' + opp.Id);
+                        }
                     }
                 }
             }
@@ -1787,52 +1845,8 @@ public class OpportunityBO {
     }
 
     public static void processPaymentMethodApproval(Map<Id,Opportunity> newMap, Map<Id, Opportunity> oldOpportunityMap) {
-        List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
-        List<Approval.ProcessSubmitRequest> approvalRequests = new List<Approval.ProcessSubmitRequest>();
-
-        for (Opportunity opp : newMap.values()) {
-            Opportunity oldOpp = oldOpportunityMap.get(opp.Id);
-            Opportunity oppToUpdate = new Opportunity(Id = opp.Id);
-            if (
-                OpportunityUtils.isStatusAwaitingAcceptance(opp) && 
-                opp.CondicoesPagamento__c == 'Negociação' 
-                && (    
-                    oldOpp == null || 
-                    oldOpp.StageName != opp.StageName || 
-                    oldOpp.CondicoesPagamento__c != opp.CondicoesPagamento__c
-                )
-            ) {
-                //oppToUpdate.StageName = OpportunityUtils.STATUS_VALIDACAO_DO_METODO_DE_PAGAMENTO; //'Validação de Método de pagamento';
-                // Inicia o processo de aprovação aqui, se necessário
-                //opportunitiesToUpdate.add(oppToUpdate);
-
-                // Criando a solicitação de envio para o processo de aprovação
-                Approval.ProcessSubmitRequest req = new Approval.ProcessSubmitRequest();
-                req.setComments('Iniciando processo de aprovação automaticamente para condição de pagamento negociável.');
-                req.setObjectId(opp.Id);
-                req.setSubmitterId(UserInfo.getUserId());
-                req.setProcessDefinitionNameOrId('Validacao_de_pagamento');
-                approvalRequests.add(req);
-                
-            }
-        }
-    
-        //if (!opportunitiesToUpdate.isEmpty()) {
-        //    update opportunitiesToUpdate;
-        //}
-
-        // Enviando solicitações de aprovação
-        if (!approvalRequests.isEmpty()) {
-            for (Approval.ProcessSubmitRequest req : approvalRequests) {
-                try {
-                    Approval.ProcessResult result = Approval.process(req);
-                    // Trate o resultado aqui, se necessário
-                } catch(Exception e) {
-                    // Tratamento de exceção adequado
-                }
-            }
-        }
-
+        // Desabilitado: auto-envio de aprovação de forma de pagamento removido para evitar falha de preferência de lock/unlock
+        return;
     }
 
     public static void scheduleTechnicalVisit( Map<Id,Opportunity> newMap , Map<Id, Opportunity> oldOpportunityMap) {
@@ -2372,7 +2386,10 @@ public class OpportunityBO {
             if (opportunity.StageName == oldOpportunity.StageName) continue;
             
             if (OpportunityUtils.isStatusChanging(opportunity, oldOpportunity)){
-                if (OpportunityUtils.isStatusCommercialPresentation(opportunity)){
+                if (OpportunityUtils.isStatusCreditAnalysis(opportunity) && OpportunityUtils.isRecordTypeEzeeSolarB(opportunity)){
+                    opportunity.Status__c = OpportunityUtils.SUB_STATUS_ANALISE_CREDITO;
+
+                } else if (OpportunityUtils.isStatusCommercialPresentation(opportunity)){
                     opportunity.Status__c = OpportunityUtils.SUB_STATUS_EM_AGENDAMENTO;
 
                 } else if (OpportunityUtils.isStatusPaymentConfirmationSinal(opportunity)){
@@ -2397,7 +2414,7 @@ public class OpportunityBO {
                     opportunity.Status__c = OpportunityUtils.SUB_STATUS_EM_ANDAMENTO;
             
                 } else if (OpportunityUtils.isStatusAccessOpinion(opportunity)){
-                    opportunity.Status__c = OpportunityUtils.isRecordTypeSolar(opportunity) || OpportunityUtils.isRecordTypeProdutos(opportunity) ? OpportunityUtils.SUB_STATUS_FAST_TRACK : OpportunityUtils.SUB_STATUS_EM_ANALISE;
+                    opportunity.Status__c = OpportunityUtils.isRecordTypeSolar(opportunity) || OpportunityUtils.isRecordTypeProdutos(opportunity) ? OpportunityUtils.SUB_STATUS_EM_ANALISE : OpportunityUtils.SUB_STATUS_EM_ANALISE;
 
                 } else if (OpportunityUtils.isStatusCompleted(opportunity)){
                     opportunity.Status__c = OpportunityUtils.SUB_STATUS_VALIDANDO_BONIFICACAO;
@@ -2724,8 +2741,8 @@ public class OpportunityBO {
         }
         
     }
-
-    private static String appendAutomationNote(String currentValue, String note, Integer maxLength) {
+	
+    public static String appendAutomationNote(String currentValue, String note, Integer maxLength) {
         if (String.isBlank(note) || maxLength == null || maxLength <= 0) {
             return currentValue;
         }
@@ -2744,7 +2761,8 @@ public class OpportunityBO {
         return candidate.length() > maxLength ? candidate.substring(0, maxLength) : candidate;
     }
 
-    private static void sendClosedLostAutomationEmail(List<Opportunity> opportunities, Set<Id> userIds, String note) {
+
+    public static void sendClosedLostAutomationEmail(List<Opportunity> opportunities, Set<Id> userIds, String note) {
         if (opportunities == null || opportunities.isEmpty() || userIds == null || userIds.isEmpty()) {
             return;
         }
@@ -2767,7 +2785,7 @@ public class OpportunityBO {
             }
         }
 
-        if (recipientEmails.isEmpty() || Test.isRunningTest()) {
+        if (recipientEmails.isEmpty()) {
             return;
         }
 
@@ -2794,7 +2812,10 @@ public class OpportunityBO {
         email.setToAddresses(recipientEmails);
         email.setSubject('Encerramento automático de atividades - Fechado Perdido');
         email.setHtmlBody(body);
-
+	
+        if( Test.isRunningTest()){
+            return;
+        }
         Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ email });
     }
 

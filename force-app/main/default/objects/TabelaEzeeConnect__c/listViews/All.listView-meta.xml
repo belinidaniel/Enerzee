@@ -2,10 +2,20 @@
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>All</fullName>
     <columns>NAME</columns>
+    <columns>UPDATEDBY_USER</columns>
+    <columns>Parceiro01__c</columns>
     <columns>ConcessionariaEnergia__c</columns>
     <columns>Distribuidora__c</columns>
     <columns>Estado__c</columns>
-    <columns>Parceiro1__c</columns>
+    <columns>DescontoFixoPar1__c</columns>
+    <columns>DescontoPromocionalPar1__c</columns>
+    <columns>PrazoContratoPar1__c</columns>
+    <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>Parceiro01__c</field>
+        <operation>equals</operation>
+        <value>Bow-e</value>
+    </filters>
     <label>All</label>
 </ListView>

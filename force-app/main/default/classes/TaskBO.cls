@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-10-2025
+ * @last modified on  : 12-16-2025
  * @last modified by  : Daniel Belini
 **/
 public class TaskBO {
@@ -16,6 +16,170 @@ public class TaskBO {
             ActivityDate      = dueDate,
             PrazoDiasUteis__c = deadline
         );
+    }
+
+    // Valida anexos obrigatórios configurados no CMDT ActivityRequiredDocument__mdt
+    @TestVisible
+    private static void validateRequiredDocuments(Task taskRecord) {
+        if (taskRecord == null || String.isBlank(taskRecord.Subject) || taskRecord.WhatId == null) {
+            return;
+        }
+
+        List<ActivityRequiredDocument__mdt> configs = [
+            SELECT ActivitySubject__c, RequiredFiles__c
+            FROM ActivityRequiredDocument__mdt
+            WHERE ActivitySubject__c = :taskRecord.Subject
+        ];
+        if (configs.isEmpty()) {
+            return;
+        }
+
+        Set<String> required = new Set<String>();
+        Map<String, String> requiredRawByNorm = new Map<String, String>();
+        for (ActivityRequiredDocument__mdt cfg : configs) {
+            if (String.isBlank(cfg.RequiredFiles__c)) continue;
+            for (String name : cfg.RequiredFiles__c.split(';')) {
+                String norm = normalizeName(name);
+                if (!String.isBlank(norm)) {
+                    required.add(norm);
+                    if (!requiredRawByNorm.containsKey(norm)) {
+                        requiredRawByNorm.put(norm, name.trim());
+                    }
+                }
+            }
+        }
+        if (required.isEmpty()) {
+            return;
+        }
+
+        Set<String> uploaded = new Set<String>();
+        for (OpportunityAttachmentLink__c link : [
+            SELECT AttachmentDescription__c, DocRequiredName__c
+            FROM OpportunityAttachmentLink__c
+            WHERE SObjectId__c = :String.valueOf(taskRecord.WhatId)
+        ]) {
+            String sourceName = String.isNotBlank(link.DocRequiredName__c)
+                ? link.DocRequiredName__c
+                : link.AttachmentDescription__c;
+            String norm = normalizeName(sourceName);
+            if (!String.isBlank(norm)) {
+                uploaded.add(norm);
+            }
+        }
+
+        Set<String> missing = required.clone();
+        missing.removeAll(uploaded);
+        if (!missing.isEmpty()) {
+            List<String> missingLabels = new List<String>();
+            for (String key : missing) {
+                if (requiredRawByNorm.containsKey(key)) {
+                    missingLabels.add(requiredRawByNorm.get(key));
+                } else {
+                    missingLabels.add(key);
+                }
+            }
+            taskRecord.addError('Ainda faltam anexar os documentos obrigatórios: ' + String.join(missingLabels, ', '));
+        }
+    }
+
+    @TestVisible
+    private static String normalizeName(String value) {
+        if (String.isBlank(value)) {
+            return '';
+        }
+        String normalized = value.toLowerCase();
+        normalized = normalized
+            .replaceAll('[áàãâä]', 'a')
+            .replaceAll('[éèêë]', 'e')
+            .replaceAll('[íìîï]', 'i')
+            .replaceAll('[óòõôö]', 'o')
+            .replaceAll('[úùûü]', 'u')
+            .replaceAll('[ç]', 'c');
+        normalized = normalized.replaceAll('[^a-z0-9]+', '_');
+        normalized = normalized.replaceAll('^_+|_+$', '');
+        return normalized;
+    }
+
+    public static Boolean hasOpenTasks(Id whatId) {
+        if (whatId == null) {
+            return false;
+        }
+
+        String query = 'SELECT Id, Status';
+        Boolean hasDispensa = Schema.sObjectType.Task.fields.getMap().containsKey('DispensarAtividade__c');
+        if (hasDispensa) {
+            query += ', DispensarAtividade__c';
+        }
+        String statusConcluido = TaskUtils.STATUS_CONCLUIDO;
+        query += ' FROM Task WHERE WhatId = :whatId AND IsDeleted = false AND Status != :statusConcluido LIMIT 50';
+
+        List<Task> tasks = Database.query(query);
+        if (tasks.isEmpty()) {
+            return false;
+        }
+
+        for (Task t : tasks) {
+            if (hasDispensa) {
+                Boolean dispensa = (Boolean)t.get('DispensarAtividade__c');
+                if (dispensa == true) {
+                    continue;
+                }
+            }
+            return true;
+        }
+
+        return false;
+    }
+    
+    public static void preventDuplicateOpenTasks(List<Task> newTasks) {
+        if (newTasks == null || newTasks.isEmpty()) {
+            return;
+        }
+
+        Map<String, List<Task>> keyToTasks = new Map<String, List<Task>>();
+        for (Task t : newTasks) {
+            if (t.WhatId == null || String.isBlank(t.Subject)) {
+                continue;
+            }
+            String key = String.valueOf(t.WhatId) + '::' + t.Subject.toLowerCase().trim();
+            if (!keyToTasks.containsKey(key)) {
+                keyToTasks.put(key, new List<Task>());
+            }
+            keyToTasks.get(key).add(t);
+        }
+
+        if (keyToTasks.isEmpty()) {
+            return;
+        }
+
+        Set<Id> whatIds = new Set<Id>();
+        Set<String> subjectsRaw = new Set<String>();
+        for (Task t : newTasks) {
+            if (t.WhatId != null && !String.isBlank(t.Subject)) {
+                whatIds.add(t.WhatId);
+                subjectsRaw.add(t.Subject.trim());
+            }
+        }
+
+        Map<String, Task> existingMap = new Map<String, Task>();
+        for (Task existing : [
+            SELECT Id, WhatId, Subject, Status
+            FROM Task
+            WHERE WhatId IN :whatIds
+                AND Subject IN :subjectsRaw
+                AND Status != :TaskUtils.STATUS_CONCLUIDO
+        ]) {
+            String key = String.valueOf(existing.WhatId) + '::' + existing.Subject.toLowerCase().trim();
+            existingMap.put(key, existing);
+        }
+
+        for (String key : keyToTasks.keySet()) {
+            if (existingMap.containsKey(key)) {
+                for (Task t : keyToTasks.get(key)) {
+                    t.addError('Já existe uma atividade em aberto com este assunto para o mesmo registro.');
+                }
+            }
+        }
     }
 
     public static Date getActivityDateBasedOnWorkingDays(Date startDate, Integer days){        
@@ -360,7 +524,7 @@ public class TaskBO {
     }
 
      // Método para atualizar a fase do projeto com base nas tarefas concluídas
-     public static void updateProjectPhase(List<Task> newRecordList, Map<Id, Task> oldMap) {
+    public static void updateProjectPhase(List<Task> newRecordList, Map<Id, Task> oldMap) {
         Set<Id> projectIds = new Set<Id>();  // Conjunto para armazenar IDs de projetos
 
         // Coleta IDs de projetos dos registros de Task novos ou atualizados
@@ -389,6 +553,75 @@ public class TaskBO {
 
         if (!projectsToUpdate.isEmpty()) {
             update projectsToUpdate;  // Atualiza os projetos cujas fases foram alteradas
+        }
+    }
+
+    // Atualiza o status do projeto e fase da oportunidade ao concluir "APROVAÇÃO DO PROJETO UFV"
+    public static void handleAprovacaoProjetoUfv(List<Task> newRecordList, Map<Id, Task> oldMap) {
+        if (newRecordList == null || newRecordList.isEmpty()) {
+            return;
+        }
+
+        Set<Id> projectIds = new Set<Id>();
+        for (Task task : newRecordList) {
+            if (task.WhatId == null || !isValidProjectId(task.WhatId)) {
+                continue;
+            }
+            if (TaskUtils.isTaskBeingConcluded(oldMap != null ? oldMap.get(task.Id) : null, task)
+                && task.Subject != null
+                && task.Subject.trim().equalsIgnoreCase(TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV)) {
+                projectIds.add(task.WhatId);
+            }
+        }
+
+        if (projectIds.isEmpty()) {
+            return;
+        }
+
+        List<Projeto__c> projectsToUpdate = new List<Projeto__c>();
+        Set<Id> opportunityIds = new Set<Id>();
+
+        Boolean hasSubStatus = Schema.SObjectType.Projeto__c.fields.getMap().containsKey('SubStatus__c');
+        String query = 'SELECT Id, Status__c, Oportunidade__c';
+        if (hasSubStatus) {
+            query += ', SubStatus__c';
+        }
+        query += ' FROM Projeto__c WHERE Id IN :projectIds';
+
+        for (Projeto__c project : Database.query(query)) {
+            String subStatusValue = hasSubStatus ? (String)project.get('SubStatus__c') : null;
+            if (subStatusValue != null && subStatusValue.equalsIgnoreCase('Aprovado')) {
+                if (project.Status__c != ProjetoUtils.STATUS_PROJETO_APROVADO) {
+                    project.Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO;
+                    projectsToUpdate.add(project);
+                }
+                if (project.Oportunidade__c != null) {
+                    opportunityIds.add(project.Oportunidade__c);
+                }
+            }
+        }
+
+        if (!projectsToUpdate.isEmpty()) {
+            update projectsToUpdate;
+        }
+
+        if (!opportunityIds.isEmpty()) {
+            List<Opportunity> oppsToUpdate = new List<Opportunity>();
+            for (Opportunity opp : [
+                SELECT Id, StageName
+                FROM Opportunity
+                WHERE Id IN :opportunityIds
+            ]) {
+                if (opp.StageName == null
+                    || !opp.StageName.equalsIgnoreCase(OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO)) {
+                    opp.StageName = OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO;
+                    oppsToUpdate.add(opp);
+                }
+            }
+
+            if (!oppsToUpdate.isEmpty()) {
+                update oppsToUpdate;
+            }
         }
     }
 
@@ -554,6 +787,229 @@ public class TaskBO {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(messageList);
         }
 
+    }
+
+    // Impede concluir tarefas enquanto houver campos obrigatórios de seções marcadas como required no Field Set.
+    public static void validateRequiredFieldSetsOnCompletion(List<Task> taskList, Map<Id, Task> oldMap) {
+        if (taskList == null || taskList.isEmpty()) {
+            return;
+        }
+
+        for (Task taskRecord : taskList) {
+            Task oldTask = oldMap != null ? oldMap.get(taskRecord.Id) : null;
+            if (!TaskUtils.isTaskBeingConcluded(oldTask, taskRecord) || taskRecord.WhatId == null) {
+                continue;
+            }
+
+            if (Schema.sObjectType.Task.fields.getMap().containsKey('DispensarAtividade__c')
+                && (Boolean)taskRecord.get('DispensarAtividade__c') == true) {
+                continue;
+            }
+
+            validateRequiredDocuments(taskRecord);
+
+            List<FieldRequirement> requiredFields = new List<FieldRequirement>();
+
+            try {
+                Schema.SObjectType targetType = taskRecord.WhatId.getSObjectType();
+                Schema.DescribeSObjectResult describeResult = targetType.getDescribe();
+                String objectApiName = describeResult.getName();
+                Map<String, Schema.SObjectField> fieldMap = describeResult.fields.getMap();
+
+                List<FieldSetConfigurationService.SectionConfiguration> sections =
+                    FieldSetConfigurationService.getConfigurationForValidation(objectApiName, taskRecord.WhatId, taskRecord.Subject);
+
+                for (FieldSetConfigurationService.SectionConfiguration section : sections) {
+                    if (section == null || section.required != true || section.fields == null) {
+                        continue;
+                    }
+                    for (FieldSetConfigurationService.FieldConfiguration fieldConfig : section.fields) {
+                        if (fieldConfig == null || fieldConfig.updateable != true) {
+                            continue;
+                        }
+
+                        Schema.SObjectField fieldToken = fieldMap.get(fieldConfig.apiName);
+                        if (fieldToken == null) {
+                            continue;
+                        }
+
+                        Schema.DescribeFieldResult fieldDescribe = fieldToken.getDescribe();
+                        if (!fieldDescribe.isAccessible()) {
+                            continue;
+                        }
+
+                        FieldRequirement req = new FieldRequirement();
+                        req.apiName = fieldConfig.apiName;
+                        req.label = fieldConfig.label;
+                        req.sectionLabel = section.label;
+                        requiredFields.add(req);
+                    }
+                }
+
+                if (requiredFields.isEmpty()) {
+                    continue;
+                }
+
+                Set<String> queryFields = new Set<String>();
+                for (FieldRequirement req : requiredFields) {
+                    if (String.isNotBlank(req.apiName)) {
+                        queryFields.add(req.apiName);
+                    }
+                }
+
+                if (objectApiName == 'Projeto__c'
+                    && taskRecord.Subject != null
+                    && taskRecord.Subject.trim().equalsIgnoreCase(TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV)) {
+                    if (fieldMap.containsKey('SubStatus__c')) {
+                        queryFields.add('SubStatus__c');
+                    }
+                    if (fieldMap.containsKey('MotivoSubStatus__c')) {
+                        queryFields.add('MotivoSubStatus__c');
+                    }
+                }
+
+                if (queryFields.isEmpty()) {
+                    continue;
+                }
+
+                String query = 'SELECT ' + String.join(new List<String>(queryFields), ', ')
+                    + ' FROM ' + objectApiName + ' WHERE Id = \'' + String.escapeSingleQuotes((String)taskRecord.WhatId) + '\'';
+
+                SObject targetRecord = Database.query(query);
+
+                Map<String, List<String>> missingBySection = new Map<String, List<String>>();
+
+                // Regra específica: Motivo Sub-Status obrigatório apenas quando Sub-Status é Aprovado Parcialmente / Cancelado / Reprovado.
+                if (objectApiName == 'Projeto__c'
+                    && taskRecord.Subject != null
+                    && taskRecord.Subject.trim().equalsIgnoreCase(TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV)
+                    && fieldMap.containsKey('SubStatus__c')
+                    && fieldMap.containsKey('MotivoSubStatus__c')) {
+                    String subStatusValue = (String)targetRecord.get('SubStatus__c');
+                    String motivoValue = (String)targetRecord.get('MotivoSubStatus__c');
+                    Boolean requiresMotivo = !String.isBlank(subStatusValue)
+                        && (subStatusValue.equalsIgnoreCase('Aprovado Parcialmente')
+                            || subStatusValue.equalsIgnoreCase('Cancelado')
+                            || subStatusValue.equalsIgnoreCase('Reprovado'));
+
+                    if (!requiresMotivo) {
+                        List<FieldRequirement> filtered = new List<FieldRequirement>();
+                        for (FieldRequirement r : requiredFields) {
+                            if (r == null || r.apiName == 'MotivoSubStatus__c') {
+                                continue;
+                            }
+                            filtered.add(r);
+                        }
+                        requiredFields = filtered;
+                    } else if (String.isBlank(motivoValue)) {
+                        taskRecord.addError('Motivo Sub-Status é obrigatório quando Sub-Status é Aprovado Parcialmente ou Cancelado ou Reprovado.');
+                        continue;
+                    }
+                }
+
+                for (FieldRequirement req : requiredFields) {
+                    Object value = resolveFieldValue(targetRecord, req.apiName);
+                    if (isEmptyValue(value)) {
+                        String label = String.isNotBlank(req.label) ? req.label : req.apiName;
+                        String sectionLabel = String.isNotBlank(req.sectionLabel) ? req.sectionLabel : 'Seção';
+
+                        if (!missingBySection.containsKey(sectionLabel)) {
+                            missingBySection.put(sectionLabel, new List<String>());
+                        }
+                        missingBySection.get(sectionLabel).add(label);
+                    }
+                }
+
+                if (!missingBySection.isEmpty()) {
+                    List<String> messages = new List<String>();
+                    for (String sectionName : missingBySection.keySet()) {
+                        messages.add('Preencha os campos obrigatórios na seção \"' + sectionName + '\": ' + String.join(missingBySection.get(sectionName), ', '));
+                    }
+                    taskRecord.addError(String.join(messages, ' | '));
+                }
+            } catch (Exception ex) {
+                String message = 'Não foi possível finalizar pois não foi preenchida a seção de campos obrigatórios.';
+                try {
+                    if (!requiredFields.isEmpty()) {
+                        Set<String> sections = new Set<String>();
+                        for (FieldRequirement r : requiredFields) {
+                            if (r != null && String.isNotBlank(r.sectionLabel)) {
+                                sections.add(r.sectionLabel);
+                            }
+                        }
+                        if (!sections.isEmpty()) {
+                            message = 'Não foi possível finalizar. Preencha os campos obrigatórios nas seções: ' + String.join(new List<String>(sections), ', ') + '.';
+                        }
+                    }
+                    if (String.isBlank(message) || message.contains('seções')) {
+                        // Adiciona o erro original para facilitar diagnóstico em QA
+                        message += ' (Detalhe técnico: ' + ex.getMessage() + ')';
+                    }
+                } catch (Exception ignore) {
+                    // keep fallback message
+                }
+                taskRecord.addError(message);
+            }
+        }
+    }
+
+    private static Object resolveFieldValue(SObject record, String fieldPath) {
+        if (record == null || String.isBlank(fieldPath)) {
+            return null;
+        }
+
+        List<String> parts = fieldPath.split('\\.');
+        Object current = record;
+
+        for (String part : parts) {
+            if (!(current instanceof SObject)) {
+                return null;
+            }
+            current = ((SObject) current).get(part);
+            if (current == null) {
+                return null;
+            }
+        }
+
+        return current;
+    }
+
+    private static Boolean isEmptyValue(Object value) {
+        if (value == null) {
+            return true;
+        }
+        if (value instanceof String) {
+            return String.isBlank((String) value);
+        }
+        return false;
+    }
+
+    public static Boolean taskSubjectExists(Id whatId, String subject) {
+        if (whatId == null || String.isBlank(subject)) {
+            return false;
+        }
+
+        String normalized = subject.trim().toLowerCase();
+
+        for (Task existing : [
+            SELECT Subject
+            FROM Task
+            WHERE WhatId = :whatId
+                AND IsDeleted = false
+        ]) {
+            String existingNorm = existing.Subject == null ? '' : existing.Subject.trim().toLowerCase();
+            if (existingNorm == normalized) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private class FieldRequirement {
+        String apiName;
+        String label;
+        String sectionLabel;
     }
 
     public static void notifyViabilityInvoiceAttachment(Task taskRecord, ContentDocumentLink link){

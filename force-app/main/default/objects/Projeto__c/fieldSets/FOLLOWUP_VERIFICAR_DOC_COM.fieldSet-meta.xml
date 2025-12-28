@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FOLLOWUP_VERIFICAR_DOC_COM</fullName>
+    <description>Follow-up para verificar documentação comercial (sem campos, apenas anexo/comentário).</description>
+    <label>Follow-up Verificar Documentação Comercial</label>
+</FieldSet>

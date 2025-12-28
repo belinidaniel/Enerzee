@@ -53,6 +53,7 @@ public with sharing class FieldSetConfigurationService {
         Id relatedRecordId = taskRecord.WhatId;
         Schema.SObjectType relatedSObjectType = relatedRecordId.getSObjectType();
         Schema.DescribeSObjectResult relatedDescribe = relatedSObjectType.getDescribe();
+
         if (!relatedDescribe.isAccessible()) {
             throw new AuraHandledException('You do not have access to view ' + relatedDescribe.getLabel() + ' records.');
         }
@@ -66,6 +67,12 @@ public with sharing class FieldSetConfigurationService {
         response.readOnly = taskRecord.IsClosed;
 
         return response;
+    }
+
+    // Exposed for server-side validations (e.g., before closing tasks).
+    @TestVisible
+    public static List<SectionConfiguration> getConfigurationForValidation(String objectApiName, Id recordId, String subject) {
+        return getConfigurationInternal(objectApiName, recordId, subject);
     }
 
     private static List<SectionConfiguration> getConfigurationInternal(String objectApiName, Id recordId, String overrideSubject) {
@@ -103,19 +110,22 @@ public with sharing class FieldSetConfigurationService {
             if (fieldSet == null) {
                 continue;
             }
-
+     
             SectionConfiguration section = new SectionConfiguration();
             section.fieldSetName = fieldSet.getName();
             section.label = String.isNotBlank(mapping.SectionLabel__c) ? mapping.SectionLabel__c : fieldSet.getLabel();
             section.required = mapping.IsSectionRequired__c == true;
             section.sortOrder = mapping.SortOrder__c == null ? 0 : mapping.SortOrder__c.intValue();
             section.fields = buildFieldConfigurations(fieldSet, fieldMap, section.required);
+            section.requiresAttachment = mapping.RequiresAttachment__c == true;
+            section.requiresComment = mapping.RequiresComment__c == true;
+            System.debug('Final sections fields: ' + section.fields);
 
-            if (!section.fields.isEmpty()) {
+            if (!section.fields.isEmpty() || section.requiresAttachment || section.requiresComment) {
                 sections.add(section);
             }
         }
-
+        System.debug('Final sections count: ' + sections.size());
         return sections;
     }
 
@@ -159,15 +169,15 @@ public with sharing class FieldSetConfigurationService {
         } else {
             mappings = [
                 SELECT DeveloperName, FieldSetName__c, SectionLabel__c, IsSectionRequired__c, SortOrder__c,
-                    RecordTypeDeveloperName__c, Subject__c
+                    RecordTypeDeveloperName__c, Subject__c, RequiresAttachment__c, RequiresComment__c
                 FROM FieldSetMapping__mdt
                 WHERE ObjectApiName__c = :objectApiName
                 ORDER BY SortOrder__c, DeveloperName
             ];
         }
-
         List<FieldSetMapping__mdt> filtered = new List<FieldSetMapping__mdt>();
         for (FieldSetMapping__mdt mapping : mappings) {
+
             if (matchesCriterion(recordContext.recordTypeDeveloperName, mapping.RecordTypeDeveloperName__c)
                 && matchesCriterion(recordContext.subject, mapping.Subject__c)) {
                 filtered.add(mapping);
@@ -229,6 +239,8 @@ public with sharing class FieldSetConfigurationService {
         @AuraEnabled public Integer sortOrder;
         @AuraEnabled public String fieldSetName;
         @AuraEnabled public List<FieldConfiguration> fields;
+        @AuraEnabled public Boolean requiresAttachment;
+        @AuraEnabled public Boolean requiresComment;
     }
 
     public class FieldConfiguration {

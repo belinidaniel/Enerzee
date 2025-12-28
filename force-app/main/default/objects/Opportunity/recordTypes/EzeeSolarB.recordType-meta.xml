@@ -1121,6 +1121,10 @@
             <default>false</default>
         </values>
         <values>
+            <fullName>Análise</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Aprovado</fullName>
             <default>false</default>
         </values>
@@ -1178,6 +1182,10 @@
         </values>
         <values>
             <fullName>Perdido</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Reprovado</fullName>
             <default>false</default>
         </values>
         <values>

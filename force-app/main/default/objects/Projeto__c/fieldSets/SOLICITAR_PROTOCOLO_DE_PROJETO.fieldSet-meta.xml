@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SOLICITAR_PROTOCOLO_DE_PROJETO</fullName>
+    <description>Anexar documentos para homologação do projeto UFV.</description>
+    <label>SOLICITAR PROTOCOLO DE PROJETO</label>
+</FieldSet>

@@ -1,8 +1,17 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 12-22-2025
+ * @last modified by  : Daniel Belini
+**/
 @isTest
 public class TaskTriggerTest{
 
     @TestSetup
     static void makeData(){
+        TaskTriggerHandler.disableTrigger();
+
         Consultor__c consultor = (Consultor__c) TestFactory.createSObject(new Consultor__c(), true);
 
         Account account = (Account) TestFactory.createSObject(new Account(), true);
@@ -10,7 +19,8 @@ public class TaskTriggerTest{
         Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
             AccountId                = account.id,
             ConsultorOportunidade__c = consultor.Id,
-            MunicipioInstalacao__c   = 'São Paulo'
+            MunicipioInstalacao__c   = 'São Paulo',
+            IdVirtualOffice__c       = '00000000-0000-0000-0000-000000000001'
         ), true);
 
         Instalacao__c instalation = (Instalacao__c) TestFactory.createSObject(new Instalacao__c(

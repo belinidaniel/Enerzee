@@ -16,7 +16,7 @@
     <filters>
         <field>Status</field>
         <operation>equals</operation>
-        <value>0,2,7</value>
+        <value>0</value>
     </filters>
     <label>Minhas mensagens ativas</label>
 </ListView>

@@ -10,6 +10,7 @@ public with sharing class TaskUtils {
     public static String SUBJECT_REALIZAR_PAGAMENTO_DA_ART                                   = 'REALIZAR PAGAMENTO DA ART';
     public static String SUBJECT_INSERIR_PROCURACAO_ASSINADA                                 = 'INSERIR PROCURAÇÃO ASSINADA';
     public static String SUBJECT_VERIFICAR_DOCUMENTOS                                        = 'VERIFICAR DOCUMENTOS';
+    public static String SUBJECT_VERIFICAR_DOCUMENTACAO_COMERCIAL                            = 'VERIFICAR DOCUMENTAÇÃO COMERCIAL';
     public static String SUBJECT_VERIFICAR_VIABILIDADE_TECNICA                               = 'VERIFICAR VIABILIDADE TÉCNICA';
     public static String SUBJECT_SOLICITAR_VERIFICACAO_DE_PROJETO                            = 'SOLICITAR VERIFICAÇÃO DE PROJETO';
     public static String SUBJECT_ANEXAR_PROJETO_DE_CONCESSIONARIA                            = 'ANEXAR PROJETO DE CONCESSIONÁRIA';

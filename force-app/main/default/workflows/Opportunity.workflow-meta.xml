@@ -25,11 +25,7 @@
         <description>Envio da Fase Aguardando dados da visita para coordenador e Responsável</description>
         <protected>false</protected>
         <recipients>
-            <recipient>CoordenadorViabilidade</recipient>
-            <type>role</type>
-        </recipients>
-        <recipients>
-            <recipient>raiana.rocha@enerzee.com.br</recipient>
+            <recipient>daniel.belini@enerzee.com.br</recipient>
             <type>user</type>
         </recipients>
         <senderType>CurrentUser</senderType>
@@ -107,8 +103,7 @@
         <description>Oportunidade Aprovada</description>
         <protected>false</protected>
         <recipients>
-            <recipient>CoordenadorViabilidade</recipient>
-            <type>role</type>
+            <type>owner</type>
         </recipients>
         <senderType>CurrentUser</senderType>
         <template>unfiled$public/Oportunidade_Aprovada_1696366372372</template>
@@ -244,6 +239,17 @@
         <name>Atualiza Campo Status Aprovação de Desc</name>
         <notifyAssignee>false</notifyAssignee>
         <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Atualiza_Etapa_Forma_Pagto</fullName>
+        <description>Avança a fase conforme etapa corrente após aprovação da forma de pagamento em negociação.</description>
+        <field>StageName</field>
+        <formula>IF(TEXT(StageName) = &apos;Aguardando aceite&apos;, &apos;Contrato&apos;, &apos;Confirmação de pagamento sinal&apos;)</formula>
+        <name>Avanca etapa forma de pagamento</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
         <protected>false</protected>
         <reevaluateOnChange>false</reevaluateOnChange>
     </fieldUpdates>

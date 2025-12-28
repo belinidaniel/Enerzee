@@ -232,4 +232,8 @@
         <name>Gerador_de_Oportunidades</name>
         <type>ConnectedApp</type>
     </appMenuItems>
+    <appMenuItems>
+        <name>standard__DigitalWallet</name>
+        <type>CustomApplication</type>
+    </appMenuItems>
 </AppMenu>

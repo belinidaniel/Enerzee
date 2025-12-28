@@ -95,6 +95,9 @@
         <aggregateTypes>Sum</aggregateTypes>
         <field>Opportunity.ValorTotalProposta__c</field>
     </columns>
+    <columns>
+        <field>LAST_STAGE_CHANGE_DATE</field>
+    </columns>
     <filter>
         <criteriaItems>
             <column>BucketField_46964861</column>

@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Old</fullName>
+    <active>false</active>
+    <label>Old</label>
+    <picklistValues>
+        <picklist>CartaAprovacaoTipo__c</picklist>
+        <values>
+            <fullName>Disponibilidade_de_Energia</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Informacao_de_Acesso</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Microgeracao</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Minigeracao</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Orcamento_Conexao_Microgeracao</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Orcamento_Conexao_Minigeracao</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Posto_ou_Subestacao</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Categoria__c</picklist>
+        <values>
+            <fullName>Fast Track</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SCEE</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Concessionaria__c</picklist>
+        <values>
+            <fullName>Amazonas Energia S%2EA - Ame</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ampla Energia E Serviços S%2EA%2E - Enel Rj</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ceb Distribuição S%2EA%2E - Cebdis</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Celesc Distribuição S%2EA - Celesc-Dis</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Celg Distribuição S%2EA%2E - Celg-D</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cemig Distribuição S%2EA - Cemig-D</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Centrais Elétricas De Carazinho Sa - Eletrocar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cersul - Cooperativa De Distribuição De Energia - Cersul</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Campolarguense De Energia - Cocel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia De Eletricidade Do Amapá - Cea</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia De Eletricidade Do Estado Da Bahia - Coelba</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Energética De Pernambuco - Celpe</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Energética De Roraima - Cerr</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Energética Do Ceará - Enel Ce</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Energética Do Maranhão - Cemar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Energética Do Rio Grande Do Norte Cosern - Cosern</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Estadual De Distribuição De Energia Elétrica - Ceee-D - Ceee-D</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Força E Luz Do Oeste - Cflo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Hidroelétrica São Patrício - Chesp - Chesp</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Jaguari De Energia - Cpfl Jaguari</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Leste Paulista De Energia - Cpfl Leste Paulista</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Luz E Força De Mococa - Cpfl Mococa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Luz E Força Santa Cruz - Cpfl Santa Cruz</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Nacional De Energia Elétrica - Cnee</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Paulista De Força E Luz - Cpfl-Paulista</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Piratininga De Força E Luz - Cpfl- Piratininga</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Sul Paulista De Energia - Cpfl Sul Paulista</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Companhia Sul Sergipana De Eletricidade - Sulgipe</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Aliança - Cooperaliança</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Distribuição De Energia Elétrica De Anitápolis - Ceral - Ceral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Distribuição De Energia Elétrica De Arapoti - Ceral Dis</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Distribuição De Energia Entre Rios Ltda - Certhil</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Distribuição De Energia Fontoura Xavier - Cerfox</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Distribuição E Geração De Energia Das Missões - Cermissões</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletricidade De Gravatal - Cergral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletricidade De São Ludgero - Cegero</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletricidade Grão Pará - Cergapa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletricidade Jacinto Machado - Cejama</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletricidade Praia Grande - Ceprag</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Anita Garibaldi Ltda - Cergal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Centro Jacuí Ltda - Celetro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Da Região De Itapecerica Da Serra - Ceris</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Da Região Do Alto Paraíba - Cedrap</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação De Braço Do Norte - Cerbranorte</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação De Ibiúna E Região - Cetril</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação E Desenvolvimento Da Região De Mogi Mirim - Cemirim</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação E Desenvolvimento Da Região De São José Do Rio Preto-Cerrp - Cerrp</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação E Desenvolvimento Rural Centro Sul De Sergipe Ltda - Cercos</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação E Distribuição Da Região De Itariri - Cedri</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Lauro Muller - Coopermila</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural Cachoeiras Itaboraí Ltda - Cerci</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural Da Média Sorocabana - Cermeso</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural Da Região De Osvaldo Cruz - Ceroc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural Da Região De Palmital %27Cerpal%27 - Cerpal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural Da Região De Promissão - Cerpro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural De Arapoti Ltda - Ceral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural De Araruama Ltda - Ceral Araruama</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural De Itaí-Paranapanema-Avaré Ltda - Ceripa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural De Resende Ltda - Ceres</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Eletrificação Rural Itu-Mairinque - Cerim</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Energia Treviso - Certrel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Energização E De Desenvolvimento Do Vale Do Mogi - Cervam</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Energização E Desenvolvimento Rural Da Grande Dourados Ltda%2E - Cergrand</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Energização E Desenvolvimento Rural Do Sudoeste Sulmatogrossense Ltda%2E - Coeso</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Infraestrutura Castrolanda - Eletrorural</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa De Prestação De Serviços Públicos De Distribuição De Energia Elétrica Senador Esteves Júnior - Cerej</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Distribuidora De Energia Vale Do Araçá - Ceraçá</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Energética Cocal - Coopercocal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Fumacense De Eletricidade - Cermoful</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Pioneira De Eletrificação - Coopera - Coopera</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Regional De Distribuição De Energia Do Litoral Norte - Coopernorte - Coopernorte</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Regional De Eletrificação Rural Do Alto Uruguai - Creral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Regional De Eletrificação Rural Fronteira Sul Ltda - Coopersul</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Regional De Energia E Desenvolvimento Ijuí Ltda - Ceriluz</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Regional De Energia Taquari Jacuí - Certaja</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperativa Regional Sul De Eletrificação Rural - Coorsel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cooperzem Cooperativa De Distribuição De Energia Elétrica - Cooperzem</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Copel Distribuição S%2EA%2E - Copel-Dis</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Coprel Cooperativa De Energia - Coprel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Creluz - Cooperativa De Distribuição De Energia - Creluz-D</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Departamento Municipal De Energia De Ijuí - Demei</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Dme Distribuição S%2EA%2E - Dmed - Dmed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Edp São Paulo Distribuição De Energia S%2EA%2E - Edp Sp</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Elektro Redes S%2EA%2E - Elektro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Eletropaulo - Enel SP - SP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Eletropaulo Metropolitana Eletricidade De São Paulo S%2EA%2E - Eletropaulo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Empresa De Distribuicao De Energia Vale Paranapanema S%2EA%2E - Edevp</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Empresa Elétrica Bragantina S%2EA%2E - Eeb</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Empresa Força E Luz De Urussanga Ltda - Eflul</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Empresa Força E Luz João Cesa Ltda - Efljc</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Empresa Luz E Força Santa Maria S%2FA - Elfsm</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Acre - Distribuidora De Energia S%2EA - Eletroacre</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Borborema - Distribuidora De Energia S%2EA - Ebo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Mato Grosso - Distribuidora De Energia S%2EA%2E - Emt</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Mato Grosso Do Sul - Distribuidora De Energia S%2EA%2E - Ems</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Minas Gerais - Distribuidora De Energia S%2EA%2E - Emg</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Nova Friburgo - Distribuidora De Energia S%2EA%2E - Enf</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Paraíba - Distribuidora De Energia S%2EA - Epb</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Rondônia - Distribuidora De Energia S%2EA - Ceron</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Sergipe - Distribuidora De Energia S%2EA - Ese</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Sul-Sudeste - Distribuidora De Energia S%2EA%2E - Ess</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Energisa Tocantins Distribuidora De Energia S%2EA%2E - Eto</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Equatorial Alagoas Distribuidora De Energia S%2EA%2E - Equatorial Al</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Equatorial Pará Distribuidora De Energia S%2EA%2E - Equatorial Pa</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Equatorial Piauí Distribuidora De Energia S%2EA - Equatorial Pi</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Espírito Santo Distribuição De Energia S%2EA%2E - Edp Es</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Força E Luz Coronel Vivida Ltda - Forcel</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Hidropan Distribuição De Energia S%2EA%2E - Hidropan</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Iguaçu Distribuidora De Energia Elétrica Ltda%2E - Ienergia</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Light Serviços De Eletricidade S A - Light</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Muxfeldt Marin E Cia Ltda - Muxenergia</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Nova Palma Energia Ltda - Uhenpal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rge Sul Distribuidora De Energia S%2EA%2E - Rge Sul</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rio Grande Energia Sa - Rge</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Roraima Energia S%2EA - Boa Vista</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>DocumentacaoComercialPendencia__c</picklist>
+        <values>
+            <fullName>Proposta</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Proposta concorrente</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>InversaoFluxo__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>NecessarioObraNaRede__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>NecessarioPFC__c</picklist>
+        <values>
+            <fullName>Não</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Status__c</picklist>
+        <values>
+            <fullName>Elaboração de projeto</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Planejamento</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Projeto aprovado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Projeto em análise</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>SubStatus__c</picklist>
+        <values>
+            <fullName>Aprovado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aprovado Parcialmente</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cancelado</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Sub_Status__c</picklist>
+        <values>
+            <fullName>Aprovado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aprovado Parcialmente</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cancelado</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>TipoObra__c</picklist>
+        <values>
+            <fullName>Bombeamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Estação de Recarga</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Padrão de Entrada</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Posto de transformação</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Subestação</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>UFV Mini Até 300</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>UFV Mini acima de 300</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>UFVMicro</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>TipoUsina__c</picklist>
+        <values>
+            <fullName>Solo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Telhado</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tracker</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>UFConcessionaria__c</picklist>
+        <values>
+            <fullName>AC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AM</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>AP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>BA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>CE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DF</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ES</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MG</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>MT</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PB</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PI</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>PR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RJ</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RN</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RR</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>RS</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SE</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>TO</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

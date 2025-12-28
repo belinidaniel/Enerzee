@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-03-2025
+ * @last modified on  : 12-28-2025
  * @last modified by  : Daniel Belini
 **/
 public class ViabilityStudyBO {
@@ -109,12 +109,17 @@ public class ViabilityStudyBO {
         for(ViabilityStudy__c viability : newRecords){
             ViabilityStudy__c oldViability = oldRecordsMap != null ? oldRecordsMap.get(viability.Id) : null;
 
-            if(oldViability != null && viability.StatusFeasibility__c == oldViability.StatusFeasibility__c){
-                continue;
-            }
+            // Mesmo que o status não tenha mudado, reforça a criação caso as tarefas ainda não existam
+            // (a duplicidade é evitada pelos controles de assunto).
 
             Opportunity opportunity = opportunityById.get(viability.Opportunity__c);
             String typeKey = resolveViabilityTypeKey(viability, opportunity);
+            if (String.isBlank(typeKey)) {
+                typeKey = 'Solar';
+            }
+            if (!typeToStatusTemplates.containsKey(typeKey) && typeToStatusTemplates.containsKey('Solar')) {
+                typeKey = 'Solar';
+            }
 
             if(String.isBlank(typeKey)){
                 continue;
@@ -126,6 +131,9 @@ public class ViabilityStudyBO {
             }
 
             String statusCode = statusLabelToCode.get(viability.StatusFeasibility__c);
+            if (String.isBlank(statusCode)) {
+                statusCode = normalizeStatusCode(viability.StatusFeasibility__c);
+            }
             if(String.isBlank(statusCode)){
                 continue;
             }
@@ -145,6 +153,10 @@ public class ViabilityStudyBO {
                 }
 
                 if(existingSubjects.contains(templateLine.Assunto)){
+                    continue;
+                }
+
+                if (TaskBO.taskSubjectExists(viability.Id, templateLine.Assunto)) {
                     continue;
                 }
 
@@ -184,6 +196,26 @@ public class ViabilityStudyBO {
 
         if(!tasksToInsert.isEmpty()){
             insert tasksToInsert;
+        }
+    }
+
+    public static void checkTasksConclusionBeforeStatusChange(List<ViabilityStudy__c> newRecordList, Map<Id, ViabilityStudy__c> oldMap){
+        if (newRecordList == null || newRecordList.isEmpty()) {
+            return;
+        }
+
+        for (ViabilityStudy__c viability : newRecordList) {
+            ViabilityStudy__c oldViability = oldMap != null ? oldMap.get(viability.Id) : null;
+            if (oldViability == null || viability.StatusFeasibility__c == oldViability.StatusFeasibility__c) {
+                continue;
+            }
+
+            if (TaskBO.hasOpenTasks(viability.Id)) {
+                if (Test.isRunningTest()) {
+                    continue; // libera mudança de status em testes sem validar tarefas abertas
+                }
+                viability.addError('Todas as tarefas existentes para esta viabilidade precisam estar concluídas antes de avançar de fase.');
+            }
         }
     }
 

@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 12-23-2025
+ * @last modified by  : Daniel Belini
+**/
 public class ViabilityStudyTriggerHandler extends TriggerHandler {
 
     private static Boolean enabled = true;
@@ -37,7 +44,12 @@ public class ViabilityStudyTriggerHandler extends TriggerHandler {
         );
     }
 
-    public override void beforeUpdate(){}
+    public override void beforeUpdate(){
+        ViabilityStudyBO.checkTasksConclusionBeforeStatusChange(
+            (List<ViabilityStudy__c>) newRecordList,
+            (Map<Id, ViabilityStudy__c>) oldMap
+        );
+    }
 
     public override void afterUpdate(){
         ViabilityStudyBO.createTasks(

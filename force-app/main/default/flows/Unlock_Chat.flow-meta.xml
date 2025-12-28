@@ -148,7 +148,7 @@
         <inputParameters>
             <name>queueId</name>
             <value>
-                <stringValue>00G5e000000bznSEAQ</stringValue>
+                <stringValue>00G5e000000c2bLEAQ</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -160,7 +160,7 @@
         <inputParameters>
             <name>queueLabel</name>
             <value>
-                <stringValue>Omni-Channel</stringValue>
+                <stringValue>Chat Enerzee</stringValue>
             </value>
         </inputParameters>
         <inputParameters>

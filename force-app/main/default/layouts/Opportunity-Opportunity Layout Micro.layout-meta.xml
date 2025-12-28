@@ -157,11 +157,11 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Lead__c</field>
+                <field>DiscountLoyalty__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>MainViability__c</field>
+                <field>DiscountNotLoyalty__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -703,6 +703,10 @@
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>FormaPagamento__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>CondicoesPagamento__c</field>
             </layoutItems>
             <layoutItems>
@@ -740,7 +744,8 @@
                 <field>UCBeneficiadora__c</field>
             </layoutItems>
             <layoutItems>
-                <emptySpace>true</emptySpace>
+                <behavior>Edit</behavior>
+                <field>isPromotional__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>

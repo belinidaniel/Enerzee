@@ -162,8 +162,16 @@
             <label>UC4 - Janeiro Fora Ponta</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUe</field>
+            <label>Observação Pagamento Direito</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8o</field>
             <label>UC4 - Julho</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUd</field>
+            <label>Consumo Médio</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8p</field>
@@ -172,6 +180,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8m</field>
             <label>UC4 - Julho Fora Ponta</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUf</field>
+            <label>Observação Pagamento Esquerdo</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8n</field>
@@ -2219,7 +2231,7 @@
             <field>00N5e00000fwRNS</field>
             <field>00N5e00000fvi4o</field>
             <field>00N5e00000fvi4p</field>
-            <field>00NHZ000006HxJZ</field>
+            <field>00NU50000021vUd</field>
             <field>00N5e00000fvi4r</field>
             <field>00NU5000000Emj8</field>
             <field>00N5e00000fvi4s</field>
@@ -2404,8 +2416,8 @@
             <field>00NU5000000085d</field>
             <field>00NU5000000yVAb</field>
             <field>00NU5000000IoJJ</field>
-            <field>00NHZ000006VC9d</field>
-            <field>00NHZ000006VC9e</field>
+            <field>00NU50000021vUe</field>
+            <field>00NU50000021vUf</field>
             <field>00NU5000000082P</field>
             <field>00N5e00000fvi5m</field>
             <field>00N5e00000fwRO8</field>
@@ -2844,8 +2856,16 @@
             <label>UC4 - Janeiro Fora Ponta</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUe</field>
+            <label>Observação Pagamento Direito</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8o</field>
             <label>UC4 - Julho</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUd</field>
+            <label>Consumo Médio</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8p</field>
@@ -2854,6 +2874,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8m</field>
             <label>UC4 - Julho Fora Ponta</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUf</field>
+            <label>Observação Pagamento Esquerdo</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8n</field>
@@ -4901,7 +4925,7 @@
             <field>00N5e00000fwRNS</field>
             <field>00N5e00000fvi4o</field>
             <field>00N5e00000fvi4p</field>
-            <field>00NHZ000006HxJZ</field>
+            <field>00NU50000021vUd</field>
             <field>00N5e00000fvi4r</field>
             <field>00NU5000000Emj8</field>
             <field>00N5e00000fvi4s</field>
@@ -5086,8 +5110,8 @@
             <field>00NU5000000085d</field>
             <field>00NU5000000yVAb</field>
             <field>00NU5000000IoJJ</field>
-            <field>00NHZ000006VC9d</field>
-            <field>00NHZ000006VC9e</field>
+            <field>00NU50000021vUe</field>
+            <field>00NU50000021vUf</field>
             <field>00NU5000000082P</field>
             <field>00N5e00000fvi5m</field>
             <field>00N5e00000fwRO8</field>
@@ -5526,8 +5550,16 @@
             <label>UC4 - Janeiro Fora Ponta</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUe</field>
+            <label>Observação Pagamento Direito</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8o</field>
             <label>UC4 - Julho</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUd</field>
+            <label>Consumo Médio</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8p</field>
@@ -5536,6 +5568,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8m</field>
             <label>UC4 - Julho Fora Ponta</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUf</field>
+            <label>Observação Pagamento Esquerdo</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8n</field>
@@ -7588,7 +7624,7 @@
             <field>00N5e00000fwRNS</field>
             <field>00N5e00000fvi4o</field>
             <field>00N5e00000fvi4p</field>
-            <field>00NHZ000006HxJZ</field>
+            <field>00NU50000021vUd</field>
             <field>00N5e00000fvi4r</field>
             <field>00NU5000000Emj8</field>
             <field>00N5e00000fvi4s</field>
@@ -7773,8 +7809,8 @@
             <field>00NU5000000085d</field>
             <field>00NU5000000yVAb</field>
             <field>00NU5000000IoJJ</field>
-            <field>00NHZ000006VC9d</field>
-            <field>00NHZ000006VC9e</field>
+            <field>00NU50000021vUe</field>
+            <field>00NU50000021vUf</field>
             <field>00NU5000000082P</field>
             <field>00N5e00000fvi5m</field>
             <field>00N5e00000fwRO8</field>
@@ -8213,8 +8249,16 @@
             <label>UC4 - Janeiro Fora Ponta</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUe</field>
+            <label>Observação Pagamento Direito</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8o</field>
             <label>UC4 - Julho</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUd</field>
+            <label>Consumo Médio</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8p</field>
@@ -8223,6 +8267,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8m</field>
             <label>UC4 - Julho Fora Ponta</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUf</field>
+            <label>Observação Pagamento Esquerdo</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8n</field>
@@ -10270,7 +10318,7 @@
             <field>00N5e00000fwRNS</field>
             <field>00N5e00000fvi4o</field>
             <field>00N5e00000fvi4p</field>
-            <field>00NHZ000006HxJZ</field>
+            <field>00NU50000021vUd</field>
             <field>00N5e00000fvi4r</field>
             <field>00NU5000000Emj8</field>
             <field>00N5e00000fvi4s</field>
@@ -10455,8 +10503,8 @@
             <field>00NU5000000085d</field>
             <field>00NU5000000yVAb</field>
             <field>00NU5000000IoJJ</field>
-            <field>00NHZ000006VC9d</field>
-            <field>00NHZ000006VC9e</field>
+            <field>00NU50000021vUe</field>
+            <field>00NU50000021vUf</field>
             <field>00NU5000000082P</field>
             <field>00N5e00000fvi5m</field>
             <field>00N5e00000fwRO8</field>
@@ -10895,8 +10943,16 @@
             <label>UC4 - Janeiro Fora Ponta</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUe</field>
+            <label>Observação Pagamento Direito</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8o</field>
             <label>UC4 - Julho</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUd</field>
+            <label>Consumo Médio</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8p</field>
@@ -10905,6 +10961,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8m</field>
             <label>UC4 - Julho Fora Ponta</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUf</field>
+            <label>Observação Pagamento Esquerdo</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8n</field>
@@ -12957,7 +13017,7 @@
             <field>00N5e00000fwRNS</field>
             <field>00N5e00000fvi4o</field>
             <field>00N5e00000fvi4p</field>
-            <field>00NHZ000006HxJZ</field>
+            <field>00NU50000021vUd</field>
             <field>00N5e00000fvi4r</field>
             <field>00NU5000000Emj8</field>
             <field>00N5e00000fvi4s</field>
@@ -13142,8 +13202,8 @@
             <field>00NU5000000085d</field>
             <field>00NU5000000yVAb</field>
             <field>00NU5000000IoJJ</field>
-            <field>00NHZ000006VC9d</field>
-            <field>00NHZ000006VC9e</field>
+            <field>00NU50000021vUe</field>
+            <field>00NU50000021vUf</field>
             <field>00NU5000000082P</field>
             <field>00N5e00000fvi5m</field>
             <field>00N5e00000fwRO8</field>
@@ -13582,8 +13642,16 @@
             <label>UC4 - Janeiro Fora Ponta</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUe</field>
+            <label>Observação Pagamento Direito</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8o</field>
             <label>UC4 - Julho</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUd</field>
+            <label>Consumo Médio</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8p</field>
@@ -13592,6 +13660,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8m</field>
             <label>UC4 - Julho Fora Ponta</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUf</field>
+            <label>Observação Pagamento Esquerdo</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8n</field>
@@ -15639,7 +15711,7 @@
             <field>00N5e00000fwRNS</field>
             <field>00N5e00000fvi4o</field>
             <field>00N5e00000fvi4p</field>
-            <field>00NHZ000006HxJZ</field>
+            <field>00NU50000021vUd</field>
             <field>00N5e00000fvi4r</field>
             <field>00NU5000000Emj8</field>
             <field>00N5e00000fvi4s</field>
@@ -15824,8 +15896,8 @@
             <field>00NU5000000085d</field>
             <field>00NU5000000yVAb</field>
             <field>00NU5000000IoJJ</field>
-            <field>00NHZ000006VC9d</field>
-            <field>00NHZ000006VC9e</field>
+            <field>00NU50000021vUe</field>
+            <field>00NU50000021vUf</field>
             <field>00NU5000000082P</field>
             <field>00N5e00000fvi5m</field>
             <field>00N5e00000fwRO8</field>
@@ -16264,8 +16336,16 @@
             <label>UC4 - Janeiro Fora Ponta</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUe</field>
+            <label>Observação Pagamento Direito</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8o</field>
             <label>UC4 - Julho</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUd</field>
+            <label>Consumo Médio</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8p</field>
@@ -16274,6 +16354,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8m</field>
             <label>UC4 - Julho Fora Ponta</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUf</field>
+            <label>Observação Pagamento Esquerdo</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8n</field>
@@ -18326,7 +18410,7 @@
             <field>00N5e00000fwRNS</field>
             <field>00N5e00000fvi4o</field>
             <field>00N5e00000fvi4p</field>
-            <field>00NHZ000006HxJZ</field>
+            <field>00NU50000021vUd</field>
             <field>00N5e00000fvi4r</field>
             <field>00NU5000000Emj8</field>
             <field>00N5e00000fvi4s</field>
@@ -18511,8 +18595,8 @@
             <field>00NU5000000085d</field>
             <field>00NU5000000yVAb</field>
             <field>00NU5000000IoJJ</field>
-            <field>00NHZ000006VC9d</field>
-            <field>00NHZ000006VC9e</field>
+            <field>00NU50000021vUe</field>
+            <field>00NU50000021vUf</field>
             <field>00NU5000000082P</field>
             <field>00N5e00000fvi5m</field>
             <field>00N5e00000fwRO8</field>
@@ -18951,8 +19035,16 @@
             <label>UC4 - Janeiro Fora Ponta</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUe</field>
+            <label>Observação Pagamento Direito</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8o</field>
             <label>UC4 - Julho</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUd</field>
+            <label>Consumo Médio</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8p</field>
@@ -18961,6 +19053,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8m</field>
             <label>UC4 - Julho Fora Ponta</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUf</field>
+            <label>Observação Pagamento Esquerdo</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8n</field>
@@ -21008,7 +21104,7 @@
             <field>00N5e00000fwRNS</field>
             <field>00N5e00000fvi4o</field>
             <field>00N5e00000fvi4p</field>
-            <field>00NHZ000006HxJZ</field>
+            <field>00NU50000021vUd</field>
             <field>00N5e00000fvi4r</field>
             <field>00NU5000000Emj8</field>
             <field>00N5e00000fvi4s</field>
@@ -21193,8 +21289,8 @@
             <field>00NU5000000085d</field>
             <field>00NU5000000yVAb</field>
             <field>00NU5000000IoJJ</field>
-            <field>00NHZ000006VC9d</field>
-            <field>00NHZ000006VC9e</field>
+            <field>00NU50000021vUe</field>
+            <field>00NU50000021vUf</field>
             <field>00NU5000000082P</field>
             <field>00N5e00000fvi5m</field>
             <field>00N5e00000fwRO8</field>
@@ -21633,8 +21729,16 @@
             <label>UC4 - Janeiro Fora Ponta</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUe</field>
+            <label>Observação Pagamento Direito</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8o</field>
             <label>UC4 - Julho</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUd</field>
+            <label>Consumo Médio</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8p</field>
@@ -21643,6 +21747,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8m</field>
             <label>UC4 - Julho Fora Ponta</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUf</field>
+            <label>Observação Pagamento Esquerdo</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8n</field>
@@ -23695,7 +23803,7 @@
             <field>00N5e00000fwRNS</field>
             <field>00N5e00000fvi4o</field>
             <field>00N5e00000fvi4p</field>
-            <field>00NHZ000006HxJZ</field>
+            <field>00NU50000021vUd</field>
             <field>00N5e00000fvi4r</field>
             <field>00NU5000000Emj8</field>
             <field>00N5e00000fvi4s</field>
@@ -23880,8 +23988,8 @@
             <field>00NU5000000085d</field>
             <field>00NU5000000yVAb</field>
             <field>00NU5000000IoJJ</field>
-            <field>00NHZ000006VC9d</field>
-            <field>00NHZ000006VC9e</field>
+            <field>00NU50000021vUe</field>
+            <field>00NU50000021vUf</field>
             <field>00NU5000000082P</field>
             <field>00N5e00000fvi5m</field>
             <field>00N5e00000fwRO8</field>
@@ -24320,8 +24428,16 @@
             <label>UC4 - Janeiro Fora Ponta</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUe</field>
+            <label>Observação Pagamento Direito</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8o</field>
             <label>UC4 - Julho</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUd</field>
+            <label>Consumo Médio</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8p</field>
@@ -24330,6 +24446,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8m</field>
             <label>UC4 - Julho Fora Ponta</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUf</field>
+            <label>Observação Pagamento Esquerdo</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8n</field>
@@ -26377,7 +26497,7 @@
             <field>00N5e00000fwRNS</field>
             <field>00N5e00000fvi4o</field>
             <field>00N5e00000fvi4p</field>
-            <field>00NHZ000006HxJZ</field>
+            <field>00NU50000021vUd</field>
             <field>00N5e00000fvi4r</field>
             <field>00NU5000000Emj8</field>
             <field>00N5e00000fvi4s</field>
@@ -26562,8 +26682,8 @@
             <field>00NU5000000085d</field>
             <field>00NU5000000yVAb</field>
             <field>00NU5000000IoJJ</field>
-            <field>00NHZ000006VC9d</field>
-            <field>00NHZ000006VC9e</field>
+            <field>00NU50000021vUe</field>
+            <field>00NU50000021vUf</field>
             <field>00NU5000000082P</field>
             <field>00N5e00000fvi5m</field>
             <field>00N5e00000fwRO8</field>
@@ -27002,8 +27122,16 @@
             <label>UC4 - Janeiro Fora Ponta</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUe</field>
+            <label>Observação Pagamento Direito</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8o</field>
             <label>UC4 - Julho</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUd</field>
+            <label>Consumo Médio</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8p</field>
@@ -27012,6 +27140,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8m</field>
             <label>UC4 - Julho Fora Ponta</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUf</field>
+            <label>Observação Pagamento Esquerdo</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8n</field>
@@ -29064,7 +29196,7 @@
             <field>00N5e00000fwRNS</field>
             <field>00N5e00000fvi4o</field>
             <field>00N5e00000fvi4p</field>
-            <field>00NHZ000006HxJZ</field>
+            <field>00NU50000021vUd</field>
             <field>00N5e00000fvi4r</field>
             <field>00NU5000000Emj8</field>
             <field>00N5e00000fvi4s</field>
@@ -29249,8 +29381,8 @@
             <field>00NU5000000085d</field>
             <field>00NU5000000yVAb</field>
             <field>00NU5000000IoJJ</field>
-            <field>00NHZ000006VC9d</field>
-            <field>00NHZ000006VC9e</field>
+            <field>00NU50000021vUe</field>
+            <field>00NU50000021vUf</field>
             <field>00NU5000000082P</field>
             <field>00N5e00000fvi5m</field>
             <field>00N5e00000fwRO8</field>
@@ -29689,8 +29821,16 @@
             <label>UC4 - Janeiro Fora Ponta</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUe</field>
+            <label>Observação Pagamento Direito</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8o</field>
             <label>UC4 - Julho</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUd</field>
+            <label>Consumo Médio</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8p</field>
@@ -29699,6 +29839,10 @@
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8m</field>
             <label>UC4 - Julho Fora Ponta</label>
+        </forecastingObjectListLabelMappings>
+        <forecastingObjectListLabelMappings>
+            <field>00NU50000021vUf</field>
+            <label>Observação Pagamento Esquerdo</label>
         </forecastingObjectListLabelMappings>
         <forecastingObjectListLabelMappings>
             <field>00N5e00000fvi8n</field>
@@ -31746,7 +31890,7 @@
             <field>00N5e00000fwRNS</field>
             <field>00N5e00000fvi4o</field>
             <field>00N5e00000fvi4p</field>
-            <field>00NHZ000006HxJZ</field>
+            <field>00NU50000021vUd</field>
             <field>00N5e00000fvi4r</field>
             <field>00NU5000000Emj8</field>
             <field>00N5e00000fvi4s</field>
@@ -31931,8 +32075,8 @@
             <field>00NU5000000085d</field>
             <field>00NU5000000yVAb</field>
             <field>00NU5000000IoJJ</field>
-            <field>00NHZ000006VC9d</field>
-            <field>00NHZ000006VC9e</field>
+            <field>00NU50000021vUe</field>
+            <field>00NU50000021vUf</field>
             <field>00NU5000000082P</field>
             <field>00N5e00000fvi5m</field>
             <field>00N5e00000fwRO8</field>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ContagemPrazoProjetoElaboracaoFmt__c</fullName>
+    <description>Tempo em Projeto em elaboração formatado (dias, horas, minutos, segundos).</description>
+    <externalId>false</externalId>
+    <formula>IF(
+    ISBLANK(ContagemPrazoProjetoElaboracao__c),
+    NULL,
+    TEXT(FLOOR(ContagemPrazoProjetoElaboracao__c)) &amp; &quot;d &quot; &amp;
+    TEXT(FLOOR(MOD(ContagemPrazoProjetoElaboracao__c * 24, 24))) &amp; &quot;h &quot; &amp;
+    TEXT(FLOOR(MOD(ContagemPrazoProjetoElaboracao__c * 24 * 60, 60))) &amp; &quot;m &quot; &amp;
+    TEXT(FLOOR(MOD(ContagemPrazoProjetoElaboracao__c * 24 * 60 * 60, 60))) &amp; &quot;s&quot;
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Projeto em elaboração</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

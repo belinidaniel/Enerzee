@@ -125,7 +125,8 @@ public class StatusEnumMap {
         53 => new Map<String, Integer>{ 'Ganho' => 66, 'Perdido' => 67 },
         56 => new Map<String, Integer>{ 'Agendamento de Visita' => 68, 'Estudo de Viabilidade' => 69 },
         57 => new Map<String, Integer>{ 'Geração do Contrato' => 70, 'Contrato Enviado' => 71, 'Contrato Assinado' => 72 },
-        59 => new Map<String, Integer>{ 'Ganho' => 73, 'Perdido' => 74 }
+        59 => new Map<String, Integer>{ 'Ganho' => 73, 'Perdido' => 74 },
+        21 => new Map<String, Integer>{ 'Análise' => 75, 'Aprovado' => 76, 'Reprovado' => 77 }
     };
 
     public static Integer getStatusEnum(String recordTypeName, String statusValue) {

@@ -2,9 +2,14 @@
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>AllOpenLeads</fullName>
     <columns>FULL_NAME</columns>
-    <columns>LEAD.COMPANY</columns>
-    <columns>LEAD.TITLE</columns>
-    <columns>LEAD.RECORDTYPE</columns>
+    <columns>LEAD.STATUS</columns>
+    <columns>Sub_Status__c</columns>
+    <columns>LEAD.LEAD_SOURCE</columns>
+    <columns>LEAD.RATING</columns>
+    <columns>ConsultorRegional__c</columns>
+    <columns>CustoEnergiaMes__c</columns>
+    <columns>Lb065_ProdutoInteresse__c</columns>
+    <columns>InteresseEnergiaSolar__c</columns>
     <columns>LEAD.STATE</columns>
     <columns>LEAD.PHONE</columns>
     <columns>LEAD.EMAIL</columns>
@@ -17,7 +22,12 @@
     <filters>
         <field>LEAD.STATUS</field>
         <operation>notEqual</operation>
-        <value>Qualified</value>
+        <value>Novo</value>
+    </filters>
+    <filters>
+        <field>LEAD.LEAD_SOURCE</field>
+        <operation>notContain</operation>
+        <value>Web-To-Lead Integrador,Web-To-Lead Cliente</value>
     </filters>
     <label>Todos os leads Abertos</label>
 </ListView>
