@@ -4,5 +4,5 @@
     <entityName>Projeto__c</entityName>
     <fieldName>Status__c</fieldName>
     <masterLabel>ProjetoPadraoEntrada</masterLabel>
-    <recordTypeName>PadraoEntrada</recordTypeName>
+    <recordTypeName>PadraoEntradaOld</recordTypeName>
 </PathAssistant>

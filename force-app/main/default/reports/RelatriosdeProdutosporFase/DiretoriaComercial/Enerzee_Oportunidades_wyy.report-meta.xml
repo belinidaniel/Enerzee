@@ -131,6 +131,13 @@
             <operator>equals</operator>
             <value>,Opportunity.OutrasOportunidades,Opportunity.EzeeConnect,Opportunity.EzeeLivre,Opportunity.Produtos,Opportunity.Servicos,Opportunity.EzeeSolarA,Opportunity.EzeeSolarB,Opportunity.ServicosEPC,Opportunity.Solar</value>
         </criteriaItems>
+        <criteriaItems>
+            <column>CREATED_DATE</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>false</isUnlocked>
+            <operator>greaterOrEqual</operator>
+            <value>11/1/2025 12:00 AM</value>
+        </criteriaItems>
         <language>pt_BR</language>
     </filter>
     <format>Summary</format>
@@ -171,6 +178,8 @@
     <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>CREATED_DATE</dateColumn>
-        <interval>INTERVAL_THISMONTH</interval>
+        <endDate>2025-11-30</endDate>
+        <interval>INTERVAL_CUSTOM</interval>
+        <startDate>2025-11-01</startDate>
     </timeFrameFilter>
 </Report>

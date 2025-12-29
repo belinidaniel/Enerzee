@@ -4,6 +4,7 @@
     <description>Data prevista para conclusão da obra.</description>
     <label>Data de Previsão de Conclusão</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Date</type>

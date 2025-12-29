@@ -190,13 +190,10 @@ export default class OpportunityProposalConsole extends LightningElement {
         const template = (this.proposalData?.templates || []).find(
             (item) => item.id === this.selectedTemplateId
         );
-        console.log('Preview URL atualizada:', JSON.stringify(template));
 
         this.previewUrl = template
-            ? `/apex/${template.templateName}?id=${this.recordId}&selectedCoverId=${template.id}&skipAutoSave=true`
+            ? `/apex/${template.templateName}?id=${this.recordId}&selectedCoverId=${template.id}&isManual=true&skipAutoSave=true`
             : null;
-
-        console.log('Preview URL atualizada:', this.previewUrl);
         this.isPreviewLoading = !!this.previewUrl;
     }
 

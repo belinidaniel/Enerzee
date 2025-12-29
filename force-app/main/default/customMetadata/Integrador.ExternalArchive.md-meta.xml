@@ -25,7 +25,6 @@
     <values>
         <field>URL__c</field>
         <value xsi:type="xsd:string">https://geradorpropostas.azurewebsites.net/api/proposal/ExternalArchive</value>
-
     </values>
     <values>
         <field>Validade_token__c</field>

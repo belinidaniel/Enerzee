@@ -21,16 +21,16 @@
             <urlValue>https://www.example.com</urlValue>
         </primitiveValues>
     </constants>
-    <label>1 - Iniciar conversa</label>
+    <label>01 - Iniciar conversa - Canal Cliente</label>
     <language>pt_BR</language>
     <messageLayouts>
         <externalTemplates>
-            <accountIdentifier>440937715778126</accountIdentifier>
-            <accountName>Enerzee Geral</accountName>
-            <language>en</language>
+            <accountIdentifier>526540573881145</accountIdentifier>
+            <accountName>Enerzee Cliente</accountName>
+            <language>pt_BR</language>
             <status>Pending</status>
             <templateName>iniciar_conversa_por_motivos_diversos</templateName>
-            <templateVersionIdentifier>993935079205140</templateVersionIdentifier>
+            <templateVersionIdentifier>734830449443698</templateVersionIdentifier>
             <type>Legacy</type>
         </externalTemplates>
         <formatType>ExternalTemplate</formatType>
@@ -42,7 +42,7 @@
                     <collectionType>None</collectionType>
                     <name>languageCode</name>
                     <primitiveValues>
-                        <literalValue>en</literalValue>
+                        <literalValue>pt_BR</literalValue>
                         <type>Literal</type>
                     </primitiveValues>
                 </layoutItems>
@@ -79,7 +79,7 @@
                                     <name>textValue</name>
                                     <primitiveValues>
                                         <type>SourceSobjectFormula</type>
-                                        <valueFormula>Owner:User.FirstName + &quot; &quot; + Owner:User.LastName</valueFormula>
+                                        <valueFormula>Owner:User.FirstName +&apos; &apos;+ Owner:User.LastName</valueFormula>
                                         <valueSourceReference>Parameters.MessagingSession</valueSourceReference>
                                     </primitiveValues>
                                 </layoutItems>

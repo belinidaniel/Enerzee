@@ -49,6 +49,9 @@
         <field>FK_$Opportunity.PotenciaPicoSistema__c</field>
     </columns>
     <columns>
+        <field>Projeto__c.DataProtocoloProjeto__c</field>
+    </columns>
+    <columns>
         <field>Projeto__c.ApprovalDate__c</field>
     </columns>
     <columns>
@@ -93,7 +96,7 @@
             <operator>notContain</operator>
             <value>Planejamento de Obra</value>
         </criteriaItems>
-        <language>en_US</language>
+        <language>pt_BR</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>

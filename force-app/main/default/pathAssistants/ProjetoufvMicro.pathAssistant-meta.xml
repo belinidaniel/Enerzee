@@ -4,5 +4,5 @@
     <entityName>Projeto__c</entityName>
     <fieldName>Status__c</fieldName>
     <masterLabel>ProjetoufvMicro</masterLabel>
-    <recordTypeName>UFVMicro</recordTypeName>
+    <recordTypeName>UFVMicroOld</recordTypeName>
 </PathAssistant>

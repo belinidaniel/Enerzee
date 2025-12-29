@@ -4,5 +4,5 @@
     <entityName>Projeto__c</entityName>
     <fieldName>Status__c</fieldName>
     <masterLabel>ProjetoSubEstacao</masterLabel>
-    <recordTypeName>Subestacao</recordTypeName>
+    <recordTypeName>SubestacaoOld</recordTypeName>
 </PathAssistant>

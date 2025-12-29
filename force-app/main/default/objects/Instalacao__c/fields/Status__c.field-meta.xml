@@ -3,6 +3,7 @@
     <fullName>Status__c</fullName>
     <label>Status da Instalação</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
@@ -13,6 +14,11 @@
                 <fullName>Planejamento de Obra</fullName>
                 <default>true</default>
                 <label>Planejamento de Obra</label>
+            </value>
+            <value>
+                <fullName>Obra agendada</fullName>
+                <default>false</default>
+                <label>Obra agendada</label>
             </value>
             <value>
                 <fullName>Obra em execução</fullName>

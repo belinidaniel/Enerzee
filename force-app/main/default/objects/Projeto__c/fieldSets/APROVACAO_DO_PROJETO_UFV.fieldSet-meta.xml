@@ -27,5 +27,10 @@
         <isFieldManaged>false</isFieldManaged>
         <isRequired>true</isRequired>
     </displayedFields>
+    <displayedFields>
+        <field>DataAprovacaoProjeto__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>false</isRequired>
+    </displayedFields>
     <label>APROVAÇÃO DO PROJETO UFV</label>
 </FieldSet>

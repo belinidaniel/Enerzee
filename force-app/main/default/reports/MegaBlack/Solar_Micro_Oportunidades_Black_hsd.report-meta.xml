@@ -66,6 +66,9 @@
         <field>LAST_UPDATE</field>
     </columns>
     <columns>
+        <field>CLOSE_DATE</field>
+    </columns>
+    <columns>
         <field>Opportunity.Numeroproposta__c</field>
     </columns>
     <columns>
@@ -150,6 +153,8 @@
     <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>CLOSE_MONTH</dateColumn>
-        <interval>INTERVAL_THISMONTH</interval>
+        <endDate>2025-12-05</endDate>
+        <interval>INTERVAL_CUSTOM</interval>
+        <startDate>2025-11-01</startDate>
     </timeFrameFilter>
 </Report>

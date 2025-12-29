@@ -85,6 +85,12 @@
         <titleSize>18</titleSize>
     </chart>
     <columns>
+        <field>Opportunity.DataDeCriacao__c</field>
+    </columns>
+    <columns>
+        <field>CLOSE_DATE</field>
+    </columns>
+    <columns>
         <field>LAST_UPDATE</field>
     </columns>
     <columns>
@@ -98,6 +104,9 @@
         <field>OPPORTUNITY_NAME</field>
     </columns>
     <columns>
+        <field>Opportunity.ConsultorOportunidade__c</field>
+    </columns>
+    <columns>
         <field>DESCRIPTION</field>
     </columns>
     <columns>
@@ -106,9 +115,6 @@
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
         <field>Opportunity.ValorTotalProposta__c</field>
-    </columns>
-    <columns>
-        <field>Opportunity.ConsultorOportunidade__c</field>
     </columns>
     <columns>
         <field>RECORDTYPE</field>
@@ -125,6 +131,9 @@
     </columns>
     <columns>
         <field>CREATED_DATE</field>
+    </columns>
+    <columns>
+        <field>Opportunity.FormaPagamento__c</field>
     </columns>
     <filter>
         <criteriaItems>
@@ -147,6 +156,13 @@
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>Contrato Micro</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>STAGE_NAME</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>notEqual</operator>
+            <value>Fechado Perdido</value>
         </criteriaItems>
         <language>pt_BR</language>
     </filter>

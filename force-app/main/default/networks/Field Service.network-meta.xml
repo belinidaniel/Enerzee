@@ -39,7 +39,7 @@
         <profile>partner community user</profile>
         <profile>integrador parceiro</profile>
         <profile>administrador api</profile>
-        <profile>administrador</profile>
+        <profile>Administrador</profile>
     </networkMemberGroups>
     <networkPageOverrides>
         <changePasswordPageOverrideSetting>Standard</changePasswordPageOverrideSetting>

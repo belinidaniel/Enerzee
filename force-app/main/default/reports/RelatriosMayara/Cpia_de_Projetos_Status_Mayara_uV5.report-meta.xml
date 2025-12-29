@@ -47,29 +47,41 @@
     <columns>
         <field>FK_OPP_RECORDTYPE</field>
     </columns>
+    <columns>
+        <field>Projeto__c.ApprovalDate__c</field>
+    </columns>
+    <columns>
+        <field>Projeto__c.InstallDate__c</field>
+    </columns>
+    <columns>
+        <field>Projeto__c.FinishProjectDate__c</field>
+    </columns>
+    <columns>
+        <field>Projeto__c.DateInspection__c</field>
+    </columns>
     <filter>
         <criteriaItems>
             <column>Projeto__c.GestorObra__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
-            <operator>notEqual</operator>
-            <value>kaique mathias</value>
+            <operator>contains</operator>
+            <value>thiago dias,millena fernandes</value>
         </criteriaItems>
         <criteriaItems>
             <column>Projeto__c.Status__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
-            <operator>equals</operator>
-            <value>,Planejamento,Planejamento de projeto,Elaboração de projeto,Projeto protocolado,Projetos em elaboração,Projeto em análise,Projeto aprovado,Planejamento de Obra,Obra em execução,Obra concluída - Aguardando troca de medidor,Aguardando vistoria,Ligação solicitada,Usina operando,Obra concluída</value>
+            <operator>contains</operator>
+            <value>Planejamento,Planejamento de projeto,Elaboração de projeto,Projetos em elaboração,Projeto em análise,Projeto aprovado,Planejamento de Obra,Obra em execução,Obra concluída - Aguardando troca de medidor,Usina operando,Obra concluída</value>
         </criteriaItems>
         <criteriaItems>
             <column>FK_OPP_RECORDTYPE</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>,Opportunity.OutrasOportunidades,Opportunity.EzeeConnect,Opportunity.EzeeLivre,Opportunity.Produtos,Opportunity.Servicos,Opportunity.EzeeSolarA,Opportunity.EzeeSolarB,Opportunity.ServicosEPC,Opportunity.Solar</value>
+            <value>Opportunity.EzeeSolarB</value>
         </criteriaItems>
-        <language>en_US</language>
+        <language>pt_BR</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>
@@ -82,7 +94,7 @@
         <field>Projeto__c.GestorObra__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Cópia de Projetos_Status - Mayara</name>
+    <name>Cópia de Projetos - REVO</name>
     <params>
         <name>co</name>
         <value>1</value>
@@ -92,8 +104,10 @@
     <showDetails>true</showDetails>
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>false</showSubTotals>
+    <sortColumn>LAST_UPDATE</sortColumn>
+    <sortOrder>Desc</sortOrder>
     <timeFrameFilter>
-        <dateColumn>DUE_DATE</dateColumn>
+        <dateColumn>LAST_UPDATE</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>
     </timeFrameFilter>
 </Report>

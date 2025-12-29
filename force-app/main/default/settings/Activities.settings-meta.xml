@@ -3,7 +3,7 @@
     <allowUsersToRelateMultipleContactsToTasksAndEvents>true</allowUsersToRelateMultipleContactsToTasksAndEvents>
     <autoRelateEventAttendees>true</autoRelateEventAttendees>
     <enableActivityReminders>true</enableActivityReminders>
-    <enableCalendarHomeLWC>false</enableCalendarHomeLWC>
+    <enableCalendarHomeLWC>true</enableCalendarHomeLWC>
     <enableClickCreateEvents>true</enableClickCreateEvents>
     <enableDragAndDropScheduling>true</enableDragAndDropScheduling>
     <enableEmailTracking>true</enableEmailTracking>
@@ -17,11 +17,11 @@
     <enableRecurringEvents>true</enableRecurringEvents>
     <enableRecurringTasks>true</enableRecurringTasks>
     <enableRollUpActivToContactsAcct>true</enableRollUpActivToContactsAcct>
-    <enableSidebarCalendarShortcut>false</enableSidebarCalendarShortcut>
+    <enableSidebarCalendarShortcut>true</enableSidebarCalendarShortcut>
     <enableSimpleTaskCreateUI>true</enableSimpleTaskCreateUI>
     <enableTimelineCompDateSort xsi:nil="true"/>
     <enableUNSTaskDelegatedToNotifications>true</enableUNSTaskDelegatedToNotifications>
-    <enableUserListViewCalendars>false</enableUserListViewCalendars>
+    <enableUserListViewCalendars>true</enableUserListViewCalendars>
     <showCustomLogoMeetingRequests>false</showCustomLogoMeetingRequests>
     <showEventDetailsMultiUserCalendar>true</showEventDetailsMultiUserCalendar>
     <showHomePageHoverLinksForEvents>true</showHomePageHoverLinksForEvents>

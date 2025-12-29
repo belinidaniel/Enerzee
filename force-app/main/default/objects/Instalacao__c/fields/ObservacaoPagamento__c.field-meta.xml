@@ -4,6 +4,7 @@
     <description>Observações adicionais sobre o pagamento do integrador e notas.</description>
     <label>Observação do Pagamento</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>TextArea</type>

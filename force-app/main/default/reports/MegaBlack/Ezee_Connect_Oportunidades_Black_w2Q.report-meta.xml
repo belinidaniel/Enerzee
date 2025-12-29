@@ -172,6 +172,8 @@
     <showSubTotals>false</showSubTotals>
     <timeFrameFilter>
         <dateColumn>CLOSE_MONTH</dateColumn>
-        <interval>INTERVAL_THISMONTH</interval>
+        <endDate>2025-11-30</endDate>
+        <interval>INTERVAL_CUSTOM</interval>
+        <startDate>2025-11-01</startDate>
     </timeFrameFilter>
 </Report>

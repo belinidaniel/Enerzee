@@ -24,6 +24,9 @@
                         <valueListItems>
                             <value>MessagingSession.Desbloquear_chat</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>MessagingSession.Reiniciar_uma_conversa</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -253,19 +256,6 @@
         <type>Region</type>
     </flexiPageRegions>
     <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>messageSessionOrgnizer</componentName>
-                <identifier>c_messageSessionOrgnizer2</identifier>
-                <visibilityRule>
-                    <criteria>
-                        <leftValue>{!$User.Profile.Name}</leftValue>
-                        <operator>CONTAINS</operator>
-                        <rightValue>Admin</rightValue>
-                    </criteria>
-                </visibilityRule>
-            </componentInstance>
-        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>

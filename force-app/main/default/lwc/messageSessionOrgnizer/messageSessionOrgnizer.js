@@ -56,6 +56,7 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
     @api messageDefinitionName;
     @api messagingChannelId;
     @api messagingEndUserId;
+    @api messagingEndUserRecordTypeDeveloperName;
 
     channels = [];
     templates = FIXED_TEMPLATES;
@@ -111,8 +112,10 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
                     name: info.endUserName || 'Cliente',
                     phone: info.phone,
                     type: 'MessagingEndUser',
-                    messagingChannelId: info.messagingChannelId
+                    messagingChannelId: info.messagingChannelId,
+                    recordTypeDeveloperName: info.messagingEndUserRecordTypeDeveloperName
                 };
+                this.messagingEndUserRecordTypeDeveloperName = info.messagingEndUserRecordTypeDeveloperName;
                 this.recipientResults = this.decorateSelection(
                     [this.selectedRecipient],
                     this.selectedRecipient.id
@@ -166,6 +169,8 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
             if (record.messagingChannelId) {
                 this.selectedChannelId = record.messagingChannelId;
             }
+            this.messagingEndUserRecordTypeDeveloperName =
+                record.type === 'MessagingEndUser' ? record.recordTypeDeveloperName || null : null;
         }
     }
 
@@ -215,6 +220,10 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
         this.messageDefinitionName = templateValue;
         this.messagingChannelId = this.selectedChannelId;
         this.messagingEndUserId = endUserId;
+        this.messagingEndUserRecordTypeDeveloperName =
+            this.selectedRecipient.type === 'MessagingEndUser'
+                ? this.selectedRecipient.recordTypeDeveloperName || null
+                : null;
 
         // Se estiver rodando dentro de um Flow, delega para o Next para o subflow executar o envio.
         if (this.availableActions && this.availableActions.includes('NEXT')) {
