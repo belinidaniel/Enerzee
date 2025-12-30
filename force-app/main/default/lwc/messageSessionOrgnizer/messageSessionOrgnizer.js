@@ -6,8 +6,8 @@ import getMessagingSessionContext from '@salesforce/apex/MessagingComposerContro
 import prepareSessionAndLaunchFlow from '@salesforce/apex/MessagingComposerController.prepareSessionAndLaunchFlow';
 
 const CHANNEL_OPTIONS = [
-    { key: 'SALES', label: '+55 11 4003-8852(Pós-vendas)', phone: '+55 11 4003-8852', developerName: 'SALES' },
-    { key: 'AFTERSALES', label: '+55 65 3634-7877 (vendas)', phone: '+55 65 3634-7877', developerName: 'AFTERSALES' }
+    { key: 'AFTERSALES', label: '+55 11 4003-8852 (Pós-vendas)', phone: '+55 11 4003-8852', developerName: 'AFTERSALES' },
+    { key: 'SALES', label: '+55 11 4003-8344 (vendas)', phone: '+55 11 4003-8344', developerName: 'SALES' }
 ];
 
 const TYPE_BADGES = {
@@ -25,6 +25,13 @@ const FIXED_TEMPLATES = [
         value: '01_Iniciar_conversa',
         text: '01 - Iniciar conversa',
         preview: 'Olá, {{1}}!\nAqui é {{2}} da Enerzee. Tudo bem?'
+    },
+    {
+        label: '2 - Sessão inativa por falta de interação',
+        value: '02_Sessao_Inativa',
+        text: '02 - Sessão inativa por falta de interação',
+        preview:
+            'Olá, {{1}}!\nTudo bem?\nNossa conversa foi encerrada automaticamente, mas o atendimento da Enerzee segue à disposição para te ajudar.\nSe precisar de algo ou tiver dúvidas, é só responder aqui!'
     }
 ];
 
