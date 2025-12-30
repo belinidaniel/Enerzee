@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
-        <name>SendMessage</name>
-        <label>Send Message</label>
-        <locationX>176</locationX>
-        <locationY>350</locationY>
+        <name>Send_Message_Iniciar_conversa</name>
+        <label>Send Message Iniciar conversa</label>
+        <locationX>126</locationX>
+        <locationY>410</locationY>
         <actionName>sendConversationMessages</actionName>
         <actionType>sendConversationMessages</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>messageDefinitionName</name>
             <value>
-                <stringValue>Iniciar_conversa</stringValue>
+                <stringValue>X01_Iniciar_conversa_Canal_Vendas</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -47,10 +47,55 @@
                 <elementReference>messagingEndUserIds</elementReference>
             </value>
         </inputParameters>
+        <nameSegment>sendConversationMessages</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_Message_Sessao_Inativa</name>
+        <label>Send Message Sessao Inativa</label>
+        <locationX>426</locationX>
+        <locationY>410</locationY>
+        <actionName>sendConversationMessages</actionName>
+        <actionType>sendConversationMessages</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
-            <name>sessionLongevityPreference</name>
+            <name>messageDefinitionName</name>
             <value>
-                <stringValue>KeepSessionOpen</stringValue>
+                <stringValue>X01_SessaoInativaFaltaInteracao</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingDefinitionInputParameters</name>
+        </inputParameters>
+        <inputParameters>
+            <name>requestType</name>
+            <value>
+                <stringValue>SendNotificationMessages</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>isEnforceMessagingChannelConsent</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>channelConsentType</name>
+            <value>
+                <stringValue>MessagingEndUser</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>allowedSessionStatus</name>
+            <value>
+                <stringValue>Any</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>messagingEndUserIds</name>
+            <value>
+                <elementReference>messagingEndUserIds</elementReference>
             </value>
         </inputParameters>
         <nameSegment>sendConversationMessages</nameSegment>
@@ -60,26 +105,10 @@
     <apiVersion>49.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
-        <name>Assign_Message_Name</name>
-        <label>Assign Message Name</label>
-        <locationX>176</locationX>
-        <locationY>134</locationY>
-        <assignmentItems>
-            <assignToReference>messageDefinitionName</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <stringValue>X01_Iniciar_conversa_Canal_Vendas</stringValue>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>BuildCollection</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
         <name>BuildCollection</name>
         <label>Build Messaging End User Collection</label>
-        <locationX>176</locationX>
-        <locationY>242</locationY>
+        <locationX>276</locationX>
+        <locationY>210</locationY>
         <assignmentItems>
             <assignToReference>messagingEndUserIds</assignToReference>
             <operator>Add</operator>
@@ -88,7 +117,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>SendMessage</targetReference>
+            <targetReference>Select_Message</targetReference>
         </connector>
     </assignments>
     <environments>Default</environments>
@@ -113,11 +142,36 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <decisions>
+        <name>Select_Message</name>
+        <label>Select Message</label>
+        <locationX>276</locationX>
+        <locationY>300</locationY>
+        <defaultConnector>
+            <targetReference>Send_Message_Iniciar_conversa</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default</defaultConnectorLabel>
+        <rules>
+            <name>Msg_02</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>selectedMessageComponentName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>02_Sessao_Inativa</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Message_Sessao_Inativa</targetReference>
+            </connector>
+            <label>Mensagem 02</label>
+        </rules>
+    </decisions>
     <start>
-        <locationX>50</locationX>
-        <locationY>0</locationY>
+        <locationX>276</locationX>
+        <locationY>50</locationY>
         <connector>
-            <targetReference>Assign_Message_Name</targetReference>
+            <targetReference>BuildCollection</targetReference>
         </connector>
     </start>
     <status>Active</status>
