@@ -67,38 +67,6 @@
         </connector>
     </assignments>
     <assignments>
-        <name>Assign_Output_Found</name>
-        <label>Assign Output Found</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <assignmentItems>
-            <assignToReference>messagingSessionId</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>FindSession.Id</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>SendMessage</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
-        <name>Assign_Output_New</name>
-        <label>Assign Output New</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <assignmentItems>
-            <assignToReference>messagingSessionId</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>CreateSession.Id</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>SendMessage</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
         <name>BuildCollection</name>
         <label>Build Messaging End User Collection</label>
         <locationX>0</locationX>
@@ -111,34 +79,9 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>FindSession</targetReference>
+            <targetReference>SendMessage</targetReference>
         </connector>
     </assignments>
-    <decisions>
-        <name>HasSession</name>
-        <label>Has Session?</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <defaultConnector>
-            <targetReference>CreateSession</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Create New</defaultConnectorLabel>
-        <rules>
-            <name>Found</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>FindSession.Id</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Assign_Output_Found</targetReference>
-            </connector>
-            <label>Found</label>
-        </rules>
-    </decisions>
     <interviewLabel>FLOW SEND MESSAGE AFTERSALES {!$Flow.CurrentDateTime}</interviewLabel>
     <label>FLOW SEND MESSAGE AFTERSALES</label>
     <processMetadataValues>
@@ -160,78 +103,6 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
-    <recordCreates>
-        <name>CreateSession</name>
-        <label>Create Session</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <connector>
-            <targetReference>Assign_Output_New</targetReference>
-        </connector>
-        <inputAssignments>
-            <field>MessagingChannelId</field>
-            <value>
-                <elementReference>messagingChannelId</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>MessagingEndUserId</field>
-            <value>
-                <elementReference>messagingEndUserId</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Status</field>
-            <value>
-                <stringValue>New</stringValue>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Telefone__c</field>
-            <value>
-                <elementReference>channelPhone</elementReference>
-            </value>
-        </inputAssignments>
-        <object>MessagingSession</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordCreates>
-    <recordLookups>
-        <name>FindSession</name>
-        <label>Find Session</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>HasSession</targetReference>
-        </connector>
-        <filterLogic>1 AND 2 AND 3</filterLogic>
-        <filters>
-            <field>MessagingEndUserId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>messagingEndUserId</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>MessagingChannelId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>messagingChannelId</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>Status</field>
-            <operator>NotEqualTo</operator>
-            <value>
-                <stringValue>Ended</stringValue>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>MessagingSession</object>
-        <sortField>CreatedDate</sortField>
-        <sortOrder>Desc</sortOrder>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
     <start>
         <locationX>0</locationX>
         <locationY>0</locationY>
