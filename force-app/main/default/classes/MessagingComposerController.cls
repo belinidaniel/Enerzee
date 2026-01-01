@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-29-2025
+ * @last modified on  : 12-30-2025
  * @last modified by  : Daniel Belini
 **/
 public without sharing class MessagingComposerController {
@@ -173,26 +173,30 @@ public without sharing class MessagingComposerController {
             results.add(dto);
         }
 
-        for (MessagingEndUser endUser : [
-            SELECT Id, Name, Telefone_Formatado__c, MessagingPlatformKey, MessageType, MessagingChannelId,
-                MessagingChannel.MasterLabel, MessagingChannel.DeveloperName, ContactId, AccountId
-            FROM MessagingEndUser
-            WHERE Name LIKE :likeTerm
-                OR MessagingPlatformKey LIKE :likeTerm
-                OR Telefone_Formatado__c LIKE :likeTerm
-            LIMIT :MAX_RESULTS
-        ]) {
-            RecipientDTO dto = new RecipientDTO();
-            dto.id = endUser.Id;
-            dto.name = endUser.Name;
-            dto.phone = String.isNotBlank(endUser.Telefone_Formatado__c) ? endUser.Telefone_Formatado__c : endUser.MessagingPlatformKey;
-            dto.type = 'MessagingEndUser';
-            dto.detail = endUser.MessagingChannel != null ? endUser.MessagingChannel.MasterLabel : null;
-            dto.messagingEndUserId = endUser.Id;
-            dto.messagingChannelId = endUser.MessagingChannelId;
-            dto.messagingChannelDeveloperName = endUser.MessagingChannel != null ? endUser.MessagingChannel.DeveloperName : null;
-            dto.recordTypeDeveloperName = null;
-            results.add(dto);
+        Set<Id> allowedChannels = resolveAllowedChannelIds();
+        if (!allowedChannels.isEmpty()) {
+            for (MessagingEndUser endUser : [
+                SELECT Id, Name, Telefone_Formatado__c, MessagingPlatformKey, MessageType, MessagingChannelId,
+                    MessagingChannel.MasterLabel, MessagingChannel.DeveloperName, ContactId, AccountId
+                FROM MessagingEndUser
+                WHERE (Name LIKE :likeTerm
+                    OR MessagingPlatformKey LIKE :likeTerm
+                    OR Telefone_Formatado__c LIKE :likeTerm)
+                    AND MessagingChannelId IN :allowedChannels
+                LIMIT :MAX_RESULTS
+            ]) {
+                RecipientDTO dto = new RecipientDTO();
+                dto.id = endUser.Id;
+                dto.name = endUser.Name;
+                dto.phone = String.isNotBlank(endUser.Telefone_Formatado__c) ? endUser.Telefone_Formatado__c : endUser.MessagingPlatformKey;
+                dto.type = 'MessagingEndUser';
+                dto.detail = endUser.MessagingChannel != null ? endUser.MessagingChannel.MasterLabel : null;
+                dto.messagingEndUserId = endUser.Id;
+                dto.messagingChannelId = endUser.MessagingChannelId;
+                dto.messagingChannelDeveloperName = endUser.MessagingChannel != null ? endUser.MessagingChannel.DeveloperName : null;
+                dto.recordTypeDeveloperName = null;
+                results.add(dto);
+            }
         }
 
         for (Lead leadRecord : [
@@ -281,6 +285,7 @@ public without sharing class MessagingComposerController {
         String channelPhone,
         String selectedMessageComponentName
     ) {
+        System.debug('MSO prepareSessionAndLaunchFlow start recipientJson=' + recipientJson + ' channelKey=' + channelKey + ' channelPhone=' + channelPhone + ' msgComponent=' + selectedMessageComponentName);
         RecipientDTO recipient = parseRecipient(recipientJson);
         if (recipient == null || String.isBlank(recipient.id)) {
             throw new AuraHandledException('Selecione um destinatário.');
@@ -295,10 +300,12 @@ public without sharing class MessagingComposerController {
         if (String.isBlank(request.phone)) {
             request.phone = normalizePhone(recipient.phone);
         }
+        System.debug('MSO prepareSessionAndLaunchFlow request=' + JSON.serialize(request));
 
         Id messagingEndUserId = resolveMessagingEndUser(request);
         MessagingSession existingSession = findLatestSession(messagingEndUserId, channelId);
         String sessionId = existingSession != null ? existingSession.Id : null;
+        System.debug('MSO prepareSessionAndLaunchFlow resolved MEU=' + messagingEndUserId + ' sessionId=' + sessionId + ' channelId=' + channelId);
 
         SessionLaunchResponse response = new SessionLaunchResponse();
         response.messagingEndUserId = messagingEndUserId;
@@ -324,6 +331,7 @@ public without sharing class MessagingComposerController {
         }
 
         try {
+            System.debug('MSO prepareSessionAndLaunchFlow invoking flow=' + flowApiName + ' inputs=' + JSON.serialize(flowInputs));
             Flow.Interview interview = Flow.Interview.createInterview(flowApiName, flowInputs);
             interview.start();
             Object flowSessionId = interview.getVariableValue('messagingSessionId');
@@ -332,6 +340,7 @@ public without sharing class MessagingComposerController {
                 return response;
             }
         } catch (Exception ex) {
+            System.debug('MSO prepareSessionAndLaunchFlow flow error=' + ex.getMessage());
             throw new AuraHandledException('Falha ao executar o Flow de envio: ' + ex.getMessage());
         }
 
@@ -635,14 +644,17 @@ public without sharing class MessagingComposerController {
         }
         try {
             Map<String, Object> raw = (Map<String, Object>) JSON.deserializeUntyped(recipientJson);
+            System.debug('MSO parseRecipient raw=' + raw);
             RecipientDTO dto = new RecipientDTO();
             dto.id = (String) raw.get('id');
-            dto.messagingEndUserId = (String) raw.get('messagingEndUserId');
+            dto.type = (String) raw.get('type');
+            dto.messagingEndUserId = 'MessagingEndUser'.equalsIgnoreCase(dto.type)
+                ? (String) raw.get('messagingEndUserId')
+                : null;
             dto.messagingChannelId = (String) raw.get('messagingChannelId');
             dto.messagingChannelDeveloperName = (String) raw.get('messagingChannelDeveloperName');
             dto.name = (String) raw.get('name');
             dto.phone = (String) raw.get('phone');
-            dto.type = (String) raw.get('type');
             dto.detail = (String) raw.get('detail');
             dto.recordTypeDeveloperName = (String) raw.get('recordTypeDeveloperName');
             return dto;
@@ -682,6 +694,7 @@ public without sharing class MessagingComposerController {
     private static Id resolveChannelId(String channelKey, String existingChannelId, String existingChannelDevName, String channelPhone) {
         // 1) já recebido
         if (String.isNotBlank(existingChannelId)) {
+            System.debug('MSO resolveChannelId using existingChannelId=' + existingChannelId);
             return Id.valueOf(existingChannelId);
         }
         // 2) por developerName direto do registro
@@ -693,6 +706,7 @@ public without sharing class MessagingComposerController {
                 LIMIT 1
             ];
             if (!byDev.isEmpty()) {
+                System.debug('MSO resolveChannelId found by existingChannelDevName=' + existingChannelDevName + ' -> ' + byDev[0].Id);
                 return byDev[0].Id;
             }
         }
@@ -706,6 +720,7 @@ public without sharing class MessagingComposerController {
                 LIMIT 1
             ];
             if (!channels.isEmpty()) {
+                System.debug('MSO resolveChannelId found by channelKey mapping ' + developerName + ' -> ' + channels[0].Id);
                 return channels[0].Id;
             }
         }
@@ -721,9 +736,11 @@ public without sharing class MessagingComposerController {
             String label = ch.MasterLabel != null ? ch.MasterLabel : '';
             String normalizedLabel = normalizePhone(label);
             if (String.isNotBlank(rawPhone) && label.contains(rawPhone)) {
+                System.debug('MSO resolveChannelId found by raw phone match label=' + label);
                 return ch.Id;
             }
             if (String.isNotBlank(normalizedPhone) && String.isNotBlank(normalizedLabel) && normalizedLabel.contains(normalizedPhone)) {
+                System.debug('MSO resolveChannelId found by normalized phone match label=' + label);
                 return ch.Id;
             }
         }
@@ -732,6 +749,7 @@ public without sharing class MessagingComposerController {
 
     private static Id resolveMessagingEndUser(SendMessageRequest request) {
         if (String.isNotBlank(request.messagingEndUserId)) {
+            System.debug('MSO resolveMessagingEndUser using provided MEU ' + request.messagingEndUserId);
             return Id.valueOf(request.messagingEndUserId);
         }
 
@@ -740,11 +758,13 @@ public without sharing class MessagingComposerController {
         // Tenta localizar por telefone e canal antes de criar
         Id existingByPhone = findExistingEndUserByPhone(request.phone, channelId);
         if (existingByPhone != null) {
+            System.debug('MSO resolveMessagingEndUser found by phone ' + existingByPhone);
             return existingByPhone;
         }
 
         Id existing = findExistingEndUser(request.contactId, request.accountId, channelId);
         if (existing != null) {
+            System.debug('MSO resolveMessagingEndUser found by contact/account ' + existing);
             return existing;
         }
 
@@ -797,6 +817,7 @@ public without sharing class MessagingComposerController {
         endUser.Name = derivedName;
 
         insert endUser;
+        System.debug('MSO resolveMessagingEndUser created MEU ' + endUser.Id);
         return endUser.Id;
     }
 
@@ -853,6 +874,23 @@ public without sharing class MessagingComposerController {
 
     private static String normalizeSearchTerm(String searchTerm) {
         return searchTerm == null ? null : searchTerm.trim();
+    }
+
+    private static Set<Id> resolveAllowedChannelIds() {
+        Set<String> devNames = new Set<String>();
+        for (String dn : CHANNEL_DEVELOPER_NAMES.values()) {
+            if (String.isNotBlank(dn)) {
+                devNames.add(dn);
+            }
+        }
+        if (devNames.isEmpty()) {
+            return new Set<Id>();
+        }
+        Set<Id> channelIds = new Set<Id>();
+        for (MessagingChannel ch : [SELECT Id FROM MessagingChannel WHERE DeveloperName IN :devNames]) {
+            channelIds.add(ch.Id);
+        }
+        return channelIds;
     }
 
     private static String normalizePhone(String rawPhone) {
