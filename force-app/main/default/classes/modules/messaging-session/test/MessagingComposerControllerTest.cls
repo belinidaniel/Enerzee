@@ -40,4 +40,39 @@ private class MessagingComposerControllerTest {
         System.assertEquals('Simulado', resp.status);
         System.assertEquals(req.messagingEndUserId, resp.messagingEndUserId);
     }
+
+    @IsTest
+    static void testGetRecipientFromRecordIdContactAccountLead() {
+        Account acc = new Account(Name = 'Conta Preselect', Phone = '551199990001');
+        insert acc;
+
+        Contact con = new Contact(LastName = 'Contato Preselect', AccountId = acc.Id, Phone = '551198880001');
+        insert con;
+
+        Lead lead = new Lead(LastName = 'Lead Preselect', Company = 'Acme', Phone = '551197770001');
+        insert lead;
+
+        Test.startTest();
+        MessagingComposerController.PreselectRecipientResponse resContact =
+            MessagingComposerController.getRecipientFromRecordId(con.Id);
+        MessagingComposerController.PreselectRecipientResponse resAccount =
+            MessagingComposerController.getRecipientFromRecordId(acc.Id);
+        MessagingComposerController.PreselectRecipientResponse resLead =
+            MessagingComposerController.getRecipientFromRecordId(lead.Id);
+        Test.stopTest();
+
+        System.assertNotEquals(null, resContact);
+        System.assertNotEquals(null, resContact.recipient);
+        System.assertEquals('Contact', resContact.recipient.type);
+        System.assertEquals(con.Id, resContact.recipient.id);
+        System.assertEquals('Conta Preselect', resContact.recipient.detail);
+
+        System.assertNotEquals(null, resAccount.recipient);
+        System.assertEquals('Account', resAccount.recipient.type);
+        System.assertEquals(acc.Id, resAccount.recipient.id);
+
+        System.assertNotEquals(null, resLead.recipient);
+        System.assertEquals('Lead', resLead.recipient.type);
+        System.assertEquals(lead.Id, resLead.recipient.id);
+    }
 }

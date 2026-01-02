@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-30-2025
+ * @last modified on  : 01-02-2026
  * @last modified by  : Daniel Belini
 **/
 public without sharing class MessagingComposerController {
@@ -100,6 +100,10 @@ public without sharing class MessagingComposerController {
         @AuraEnabled public String messagingEndUserRecordTypeDeveloperName;
     }
 
+    public class PreselectRecipientResponse {
+        @AuraEnabled public RecipientDTO recipient;
+    }
+
     @AuraEnabled(cacheable=true)
     public static SessionContext getMessagingSessionContext(Id recordId) {
         if (recordId == null) {
@@ -126,6 +130,107 @@ public without sharing class MessagingComposerController {
             System.debug('Context lookup skipped: ' + ex.getMessage());
         }
         return context;
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static PreselectRecipientResponse getRecipientFromRecordId(Id recordId) {
+        PreselectRecipientResponse response = new PreselectRecipientResponse();
+        if (recordId == null) {
+            return response;
+        }
+        SObjectType typeRef = recordId.getSObjectType();
+        if (typeRef == MessagingSession.sObjectType) {
+            try {
+                MessagingSession ms = [
+                    SELECT Id, MessagingEndUserId, MessagingChannelId, MessagingEndUser.Name,
+                        MessagingEndUser.Telefone_Formatado__c, MessagingEndUser.MessagingPlatformKey,
+                        MessagingEndUser.MessagingChannel.DeveloperName, MessagingChannel.DeveloperName
+                    FROM MessagingSession
+                    WHERE Id = :recordId
+                    LIMIT 1
+                ];
+                if (ms.MessagingEndUserId != null) {
+                    RecipientDTO dto = new RecipientDTO();
+                    dto.id = ms.MessagingEndUserId;
+                    dto.messagingEndUserId = ms.MessagingEndUserId;
+                    dto.messagingChannelId = ms.MessagingChannelId;
+                    dto.messagingChannelDeveloperName = ms.MessagingChannel != null ? ms.MessagingChannel.DeveloperName : null;
+                    dto.name = ms.MessagingEndUser != null ? ms.MessagingEndUser.Name : 'Cliente';
+                    dto.phone = ms.MessagingEndUser != null && String.isNotBlank(ms.MessagingEndUser.Telefone_Formatado__c)
+                        ? ms.MessagingEndUser.Telefone_Formatado__c
+                        : (ms.MessagingEndUser != null ? ms.MessagingEndUser.MessagingPlatformKey : null);
+                    dto.type = 'MessagingEndUser';
+                    response.recipient = dto;
+                    return response;
+                }
+            } catch (Exception ex) {
+                System.debug('MSO getRecipientFromRecordId session lookup failed: ' + ex.getMessage());
+            }
+        } else if (typeRef == MessagingEndUser.sObjectType) {
+            MessagingEndUser meu = [
+                SELECT Id, Name, Telefone_Formatado__c, MessagingPlatformKey, MessagingChannelId,
+                    MessagingChannel.DeveloperName
+                FROM MessagingEndUser
+                WHERE Id = :recordId
+                LIMIT 1
+            ];
+            RecipientDTO dto = new RecipientDTO();
+            dto.id = meu.Id;
+            dto.messagingEndUserId = meu.Id;
+            dto.messagingChannelId = meu.MessagingChannelId;
+            dto.messagingChannelDeveloperName = meu.MessagingChannel != null ? meu.MessagingChannel.DeveloperName : null;
+            dto.name = meu.Name;
+            dto.phone = String.isNotBlank(meu.Telefone_Formatado__c) ? meu.Telefone_Formatado__c : meu.MessagingPlatformKey;
+            dto.type = 'MessagingEndUser';
+            response.recipient = dto;
+            return response;
+        } else if (typeRef == Contact.sObjectType) {
+            Contact c = [
+                SELECT Id, Name, Phone, MobilePhone, Telefone_Formatado__c, AccountId, Account.Name
+                FROM Contact
+                WHERE Id = :recordId
+                LIMIT 1
+            ];
+            RecipientDTO dto = new RecipientDTO();
+            dto.id = c.Id;
+            dto.name = c.Name;
+            dto.phone = pickPhone(c);
+            dto.type = 'Contact';
+            dto.detail = c.AccountId != null ? c.Account.Name : null;
+            response.recipient = dto;
+            return response;
+        } else if (typeRef == Account.sObjectType) {
+            Account a = [
+                SELECT Id, Name, Phone, Telefone_Formatado__c
+                FROM Account
+                WHERE Id = :recordId
+                LIMIT 1
+            ];
+            RecipientDTO dto = new RecipientDTO();
+            dto.id = a.Id;
+            dto.name = a.Name;
+            dto.phone = pickPhone(a);
+            dto.type = 'Account';
+            dto.detail = 'Conta';
+            response.recipient = dto;
+            return response;
+        } else if (typeRef == Lead.sObjectType) {
+            Lead l = [
+                SELECT Id, Name, Phone, MobilePhone, Telefone_Formatado__c, Company
+                FROM Lead
+                WHERE Id = :recordId
+                LIMIT 1
+            ];
+            RecipientDTO dto = new RecipientDTO();
+            dto.id = l.Id;
+            dto.name = l.Name;
+            dto.phone = pickPhone(l);
+            dto.type = 'Lead';
+            dto.detail = l.Company;
+            response.recipient = dto;
+            return response;
+        }
+        return response;
     }
 
     @AuraEnabled(cacheable=true)
@@ -174,8 +279,19 @@ public without sharing class MessagingComposerController {
         }
 
         Set<Id> allowedChannels = resolveAllowedChannelIds();
-        if (!allowedChannels.isEmpty()) {
-            for (MessagingEndUser endUser : [
+        List<MessagingEndUser> endUsers = new List<MessagingEndUser>();
+        if (allowedChannels.isEmpty()) {
+            endUsers = [
+                SELECT Id, Name, Telefone_Formatado__c, MessagingPlatformKey, MessageType, MessagingChannelId,
+                    MessagingChannel.MasterLabel, MessagingChannel.DeveloperName, ContactId, AccountId
+                FROM MessagingEndUser
+                WHERE Name LIKE :likeTerm
+                    OR MessagingPlatformKey LIKE :likeTerm
+                    OR Telefone_Formatado__c LIKE :likeTerm
+                LIMIT :MAX_RESULTS
+            ];
+        } else {
+            endUsers = [
                 SELECT Id, Name, Telefone_Formatado__c, MessagingPlatformKey, MessageType, MessagingChannelId,
                     MessagingChannel.MasterLabel, MessagingChannel.DeveloperName, ContactId, AccountId
                 FROM MessagingEndUser
@@ -184,19 +300,25 @@ public without sharing class MessagingComposerController {
                     OR Telefone_Formatado__c LIKE :likeTerm)
                     AND MessagingChannelId IN :allowedChannels
                 LIMIT :MAX_RESULTS
-            ]) {
-                RecipientDTO dto = new RecipientDTO();
-                dto.id = endUser.Id;
-                dto.name = endUser.Name;
-                dto.phone = String.isNotBlank(endUser.Telefone_Formatado__c) ? endUser.Telefone_Formatado__c : endUser.MessagingPlatformKey;
-                dto.type = 'MessagingEndUser';
-                dto.detail = endUser.MessagingChannel != null ? endUser.MessagingChannel.MasterLabel : null;
-                dto.messagingEndUserId = endUser.Id;
-                dto.messagingChannelId = endUser.MessagingChannelId;
-                dto.messagingChannelDeveloperName = endUser.MessagingChannel != null ? endUser.MessagingChannel.DeveloperName : null;
-                dto.recordTypeDeveloperName = null;
-                results.add(dto);
+            ];
+        }
+        for (MessagingEndUser endUser : endUsers) {
+            if(endUser.MessagingChannel.MasterLabel != '+55 11 4003-8852'  &&
+               endUser.MessagingChannel.MasterLabel != '+55 11 4003-8344'){
+                continue;
             }
+            
+            RecipientDTO dto = new RecipientDTO();
+            dto.id = endUser.Id;
+            dto.name = endUser.Name;
+            dto.phone = String.isNotBlank(endUser.Telefone_Formatado__c) ? endUser.Telefone_Formatado__c : endUser.MessagingPlatformKey;
+            dto.type = 'MessagingEndUser';
+            dto.detail = endUser.MessagingChannel != null ? endUser.MessagingChannel.MasterLabel : null;
+            dto.messagingEndUserId = endUser.Id;
+            dto.messagingChannelId = endUser.MessagingChannelId;
+            dto.messagingChannelDeveloperName = endUser.MessagingChannel != null ? endUser.MessagingChannel.DeveloperName : null;
+            dto.recordTypeDeveloperName = null;
+            results.add(dto);
         }
 
         for (Lead leadRecord : [
@@ -874,6 +996,19 @@ public without sharing class MessagingComposerController {
 
     private static String normalizeSearchTerm(String searchTerm) {
         return searchTerm == null ? null : searchTerm.trim();
+    }
+
+    private static String pickPhone(Lead leadRecord) {
+        if (leadRecord == null) {
+            return null;
+        }
+        if (String.isNotBlank(leadRecord.Telefone_Formatado__c)) {
+            return leadRecord.Telefone_Formatado__c;
+        }
+        if (String.isNotBlank(leadRecord.MobilePhone)) {
+            return leadRecord.MobilePhone;
+        }
+        return leadRecord.Phone;
     }
 
     private static Set<Id> resolveAllowedChannelIds() {

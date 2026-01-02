@@ -2,11 +2,13 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 10-23-2025
+  @last modified on  : 01-02-2026
   @last modified by  : Daniel Belini
 -->
-<aura:component implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable"
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,lightning:isUrlAddressable"
                  access="global"
                  apiVersion="60.0">
-    <c:messageSessionOrgnizer />
+    <aura:attribute name="recordId" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <c:messageSessionOrgnizer recordId="{!v.recordId}"/>
 </aura:component>
