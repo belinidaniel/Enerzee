@@ -14,7 +14,7 @@ private class TaskCompletionServiceTest {
     @isTest
     static void createsFollowUpForDocumentacaoComercial() {
         Projeto__c project = (Projeto__c) TestFactory.createSObject(new Projeto__c(), true);
-        project.DocumentacaoComercialPendencia__c = 'Proposta;Proposta concorrente';
+        project.DocumentacaoComercialPendencia__c = 'RG e CPF do responsável';
         project.DocumentacaoCriarAtividadeContratos__c = true;
         update project;
 
