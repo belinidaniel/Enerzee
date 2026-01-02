@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MessagingChannel xmlns="http://soap.sforce.com/2006/04/metadata">
+    <automatedResponses>
+        <autoResponseContentType>TextResponse</autoResponseContentType>
+        <response>Essa conversa está sendo encerrada. Obrigado por entrar em contato conosco!</response>
+        <type>AgentEndEngagementResponse</type>
+    </automatedResponses>
+    <automatedResponses>
+        <autoResponseContentType>TextResponse</autoResponseContentType>
+        <language>pt_BR</language>
+        <response>Você optou por não receber nossas mensagens, então não entraremos mais em contato.</response>
+        <type>OptOutConfirmation</type>
+    </automatedResponses>
+    <automatedResponses>
+        <autoResponseContentType>TextResponse</autoResponseContentType>
+        <language>pt_BR</language>
+        <response>Envie uma mensagem de texto com PARAR para optar por não receber mais mensagens.</response>
+        <type>HelpResponse</type>
+    </automatedResponses>
+    <channelUsages>
+        <channelConsentType>ImplicitOptIn</channelConsentType>
+        <deploymentType>DigitalEngagementConversation</deploymentType>
+    </channelUsages>
+    <countryCode>US</countryCode>
+    <externalAccountId>440937715778126</externalAccountId>
+    <masterLabel>+55 65 3634-7877</masterLabel>
+    <messagingChannelType>WhatsApp</messagingChannelType>
+    <messagingKeywords>
+        <keyword>cancel</keyword>
+        <keyword>end</keyword>
+        <keyword>quit</keyword>
+        <keyword>stop</keyword>
+        <keyword>stopall</keyword>
+        <keyword>unsubscribe</keyword>
+        <keywordType>OptOut</keywordType>
+        <language>pt_BR</language>
+    </messagingKeywords>
+    <messagingKeywords>
+        <keyword>ajudar</keyword>
+        <keyword>help</keyword>
+        <keywordType>Help</keywordType>
+        <language>pt_BR</language>
+    </messagingKeywords>
+    <platformKey>443091492226100</platformKey>
+    <sessionHandlerFlow>Route_to_Enerzee_Aviso_n_mero_antigo</sessionHandlerFlow>
+    <sessionHandlerQueue>Chat_Enerzee</sessionHandlerQueue>
+    <sessionHandlerType>Flow</sessionHandlerType>
+</MessagingChannel>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MessagingChannel xmlns="http://soap.sforce.com/2006/04/metadata">
+    <automatedResponses>
+        <autoResponseContentType>TextResponse</autoResponseContentType>
+        <response>Essa conversa está sendo encerrada. Obrigado por entrar em contato conosco!</response>
+        <type>AgentEndEngagementResponse</type>
+    </automatedResponses>
+    <automatedResponses>
+        <autoResponseContentType>TextResponse</autoResponseContentType>
+        <language>pt_BR</language>
+        <response>Obrigado pelo contato, qualquer coisa estaremos aqui!!</response>
+        <type>OptOutConfirmation</type>
+    </automatedResponses>
+    <automatedResponses>
+        <autoResponseContentType>TextResponse</autoResponseContentType>
+        <language>pt_BR</language>
+        <response>Text STOP to opt out of further messages.</response>
+        <type>HelpResponse</type>
+    </automatedResponses>
+    <automatedResponses>
+        <autoResponseContentType>TextResponse</autoResponseContentType>
+        <language>pt_BR</language>
+        <response>iniciar,aceito,sim,quero</response>
+        <type>OptInConfirmation</type>
+    </automatedResponses>
+    <channelUsages>
+        <deploymentType>MarketingJourneyBuilder</deploymentType>
+    </channelUsages>
+    <channelUsages>
+        <deploymentType>UnifiedConversation</deploymentType>
+    </channelUsages>
+    <channelUsages>
+        <channelConsentType>ExplicitOptIn</channelConsentType>
+        <deploymentType>MessagingEngagement</deploymentType>
+    </channelUsages>
+    <countryCode>US</countryCode>
+    <externalAccountId>526540573881145</externalAccountId>
+    <masterLabel>+55 11 4003-8344</masterLabel>
+    <messagingChannelType>WhatsApp</messagingChannelType>
+    <messagingKeywords>
+        <keyword>aceito</keyword>
+        <keyword>iniciar</keyword>
+        <keyword>quero</keyword>
+        <keyword>sim</keyword>
+        <keywordType>OptIn</keywordType>
+        <language>pt_BR</language>
+    </messagingKeywords>
+    <messagingKeywords>
+        <keyword>cancel</keyword>
+        <keyword>cancelar</keyword>
+        <keyword>end</keyword>
+        <keyword>parar</keyword>
+        <keyword>quit</keyword>
+        <keyword>stop</keyword>
+        <keyword>stopall</keyword>
+        <keyword>unsubscribe</keyword>
+        <keywordType>OptOut</keywordType>
+        <language>pt_BR</language>
+    </messagingKeywords>
+    <messagingKeywords>
+        <keyword>ajuda</keyword>
+        <keyword>help</keyword>
+        <keywordType>Help</keywordType>
+        <language>pt_BR</language>
+    </messagingKeywords>
+    <platformKey>610227168839050</platformKey>
+    <sessionHandlerFlow>Rotear_para_EzeeBot</sessionHandlerFlow>
+    <sessionHandlerQueue>Chat_Enerzee</sessionHandlerQueue>
+    <sessionHandlerType>Flow</sessionHandlerType>
+</MessagingChannel>

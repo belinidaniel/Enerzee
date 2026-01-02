@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-22-2025
+ * @last modified on  : 12-29-2025
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -1059,35 +1059,35 @@ public class OpportunityBO {
                         // }
                         String subjectGrupoB = 'Informe os dados da proposta - Grupo B - ' + accountName;
                         String normSubjectGrupoB = subjectGrupoB.trim().toLowerCase();
-                        if (!existingSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoB)
-                            && !newSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoB)) {
-                            taskstoInsert.add(TaskBO.createTask(
-                                opportunity.Id,
+                        // if (!existingSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoB)
+                        //     && !newSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoB)) {
+                        //     taskstoInsert.add(TaskBO.createTask(
+                        //         opportunity.Id,
 
-                                subjectGrupoB,
+                        //         subjectGrupoB,
 
-                                'PREENCHER OS CAMPOS: \n\nModalidade de Venda\n Tipo da venda\n ' +
-                                'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
-                                'Tipo do telhado - Estrutura de fixação\n ' +
-                                'Logradouro\n Município Instalação\n Consumo Anual\n ' +
-                                'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
-                                'Validade da proposta (dias)\n' +
-                                'Tarifa com tributos - B\n Tensão de Alimentação\n ' +
-                                'Potência Pico do Sistema (kWp)\n Geração mensal estimada\n ' +
-                                'Geração anual estimada\n Número de Módulos\n Potência Nominal do Módulo\n ' +
-                                'Fabricante Módulos\n Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
-                                'Potência Nominal do Sistema (kW)\n' +
-                                'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
+                        //         'PREENCHER OS CAMPOS: \n\nModalidade de Venda\n Tipo da venda\n ' +
+                        //         'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
+                        //         'Tipo do telhado - Estrutura de fixação\n ' +
+                        //         'Logradouro\n Município Instalação\n Consumo Anual\n ' +
+                        //         'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
+                        //         'Validade da proposta (dias)\n' +
+                        //         'Tarifa com tributos - B\n Tensão de Alimentação\n ' +
+                        //         'Potência Pico do Sistema (kWp)\n Geração mensal estimada\n ' +
+                        //         'Geração anual estimada\n Número de Módulos\n Potência Nominal do Módulo\n ' +
+                        //         'Fabricante Módulos\n Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
+                        //         'Potência Nominal do Sistema (kW)\n' +
+                        //         'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
 
-                                (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
+                        //         (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
                                 
-                                TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
+                        //         TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
 
-                                '1'
-                            ));
-                            existingSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoB);
-                            newSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoB);
-                        }
+                        //         '1'
+                        //     ));
+                        //     existingSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoB);
+                        //     newSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoB);
+                        // }
                         continue;
                     }
                 }

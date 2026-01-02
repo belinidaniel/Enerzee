@@ -1,102 +1,74 @@
 import { LightningElement, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { NavigationMixin } from 'lightning/navigation';
-import { FlowNavigationNextEvent } from 'lightning/flowSupport';
 import searchRecipients from '@salesforce/apex/MessagingComposerController.searchRecipients';
-import getMessagingChannels from '@salesforce/apex/MessagingComposerController.getMessagingChannels';
-import sendMessageJson from '@salesforce/apex/MessagingComposerController.sendMessageJson';
 import getMessagingSessionContext from '@salesforce/apex/MessagingComposerController.getMessagingSessionContext';
+import prepareSessionAndLaunchFlow from '@salesforce/apex/MessagingComposerController.prepareSessionAndLaunchFlow';
+
+const CHANNEL_OPTIONS = [
+    { key: 'AFTERSALES', label: '+55 11 4003-8852 (Pós-vendas)', phone: '+55 11 4003-8852', developerName: 'AFTERSALES' },
+    { key: 'SALES', label: '+55 11 4003-8344 (vendas)', phone: '+55 11 4003-8344', developerName: 'SALES' }
+];
+
+const TYPE_BADGES = {
+    Lead: { label: 'Lead', className: 'tag tag-lead' },
+    Contact: { label: 'Contact', className: 'tag tag-contact' },
+    Account: { label: 'Account', className: 'tag tag-account' },
+    Opportunity: { label: 'Opportunity', className: 'tag tag-opportunity' },
+    MessagingEndUser: { label: 'Messaging End User', className: 'tag tag-meu' },
+    Other: { label: 'Other', className: 'tag tag-other' }
+};
 
 const FIXED_TEMPLATES = [
     {
-        label: 'Notificação inicial',
-        value: 'Notifica_o_inicial',
-        text: 'Notificação inicial',
-        preview: 'Olá, {{1}}!\nAqui é {{2}} da Enerzee. Tudo bem?'
-    },
-    {
         label: '1 - Iniciar conversa',
-        value: 'Iniciar_conversa',
-        text: 'Iniciar conversa',
+        value: '01_Iniciar_conversa',
+        text: '01 - Iniciar conversa',
         preview: 'Olá, {{1}}!\nAqui é {{2}} da Enerzee. Tudo bem?'
     },
     {
-        label: '1 - Iniciar conversa - Consultor',
-        value: 'Iniciar_conversa_consultor',
-        text: 'Iniciar conversa - Consultor',
-        preview: 'Olá, {{1}}!\nAqui é {{2}} da Enerzee. Tudo bem?'
-    },
-    {
-        label: '2 - Sessão Inativa - Agente',
-        value: 'Sessao_Inativa',
-        text: 'Sessão inativa',
-        preview:
-            'Olá, {{1}}!\nTudo bem?\nAqui é {{2}} do atendimento da Enerzee. Vimos que nossa conversa foi encerrada automaticamente, mas estou aqui para ajudar com o que precisar. Caso ainda tenha alguma dúvida ou informação, é só me chamar!'
-    },
-    {
-        label: '2 - Sessão Inativa - Cliente',
-        value: 'Sessao_Inativa_Cliente',
-        text: 'Iniciar conversa por inatividade do cliente.',
+        label: '2 - Sessão inativa por falta de interação',
+        value: '02_Sessao_Inativa',
+        text: '02 - Sessão inativa por falta de interação',
         preview:
             'Olá, {{1}}!\nTudo bem?\nNossa conversa foi encerrada automaticamente, mas o atendimento da Enerzee segue à disposição para te ajudar.\nSe precisar de algo ou tiver dúvidas, é só responder aqui!'
-    },
-    {
-        label: '2 - Sessão Inativa - Agente - Consultor',
-        value: 'sessao_inativa_agente_consultor',
-        text: 'Sessão Inativa - Agente - Consultor',
-        preview:
-            'Olá, {{1}}!\nTudo bem?\nAqui é {{2}} do atendimento da Enerzee. Vimos que nossa conversa foi encerrada automaticamente, mas estou aqui para ajudar com o que precisar. Caso ainda tenha alguma dúvida ou informação, é só me chamar!'
     }
 ];
 
 export default class MessageSessionOrgnizer extends NavigationMixin(LightningElement) {
     @api recordId;
-    @api availableActions; // fornecido pelo Flow Screen
-    // Propriedades expostas ao Flow: serão preenchidas no envio para alimentar o subflow
+    // Propriedades expostas ao Flow (mantidas para compatibilidade)
     @api messageDefinitionName;
     @api messagingChannelId;
     @api messagingEndUserId;
     @api messagingEndUserRecordTypeDeveloperName;
 
-    channels = [];
-    templates = FIXED_TEMPLATES;
+    channels = CHANNEL_OPTIONS.map((ch) => ({ label: ch.label, value: ch.key }));
+    templates = [];
     recipientResults = [];
     selectedRecipient;
+    selectedRecipientId;
     selectedTemplateValue;
     selectedTemplateText;
-    selectedChannelId;
+    selectedChannelKey;
+    selectedChannelPhone;
     sessionInfo;
     searchTimeout;
+    hideChannel = false;
 
     recipientSearch = '';
     isLoading = false;
+    templatesLoading = false; // mantido por compatibilidade de UI
 
     connectedCallback() {
-        // Pré-seleciona o primeiro template para evitar envio sem template.
-        if (this.templates && this.templates.length > 0 && !this.selectedTemplateValue) {
-            const first = this.templates[0];
-            this.selectedTemplateValue = first.value;
-            this.selectedTemplateText = first.preview || first.text || first.label;
+        const defaultChannel = CHANNEL_OPTIONS[0];
+        if (defaultChannel) {
+            this.selectedChannelKey = defaultChannel.key;
+            this.selectedChannelPhone = defaultChannel.phone;
+            this.loadTemplates();
         }
-        this.loadChannels();
         if (this.recordId) {
             this.loadSessionContext();
-        }
-    }
-
-    async loadChannels() {
-        try {
-            const data = await getMessagingChannels();
-            this.channels = (data || []).map((channel) => ({
-                ...channel,
-                label: channel.label,
-                value: channel.id
-            }));
-            if (!this.selectedChannelId && this.channels.length > 0) {
-                this.selectedChannelId = this.channels[0].value;
-            }
-        } catch (error) {
-            this.handleError('Erro ao carregar canais', error);
         }
     }
 
@@ -105,7 +77,12 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
             const info = await getMessagingSessionContext({ recordId: this.recordId });
             if (info) {
                 this.sessionInfo = info;
-                this.selectedChannelId = info.messagingChannelId;
+                const mappedChannel = this.resolveChannelKeyFromDeveloperName(info.channelDeveloperName);
+                if (mappedChannel) {
+                    this.selectedChannelKey = mappedChannel.key;
+                    this.selectedChannelPhone = mappedChannel.phone;
+                    this.loadTemplates();
+                }
                 this.selectedRecipient = {
                     id: info.messagingEndUserId,
                     messagingEndUserId: info.messagingEndUserId,
@@ -115,6 +92,7 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
                     messagingChannelId: info.messagingChannelId,
                     recordTypeDeveloperName: info.messagingEndUserRecordTypeDeveloperName
                 };
+                this.selectedRecipientId = info.messagingEndUserId;
                 this.messagingEndUserRecordTypeDeveloperName = info.messagingEndUserRecordTypeDeveloperName;
                 this.recipientResults = this.decorateSelection(
                     [this.selectedRecipient],
@@ -124,6 +102,16 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
         } catch (error) {
             this.handleError('Não foi possível identificar a sessão de mensagens.', error);
         }
+    }
+
+    resolveChannelKeyFromDeveloperName(developerName) {
+        if (!developerName) {
+            return null;
+        }
+        const found = CHANNEL_OPTIONS.find(
+            (item) => item.developerName && item.developerName.toLowerCase() === developerName.toLowerCase()
+        );
+        return found ? { key: found.key, phone: found.phone } : null;
     }
 
     handleRecipientSearchInput(event) {
@@ -152,7 +140,19 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
         this.isLoading = true;
         try {
             const data = await searchRecipients({ searchTerm: term });
-            this.recipientResults = this.decorateSelection(data || [], this.selectedRecipient?.id);
+            const sorted = [...(data || [])].sort((a, b) => {
+                if (a.type === b.type) {
+                    return 0;
+                }
+                if (a.type === 'MessagingEndUser') {
+                    return -1;
+                }
+                if (b.type === 'MessagingEndUser') {
+                    return 1;
+                }
+                return 0;
+            });
+            this.recipientResults = this.decorateSelection(sorted, this.selectedRecipient?.id);
         } catch (error) {
             this.handleError('Erro ao buscar destinatários', error);
         } finally {
@@ -162,20 +162,56 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
 
     handleRecipientSelect(event) {
         const recordId = event.currentTarget.dataset.id;
+        // eslint-disable-next-line no-console
+        console.log('MSO handleRecipientSelect clicked id', recordId);
         const record = this.recipientResults.find((rec) => rec.id === recordId);
         if (record) {
             this.selectedRecipient = record;
+            this.selectedRecipientId = record.id;
             this.recipientResults = this.decorateSelection([record], record.id);
-            if (record.messagingChannelId) {
-                this.selectedChannelId = record.messagingChannelId;
-            }
             this.messagingEndUserRecordTypeDeveloperName =
                 record.type === 'MessagingEndUser' ? record.recordTypeDeveloperName || null : null;
+            // Preenche messagingEndUserId se vier vazio
+            if (!this.selectedRecipient.messagingEndUserId) {
+                this.selectedRecipient.messagingEndUserId = this.selectedRecipient.id;
+            }
+            this.hideChannel = record.type === 'MessagingEndUser' && !!record.messagingChannelId;
+            // Se for MEU com canal, mantemos o canal atual (já validado no Apex)
+            if (record.messagingChannelDeveloperName) {
+                const mapped = CHANNEL_OPTIONS.find(
+                    (ch) =>
+                        ch.developerName &&
+                        ch.developerName.toLowerCase() === record.messagingChannelDeveloperName.toLowerCase()
+                );
+                if (mapped) {
+                    this.selectedChannelKey = mapped.key;
+                    this.selectedChannelPhone = mapped.phone;
+                }
+            }
         }
+        // eslint-disable-next-line no-console
+        console.log('MSO handleRecipientSelect selectedRecipient', JSON.stringify(this.selectedRecipient));
     }
 
     handleChannelChange(event) {
-        this.selectedChannelId = event.detail.value;
+        const selectedKey = event.detail.value;
+        const channel = CHANNEL_OPTIONS.find((ch) => ch.key === selectedKey);
+        this.selectedChannelKey = selectedKey;
+        this.selectedChannelPhone = channel ? channel.phone : null;
+        this.selectedTemplateValue = null;
+        this.selectedTemplateText = null;
+        this.loadTemplates();
+    }
+
+    loadTemplates() {
+        this.templatesLoading = true;
+        this.templates = FIXED_TEMPLATES;
+        if (this.templates.length > 0) {
+            const first = this.templates[0];
+            this.selectedTemplateValue = first.value;
+            this.selectedTemplateText = first.preview || first.text || first.label;
+        }
+        this.templatesLoading = false;
     }
 
     handleTemplateChange(event) {
@@ -186,74 +222,97 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
     }
 
     get recipientList() {
-        return (this.recipientResults || []).map((rec) => ({
-            ...rec,
-            cssClass: `tile ${this.selectedRecipient?.id === rec.id ? 'selected' : ''}`
-        }));
+        return (this.recipientResults || []).map((rec) => {
+            const typeMeta = TYPE_BADGES[rec.type] || TYPE_BADGES.Other;
+            return {
+                ...rec,
+                cssClass: `tile ${
+                    this.selectedRecipientId === rec.id || this.selectedRecipient?.id === rec.id ? 'selected' : ''
+                }`,
+                badgeClass: typeMeta.className,
+                badgeLabel: typeMeta.label
+            };
+        });
     }
 
     get hasRecipients() {
         return (this.recipientResults || []).length > 0;
     }
 
+    get channelOptions() {
+        return this.channels;
+    }
+
+    get showChannelSelector() {
+        return !this.hideChannel;
+    }
+
     async handleSend() {
-        const templateValue = (this.selectedTemplateValue || this.templates?.[0]?.value || '').trim();
-        if (!templateValue) {
-            this.showToast('Selecione uma mensagem para enviar.', 'warning');
-            return;
+        const templateValue = (this.selectedTemplateValue || '').trim();
+        // Try to recover selected recipient by id or selection flag
+        if (!this.selectedRecipient && this.selectedRecipientId) {
+            const fromId = (this.recipientResults || []).find((rec) => rec.id === this.selectedRecipientId);
+            if (fromId) {
+                this.selectedRecipient = fromId;
+            }
         }
-        // Se o template estava vazio mas existe um default, garante que o combobox reflita o valor usado.
-        this.selectedTemplateValue = templateValue;
-
         if (!this.selectedRecipient) {
-            this.showToast('Selecione um destinatário.', 'warning');
+            const selectedFromList = (this.recipientResults || []).find((rec) =>
+                rec.cssClass && rec.cssClass.includes('tile')
+            );
+
+            if (selectedFromList) {
+                this.selectedRecipient = selectedFromList;
+                this.selectedRecipientId = selectedFromList.id;
+            }
+        }
+
+        // eslint-disable-next-line no-console
+        console.log('MSO handleSend selection from selectedRecipient', JSON.stringify(this.selectedRecipient));
+        if (!this.selectedRecipient) {
+            this.showToast('Selecione um destinatário', 'warning');
             return;
         }
-        if (!this.selectedChannelId) {
-            this.showToast('Selecione um canal.', 'warning');
+        const isMessagingEndUser = this.selectedRecipient?.type === 'MessagingEndUser';
+        if (!isMessagingEndUser && !this.selectedChannelKey) {
+            this.showToast('Selecione um canal', 'warning');
+            return;
+        }
+        if (!templateValue) {
+            this.showToast('Selecione uma mensagem', 'warning');
             return;
         }
 
-        const endUserId = this.selectedRecipient.messagingEndUserId || this.selectedRecipient.id;
-
-        // Preenche propriedades expostas ao Flow Screen
+        this.selectedTemplateValue = templateValue;
         this.messageDefinitionName = templateValue;
-        this.messagingChannelId = this.selectedChannelId;
-        this.messagingEndUserId = endUserId;
-        this.messagingEndUserRecordTypeDeveloperName =
-            this.selectedRecipient.type === 'MessagingEndUser'
-                ? this.selectedRecipient.recordTypeDeveloperName || null
-                : null;
-
-        // Se estiver rodando dentro de um Flow, delega para o Next para o subflow executar o envio.
-        if (this.availableActions && this.availableActions.includes('NEXT')) {
-            this.dispatchEvent(new FlowNavigationNextEvent());
-            return;
-        }
-
-        // Fallback para uso fora de Flow: envia via Apex diretamente.
-        const payload = {
-            recordId: this.recordId,
-            messageDefinitionName: templateValue,
-            messagingChannelId: this.selectedChannelId,
-            messagingEndUserId: endUserId,
-            contactId: this.selectedRecipient.type === 'Contact' ? this.selectedRecipient.id : null,
-            leadId: this.selectedRecipient.type === 'Lead' ? this.selectedRecipient.id : null,
-            accountId: this.selectedRecipient.type === 'Account' ? this.selectedRecipient.id : null,
-            phone: this.selectedRecipient.phone,
-            allowedSessionStatus: 'Any',
-            requestType: 'SendNotificationMessages',
-            enforceConsent: true,
-            channelConsentType: 'MessagingEndUser'
-        };
 
         this.isLoading = true;
         try {
-            const response = await sendMessageJson({ requestJson: JSON.stringify(payload) });
+            const recipientPayload = this.buildRecipientPayload(this.selectedRecipient);
+            // eslint-disable-next-line no-console
+            console.log('MSO handleSend calling Apex with', {
+                recipient: recipientPayload,
+                channelKey: this.selectedChannelKey,
+                channelPhone: this.selectedChannelPhone,
+                templateValue
+            });
+            const response = await prepareSessionAndLaunchFlow({
+                recipientJson: JSON.stringify(recipientPayload),
+                channelKey: this.selectedChannelKey,
+                channelPhone: this.selectedChannelPhone,
+                selectedMessageComponentName: templateValue
+            });
+
+            this.messagingChannelId = response?.messagingChannelId;
+            this.messagingEndUserId = response?.messagingEndUserId;
+            this.messagingEndUserRecordTypeDeveloperName = response?.messagingEndUserRecordTypeDeveloperName;
+
+            this.showToast('Mensagem enviada via Flow', 'success');
             const sessionId = response?.messagingSessionId;
-            this.showToast('Mensagem enviada', 'success');
             if (sessionId) {
                 this.navigateToSession(sessionId);
+            } else {
+                throw new Error('Não foi possível criar/recuperar a sessão de mensagens.');
             }
         } catch (error) {
             this.handleError('Erro ao enviar mensagem', error);
@@ -315,5 +374,21 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
             return error.message;
         }
         return 'Erro inesperado.';
+    }
+
+    buildRecipientPayload(recipient) {
+        if (!recipient) {
+            return null;
+        }
+        return {
+            id: recipient.id,
+            messagingEndUserId: recipient.messagingEndUserId || recipient.id,
+            messagingChannelId: recipient.messagingChannelId,
+            name: recipient.name,
+            phone: recipient.phone,
+            type: recipient.type,
+            detail: recipient.detail,
+            recordTypeDeveloperName: recipient.recordTypeDeveloperName
+        };
     }
 }
