@@ -1,8 +1,9 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { NavigationMixin } from 'lightning/navigation';
+import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import searchRecipients from '@salesforce/apex/MessagingComposerController.searchRecipients';
 import getMessagingSessionContext from '@salesforce/apex/MessagingComposerController.getMessagingSessionContext';
+import getRecipientFromRecordId from '@salesforce/apex/MessagingComposerController.getRecipientFromRecordId';
 import prepareSessionAndLaunchFlow from '@salesforce/apex/MessagingComposerController.prepareSessionAndLaunchFlow';
 
 const CHANNEL_OPTIONS = [
@@ -37,6 +38,7 @@ const FIXED_TEMPLATES = [
 
 export default class MessageSessionOrgnizer extends NavigationMixin(LightningElement) {
     @api recordId;
+    pageRecordId;
     // Propriedades expostas ao Flow (mantidas para compatibilidade)
     @api messageDefinitionName;
     @api messagingChannelId;
@@ -60,7 +62,20 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
     isLoading = false;
     templatesLoading = false; // mantido por compatibilidade de UI
 
+    @wire(CurrentPageReference)
+    parseState(record) {
+        if (record && record.state) {
+            const stateRecordId = record.state.recordId || record.state.c__recordId;
+            if (stateRecordId && !this.recordId) {
+                this.recordId = stateRecordId;
+                this.pageRecordId = stateRecordId;
+                this.loadRecipientFromRecord();
+            }
+        }
+    }
+
     connectedCallback() {
+        console.log('recordId', this.recordId);
         const defaultChannel = CHANNEL_OPTIONS[0];
         if (defaultChannel) {
             this.selectedChannelKey = defaultChannel.key;
@@ -68,7 +83,7 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
             this.loadTemplates();
         }
         if (this.recordId) {
-            this.loadSessionContext();
+            this.loadRecipientFromRecord();
         }
     }
 
@@ -101,6 +116,32 @@ export default class MessageSessionOrgnizer extends NavigationMixin(LightningEle
             }
         } catch (error) {
             this.handleError('Não foi possível identificar a sessão de mensagens.', error);
+        }
+    }
+
+    async loadRecipientFromRecord() {
+        try {
+            const result = await getRecipientFromRecordId({ recordId: this.recordId });
+            if (result && result.recipient) {
+                const rec = result.recipient;
+                this.selectedRecipient = rec;
+                this.selectedRecipientId = rec.id;
+                if (rec.type === 'MessagingEndUser' && rec.messagingChannelDeveloperName) {
+                    const mapped = this.resolveChannelKeyFromDeveloperName(rec.messagingChannelDeveloperName);
+                    if (mapped) {
+                        this.selectedChannelKey = mapped.key;
+                        this.selectedChannelPhone = mapped.phone;
+                    }
+                }
+                this.hideChannel = rec.type === 'MessagingEndUser' && !!rec.messagingChannelId;
+                this.recipientResults = this.decorateSelection([rec], rec.id);
+            } else if (this.recordId) {
+                // fallback para sessão existente
+                await this.loadSessionContext();
+            }
+        } catch (error) {
+            // fallback para sessão existente se falhar
+            await this.loadSessionContext();
         }
     }
 
