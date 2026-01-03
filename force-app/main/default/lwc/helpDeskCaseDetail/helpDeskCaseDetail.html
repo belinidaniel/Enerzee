@@ -1,0 +1,106 @@
+<template>
+    <article class="detail-container slds-card">
+        <template if:true={detail}>
+            <header class="detail-header">
+                <p class="case-number">Case #{detail.caseNumber}</p>
+                <h2 class="case-subject">{detail.subject}</h2>
+            </header>
+
+            <section class="info-cards">
+                <div class="info-card">
+                    <p class="label">Opened</p>
+                    <p class="value">{detail.createdDateDisplay}</p>
+                </div>
+                <div class="info-card">
+                    <p class="label">Status</p>
+                    <p class="value">{detail.status}</p>
+                </div>
+                <div class="info-card action-card">
+                    <p class="label">Actions</p>
+                    <lightning-button variant="brand-outline" label="Reopen" onclick={handleReopen} disabled={isOpen}></lightning-button>
+                </div>
+            </section>
+
+            <lightning-tabset active-tab-value="activity">
+                <lightning-tab label="Activity" value="activity">
+                    <section class="composer">
+                        <lightning-textarea
+                            value={newComment}
+                            label="Add a comment"
+                            placeholder="Share an update with the support team"
+                            onchange={handleCommentChange}
+                        ></lightning-textarea>
+                        <div class="composer-actions">
+                            <lightning-button variant="brand" label="Add Comment" onclick={handleAddComment} disabled={isAddDisabled}></lightning-button>
+                        </div>
+                    </section>
+                    <section class="feed">
+                        <template if:true={hasComments}>
+                            <template for:each={comments} for:item="comment">
+                                <div key={comment.id} class="feed-item slds-card">
+                                    <div class="avatar">
+                                        <lightning-avatar
+                                            fallback-icon-name="standard:user"
+                                            alternative-text={comment.author}
+                                            src={comment.avatar}
+                                            size="medium"
+                                            initials={comment.initials}
+                                        ></lightning-avatar>
+                                    </div>
+                                    <div class="feed-body">
+                                        <div class="feed-meta">
+                                            <span class="author">{comment.author}</span>
+                                            <span class="date">{comment.date}</span>
+                                        </div>
+                                        <div class="feed-text">{comment.body}</div>
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
+                        <template if:false={hasComments}>
+                            <p class="empty-feed">Sem comentários ainda. Adicione o primeiro para atualizar o time.</p>
+                        </template>
+                    </section>
+                </lightning-tab>
+                <lightning-tab label="Details" value="details">
+                    <div class="details-grid">
+                        <div>
+                            <p class="label">Case Number</p>
+                            <p class="value">{detail.caseNumber}</p>
+                        </div>
+                        <div>
+                            <p class="label">Subject</p>
+                            <p class="value">{detail.subject}</p>
+                        </div>
+                        <div>
+                            <p class="label">Status</p>
+                            <p class="value">{detail.status}</p>
+                        </div>
+                        <div>
+                            <p class="label">Contact</p>
+                            <p class="value">{detail.contactName}</p>
+                        </div>
+                        <div>
+                            <p class="label">Opened</p>
+                            <p class="value">{detail.createdDateDisplay}</p>
+                        </div>
+                        <div>
+                            <p class="label">Last Modified</p>
+                            <p class="value">{detail.lastModifiedDisplay}</p>
+                        </div>
+                    </div>
+                </lightning-tab>
+            </lightning-tabset>
+        </template>
+        <template if:false={detail}>
+            <div class="placeholder">
+                <lightning-spinner alternative-text="Loading case" size="medium"></lightning-spinner>
+            </div>
+        </template>
+        <template if:true={isSaving}>
+            <div class="backdrop">
+                <lightning-spinner alternative-text="Saving" size="small"></lightning-spinner>
+            </div>
+        </template>
+    </article>
+</template>

@@ -1,0 +1,75 @@
+<template>
+    <article class="case-card slds-card">
+        <header class="slds-card__header slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+            <div class="controls slds-grid slds-grid_vertical-align-center">
+                <lightning-combobox
+                    class="filter"
+                    variant="label-hidden"
+                    options={filterOptions}
+                    value={filterType}
+                    onchange={handleFilterChange}
+                ></lightning-combobox>
+                <lightning-input
+                    class="search"
+                    type="search"
+                    variant="label-hidden"
+                    placeholder="Search"
+                    value={searchTerm}
+                    onchange={handleSearchChange}
+                ></lightning-input>
+            </div>
+            <div class="meta slds-grid slds-grid_vertical-align-center">
+                <span class="total">Total {caseCount}</span>
+                <lightning-button-icon icon-name="utility:refresh" variant="bare" alternative-text="Refresh" onclick={handleRefresh}></lightning-button-icon>
+            </div>
+        </header>
+
+        <div class="slds-card__body">
+            <div class="table-wrapper">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Case Number</th>
+                            <th scope="col">Subject</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date/Time Modified</th>
+                            <th scope="col">Contact Full Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template if:true={hasCases}>
+                            <template for:each={cases} for:item="caseItem">
+                                <tr key={caseItem.id}>
+                                    <td>
+                                        <a href={caseItem.url} data-id={caseItem.id} onclick={handleNavigate} class="case-link">{caseItem.caseNumber}</a>
+                                    </td>
+                                    <td>{caseItem.subject}</td>
+                                    <td>{caseItem.status}</td>
+                                    <td>{caseItem.lastModified}</td>
+                                    <td>{caseItem.contactName}</td>
+                                </tr>
+                            </template>
+                        </template>
+                        <template if:false={hasCases}>
+                            <tr>
+                                <td colspan="5">
+                                    <div class="empty-state">
+                                        <div class="empty-illustration"></div>
+                                        <p class="empty-title">Looks like you have no cases in the selected criteria</p>
+                                        <p class="empty-subtitle">Please select a different criteria</p>
+                                        <p class="empty-link">Still need help? <a href="https://trailhead.salesforce.com/help" target="_blank">Post your question</a></p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <template if:true={isLoading}>
+            <div class="backdrop">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </div>
+        </template>
+    </article>
+</template>

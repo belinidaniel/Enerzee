@@ -1,0 +1,39 @@
+<template>
+    <div class="help-container">
+        <section class="hero">
+            <div class="hero-left">
+                <div class="eyebrow">Trailhead / Help</div>
+                <h1 class="hero-title">Suporte rápido para seus casos</h1>
+                <p class="hero-subtitle">
+                    Acompanhe seus casos, leia atualizações e converse com o time de suporte em um painel limpo e focado.
+                </p>
+                <lightning-button variant="neutral" label="Select an Org" class="select-org"></lightning-button>
+            </div>
+            <div class="hero-card slds-card">
+                <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-spread">
+                    <div class="slds-media slds-media_center">
+                        <div class="slds-media__figure illustration">
+                            <div class="astro-circle"></div>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="card-title">Create a Case with Agentforce</div>
+                            <p class="card-text">
+                                Obtenha respostas instantâneas, conecte-se a especialistas e envie casos rapidamente.
+                            </p>
+                            <div class="card-actions">
+                                <lightning-button variant="brand-outline" label="Ask Agentforce"></lightning-button>
+                                <lightning-button variant="neutral" label="Learn more"></lightning-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cases">
+            <c-help-desk-case-list></c-help-desk-case-list>
+        </section>
+
+        <button class="floating-btn" type="button">Ask Agentforce</button>
+    </div>
+</template>

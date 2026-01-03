@@ -1,0 +1,103 @@
+.help-container {
+    background: #f7f9fb;
+    min-height: 100vh;
+}
+
+.hero {
+    background: linear-gradient(135deg, #e8f3ff 0%, #f5faff 100%);
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    grid-gap: 24px;
+    align-items: center;
+}
+
+.hero-left .eyebrow {
+    color: #0176d3;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-bottom: 4px;
+}
+
+.hero-title {
+    font-size: 28px;
+    margin: 0 0 8px;
+    color: #1e2b3c;
+}
+
+.hero-subtitle {
+    color: #4a5568;
+    margin-bottom: 16px;
+}
+
+.select-org {
+    margin-top: 8px;
+}
+
+.hero-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    padding: 16px 20px;
+}
+
+.card-title {
+    font-weight: 700;
+    color: #122843;
+    margin-bottom: 4px;
+}
+
+.card-text {
+    color: #4a5568;
+    margin-bottom: 12px;
+}
+
+.card-actions lightning-button {
+    margin-right: 8px;
+}
+
+.illustration {
+    width: 72px;
+    height: 72px;
+    margin-right: 12px;
+}
+
+.astro-circle {
+    background: radial-gradient(circle at 30% 30%, #b2d8ff, #1b96ff);
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.cases {
+    padding: 20px 32px 48px;
+}
+
+.floating-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #0176d3;
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 12px 22px;
+    box-shadow: 0 8px 16px rgba(1, 118, 211, 0.35);
+    cursor: pointer;
+    font-weight: 700;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+    z-index: 10;
+}
+
+.floating-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px rgba(1, 118, 211, 0.4);
+}
+
+@media (max-width: 960px) {
+    .hero {
+        grid-template-columns: 1fr;
+        padding: 24px;
+    }
+}

@@ -1,0 +1,132 @@
+.detail-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    padding: 16px 20px 24px;
+    position: relative;
+}
+
+.detail-header {
+    margin-bottom: 12px;
+}
+
+.case-number {
+    color: #0b5cab;
+    font-weight: 700;
+    margin: 0;
+}
+
+.case-subject {
+    margin: 4px 0 0;
+    color: #1e2b3c;
+}
+
+.info-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.info-card {
+    background: #f7f9fb;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.label {
+    color: #6b7280;
+    margin: 0 0 6px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.value {
+    margin: 0;
+    color: #1e2b3c;
+    font-weight: 600;
+}
+
+.action-card lightning-button {
+    margin-top: 2px;
+}
+
+.composer {
+    margin: 8px 0 16px;
+}
+
+.composer-actions {
+    margin-top: 8px;
+    text-align: right;
+}
+
+.feed {
+    display: grid;
+    gap: 12px;
+}
+
+.feed-item {
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.feed-item .slds-card__header {
+    display: none;
+}
+
+.feed-item .slds-card__body {
+    padding: 0;
+}
+
+.feed-item {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.feed-meta {
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.feed-meta .author {
+    color: #1e2b3c;
+    font-weight: 700;
+    margin-right: 8px;
+}
+
+.feed-text {
+    white-space: pre-wrap;
+    color: #1f2937;
+}
+
+.empty-feed {
+    color: #6b7280;
+    text-align: center;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.placeholder {
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
