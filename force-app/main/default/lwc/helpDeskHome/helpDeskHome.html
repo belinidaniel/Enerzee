@@ -76,21 +76,33 @@
 
                     <div class="slds-m-top_medium">
                         <p class="slds-text-title_caps slds-m-bottom_x-small">Anexos</p>
-                        <lightning-file-upload
-                            label="Adicionar arquivos"
-                            name="fileUploader"
-                            record-id={createdCaseId}
-                            multiple
-                            disabled={disableUpload}
-                        ></lightning-file-upload>
+                        <div class="slds-grid slds-grid_vertical-align-center">
+                            <lightning-input
+                                type="file"
+                                label="Adicionar arquivos"
+                                multiple
+                                accept={acceptedFormats}
+                                onchange={handleFilesChange}
+                            ></lightning-input>
+                        </div>
+                        <template if:true={hasFiles}>
+                            <ul class="file-list slds-m-top_small">
+                                <template for:each={pendingFiles} for:item="file">
+                                    <li key={file.name} class="file-item slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                        <span>{file.name} ({file.humanSize})</span>
+                                        <lightning-button-icon icon-name="utility:close" alternative-text="Remover" onclick={removeFile} data-name={file.name}></lightning-button-icon>
+                                    </li>
+                                </template>
+                            </ul>
+                        </template>
                         <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">
-                            {uploadHelperText}
+                            Os arquivos serão enviados junto com a criação do caso.
                         </p>
                     </div>
                 </div>
                 <footer class="slds-modal__footer">
                     <lightning-button variant="neutral" label="Cancelar" onclick={closeModal}></lightning-button>
-                    <lightning-button variant="brand" class="slds-m-left_small" label={primaryButtonLabel} onclick={handleCreate} disabled={disableCreate}></lightning-button>
+                    <lightning-button variant="brand" class="slds-m-left_small" label="Criar caso" onclick={handleCreate} disabled={disableCreate}></lightning-button>
                 </footer>
             </div>
         </section>

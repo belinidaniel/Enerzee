@@ -6,16 +6,20 @@
     </template>
     <regions>
         <name>header</name>
+        <type>Region</type>
     </regions>
     <regions>
         <name>content</name>
-        <components>
-            <componentInstanceProperties>
-                <name>recordId</name>
-                <value>{!recordId}</value>
-            </componentInstanceProperties>
-            <componentName>c:helpDeskCaseDetail</componentName>
-        </components>
+        <type>Region</type>
+        <items>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>recordId</name>
+                    <value>{!recordId}</value>
+                </componentInstanceProperties>
+                <componentName>c:helpDeskCaseDetail</componentName>
+            </componentInstance>
+        </items>
     </regions>
     <sobjectType>Case</sobjectType>
     <type>RecordPage</type>

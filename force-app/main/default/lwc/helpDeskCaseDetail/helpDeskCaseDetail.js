@@ -1,6 +1,7 @@
 import { api, LightningElement, wire, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
+import { CurrentPageReference } from 'lightning/navigation';
 import getCaseDetail from '@salesforce/apex/ModuloHelpDeskCaseController.getCaseDetail';
 import getCaseComments from '@salesforce/apex/ModuloHelpDeskCaseController.getCaseComments';
 import addComment from '@salesforce/apex/ModuloHelpDeskCaseController.addComment';
@@ -13,6 +14,16 @@ export default class HelpDeskCaseDetail extends LightningElement {
     @track comments = [];
     newComment = '';
     isSaving = false;
+    pageRef;
+
+    @wire(CurrentPageReference)
+    wiredPageRef(ref) {
+        this.pageRef = ref;
+        const fromState = ref?.state?.recordId || ref?.state?.c__recordId || ref?.attributes?.recordId;
+        if (!this.recordId && fromState) {
+            this.recordId = fromState;
+        }
+    }
 
     @wire(getCaseDetail, { caseId: '$recordId' })
     wiredCaseDetail(result) {
@@ -44,7 +55,7 @@ export default class HelpDeskCaseDetail extends LightningElement {
     }
 
     get isOpen() {
-        return this.detail && this.detail.status !== 'Closed';
+        return this.detail && this.detail.status !== 'Fechado';
     }
 
     get isBlank() {

@@ -1,13 +1,13 @@
 .detail-container {
     background: #fff;
     border-radius: 12px;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-    padding: 16px 20px 24px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+    padding: 20px 22px 26px;
     position: relative;
 }
 
-.detail-header {
-    margin-bottom: 12px;
+.header-block {
+    margin-bottom: 8px;
 }
 
 .case-number {
@@ -21,17 +21,25 @@
     color: #1e2b3c;
 }
 
-.info-cards {
+.summary-card {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
-    margin-bottom: 12px;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    border: 1px solid #eef1f6;
 }
 
-.info-card {
-    background: #f7f9fb;
-    border-radius: 10px;
-    padding: 12px;
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.summary-item.action {
+    align-items: flex-start;
 }
 
 .label {
@@ -53,7 +61,16 @@
 }
 
 .composer {
-    margin: 8px 0 16px;
+    margin: 12px 0 16px;
+}
+
+.composer-label {
+    display: block;
+    margin-bottom: 6px;
+    color: #6b7280;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
 }
 
 .composer-actions {
@@ -63,12 +80,13 @@
 
 .feed {
     display: grid;
-    gap: 12px;
+    gap: 14px;
 }
 
 .feed-item {
-    padding: 12px;
-    border-radius: 10px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #eef1f6;
 }
 
 .feed-item .slds-card__header {
@@ -107,11 +125,19 @@
     text-align: center;
 }
 
-.details-grid {
+.details-card {
+    background: #fdfefe;
+    border-radius: 12px;
+    border: 1px solid #eef1f6;
+    padding: 14px 16px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
-    margin-top: 8px;
+}
+
+.details-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
 }
 
 .placeholder {

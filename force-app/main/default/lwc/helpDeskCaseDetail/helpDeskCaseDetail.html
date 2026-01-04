@@ -1,37 +1,37 @@
 <template>
     <article class="detail-container slds-card">
         <template if:true={detail}>
-            <header class="detail-header">
-                <p class="case-number">Case #{detail.caseNumber}</p>
+            <div class="header-block">
+                <p class="case-number">Caso #{detail.caseNumber}</p>
                 <h2 class="case-subject">{detail.subject}</h2>
-            </header>
+            </div>
 
-            <section class="info-cards">
-                <div class="info-card">
-                    <p class="label">Opened</p>
+            <section class="summary-card">
+                <div class="summary-item">
+                    <p class="label">Aberto em</p>
                     <p class="value">{detail.createdDateDisplay}</p>
                 </div>
-                <div class="info-card">
+                <div class="summary-item">
                     <p class="label">Status</p>
                     <p class="value">{detail.status}</p>
                 </div>
-                <div class="info-card action-card">
-                    <p class="label">Actions</p>
-                    <lightning-button variant="brand-outline" label="Reopen" onclick={handleReopen} disabled={isOpen}></lightning-button>
+                <div class="summary-item action">
+                    <p class="label">Ações</p>
+                    <lightning-button variant="neutral" label="Reabrir" onclick={handleReopen} disabled={isOpen}></lightning-button>
                 </div>
             </section>
 
             <lightning-tabset active-tab-value="activity">
-                <lightning-tab label="Activity" value="activity">
+                <lightning-tab label="Atividade" value="activity">
                     <section class="composer">
+                        <label class="label composer-label">Adicionar um comentário</label>
                         <lightning-textarea
                             value={newComment}
-                            label="Add a comment"
-                            placeholder="Share an update with the support team"
+                            placeholder="Compartilhe uma atualização com o time de suporte"
                             onchange={handleCommentChange}
                         ></lightning-textarea>
                         <div class="composer-actions">
-                            <lightning-button variant="brand" label="Add Comment" onclick={handleAddComment} disabled={isAddDisabled}></lightning-button>
+                            <lightning-button variant="brand" label="Adicionar comentário" onclick={handleAddComment} disabled={isAddDisabled}></lightning-button>
                         </div>
                     </section>
                     <section class="feed">
@@ -62,33 +62,37 @@
                         </template>
                     </section>
                 </lightning-tab>
-                <lightning-tab label="Details" value="details">
-                    <div class="details-grid">
-                        <div>
-                            <p class="label">Case Number</p>
-                            <p class="value">{detail.caseNumber}</p>
+                <lightning-tab label="Detalhes" value="details">
+                    <section class="details-card">
+                        <div class="details-row">
+                            <div>
+                                <p class="label">Número do Caso</p>
+                                <p class="value">{detail.caseNumber}</p>
+                            </div>
+                            <div>
+                                <p class="label">Assunto</p>
+                                <p class="value">{detail.subject}</p>
+                            </div>
+                            <div>
+                                <p class="label">Status</p>
+                                <p class="value">{detail.status}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="label">Subject</p>
-                            <p class="value">{detail.subject}</p>
+                        <div class="details-row">
+                            <div>
+                                <p class="label">Contato</p>
+                                <p class="value">{detail.contactName}</p>
+                            </div>
+                            <div>
+                                <p class="label">Aberto em</p>
+                                <p class="value">{detail.createdDateDisplay}</p>
+                            </div>
+                            <div>
+                                <p class="label">Última modificação</p>
+                                <p class="value">{detail.lastModifiedDisplay}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="label">Status</p>
-                            <p class="value">{detail.status}</p>
-                        </div>
-                        <div>
-                            <p class="label">Contact</p>
-                            <p class="value">{detail.contactName}</p>
-                        </div>
-                        <div>
-                            <p class="label">Opened</p>
-                            <p class="value">{detail.createdDateDisplay}</p>
-                        </div>
-                        <div>
-                            <p class="label">Last Modified</p>
-                            <p class="value">{detail.lastModifiedDisplay}</p>
-                        </div>
-                    </div>
+                    </section>
                 </lightning-tab>
             </lightning-tabset>
         </template>

@@ -2,6 +2,7 @@ import { LightningElement, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import createCase from '@salesforce/apex/ModuloHelpDeskCaseController.createCase';
 import getDefaultEntities from '@salesforce/apex/ModuloHelpDeskCaseController.getDefaultEntities';
+import uploadFiles from '@salesforce/apex/ModuloHelpDeskCaseController.uploadFiles';
 
 export default class HelpDeskHome extends LightningElement {
     @track showModal = false;
@@ -19,6 +20,8 @@ export default class HelpDeskHome extends LightningElement {
     @track priorityValue = 'Medium';
     @track suppliedEmail = '';
     @track suppliedPhone = '';
+    @track pendingFiles = [];
+    @track readingFiles = false;
 
     typeOptions = [
         { label: 'Erro Salesforce', value: 'Erro Salesforce' },
@@ -52,20 +55,16 @@ export default class HelpDeskHome extends LightningElement {
         return this.reasonByType[this.typeValue] || [];
     }
 
-    get primaryButtonLabel() {
-        return this.createdCaseId ? 'Salvar anexos' : 'Criar caso';
-    }
-
     get disableCreate() {
-        return this.isSaving || !this.subject || !this.subject.trim();
+        return this.isSaving || this.readingFiles || !this.subject || !this.subject.trim();
     }
 
-    get disableUpload() {
-        return !this.createdCaseId;
+    get hasFiles() {
+        return this.pendingFiles && this.pendingFiles.length > 0;
     }
 
-    get uploadHelperText() {
-        return this.createdCaseId ? 'Anexe documentos que serão vinculados ao caso.' : 'Crie o caso para habilitar o envio de anexos.';
+    get acceptedFormats() {
+        return '.pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.txt';
     }
 
     connectedCallback() {
@@ -107,6 +106,7 @@ export default class HelpDeskHome extends LightningElement {
             return;
         }
         this.isSaving = true;
+        let createdId;
         createCase({
             subject: this.subject,
             description: this.description,
@@ -119,8 +119,18 @@ export default class HelpDeskHome extends LightningElement {
             accountId: this.accountId
         })
             .then((result) => {
-                this.createdCaseId = result;
-                this.showToast('Caso criado', 'Caso criado com sucesso. Adicione anexos se necessário.', 'success');
+                createdId = result;
+                if (this.hasFiles) {
+                    return uploadFiles({ caseId: createdId, files: this.pendingFiles });
+                }
+                return null;
+            })
+            .then(() => {
+                this.createdCaseId = createdId;
+                this.showToast('Caso criado', 'Caso criado com sucesso.', 'success');
+                this.resetForm();
+                this.showModal = false;
+                this.template.querySelector('c-help-desk-case-list')?.handleRefresh?.();
             })
             .catch((error) => {
                 this.showToast('Erro ao criar caso', this.normalizeError(error), 'error');
@@ -140,6 +150,61 @@ export default class HelpDeskHome extends LightningElement {
         this.priorityValue = 'Medium';
         this.suppliedEmail = '';
         this.suppliedPhone = '';
+        this.pendingFiles = [];
+        this.readingFiles = false;
+    }
+
+    handleFilesChange(event) {
+        const files = event.target.files;
+        if (!files || files.length === 0) {
+            return;
+        }
+        this.readingFiles = true;
+        const readers = [];
+        Array.from(files).forEach((file) => {
+            readers.push(
+                new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const base64 = reader.result.split(',')[1];
+                        resolve({
+                            fileName: file.name,
+                            contentType: file.type,
+                            base64Data: base64,
+                            humanSize: this.formatSize(file.size),
+                            name: file.name
+                        });
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                })
+            );
+        });
+
+        Promise.all(readers)
+            .then((results) => {
+                this.pendingFiles = [...this.pendingFiles, ...results];
+            })
+            .catch((error) => {
+                this.showToast('Erro ao ler arquivo', error?.message || 'Erro inesperado', 'error');
+            })
+            .finally(() => {
+                this.readingFiles = false;
+            });
+    }
+
+    removeFile(event) {
+        const name = event.currentTarget.dataset.name;
+        this.pendingFiles = this.pendingFiles.filter((f) => f.name !== name);
+    }
+
+    formatSize(bytes) {
+        if (!bytes && bytes !== 0) {
+            return '';
+        }
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(1024));
+        return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
     }
 
     showToast(title, message, variant) {

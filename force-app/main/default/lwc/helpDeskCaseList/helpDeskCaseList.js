@@ -6,11 +6,11 @@ import getCases from '@salesforce/apex/ModuloHelpDeskCaseController.getCases';
 
 export default class HelpDeskCaseList extends NavigationMixin(LightningElement) {
     filterOptions = [
-        { label: 'My Open Cases', value: 'open' },
-        { label: 'My Closed Cases', value: 'closed' }
+        { label: 'Meus casos abertos', value: 'Novo' },
+        { label: 'Meus casos fechados', value: 'Fechado' }
     ];
 
-    filterType = 'open';
+    filterType = 'Novo';
     searchTerm = '';
     @track cases = [];
     isLoading = true;

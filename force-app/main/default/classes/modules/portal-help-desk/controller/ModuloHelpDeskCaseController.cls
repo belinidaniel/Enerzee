@@ -3,6 +3,8 @@
  * Localização lógica: modulo/helpDesk.
  */
 public with sharing class ModuloHelpDeskCaseController {
+    private static Id cachedEnerzeeContactId;
+
     private class UserContext {
         Id userId;
         Id contactId;
@@ -13,7 +15,7 @@ public with sharing class ModuloHelpDeskCaseController {
     public static List<Case> getCases(String filterType, String searchTerm) {
         UserContext ctx = loadUserContext();
         String ownershipFilter = buildOwnershipFilter(ctx);
-        String statusFilter = (filterType != null && filterType.toLowerCase() == 'closed') ? 'Status = \'Closed\'' : 'Status != \'Closed\'';
+        String statusFilter = (filterType != null && filterType.toLowerCase() == 'closed') ? 'IsClosed = TRUE' : 'IsClosed = FALSE';
         String query = 'SELECT Id, CaseNumber, Subject, Status, LastModifiedDate, Contact.Name, ContactId ' +
             'FROM Case WHERE ' + ownershipFilter + ' AND ' + statusFilter;
 
@@ -23,6 +25,7 @@ public with sharing class ModuloHelpDeskCaseController {
         }
 
         query += ' ORDER BY LastModifiedDate DESC';
+        System.debug('Executing query: ' + query);
         List<Case> results = Database.query(query);
         return (List<Case>) Security.stripInaccessible(AccessType.READABLE, results).getRecords();
     }
@@ -70,6 +73,12 @@ public with sharing class ModuloHelpDeskCaseController {
 
         insert sanitized;
         return sanitized[0];
+    }
+
+    public class FilePayload {
+        @AuraEnabled public String fileName;
+        @AuraEnabled public String contentType;
+        @AuraEnabled public String base64Data;
     }
 
     public class DefaultEntitiesDTO {
@@ -155,6 +164,34 @@ public with sharing class ModuloHelpDeskCaseController {
         return sanitized[0].Id;
     }
 
+    @AuraEnabled
+    public static void uploadFiles(Id caseId, List<FilePayload> files) {
+        if (caseId == null) {
+            throw new AuraHandledException('caseId é obrigatório para anexar arquivos.');
+        }
+        if (files == null || files.isEmpty()) {
+            return;
+        }
+        enforceVisibility(caseId);
+
+        List<ContentVersion> versions = new List<ContentVersion>();
+        for (FilePayload file : files) {
+            if (file == null || String.isBlank(file.fileName) || String.isBlank(file.base64Data)) {
+                continue;
+            }
+            ContentVersion cv = new ContentVersion();
+            cv.Title = file.fileName;
+            cv.PathOnClient = '/' + file.fileName;
+            cv.VersionData = EncodingUtil.base64Decode(file.base64Data);
+            cv.FirstPublishLocationId = caseId;
+            versions.add(cv);
+        }
+        if (!versions.isEmpty()) {
+            List<ContentVersion> sanitized = (List<ContentVersion>) Security.stripInaccessible(AccessType.CREATABLE, versions).getRecords();
+            insert sanitized;
+        }
+    }
+
     private static UserContext loadUserContext() {
         UserContext ctx = new UserContext();
         ctx.userId = UserInfo.getUserId();
@@ -169,13 +206,19 @@ public with sharing class ModuloHelpDeskCaseController {
     }
 
     private static String buildOwnershipFilter(UserContext ctx) {
+        Id enerzeeContactId = getEnerzeeContactId();
+        if (enerzeeContactId != null) {
+            return 'ContactId = \'' + String.escapeSingleQuotes(String.valueOf(enerzeeContactId)) + '\'';
+        }
         if (ctx.contactId != null) {
-            return 'ContactId = :ctx.contactId';
+            return 'ContactId = \'' + String.escapeSingleQuotes(String.valueOf(ctx.contactId)) + '\'';
         }
         if (String.isNotBlank(ctx.email)) {
-            return '(SuppliedEmail = :ctx.email OR CreatedById = :ctx.userId)';
+            String emailEscaped = String.escapeSingleQuotes(ctx.email);
+            String userIdEscaped = String.escapeSingleQuotes(String.valueOf(ctx.userId));
+            return '(SuppliedEmail = \'' + emailEscaped + '\' OR CreatedById = \'' + userIdEscaped + '\')';
         }
-        return 'CreatedById = :ctx.userId';
+        return 'CreatedById = \'' + String.escapeSingleQuotes(String.valueOf(ctx.userId)) + '\'';
     }
 
     private static Id resolveRecordTypeId(String sObjectName, String developerName) {
@@ -195,5 +238,24 @@ public with sharing class ModuloHelpDeskCaseController {
         if (rows.isEmpty()) {
             throw new AuraHandledException('Caso não encontrado ou sem permissão de acesso.');
         }
+    }
+
+    private static Id getEnerzeeContactId() {
+        if (cachedEnerzeeContactId != null) {
+            return cachedEnerzeeContactId;
+        }
+        try {
+            Contact c = [
+                SELECT Id
+                FROM Contact
+                WHERE Name LIKE '%Enerzee%'
+                ORDER BY LastModifiedDate DESC
+                LIMIT 1
+            ];
+            cachedEnerzeeContactId = c.Id;
+        } catch (Exception e) {
+            cachedEnerzeeContactId = null;
+        }
+        return cachedEnerzeeContactId;
     }
 }
