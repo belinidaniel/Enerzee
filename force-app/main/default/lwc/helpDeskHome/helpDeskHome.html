@@ -7,33 +7,94 @@
                 <p class="hero-subtitle">
                     Acompanhe seus casos, leia atualizações e converse com o time de suporte em um painel limpo e focado.
                 </p>
-                <lightning-button variant="neutral" label="Select an Org" class="select-org"></lightning-button>
+                <lightning-button variant="brand" label="Criar um caso" class="select-org" onclick={openModal}></lightning-button>
             </div>
-            <div class="hero-card slds-card">
-                <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-spread">
-                    <div class="slds-media slds-media_center">
-                        <div class="slds-media__figure illustration">
-                            <div class="astro-circle"></div>
-                        </div>
-                        <div class="slds-media__body">
-                            <div class="card-title">Create a Case with Agentforce</div>
-                            <p class="card-text">
-                                Obtenha respostas instantâneas, conecte-se a especialistas e envie casos rapidamente.
-                            </p>
-                            <div class="card-actions">
-                                <lightning-button variant="brand-outline" label="Ask Agentforce"></lightning-button>
-                                <lightning-button variant="neutral" label="Learn more"></lightning-button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Agentforce card desativado por enquanto -->
         </section>
 
         <section class="cases">
             <c-help-desk-case-list></c-help-desk-case-list>
         </section>
 
-        <button class="floating-btn" type="button">Ask Agentforce</button>
+        <template if:true={showModal}>
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <h2 class="slds-text-heading_medium">Criar caso - Help Desk Salesforce</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                        <lightning-combobox
+                            name="typeValue"
+                            label="Tipo"
+                            value={typeValue}
+                            placeholder="Selecione o tipo"
+                            options={typeOptions}
+                            onchange={handleInputChange}
+                        ></lightning-combobox>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                        <lightning-combobox
+                            name="reasonValue"
+                            label="Subtipo"
+                            value={reasonValue}
+                            placeholder="Selecione o subtipo"
+                            options={reasonOptions}
+                            onchange={handleInputChange}
+                        ></lightning-combobox>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                <lightning-input name="contactName" label="Contact Name" value={contactName} disabled></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                <lightning-input name="accountName" label="Account Name" value={accountName} disabled></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                <lightning-input name="suppliedEmail" type="email" label="Email para contato" value={suppliedEmail} onchange={handleInputChange}></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                <lightning-input name="suppliedPhone" type="tel" label="Whatsapp/Telefone" value={suppliedPhone} onchange={handleInputChange}></lightning-input>
+                            </div>
+                        <div class="slds-col slds-size_1-of-1">
+                            <lightning-combobox
+                                name="priorityValue"
+                                label="Prioridade"
+                                value={priorityValue}
+                                placeholder="Selecione a prioridade"
+                                options={priorityOptions}
+                                onchange={handleInputChange}
+                            ></lightning-combobox>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1">
+                            <lightning-input name="subject" label="Assunto" value={subject} onchange={handleInputChange} required></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1">
+                            <lightning-textarea name="description" label="Descrição" value={description} onchange={handleInputChange}></lightning-textarea>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-top_medium">
+                        <p class="slds-text-title_caps slds-m-bottom_x-small">Anexos</p>
+                        <lightning-file-upload
+                            label="Adicionar arquivos"
+                            name="fileUploader"
+                            record-id={createdCaseId}
+                            multiple
+                            disabled={disableUpload}
+                        ></lightning-file-upload>
+                        <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">
+                            {uploadHelperText}
+                        </p>
+                    </div>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="neutral" label="Cancelar" onclick={closeModal}></lightning-button>
+                    <lightning-button variant="brand" class="slds-m-left_small" label={primaryButtonLabel} onclick={handleCreate} disabled={disableCreate}></lightning-button>
+                </footer>
+            </div>
+        </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
     </div>
 </template>

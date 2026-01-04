@@ -72,6 +72,89 @@ public with sharing class ModuloHelpDeskCaseController {
         return sanitized[0];
     }
 
+    public class DefaultEntitiesDTO {
+        @AuraEnabled public Id contactId;
+        @AuraEnabled public String contactName;
+        @AuraEnabled public Id accountId;
+        @AuraEnabled public String accountName;
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static DefaultEntitiesDTO getDefaultEntities() {
+        DefaultEntitiesDTO dto = new DefaultEntitiesDTO();
+        try {
+            Contact c = [
+                SELECT Id, Name
+                FROM Contact
+                WHERE Name LIKE '%Enerzee%'
+                ORDER BY LastModifiedDate DESC
+                LIMIT 1
+            ];
+            dto.contactId = c.Id;
+            dto.contactName = c.Name;
+        } catch (Exception e) {
+            // Sem contato padrão
+        }
+        try {
+            Account a = [
+                SELECT Id, Name
+                FROM Account
+                WHERE Name LIKE '%Enerzee%'
+                ORDER BY LastModifiedDate DESC
+                LIMIT 1
+            ];
+            dto.accountId = a.Id;
+            dto.accountName = a.Name;
+        } catch (Exception e) {
+            // Sem conta padrão
+        }
+        return dto;
+    }
+
+    @AuraEnabled
+    public static Id createCase(String subject, String description, String typeValue, String reasonValue, String priorityValue, String suppliedEmail, String suppliedPhone, Id contactId, Id accountId) {
+        if (String.isBlank(subject)) {
+            throw new AuraHandledException('Subject é obrigatório.');
+        }
+
+        Case newCase = new Case();
+        newCase.Subject = subject;
+        newCase.Description = description;
+        if (String.isNotBlank(typeValue)) {
+            newCase.Type = typeValue;
+        }
+        if (String.isNotBlank(reasonValue)) {
+            newCase.Reason = reasonValue;
+        }
+        if (String.isNotBlank(priorityValue)) {
+            newCase.Priority = priorityValue;
+        }
+        newCase.SuppliedEmail = suppliedEmail;
+        newCase.SuppliedPhone = suppliedPhone;
+        newCase.Origin = 'Help Desk Salesforce';
+        newCase.RecordTypeId = resolveRecordTypeId('Case', 'Help_Desk_Salesforce');
+
+        if (contactId != null) {
+            newCase.ContactId = contactId;
+        } else {
+            UserContext ctx = loadUserContext();
+            if (ctx.contactId != null) {
+                newCase.ContactId = ctx.contactId;
+            }
+        }
+        if (accountId != null) {
+            newCase.AccountId = accountId;
+        }
+
+        List<Case> sanitized = (List<Case>) Security.stripInaccessible(AccessType.CREATABLE, new List<Case>{ newCase }).getRecords();
+        if (sanitized.isEmpty()) {
+            throw new AuraHandledException('Você não tem permissão para criar casos.');
+        }
+
+        insert sanitized;
+        return sanitized[0].Id;
+    }
+
     private static UserContext loadUserContext() {
         UserContext ctx = new UserContext();
         ctx.userId = UserInfo.getUserId();
@@ -93,6 +176,15 @@ public with sharing class ModuloHelpDeskCaseController {
             return '(SuppliedEmail = :ctx.email OR CreatedById = :ctx.userId)';
         }
         return 'CreatedById = :ctx.userId';
+    }
+
+    private static Id resolveRecordTypeId(String sObjectName, String developerName) {
+        Map<String, Schema.RecordTypeInfo> infos = Schema.getGlobalDescribe().get(sObjectName).getDescribe().getRecordTypeInfosByDeveloperName();
+        Schema.RecordTypeInfo info = infos.get(developerName);
+        if (info == null) {
+            throw new AuraHandledException('Record Type não encontrado: ' + developerName);
+        }
+        return info.getRecordTypeId();
     }
 
     private static void enforceVisibility(Id caseId) {

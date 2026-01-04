@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <masterLabel>Case Help Desk Portal Page</masterLabel>
+    <template>
+        <name>flexipage:recordPageTemplateDesktop</name>
+    </template>
+    <regions>
+        <name>header</name>
+    </regions>
+    <regions>
+        <name>content</name>
+        <components>
+            <componentInstanceProperties>
+                <name>recordId</name>
+                <value>{!recordId}</value>
+            </componentInstanceProperties>
+            <componentName>c:helpDeskCaseDetail</componentName>
+        </components>
+    </regions>
+    <sobjectType>Case</sobjectType>
+    <type>RecordPage</type>
+</FlexiPage>

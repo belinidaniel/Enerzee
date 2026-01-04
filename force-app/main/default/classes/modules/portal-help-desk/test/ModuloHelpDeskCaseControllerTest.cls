@@ -17,6 +17,18 @@ private class ModuloHelpDeskCaseControllerTest {
         );
     }
 
+    private static void ensureRecordType() {
+        if ([SELECT COUNT() FROM RecordType WHERE DeveloperName = 'Help_Desk_Salesforce' AND SobjectType = 'Case'] == 0) {
+            insert new RecordType(
+                SObjectType = 'Case',
+                DeveloperName = 'Help_Desk_Salesforce',
+                Name = 'Help Desk Salesforce',
+                Description = 'Record type para Help Desk Salesforce',
+                IsActive = true
+            );
+        }
+    }
+
     @IsTest
     static void testGetCasesOpenClosedAndSearch() {
         User u = createUser();
@@ -67,6 +79,46 @@ private class ModuloHelpDeskCaseControllerTest {
             System.assertEquals(1, comments.size(), 'Comentário existente deve ser retornado');
             System.assertNotEquals(null, created.Id, 'Novo comentário deve ser criado');
             System.assertEquals(2, commentsAfter.size(), 'Após inserir, deve haver dois comentários');
+        }
+    }
+
+    @IsTest
+    static void testCreateCaseWithDefaults() {
+        ensureRecordType();
+        User u = createUser();
+        insert u;
+
+        System.runAs(u) {
+            Contact c = new Contact(LastName = 'Enerzee contato');
+            insert c;
+            Account a = new Account(Name = 'Enerzee');
+            insert a;
+
+            Test.startTest();
+            ModuloHelpDeskCaseController.DefaultEntitiesDTO dto = ModuloHelpDeskCaseController.getDefaultEntities();
+            Id caseId = ModuloHelpDeskCaseController.createCase(
+                'Novo caso de teste',
+                'Descricao do caso',
+                null,
+                null,
+                'High',
+                'contato@enerzee.com',
+                '+5511999999999',
+                dto.contactId,
+                dto.accountId
+            );
+            Test.stopTest();
+
+            Case created = [SELECT Subject, Description, Type, Reason, Priority, Origin, RecordType.DeveloperName, ContactId, AccountId FROM Case WHERE Id = :caseId];
+            System.assertEquals('Novo caso de teste', created.Subject);
+            System.assertEquals('Descricao do caso', created.Description);
+            System.assertEquals(null, created.Type);
+            System.assertEquals(null, created.Reason);
+            System.assertEquals('High', created.Priority);
+            System.assertEquals('Help Desk Salesforce', created.Origin);
+            System.assertEquals('Help_Desk_Salesforce', created.RecordType.DeveloperName);
+            System.assertEquals(dto.contactId, created.ContactId);
+            System.assertEquals(dto.accountId, created.AccountId);
         }
     }
 
