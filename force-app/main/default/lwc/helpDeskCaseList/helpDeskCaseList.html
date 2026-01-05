@@ -41,7 +41,7 @@
                             <template for:each={cases} for:item="caseItem">
                                 <tr key={caseItem.id}>
                                     <td>
-                                        <a href={caseItem.url} data-id={caseItem.id} onclick={handleNavigate} class="case-link">{caseItem.caseNumber}</a>
+                                        <a href={caseItem.url} class="case-link">{caseItem.caseNumber}</a>
                                     </td>
                                     <td>{caseItem.subject}</td>
                                     <td>{caseItem.status}</td>

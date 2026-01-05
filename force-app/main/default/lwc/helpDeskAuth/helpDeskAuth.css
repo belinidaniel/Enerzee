@@ -1,0 +1,25 @@
+.auth-card {
+    padding: 18px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid #eef1f6;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.auth-title {
+    margin: 0 0 12px;
+    color: #1e2b3c;
+}
+
+.auth-actions {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.auth-footer {
+    margin-top: 10px;
+    text-align: center;
+}

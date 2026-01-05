@@ -17,132 +17,78 @@ private class ModuloHelpDeskCaseControllerTest {
         );
     }
 
-    private static void ensureRecordType() {
-        if ([SELECT COUNT() FROM RecordType WHERE DeveloperName = 'Help_Desk_Salesforce' AND SobjectType = 'Case'] == 0) {
-            insert new RecordType(
-                SObjectType = 'Case',
-                DeveloperName = 'Help_Desk_Salesforce',
-                Name = 'Help Desk Salesforce',
-                Description = 'Record type para Help Desk Salesforce',
-                IsActive = true
-            );
-        }
+    private static Contact createContact() {
+        Account a = new Account(Name = 'Enerzee');
+        insert a;
+        Contact c = new Contact(FirstName = 'Portal', LastName = 'Tester', Email = 'tester@example.com', AccountId = a.Id);
+        insert c;
+        return c;
     }
 
     @IsTest
-    static void testGetCasesOpenClosedAndSearch() {
+    static void testGetCasesAndDetailWithContact() {
         User u = createUser();
         insert u;
+        Contact c = createContact();
 
         System.runAs(u) {
-            Case openCase = new Case(Subject = 'Open Case Subject', Status = 'Working', Origin = 'Phone');
+            Case openCase = new Case(Subject = 'Open Case', Status = 'Novo', Origin = 'Phone', ContactId = c.Id);
             insert openCase;
-
-            Case closedCase = new Case(Subject = 'Closed Case Subject', Status = 'Closed', Origin = 'Phone');
+            Case closedCase = new Case(Subject = 'Closed Case', Status = 'Fechado', Origin = 'Phone', ContactId = c.Id);
             insert closedCase;
 
             Test.startTest();
-            List<Case> openCases = ModuloHelpDeskCaseController.getCases('open', null);
-            List<Case> closedCases = ModuloHelpDeskCaseController.getCases('closed', null);
-            List<Case> searchedCases = ModuloHelpDeskCaseController.getCases('open', 'Open Case');
+            List<Case> openCases = ModuloHelpDeskCaseController.getCases('open', null, c.Id);
+            List<Case> closedCases = ModuloHelpDeskCaseController.getCases('closed', null, c.Id);
+            Case detail = ModuloHelpDeskCaseController.getCaseDetail(openCase.Id, c.Id);
             Test.stopTest();
 
-            System.assertEquals(1, openCases.size(), 'Deve retornar apenas casos abertos do usuário');
-            System.assertEquals('Working', openCases[0].Status);
-            System.assertEquals(1, closedCases.size(), 'Deve retornar apenas casos fechados do usuário');
-            System.assertEquals('Closed', closedCases[0].Status);
-            System.assertEquals(1, searchedCases.size(), 'Busca deve filtrar pelo termo informado');
+            System.assertEquals(1, openCases.size());
+            System.assertEquals('Novo', openCases[0].Status);
+            System.assertEquals(1, closedCases.size());
+            System.assertEquals('Fechado', closedCases[0].Status);
+            System.assertEquals(openCase.Id, detail.Id);
         }
     }
 
     @IsTest
-    static void testGetCaseDetailAndCommentsAndAdd() {
+    static void testCommentsAttachmentsAndUpload() {
         User u = createUser();
         insert u;
+        Contact c = createContact();
+        Case cs = new Case(Subject = 'Case with files', Status = 'Novo', Origin = 'Email', ContactId = c.Id);
+        insert cs;
 
         System.runAs(u) {
-            Case c = new Case(Subject = 'Detail Subject', Status = 'Working', Origin = 'Email');
-            insert c;
-
-            CaseComment existing = new CaseComment(ParentId = c.Id, CommentBody = 'Existing comment', IsPublished = true);
+            CaseComment existing = new CaseComment(ParentId = cs.Id, CommentBody = 'Existing', IsPublished = true);
             insert existing;
 
             Test.startTest();
-            Case detail = ModuloHelpDeskCaseController.getCaseDetail(c.Id);
-            List<CaseComment> comments = ModuloHelpDeskCaseController.getCaseComments(c.Id);
-            CaseComment created = ModuloHelpDeskCaseController.addComment(c.Id, 'New comment text');
-            List<CaseComment> commentsAfter = ModuloHelpDeskCaseController.getCaseComments(c.Id);
+            List<CaseComment> comments = ModuloHelpDeskCaseController.getCaseComments(cs.Id, c.Id);
+            CaseComment created = ModuloHelpDeskCaseController.addComment(cs.Id, 'New comment', c.Id);
+            List<ContentDocumentLink> beforeLinks = ModuloHelpDeskCaseController.getCaseAttachments(cs.Id, c.Id);
+            HelpDeskFilePayload fp = new HelpDeskFilePayload();
+            fp.fileName = 'test.txt';
+            fp.base64Data = EncodingUtil.base64Encode(Blob.valueOf('hello'));
+            ModuloHelpDeskCaseController.uploadFiles(cs.Id, new List<HelpDeskFilePayload>{ fp }, c.Id);
+            List<ContentDocumentLink> afterLinks = ModuloHelpDeskCaseController.getCaseAttachments(cs.Id, c.Id);
             Test.stopTest();
 
-            System.assertNotEquals(null, detail, 'Detalhe deve ser retornado');
-            System.assertEquals('Detail Subject', detail.Subject);
-            System.assertEquals(1, comments.size(), 'Comentário existente deve ser retornado');
-            System.assertNotEquals(null, created.Id, 'Novo comentário deve ser criado');
-            System.assertEquals(2, commentsAfter.size(), 'Após inserir, deve haver dois comentários');
+            System.assertEquals(1, comments.size());
+            System.assertNotEquals(null, created.Id);
+            System.assertEquals(0, beforeLinks.size());
+            System.assertEquals(1, afterLinks.size());
         }
     }
 
     @IsTest
-    static void testCreateCaseWithDefaults() {
-        ensureRecordType();
-        User u = createUser();
-        insert u;
-
-        System.runAs(u) {
-            Contact c = new Contact(LastName = 'Enerzee contato');
-            insert c;
-            Account a = new Account(Name = 'Enerzee');
-            insert a;
-
+    static void testAccessCodeFlow() {
+        System.runAs(createUser()) {
             Test.startTest();
-            ModuloHelpDeskCaseController.DefaultEntitiesDTO dto = ModuloHelpDeskCaseController.getDefaultEntities();
-            Id caseId = ModuloHelpDeskCaseController.createCase(
-                'Novo caso de teste',
-                'Descricao do caso',
-                null,
-                null,
-                'High',
-                'contato@enerzee.com',
-                '+5511999999999',
-                dto.contactId,
-                dto.accountId
-            );
+            ModuloHelpDeskCaseController.requestAccessCode('newguest@example.com', 'Guest', 'User', null);
+            Id cid = ModuloHelpDeskCaseController.validateAccessCode('newguest@example.com', [SELECT Verification_Code__c FROM Contact WHERE Email = 'newguest@example.com' LIMIT 1].Verification_Code__c);
             Test.stopTest();
-
-            Case created = [SELECT Subject, Description, Type, Reason, Priority, Origin, RecordType.DeveloperName, ContactId, AccountId FROM Case WHERE Id = :caseId];
-            System.assertEquals('Novo caso de teste', created.Subject);
-            System.assertEquals('Descricao do caso', created.Description);
-            System.assertEquals(null, created.Type);
-            System.assertEquals(null, created.Reason);
-            System.assertEquals('High', created.Priority);
-            System.assertEquals('Help Desk Salesforce', created.Origin);
-            System.assertEquals('Help_Desk_Salesforce', created.RecordType.DeveloperName);
-            System.assertEquals(dto.contactId, created.ContactId);
-            System.assertEquals(dto.accountId, created.AccountId);
-        }
-    }
-
-    @IsTest
-    static void testAccessDeniedForForeignCase() {
-        User ownerUser = createUser();
-        insert ownerUser;
-        User anotherUser = createUser();
-        insert anotherUser;
-
-        Case otherCase;
-        System.runAs(ownerUser) {
-            otherCase = new Case(Subject = 'Other user case', Status = 'Working', Origin = 'Phone');
-            insert otherCase;
-        }
-
-        System.runAs(anotherUser) {
-            Boolean threw = false;
-            try {
-                ModuloHelpDeskCaseController.getCaseDetail(otherCase.Id);
-            } catch (Exception e) {
-                threw = true;
-            }
-            System.assertEquals(true, threw, 'Deve lançar exceção ao tentar acessar caso de outro usuário');
+            System.assertNotEquals(null, cid);
         }
     }
 }

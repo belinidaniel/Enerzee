@@ -30,6 +30,25 @@
                             placeholder="Compartilhe uma atualização com o time de suporte"
                             onchange={handleCommentChange}
                         ></lightning-textarea>
+                        <div class="file-picker">
+                            <lightning-input
+                                type="file"
+                                label="Anexar arquivos"
+                                multiple
+                                accept={acceptedFormats}
+                                onchange={handleFilesChange}
+                            ></lightning-input>
+                            <template if:true={pendingFiles}>
+                                <ul class="pending-list">
+                                    <template for:each={pendingFiles} for:item="file">
+                                        <li key={file.name} class="pending-item">
+                                            <span>{file.name} ({file.humanSize})</span>
+                                            <lightning-button-icon icon-name="utility:close" alternative-text="Remover" onclick={removePendingFile} data-name={file.name}></lightning-button-icon>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </template>
+                        </div>
                         <div class="composer-actions">
                             <lightning-button variant="brand" label="Adicionar comentário" onclick={handleAddComment} disabled={isAddDisabled}></lightning-button>
                         </div>
@@ -91,6 +110,23 @@
                                 <p class="label">Última modificação</p>
                                 <p class="value">{detail.lastModifiedDisplay}</p>
                             </div>
+                        </div>
+                        <div class="attachments-block">
+                            <p class="label">Anexos</p>
+                            <template if:true={hasAttachments}>
+                                <ul class="attachment-list">
+                                    <template for:each={attachments} for:item="att">
+                                        <li key={att.id} class="attachment-item">
+                                            <span class="attachment-title">{att.title}</span>
+                                            <span class="attachment-meta">{att.size}</span>
+                                            <a href={att.downloadUrl} target="_blank" rel="noopener noreferrer">Baixar</a>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </template>
+                            <template if:false={hasAttachments}>
+                                <p class="empty-feed">Sem anexos para este caso.</p>
+                            </template>
                         </div>
                     </section>
                 </lightning-tab>

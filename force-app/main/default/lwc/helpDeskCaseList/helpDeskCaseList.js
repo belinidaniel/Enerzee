@@ -1,26 +1,31 @@
-import { LightningElement, wire, track } from 'lwc';
-import { NavigationMixin } from 'lightning/navigation';
+import { LightningElement, api, wire, track } from 'lwc';
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getCases from '@salesforce/apex/ModuloHelpDeskCaseController.getCases';
 
-export default class HelpDeskCaseList extends NavigationMixin(LightningElement) {
+export default class HelpDeskCaseList extends LightningElement {
+    @api contactId;
     filterOptions = [
-        { label: 'Meus casos abertos', value: 'Novo' },
-        { label: 'Meus casos fechados', value: 'Fechado' }
+        { label: 'Meus casos abertos', value: 'open' },
+        { label: 'Meus casos fechados', value: 'closed' }
     ];
 
-    filterType = 'Novo';
+    filterType = 'open';
     searchTerm = '';
     @track cases = [];
     isLoading = true;
     wiredResult;
 
-    @wire(getCases, { filterType: '$filterType', searchTerm: '$searchTerm' })
+    @wire(getCases, { filterType: '$filterType', searchTerm: '$searchTerm', contactId: '$contactId' })
     wiredCases(result) {
         this.wiredResult = result;
         const { data, error } = result;
         this.isLoading = false;
+
+        if (!this.contactId) {
+            this.cases = [];
+            return;
+        }
 
         if (data) {
             this.cases = data.map((c) => ({
@@ -36,7 +41,7 @@ export default class HelpDeskCaseList extends NavigationMixin(LightningElement) 
                     minute: '2-digit'
                 }).format(new Date(c.LastModifiedDate)),
                 contactName: c.Contact ? c.Contact.Name : '',
-                url: `/lightning/r/Case/${c.Id}/view`
+                url: `/case/${c.Id}?cId=${this.contactId || ''}`
             }));
         } else if (error) {
             this.showToast('Erro ao carregar casos', this.normalizeError(error), 'error');
@@ -65,19 +70,6 @@ export default class HelpDeskCaseList extends NavigationMixin(LightningElement) 
         this.isLoading = true;
         refreshApex(this.wiredResult).finally(() => {
             this.isLoading = false;
-        });
-    }
-
-    handleNavigate(event) {
-        event.preventDefault();
-        const recordId = event.currentTarget.dataset.id;
-        this[NavigationMixin.Navigate]({
-            type: 'standard__recordPage',
-            attributes: {
-                recordId,
-                objectApiName: 'Case',
-                actionName: 'view'
-            }
         });
     }
 

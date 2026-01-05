@@ -1,15 +1,25 @@
-import { LightningElement, track } from 'lwc';
+import { api, LightningElement, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import createCase from '@salesforce/apex/ModuloHelpDeskCaseController.createCase';
 import getDefaultEntities from '@salesforce/apex/ModuloHelpDeskCaseController.getDefaultEntities';
 import uploadFiles from '@salesforce/apex/ModuloHelpDeskCaseController.uploadFiles';
 
 export default class HelpDeskHome extends LightningElement {
+    _contactId;
+    @api
+    get contactId() {
+        return this._contactId;
+    }
+    set contactId(value) {
+        this._contactId = value;
+        if (value) {
+            this.loadDefaults(value);
+        }
+    }
     @track showModal = false;
     @track isSaving = false;
     @track createdCaseId;
     @track contactName;
-    contactId;
     @track accountName;
     accountId;
 
@@ -67,17 +77,25 @@ export default class HelpDeskHome extends LightningElement {
         return '.pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.txt';
     }
 
-    connectedCallback() {
-        this.loadDefaults();
+    get canCreate() {
+        return !!this.contactId;
     }
 
-    loadDefaults() {
-        getDefaultEntities()
+    connectedCallback() {
+        this.loadDefaults(this.contactId);
+    }
+
+    loadDefaults(contactIdParam) {
+        getDefaultEntities({ contactId: contactIdParam })
             .then((result) => {
-                this.contactId = result.contactId;
-                this.contactName = result.contactName;
                 this.accountId = result.accountId;
                 this.accountName = result.accountName;
+                if (result.contactId) {
+                    this._contactId = result.contactId;
+                }
+                this.contactName = result.contactName;
+                this.suppliedEmail = result.contactEmail;
+                this.suppliedPhone = result.contactPhone;
             })
             .catch((error) => {
                 this.showToast('Aviso', this.normalizeError(error), 'warning');
@@ -102,7 +120,7 @@ export default class HelpDeskHome extends LightningElement {
     }
 
     handleCreate() {
-        if (this.disableCreate || this.createdCaseId) {
+        if (this.disableCreate || this.createdCaseId || !this.contactId) {
             return;
         }
         this.isSaving = true;
@@ -121,7 +139,7 @@ export default class HelpDeskHome extends LightningElement {
             .then((result) => {
                 createdId = result;
                 if (this.hasFiles) {
-                    return uploadFiles({ caseId: createdId, files: this.pendingFiles });
+                    return uploadFiles({ caseId: createdId, files: this.pendingFiles, contactId: this.contactId });
                 }
                 return null;
             })
@@ -156,27 +174,29 @@ export default class HelpDeskHome extends LightningElement {
 
     handleFilesChange(event) {
         const files = event.target.files;
-        if (!files || files.length === 0) {
-            return;
-        }
+        console.log('Files selected:', files);
         this.readingFiles = true;
         const readers = [];
         Array.from(files).forEach((file) => {
             readers.push(
                 new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                        const base64 = reader.result.split(',')[1];
-                        resolve({
-                            fileName: file.name,
-                            contentType: file.type,
-                            base64Data: base64,
-                            humanSize: this.formatSize(file.size),
-                            name: file.name
-                        });
-                    };
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
+                    try {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            const base64 = reader.result.split(',')[1];
+                            resolve({
+                                fileName: file.name,
+                                contentType: file.type,
+                                base64Data: base64,
+                                humanSize: this.formatSize(file.size),
+                                name: file.name
+                            });
+                        };
+                        reader.onerror = (e) => reject(e);
+                        reader.readAsDataURL(file);
+                    } catch (e) {
+                        console.log('Error reading file', e);
+                    }
                 })
             );
         });
@@ -191,20 +211,14 @@ export default class HelpDeskHome extends LightningElement {
             .finally(() => {
                 this.readingFiles = false;
             });
+
+        console.log('Files pendingFiles:', this.pendingFiles);
+
     }
 
     removeFile(event) {
         const name = event.currentTarget.dataset.name;
         this.pendingFiles = this.pendingFiles.filter((f) => f.name !== name);
-    }
-
-    formatSize(bytes) {
-        if (!bytes && bytes !== 0) {
-            return '';
-        }
-        const sizes = ['B', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(1024));
-        return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
     }
 
     showToast(title, message, variant) {

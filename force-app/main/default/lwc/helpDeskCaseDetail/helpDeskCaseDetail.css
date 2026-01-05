@@ -73,6 +73,38 @@
     letter-spacing: 0.02em;
 }
 
+.file-picker {
+    margin: 10px 0;
+}
+
+.pending-list,
+.attachment-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 8px 0 0;
+}
+
+.pending-item,
+.attachment-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border: 1px solid #eef1f6;
+    border-radius: 8px;
+    margin-bottom: 6px;
+}
+
+.attachment-title {
+    font-weight: 600;
+    color: #1e2b3c;
+}
+
+.attachment-meta {
+    color: #6b7280;
+    margin-left: 8px;
+}
+
 .composer-actions {
     margin-top: 8px;
     text-align: right;
