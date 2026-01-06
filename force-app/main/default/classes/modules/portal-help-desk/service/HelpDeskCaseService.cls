@@ -58,13 +58,16 @@ public without sharing class HelpDeskCaseService {
         return sanitized[0];
     }
 
-    public static Id createCase(String subject, String description, String typeValue, String reasonValue, String priorityValue, String suppliedEmail, String suppliedPhone, Id contactId, Id accountId) {
+    public static Id createCase(String subject, String description, String richDescription, String typeValue, String reasonValue, String priorityValue, String suppliedEmail, String suppliedPhone, Id contactId, Id accountId) {
         if (String.isBlank(subject)) {
             throw new AuraHandledException('Subject é obrigatório.');
         }
         Case newCase = new Case();
         newCase.Subject = subject;
         newCase.Description = description;
+        if (String.isNotBlank(richDescription)) {
+            newCase.Description_Rich__c = richDescription;
+        }
         if (String.isNotBlank(typeValue)) {
             newCase.Type = typeValue;
         }

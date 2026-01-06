@@ -71,7 +71,14 @@
                                 <lightning-input name="subject" label="Assunto" value={subject} onchange={handleInputChange} required></lightning-input>
                             </div>
                             <div class="slds-col slds-size_1-of-1">
-                                <lightning-textarea name="description" label="Descrição" value={description} onchange={handleInputChange}></lightning-textarea>
+                            <lightning-input-rich-text
+                                class="rich-input"
+                                name="richDescription"
+                                label="Descrição"
+                                value={richDescription}
+                                formats={richFormats}
+                                onchange={handleInputChange}
+                            ></lightning-input-rich-text>
                             </div>
                         </div>
 

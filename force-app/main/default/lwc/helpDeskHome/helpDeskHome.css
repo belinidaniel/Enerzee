@@ -1,0 +1,4 @@
+.rich-input .slds-rich-text-editor__textarea {
+    min-height: 240px;
+    resize: vertical;
+}
