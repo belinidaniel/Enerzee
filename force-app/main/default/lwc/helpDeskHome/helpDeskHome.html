@@ -1,0 +1,114 @@
+<template>
+    <template if:true={contactId}>
+        <div class="help-container">
+            <section class="hero">
+                <div class="hero-left">
+                    <div class="eyebrow">Trailhead / Help</div>
+                    <h1 class="hero-title">Suporte rápido para seus casos</h1>
+                    <p class="hero-subtitle">
+                        Acompanhe seus casos, leia atualizações e converse com o time de suporte em um painel limpo e focado.
+                    </p>
+                    <lightning-button variant="brand" label="Criar um caso" class="select-org" onclick={openModal}></lightning-button>
+                </div>
+                <!-- Agentforce card desativado -->
+            </section>
+
+            <section class="cases">
+                <c-help-desk-case-list contact-id={contactId}></c-help-desk-case-list>
+            </section>
+
+            <template if:true={showModal}>
+                <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <h2 class="slds-text-heading_medium">Criar caso - Help Desk Salesforce</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <div class="slds-grid slds-wrap slds-gutters">
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                            <lightning-combobox
+                                name="typeValue"
+                                label="Tipo"
+                                value={typeValue}
+                                placeholder="Selecione o tipo"
+                                options={typeOptions}
+                                onchange={handleInputChange}
+                            ></lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                            <lightning-combobox
+                                name="reasonValue"
+                                label="Subtipo"
+                                value={reasonValue}
+                                placeholder="Selecione o subtipo"
+                                options={reasonOptions}
+                                onchange={handleInputChange}
+                            ></lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                    <lightning-input name="contactName" label="Contact Name" value={contactName} disabled></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                    <lightning-input name="accountName" label="Account Name" value={accountName} disabled></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                    <lightning-input name="suppliedEmail" type="email" label="Email para contato" value={suppliedEmail} disabled></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                    <lightning-input name="suppliedPhone" type="tel" label="Whatsapp/Telefone" value={suppliedPhone} disabled></lightning-input>
+                                </div>
+                            <div class="slds-col slds-size_1-of-1">
+                                <lightning-combobox
+                                    name="priorityValue"
+                                    label="Prioridade"
+                                    value={priorityValue}
+                                    placeholder="Selecione a prioridade"
+                                    options={priorityOptions}
+                                    onchange={handleInputChange}
+                                ></lightning-combobox>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1">
+                                <lightning-input name="subject" label="Assunto" value={subject} onchange={handleInputChange} required></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1">
+                                <lightning-textarea name="description" label="Descrição" value={description} onchange={handleInputChange}></lightning-textarea>
+                            </div>
+                        </div>
+
+                        <div class="slds-m-top_medium">
+                            <p class="slds-text-title_caps slds-m-bottom_x-small">Anexos</p>
+                            <div class="slds-grid slds-grid_vertical-align-center">
+                                <lightning-input
+                                    type="file"
+                                    label="Adicionar arquivos"
+                                    multiple
+                                    accept={acceptedFormats}
+                                    onchange={handleFilesChange}
+                                ></lightning-input>
+                            </div>
+                            <template if:true={hasFiles}>
+                                <ul class="file-list slds-m-top_small">
+                                    <template for:each={pendingFiles} for:item="file">
+                                        <li key={file.name} class="file-item slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                            <span>{file.name} ({file.humanSize})</span>
+                                            <lightning-button-icon icon-name="utility:close" alternative-text="Remover" onclick={removeFile} data-name={file.name}></lightning-button-icon>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </template>
+                            <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">
+                                Os arquivos serão enviados junto com a criação do caso.
+                            </p>
+                        </div>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning-button variant="neutral" label="Cancelar" onclick={closeModal}></lightning-button>
+                        <lightning-button variant="brand" class="slds-m-left_small" label="Criar caso" onclick={handleCreate} disabled={disableCreate}></lightning-button>
+                    </footer>
+                </div>
+            </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+        </div>
+    </template>
+</template>

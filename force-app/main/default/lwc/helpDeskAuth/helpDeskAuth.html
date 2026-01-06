@@ -1,0 +1,67 @@
+<template>
+    <template if:false={contactId}>
+        <div class="auth-card">
+            <h3 class="auth-title">Acessar seus casos</h3>
+            <lightning-input name="email" type="email" label="E-mail" value={email} onchange={handleInputChange} required></lightning-input>
+            <template if:false={showRegister}>
+                <lightning-input class="slds-m-top_small" name="code" label="Código de acesso" value={code} onchange={handleInputChange}></lightning-input>
+            </template>
+
+            <template if:true={showRegister}>
+                <div class="slds-grid slds-wrap slds-gutters slds-m-top_small">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                        <lightning-input name="firstName" label="Nome" value={firstName} onchange={handleInputChange}></lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                        <lightning-input name="lastName" label="Sobrenome" value={lastName} onchange={handleInputChange}></lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1">
+                        <lightning-input name="mobilePhone" type="tel" label="Celular" value={mobilePhone} onchange={handleInputChange}></lightning-input>
+                    </div>
+                </div>
+                <div class="auth-actions slds-m-top_small">
+                    <lightning-button variant="brand" label="Registrar" onclick={handleRegister} disabled={isRequesting}></lightning-button>
+                </div>
+                <div class="auth-footer">
+                    <a href="javascript:void(0);" onclick={handleToggleRegister}>
+                        Voltar
+                    </a>
+                </div>
+            </template>
+
+            <template if:false={showRegister}>
+                <div class="auth-actions">
+                    <lightning-button variant="brand" label="Validar código" onclick={handleValidateCode} disabled={isValidating}></lightning-button>
+                </div>
+                <div class="auth-footer">
+                    <a href="javascript:void(0);" onclick={handleToggleRegister}>
+                        Não tem código? Registrar
+                    </a>
+                </div>
+            </template>
+
+            <template if:true={showSuccessModal}>
+                <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <lightning-button-icon icon-name="utility:close" class="slds-modal__close" onclick={handleCloseModal} alternative-text="Close"></lightning-button-icon>
+                            <h2 class="slds-text-heading_medium">Usuário cadastrado</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <p>Se o e-mail informado não existia, ele foi criado e o código foi enviado.</p>
+                            <p class="slds-m-top_small">Use o código recebido para validar o acesso.</p>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button variant="brand" label="OK" onclick={handleCloseModal}></lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+        </div>
+    </template>
+
+    <template if:true={contactId}>
+        <c-help-desk-home contact-id={contactId}></c-help-desk-home>
+    </template>
+</template>

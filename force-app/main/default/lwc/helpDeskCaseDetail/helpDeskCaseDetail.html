@@ -1,0 +1,146 @@
+<template>
+    <article class="detail-container slds-card">
+        <template if:true={detail}>
+            <div class="header-block">
+                <p class="case-number">Caso #{detail.caseNumber}</p>
+                <h2 class="case-subject">{detail.subject}</h2>
+            </div>
+
+            <section class="summary-card">
+                <div class="summary-item">
+                    <p class="label">Aberto em</p>
+                    <p class="value">{detail.createdDateDisplay}</p>
+                </div>
+                <div class="summary-item">
+                    <p class="label">Status</p>
+                    <p class="value">{detail.status}</p>
+                </div>
+                <div class="summary-item action">
+                    <p class="label">Ações</p>
+                    <lightning-button variant="neutral" label="Reabrir" onclick={handleReopen} disabled={isOpen}></lightning-button>
+                </div>
+            </section>
+
+            <lightning-tabset active-tab-value="activity">
+                <lightning-tab label="Atividade" value="activity">
+                    <section class="composer">
+                        <label class="label composer-label">Adicionar um comentário</label>
+                        <lightning-textarea
+                            value={newComment}
+                            placeholder="Compartilhe uma atualização com o time de suporte"
+                            onchange={handleCommentChange}
+                        ></lightning-textarea>
+                        <div class="file-picker">
+                            <lightning-input
+                                type="file"
+                                label="Anexar arquivos"
+                                multiple
+                                accept={acceptedFormats}
+                                onchange={handleFilesChange}
+                            ></lightning-input>
+                            <template if:true={pendingFiles}>
+                                <ul class="pending-list">
+                                    <template for:each={pendingFiles} for:item="file">
+                                        <li key={file.name} class="pending-item">
+                                            <span>{file.name} ({file.humanSize})</span>
+                                            <lightning-button-icon icon-name="utility:close" alternative-text="Remover" onclick={removePendingFile} data-name={file.name}></lightning-button-icon>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </template>
+                        </div>
+                        <div class="composer-actions">
+                            <lightning-button variant="brand" label="Adicionar comentário" onclick={handleAddComment} disabled={isAddDisabled}></lightning-button>
+                        </div>
+                    </section>
+                    <section class="feed">
+                        <template if:true={hasComments}>
+                            <template for:each={comments} for:item="comment">
+                                <div key={comment.id} class="feed-item slds-card">
+                                    <div class="avatar">
+                                        <lightning-avatar
+                                            fallback-icon-name="standard:user"
+                                            alternative-text={comment.author}
+                                            src={comment.avatar}
+                                            size="medium"
+                                            initials={comment.initials}
+                                        ></lightning-avatar>
+                                    </div>
+                                    <div class="feed-body">
+                                        <div class="feed-meta">
+                                            <span class="author">{comment.author}</span>
+                                            <span class="date">{comment.date}</span>
+                                        </div>
+                                        <div class="feed-text">{comment.body}</div>
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
+                        <template if:false={hasComments}>
+                            <p class="empty-feed">Sem comentários ainda. Adicione o primeiro para atualizar o time.</p>
+                        </template>
+                    </section>
+                </lightning-tab>
+                <lightning-tab label="Detalhes" value="details">
+                    <section class="details-card">
+                        <div class="details-row">
+                            <div>
+                                <p class="label">Número do Caso</p>
+                                <p class="value">{detail.caseNumber}</p>
+                            </div>
+                            <div>
+                                <p class="label">Assunto</p>
+                                <p class="value">{detail.subject}</p>
+                            </div>
+                            <div>
+                                <p class="label">Status</p>
+                                <p class="value">{detail.status}</p>
+                            </div>
+                        </div>
+                        <div class="details-row">
+                            <div>
+                                <p class="label">Contato</p>
+                                <p class="value">{detail.contactName}</p>
+                            </div>
+                            <div>
+                                <p class="label">Aberto em</p>
+                                <p class="value">{detail.createdDateDisplay}</p>
+                            </div>
+                            <div>
+                                <p class="label">Última modificação</p>
+                                <p class="value">{detail.lastModifiedDisplay}</p>
+                            </div>
+                        </div>
+                        <div class="attachments-block">
+                            <p class="label">Anexos</p>
+                            <template if:true={hasAttachments}>
+                                <ul class="attachment-list">
+                                    <template for:each={attachments} for:item="att">
+                                        <li key={att.id} class="attachment-item">
+                                            <span class="attachment-title">{att.title}</span>
+                                            <span class="attachment-meta">{att.size}</span>
+                                            <a href={att.downloadUrl} target="_blank" rel="noopener noreferrer">Baixar</a>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </template>
+                            <template if:false={hasAttachments}>
+                                <p class="empty-feed">Sem anexos para este caso.</p>
+                            </template>
+                        </div>
+                    </section>
+                </lightning-tab>
+            </lightning-tabset>
+        </template>
+        <template if:false={detail}>
+            <div class="placeholder">
+                <lightning-spinner alternative-text="Loading case" size="medium"></lightning-spinner>
+            </div>
+        </template>
+        <template if:true={isSaving}>
+            <div class="backdrop">
+                <lightning-spinner alternative-text="Saving" size="small"></lightning-spinner>
+            </div>
+        </template>
+    </article>
+</template>

@@ -1,0 +1,190 @@
+.detail-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+    padding: 20px 22px 26px;
+    position: relative;
+}
+
+.header-block {
+    margin-bottom: 8px;
+}
+
+.case-number {
+    color: #0b5cab;
+    font-weight: 700;
+    margin: 0;
+}
+
+.case-subject {
+    margin: 4px 0 0;
+    color: #1e2b3c;
+}
+
+.summary-card {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    border: 1px solid #eef1f6;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.summary-item.action {
+    align-items: flex-start;
+}
+
+.label {
+    color: #6b7280;
+    margin: 0 0 6px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.value {
+    margin: 0;
+    color: #1e2b3c;
+    font-weight: 600;
+}
+
+.action-card lightning-button {
+    margin-top: 2px;
+}
+
+.composer {
+    margin: 12px 0 16px;
+}
+
+.composer-label {
+    display: block;
+    margin-bottom: 6px;
+    color: #6b7280;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.file-picker {
+    margin: 10px 0;
+}
+
+.pending-list,
+.attachment-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 8px 0 0;
+}
+
+.pending-item,
+.attachment-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border: 1px solid #eef1f6;
+    border-radius: 8px;
+    margin-bottom: 6px;
+}
+
+.attachment-title {
+    font-weight: 600;
+    color: #1e2b3c;
+}
+
+.attachment-meta {
+    color: #6b7280;
+    margin-left: 8px;
+}
+
+.composer-actions {
+    margin-top: 8px;
+    text-align: right;
+}
+
+.feed {
+    display: grid;
+    gap: 14px;
+}
+
+.feed-item {
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #eef1f6;
+}
+
+.feed-item .slds-card__header {
+    display: none;
+}
+
+.feed-item .slds-card__body {
+    padding: 0;
+}
+
+.feed-item {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.feed-meta {
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.feed-meta .author {
+    color: #1e2b3c;
+    font-weight: 700;
+    margin-right: 8px;
+}
+
+.feed-text {
+    white-space: pre-wrap;
+    color: #1f2937;
+}
+
+.empty-feed {
+    color: #6b7280;
+    text-align: center;
+}
+
+.details-card {
+    background: #fdfefe;
+    border-radius: 12px;
+    border: 1px solid #eef1f6;
+    padding: 14px 16px;
+    display: grid;
+    gap: 12px;
+}
+
+.details-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+}
+
+.placeholder {
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
