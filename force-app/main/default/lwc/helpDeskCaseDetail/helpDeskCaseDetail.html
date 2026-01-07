@@ -111,6 +111,15 @@
                                 <p class="value">{detail.lastModifiedDisplay}</p>
                             </div>
                         </div>
+                        <div class="details-rich">
+                            <p class="label">Detalhes</p>
+                            <template if:true={detail.richDescription}>
+                                <lightning-formatted-rich-text value={detail.richDescription}></lightning-formatted-rich-text>
+                            </template>
+                            <template if:false={detail.richDescription}>
+                                <p class="empty-feed">Sem detalhes adicionais.</p>
+                            </template>
+                        </div>
                         <div class="attachments-block">
                             <p class="label">Anexos</p>
                             <template if:true={hasAttachments}>

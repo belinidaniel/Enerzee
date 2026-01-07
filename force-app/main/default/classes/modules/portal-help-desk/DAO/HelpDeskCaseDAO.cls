@@ -20,7 +20,7 @@ public without sharing class HelpDeskCaseDAO {
 
     public static Case queryCaseDetail(Id caseId) {
         return [
-            SELECT Id, CaseNumber, Subject, Status, CreatedDate, LastModifiedDate, Contact.Name, ContactId
+            SELECT Id, CaseNumber, Subject, Status, CreatedDate, LastModifiedDate, Contact.Name, ContactId, Description, Description_Rich__c
             FROM Case
             WHERE Id = :caseId
         ];
