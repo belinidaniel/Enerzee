@@ -3,6 +3,8 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import createCase from '@salesforce/apex/ModuloHelpDeskCaseController.createCase';
 import getDefaultEntities from '@salesforce/apex/ModuloHelpDeskCaseController.getDefaultEntities';
 import uploadFiles from '@salesforce/apex/ModuloHelpDeskCaseController.uploadFiles';
+import cloudLogo from '@salesforce/resourceUrl/salesforceCloudV3';
+import agentAstro from '@salesforce/resourceUrl/agentforceAgentAstro';
 
 export default class HelpDeskHome extends LightningElement {
     _contactId;
@@ -33,6 +35,8 @@ export default class HelpDeskHome extends LightningElement {
     @track suppliedPhone = '';
     @track pendingFiles = [];
     @track readingFiles = false;
+    cloudLogo = cloudLogo;
+    agentAstro = agentAstro;
 
     typeOptions = [
         { label: 'Erro Salesforce', value: 'Erro Salesforce' },

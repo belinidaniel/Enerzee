@@ -3,14 +3,34 @@
         <div class="help-container">
             <section class="hero">
                 <div class="hero-left">
-                    <div class="eyebrow">Trailhead / Help</div>
+                    <div class="brand">
+                        <div class="brand-text">
+                            <img class="brand-cloud" src={cloudLogo} alt="Salesforce" />
+                            <p class="brand-name">Enerzeee</p>
+                            <p class="brand-plan">Standard Success Plan</p>
+                        </div>
+                    </div>
                     <h1 class="hero-title">Suporte rápido para seus casos</h1>
                     <p class="hero-subtitle">
                         Acompanhe seus casos, leia atualizações e converse com o time de suporte em um painel limpo e focado.
                     </p>
-                    <lightning-button variant="brand" label="Criar um caso" class="select-org" onclick={openModal}></lightning-button>
                 </div>
-                <!-- Agentforce card desativado -->
+                <div class="hero-right">
+                    <article class="agent-card">
+                        <div class="agent-illustration">
+                            <img class="agent-image" src={agentAstro} alt="Agentforce" />
+                        </div>
+                        <div class="agent-content">
+                            <h2 class="agent-title">Create a Case with Agentforce</h2>
+                            <p class="agent-text">
+                                Abrir chamado para o Salesforce Enerzeee. Entrar em contato com o suporte.
+                            </p>
+                            <div class="agent-actions">
+                                <lightning-button variant="brand" label="Abrir chamado" onclick={openModal}></lightning-button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
             </section>
 
             <section class="cases">

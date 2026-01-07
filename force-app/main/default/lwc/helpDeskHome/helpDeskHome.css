@@ -1,4 +1,129 @@
+.help-container {
+    background: #f4f8fc;
+    padding: 24px 28px 32px;
+    min-height: 100%;
+}
+
+.hero {
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) minmax(280px, 520px);
+    gap: 24px;
+    align-items: center;
+    background: linear-gradient(180deg, #eaf4ff 0%, #f4f8fc 100%);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #dce6f2;
+}
+
+.hero-left {
+    display: grid;
+    gap: 10px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-text {
+    display: grid;
+    gap: 4px;
+}
+
+.brand-cloud {
+    width: 36px;
+    height: auto;
+}
+
+.brand-name {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    color: #0f2a4c;
+}
+
+.brand-plan {
+    margin: 2px 0 0;
+    color: #5a6b81;
+    font-size: 13px;
+}
+
+.hero-title {
+    margin: 6px 0 0;
+    color: #0f2a4c;
+    font-size: 20px;
+}
+
+.hero-subtitle {
+    margin: 0;
+    color: #4f6076;
+    font-size: 14px;
+    max-width: 520px;
+}
+
+.agent-card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #dfe7f2;
+    box-shadow: 0 12px 24px rgba(14, 32, 68, 0.08);
+    padding: 18px;
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 16px;
+}
+
+.agent-illustration {
+    width: 72px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.agent-image {
+    width: 72px;
+    height: auto;
+}
+
+.agent-title {
+    margin: 0 0 6px;
+    font-size: 16px;
+    color: #0f2a4c;
+}
+
+.agent-text {
+    margin: 0 0 12px;
+    color: #4f6076;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.agent-actions lightning-button {
+    margin-right: 8px;
+}
+
 .rich-input .slds-rich-text-editor__textarea {
     min-height: 240px;
     resize: vertical;
+}
+
+@media (max-width: 900px) {
+    .hero {
+        grid-template-columns: 1fr;
+    }
+
+    .agent-card {
+        grid-template-columns: 1fr;
+        text-align: left;
+    }
+
+    .agent-illustration {
+        width: 64px;
+        height: 64px;
+    }
+
+    .agent-image {
+        width: 64px;
+    }
 }
