@@ -4,6 +4,8 @@ import sendProposal from '@salesforce/apex/ProposalConsoleController.sendProposa
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { subscribe, unsubscribe, onError } from 'lightning/empApi';
+import { updateRecord } from 'lightning/uiRecordApi';
+import DESCRICAO_BATERIA_FIELD from '@salesforce/schema/Opportunity.DescricaoBateria__c';
 
 export default class OpportunityProposalConsole extends LightningElement {
     @api recordId;
@@ -34,6 +36,10 @@ export default class OpportunityProposalConsole extends LightningElement {
     channelName = '/data/OpportunityAttachmentLink__ChangeEvent';
     refreshTimer = null;
     refreshAttempts = 0;
+    batteryDescription = '';
+    lastSavedBatteryDescription = '';
+    tipoKitPromocional;
+    isSavingBatteryDescription = false;
 
     connectedCallback() {
         this.subscribeToAttachmentChanges();
@@ -53,6 +59,9 @@ export default class OpportunityProposalConsole extends LightningElement {
         if (data) {
             this.error = undefined;
             this.proposalData = data;
+            this.batteryDescription = data.batteryDescription || '';
+            this.lastSavedBatteryDescription = this.batteryDescription;
+            this.tipoKitPromocional = data.tipoKitPromocional;
             this.proposalAttachments = this.formatAttachments(data.proposalFiles || [], 'proposal');
             this.otherAttachments = this.formatAttachments(data.otherFiles || [], 'other');
             this.proposalVisibleCount = this.proposalAttachments.length > 0 ? Math.min(4, this.proposalAttachments.length) : 0;
@@ -63,6 +72,9 @@ export default class OpportunityProposalConsole extends LightningElement {
             this.proposalData = undefined;
             this.proposalAttachments = [];
             this.otherAttachments = [];
+            this.batteryDescription = '';
+            this.lastSavedBatteryDescription = '';
+            this.tipoKitPromocional = undefined;
         }
 
         this.isLoading = false;
@@ -96,6 +108,10 @@ export default class OpportunityProposalConsole extends LightningElement {
 
     get hasTemplates() {
         return (this.proposalData?.templates || []).length > 0;
+    }
+
+    get showBatteryDescription() {
+        return String(this.tipoKitPromocional) === '6';
     }
 
     get emptyProposalMessage() {
@@ -151,6 +167,41 @@ export default class OpportunityProposalConsole extends LightningElement {
         return this.isSendMode ? this.sendButtonLabel : this.viewButtonLabel;
     }
 
+    handleBatteryDescriptionInput(event) {
+        this.batteryDescription = event.target.value;
+    }
+
+    handleBatteryDescriptionBlur() {
+        if (!this.showBatteryDescription || this.isSavingBatteryDescription) {
+            return;
+        }
+        
+        this.isSavingBatteryDescription = true;
+        const fields = {
+            Id: this.recordId,
+            [DESCRICAO_BATERIA_FIELD.fieldApiName]:   this.batteryDescription 
+        };
+
+        updateRecord({ fields })
+            .then(() => {
+                this.lastSavedBatteryDescription =   this.batteryDescription ;
+            })
+            .catch((error) => {
+                const message = this.reduceError(error);
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Erro ao salvar descrição',
+                        message,
+                        variant: 'error'
+                    })
+                );
+                this.batteryDescription = this.lastSavedBatteryDescription || '';
+            })
+            .finally(() => {
+                this.isSavingBatteryDescription = false;
+            });
+    }
+
     handleOpenPreview() {
         this.isSendMode = false;
         this.openModal();
@@ -177,6 +228,7 @@ export default class OpportunityProposalConsole extends LightningElement {
     handleTemplateChange(event) {
         const selectedValue = event.detail.value;
         this.selectedTemplateId = selectedValue || null;
+        this.showBatteryDescription = false;
         this.updatePreviewUrl();
     }
 

@@ -61,6 +61,7 @@ public with sharing class PDFControllerExtension {
                             PrazoContratoParceiro__c,
                             GrupoTarifario__c,
                             isPromotional__c,
+                            DescricaoBateria__c,
                             StageName,
                             Numeroproposta__c,
                             Parceiro__r.Name,
@@ -79,9 +80,14 @@ public with sharing class PDFControllerExtension {
         this.selectedCoverId = this.opportunity.Parceiro__r.CapaProposta__c;
         this.salvar = ApexPages.currentPage().getParameters().get('salvar');
         pdfUrls = new List<String>();
+        String descriptionSource = null;
         if(this.opportunity.OpportunityLineItems.size() > 0) {
-            this.description = this.opportunity.OpportunityLineItems[0]?.Product2.Description != null ? this.opportunity.OpportunityLineItems[0]?.Product2.Description : 'Descrição não disponível';
+            descriptionSource = this.opportunity.OpportunityLineItems[0]?.Product2?.Description;
         }
+        if (String.isBlank(descriptionSource)) {
+            descriptionSource = this.opportunity.DescricaoBateria__c;
+        }
+        this.description = String.isBlank(descriptionSource) ? 'Descrição não disponível' : descriptionSource;
         //Controlar recursividade na chamada de getContent()
         //salvar = ApexPages.currentPage().getParameters().get('salvar');
 

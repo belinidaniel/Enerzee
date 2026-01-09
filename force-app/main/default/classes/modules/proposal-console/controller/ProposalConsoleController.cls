@@ -24,6 +24,8 @@ public with sharing class ProposalConsoleController {
         @AuraEnabled public List<ProposalFileDTO> proposalFiles;
         @AuraEnabled public List<ProposalFileDTO> otherFiles;
         @AuraEnabled public Boolean hasViability;
+        @AuraEnabled public String batteryDescription;
+        @AuraEnabled public String tipoKitPromocional;
     }
 
     public class ProposalActionResult {
@@ -52,7 +54,9 @@ public with sharing class ProposalConsoleController {
                    RecordTypeId,
                    Parceiro__r.CapaProposta__c,
                    Parceiro__r.CapaPromocional__c,
-                   ViabilityStudyFinished__c
+                   ViabilityStudyFinished__c,
+                   TipoKitPromocional__c,
+                   DescricaoBateria__c
             FROM Opportunity
             WHERE Id = :opportunityId
             LIMIT 1
@@ -120,6 +124,8 @@ public with sharing class ProposalConsoleController {
         result.proposalFiles = proposalFiles;
         result.otherFiles = otherFiles;
         result.hasViability = hasViabilityRecords(opportunityId);
+        result.batteryDescription = opp.DescricaoBateria__c;
+        result.tipoKitPromocional = opp.TipoKitPromocional__c;
         if (opp.Parceiro__r != null) {
             result.defaultTemplateId = opp.Parceiro__r.CapaProposta__c;
         }
