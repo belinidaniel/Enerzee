@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 11-25-2025
+  @last modified on  : 01-08-2026
   @last modified by  : Daniel Belini
 -->
 <apex:page standardController="Opportunity" applyBodyTag="false" extensions="PDFControllerExtension,OpportunityDataController" action="{!salvarPDF}" standardStylesheets="false" showHeader="false"  sidebar="false" renderAs="PDF" cache="false">     
@@ -124,7 +124,7 @@
             KWh
         </div>
         <!-- TARIFA DE ENERGIA -->
-        <div style="position:relative; bottom:450px; left:210px; right:120px;">
+        <div style="position:relative; bottom:452px; left:210px; right:120px;">
             R$ 
             <apex:outputtext rendered="{!IF(Opportunity.TarifaComTributosB__c == null, true, false)}">
                 -
@@ -147,7 +147,7 @@
             </apex:outputtext>
         </div>
         <!-- GRUPO TARIFÁRICO -->
-        <div style="position:relative; bottom:432px; left:210px; right:120px;">
+        <div style="position:relative; bottom:429px; left:210px; right:120px;">
             {!IF(ISBLANK(Opportunity.GrupoTarifario__c), '-', Opportunity.GrupoTarifario__c)} 
         </div>
         <!-- CUSTO MÉDIO MENSAL DE ENERGIA -->
@@ -326,19 +326,19 @@
 
         <!-- DADOS DO CLIENTE -->
         <!-- NOME -->
-        <div  style="position:relative; bottom:623px; left: 120px; right:120px;">
+        <div  style="position:relative; bottom:618px; left: 120px; right:120px;">
             {!IF(ISBLANK(Opportunity.Account.Name), '-', Opportunity.Account.Name)}
         </div>
         <!-- CPF/CNPJ -->
-        <div style="position:relative; bottom:603px; left: 147px; right:120px; color:black;">
+        <div style="position:relative; bottom: 601px; left: 147px; right:120px; color:black;">
             {!IF(!ISBLANK(Opportunity.Account.CPF__c), Opportunity.Account.CPF__c, Opportunity.Account.CNPJ__c)}
         </div>
         <!-- ENDEREÇO -->
-        <div style="position:relative; bottom:588px; left: 152px; right:100px; !important;">
+        <div style="position:relative; bottom:582px; left: 152px; right:100px; !important;">
             {!IF(ISBLANK(Opportunity.EnderecoOportunidade__c), '-', Opportunity.EnderecoOportunidade__c)}
         </div>
         <!-- CONSUMO ANUAL CONSIDERADO -->
-        <div style="position:relative; bottom:570px; left:294px; right:120px;">
+        <div style="position:relative; bottom:566px; left:294px; right:120px;">
             <apex:outputtext rendered="{!IF(Opportunity.ConsumoAnual__c == null, true, false)}">
                 -
             </apex:outputtext>
@@ -355,7 +355,7 @@
             KWh
         </div>
         <!-- TARIFA DE ENERGIA -->
-        <div style="position:relative; bottom:552px; left:201px; right:120px;">
+        <div style="position:relative; bottom:544px; left:201px; right:120px;">
             R$ 
             <apex:outputtext rendered="{!IF(Opportunity.TarifaComTributosB__c == null, true, false)}">
                 -
@@ -378,11 +378,11 @@
             </apex:outputtext>
         </div>
         <!-- GRUPO TARIFÁRICO -->  
-        <div style="position:relative; bottom:535px; left:208px; right:120px;">
+        <div style="position:relative; bottom:530px; left:208px; right:120px;">
             {!IF(ISBLANK(Opportunity.GrupoTarifario__c), '-', Opportunity.GrupoTarifario__c)} 
         </div>
         <!-- CUSTO MÉDIO MENSAL DE ENERGIA -->
-        <div style="position:relative; bottom:517px; left:310px; right:120px;">
+        <div style="position:relative; bottom:513px; left:310px; right:120px;">
             R$     
             <apex:outputtext rendered="{!IF(Opportunity.CustoMedioEnergia__c == null, true, false)}">
                 -
@@ -400,20 +400,20 @@
         </div>
 
         <!-- MODULOS -->
-        <div style="position:relative; bottom:426px; left:203px; right:120px; font-weight: bold;">
+        <div style="position:relative; bottom:414px; left:203px; right:120px; font-weight: bold;">
             <apex:outputText value="{0, number, #0}">
                 <apex:param value="{!IF(ISBLANK(Opportunity.NumeroModulos__c), 0, Opportunity.NumeroModulos__c)}" />
             </apex:outputText> 
             Modulos
         </div>
         <!-- Detalhes dos módulos -->
-        <div style="position:relative; bottom:425px; left:170px; right:120px; font-size:11px;">
+        <div style="position:relative; bottom:414px; left:170px; right:120px; font-size:11px;">
             Fabricante: {!IF(ISBLANK(Opportunity.FabricanteModulos__c), '-', Opportunity.FabricanteModulos__c)}
         </div>
-        <div style="position:relative; bottom:421px; left:170px; right:120px; font-size:11px;">
+        <div style="position:relative; bottom:410px; left:170px; right:120px; font-size:11px;">
             Modelo: {!IF(ISBLANK(Opportunity.Modelo__c), '-', LEFT(Opportunity.Modelo__c, 25))}
         </div>
-        <div style="position:relative; bottom:417px; left:170px; right:120px; font-size:11px;">
+        <div style="position:relative; bottom:406px; left:170px; right:120px; font-size:11px;">
             Potência Nominal:   
             <apex:outputtext rendered="{!IF(Opportunity.PotenciaNominalWp__c == null, true, false)}">
                 -
@@ -430,7 +430,7 @@
             </apex:outputtext>
             W
         </div>
-        <div style="position:relative; bottom:413px; left:170px; right:120px; font-size:11px;">
+        <div style="position:relative; bottom:402px; left:170px; right:120px; font-size:11px;">
             Peso:    
             <apex:outputtext rendered="{!IF(Opportunity.Pesokg__c == null, true, false)}">
                 -
