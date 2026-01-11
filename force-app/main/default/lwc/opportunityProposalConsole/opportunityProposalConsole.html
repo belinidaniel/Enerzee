@@ -136,7 +136,7 @@
                             placeholder="Selecione"
                             options={templateOptions}
                             onchange={handleTemplateChange}
-                            disabled={isSavingBatteryDescription}>
+                            disabled={disablePaymentField}>
                         </lightning-combobox>
                         <template if:true={showBatteryDescription}>
                             <lightning-textarea class="battery-description"

@@ -40,6 +40,7 @@ export default class OpportunityProposalConsole extends LightningElement {
     lastSavedBatteryDescription = '';
     tipoKitPromocional;
     isSavingBatteryDescription = false;
+    disablePaymentField = false;
 
     connectedCallback() {
         this.subscribeToAttachmentChanges();
@@ -175,7 +176,7 @@ export default class OpportunityProposalConsole extends LightningElement {
         if (!this.showBatteryDescription || this.isSavingBatteryDescription) {
             return;
         }
-        
+        this.disablePaymentField = true;
         this.isSavingBatteryDescription = true;
         const fields = {
             Id: this.recordId,
@@ -199,6 +200,8 @@ export default class OpportunityProposalConsole extends LightningElement {
             })
             .finally(() => {
                 this.isSavingBatteryDescription = false;
+                this.disablePaymentField = false;
+
             });
     }
 
@@ -228,7 +231,7 @@ export default class OpportunityProposalConsole extends LightningElement {
     handleTemplateChange(event) {
         const selectedValue = event.detail.value;
         this.selectedTemplateId = selectedValue || null;
-        this.showBatteryDescription = false;
+        this.isSavingBatteryDescription = true;
         this.updatePreviewUrl();
     }
 
