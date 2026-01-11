@@ -1,3 +1,10 @@
+<!--
+  @description       : 
+  @author            : Daniel Belini
+  @group             : 
+  @last modified on  : 01-09-2026
+  @last modified by  : Daniel Belini
+-->
 <template>
     <div class="proposal-shell">
         <template if:true={error}>
@@ -124,11 +131,22 @@
                 <div class="slds-modal__content slds-p-around_medium">
                     <template if:true={hasTemplates}>
                         <lightning-combobox name="template"
-                                            label="Modelo de proposta"
-                                            value={comboboxValue}
-                                            placeholder="Selecione"
-                                            options={templateOptions}
-                                            onchange={handleTemplateChange}></lightning-combobox>
+                            label="Modelo de proposta"
+                            value={comboboxValue}
+                            placeholder="Selecione"
+                            options={templateOptions}
+                            onchange={handleTemplateChange}
+                            disabled={disablePaymentField}>
+                        </lightning-combobox>
+                        <template if:true={showBatteryDescription}>
+                            <lightning-textarea class="battery-description"
+                                label="Descrição da bateria"
+                                value={batteryDescription}
+                                onchange={handleBatteryDescriptionInput}
+                                onblur={handleBatteryDescriptionBlur}
+                                disabled={isSavingBatteryDescription}>
+                            </lightning-textarea>
+                        </template>
                         <template if:true={previewUrl}>
                             <div class="preview-container slds-m-top_medium">
                                 <template if:true={isPreviewLoading}>
