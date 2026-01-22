@@ -200,7 +200,7 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
         this.clickSignTemplate.IsActivate__c = true;
         this.updateTemplate();
         setTimeout(() => {
-            this.navigateToRecordPage();
+            this.navigateToRecentListView();
         }, 1000); // Add a delay of 1 second before navigating
     }
 
@@ -267,10 +267,22 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
         this.bannerMessage = message;
         this.bannerVariant = variant;
         this.showBanner = true;
+        this.clearBannerTimeout();
+        this.bannerTimeoutId = setTimeout(() => {
+            this.showBanner = false;
+        }, 5000);
     }
 
     handleBannerClose() {
         this.showBanner = false;
+        this.clearBannerTimeout();
+    }
+
+    clearBannerTimeout() {
+        if (this.bannerTimeoutId) {
+            clearTimeout(this.bannerTimeoutId);
+            this.bannerTimeoutId = null;
+        }
     }
 
     get bannerClass() {
@@ -310,5 +322,57 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
                 actionName: 'list'
             }
         });
+    }
+
+    navigateToRecentListView() {
+        const pageRef = {
+            type: 'standard__objectPage',
+            attributes: {
+                objectApiName: 'ClickSignTemplate__c',
+                actionName: 'list'
+            },
+            state: {
+                filterName: '__Recent'
+            }
+        };
+
+        // Fallback for Visualforce context where NavigationMixin may not redirect
+        this[NavigationMixin.GenerateUrl](pageRef)
+            .then((url) => {
+                const targetUrl = url || '/lightning/o/ClickSignTemplate__c/list?filterName=__Recent';
+                const event = new CustomEvent('redirect', {
+                    detail: { url: targetUrl },
+                    bubbles: true,
+                    composed: true,
+                    cancelable: true
+                });
+                const handled = this.dispatchEvent(event) === false;
+                if (handled) {
+                    return;
+                }
+                // Try postMessage to parent (Visualforce / Lightning Out)
+                try {
+                    if (window.top && window.top !== window) {
+                        window.top.postMessage({ type: 'clicksign:navigate', url: targetUrl }, '*');
+                        return;
+                    }
+                } catch (e) {
+                    // fall through to direct navigation
+                }
+                // Visualforce may be embedded in an iframe, so use top-level navigation
+                if (window.top) {
+                    window.top.location.assign(targetUrl);
+                } else {
+                    window.location.assign(targetUrl);
+                }
+            })
+            .catch(() => {
+                const fallbackUrl = '/lightning/o/ClickSignTemplate__c/list?filterName=__Recent';
+                if (window.top) {
+                    window.top.location.assign(fallbackUrl);
+                } else {
+                    window.location.assign(fallbackUrl);
+                }
+            });
     }
 }

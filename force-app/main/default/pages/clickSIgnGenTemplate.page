@@ -55,7 +55,13 @@
       };
       var _navigateToURL = function (event) {
         var url = event.getParam('url');
-        window.open(url, '_blank');
+        if (typeof sforce != 'undefined') {
+          sforce.one.navigateToURL(url);
+        } else if (window.top) {
+          window.top.location.href = url;
+        } else {
+          window.location.href = url;
+        }
       };
       $Lightning.use('c:clickSignGemTemplate', function () {
         $Lightning.createComponent('c:clickSignTemplateApp', {
@@ -68,6 +74,36 @@
           } else {
             // TODO: handle error?
           }
+          var lightningDiv = document.getElementById('lightning');
+          if (lightningDiv) {
+            lightningDiv.addEventListener('redirect', function (e) {
+              var url = e.detail && e.detail.url;
+              if (!url) {
+                return;
+              }
+              e.preventDefault();
+              if (typeof sforce != 'undefined') {
+                sforce.one.navigateToURL(url);
+              } else if (window.top) {
+                window.top.location.href = url;
+              } else {
+                window.location.href = url;
+              }
+            });
+          }
+          window.addEventListener('message', function (e) {
+            var data = e.data || {};
+            if (data.type !== 'clicksign:navigate' || !data.url) {
+              return;
+            }
+            if (typeof sforce != 'undefined') {
+              sforce.one.navigateToURL(data.url);
+            } else if (window.top) {
+              window.top.location.href = data.url;
+            } else {
+              window.location.href = data.url;
+            }
+          });
           $A.eventService.addHandler({'event': 'force:navigateToSObject', 'handler': navigate});
           $A.eventService.addHandler({'event': 'force:navigateToURL', 'handler': _navigateToURL});
         });

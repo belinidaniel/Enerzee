@@ -69,19 +69,22 @@ public with sharing class ClickSignUtils {
             lg.RequestURI__c  = req.requestURI;
         }
 
-        //System.enqueueJob(new ClickSignQueueable(lg));
-        //insert lg;
-        
-        createLogAsync(JSON.serialize(lg));
+        // Avoid DML before subsequent callouts in async contexts
+        if (System.isQueueable() || System.isBatch()) {
+            createLogAsync(JSON.serialize(lg));
+        } else if (System.isFuture()) {
+            insert lg;
+        } else {
+            System.enqueueJob(new ClickSignQueueable(lg));
+        }
         
         return lg;
     }
     
+    // @Future kept for backward compatibility if needed in other flows
     @Future
     public static void createLogAsync(String logJSON){
-        
         ClickSignLog__c log = (ClickSignLog__c) JSON.deserialize(logJSON, ClickSignLog__c.class);
-        
         insert log;
     }
 
@@ -236,6 +239,9 @@ public with sharing class ClickSignUtils {
     @AuraEnabled
     public static String generateMapFields(Id recordId, String objectMappings, String contractNumber, String jsonContractInformation) {
         Map<String, String> mapFields = new Map<String, String>();
+        if (String.isBlank(objectMappings)) {
+            return JSON.serialize(mapFields);
+        }
         List<Object> mappings = (List<Object>) JSON.deserializeUntyped(objectMappings);
         String query = 'SELECT ';
         List<String> fields = new List<String>();
@@ -319,6 +325,21 @@ public with sharing class ClickSignUtils {
 
         System.debug('Final mapFields output: ' + JSON.serialize(mapFields));
 
+        return JSON.serialize(mapFields);
+    }
+
+    @AuraEnabled
+    public static String generateTagMapFromMappings(String objectMappings) {
+        Map<String, String> mapFields = new Map<String, String>();
+        if (String.isBlank(objectMappings)) {
+            return JSON.serialize(mapFields);
+        }
+        List<Object> mappings = (List<Object>) JSON.deserializeUntyped(objectMappings);
+        for (Object mappingObj : mappings) {
+            Map<String, Object> mapping = (Map<String, Object>) mappingObj;
+            String tagLabel = String.valueOf(mapping.get('tagLabel')).replace('{{', '').replace('}}', '');
+            mapFields.put(tagLabel, '{{' + tagLabel + '}}');
+        }
         return JSON.serialize(mapFields);
     }
 

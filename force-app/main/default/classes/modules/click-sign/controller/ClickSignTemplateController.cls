@@ -216,6 +216,9 @@ public with sharing class ClickSignTemplateController {
         //change limit ObjectMappings2__c
         ClickSignTemplate__c template = [SELECT Id, Name, Description__c,ExternalId__c, SourceObject__c,ObjectMappings__c,ObjectMappings2__c, Stage__c,fileName__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
         List<ContentDocument> documents = getDocuments(templateId);
+        if (documents == null || documents.isEmpty()) {
+            throw new AuraHandledException('Nenhum documento encontrado para gerar o preview.');
+        }
 
         ClickSignService.Document document = new ClickSignService.Document(); 
         document.id = templateId;
@@ -229,8 +232,23 @@ public with sharing class ClickSignTemplateController {
         System.debug('template.ObjectMappings__c ' + template.ObjectMappings__c);
         document.mergeFields = ClickSignUtils.generateMapFields(recordId,template.ObjectMappings__c,null,null);
         System.debug('document.mergeField ' + document.mergeFields);
-        ClickSignService.createTemplate(document);  
+        ClickSignService.createTemplatePreview(document);  
         return 'success'; 
+    }
+
+    @AuraEnabled
+    public static String generateTemplateFromMappings(String templateId){
+        ClickSignTemplate__c template = [SELECT Id, ObjectMappings__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
+        if (String.isBlank(template.ObjectMappings__c)) {
+            return 'no-mappings';
+        }
+        List<ContentDocument> documents = getDocuments(templateId);
+        if (documents == null || documents.isEmpty()) {
+            return 'no-document';
+        }
+
+        System.enqueueJob(new ClickSignTemplateQueueable(templateId));
+        return 'queued';
     }
 
     @AuraEnabled

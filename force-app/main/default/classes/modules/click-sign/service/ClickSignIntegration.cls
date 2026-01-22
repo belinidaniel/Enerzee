@@ -267,7 +267,9 @@ public with sharing class ClickSignIntegration {
         String integrationName = ClickSignUtils.METHOD.CREATE_TEMPLATE.name();
 
         String response = send(integrationName, JSON.serialize(template));
-        
+        if (String.isBlank(response)) {
+            throw new ClickSignIntegrationException('Empty response from ClickSign createTemplate.');
+        }
         ClickSignResponseDTO.Document documentDTO = (ClickSignResponseDTO.Document) JSON.deserialize(response, ClickSignResponseDTO.Document.class);
 
         return documentDTO; 
@@ -292,7 +294,7 @@ public with sharing class ClickSignIntegration {
             'envelope_id' => envelopeId
         };
         
-        String response = send(integrationName, params);
+        String response = send(integrationName, null, params, false);
 
         ClickSignResponseDTO.Envelope envelopeDTO = (ClickSignResponseDTO.Envelope) JSON.deserialize(response, ClickSignResponseDTO.Envelope.class);
 
@@ -308,24 +310,28 @@ public with sharing class ClickSignIntegration {
             'envelope_id' => envelopeId
         };
         
-        String response = send(integrationName, params);
+        String response = send(integrationName, null, params, false);
 
         return response;
     }
 
     public static String send(String integrationName){
-        return send(integrationName, null, null);
+        return send(integrationName, null, null, true);
     }
 
     public static String send(String integrationName, Map<String, String> params){
-        return send(integrationName, null, params);
+        return send(integrationName, null, params, true);
     }
 
     public static String send(String integrationName, String body){
-        return send(integrationName, body, null);
+        return send(integrationName, body, null, true);
     }
 
     public static String send(String integrationName, String body, Map<String, String> params){
+        return send(integrationName, body, params, true);
+    }
+
+    private static String send(String integrationName, String body, Map<String, String> params, Boolean logOnError){
 
         String responseBody;
 
@@ -359,21 +365,29 @@ public with sharing class ClickSignIntegration {
             System.debug('response: ' + response);
 
             if(response.getStatusCode() != 200 && response.getStatusCode() != 201){
-                ClickSignUtils.createLog(CLASS_NAME, integrationName, response);
+                if (logOnError) {
+                    ClickSignUtils.createLog(CLASS_NAME, integrationName, response);
+                }
                 throw new ClickSignIntegrationException(response.getBody());
             }
 
             responseBody = response.getBody();
 
         }catch(CalloutException calloutException){
-            ClickSignUtils.createLog(CLASS_NAME, integrationName, calloutException);
-            //throw new ClickSignIntegrationException(calloutException.getMessage());
+            if (logOnError) {
+                ClickSignUtils.createLog(CLASS_NAME, integrationName, calloutException);
+            }
+            throw new ClickSignIntegrationException(calloutException.getMessage());
         }catch(ClickSignIntegrationException customException){
-            ClickSignUtils.createLog(CLASS_NAME, integrationName, customException);
-            //throw new ClickSignIntegrationException(customException.getMessage());
+            if (logOnError) {
+                ClickSignUtils.createLog(CLASS_NAME, integrationName, customException);
+            }
+            throw customException;
         }catch(Exception ex){
-            ClickSignUtils.createLog(CLASS_NAME, integrationName, ex);
-            //throw new ClickSignIntegrationException(ex.getMessage());
+            if (logOnError) {
+                ClickSignUtils.createLog(CLASS_NAME, integrationName, ex);
+            }
+            throw new ClickSignIntegrationException(ex.getMessage());
         }
 
         return responseBody;

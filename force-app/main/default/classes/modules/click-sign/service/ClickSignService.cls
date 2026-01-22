@@ -142,6 +142,11 @@ public with sharing class ClickSignService {
 
     //Create Template
     public static void createTemplate(Document document){
+        createTemplate(document, false);
+    }
+
+    //Create Template with optional force creation
+    public static void createTemplate(Document document, Boolean forceCreate){
 
         ClickSignResponseDTO.Envelope envelopeDTO;
         ClickSignEnvelope__c envelopeSObj;
@@ -152,9 +157,17 @@ public with sharing class ClickSignService {
         if(String.isNotBlank(clickSignTemplate.ExternalId__c)){
 
             envelopeId = clickSignTemplate.ClickSignEnvelope__r.ExternalId__c;
-            envelopeDTO = ClickSignIntegration.getEnvelope(envelopeId);
+            try {
+                envelopeDTO = ClickSignIntegration.getEnvelope(envelopeId);
+            } catch (Exception ex) {
+                envelopeDTO = null;
+            }
 
-            ClickSignIntegration.deleteDocument(envelopeId, clickSignTemplate.ExternalId__c);
+            try {
+                ClickSignIntegration.deleteDocument(envelopeId, clickSignTemplate.ExternalId__c);
+            } catch (Exception ex) {
+                // Ignore delete failures; template may not exist or was removed externally.
+            }
 
             if(envelopeDTO == null || envelopeDTO?.data?.attributes?.status != 'draft'){
                 envelopeDTO = ClickSignIntegration.createEnvelope('Template Envelope');
@@ -164,12 +177,26 @@ public with sharing class ClickSignService {
             envelopeDTO = ClickSignIntegration.createEnvelope('Template Envelope');
         }
 
-        ClickSignResponseDTO.Document templateDTO = ClickSignIntegration.createTemplate(document.filename, document.file);
-        ClickSignResponseDTO.Document documentDTO = ClickSignIntegration.createTemplateDocument(envelopeDTO.data.id, document.filename, templateDTO.data.id, document.mergeFields);
+        String templateId;
+        if (!forceCreate && String.isNotBlank(document.externalId)) {
+            templateId = document.externalId;
+        } else {
+            ClickSignResponseDTO.Document templateDTO = ClickSignIntegration.createTemplate(document.filename, document.file);
+            templateId = templateDTO.data.id;
+        }
+
+        ClickSignResponseDTO.Document documentDTO = ClickSignIntegration.createTemplateDocument(
+            envelopeDTO.data.id,
+            document.filename,
+            templateId,
+            document.mergeFields
+        );
 
         Blob fileMerged = ClickSignIntegration.getDocument(documentDTO.data.links.files.original);
 
-        clickSignTemplate.ExternalId__c = templateDTO.data.id;
+        if (String.isBlank(clickSignTemplate.ExternalId__c)) {
+            clickSignTemplate.ExternalId__c = templateId;
+        }
 
         if(String.isBlank(clickSignTemplate.ClickSignEnvelope__c)){
             envelopeSObj = createEnvelope(envelopeDTO);
@@ -190,6 +217,44 @@ public with sharing class ClickSignService {
         }
 
         uploadDocument(document.filename, EncodingUtil.base64Encode(fileMerged), '', clickSignTemplate.Id, documentDTO.data.id);
+    }
+
+    public static void createTemplateFromMappings(Id templateId){
+        ClickSignTemplate__c template = [
+            SELECT Id, Name, Description__c, ExternalId__c, SourceObject__c, ObjectMappings__c, ObjectMappings2__c,
+                Stage__c, fileName__c, ClickSignEnvelope__c, ClickSignEnvelope__r.ExternalId__c
+            FROM ClickSignTemplate__c
+            WHERE Id = :templateId
+            LIMIT 1
+        ];
+
+        if (String.isBlank(template.ObjectMappings__c)) {
+            return;
+        }
+
+        List<ContentDocument> documents = ClickSignUtils.getDocuments(templateId);
+        if (documents == null || documents.isEmpty()) {
+            return;
+        }
+
+        ClickSignService.Document document = new ClickSignService.Document(); 
+        document.id = templateId;
+        if (!template.fileName__c.endsWith('.docx')) {
+            document.filename = template.fileName__c + '.docx';
+        } else {
+            document.filename = template.fileName__c;
+        }
+        document.externalId  = template.ExternalId__c;
+        document.file = EncodingUtil.base64Encode(documents[0].LatestPublishedVersion.versionData);
+        document.mergeFields = ClickSignUtils.generateTagMapFromMappings(template.ObjectMappings__c);
+
+        // Force create a new template when uploading documents
+        ClickSignService.createTemplate(document, true);  
+    }
+
+    // Preview should reuse existing template id when available
+    public static void createTemplatePreview(Document document){
+        ClickSignService.createTemplate(document, false);
     }
 
     /*Criação e enriquecimento de SObjects*/
