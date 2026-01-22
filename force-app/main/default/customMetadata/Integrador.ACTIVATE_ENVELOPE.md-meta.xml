@@ -16,7 +16,7 @@
     </values>
     <values>
         <field>LastToken__c</field>
-        <value xsi:type="xsd:string">428dd635-2665-473f-a176-56fa8d2cb6c2</value>
+        <value xsi:type="xsd:string">3096f096-f73a-4281-9ca9-de532affe781</value>
     </values>
     <values>
         <field>Method__c</field>
@@ -24,7 +24,7 @@
     </values>
     <values>
         <field>URL__c</field>
-        <value xsi:type="xsd:string">https://app.clicksign.com/api/v3/envelopes/envelope_id</value>
+        <value xsi:type="xsd:string">https://sandbox.clicksign.com/api/v3/envelopes/envelope_id</value>
     </values>
     <values>
         <field>Validade_token__c</field>
