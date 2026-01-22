@@ -136,6 +136,21 @@ export default class ClickSignUploadDocuments extends LightningElement {
             variant,
         });
         this.dispatchEvent(event);
+        this.notifyParent(
+            variant === 'success' ? this.label.ClickSign_Success : this.label.ClickSign_Error,
+            message,
+            variant
+        );
+    }
+
+    notifyParent(title, message, variant) {
+        this.dispatchEvent(
+            new CustomEvent('notify', {
+                detail: { title, message, variant },
+                bubbles: true,
+                composed: true
+            })
+        );
     }
 
     handleGeneratedFileNameChange(event) {

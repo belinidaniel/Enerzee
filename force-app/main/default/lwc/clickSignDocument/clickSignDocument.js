@@ -5,6 +5,7 @@ import uploadDocument from '@salesforce/apex/ClickSignController.uploadDocument'
 import getActiveTemplates from '@salesforce/apex/ClickSignController.getActiveTemplates'; // Apex method to get active templates
 import documentUploadIcon from '@salesforce/resourceUrl/DocumentUploadIcon';
 import saveTemplateId from '@salesforce/apex/ClickSignController.saveTemplateId'; // Apex method to save template ID
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import ClickSign_SelectedDocuments from '@salesforce/label/c.ClickSign_SelectedDocuments';
 import ClickSign_SelectTemplate from '@salesforce/label/c.ClickSign_SelectTemplate';
 import ClickSign_ChangeTemplate from '@salesforce/label/c.ClickSign_ChangeTemplate';
@@ -54,6 +55,7 @@ export default class ClickSignDocument extends LightningElement {
             })
             .catch((error) => {
                 console.error('Error loading documents:', error);
+                this.showToast('Error', 'Falha ao carregar documentos.', 'error');
             });
     }
 
@@ -74,6 +76,7 @@ export default class ClickSignDocument extends LightningElement {
             })
             .catch((error) => {
                 console.error('Error loading templates:', error);
+                this.showToast('Error', 'Falha ao carregar templates.', 'error');
             });
     }
 
@@ -100,9 +103,11 @@ export default class ClickSignDocument extends LightningElement {
         saveTemplateId({ clickSignId: this.clickSign.Id, templateId: null })
             .then(() => {
                 console.log('Template removed');
+                this.showToast('Success', 'Template removido com sucesso.', 'success');
             })
             .catch((error) => {
                 console.error('Error removing template:', error);
+                this.showToast('Error', 'Falha ao remover template.', 'error');
             });
     }
 
@@ -116,9 +121,11 @@ export default class ClickSignDocument extends LightningElement {
         saveTemplateId({ clickSignId: this.clickSign.Id, templateId: this.selectedTemplate })
             .then(() => {
                 console.log('Template ID saved');
+                this.showToast('Success', 'Template atualizado com sucesso.', 'success');
             })
             .catch((error) => {
                 console.error('Error saving template ID:', error);
+                this.showToast('Error', 'Falha ao salvar template.', 'error');
             });
     }
 
@@ -134,10 +141,12 @@ export default class ClickSignDocument extends LightningElement {
                 .then(() => {
                     this.loadDocuments(); // Reload documents after successful upload
                     this.showModal = false; // Hide the modal
+                    this.showToast('Success', 'Arquivo enviado com sucesso.', 'success');
                 })
                 .catch((error) => {
                     console.error('Error uploading files:', error);
                     this.showModal = false; // Hide modal even if an error occurs
+                    this.showToast('Error', 'Falha ao enviar arquivo.', 'error');
                 });
         } else {
             console.warn('No files selected');
@@ -184,10 +193,12 @@ export default class ClickSignDocument extends LightningElement {
             .then(() => {
                 this.documents = this.documents.filter((doc) => doc.id !== documentId); // Remove from list
                 this.showModal = false; // Hide the modal
+                this.showToast('Success', 'Documento removido com sucesso.', 'success');
             })
             .catch((error) => {
                 console.error('Error deleting document:', error);
                 this.showModal = false; // Hide the modal
+                this.showToast('Error', 'Falha ao remover documento.', 'error');
             });
     }
 
@@ -249,5 +260,10 @@ export default class ClickSignDocument extends LightningElement {
 
     get hasSelectedTemplate() {
         return this.selectedTemplate !== null;
+    }
+
+    showToast(title, message, variant) {
+        const event = new ShowToastEvent({ title, message, variant });
+        this.dispatchEvent(event);
     }
 }

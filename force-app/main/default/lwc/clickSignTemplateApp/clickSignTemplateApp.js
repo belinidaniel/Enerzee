@@ -30,6 +30,10 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
     @track fileName = '';
     @track showModal = false;
     @track isCreateButtonTemplate = false;
+    @track showBanner = false;
+    @track bannerTitle = '';
+    @track bannerMessage = '';
+    @track bannerVariant = 'info';
 
     objectName;
     phases = [
@@ -106,6 +110,8 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
         })
         .catch(error => {
             console.error('Error fetching ClickSignTemplate:', error);
+            this.showBannerMessage('Error', 'Falha ao carregar o template do ClickSign.', 'error');
+            this.showToast('Error', 'Falha ao carregar o template do ClickSign.', 'error');
         });
     }
 
@@ -122,6 +128,8 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
         })
         .catch(error => {
             console.error('Error updating ClickSignTemplate:', error);
+            this.showBannerMessage('Error', 'Falha ao atualizar o template do ClickSign.', 'error');
+            this.showToast('Error', 'Falha ao atualizar o template do ClickSign.', 'error');
             this.isLoading = false;
         });
     }
@@ -147,6 +155,8 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
             }
         } catch (error) {
             console.error('Error creating ClickSignTemplate:', error);
+            this.showBannerMessage('Error', 'Falha ao criar o template do ClickSign.', 'error');
+            this.showToast('Error', 'Falha ao criar o template do ClickSign.', 'error');
         }
 
         this.closeModal();
@@ -208,6 +218,22 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
         this.updateTemplate();
     }
 
+    handlePathStepChange(event) {
+        const nextStep = event.detail?.value;
+        if (!nextStep || nextStep === this.currentStep) {
+            return;
+        }
+        const isValidStep = this.phases.some((phase) => phase.value === nextStep);
+        if (!isValidStep) {
+            return;
+        }
+        this.currentStep = nextStep;
+        this.updatePhaseFlags();
+        this.clickSignTemplate.Stage__c = this.currentStep;
+        this.refreshComponent();
+        this.updateTemplate();
+    }
+
     updatePhaseFlags() {
         this.isSourcePhase = this.currentStep === 'Select Source';
         this.isAddFields = this.currentStep === 'Add Fields';
@@ -229,6 +255,33 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
             variant: variant,
         });
         this.dispatchEvent(event);
+    }
+
+    handleNotify(event) {
+        const detail = event.detail || {};
+        this.showBannerMessage(detail.title || 'Aviso', detail.message || '', detail.variant || 'info');
+    }
+
+    showBannerMessage(title, message, variant) {
+        this.bannerTitle = title;
+        this.bannerMessage = message;
+        this.bannerVariant = variant;
+        this.showBanner = true;
+    }
+
+    handleBannerClose() {
+        this.showBanner = false;
+    }
+
+    get bannerClass() {
+        const themeClass = this.bannerVariant === 'success'
+            ? 'slds-theme_success'
+            : this.bannerVariant === 'warning'
+                ? 'slds-theme_warning'
+                : this.bannerVariant === 'error'
+                    ? 'slds-theme_error'
+                    : 'slds-theme_info';
+        return `slds-notify slds-notify_alert slds-theme_alert-texture ${themeClass}`;
     }
 
     navigateToRecordPage() {

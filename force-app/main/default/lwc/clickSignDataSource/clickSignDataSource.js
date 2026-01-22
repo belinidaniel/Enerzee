@@ -76,6 +76,7 @@ export default class ClickSignDataSource extends LightningElement {
             })
             .catch((error) => {
                 console.error('Error fetching object list:', error);
+                this.notifyParent('Error', 'Falha ao carregar a lista de objetos.', 'error');
                 this.isLoading = false;
             });
     }
@@ -175,7 +176,18 @@ export default class ClickSignDataSource extends LightningElement {
             })
             .catch((error) => {
                 console.error('Error fetching records:', error);
+                this.notifyParent('Error', 'Falha ao buscar registros.', 'error');
                 this.records = []; // Clear records in case of an error
             });
+    }
+
+    notifyParent(title, message, variant) {
+        this.dispatchEvent(
+            new CustomEvent('notify', {
+                detail: { title, message, variant },
+                bubbles: true,
+                composed: true
+            })
+        );
     }
 }

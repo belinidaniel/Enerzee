@@ -18,7 +18,9 @@
                         options-relationship={relationshipFields}
                         options-related={lookupFields}
                         selected-value={field.fieldName}
+                        selected-related-field={field.relatedField}
                         object-name={objectName}
+                        related-object-name={field.relationshipField}
                         label-field-name={field.labelFieldName}
                         label-related-field={field.labelRelatedField}
                         data-index={field.id}
@@ -72,7 +74,9 @@
                         options-related={lookupFields}
                         selected-value={field.fieldName}
                         object-name={objectName}
-                        label-related-field={field.emailField}
+                        email-field={field.emailField}
+                        label-email-field={field.labelEmailField}
+                        role-value-field={field.roleValueField}
                         label-role-field={field.labelRoleField}
                         data-index={field.id}
                         template-id={templateId}

@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 01-22-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class ClickSignIntegration {
 
     private static final String CLASS_NAME = 'ClickSignIntegration';

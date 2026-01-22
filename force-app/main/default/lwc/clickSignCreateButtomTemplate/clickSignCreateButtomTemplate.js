@@ -84,6 +84,7 @@ export default class ClickSignCreateButtomTemplate extends LightningElement {
             })
             .catch((error) => {
                 console.error('Error loading template 2222:', error);
+                this.showToast('Error', 'Falha ao carregar o template.', 'error');
             })
             .finally(() => {
                 this.isLoading = false;
@@ -106,6 +107,7 @@ export default class ClickSignCreateButtomTemplate extends LightningElement {
             })
             .catch((error) => {
                 console.error('Error loading template 2222:', error);
+                this.showToast('Error', 'Falha ao carregar o template.', 'error');
             })
             .finally(() => {
                 this.isLoading = false;
@@ -142,6 +144,7 @@ export default class ClickSignCreateButtomTemplate extends LightningElement {
             })
             .catch((error) => {
                 console.error('Error creating button:', error);
+                this.showToast('Error', 'Falha ao criar o botão.', 'error');
             });
     }
 
@@ -152,5 +155,16 @@ export default class ClickSignCreateButtomTemplate extends LightningElement {
             variant: variant,
         });
         this.dispatchEvent(event);
+        this.notifyParent(title, message, variant);
+    }
+
+    notifyParent(title, message, variant) {
+        this.dispatchEvent(
+            new CustomEvent('notify', {
+                detail: { title, message, variant },
+                bubbles: true,
+                composed: true
+            })
+        );
     }
 }

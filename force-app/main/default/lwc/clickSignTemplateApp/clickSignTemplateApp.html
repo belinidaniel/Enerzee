@@ -43,14 +43,30 @@
                     </template>
                 </div>
             </div>
-            <div style="padding: 100px 250px 0px 250px;">
+            <div style="padding: 100px 250px 0px 250px;" onnotify={handleNotify}>
+                <template if:true={showBanner}>
+                    <div class={bannerClass} role="alert" style="margin-bottom: 12px;">
+                        <span class="slds-assistive-text">{bannerVariant}</span>
+                        <h2>{bannerTitle}</h2>
+                        <div class="slds-notify__content">{bannerMessage}</div>
+                        <div class="slds-notify__close">
+                            <lightning-button-icon
+                                icon-name="utility:close"
+                                variant="bare-inverse"
+                                alternative-text="Fechar"
+                                onclick={handleBannerClose}>
+                            </lightning-button-icon>
+                        </div>
+                    </div>
+                </template>
                 <!-- Path Component -->
                 <div class="progress-container">
                     <c-path
                         indicator-type="path"
                         step-list="Select Source, Add Fields, Upload Documents,Add Recipient, Preview Documents, Create button Template"
                         current-step={currentStep}
-                        current-step-percentage="0">
+                        current-step-percentage="0"
+                        onstepchange={handlePathStepChange}>
                     </c-path>
                 </div>
 

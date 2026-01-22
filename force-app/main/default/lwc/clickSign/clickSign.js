@@ -6,6 +6,7 @@ import cancelAndCreateClickSign from '@salesforce/apex/ClickSignController.cance
 import process from '@salesforce/apex/ClickSignController.process';
 import updateClickSignCurrentStep from '@salesforce/apex/ClickSignController.updateClickSignCurrentStep';
 import { RefreshEvent } from 'lightning/refresh';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import ClickSign_HeaderTitle from '@salesforce/label/c.ClickSign_HeaderTitle';
 import ClickSign_CancelButton from '@salesforce/label/c.ClickSign_CancelButton';
 import ClickSign_BackButton from '@salesforce/label/c.ClickSign_BackButton';
@@ -121,6 +122,7 @@ export default class ClickSign extends NavigationMixin(LightningElement) {
             })
             .catch(error => {
                 console.error('Error initializing ClickSign:', error);
+                this.showToast('Error', 'Erro ao iniciar o ClickSign.', 'error');
                 this.isLoading = false;
             });
     }
@@ -149,6 +151,7 @@ export default class ClickSign extends NavigationMixin(LightningElement) {
             })
             .catch(error => {
                 console.error('Error creating new ClickSign:', error);
+                this.showToast('Error', 'Erro ao criar novo ClickSign.', 'error');
                 this.isLoading = false;
             });
     }
@@ -164,6 +167,7 @@ export default class ClickSign extends NavigationMixin(LightningElement) {
             })
             .catch(error => {
                 console.error('Error creating new ClickSign:', error);
+                this.showToast('Error', 'Erro ao criar novo ClickSign.', 'error');
                 this.isLoading = false;
             });
     }
@@ -202,6 +206,7 @@ export default class ClickSign extends NavigationMixin(LightningElement) {
             })
             .catch(error => {
                 console.error('Error updating ClickSign status:', error);
+                this.showToast('Error', 'Erro ao atualizar etapa do ClickSign.', 'error');
                 this.isLoading = false;
             });
     }
@@ -243,8 +248,27 @@ export default class ClickSign extends NavigationMixin(LightningElement) {
             })
             .catch(error => {
                 console.error('Error processing ClickSign:', error);
+                this.showToast('Error', 'Erro ao processar o ClickSign.', 'error');
                 this.isLoading = false;
             });
+    }
+
+    handlePathStepChange(event) {
+        const nextStep = event.detail?.value;
+        if (!nextStep || nextStep === this.currentStep) {
+            return;
+        }
+        const isValidStep = this.phases.some((phase) => phase.value === nextStep);
+        if (!isValidStep) {
+            return;
+        }
+        this.currentStep = nextStep;
+        this.updateClickSignCurrentStep();
+    }
+
+    showToast(title, message, variant) {
+        const event = new ShowToastEvent({ title, message, variant });
+        this.dispatchEvent(event);
     }
 
 

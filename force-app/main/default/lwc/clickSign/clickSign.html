@@ -38,7 +38,8 @@
                         indicator-type="path"
                         step-list="Documents,Recipients,Prepare & Send"
                         current-step={currentStep}
-                        current-step-percentage="0">
+                        current-step-percentage="0"
+                        onstepchange={handlePathStepChange}>
                     </c-path>
                 </div>
 
