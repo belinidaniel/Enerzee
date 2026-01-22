@@ -3,10 +3,6 @@ public with sharing class ClickSignIntegration {
     private static final String CLASS_NAME = 'ClickSignIntegration';
     
     public static ClickSignResponseDTO.Envelope createEnvelope(String filename){
-        return createEnvelope(filename, null);
-    }
-
-    public static ClickSignResponseDTO.Envelope createEnvelope(String filename, Id relatedId){
 
         ClickSignRequestDTO.Envelope envelope = new ClickSignRequestDTO.Envelope();
         ClickSignRequestDTO.EnvelopeData envelopeData = new ClickSignRequestDTO.EnvelopeData();
@@ -25,7 +21,7 @@ public with sharing class ClickSignIntegration {
 
         String integrationName = ClickSignUtils.METHOD.CREATE_ENVELOPE.name();
         
-        String response = send(integrationName, JSON.serialize(envelope), null, relatedId);
+        String response = send(integrationName, JSON.serialize(envelope));
 
         ClickSignResponseDTO.Envelope envelopeDTO = (ClickSignResponseDTO.Envelope) JSON.deserialize(response, ClickSignResponseDTO.Envelope.class);
 
@@ -33,10 +29,6 @@ public with sharing class ClickSignIntegration {
     }
 
     public static ClickSignResponseDTO.Document createDocument(String envelopeId, String filename, String file){
-        return createDocument(envelopeId, filename, file, null);
-    }
-
-    public static ClickSignResponseDTO.Document createDocument(String envelopeId, String filename, String file, Id relatedId){
 
         ClickSignRequestDTO.Document document = new ClickSignRequestDTO.Document();
         ClickSignRequestDTO.DocumentData documentData = new ClickSignRequestDTO.DocumentData();
@@ -54,7 +46,7 @@ public with sharing class ClickSignIntegration {
             'envelope_id' => envelopeId
         };
         
-        String response = send(integrationName, JSON.serialize(document), params, relatedId);
+        String response = send(integrationName, JSON.serialize(document), params);
         
         ClickSignResponseDTO.Document documentDTO = (ClickSignResponseDTO.Document) JSON.deserialize(response, ClickSignResponseDTO.Document.class);
 
@@ -62,10 +54,6 @@ public with sharing class ClickSignIntegration {
     }
 
     public static ClickSignResponseDTO.Document createTemplateDocument(String envelopeId, String filename, String key, String data){
-        return createTemplateDocument(envelopeId, filename, key, data, null);
-    }
-
-    public static ClickSignResponseDTO.Document createTemplateDocument(String envelopeId, String filename, String key, String data, Id relatedId){
 
         ClickSignRequestDTO.TemplateDocument document = new ClickSignRequestDTO.TemplateDocument();
         ClickSignRequestDTO.TemplateDocumentData documentData = new ClickSignRequestDTO.TemplateDocumentData();
@@ -85,7 +73,7 @@ public with sharing class ClickSignIntegration {
             'envelope_id' => envelopeId
         };
         
-        String response = send(integrationName, JSON.serialize(document), params, relatedId);
+        String response = send(integrationName, JSON.serialize(document), params);
         
         ClickSignResponseDTO.Document documentDTO = (ClickSignResponseDTO.Document) JSON.deserialize(response, ClickSignResponseDTO.Document.class);
 
@@ -93,10 +81,6 @@ public with sharing class ClickSignIntegration {
     }
 
     public static ClickSignResponseDTO.Signer createSigner(String envelopeId, String name, String email){
-        return createSigner(envelopeId, name, email, null);
-    }
-
-    public static ClickSignResponseDTO.Signer createSigner(String envelopeId, String name, String email, Id relatedId){
 
         ClickSignRequestDTO.Signer signer = new ClickSignRequestDTO.Signer();
         ClickSignRequestDTO.SignerData signerData = new ClickSignRequestDTO.SignerData();
@@ -121,7 +105,7 @@ public with sharing class ClickSignIntegration {
             'envelope_id' => envelopeId
         };
         
-        String response = send(integrationName, JSON.serialize(signer), params, relatedId);
+        String response = send(integrationName, JSON.serialize(signer), params);
         
         ClickSignResponseDTO.Signer signerDTO = (ClickSignResponseDTO.Signer) JSON.deserialize(response, ClickSignResponseDTO.Signer.class);
 
@@ -129,10 +113,6 @@ public with sharing class ClickSignIntegration {
     }
 
     public static String createRequirementQualification(String envelopeId, String signerId, String documentId, String role){
-        return createRequirementQualification(envelopeId, signerId, documentId, role, null);
-    }
-
-    public static String createRequirementQualification(String envelopeId, String signerId, String documentId, String role, Id relatedId){
 
         ClickSignRequestDTO.RequirementQualification qualification = new ClickSignRequestDTO.RequirementQualification();
         ClickSignRequestDTO.RequirementQualificationData qualificationData = new ClickSignRequestDTO.RequirementQualificationData();
@@ -168,7 +148,7 @@ public with sharing class ClickSignIntegration {
             'envelope_id' => envelopeId
         };
         
-        String response = send(integrationName, JSON.serialize(qualification), params, relatedId);
+        String response = send(integrationName, JSON.serialize(qualification), params);
 
         System.debug('requirements qualification: ' + response);
         
@@ -176,10 +156,6 @@ public with sharing class ClickSignIntegration {
     }
 
     public static String createRequirementAutentication(String envelopeId, String signerId, String documentId, String email){
-        return createRequirementAutentication(envelopeId, signerId, documentId, email, null);
-    }
-
-    public static String createRequirementAutentication(String envelopeId, String signerId, String documentId, String email, Id relatedId){
 
         ClickSignRequestDTO.RequirementAutentication autentication = new ClickSignRequestDTO.RequirementAutentication();
         ClickSignRequestDTO.RequirementAutenticationData autenticationData = new ClickSignRequestDTO.RequirementAutenticationData();
@@ -215,7 +191,7 @@ public with sharing class ClickSignIntegration {
             'envelope_id' => envelopeId
         };
         
-        String response = send(integrationName, JSON.serialize(autentication), params, relatedId);
+        String response = send(integrationName, JSON.serialize(autentication), params);
 
         System.debug('requirements: ' + response);
         
@@ -223,10 +199,6 @@ public with sharing class ClickSignIntegration {
     }
 
     public static String activateEnvelope(String envelopeId){
-        return activateEnvelope(envelopeId, null);
-    }
-
-    public static String activateEnvelope(String envelopeId, Id relatedId){
 
         ClickSignRequestDTO.EnvelopeActivation activation = new ClickSignRequestDTO.EnvelopeActivation();
         ClickSignRequestDTO.EnvelopeActivationData activationData = new ClickSignRequestDTO.EnvelopeActivationData();
@@ -244,7 +216,7 @@ public with sharing class ClickSignIntegration {
             'envelope_id' => envelopeId
         };
         
-        String response = send(integrationName, JSON.serialize(activation), params, relatedId);
+        String response = send(integrationName, JSON.serialize(activation), params);
 
         System.debug('activate: ' + response);
         
@@ -252,10 +224,6 @@ public with sharing class ClickSignIntegration {
     }
 
     public static void notification(String envelopeId){
-        notification(envelopeId, null);
-    }
-
-    public static void notification(String envelopeId, Id relatedId){
 
         ClickSignRequestDTO.EnvelopeNotification envelope = new ClickSignRequestDTO.EnvelopeNotification();
         ClickSignRequestDTO.EnvelopeNotificationData envelopeData = new ClickSignRequestDTO.EnvelopeNotificationData();
@@ -272,16 +240,12 @@ public with sharing class ClickSignIntegration {
             'envelope_id' => envelopeId
         };
         
-        String response = send(integrationName, JSON.serialize(envelope), params, relatedId);
+        String response = send(integrationName, JSON.serialize(envelope), params);
 
         System.debug('notification: ' + response);
     }
 
     public static ClickSignResponseDTO.Document createTemplate(String filename, String file){
-        return createTemplate(filename, file, null);
-    }
-
-    public static ClickSignResponseDTO.Document createTemplate(String filename, String file, Id relatedId){
 
         ClickSignRequestDTO.Template template = new ClickSignRequestDTO.Template();
         ClickSignRequestDTO.TemplateData templateData = new ClickSignRequestDTO.TemplateData();
@@ -295,7 +259,7 @@ public with sharing class ClickSignIntegration {
 
         String integrationName = ClickSignUtils.METHOD.CREATE_TEMPLATE.name();
 
-        String response = send(integrationName, JSON.serialize(template), null, relatedId);
+        String response = send(integrationName, JSON.serialize(template));
         
         ClickSignResponseDTO.Document documentDTO = (ClickSignResponseDTO.Document) JSON.deserialize(response, ClickSignResponseDTO.Document.class);
 
@@ -303,14 +267,10 @@ public with sharing class ClickSignIntegration {
     }
 
     public static ClickSignResponseDTO.Template getTemplates(){
-        return getTemplates(null);
-    }
-
-    public static ClickSignResponseDTO.Template getTemplates(Id relatedId){
 
         String integrationName = ClickSignUtils.METHOD.CREATE_TEMPLATE.name();
 
-        String response = send(integrationName, null, null, relatedId);
+        String response = send(integrationName);
         
         ClickSignResponseDTO.Template templateDTO = (ClickSignResponseDTO.Template) JSON.deserialize(response, ClickSignResponseDTO.Template.class);
 
@@ -318,10 +278,6 @@ public with sharing class ClickSignIntegration {
     }
 
     public static ClickSignResponseDTO.Envelope getEnvelope(String envelopeId){
-        return getEnvelope(envelopeId, null);
-    }
-
-    public static ClickSignResponseDTO.Envelope getEnvelope(String envelopeId, Id relatedId){
 
         String integrationName = ClickSignUtils.METHOD.GET_ENVELOPE.name();
 
@@ -329,7 +285,7 @@ public with sharing class ClickSignIntegration {
             'envelope_id' => envelopeId
         };
         
-        String response = send(integrationName, null, params, relatedId);
+        String response = send(integrationName, params);
 
         ClickSignResponseDTO.Envelope envelopeDTO = (ClickSignResponseDTO.Envelope) JSON.deserialize(response, ClickSignResponseDTO.Envelope.class);
 
@@ -337,10 +293,6 @@ public with sharing class ClickSignIntegration {
     }
 
     public static String deleteDocument(String envelopeId, String documentId){
-        return deleteDocument(envelopeId, documentId, null);
-    }
-
-    public static String deleteDocument(String envelopeId, String documentId, Id relatedId){
 
         String integrationName = ClickSignUtils.METHOD.DELETE_DOCUMENT.name();
 
@@ -349,28 +301,24 @@ public with sharing class ClickSignIntegration {
             'envelope_id' => envelopeId
         };
         
-        String response = send(integrationName, null, params, relatedId);
+        String response = send(integrationName, params);
 
         return response;
     }
 
     public static String send(String integrationName){
-        return send(integrationName, null, null, null);
+        return send(integrationName, null, null);
     }
 
     public static String send(String integrationName, Map<String, String> params){
-        return send(integrationName, null, params, null);
+        return send(integrationName, null, params);
     }
 
     public static String send(String integrationName, String body){
-        return send(integrationName, body, null, null);
+        return send(integrationName, body, null);
     }
 
     public static String send(String integrationName, String body, Map<String, String> params){
-        return send(integrationName, body, params, null);
-    }
-
-    public static String send(String integrationName, String body, Map<String, String> params, Id relatedId){
 
         String responseBody;
 
@@ -404,20 +352,20 @@ public with sharing class ClickSignIntegration {
             System.debug('response: ' + response);
 
             if(response.getStatusCode() != 200 && response.getStatusCode() != 201){
-                ClickSignUtils.createLog(CLASS_NAME, integrationName, response, relatedId);
+                ClickSignUtils.createLog(CLASS_NAME, integrationName, response);
                 throw new ClickSignIntegrationException(response.getBody());
             }
 
             responseBody = response.getBody();
 
         }catch(CalloutException calloutException){
-            ClickSignUtils.createLog(CLASS_NAME, integrationName, calloutException, relatedId);
+            ClickSignUtils.createLog(CLASS_NAME, integrationName, calloutException);
             //throw new ClickSignIntegrationException(calloutException.getMessage());
         }catch(ClickSignIntegrationException customException){
-            ClickSignUtils.createLog(CLASS_NAME, integrationName, customException, relatedId);
+            ClickSignUtils.createLog(CLASS_NAME, integrationName, customException);
             //throw new ClickSignIntegrationException(customException.getMessage());
         }catch(Exception ex){
-            ClickSignUtils.createLog(CLASS_NAME, integrationName, ex, relatedId);
+            ClickSignUtils.createLog(CLASS_NAME, integrationName, ex);
             //throw new ClickSignIntegrationException(ex.getMessage());
         }
 
@@ -425,10 +373,6 @@ public with sharing class ClickSignIntegration {
     }
 
     public static Blob getDocument(String endpoint){
-        return getDocument(endpoint, null);
-    }
-
-    public static Blob getDocument(String endpoint, Id relatedId){
 
         try{
 
@@ -445,7 +389,7 @@ public with sharing class ClickSignIntegration {
             return response.getBodyAsBlob();
 
         }catch(Exception ex){
-            ClickSignUtils.createLog(CLASS_NAME, 'Get Document', ex, relatedId);
+            ClickSignUtils.createLog(CLASS_NAME, 'Get Document', ex);
             throw new ClickSignIntegrationException(ex.getMessage());
         }
     }

@@ -22,15 +22,10 @@ public with sharing class ClickSignUtils {
     }
 
     public static ClickSignLog__c createLog(String className, String methodName, Object source){
-        return createLog(className, methodName, source, null);
-    }
-
-    public static ClickSignLog__c createLog(String className, String methodName, Object source, Id relatedId){
 
         ClickSignLog__c lg = new ClickSignLog__c(
             Class__c  = className,
-            Method__c = methodName,
-            RelatedId__c = relatedId
+            Method__c = methodName
         );
 
         //Set additional log fields based on source type
@@ -51,7 +46,7 @@ public with sharing class ClickSignUtils {
             HttpResponse resp = (HttpResponse) source;
 
             lg.StatusCode__c   = resp.getStatusCode();
-            lg.ResponseBody__c = trimToBodyLimit(resp.getBody());
+            lg.ResponseBody__c = resp.getBody().length() > 131072 ? resp.getBody().substring(0, 131072) : resp.getBody();
             lg.Status__c = resp.getStatus();
         }
 
@@ -59,7 +54,7 @@ public with sharing class ClickSignUtils {
 
             HttpRequest req = (HttpRequest) source;
 
-            lg.RequestBody__c = trimToBodyLimit(req.getBody());
+            lg.RequestBody__c = req.getBody().length() > 131072 ? req.getBody().substring(0, 131072) : req.getBody();
             lg.HTTPMethod__c  = req.getMethod();
             lg.RequestURI__c = req.getEndpoint();
         }
@@ -69,7 +64,7 @@ public with sharing class ClickSignUtils {
             
             RestRequest req = (RestRequest) source;
 
-            lg.RequestBody__c = trimToBodyLimit(req.requestBody.toString());
+            lg.RequestBody__c = req.requestBody.toString().length() > 131072 ? req.requestBody.toString().substring(0, 131072) : req.requestBody.toString();
             lg.HTTPMethod__c  = req.httpMethod;
             lg.RequestURI__c  = req.requestURI;
         }
@@ -88,13 +83,6 @@ public with sharing class ClickSignUtils {
         ClickSignLog__c log = (ClickSignLog__c) JSON.deserialize(logJSON, ClickSignLog__c.class);
         
         insert log;
-    }
-
-    private static String trimToBodyLimit(String content){
-        if(String.isEmpty(content)){
-            return content;
-        }
-        return content.length() > 131072 ? content.substring(0, 131072) : content;
     }
 
     public static ClickSign__c getOrCreateClickSign(SObject record) {
