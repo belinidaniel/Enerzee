@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Assistencia_Tecnica_Gestao_de_Faturas_e_Concessionarias</fullName>
+    <fullName>Operacao_e_Manutencao</fullName>
     <active>true</active>
     <businessProcess>Assistência Técnica</businessProcess>
-    <label>Assistência Técnica - Gestão de Faturas e Concessionárias (Outros)</label>
+    <label>Operação e Manutenção</label>
     <picklistValues>
         <picklist>Esta_na_garantia__c</picklist>
         <values>

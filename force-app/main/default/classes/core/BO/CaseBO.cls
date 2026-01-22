@@ -150,6 +150,101 @@ public class CaseBO {
         }
     }
 
+    public static void populateFromOpportunityAndSubject(List<Case> newRecords, Map<Id, Case> oldMap){
+        if(newRecords == null || newRecords.isEmpty()) return;
+
+        Set<Id> opportunityIds = new Set<Id>();
+        for(Case caseRecord : newRecords){
+            if(caseRecord.Nome_da_Oportunidade__c == null && caseRecord.Oportunidade_Pai__c != null){
+                caseRecord.Nome_da_Oportunidade__c = caseRecord.Oportunidade_Pai__c;
+            }
+            if(caseRecord.Nome_da_Oportunidade__c != null){
+                opportunityIds.add(caseRecord.Nome_da_Oportunidade__c);
+            }
+        }
+
+        Map<Id, Opportunity> opportunityById = new Map<Id, Opportunity>();
+        Set<Id> accountIds = new Set<Id>();
+        if(!opportunityIds.isEmpty()){
+            for(Opportunity opp : [
+                SELECT Id, Name, AccountId, ConsultorOportunidade__c
+                FROM Opportunity
+                WHERE Id IN :opportunityIds
+            ]){
+                opportunityById.put(opp.Id, opp);
+                if(opp.AccountId != null){
+                    accountIds.add(opp.AccountId);
+                }
+            }
+        }
+
+        Map<Id, Contact> contactByAccountId = new Map<Id, Contact>();
+        if(!accountIds.isEmpty()){
+            for(Contact contact : [
+                SELECT Id, AccountId
+                FROM Contact
+                WHERE AccountId IN :accountIds
+                ORDER BY CreatedDate DESC
+            ]){
+                if(!contactByAccountId.containsKey(contact.AccountId)){
+                    contactByAccountId.put(contact.AccountId, contact);
+                }
+            }
+        }
+
+        for(Case caseRecord : newRecords){
+            Opportunity opportunity = opportunityById.get(caseRecord.Nome_da_Oportunidade__c);
+            if(opportunity == null) continue;
+
+            if(caseRecord.AccountId == null && opportunity.AccountId != null){
+                caseRecord.AccountId = opportunity.AccountId;
+            }
+
+            if(caseRecord.ContactId == null && opportunity.AccountId != null){
+                Contact contact = contactByAccountId.get(opportunity.AccountId);
+                if(contact != null){
+                    caseRecord.ContactId = contact.Id;
+                }
+            }
+
+            if(caseRecord.Nome_do_Consultor__c == null && opportunity.ConsultorOportunidade__c != null){
+                caseRecord.Nome_do_Consultor__c = opportunity.ConsultorOportunidade__c;
+            }
+        }
+
+        applyCaseSubject(newRecords, oldMap, opportunityById);
+    }
+
+    private static void applyCaseSubject(List<Case> newRecords, Map<Id, Case> oldMap, Map<Id, Opportunity> opportunityById){
+        for(Case caseRecord : newRecords){
+            if(String.isBlank(caseRecord.Type) || String.isBlank(caseRecord.Subtipo_de_caso__c) || caseRecord.Nome_da_Oportunidade__c == null){
+                continue;
+            }
+
+            Opportunity opportunity = opportunityById.get(caseRecord.Nome_da_Oportunidade__c);
+            if(opportunity == null) continue;
+
+            Boolean shouldUpdate = oldMap == null;
+            if(oldMap != null){
+                Case oldCase = oldMap.get(caseRecord.Id);
+                if(oldCase == null){
+                    shouldUpdate = true;
+                } else if(
+                    caseRecord.Type != oldCase.Type ||
+                    caseRecord.Subtipo_de_caso__c != oldCase.Subtipo_de_caso__c ||
+                    caseRecord.Nome_da_Oportunidade__c != oldCase.Nome_da_Oportunidade__c ||
+                    String.isBlank(caseRecord.Subject)
+                ){
+                    shouldUpdate = true;
+                }
+            }
+
+            if(shouldUpdate){
+                caseRecord.Subject = caseRecord.Type + ' - ' + caseRecord.Subtipo_de_caso__c + ' - ' + opportunity.Name;
+            }
+        }
+    }
+
     public static void CreateServiceResource(Map<Id,Case> newMap,Map<Id,Case> oldMap){
         List<ServiceResource> sr= new List<ServiceResource>();
         List<case> qualificaConsultor = new List<case>();

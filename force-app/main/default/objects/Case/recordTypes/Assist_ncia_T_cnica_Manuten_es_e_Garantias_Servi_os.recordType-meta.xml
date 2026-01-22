@@ -29,32 +29,16 @@
     <picklistValues>
         <picklist>Origin</picklist>
         <values>
-            <fullName>Email</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Facebook</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Phone</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Twitter</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Web</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Web To Case Integrador</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Whatsapp</fullName>
+            <fullName>Enerzee</fullName>
             <default>true</default>
+        </values>
+        <values>
+            <fullName>Cliente</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Consultor</fullName>
+            <default>false</default>
         </values>
     </picklistValues>
     <picklistValues>
@@ -90,11 +74,7 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>Existing problem</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Instructions not clear</fullName>
+            <fullName>Manutenção preventiva</fullName>
             <default>false</default>
         </values>
         <values>
@@ -102,18 +82,58 @@
             <default>false</default>
         </values>
         <values>
-            <fullName>User didn%27t attend training</fullName>
+            <fullName>Existing problem</fullName>
             <default>false</default>
         </values>
     </picklistValues>
     <picklistValues>
         <picklist>Subtipo_de_caso__c</picklist>
         <values>
-            <fullName>Irregularidades%2CEquipamentos e%2Fou Instalações</fullName>
+            <fullName>Concessionária</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Serviços</fullName>
+            <fullName>Alteração Contratual</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cadastro de Beneficiária</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Garantia de Equipamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Garantia de Serviço</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Análise Interna</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Análise de Fatura</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Reclamação</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Equipamento</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Operação e Manutenção (O&amp;M)</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Serviço</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Retomada</fullName>
             <default>false</default>
         </values>
     </picklistValues>
@@ -176,16 +196,32 @@
     <picklistValues>
         <picklist>Type</picklist>
         <values>
-            <fullName>Gestão de faturas e concessionárias</fullName>
+            <fullName>Concessionária</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Manutenções e Garantias</fullName>
+            <fullName>Garantia</fullName>
             <default>false</default>
         </values>
         <values>
-            <fullName>Question</fullName>
+            <fullName>Gestão de faturas</fullName>
             <default>false</default>
+        </values>
+        <values>
+            <fullName>Informação</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manutenção</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Retomada</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Geral</fullName>
+            <default>true</default>
         </values>
     </picklistValues>
 </RecordType>

@@ -2,8 +2,23 @@
 <StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <sorted>false</sorted>
     <standardValue>
-        <fullName>Whatsapp</fullName>
+        <fullName>Enerzee</fullName>
         <default>true</default>
+        <label>Enerzee</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Cliente</fullName>
+        <default>false</default>
+        <label>Cliente</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Consultor</fullName>
+        <default>false</default>
+        <label>Consultor</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Whatsapp</fullName>
+        <default>false</default>
         <label>Whatsapp</label>
     </standardValue>
     <standardValue>

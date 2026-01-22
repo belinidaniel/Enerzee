@@ -13,29 +13,29 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Serviços</fullName>
+                <fullName>Concessionária</fullName>
                 <default>false</default>
-                <label>Serviços</label>
+                <label>Concessionária</label>
             </value>
             <value>
-                <fullName>Irregularidades,Equipamentos e/ou Instalações</fullName>
+                <fullName>Alteração Contratual</fullName>
                 <default>false</default>
-                <label>Irregularidades,Equipamentos e/ou Instalações</label>
+                <label>Alteração Contratual</label>
             </value>
             <value>
-                <fullName>Erro Interno</fullName>
+                <fullName>Cadastro de Beneficiária</fullName>
                 <default>false</default>
-                <label>Erro Interno</label>
+                <label>Cadastro de Beneficiária</label>
             </value>
             <value>
-                <fullName>Atendimento ao Cliente</fullName>
+                <fullName>Garantia de Equipamento</fullName>
                 <default>false</default>
-                <label>Atendimento ao Cliente</label>
+                <label>Garantia de Equipamento</label>
             </value>
             <value>
-                <fullName>N/A</fullName>
+                <fullName>Garantia de Serviço</fullName>
                 <default>false</default>
-                <label>N/A</label>
+                <label>Garantia de Serviço</label>
             </value>
             <value>
                 <fullName>Análise Interna</fullName>
@@ -48,18 +48,70 @@
                 <label>Análise de Fatura</label>
             </value>
             <value>
-                <fullName>Cadastro de beneficiária</fullName>
+                <fullName>Reclamação</fullName>
                 <default>false</default>
-                <label>Cadastro de beneficiária</label>
+                <label>Reclamação</label>
+            </value>
+            <value>
+                <fullName>Equipamento</fullName>
+                <default>false</default>
+                <label>Equipamento</label>
+            </value>
+            <value>
+                <fullName>Operação e Manutenção (O&amp;M)</fullName>
+                <default>false</default>
+                <label>Operação e Manutenção (O&amp;M)</label>
+            </value>
+            <value>
+                <fullName>Serviço</fullName>
+                <default>false</default>
+                <label>Serviço</label>
+            </value>
+            <value>
+                <fullName>Retomada</fullName>
+                <default>false</default>
+                <label>Retomada</label>
+            </value>
+            <value>
+                <fullName>Serviços</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Serviços</label>
+            </value>
+            <value>
+                <fullName>Irregularidades,Equipamentos e/ou Instalações</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Irregularidades,Equipamentos e/ou Instalações</label>
+            </value>
+            <value>
+                <fullName>Erro Interno</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Erro Interno</label>
+            </value>
+            <value>
+                <fullName>Atendimento ao Cliente</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Atendimento ao Cliente</label>
+            </value>
+            <value>
+                <fullName>N/A</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>N/A</label>
             </value>
             <value>
                 <fullName>Reclamações</fullName>
                 <default>false</default>
+                <isActive>false</isActive>
                 <label>Reclamações</label>
             </value>
             <value>
                 <fullName>Alterações Contratuais</fullName>
                 <default>false</default>
+                <isActive>false</isActive>
                 <label>Alterações Contratuais</label>
             </value>
             <value>
@@ -76,32 +128,52 @@
             </value>
         </valueSetDefinition>
         <valueSettings>
-            <controllingFieldValue>Manutenções e Garantias</controllingFieldValue>
-            <valueName>Serviços</valueName>
+            <controllingFieldValue>Concessionária</controllingFieldValue>
+            <valueName>Concessionária</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Manutenções e Garantias</controllingFieldValue>
-            <valueName>Irregularidades,Equipamentos e/ou Instalações</valueName>
+            <controllingFieldValue>Concessionária</controllingFieldValue>
+            <valueName>Alteração Contratual</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Gestão de faturas e concessionárias</controllingFieldValue>
+            <controllingFieldValue>Concessionária</controllingFieldValue>
+            <valueName>Cadastro de Beneficiária</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Garantia</controllingFieldValue>
+            <valueName>Garantia de Equipamento</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Garantia</controllingFieldValue>
+            <valueName>Garantia de Serviço</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Gestão de faturas</controllingFieldValue>
             <valueName>Análise Interna</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Gestão de faturas e concessionárias</controllingFieldValue>
+            <controllingFieldValue>Gestão de faturas</controllingFieldValue>
             <valueName>Análise de Fatura</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Gestão de faturas e concessionárias</controllingFieldValue>
-            <valueName>Cadastro de beneficiária</valueName>
+            <controllingFieldValue>Gestão de faturas</controllingFieldValue>
+            <valueName>Reclamação</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Gestão de faturas e concessionárias</controllingFieldValue>
-            <valueName>Reclamações</valueName>
+            <controllingFieldValue>Manutenção</controllingFieldValue>
+            <valueName>Equipamento</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue>Gestão de faturas e concessionárias</controllingFieldValue>
-            <valueName>Alterações Contratuais</valueName>
+            <controllingFieldValue>Manutenção</controllingFieldValue>
+            <valueName>Operação e Manutenção (O&amp;M)</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Manutenção</controllingFieldValue>
+            <valueName>Serviço</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Retomada</controllingFieldValue>
+            <valueName>Retomada</valueName>
         </valueSettings>
     </valueSet>
 </CustomField>

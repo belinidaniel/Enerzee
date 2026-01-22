@@ -16,4 +16,39 @@
         <default>false</default>
         <label>Gestão de faturas e concessionárias</label>
     </standardValue>
+    <standardValue>
+        <fullName>Concessionária</fullName>
+        <default>false</default>
+        <label>Concessionária</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Garantia</fullName>
+        <default>false</default>
+        <label>Garantia</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Gestão de faturas</fullName>
+        <default>false</default>
+        <label>Gestão de faturas</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Informação</fullName>
+        <default>false</default>
+        <label>Informação</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Manutenção</fullName>
+        <default>false</default>
+        <label>Manutenção</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Retomada</fullName>
+        <default>false</default>
+        <label>Retomada</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Geral</fullName>
+        <default>true</default>
+        <label>Geral</label>
+    </standardValue>
 </StandardValueSet>

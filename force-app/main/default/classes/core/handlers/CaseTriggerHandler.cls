@@ -22,6 +22,7 @@ public class CaseTriggerHandler extends TriggerHandler {
 
     public override void beforeInsert(){
         CaseBO.AssignContactForCase((List<Case>)newRecordList);
+        CaseBO.populateFromOpportunityAndSubject((List<Case>) newRecordList, null);
     }
 
     public override void afterInsert(){
@@ -32,6 +33,7 @@ public class CaseTriggerHandler extends TriggerHandler {
     public override void beforeUpdate(){
        CaseBO.checkTasksConclusionBeforeStatusChange((List<Case>) newRecordList, (Map<Id, Case>) oldMap);
        CaseBO.updateStatusWhenOwnerChange((List<Case>) newRecordList, (Map<Id, Case>) oldMap);
+       CaseBO.populateFromOpportunityAndSubject((List<Case>) newRecordList, (Map<Id, Case>) oldMap);
     }
 
     public override void afterUpdate(){

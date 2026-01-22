@@ -2,9 +2,9 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Oportunidade_Pai__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
-    <label>Oportunidade Pai</label>
+    <label>Oportunidade de Origem</label>
     <referenceTo>Opportunity</referenceTo>
-    <relationshipLabel>Casos Oportunidade Pai</relationshipLabel>
+    <relationshipLabel>Casos Oportunidade de Origem</relationshipLabel>
     <relationshipName>OportunidadePaiCasos</relationshipName>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>

@@ -31,4 +31,10 @@
         <label>Novo problema</label>
         <cssExposed>false</cssExposed>
     </standardValue>
+    <standardValue>
+        <fullName>Manutenção preventiva</fullName>
+        <default>false</default>
+        <label>Manutenção preventiva</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
 </StandardValueSet>
