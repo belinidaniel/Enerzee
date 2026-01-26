@@ -64,6 +64,15 @@
         }
       };
       $Lightning.use('c:clickSignGemTemplate', function () {
+        window.navigateToClickSignList = function (url) {
+          if (typeof sforce != 'undefined') {
+            sforce.one.navigateToURL(url);
+          } else if (window.top) {
+            window.top.location.href = url;
+          } else {
+            window.location.href = url;
+          }
+        };
         $Lightning.createComponent('c:clickSignTemplateApp', {
           templateId: '{!$CurrentPage.parameters.id}',
           isCreating: '{!$CurrentPage.parameters.isEdit}' !== 'true',
@@ -82,15 +91,16 @@
                 return;
               }
               e.preventDefault();
-              if (typeof sforce != 'undefined') {
-                sforce.one.navigateToURL(url);
-              } else if (window.top) {
-                window.top.location.href = url;
-              } else {
-                window.location.href = url;
-              }
+              window.navigateToClickSignList(url);
             });
           }
+          window.addEventListener('clicksign:navigate', function (e) {
+            var url = e.detail && e.detail.url;
+            if (!url) {
+              return;
+            }
+            window.navigateToClickSignList(url);
+          });
           window.addEventListener('message', function (e) {
             var data = e.data || {};
             if (data.type !== 'clicksign:navigate' || !data.url) {

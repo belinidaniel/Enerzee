@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 01-26-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class ClickSignDAO {
     public static ClickSign__c getClickSignById(Id clickSignId) {
         return [SELECT Id, Name, CurrentStep__c, Status__c, ClickSignEnvelope__c, ClickSignTemplate__c 

@@ -339,16 +339,33 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
         // Fallback for Visualforce context where NavigationMixin may not redirect
         this[NavigationMixin.GenerateUrl](pageRef)
             .then((url) => {
-                const targetUrl = url || '/lightning/o/ClickSignTemplate__c/list?filterName=__Recent';
-                const event = new CustomEvent('redirect', {
-                    detail: { url: targetUrl },
-                    bubbles: true,
-                    composed: true,
-                    cancelable: true
-                });
-                const handled = this.dispatchEvent(event) === false;
-                if (handled) {
-                    return;
+                const targetUrl = '/lightning/o/ClickSignTemplate__c/list?filterName=__Recent';
+                // Dispatch a global event for Visualforce to catch
+                try {
+                    const globalEvent = new CustomEvent('clicksign:navigate', {
+                        detail: { url: targetUrl }
+                    });
+                    window.dispatchEvent(globalEvent);
+                } catch (e) {
+                    // ignore
+                }
+                // Try explicit VF helper in top window
+                try {
+                    if (window.top && typeof window.top.navigateToClickSignList === 'function') {
+                        window.top.navigateToClickSignList(targetUrl);
+                        return;
+                    }
+                } catch (e) {
+                    // fall through
+                }
+                // Try sforce.one in top window when running inside Visualforce
+                try {
+                    if (window.top && window.top.sforce && window.top.sforce.one) {
+                        window.top.sforce.one.navigateToURL(targetUrl);
+                        return;
+                    }
+                } catch (e) {
+                    // fall through
                 }
                 // Try postMessage to parent (Visualforce / Lightning Out)
                 try {

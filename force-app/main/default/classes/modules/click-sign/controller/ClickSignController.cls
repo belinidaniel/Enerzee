@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 01-26-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class ClickSignController {
 
     @AuraEnabled
