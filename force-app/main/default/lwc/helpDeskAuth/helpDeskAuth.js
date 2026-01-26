@@ -1,5 +1,5 @@
 import { LightningElement, track } from 'lwc';
-import LightningAlert from 'lightning/alert';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import requestAccessCode from '@salesforce/apex/ModuloHelpDeskCaseController.requestAccessCode';
 import validateAccessCode from '@salesforce/apex/ModuloHelpDeskCaseController.validateAccessCode';
 
@@ -104,11 +104,14 @@ export default class HelpDeskAuth extends LightningElement {
     }
 
     showToast(title, message, variant) {
-        return LightningAlert.open({
-            message,
-            theme: variant === 'error' ? 'error' : variant === 'warning' ? 'warning' : 'success',
-            label: title
-        });
+        this.dispatchEvent(
+            new ShowToastEvent({
+                title,
+                message,
+                variant: variant || 'info',
+                mode: 'dismissable'
+            })
+        );
     }
 
     normalizeError(error) {

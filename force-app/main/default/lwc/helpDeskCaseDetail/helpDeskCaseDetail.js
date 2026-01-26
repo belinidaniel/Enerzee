@@ -197,7 +197,8 @@ export default class HelpDeskCaseDetail extends LightningElement {
             status: data.Status,
             contactName: data.Contact ? data.Contact.Name : '',
             createdDateDisplay: this.formatDate(data.CreatedDate),
-            lastModifiedDisplay: this.formatDate(data.LastModifiedDate)
+            lastModifiedDisplay: this.formatDate(data.LastModifiedDate),
+            richDescription: data.Description_Rich__c || data.Description || ''
         };
     }
 

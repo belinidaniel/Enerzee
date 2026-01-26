@@ -20,13 +20,15 @@ public with sharing class ClickSignUtilsTest {
         Exception source = new DmlException('Test exception');
 
         // Act
-        ClickSignLog__c log = ClickSignUtils.createLog(className, methodName, source);
+        Id relatedId = UserInfo.getUserId();
+        ClickSignLog__c log = ClickSignUtils.createLog(className, methodName, source, relatedId);
 
         // Assert
         System.assertNotEquals(null, log);
         System.assertEquals(className, log.Class__c);
         System.assertEquals(methodName, log.Method__c);
         System.assertEquals('Test exception', log.Message__c);
+        System.assertEquals(relatedId, log.RelatedId__c);
     }
 
     @IsTest
@@ -39,7 +41,8 @@ public with sharing class ClickSignUtilsTest {
         response.setBody('{"message":"success"}');
 
         // Act
-        ClickSignLog__c log = ClickSignUtils.createLog(className, methodName, response);
+        Id relatedId = UserInfo.getUserId();
+        ClickSignLog__c log = ClickSignUtils.createLog(className, methodName, response, relatedId);
 
         // Assert
         System.assertNotEquals(null, log);
@@ -47,6 +50,7 @@ public with sharing class ClickSignUtilsTest {
         System.assertEquals(methodName, log.Method__c);
         System.assertEquals(200, log.StatusCode__c);
         System.assertEquals('{"message":"success"}', log.ResponseBody__c);
+        System.assertEquals(relatedId, log.RelatedId__c);
     }
 
     @IsTest

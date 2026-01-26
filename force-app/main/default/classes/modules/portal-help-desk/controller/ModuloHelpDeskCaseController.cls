@@ -30,8 +30,8 @@ public without sharing class ModuloHelpDeskCaseController {
     }
 
     @AuraEnabled
-    public static Id createCase(String subject, String description, String typeValue, String reasonValue, String priorityValue, String suppliedEmail, String suppliedPhone, Id contactId, Id accountId) {
-        return HelpDeskCaseService.createCase(subject, description, typeValue, reasonValue, priorityValue, suppliedEmail, suppliedPhone, contactId, accountId);
+    public static Id createCase(String subject, String description, String richDescription, String typeValue, String reasonValue, String priorityValue, String suppliedEmail, String suppliedPhone, Id contactId, Id accountId) {
+        return HelpDeskCaseService.createCase(subject, description, richDescription, typeValue, reasonValue, priorityValue, suppliedEmail, suppliedPhone, contactId, accountId);
     }
 
     @AuraEnabled

@@ -3,6 +3,8 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import createCase from '@salesforce/apex/ModuloHelpDeskCaseController.createCase';
 import getDefaultEntities from '@salesforce/apex/ModuloHelpDeskCaseController.getDefaultEntities';
 import uploadFiles from '@salesforce/apex/ModuloHelpDeskCaseController.uploadFiles';
+import cloudLogo from '@salesforce/resourceUrl/salesforceCloudV3';
+import agentAstro from '@salesforce/resourceUrl/agentforceAgentAstro';
 
 export default class HelpDeskHome extends LightningElement {
     _contactId;
@@ -25,6 +27,7 @@ export default class HelpDeskHome extends LightningElement {
 
     @track subject = '';
     @track description = '';
+    @track richDescription = '';
     @track typeValue = '';
     @track reasonValue = '';
     @track priorityValue = 'Medium';
@@ -32,6 +35,8 @@ export default class HelpDeskHome extends LightningElement {
     @track suppliedPhone = '';
     @track pendingFiles = [];
     @track readingFiles = false;
+    cloudLogo = cloudLogo;
+    agentAstro = agentAstro;
 
     typeOptions = [
         { label: 'Erro Salesforce', value: 'Erro Salesforce' },
@@ -59,6 +64,20 @@ export default class HelpDeskHome extends LightningElement {
         { label: 'Alta', value: 'High' },
         { label: 'Média', value: 'Medium' },
         { label: 'Baixa', value: 'Low' }
+    ];
+
+    richFormats = [
+        'font',
+        'size',
+        'bold',
+        'italic',
+        'underline',
+        'strike',
+        'list',
+        'align',
+        'link',
+        'image',
+        'clean'
     ];
 
     get reasonOptions() {
@@ -128,6 +147,7 @@ export default class HelpDeskHome extends LightningElement {
         createCase({
             subject: this.subject,
             description: this.description,
+            richDescription: this.richDescription,
             typeValue: this.typeValue,
             reasonValue: this.reasonValue,
             priorityValue: this.priorityValue,
@@ -146,6 +166,7 @@ export default class HelpDeskHome extends LightningElement {
             .then(() => {
                 this.createdCaseId = createdId;
                 this.showToast('Caso criado', 'Caso criado com sucesso.', 'success');
+                this.navigateToCase(createdId);
                 this.resetForm();
                 this.showModal = false;
                 this.template.querySelector('c-help-desk-case-list')?.handleRefresh?.();
@@ -158,11 +179,19 @@ export default class HelpDeskHome extends LightningElement {
             });
     }
 
+    navigateToCase(caseId) {
+        if (!caseId) return;
+        // Redireciona para a rota do case no site (preserva cId para uso nos detalhes)
+        const url = `/helpdesk/case/${caseId}${this.contactId ? `?cId=${this.contactId}` : ''}`;
+        window.location.assign(url);
+    }
+
     resetForm() {
         this.isSaving = false;
         this.createdCaseId = null;
         this.subject = '';
         this.description = '';
+        this.richDescription = '';
         this.typeValue = '';
         this.reasonValue = '';
         this.priorityValue = 'Medium';
@@ -173,16 +202,18 @@ export default class HelpDeskHome extends LightningElement {
     }
 
     handleFilesChange(event) {
-        const files = event.target.files;
-        console.log('Files selected:', files);
+        const files = Array.from(event.target.files || []);
+        if (!files.length) {
+            return;
+        }
         this.readingFiles = true;
-        const readers = [];
-        Array.from(files).forEach((file) => {
-            readers.push(
-                new Promise((resolve, reject) => {
-                    try {
-                        const reader = new FileReader();
-                        reader.onload = () => {
+
+        const readers = files.map((file) => {
+            return new Promise((resolve, reject) => {
+                try {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        try {
                             const base64 = reader.result.split(',')[1];
                             resolve({
                                 fileName: file.name,
@@ -191,29 +222,33 @@ export default class HelpDeskHome extends LightningElement {
                                 humanSize: this.formatSize(file.size),
                                 name: file.name
                             });
-                        };
-                        reader.onerror = (e) => reject(e);
-                        reader.readAsDataURL(file);
-                    } catch (e) {
-                        console.log('Error reading file', e);
-                    }
-                })
-            );
+                        } catch (e) {
+                            reject(e);
+                        }
+                    };
+                    reader.onerror = (e) => reject(e);
+                    reader.readAsDataURL(file);
+                } catch (e) {
+                    reject(e);
+                }
+            });
         });
 
-        Promise.all(readers)
+        Promise.allSettled(readers)
             .then((results) => {
-                this.pendingFiles = [...this.pendingFiles, ...results];
-            })
-            .catch((error) => {
-                this.showToast('Erro ao ler arquivo', error?.message || 'Erro inesperado', 'error');
+                const success = results.filter((r) => r.status === 'fulfilled').map((r) => r.value);
+                const failures = results.filter((r) => r.status === 'rejected');
+                if (success.length) {
+                    this.pendingFiles = [...this.pendingFiles, ...success];
+                }
+                if (failures.length) {
+                    const firstErr = failures[0].reason;
+                    this.showToast('Erro ao ler arquivo', firstErr?.message || firstErr || 'Erro inesperado', 'error');
+                }
             })
             .finally(() => {
                 this.readingFiles = false;
             });
-
-        console.log('Files pendingFiles:', this.pendingFiles);
-
     }
 
     removeFile(event) {
