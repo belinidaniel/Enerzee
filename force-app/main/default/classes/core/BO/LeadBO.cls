@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-05-2025
+ * @last modified on  : 01-28-2026
  * @last modified by  : Daniel Belini
 **/
 public class LeadBO {
@@ -19,7 +19,7 @@ public class LeadBO {
         Id voUserId = [
             SELECT  Id
             FROM    User
-            WHERE   Username like 'integracao@lab065.com'
+            WHERE   Username like '%integracao@lab065.com%'
             LIMIT   1
         ].Id;
         
