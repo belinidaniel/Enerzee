@@ -10,7 +10,7 @@ public with sharing class IntegracaoVOPlano {
     @future(callout=true)
     public static void sendPlano(Set<Id> triggerIds) {
         List<Opportunity> oportunidades = [ 
-        	SELECT Id, AccountId, Numeroproposta__c, Account.IdVirtualOffice2__c, Account.Name, Account.Email__c, Account.DataNascimento__c, Account.SeCPFouCNPJ__c, Account.ShippingStreet, Account.NumeroRuaEntrega__c, Account.ShippingPostalCode, Account.ComplementoEntrega__c, Account.Consultor__r.Login_no_virtual__c, Account.Consultor__r.IdVirtualOffice2__c,PotenciaPicoSistema__c, SubTipo__c, RecordType.DeveloperName, RecordType.Name, paymentMethod__c, StageName, ValorTotalProposta__c, Rede__c, Kwh__c, ConsultorOportunidade__r.Login_no_virtual__c, ConsultorOportunidade__r.IdVirtualOffice2__c, ParceiroRegistroOportunidade__c,Parceiro__r.Name
+        	SELECT Id, AccountId, Numeroproposta__c, Account.IdVirtualOffice2__c, Account.Name, Account.Email__c, Account.DataNascimento__c, Account.SeCPFouCNPJ__c, Account.ShippingStreet, Account.NumeroRuaEntrega__c, Account.ShippingPostalCode, Account.ComplementoEntrega__c, Account.Consultor__r.Login_no_virtual__c, Account.Consultor__r.IdVirtualOffice2__c,PotenciaPicoSistema__c, SubTipo__c, TipoKitPromocional__c, RecordType.DeveloperName, RecordType.Name, paymentMethod__c, StageName, ValorTotalProposta__c, Rede__c, Kwh__c, ConsultorOportunidade__r.Login_no_virtual__c, ConsultorOportunidade__r.IdVirtualOffice2__c, ParceiroRegistroOportunidade__c,Parceiro__r.Name
             FROM Opportunity 
             WHERE Id IN :triggerIds 
         ];
@@ -67,6 +67,7 @@ public with sharing class IntegracaoVOPlano {
             corpoRequisicao.etapaSalesForce = opp.StageName;
         	corpoRequisicao.tipopagamento	= formPag.get(opp.paymentMethod__c);
             corpoRequisicao.kw				= opp.PotenciaPicoSistema__c;
+            corpoRequisicao.tipodoKitPromocional = getPicklistLabel(Opportunity.TipoKitPromocional__c, opp.TipoKitPromocional__c);
             
             if (plano == 'Ezee Livre'){
         		corpoRequisicao.valor		= opp.Rede__c;
@@ -136,6 +137,7 @@ public with sharing class IntegracaoVOPlano {
         public Integer tipopagamento;
         public Decimal valor;
         public Decimal kw;
+        public String tipodoKitPromocional;
     }
 
     private static final Map<String, String> plano = new Map<String, String>{
@@ -184,4 +186,17 @@ public with sharing class IntegracaoVOPlano {
 		'Manual' 						 => 16,
 		'Pix e Saldo' 					 => 17
 	};
+
+    private static String getPicklistLabel(SObjectField field, String value) {
+        if (String.isBlank(value)) {
+            return null;
+        }
+
+		for (Schema.PicklistEntry option : field.getDescribe().getPicklistValues()) {
+			if (option.getValue() == value) {
+				return option.getLabel();
+			}
+		}
+		return value;
+	}
 }

@@ -146,7 +146,7 @@ public without sharing class KitInstalacaoBO {
             List<Opportunity> opportunitiesToProcess = [
                 SELECT  Id, PotenciaPicoSistema__c, NumeroModulos__c, IdVirtualOffice__c, 
                         BDI__c, Rede3750__c, Pontos__c, Direct__c,
-                        CustoAdicionalFixo__c, Instalacao__c, CustoFinanceiroWeg__c,ConsumoAlvo__c,
+                        CustoAdicionalFixo__c, Instalacao__c, CustoFinanceiroWeg__c, ConsumoAlvo__c, TipoTelhadoEstrutura__c,
                         (SELECT ID, product2.Name, Quantity, UnitPrice, product2.Family, product2.ExternalId__c FROM OpportunityLineItems)
                 FROM    Opportunity
                 WHERE   Id IN :oppIdToKitIdMap.keySet() AND Isclosed = false
@@ -195,6 +195,7 @@ public without sharing class KitInstalacaoBO {
         request.ConsumoDesejado = opp.ConsumoAlvo__c;
         request.PotenciaPicoSistema = opp.PotenciaPicoSistema__c;
         request.QtdModulos = (opp.NumeroModulos__c != null) ? (Integer)opp.NumeroModulos__c : 0;
+        request.StructureType = getStructureType(opp.TipoTelhadoEstrutura__c);
         
         request.listProducts = new List<IntegracaoNivelloContrato.Product>();
         for (OpportunityLineItem oli : opp.OpportunityLineItems) {
@@ -208,6 +209,25 @@ public without sharing class KitInstalacaoBO {
             request.listProducts.add(product);
         }
         return request;
+    }
+
+    private static Integer getStructureType(String value) {
+        if (String.isBlank(value)) {
+            return null;
+        }
+
+        switch on value {
+            when 'Ao Solo', 'Solo' { return 1; }
+            when 'Cerâmico', 'Ceramico' { return 2; }
+            when 'Fibromadeira', 'Fibrocimento (Madeira)' { return 3; }
+            when 'Fibrocimento (Metálico)', 'Fibrocimento (Metalico)' { return 5; }
+            when 'Metálico', 'Metalico' { return 6; }
+            when 'Laje' { return 8; }
+            when 'Zipado' { return 9; }
+            when 'Shingle' { return 10; }
+            when 'CarPort', 'Carport', 'Car Port' { return 11; }
+            when else { return null; }
+        }
     }
 
     /**
