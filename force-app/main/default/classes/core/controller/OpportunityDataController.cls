@@ -65,6 +65,7 @@ public with sharing class OpportunityDataController {
 
         Decimal saldo = -investimento;
         for (Integer year = startYear; year <= startYear + 24; year++) {
+            saldo += economia;
             years.add(String.valueOf(year));
             saldoAcumulado.add(saldo);
 
@@ -73,8 +74,6 @@ public with sharing class OpportunityDataController {
             } else {
                 colors.add('rgb(168, 206, 140)');
             }
-
-            saldo += economia;
         }
 
         return generateQuickChartImageUrlB(years, saldoAcumulado, colors, investimento);
@@ -165,9 +164,9 @@ public with sharing class OpportunityDataController {
             ',"borderColor":' + JSON.serialize(colors) +
             ',"borderWidth":0}]},' +
             '"options":{' +
-            '"plugins":{"datalabels":{"color":"#5b6b7b","font":{"size":7},"formatter":' + dataLabelFormatter + ',"align":' + dataLabelAlign + ',"anchor":' + dataLabelAnchor + ',"clamp":true}},' +
+            '"plugins":{"datalabels":{"color":"#5b6b7b","font":{"size":7},"formatter":' + dataLabelFormatter + ',"align":' + dataLabelAlign + ',"anchor":' + dataLabelAnchor + ',"clamp":true,"clip":false}},' +
             '"legend":{"display":false},' +
-            '"layout":{"padding":{"top":10,"right":10,"left":10,"bottom":0}},' +
+            '"layout":{"padding":{"top":18,"right":28,"left":10,"bottom":0}},' +
             '"scales":{' +
                 '"xAxes":[{"ticks":{"fontSize":8,"fontColor":"#2f3f59","maxRotation":0,"minRotation":0,"autoSkip":true,"maxTicksLimit":10,"padding":4},"gridLines":{"display":false}}],' +
                 '"yAxes":[{"ticks":{"fontSize":8,"fontColor":"#2f3f59","padding":6,"callback":' + tickCallback + '},' +
