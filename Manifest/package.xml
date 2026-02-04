@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>AttachmentFeedServiceTest</members>
+        <members>IntegracaoGeradorPropostasTest</members>
+        <members>IntegracaoNivelloAdditionalTest</members>
+        <members>LeadDistributionSelector</members>
+        <members>LeadDistributionSelectorTest</members>
+        <members>OpportunityDataController</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Lead_Update_After_Distribui_o_do_Lead</members>
+        <name>Flow</name>
+    </types>
+    <types>
+        <members>ModeloPropostaB</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>Opportunity.CamposObrigatorios_Parecer_EB</members>
+        <name>ValidationRule</name>
+    </types>
+    <version>63.0</version>
+</Package>

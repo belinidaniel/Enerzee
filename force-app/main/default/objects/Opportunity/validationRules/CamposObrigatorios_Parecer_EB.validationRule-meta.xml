@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CamposObrigatorios_Parecer_EB</fullName>
+    <active>true</active>
+    <description>Exige Potencia Pico do Sistema e Valor Total da Proposta para avancar a partir de Parecer de acesso no Ezee Solar Grupo B.</description>
+    <errorConditionFormula>AND(
+    ISCHANGED(StageName),
+    RecordType.DeveloperName = &quot;EzeeSolarB&quot;,
+    OR(
+        ISPICKVAL(StageName, &quot;Parecer de acesso&quot;),
+        ISPICKVAL(StageName, &quot;Equipamento&quot;),
+        ISPICKVAL(StageName, &quot;Instalação&quot;),
+        ISPICKVAL(StageName, &quot;Ganho fechado&quot;),
+        ISPICKVAL(StageName, &quot;Ganho Fechado&quot;)
+    ),
+    OR(
+        ISBLANK(PotenciaPicoSistema__c),
+        PotenciaPicoSistema__c = 0,
+        ValorTotalProposta__c = 0
+    )
+)</errorConditionFormula>
+    <errorMessage>Preencha &quot;Potencia Pico do Sistema (kWp)&quot; e &quot;Valor Total da Proposta&quot; para avancar para Parecer de acesso (ou etapas seguintes).</errorMessage>
+</ValidationRule>

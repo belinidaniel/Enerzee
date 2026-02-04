@@ -116,6 +116,7 @@ public without sharing class IntegracaoNivelloContrato {
         public Decimal PotenciaPicoSistema;
         public Decimal ConsumoDesejado;
         public Integer QtdModulos;
+        public Integer StructureType;
         public List<Product> listProducts;
     }
 

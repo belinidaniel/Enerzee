@@ -674,7 +674,7 @@
     </div>
 
     <div style="position:relative; margin-top:-462px; left:10px; right:120px; 18px; font-weight: bold;">
-        <apex:outputText value="{!opportunityChartImage}" escape="false" />
+        <apex:outputText value="{!opportunityChartImageB}" escape="false" />
     </div>
 
 

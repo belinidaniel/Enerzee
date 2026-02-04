@@ -19,63 +19,27 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
     <actionCalls>
-        <name>Split_value_consultant</name>
-        <label>Split value consultant</label>
-        <locationX>50</locationX>
-        <locationY>431</locationY>
-        <actionName>StringListParser</actionName>
+        <name>Select_Consultor_Locked</name>
+        <label>Select Consultant (Locked)</label>
+        <locationX>1634</locationX>
+        <locationY>215</locationY>
+        <actionName>LeadDistributionSelector</actionName>
         <actionType>apex</actionType>
         <connector>
-            <targetReference>get_Consultant_by_Email</targetReference>
+            <targetReference>get_recordtype</targetReference>
         </connector>
-        <flowTransactionModel>Automatic</flowTransactionModel>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
-            <name>delimiterType</name>
+            <name>leadId</name>
             <value>
-                <stringValue>VIRGULA</stringValue>
+                <elementReference>$Record.Id</elementReference>
             </value>
         </inputParameters>
-        <inputParameters>
-            <name>rawValue</name>
-            <value>
-                <elementReference>$Record.DistributionValue__c</elementReference>
-            </value>
-        </inputParameters>
-        <nameSegment>StringListParser</nameSegment>
+        <nameSegment>LeadDistributionSelector</nameSegment>
         <offset>0</offset>
         <outputParameters>
-            <assignToReference>ValueSearchList</assignToReference>
-            <name>values</name>
-        </outputParameters>
-    </actionCalls>
-    <actionCalls>
-        <name>Split_value_graduation</name>
-        <label>Split value graduation</label>
-        <locationX>402</locationX>
-        <locationY>431</locationY>
-        <actionName>StringListParser</actionName>
-        <actionType>apex</actionType>
-        <connector>
-            <targetReference>Get_Consultant_by_graduation</targetReference>
-        </connector>
-        <flowTransactionModel>Automatic</flowTransactionModel>
-        <inputParameters>
-            <name>delimiterType</name>
-            <value>
-                <stringValue>VIRGULA</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>rawValue</name>
-            <value>
-                <elementReference>$Record.DistributionValue__c</elementReference>
-            </value>
-        </inputParameters>
-        <nameSegment>StringListParser</nameSegment>
-        <offset>0</offset>
-        <outputParameters>
-            <assignToReference>ValueSearchList</assignToReference>
-            <name>values</name>
+            <assignToReference>varConsultorSelecionadoId</assignToReference>
+            <name>consultantId</name>
         </outputParameters>
     </actionCalls>
     <apiVersion>63.0</apiVersion>
@@ -608,61 +572,6 @@
             <label>Yes</label>
         </rules>
     </decisions>
-    <decisions>
-        <name>Type_of_Distribution</name>
-        <label>Type of Distribution</label>
-        <locationX>1634</locationX>
-        <locationY>323</locationY>
-        <defaultConnector>
-            <targetReference>Evaluete_Lead_Rating</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>No</defaultConnectorLabel>
-        <rules>
-            <name>By_Consutant</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Distributiontype__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Email</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Split_value_consultant</targetReference>
-            </connector>
-            <label>By Consutant</label>
-        </rules>
-        <rules>
-            <name>By_Graduation</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Distributiontype__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Graduação</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Split_value_graduation</targetReference>
-            </connector>
-            <label>By Graduation</label>
-        </rules>
-        <rules>
-            <name>YesState</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.State</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Evaluete_Lead_Rating_Filter_True</targetReference>
-            </connector>
-            <label>by State</label>
-        </rules>
-    </decisions>
     <environments>Default</environments>
     <formulas>
         <name>NOW</name>
@@ -1158,7 +1067,7 @@
         <locationX>1634</locationX>
         <locationY>1397</locationY>
         <connector>
-            <targetReference>Assign_Last_Lead_Consultant</targetReference>
+            <targetReference>Call_Lead_Integration</targetReference>
         </connector>
         <inputAssignments>
             <field>ConsultorRegional__c</field>
@@ -1190,7 +1099,7 @@
         <locationX>1508</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Type_of_Distribution</targetReference>
+            <targetReference>Select_Consultor_Locked</targetReference>
         </connector>
         <filterLogic>(1 OR (3 AND 4)) AND 2</filterLogic>
         <filters>
