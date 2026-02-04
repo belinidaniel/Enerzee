@@ -21,8 +21,6 @@
         <members>LeadDistributionSelectorTest</members>
         <members>ModuloHelpDeskCaseController</members>
         <members>OpportunityDataController</members>
-        <members>PDFControllerExtension</members>
-        <members>ProposalConsoleController</members>
         <name>ApexClass</name>
     </types>
     <types>

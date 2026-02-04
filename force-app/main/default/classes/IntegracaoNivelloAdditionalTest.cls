@@ -180,7 +180,7 @@ private class IntegracaoNivelloAdditionalTest {
             return null;
         }
         Schema.DescribeFieldResult describeResult = sobjectType.getDescribe().fields.getMap().get(fieldName).getDescribe();
-        if (describeResult == null || !describeResult.isPicklist()) {
+        if (describeResult == null || describeResult.getType() != Schema.DisplayType.Picklist) {
             return null;
         }
         List<Schema.PicklistEntry> entries = describeResult.getPicklistValues();
