@@ -39,6 +39,10 @@ public class InstalacaoTriggerHandler extends TriggerHandler {
     }
     public override void afterUpdate(){
         InstalacaoTaskBO.createTasks((List<Instalacao__c>) newRecordList, (Map<Id, Instalacao__c>) oldMap);
+        WorkDeliveryReportService.enqueueForInstallations(
+            (List<Instalacao__c>) newRecordList,
+            (Map<Id, Instalacao__c>) oldMap
+        );
     }
     public override void beforeDelete(){}
     public override void afterDelete(){}

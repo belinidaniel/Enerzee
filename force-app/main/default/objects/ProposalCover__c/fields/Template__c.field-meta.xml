@@ -30,6 +30,11 @@
                 <default>false</default>
                 <label>ModeloPropostaEzeeConnect</label>
             </value>
+            <value>
+                <fullName>WorkDeliveryReportPdf</fullName>
+                <default>false</default>
+                <label>WorkDeliveryReportPdf</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

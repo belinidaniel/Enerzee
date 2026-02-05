@@ -9,23 +9,30 @@
         <members>ClickSignUtils</members>
         <members>ClickSignUtilsTest</members>
         <members>ConsultorTriggerHandler</members>
+        <members>ActivityDocumentController</members>
         <members>HelpDeskCaseDAO</members>
         <members>HelpDeskCaseService</members>
         <members>IntegracaoGeradorPropostasTest</members>
         <members>IntegracaoNivelloAdditionalTest</members>
         <members>IntegracaoNivelloContrato</members>
         <members>IntegracaoVOPlano</members>
+        <members>InstalacaoTriggerHandler</members>
         <members>KitInstalacaoBO</members>
         <members>LeadBO</members>
         <members>LeadDistributionSelector</members>
         <members>LeadDistributionSelectorTest</members>
         <members>ModuloHelpDeskCaseController</members>
         <members>OpportunityDataController</members>
+        <members>WorkDeliveryReportPdfController</members>
+        <members>WorkDeliveryReportQueueable</members>
+        <members>WorkDeliveryReportService</members>
+        <members>WorkDeliveryReportServiceTest</members>
         <name>ApexClass</name>
     </types>
     <types>
         <members>ModeloPropostaA</members>
         <members>ModeloPropostaB</members>
+        <members>WorkDeliveryReportPdf</members>
         <name>ApexPage</name>
     </types>
     <types>
@@ -46,6 +53,7 @@
         <members>helpDeskHome</members>
         <members>opportunityIntegrationLogs</members>
         <members>opportunityProposalConsole</members>
+        <members>activityDocumentUpload</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
@@ -55,8 +63,12 @@
     <types>
         <members>Case.Description_Rich__c</members>
         <members>ClickSignLog__c.RelatedId__c</members>
+        <members>Instalacao__c.WorkDeliveryReportContentDocumentId__c</members>
+        <members>Instalacao__c.WorkDeliveryReportGenerated__c</members>
+        <members>Instalacao__c.WorkDeliveryReportLastError__c</members>
         <members>Opportunity.DescricaoBateria__c</members>
         <members>Opportunity.ValorTotalProposta__c</members>
+        <members>ProposalCover__c.Template__c</members>
         <name>CustomField</name>
     </types>
     <types>

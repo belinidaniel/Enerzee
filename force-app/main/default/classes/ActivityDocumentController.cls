@@ -87,6 +87,24 @@ public with sharing class ActivityDocumentController {
         return results;
     }
 
+    @AuraEnabled
+    public static Boolean deleteAttachment(Id attachmentId) {
+        if (attachmentId == null) {
+            return false;
+        }
+        List<OpportunityAttachmentLink__c> links = [
+            SELECT Id
+            FROM OpportunityAttachmentLink__c
+            WHERE Id = :attachmentId
+            LIMIT 1
+        ];
+        if (links.isEmpty()) {
+            return false;
+        }
+        delete links;
+        return true;
+    }
+
     @AuraEnabled(cacheable=true)
     public static TaskContext getTaskContext(Id taskId) {
         TaskContext ctx = new TaskContext();
@@ -115,14 +133,23 @@ public with sharing class ActivityDocumentController {
                 ctx.idVirtualOffice = proj.Oportunidade__r != null ? proj.Oportunidade__r.IdVirtualOffice__c : null;
             } else if (sobj == 'Instalacao__c') {
                 Instalacao__c inst = [
-                    SELECT Projeto__c, Projeto__r.Oportunidade__c, Projeto__r.Oportunidade__r.IdVirtualOffice__c
+                    SELECT Projeto__c,
+                           Projeto__r.Oportunidade__c,
+                           Projeto__r.Oportunidade__r.IdVirtualOffice__c,
+                           Oportunidade__c,
+                           Oportunidade__r.IdVirtualOffice__c
                     FROM Instalacao__c
                     WHERE Id = :t.WhatId
                     LIMIT 1
                 ];
-                ctx.opportunityId = inst.Projeto__r != null ? inst.Projeto__r.Oportunidade__c : null;
-                ctx.idVirtualOffice = (inst.Projeto__r != null && inst.Projeto__r.Oportunidade__r != null)
-                    ? inst.Projeto__r.Oportunidade__r.IdVirtualOffice__c : null;
+                ctx.opportunityId = inst.Oportunidade__c != null
+                    ? inst.Oportunidade__c
+                    : (inst.Projeto__r != null ? inst.Projeto__r.Oportunidade__c : null);
+                ctx.idVirtualOffice = inst.Oportunidade__r != null
+                    ? inst.Oportunidade__r.IdVirtualOffice__c
+                    : (inst.Projeto__r != null && inst.Projeto__r.Oportunidade__r != null
+                        ? inst.Projeto__r.Oportunidade__r.IdVirtualOffice__c
+                        : null);
             } else if (sobj == 'Opportunity') {
                 Opportunity opp = [
                     SELECT IdVirtualOffice__c

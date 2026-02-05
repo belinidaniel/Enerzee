@@ -30,17 +30,22 @@
                                             {row.fileName}
                                         </a>
                                     </template>
-                                    <template if:false={row.existingUrl}>
+                                    <div class="slds-m-top_x-small">
                                         <input
                                             type="file"
-                                            accept=".pdf,application/pdf"
+                                            accept=".png,.jpg,.jpeg,.gif,.bmp,.webp,image/*"
                                             data-index={row.id}
                                             onchange={handleFileChange}
                                         />
-                                    </template>
+                                    </div>
                                 </td>
                                 <td>
-                                    <lightning-button label="Enviar" data-index={row.id} onclick={handleUpload} variant="brand"></lightning-button>
+                                    <lightning-button-group>
+                                        <lightning-button label="Enviar" data-index={row.id} onclick={handleUpload} variant="brand"></lightning-button>
+                                        <template if:true={row.existingId}>
+                                            <lightning-button label="Remover" data-index={row.id} onclick={handleRemove} variant="destructive-text"></lightning-button>
+                                        </template>
+                                    </lightning-button-group>
                                 </td>
                                 <td>{row.status}</td>
                             </tr>

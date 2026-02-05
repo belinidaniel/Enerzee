@@ -4,6 +4,7 @@ import getRequiredDocuments from '@salesforce/apex/ActivityDocumentController.ge
 import uploadExternalArchive from '@salesforce/apex/ExternalArchiveService.uploadExternalArchive';
 import getAttachments from '@salesforce/apex/ActivityDocumentController.getAttachments';
 import getTaskContext from '@salesforce/apex/ActivityDocumentController.getTaskContext';
+import deleteAttachment from '@salesforce/apex/ActivityDocumentController.deleteAttachment';
 
 export default class ActivityDocumentUpload extends LightningElement {
     @api recordId; // Task Id
@@ -47,7 +48,8 @@ export default class ActivityDocumentUpload extends LightningElement {
                 fileName: null,
                 base64: null,
                 status: 'Pendente',
-                existingUrl: null
+                existingUrl: null,
+                existingId: null
             }));
         } catch (error) {
             this.showToast('Erro', this.normalizeError(error), 'error');
@@ -71,7 +73,13 @@ export default class ActivityDocumentUpload extends LightningElement {
                         att.name === r.name
                 );
                 if (match) {
-                    return { ...r, status: 'Enviado', fileName: match.name, existingUrl: match.url || match.downloadUrl };
+                    return {
+                        ...r,
+                        status: 'Enviado',
+                        fileName: match.name,
+                        existingUrl: match.url || match.downloadUrl,
+                        existingId: match.id
+                    };
                 }
                 return r;
             });
@@ -105,11 +113,11 @@ export default class ActivityDocumentUpload extends LightningElement {
         const file = event.target.files && event.target.files[0];
         if (!file) return;
 
-        const isPdf =
-            (file.type && file.type.toLowerCase() === 'application/pdf') ||
-            (file.name && file.name.toLowerCase().endsWith('.pdf'));
-        if (!isPdf) {
-            this.showToast('Aviso', 'Apenas arquivos PDF são aceitos para este envio.', 'warning');
+        const isImage =
+            (file.type && file.type.toLowerCase().startsWith('image/')) ||
+            (file.name && /\.(png|jpe?g|gif|bmp|webp)$/i.test(file.name));
+        if (!isImage) {
+            this.showToast('Aviso', 'Apenas imagens (JPG/PNG/etc.) são aceitas para este envio.', 'warning');
             event.target.value = null; // limpa seleção
             return;
         }
@@ -146,6 +154,14 @@ export default class ActivityDocumentUpload extends LightningElement {
                 docRequiredName: row.name
             });
             if (result && result.success) {
+                if (row.existingId && result.attachmentId && row.existingId !== result.attachmentId) {
+                    try {
+                        await deleteAttachment({ attachmentId: row.existingId });
+                    } catch (deleteError) {
+                        // eslint-disable-next-line no-console
+                        console.warn('Erro ao remover anexo antigo', deleteError);
+                    }
+                }
                 this.rows = this.rows.map(r => r.id == idx ? { ...r, status: 'Enviado' } : r);
                 this.showToast('Sucesso', 'Arquivo enviado com sucesso.', 'success');
                 this.dispatchEvent(new CustomEvent('uploaded'));
@@ -153,6 +169,29 @@ export default class ActivityDocumentUpload extends LightningElement {
             } else {
                 this.showToast('Erro', (result && result.message) || 'Falha ao enviar.', 'error');
             }
+        } catch (error) {
+            this.showToast('Erro', this.normalizeError(error), 'error');
+        } finally {
+            this.loading = false;
+        }
+    }
+
+    async handleRemove(event) {
+        const idx = event.target.dataset.index;
+        const row = this.rows.find(r => r.id == idx);
+        if (!row || !row.existingId) {
+            return;
+        }
+        this.loading = true;
+        try {
+            const removed = await deleteAttachment({ attachmentId: row.existingId });
+            if (removed) {
+                this.showToast('Sucesso', 'Arquivo removido.', 'success');
+            } else {
+                this.showToast('Aviso', 'Arquivo não encontrado para remoção.', 'warning');
+            }
+            await this.loadExistingAttachments();
+            this.rows = this.rows.map(r => r.id == idx ? { ...r, existingUrl: null, existingId: null, status: 'Pendente' } : r);
         } catch (error) {
             this.showToast('Erro', this.normalizeError(error), 'error');
         } finally {
