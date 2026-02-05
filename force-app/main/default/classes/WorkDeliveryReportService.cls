@@ -5,6 +5,7 @@
  * - ActivityRequiredDocument__mdt com ActivitySubject__c = 'RELATÓRIO FINAL DE OBRA' e RequiredFiles__c
  *   na ordem desejada das páginas.
  * - Apenas imagens (JPG/PNG/etc.) são suportadas por enquanto; PDFs serão ignorados.
+ * - Imagens externas são usadas diretamente por URL (sem callout).
  */
 public with sharing class WorkDeliveryReportService {
     public static final String STATUS_OBRA_CONCLUIDA = 'Obra concluída';
@@ -18,7 +19,6 @@ public with sharing class WorkDeliveryReportService {
     private static List<String> requiredDocsOverride;
 
     private static Set<Id> enqueuedInstalacoes = new Set<Id>();
-    private static String lastDownloadError;
 
     public static void enqueueForInstallations(
         List<Instalacao__c> newRecords,
@@ -64,8 +64,6 @@ public with sharing class WorkDeliveryReportService {
         if (installationId == null) {
             return;
         }
-        lastDownloadError = null;
-
         Instalacao__c inst;
         try {
             inst = [
@@ -194,13 +192,7 @@ public with sharing class WorkDeliveryReportService {
                     );
                     return;
                 }
-                String dataUrl = downloadExternalImageDataUrl(source.externalUrl, inst.Id);
-                if (String.isBlank(dataUrl)) {
-                    String detail = String.isNotBlank(lastDownloadError) ? ' Detalhe: ' + lastDownloadError : '';
-                    logAndUpdateInstallation(inst, 'Falha ao baixar o documento: ' + source.displayName + '.' + detail);
-                    return;
-                }
-                PageItem externalPage = buildPageItemFromUrl(dataUrl);
+                PageItem externalPage = buildPageItemFromUrl(source.externalUrl);
                 if (externalPage != null) {
                     pages.add(externalPage);
                 }
@@ -251,12 +243,12 @@ public with sharing class WorkDeliveryReportService {
         );
         insert link;
 
-        update new Instalacao__c(
-            Id = installationId,
-            WorkDeliveryReportGenerated__c = true,
-            WorkDeliveryReportContentDocumentId__c = String.valueOf(storedReport.ContentDocumentId),
-            WorkDeliveryReportLastError__c = null
-        );
+        // update new Instalacao__c(
+        //     Id = installationId,
+        //     WorkDeliveryReportGenerated__c = true,
+        //     WorkDeliveryReportContentDocumentId__c = String.valueOf(storedReport.ContentDocumentId),
+        //     WorkDeliveryReportLastError__c = null
+        // );
     }
 
     private static List<String> loadRequiredDocuments() {
@@ -375,83 +367,6 @@ public with sharing class WorkDeliveryReportService {
             result.put(norm, link);
         }
         return result;
-    }
-
-    private static String downloadExternalImageDataUrl(String externalUrl, Id installationId) {
-        if (String.isBlank(externalUrl)) {
-            return null;
-        }
-
-        String endpoint = buildAzureEndpoint(externalUrl);
-        if (String.isBlank(endpoint)) {
-            lastDownloadError = 'URL inválida para download: ' + externalUrl;
-            logError(installationId, lastDownloadError, null);
-            return null;
-        }
-
-        HttpRequest req = new HttpRequest();
-        req.setMethod('GET');
-        req.setEndpoint(endpoint);
-        req.setTimeout(120000);
-        System.debug('WorkDeliveryReportService.downloadExternalImageDataUrl -> endpoint=' + endpoint);
-        System.debug('WorkDeliveryReportService.downloadExternalImageDataUrl -> originalUrl=' + externalUrl);
-        Utils.createLog('WorkDeliveryReportService', 'downloadExternalImageDataUrl - request', req, String.valueOf(installationId));
-
-        HttpResponse res;
-        try {
-            res = new Http().send(req);
-        } catch (Exception e) {
-            lastDownloadError = 'CalloutException: ' + e.getMessage() + ' | endpoint=' + endpoint;
-            logError(installationId, lastDownloadError, e);
-            return null;
-        }
-
-        if (res != null) {
-            System.debug('WorkDeliveryReportService.downloadExternalImageDataUrl -> status=' + res.getStatusCode() + ' ' + res.getStatus());
-            System.debug('WorkDeliveryReportService.downloadExternalImageDataUrl -> contentType=' + res.getHeader('Content-Type'));
-            System.debug('WorkDeliveryReportService.downloadExternalImageDataUrl -> bodySize=' + (res.getBody() != null ? res.getBody().length() : 0));
-        }
-
-        if (res == null || res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
-            if (res != null) {
-                Utils.createLog('WorkDeliveryReportService', 'downloadExternalImageDataUrl', res, String.valueOf(installationId));
-            }
-            lastDownloadError = 'Resposta inválida do Azure Blob: ' +
-                (res != null ? String.valueOf(res.getStatusCode()) + ' ' + res.getStatus() : 'sem resposta');
-            return null;
-        }
-
-        Blob fileBody = res.getBodyAsBlob();
-        if (fileBody == null || fileBody.size() == 0) {
-            lastDownloadError = 'Resposta sem conteúdo (body vazio).';
-            return null;
-        }
-        String contentType = res.getHeader('Content-Type');
-        if (String.isBlank(contentType)) {
-            contentType = guessContentTypeFromUrl(externalUrl);
-        }
-        if (String.isBlank(contentType) || !contentType.toLowerCase().startsWith('image/')) {
-            lastDownloadError = 'Conteúdo não é imagem. Content-Type=' + contentType;
-            return null;
-        }
-
-        String base64Data = EncodingUtil.base64Encode(fileBody);
-        return 'data:' + contentType + ';base64,' + base64Data;
-    }
-
-    private static String buildAzureEndpoint(String attachmentUrl) {
-        if (String.isBlank(attachmentUrl)) {
-            return null;
-        }
-
-        String normalized = attachmentUrl.trim();
-        Integer schemeIndex = normalized.indexOf('://');
-        Integer pathIndex = schemeIndex > -1 ? normalized.indexOf('/', schemeIndex + 3) : normalized.indexOf('/');
-        String path = pathIndex > -1 ? normalized.substring(pathIndex) : '';
-        if (String.isBlank(path)) {
-            return null;
-        }
-        return 'callout:' + AZURE_NAMED_CREDENTIAL + path;
     }
 
     private static String buildReportFileName(Instalacao__c inst) {
@@ -604,23 +519,6 @@ public with sharing class WorkDeliveryReportService {
             || cleaned.endsWith('.gif')
             || cleaned.endsWith('.bmp')
             || cleaned.endsWith('.webp');
-    }
-
-    private static String guessContentTypeFromUrl(String url) {
-        if (String.isBlank(url)) {
-            return null;
-        }
-        String cleaned = url.toLowerCase();
-        Integer queryIndex = cleaned.indexOf('?');
-        if (queryIndex > -1) {
-            cleaned = cleaned.substring(0, queryIndex);
-        }
-        if (cleaned.endsWith('.png')) return 'image/png';
-        if (cleaned.endsWith('.jpg') || cleaned.endsWith('.jpeg')) return 'image/jpeg';
-        if (cleaned.endsWith('.gif')) return 'image/gif';
-        if (cleaned.endsWith('.bmp')) return 'image/bmp';
-        if (cleaned.endsWith('.webp')) return 'image/webp';
-        return null;
     }
 
     private class CoverPair {

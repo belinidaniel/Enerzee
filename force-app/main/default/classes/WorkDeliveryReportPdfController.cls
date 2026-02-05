@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 02-05-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class WorkDeliveryReportPdfController {
     public List<String> pageUrls { get; private set; }
 
@@ -5,6 +12,8 @@ public with sharing class WorkDeliveryReportPdfController {
         pageUrls = new List<String>();
 
         String pagesParam = ApexPages.currentPage().getParameters().get('pages');
+        String installationId = ApexPages.currentPage().getParameters().get('installationId');
+        
         if (String.isBlank(pagesParam)) {
             return;
         }
