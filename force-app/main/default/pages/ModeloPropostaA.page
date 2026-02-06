@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 11-28-2025
+  @last modified on  : 02-06-2026
   @last modified by  : Daniel Belini
 -->
 <apex:page standardController="Opportunity" applyBodyTag="false" extensions="PDFControllerExtension,OpportunityDataController"  standardStylesheets="false" showHeader="false"  sidebar="false" renderAs="PDF"  action="{!salvarPDF}" cache="false">
@@ -753,8 +753,7 @@
 
     <!-- imagem de fundo -->
     <div style="height: 900px;" >
-        <apex:image url="{!IF(AND(OR(NOT(ISBLANK(paymentMethodLeftHtml)), NOT(ISBLANK(paymentMethodRightHtml)), NOT(ISBLANK(Opportunity.NotePaymentMethod__c))), NOT(ISBLANK(paymentMethodNoteImageUrl))), paymentMethodNoteImageUrl, pdfUrls[5])}"  height="1131px" />
-    </div>
+        <apex:image url="{!IF(AND(OR(NOT(ISBLANK(paymentMethodLeftHtml)), NOT(ISBLANK(paymentMethodRightHtml)), NOT(ISBLANK(Opportunity.NotePaymentMethod__c))), NOT(ISBLANK(paymentMethodNoteImageUrl))), pdfUrls[5], paymentMethodNoteImageUrl)}"  height="1131px" />    </div>
     <!-- INVESTIMENTO TOTAL -->
     <div style="position:relative; bottom:630px; left:75px; right:120px; font-size:28px !important; font-weight: bold;">
         R$ 
