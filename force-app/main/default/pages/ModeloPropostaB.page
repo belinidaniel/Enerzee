@@ -701,7 +701,7 @@
     <!-- PAGINA 6 ------------------------------------->
     <!-- imagem de fundo -->
     <div style="height: 900px;" >
-        <apex:image url="{!IF(AND(OR(NOT(ISBLANK(paymentMethodLeftHtml)), NOT(ISBLANK(paymentMethodRightHtml)), NOT(ISBLANK(Opportunity.NotePaymentMethod__c))), NOT(ISBLANK(paymentMethodNoteImageUrl))), pdfUrls[5], paymentMethodNoteImageUrl)}"  height="1131px" />
+        <apex:image url="{!IF(AND(OR(NOT(ISBLANK(paymentMethodLeftHtml)), NOT(ISBLANK(paymentMethodRightHtml)), NOT(ISBLANK(Opportunity.NotePaymentMethod__c))), NOT(ISBLANK(paymentMethodNoteImageUrl))), paymentMethodNoteImageUrl, pdfUrls[5])}"  height="1131px" />
     </div>
     <!-- INVESTIMENTO TOTAL -->
     <div style="position:relative; bottom:730px; left:75px; right:120px; font-size:28px !important; font-weight: bold;">
