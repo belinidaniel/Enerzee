@@ -28,6 +28,48 @@ public with sharing class ExternalArchiveService {
         if (String.isBlank(base64File)) {
             throw new AuraHandledException('Arquivo inválido.');
         }
+        if (String.isBlank(sobjectId)) {
+            throw new AuraHandledException('Registro relacionado é obrigatório.');
+        }
+
+        Boolean isRelatorio = isRelatorioFinalDeObra(activityName);
+        String fileNameWithExtension = isRelatorio ? normalizeFileName(fileName) : ensureExtension(fileName);
+
+        if (isRelatorio) {
+            Blob fileBlob = decodeBase64File(base64File);
+            String title = stripExtension(fileNameWithExtension);
+            ContentVersion cv = new ContentVersion();
+            cv.ContentLocation = 'S';
+            cv.FirstPublishLocationId = (Id) sobjectId;
+            cv.VersionData = fileBlob;
+            cv.Title = title;
+            cv.PathOnClient = fileNameWithExtension;
+            cv.IsMajorVersion = true;
+            insert cv;
+
+            cv = [
+                SELECT Id, ContentDocumentId
+                FROM ContentVersion
+                WHERE Id = :cv.Id
+                LIMIT 1
+            ];
+
+            OpportunityAttachmentLink__c link = new OpportunityAttachmentLink__c();
+            link.ActivityName__c = activityName;
+            link.SObjectId__c = sobjectId;
+            link.AttachmentDescription__c = fileNameWithExtension;
+            link.DocRequiredName__c = docRequiredName;
+            link.ContentDocumentId__c = String.valueOf(cv.ContentDocumentId);
+            link.AttachmentURL__c = '/sfc/servlet.shepherd/document/download/' + cv.ContentDocumentId;
+            insert link;
+
+            UploadResult ok = new UploadResult();
+            ok.success = true;
+            ok.attachmentId = link.Id;
+            ok.message = 'Arquivo enviado com sucesso.';
+            return ok;
+        }
+
         if (opportunityId == null) {
             throw new AuraHandledException('Oportunidade é obrigatória.');
         }
@@ -48,8 +90,6 @@ public with sharing class ExternalArchiveService {
             WHERE DeveloperName = 'ExternalArchive'
             LIMIT 1
         ];
-
-        String fileNameWithExtension = ensureExtension(fileName);
 
         Map<String, Object> body = new Map<String, Object>{
             'IdProposal' => opp.IdVirtualOffice__c,
@@ -92,6 +132,33 @@ public with sharing class ExternalArchiveService {
         return ok;
     }
 
+    private static Boolean isRelatorioFinalDeObra(String activityName) {
+        if (String.isBlank(activityName)) {
+            return false;
+        }
+        return activityName.trim().equalsIgnoreCase(TaskUtils.SUBJECT_RELATORIO_FINAL_DE_OBRA);
+    }
+
+    private static Blob decodeBase64File(String base64File) {
+        String content = base64File;
+        Integer idx = content.indexOf('base64,');
+        if (idx > -1) {
+            content = content.substring(idx + 7);
+        }
+        return EncodingUtil.base64Decode(content);
+    }
+
+    private static String stripExtension(String name) {
+        if (String.isBlank(name)) {
+            return 'arquivo';
+        }
+        Integer idx = name.lastIndexOf('.');
+        if (idx > 0) {
+            return name.substring(0, idx);
+        }
+        return name;
+    }
+
     private static String ensureExtension(String name) {
         if (String.isBlank(name)) {
             return 'arquivo.pdf';
@@ -100,5 +167,12 @@ public with sharing class ExternalArchiveService {
             return name;
         }
         return name + '.pdf';
+    }
+
+    private static String normalizeFileName(String name) {
+        if (String.isBlank(name)) {
+            return 'arquivo';
+        }
+        return name;
     }
 }

@@ -4,13 +4,13 @@
     </template>
 
     <template if:true={showTable}>
-        <lightning-card title="Documentos obrigatórios">
+        <lightning-card title="Documentos obrigatorios">
             <div class="slds-p-horizontal_small slds-p-vertical_x-small">
                 <table class="slds-table slds-table_cell-buffer slds-table_bordered">
                     <thead>
                         <tr>
                             <th scope="col">Documento</th>
-                            <th scope="col">Observação</th>
+                            <th scope="col">Observacao</th>
                             <th scope="col">Arquivo</th>
                             <th scope="col"></th>
                             <th scope="col">Status</th>
@@ -22,25 +22,59 @@
                                 <td>{row.name}</td>
                                 <td>{row.observation}</td>
                                 <td>
-                                    <template if:true={row.existingUrl}>
-                                        <a href={row.existingUrl}
-                                           data-url={row.existingUrl}
-                                           data-label={row.fileName}
-                                           onclick={handleOpenPreview}>
-                                            {row.fileName}
-                                        </a>
+                                    <template if:true={row.existingFiles.length}>
+                                        <div class="file-list">
+                                            <template for:each={row.existingFiles} for:item="file">
+                                                <div key={file.url} class="file-item">
+                                                    <a
+                                                        href={file.url}
+                                                        data-url={file.url}
+                                                        data-label={file.name}
+                                                        onclick={handleOpenPreview}
+                                                    >
+                                                        {file.name}
+                                                    </a>
+                                                </div>
+                                            </template>
+                                        </div>
                                     </template>
-                                    <template if:false={row.existingUrl}>
+
+                                    <template if:true={row.pendingFiles.length}>
+                                        <div class="file-list pending">
+                                            <template for:each={row.pendingFiles} for:item="file">
+                                                <div key={file.fileName} class="file-item">
+                                                    {file.fileName}
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+
+                                    <template if:true={row.canUpload}>
                                         <input
                                             type="file"
-                                            accept=".pdf,application/pdf"
+                                            accept={acceptedFormats}
+                                            multiple={allowMultipleFiles}
                                             data-index={row.id}
                                             onchange={handleFileChange}
                                         />
+                                        <template if:true={isRelatorioFinalDeObra}>
+                                            <div class="help-text">Maximo {row.maxFiles} imagens. Restantes: {row.remainingSlots}</div>
+                                        </template>
+                                    </template>
+                                    <template if:false={row.canUpload}>
+                                        <template if:true={isRelatorioFinalDeObra}>
+                                            <div class="help-text">Limite de {row.maxFiles} imagens atingido.</div>
+                                        </template>
                                     </template>
                                 </td>
                                 <td>
-                                    <lightning-button label="Enviar" data-index={row.id} onclick={handleUpload} variant="brand"></lightning-button>
+                                    <lightning-button
+                                        label="Enviar"
+                                        data-index={row.id}
+                                        onclick={handleUpload}
+                                        variant="brand"
+                                        disabled={row.disableSend}
+                                    ></lightning-button>
                                 </td>
                                 <td>{row.status}</td>
                             </tr>
