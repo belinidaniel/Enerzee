@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-04-2025
+ * @last modified on  : 02-05-2026
  * @last modified by  : Daniel Belini
 **/
 public without sharing class KitInstalacaoBO {
@@ -146,7 +146,7 @@ public without sharing class KitInstalacaoBO {
             List<Opportunity> opportunitiesToProcess = [
                 SELECT  Id, PotenciaPicoSistema__c, NumeroModulos__c, IdVirtualOffice__c, 
                         BDI__c, Rede3750__c, Pontos__c, Direct__c,
-                        CustoAdicionalFixo__c, Instalacao__c, CustoFinanceiroWeg__c, ConsumoAlvo__c, TipoTelhadoEstrutura__c,
+                        CustoAdicionalFixo__c, Instalacao__c, CustoFinanceiroWeg__c, ConsumoAlvo__c, ConsumoInformadoB__c,TipoTelhadoEstrutura__c,
                         (SELECT ID, product2.Name, Quantity, UnitPrice, product2.Family, product2.ExternalId__c FROM OpportunityLineItems)
                 FROM    Opportunity
                 WHERE   Id IN :oppIdToKitIdMap.keySet() AND Isclosed = false
@@ -163,7 +163,7 @@ public without sharing class KitInstalacaoBO {
                         Id relatedKitId = oppIdToKitIdMap.get(opp.Id);
                         opportunitiesToUpdate.add(createOpportunityForUpdate(opp, response, relatedKitId));
                     } else {
-                        Utils.createLog(CLASS_NAME, 'SendKitUpdate - enviarKit sem resposta ' + opp.Id, new AuraHandledException('IntegracaoNivelloContrato.enviarKit retornou nulo.'), opp.Id);
+                        Utils.createLog(CLASS_NAME, 'SendKitUpdate - enviarKit sem resposta ' + opp.Id, new CalloutException('IntegracaoNivelloContrato.enviarKit retornou nulo.'), opp.Id);
                     }
                 } catch(Exception e){
                     Utils.createLog(CLASS_NAME, 'SendKitUpdate - opp ' + opp.Id, e, opp.Id);
@@ -192,7 +192,7 @@ public without sharing class KitInstalacaoBO {
     private static IntegracaoNivelloContrato.EnviarKitRequest buildKitRequest(Opportunity opp) {
         IntegracaoNivelloContrato.EnviarKitRequest request = new IntegracaoNivelloContrato.EnviarKitRequest();
         request.Id = opp.IdVirtualOffice__c;
-        request.ConsumoDesejado = opp.ConsumoAlvo__c;
+        request.ConsumoDesejado = opp.ConsumoInformadoB__c;
         request.PotenciaPicoSistema = opp.PotenciaPicoSistema__c;
         request.QtdModulos = (opp.NumeroModulos__c != null) ? (Integer)opp.NumeroModulos__c : 0;
         request.StructureType = getStructureType(opp.TipoTelhadoEstrutura__c);

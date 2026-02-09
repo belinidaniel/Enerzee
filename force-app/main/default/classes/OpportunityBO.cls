@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-29-2025
+ * @last modified on  : 02-05-2026
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -107,6 +107,7 @@ public class OpportunityBO {
         }
         if (singleOpportunity.TargetConsume != null) {
             opportunity.ConsumoAlvo__c = singleOpportunity.TargetConsume;
+            opportunity.ConsumoInformadoB__c = singleOpportunity.TargetConsume;
         }
         if (singleOpportunity.PercentageIncreaseInConsumption != null) {
             opportunity.PorcentagemAumentoConsumo__c = singleOpportunity.PercentageIncreaseInConsumption;

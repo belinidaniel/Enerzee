@@ -79,7 +79,7 @@
                     <template if:false={isAttachmentPreviewLoading}>
                         <template if:true={hasPreviewUrl}>
                             <template if:true={filePreviewIsImage}>
-                                <img src={filePreviewUrl} alt="Pré-visualização" class="file-preview__image" />
+                                <img src={} alt="Pré-visualização" class="file-preview__image" />
                             </template>
                             <template if:true={filePreviewIsPdf}>
                                 <iframe src={filePreviewUrl}
