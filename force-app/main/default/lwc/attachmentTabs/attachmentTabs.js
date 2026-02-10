@@ -1,4 +1,5 @@
 import { LightningElement, api, track } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getAttachments from '@salesforce/apex/ActivityDocumentController.getAttachments';
 
 export default class AttachmentTabs extends LightningElement {
@@ -14,6 +15,7 @@ export default class AttachmentTabs extends LightningElement {
     filePreviewIsPdf = false;
     filePreviewIsImage = false;
     isAttachmentPreviewLoading = false;
+    isGeneratingPdf = false;
     error;
 
     connectedCallback() {
@@ -58,6 +60,18 @@ export default class AttachmentTabs extends LightningElement {
 
     get hasData() {
         return (this.groups || []).length > 0;
+    }
+
+    get isGenerateDisabled() {
+        return !this.targetId || !this.selectedGroupName || this.isGeneratingPdf;
+    }
+
+    get isRelatorioFinalSelected() {
+        return this.isRelatorioFinalSubject(this.selectedGroupName);
+    }
+
+    get generateButtonLabel() {
+        return this.isGeneratingPdf ? 'Gerando...' : 'Gerar PDF';
     }
 
     handleTabChange(event) {
@@ -109,6 +123,44 @@ export default class AttachmentTabs extends LightningElement {
         if (url) {
             window.open(url, '_blank');
         }
+    }
+
+    async handleGeneratePdf() {
+        if (!this.targetId) {
+            this.showToast('Erro', 'Registro não identificado para gerar PDF.', 'error');
+            return;
+        }
+        if (!this.selectedGroupName) {
+            this.showToast('Aviso', 'Selecione uma atividade para gerar o PDF.', 'warning');
+            return;
+        }
+        this.isGeneratingPdf = true;
+        try {
+            const pdfUrl = this.buildPdfUrl();
+            window.open(pdfUrl, '_blank');
+        } catch (error) {
+            this.showToast('Erro', this.normalizeError(error), 'error');
+        } finally {
+            this.isGeneratingPdf = false;
+        }
+    }
+
+    handlePreviewPdf() {
+        if (!this.targetId) {
+            this.showToast('Erro', 'Registro não identificado para pré-visualizar.', 'error');
+            return;
+        }
+        if (!this.selectedGroupName) {
+            this.showToast('Aviso', 'Selecione uma atividade para pré-visualizar.', 'warning');
+            return;
+        }
+        const pdfUrl = this.buildPdfUrl();
+        this.filePreviewName = `Relatório - ${this.selectedGroupName}`;
+        this.filePreviewUrl = pdfUrl;
+        this.filePreviewIsPdf = true;
+        this.filePreviewIsImage = false;
+        this.isAttachmentPreviewLoading = false;
+        this.isFileModalOpen = true;
     }
 
     formatAttachment(record) {
@@ -173,5 +225,46 @@ export default class AttachmentTabs extends LightningElement {
 
     get hasPreviewUrl() {
         return !!this.filePreviewUrl;
+    }
+
+    buildPdfUrl() {
+        const base = '/apex/WorkDeliveryReportPdf';
+        const params = new URLSearchParams({
+            sobjectId: this.targetId,
+            activityName: this.selectedGroupName
+        });
+        return `${base}?${params.toString()}`;
+    }
+
+    isRelatorioFinalSubject(value) {
+        return this.normalizeSubject(value) === 'RELATORIO FINAL DE OBRA';
+    }
+
+    normalizeSubject(value) {
+        if (!value) return '';
+        try {
+            return value
+                .toString()
+                .trim()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toUpperCase();
+        } catch (error) {
+            return value.toString().trim().toUpperCase();
+        }
+    }
+
+    showToast(title, message, variant) {
+        this.dispatchEvent(new ShowToastEvent({ title, message, variant }));
+    }
+
+    normalizeError(error) {
+        if (!error) return 'Erro desconhecido';
+        if (Array.isArray(error.body)) {
+            return error.body.map((e) => e.message).join(', ');
+        } else if (error.body && error.body.message) {
+            return error.body.message;
+        }
+        return error.message || JSON.stringify(error);
     }
 }

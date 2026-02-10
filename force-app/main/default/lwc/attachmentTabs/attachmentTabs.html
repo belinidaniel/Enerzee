@@ -6,6 +6,21 @@
     </template>
 
     <template if:true={hasData}>
+        <div class="toolbar slds-p-around_small slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+            <div class="slds-text-title_caps">Arquivos por Atividade</div>
+            <div class="toolbar-actions">
+                <template if:true={isRelatorioFinalSelected}>
+                    <lightning-button label="Visualizar"
+                                      variant="neutral"
+                                      onclick={handlePreviewPdf}
+                                      disabled={isGenerateDisabled}></lightning-button>
+                    <lightning-button label={generateButtonLabel}
+                                      variant="brand"
+                                      onclick={handleGeneratePdf}
+                                      disabled={isGenerateDisabled}></lightning-button>
+                </template>
+            </div>
+        </div>
         <lightning-layout multiple-rows="true">
             <lightning-layout-item size="3" class="nav-pane">
                 <lightning-vertical-navigation selected-item={selectedGroupName} onselect={handleNavSelect}>

@@ -1,0 +1,129 @@
+<!--
+  @description       : 
+  @author            : Daniel Belini
+  @group             : 
+  @last modified on  : 02-10-2026
+  @last modified by  : Daniel Belini
+-->
+<apex:page controller="WorkDeliveryReportPdfController"
+    showHeader="false"
+    sidebar="false"
+    standardStylesheets="false"
+    applyBodyTag="false"
+    cache="false"
+    renderAs="PDF"
+    title="{!documentTitle}">
+    <head>
+        <style type="text/css" media="print">
+            @page {
+                size: A4 landscape;
+                margin: 0;
+            }
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                font-family: Arial, sans-serif;
+                color: #1f2937;
+            }
+        </style>
+    </head>
+
+    <apex:outputPanel rendered="{!hasCover}" layout="none">
+        <div class="page cover" style="width:297mm;height:204mm;page-break-after:always;overflow:hidden;position:relative;">
+            <apex:image url="{!coverUrl}" style="width:100%;height:100%;object-fit:cover;display:block;" />
+            <div style="position:absolute;top:77mm;font-size:14pt;color:#1e2a5a;line-height:1.1;">
+                <div style="padding-top:2px;display:flex;padding-left:615px;">
+                    <apex:outputText value="{!clientName}" />
+                </div>
+                <div style="padding-top:23px;display:flex;padding-left:642px;">
+                    <apex:outputText value="{!endereco}" />
+                </div>
+                <div style="padding-top:23px;display:flex;padding-left:655px;">
+                    <apex:outputText value="{!integradorName}" />
+                </div>
+                <div style="padding-top:23px;display:flex;padding-left:717px;">
+                    <apex:outputText value="{!prazoContratual}" />
+                </div>
+                <div style="padding-top:24px;display:flex;padding-left:805px;">
+                    <apex:outputText value="{!periodoObra}" />
+                </div>
+                <div style="padding-top:22px;display:flex;padding-left:613px;">
+                    <apex:outputText value="{!gestorName}" />
+                </div>
+                <div style="padding-top:22px;display:flex;padding-left:613px;">
+                    <apex:outputText value="{!statusInstalacao}" />
+                </div>
+            </div>
+        </div>
+    </apex:outputPanel>
+
+    <apex:outputPanel rendered="{!hasSections}" layout="none">
+        <apex:repeat value="{!pages}" var="page">
+            <div class="page content" style="width:297mm;height:204mm;page-break-after:always;overflow:hidden;position:relative;box-sizing:border-box;padding-left:0px;background:#ffffff;">
+                <div class="content-header" style="height:24mm;text-align:left;padding-left:16mm;padding-top:16mm;">
+                    <div style="font-size:20pt;font-weight:700;color:#1e2a5a;">Imagens para Aprovação da Finalização da Obra</div>
+                    <div style="font-size:17pt;font-weight:600;color:#4b5563;">{!page.displayTitle}</div>
+                </div>
+                <div class="content-body" style="position:absolute;left:16mm;right:16mm;top:40mm;bottom:12mm;display:flex;align-items:center;justify-content:center;">
+                    <apex:outputPanel rendered="{!page.templateType == 1}" layout="none">
+                        <table style="max-width:80%;max-height:80%;border-collapse:separate;border-spacing:6mm;margin:0 auto;table-layout:fixed;text-align:center;">
+                            <tr>
+                                <td style="width:80mm;height:120mm;vertical-align:middle;text-align:center;">
+                                    <div style="width:100%;height:100%;background:#ffffff;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                        <apex:image url="{!page.image1}" style="width:100%;height:100%;object-fit:cover;display:block;" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!page.templateType == 2}" layout="none">
+                        <table style="width:100%;height:100%;border-collapse:separate;border-spacing:6mm;margin:0 auto;table-layout:fixed;text-align:center;">
+                            <tr>
+                                <td style="width:80mm;height:120mm;vertical-align:middle;text-align:center;">
+                                    <div style="width:100%;height:100%;background:#ffffff;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                        <apex:image url="{!page.image1}" style="width:100%;height:100%;object-fit:cover;display:block;" />
+                                    </div>
+                                </td>
+                                <td style="width:80mm;height:120mm;vertical-align:middle;text-align:center;">
+                                    <div style="width:100%;height:100%;background:#ffffff;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                        <apex:image url="{!page.image2}" style="width:100%;height:100%;object-fit:cover;display:block;" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!page.templateType == 3}" layout="none">
+                        <table style="width:100%;height:100%;border-collapse:separate;border-spacing:6mm;margin:0 auto;table-layout:fixed;text-align:center;">
+                            <tr>
+                                <td style="width:80mm;height:120mm;vertical-align:middle;text-align:center;">
+                                    <div style="width:100%;height:100%;background:#ffffff;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                        <apex:image url="{!page.image1}" style="width:100%;height:100%;object-fit:cover;display:block;" />
+                                    </div>
+                                </td>
+                                <td style="width:80mm;height:120mm;vertical-align:middle;text-align:center;">
+                                    <div style="width:100%;height:100%;background:#ffffff;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                        <apex:image url="{!page.image2}" style="width:100%;height:100%;object-fit:cover;display:block;" />
+                                    </div>
+                                </td>
+                                <td style="width:80mm;height:120mm;vertical-align:middle;text-align:center;">
+                                    <div style="width:100%;height:100%;background:#ffffff;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                        <apex:image url="{!page.image3}" style="width:100%;height:100%;object-fit:cover;display:block;" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:outputPanel>
+                </div>
+            </div>
+        </apex:repeat>
+    </apex:outputPanel>
+
+    <apex:outputPanel rendered="{!hasContraCover}" layout="none">
+        <div class="page cover" style="width:297mm;height:204mm;page-break-after:auto;overflow:hidden;position:relative;">
+            <apex:image url="{!contraCoverUrl}" style="width:100%;height:100%;object-fit:cover;display:block;" />
+        </div>
+    </apex:outputPanel>
+</apex:page>
+    
