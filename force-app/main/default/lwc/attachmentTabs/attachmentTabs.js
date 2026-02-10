@@ -66,6 +66,10 @@ export default class AttachmentTabs extends LightningElement {
         return !this.targetId || !this.selectedGroupName || this.isGeneratingPdf;
     }
 
+    get isRelatorioFinalSelected() {
+        return this.isRelatorioFinalSubject(this.selectedGroupName);
+    }
+
     get generateButtonLabel() {
         return this.isGeneratingPdf ? 'Gerando...' : 'Gerar PDF';
     }
@@ -230,6 +234,24 @@ export default class AttachmentTabs extends LightningElement {
             activityName: this.selectedGroupName
         });
         return `${base}?${params.toString()}`;
+    }
+
+    isRelatorioFinalSubject(value) {
+        return this.normalizeSubject(value) === 'RELATORIO FINAL DE OBRA';
+    }
+
+    normalizeSubject(value) {
+        if (!value) return '';
+        try {
+            return value
+                .toString()
+                .trim()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toUpperCase();
+        } catch (error) {
+            return value.toString().trim().toUpperCase();
+        }
     }
 
     showToast(title, message, variant) {
