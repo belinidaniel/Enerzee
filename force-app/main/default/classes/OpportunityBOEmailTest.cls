@@ -63,4 +63,23 @@ private class OpportunityBOEmailTest {
         Test.stopTest();
 
     }
+
+    @IsTest
+    static void shouldFilterGrupoAFromNivelloEmail() {
+        Id grupoARecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+            .get('EzeeSolarA').getRecordTypeId();
+        Id otherRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+            .get('Solar').getRecordTypeId();
+
+        Opportunity oppGrupoA = new Opportunity(RecordTypeId = grupoARecordTypeId, Origem__c = 'Nivello');
+        Opportunity oppOther = new Opportunity(RecordTypeId = otherRecordTypeId, Origem__c = 'Nivello');
+        Opportunity oppOtherOrigin = new Opportunity(RecordTypeId = otherRecordTypeId, Origem__c = 'Outro');
+
+        List<Opportunity> result = OpportunityBO.filterNivelloEmailOpps(
+            new List<Opportunity>{ oppGrupoA, oppOther, oppOtherOrigin }
+        );
+
+        System.assertEquals(1, result.size(), 'Deve enviar apenas para Nivello fora do Grupo A');
+        System.assertEquals(otherRecordTypeId, result[0].RecordTypeId, 'RecordType de saída incorreto');
+    }
 }

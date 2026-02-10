@@ -224,6 +224,51 @@ public class InstalacaoBOTest {
     }
 
     @isTest
+    static void advancesOpportunityStageOnProjectApprovalGrupoA(){
+        Account account = (Account) TestFactory.createSObject(new Account(), true);
+        Parceiro__c parceiro = createPartner();
+        Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
+            AccountId    = account.Id,
+            StageName    = OpportunityUtils.STATUS_PARECER_DE_ACESSO,
+            CloseDate    = System.today(),
+            Name         = 'Opp Avanço Grupo A',
+            Parceiro__c  = parceiro.Id,
+            RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('EzeeSolarA').getRecordTypeId()
+        ), true);
+
+        Projeto__c projectOld = (Projeto__c) TestFactory.createSObject(new Projeto__c(
+            Name            = 'Projeto Avanço Grupo A',
+            Status__c       = ProjetoUtils.STATUS_PLANEJAMENTO,
+            Oportunidade__c = opportunity.Id,
+            TipoObra__c     = 'UFVMicro',
+            Conta__c        = account.Id,
+            RecordTypeId    = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName().get('UFVMicro').getRecordTypeId()
+        ), true);
+
+        Projeto__c projectNew = projectOld.clone(true, true, false, false);
+        projectNew.Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO;
+
+        Test.startTest();
+        InstalacaoBO.ensureInstallationOnProjectApproved(
+            new List<Projeto__c>{ projectNew },
+            new Map<Id, Projeto__c>{ projectOld.Id => projectOld }
+        );
+        Test.stopTest();
+
+        Opportunity updatedOpp = [
+            SELECT StageName
+            FROM   Opportunity
+            WHERE  Id = :opportunity.Id
+        ];
+
+        System.assertEquals(
+            OpportunityUtils.STATUS_EQUIPAMENTO,
+            updatedOpp.StageName,
+            'Oportunidade Grupo A deve avançar para Equipamento'
+        );
+    }
+
+    @isTest
     static void createsInstallationWhenApprovalDateFilled(){
         Account account = (Account) TestFactory.createSObject(new Account(), true);
         Parceiro__c parceiro = createPartner();

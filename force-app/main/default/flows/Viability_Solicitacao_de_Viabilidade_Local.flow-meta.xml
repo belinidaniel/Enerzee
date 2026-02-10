@@ -85,10 +85,39 @@
         </rules>
     </decisions>
     <decisions>
+        <name>Oportunidade_Elegivel</name>
+        <label>Oportunidade elegível?</label>
+        <locationX>380</locationX>
+        <locationY>431</locationY>
+        <defaultConnectorLabel>Não</defaultConnectorLabel>
+        <rules>
+            <name>Sim_Elegivel</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Oportunidade.RecordType.DeveloperName</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Produtos</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Oportunidade.RecordType.DeveloperName</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>EzeeSolarA</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Potencia_Nominal_do_Sistema_kWp_Menor_que_10</targetReference>
+            </connector>
+            <label>Sim</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>Potencia_Nominal_do_Sistema_kWp_Menor_que_10</name>
         <label>Potência nominal do Sistema (kW) Menor que 10 ?</label>
         <locationX>380</locationX>
-        <locationY>431</locationY>
+        <locationY>539</locationY>
         <defaultConnectorLabel>Não</defaultConnectorLabel>
         <rules>
             <name>Sim</name>
@@ -188,7 +217,7 @@
         <locationY>323</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Potencia_Nominal_do_Sistema_kWp_Menor_que_10</targetReference>
+            <targetReference>Oportunidade_Elegivel</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
