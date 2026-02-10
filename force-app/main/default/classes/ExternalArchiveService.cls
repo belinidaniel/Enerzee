@@ -35,41 +35,6 @@ public with sharing class ExternalArchiveService {
         Boolean isRelatorio = isRelatorioFinalDeObra(activityName);
         String fileNameWithExtension = isRelatorio ? normalizeFileName(fileName) : ensureExtension(fileName);
 
-        if (isRelatorio) {
-            Blob fileBlob = decodeBase64File(base64File);
-            String title = stripExtension(fileNameWithExtension);
-            ContentVersion cv = new ContentVersion();
-            cv.ContentLocation = 'S';
-            cv.FirstPublishLocationId = (Id) sobjectId;
-            cv.VersionData = fileBlob;
-            cv.Title = title;
-            cv.PathOnClient = fileNameWithExtension;
-            cv.IsMajorVersion = true;
-            insert cv;
-
-            cv = [
-                SELECT Id, ContentDocumentId
-                FROM ContentVersion
-                WHERE Id = :cv.Id
-                LIMIT 1
-            ];
-
-            OpportunityAttachmentLink__c link = new OpportunityAttachmentLink__c();
-            link.ActivityName__c = activityName;
-            link.SObjectId__c = sobjectId;
-            link.AttachmentDescription__c = fileNameWithExtension;
-            link.DocRequiredName__c = docRequiredName;
-            link.ContentDocumentId__c = String.valueOf(cv.ContentDocumentId);
-            link.AttachmentURL__c = '/sfc/servlet.shepherd/document/download/' + cv.ContentDocumentId;
-            insert link;
-
-            UploadResult ok = new UploadResult();
-            ok.success = true;
-            ok.attachmentId = link.Id;
-            ok.message = 'Arquivo enviado com sucesso.';
-            return ok;
-        }
-
         if (opportunityId == null) {
             throw new AuraHandledException('Oportunidade é obrigatória.');
         }
@@ -115,6 +80,30 @@ public with sharing class ExternalArchiveService {
             return result;
         }
 
+        String internalUrl;
+        String contentDocumentId;
+        if (isRelatorio) {
+            Blob fileBlob = decodeBase64File(base64File);
+            String title = stripExtension(fileNameWithExtension);
+            ContentVersion cv = new ContentVersion();
+            cv.ContentLocation = 'S';
+            cv.FirstPublishLocationId = (Id) sobjectId;
+            cv.VersionData = fileBlob;
+            cv.Title = title;
+            cv.PathOnClient = fileNameWithExtension;
+            cv.IsMajorVersion = true;
+            insert cv;
+
+            cv = [
+                SELECT Id, ContentDocumentId
+                FROM ContentVersion
+                WHERE Id = :cv.Id
+                LIMIT 1
+            ];
+            contentDocumentId = String.valueOf(cv.ContentDocumentId);
+            internalUrl = '/sfc/servlet.shepherd/document/download/' + cv.ContentDocumentId;
+        }
+
         OpportunityAttachmentLink__c link = new OpportunityAttachmentLink__c();
         // link.OpportunityId__c = opportunityId;
         link.ActivityName__c = activityName;
@@ -123,6 +112,10 @@ public with sharing class ExternalArchiveService {
         link.DocRequiredName__c = docRequiredName;
         Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
         link.AttachmentURL__c = (String) responseBody.get('data');
+        if (isRelatorio) {
+            link.ContentDocumentId__c = contentDocumentId;
+            link.InternalAttachmentURL__c = internalUrl;
+        }
         insert link;
 
         UploadResult ok = new UploadResult();
