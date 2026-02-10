@@ -3782,11 +3782,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Quote.ServiceDocumentTemplate</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>Quote.ShippingAddress</field>
         <readable>true</readable>
     </fieldPermissions>

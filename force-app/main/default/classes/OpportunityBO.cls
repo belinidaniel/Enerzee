@@ -712,19 +712,33 @@ public class OpportunityBO {
         }
     }
 
-    public static void sendEmailToOwnerNivello(List<Opportunity> newRecords){
-        Set<Id> ownerIds = new Set<Id>();
-        for(Opportunity opportunity : newRecords){
-            if(opportunity.Origem__c == 'Nivello'){
-                ownerIds.add(opportunity.OwnerId);
+    @TestVisible
+    static List<Opportunity> filterNivelloEmailOpps(List<Opportunity> newRecords) {
+        List<Opportunity> oppsToEmail = new List<Opportunity>();
+        if (newRecords == null || newRecords.isEmpty()) {
+            return oppsToEmail;
+        }
+
+        for (Opportunity opportunity : newRecords) {
+            if (opportunity != null
+                && opportunity.Origem__c == 'Nivello'
+                && !OpportunityUtils.isRecordTypeEzeeSolarA(opportunity)) {
+                oppsToEmail.add(opportunity);
             }
         }
+
+        return oppsToEmail;
+    }
+
+    public static void sendEmailToOwnerNivello(List<Opportunity> newRecords){
+        List<Opportunity> oppsToEmail = filterNivelloEmailOpps(newRecords);
+
         // Only send email in Production (not in sandbox or test)
         Boolean orgType = [SELECT IsSandbox FROM Organization LIMIT 1].IsSandbox;
-        if(!ownerIds.isEmpty() && !Test.isRunningTest() && !orgType){
+        if(!oppsToEmail.isEmpty() && !Test.isRunningTest() && !orgType){
 
             List<Messaging.SingleEmailMessage> messageList = new List<Messaging.SingleEmailMessage>();
-            for(Opportunity opportunity : newRecords){
+            for(Opportunity opportunity : oppsToEmail){
             Messaging.SingleEmailMessage message = new Messaging.SingleEmailMessage();
             message.setHtmlBody(
                 'Olá! Uma nova oportunidade foi gerada no Salesforce a partir do gerenciador ' +

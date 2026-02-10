@@ -3140,11 +3140,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Case.rsplus__Contact_Phone__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>Case.rsplus__Phone_Number__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -10287,11 +10282,6 @@
         <editable>true</editable>
         <field>Quote.QuoteToName</field>
         <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Quote.ServiceDocumentTemplate</field>
-        <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>

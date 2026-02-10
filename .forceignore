@@ -10,3 +10,7 @@ package.xml
 
 # LWC Jest
 **/__tests__/**
+
+# Ignore fields not supported in this org
+force-app/main/default/objects/Case/fields/rsplus__Contact_Phone__c.field-meta.xml
+force-app/main/default/objects/Quote/fields/ServiceDocumentTemplate.field-meta.xml

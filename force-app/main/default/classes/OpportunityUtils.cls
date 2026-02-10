@@ -120,6 +120,16 @@ public class OpportunityUtils {
         return opportunity.RecordTypeId == Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('OutrasOportunidades').getRecordTypeId();
     }
 
+    public static String resolveStageForProjectCompletion(Opportunity opportunity) {
+        if (opportunity == null) {
+            return STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO;
+        }
+        if (isRecordTypeEzeeSolarA(opportunity)) {
+            return STATUS_EQUIPAMENTO;
+        }
+        return STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO;
+    }
+
     //public static boolean isStatusProspecting(Opportunity opportunity){
     //    return opportunity.StageName.equalsIgnoreCase(STATUS_PROSPECCAO);
     //}

@@ -144,14 +144,15 @@ public class InstalacaoBO {
 
         List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
         for(Opportunity opp : [
-            SELECT Id, StageName
+            SELECT Id, StageName, RecordTypeId
             FROM Opportunity
             WHERE Id IN :opportunityIds
         ]){
             if(opp.StageName != null && opp.StageName.equalsIgnoreCase(OpportunityUtils.STATUS_PARECER_DE_ACESSO)){
+                String targetStage = OpportunityUtils.resolveStageForProjectCompletion(opp);
                 opportunitiesToUpdate.add(new Opportunity(
                     Id = opp.Id,
-                    StageName = OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO
+                    StageName = targetStage
                 ));
             }
         }

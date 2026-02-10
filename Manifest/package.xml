@@ -5,11 +5,26 @@
         <members>WorkDeliveryReportPdfService</members>
         <members>WorkDeliveryReportPdfServiceTest</members>
         <members>ExternalArchiveService</members>
+        <members>IntegracaoNivelloAprovacaoDesconto</members>
+        <members>IntegracaoNivelloValorTotalProposta</members>
+        <members>InstalacaoBO</members>
+        <members>InstalacaoBOTest</members>
+        <members>KitInstalacaoBO</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityBOEmailTest</members>
+        <members>OpportunityRecordsTO</members>
+        <members>OpportunityUtils</members>
+        <members>TaskBO</members>
         <name>ApexClass</name>
     </types>
     <types>
         <members>WorkDeliveryReportPdf</members>
         <name>ApexPage</name>
+    </types>
+    <types>
+        <members>Enviar_Email_Nova_Oportunidade_Criada</members>
+        <members>Viability_Solicitacao_de_Viabilidade_Local</members>
+        <name>Flow</name>
     </types>
     <types>
         <members>attachmentTabs</members>
@@ -22,7 +37,39 @@
     </types>
     <types>
         <members>OpportunityAttachmentLink__c.ContentDocumentId__c</members>
+        <members>Campaign.Investimento_Total_da_Meta__c</members>
+        <members>Opportunity.Tempo_em_Aberto__c</members>
+        <members>Opportunity.UC2JaneiroForaPonta__c</members>
+        <members>Opportunity.Rede__c</members>
+        <members>Opportunity.ValorTotalProposta__c</members>
         <name>CustomField</name>
+    </types>
+    <types>
+        <members>Oportunidade_P_gina_de_registro</members>
+        <name>FlexiPage</name>
+    </types>
+    <types>
+        <members>Opportunity-Informe os dados da proposta - Grupo A -  Mini - Elaboração de proposta</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo A - Micro - Elaboração de proposta</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo B - Micro - Elaboração de proposta</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo B - Mini - Elaboração de proposta</members>
+        <members>Opportunity-Inserir dados da viabilidade - Micro - Análise viabilidade</members>
+        <members>Opportunity-Inserir dados da viabilidade - Mini - Análise viabilidade</members>
+        <members>Opportunity-Opportunity Layout</members>
+        <members>Opportunity-Opportunity Layout Mini</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>Acesso_a_sessao_custos_da_composicao_da_proposta</members>
+        <members>ConjuntoPermissaoPowerBI</members>
+        <members>CreateFieldPermission</members>
+        <members>Custom_permission_user</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>Oportunidades_com_Projetos</members>
+        <members>Oportunidades_e_Projetos</members>
+        <name>ReportType</name>
     </types>
     <version>66.0</version>
 </Package>
