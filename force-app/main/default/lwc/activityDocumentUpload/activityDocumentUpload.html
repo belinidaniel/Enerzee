@@ -57,14 +57,8 @@
                                             data-index={row.id}
                                             onchange={handleFileChange}
                                         />
-                                        <template if:true={isRelatorioFinalDeObra}>
-                                            <div class="help-text">Maximo {row.maxFiles} imagens. Restantes: {row.remainingSlots}</div>
-                                        </template>
                                     </template>
                                     <template if:false={row.canUpload}>
-                                        <template if:true={isRelatorioFinalDeObra}>
-                                            <div class="help-text">Limite de {row.maxFiles} imagens atingido.</div>
-                                        </template>
                                     </template>
                                 </td>
                                 <td>

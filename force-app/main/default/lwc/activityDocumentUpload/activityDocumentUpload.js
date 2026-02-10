@@ -38,7 +38,7 @@ export default class ActivityDocumentUpload extends LightningElement {
     }
 
     get maxFilesPerRow() {
-        return this.isRelatorioFinalDeObra ? 3 : 1;
+        return this.isRelatorioFinalDeObra ? null : 1;
     }
 
     get acceptedFormats() {
@@ -68,7 +68,7 @@ export default class ActivityDocumentUpload extends LightningElement {
                 canSend: false,
                 disableSend: true,
                 maxFiles: this.maxFilesPerRow,
-                remainingSlots: this.maxFilesPerRow
+                remainingSlots: null
             }));
         } catch (error) {
             this.showToast('Erro', this.normalizeError(error), 'error');
@@ -100,8 +100,8 @@ export default class ActivityDocumentUpload extends LightningElement {
                 }));
 
                 const existingCount = existingFiles.length;
-                const canUpload = isRelatorio ? existingCount < r.maxFiles : existingCount === 0;
-                const remainingSlots = Math.max(0, r.maxFiles - existingCount);
+                const canUpload = isRelatorio ? true : existingCount === 0;
+                const remainingSlots = null;
                 const canSend = (r.pendingFiles || []).length > 0;
 
                 return {
@@ -152,13 +152,6 @@ export default class ActivityDocumentUpload extends LightningElement {
         }
 
         if (this.isRelatorioFinalDeObra) {
-            const maxAllowed = Math.max(0, row.maxFiles - (row.existingCount || 0));
-            if (files.length > maxAllowed) {
-                this.showToast('Aviso', `Voce pode enviar no maximo ${maxAllowed} imagem(ns) para este item.`, 'warning');
-                event.target.value = null;
-                return;
-            }
-
             const invalid = files.find((file) => !this.isImageFile(file));
             if (invalid) {
                 this.showToast('Aviso', 'Apenas imagens PNG ou JPG sao aceitas para este envio.', 'warning');
