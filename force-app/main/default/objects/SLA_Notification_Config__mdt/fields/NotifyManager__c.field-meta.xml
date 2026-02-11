@@ -3,6 +3,7 @@
     <fullName>NotifyManager__c</fullName>
     <defaultValue>false</defaultValue>
     <description>Notificar o gestor do owner.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Notify Manager</label>
     <type>Checkbox</type>
 </CustomField>

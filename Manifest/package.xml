@@ -7,6 +7,7 @@
         <members>SendEmailSummaryTasksTest</members>
         <members>TaskDeadlineNotificationBatch</members>
         <members>TaskSlaConfig</members>
+        <members>TaskSlaCoreTest</members>
         <members>TaskSlaDailySummaryScheduler</members>
         <members>TaskSlaDailySummaryService</members>
         <members>TaskSlaDailySummaryServiceTest</members>
@@ -51,11 +52,13 @@
     </types>
     <types>
         <members>OpportunityAttachmentLink__c.ContentDocumentId__c</members>
+        <members>OpportunityAttachmentLink__c.InternalAttachmentURL__c</members>
         <members>Campaign.Investimento_Total_da_Meta__c</members>
         <members>Opportunity.Tempo_em_Aberto__c</members>
         <members>Opportunity.UC2JaneiroForaPonta__c</members>
         <members>Opportunity.Rede__c</members>
         <members>Opportunity.ValorTotalProposta__c</members>
+        <members>Activity.OwnerManagerName__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -108,5 +111,25 @@
         <members>SLA_Status_Config__mdt.Concluida</members>
         <name>CustomMetadata</name>
     </types>
-    <version>66.0</version>
+    <types>
+        <members>Dashboard_Executivo_Atividades</members>
+        <name>ReportFolder</name>
+    </types>
+    <types>
+        <members>Dashboard_Executivo_Atividades/Atividades_Atrasadas_por_Area</members>
+        <members>Dashboard_Executivo_Atividades/Atividades_Vencendo_Hoje_e_Amanha</members>
+        <members>Dashboard_Executivo_Atividades/Atividades_em_Aberto_por_Area</members>
+        <members>Dashboard_Executivo_Atividades/Atividades_por_Area_e_Status</members>
+        <members>Dashboard_Executivo_Atividades/Atividades_por_Gestor</members>
+        <name>Report</name>
+    </types>
+    <types>
+        <members>Dashboard_Executivo_Atividades</members>
+        <name>DashboardFolder</name>
+    </types>
+    <types>
+        <members>Dashboard_Executivo_Atividades/Dashboard_Executivo_Atividades</members>
+        <name>Dashboard</name>
+    </types>
+    <version>65.0</version>
 </Package>

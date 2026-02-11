@@ -3,6 +3,7 @@
     <fullName>NotifyQueue__c</fullName>
     <defaultValue>true</defaultValue>
     <description>Notificar owners/membros de fila quando owner for Queue.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Notify Queue</label>
     <type>Checkbox</type>
 </CustomField>

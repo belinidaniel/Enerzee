@@ -3,6 +3,7 @@
     <fullName>IsClosed__c</fullName>
     <defaultValue>false</defaultValue>
     <description>Indica se o status conta como fechado.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Is Closed</label>
     <type>Checkbox</type>
 </CustomField>
