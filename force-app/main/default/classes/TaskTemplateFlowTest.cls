@@ -213,7 +213,18 @@ public class TaskTemplateFlowTest {
         DateTime pastDue = TaskTemplateUtils.combineDateAndTime(updatedPast.ActivityDate, overdue.get('HoraVencimento__c'));
 
         Boolean expectSoonAfter = System.now() >= soonDue;
-        Boolean expectSoonBefore = System.now() >= soonDue.addMinutes(-30);
+        Integer beforeMinutes = 30;
+        try {
+            TaskSlaConfig.NotificationConfig config = TaskSlaConfig.getNotificationConfig(
+                TaskSlaConfig.TYPE_BEFORE_DUE
+            );
+            if (config != null && config.minutesBeforeDue != null) {
+                beforeMinutes = config.minutesBeforeDue;
+            }
+        } catch (Exception e) {
+            // fallback para 30 minutos
+        }
+        Boolean expectSoonBefore = System.now() >= soonDue.addMinutes(-beforeMinutes);
 
         if(hasNotifBefore){
             Task refreshedSoon = [SELECT Id, NotificadoAntesVencer__c FROM Task WHERE Id = :dueSoon.Id];
