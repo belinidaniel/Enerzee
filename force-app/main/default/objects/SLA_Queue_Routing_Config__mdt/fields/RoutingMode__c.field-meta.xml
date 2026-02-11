@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RoutingMode__c</fullName>
+    <description>MEMBERS, QUEUE_EMAIL ou NONE.</description>
+    <label>Routing Mode</label>
+    <type>Text</type>
+    <length>30</length>
+</CustomField>
