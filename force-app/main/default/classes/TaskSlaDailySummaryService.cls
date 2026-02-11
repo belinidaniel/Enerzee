@@ -340,7 +340,7 @@ public with sharing class TaskSlaDailySummaryService {
     ) {
         String baseQuery = 'SELECT Id, Subject, Description, ActivityDate, OwnerId, Owner.Name, '
             + 'WhatId, WhoId, Priority, TaskSubtype, Type, Status '
-            + 'FROM Task';
+            + 'FROM Task WHERE Id != null';
 
         if (!closedStatuses.isEmpty()) {
             baseQuery += ' AND Status NOT IN :closedStatuses';
@@ -765,7 +765,7 @@ public with sharing class TaskSlaDailySummaryService {
                 continue;
             }
             Schema.DescribeSObjectResult describe = sobjectType.getDescribe();
-            String nameField = describe.getName();
+            String nameField = resolveNameFieldApiName(describe);
             if (String.isBlank(nameField)) {
                 continue;
             }
@@ -784,6 +784,20 @@ public with sharing class TaskSlaDailySummaryService {
         }
 
         return result;
+    }
+
+    private static String resolveNameFieldApiName(Schema.DescribeSObjectResult describe) {
+        if (describe == null) {
+            return '';
+        }
+        Map<String, Schema.SObjectField> fields = describe.fields.getMap();
+        for (String fieldName : fields.keySet()) {
+            Schema.DescribeFieldResult fieldDescribe = fields.get(fieldName).getDescribe();
+            if (fieldDescribe != null && fieldDescribe.isNameField()) {
+                return fieldDescribe.getName();
+            }
+        }
+        return '';
     }
 
     private static String buildRelatedHtml(Task taskRecord, Map<Id, String> relatedNames) {
