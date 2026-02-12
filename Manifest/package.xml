@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <types>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">    <types>
         <members>SendEmailLateTasks</members>
         <members>SendEmailLateTasksTest</members>
         <members>SendEmailSummaryTasks</members>
@@ -16,10 +15,6 @@
         <members>TaskSlaRecipientResolver</members>
         <members>TaskSlaUtils</members>
         <members>TaskTemplateFlowTest</members>
-        <members>WorkDeliveryReportPdfController</members>
-        <members>WorkDeliveryReportPdfService</members>
-        <members>WorkDeliveryReportPdfServiceTest</members>
-        <members>ExternalArchiveService</members>
         <members>IntegracaoNivelloAprovacaoDesconto</members>
         <members>IntegracaoNivelloValorTotalProposta</members>
         <members>InstalacaoBO</members>
@@ -30,10 +25,56 @@
         <members>OpportunityRecordsTO</members>
         <members>OpportunityUtils</members>
         <members>TaskBO</members>
+        <members>TaskBOTest</members>
+        <members>AccountBOTest</members>
+        <members>AccountTriggerHandlerTest</members>
+        <members>CaseBOTest</members>
+        <members>ClickSignDAOTest</members>
+        <members>ClickSignDTOTest</members>
+        <members>ClickSignInboundDTOTest</members>
+        <members>ClickSignLogViewerControllerTest</members>
+        <members>ClickSignQueueableTest</members>
+        <members>ClickSignRESTTest</members>
+        <members>ClickSignTemplateControllerTest</members>
+        <members>ConsultorTriggerHandlerTest</members>
+        <members>ContactTriggerHandlerTest</members>
+        <members>ContentDocumentLinkTriggerTest</members>
+        <members>ContentVersionTriggerHandlerTest</members>
+        <members>ExternalArchiveServiceTest</members>
+        <members>FormularioPDFControllerTest</members>
+        <members>GORecordsTOTest</members>
+        <members>HelpDeskAuthServiceTest</members>
+        <members>HelpDeskCaseDAOTest</members>
+        <members>HelpDeskCaseServiceTest</members>
+        <members>HelpDeskContactDAOTest</members>
+        <members>HelpDeskFilePayloadTest</members>
+        <members>InstalacaoTaskBOTest</members>
+        <members>InstalacaoTriggerHandlerTest</members>
+        <members>IntegracaoFormaPagamentoNegociacaoTest</members>
+        <members>IntegracaoNivelloAnaliseVTTest</members>
+        <members>IntegracaoNivelloDataVisitaTecnicaTest</members>
+        <members>IntegracaoNivelloPropostaTest</members>
+        <members>IntegracaoNivelloSimFinTest</members>
+        <members>IntegracaoNivelloValorTotalPropostaTest</members>
+        <members>IntegracaoNivelloViabilidadeTest</members>
+        <members>KitInstalacaoBOTest</members>
+        <members>LeadBOTest</members>
+        <members>OpportunityLogViewerControllerTest</members>
+        <members>OpportunityRecordsTOTest</members>
+        <members>ProjetoUtilsTest</members>
+        <members>ProposalCoverTriggerHandlerTest</members>
+        <members>ProposalPendingSendQueueableTest</members>
+        <members>RevoIntegrationServiceTest</members>
+        <members>RevoOpportunityErrorBatchTest</members>
+        <members>ServiceAppointmentBOTest</members>
+        <members>TemplateJornadaDoClienteControllerTest</members>
+        <members>TestMetadataUtils</members>
+        <members>TokenAPIVOWsTest</members>
+        <members>TriggerHandlerTest</members>
+        <members>ViabilityStudyControllerTest</members>
         <name>ApexClass</name>
     </types>
     <types>
-        <members>WorkDeliveryReportPdf</members>
         <name>ApexPage</name>
     </types>
     <types>
