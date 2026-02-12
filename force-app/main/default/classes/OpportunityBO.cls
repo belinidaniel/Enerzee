@@ -9,9 +9,6 @@ public class OpportunityBO {
 
     // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas
     public static Boolean skipAsyncProposalGeneration = false;
-    // Controle por transação para evitar múltiplas enfileirações da mesma oportunidade
-    private static Set<Id> queuedProposalOpps = new Set<Id>();
-
     //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
     public static void createSellBuyOrder(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
 
@@ -1629,185 +1626,11 @@ public class OpportunityBO {
     }
 
     public static void applyDiscountAndInitiateApproval(Map<Id,Opportunity> newMap, Map<Id,Opportunity> oldMap) {
-        List<Opportunity> oppsToUpdate = new List<Opportunity>();
-        List<Approval.ProcessSubmitRequest> approvalRequests = new List<Approval.ProcessSubmitRequest>();
-        
-        // Pega a informação dos metadados do campo StageName
-        Schema.DescribeFieldResult fieldResult = Opportunity.StageName.getDescribe();
-        List<Schema.PicklistEntry> picklistValues = fieldResult.getPicklistValues();
-
-        // Construa uma lista ordenada com os valores do StageName
-        List<String> stages = new List<String>();
-        for (Schema.PicklistEntry pickVal : picklistValues) {
-            stages.add(pickVal.getLabel());
-        }
-
-        // Pega IDs de Oportunidades que podem precisar de aprovação
-        Set<Id> oppIdsForApprovalCheck = newMap.keySet();
-
-        // Verifica quais Oportunidades já têm um processo de aprovação pendente
-        Set<Id> oppIdsWithActiveApproval = new Set<Id>();
-        for(ProcessInstance pi : [SELECT TargetObjectId FROM ProcessInstance WHERE TargetObjectId IN :oppIdsForApprovalCheck AND Status = 'Pending']){
-            oppIdsWithActiveApproval.add(pi.TargetObjectId);
-        }
-
-        for (Opportunity opp : newMap.values()) {
-            
-            Opportunity oldOpp = oldMap.get(opp.Id);
-            Opportunity updateOpp = new Opportunity(Id = opp.Id);
-            
-            // Verifique se o desconto foi alterado
-            if (opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c && opp.StatusAprovacaoDesconto__c == 'Pendente') {
-                // Calculando a porcentagem de desconto em relação ao valor total da proposta
-                Decimal totalProposalValue = opp.ValorTotalProposta__c != null ? opp.ValorTotalProposta__c : opp.ValorTotalProdutos__c;
-                Decimal discountPercentage = 0;
-                if (totalProposalValue != null && totalProposalValue != 0) {
-                    discountPercentage = (opp.DescontoUFV__c / totalProposalValue) * 100;
-                }
-
-                // Calcular a porcentagem de BDI em relação à soma de BDI e campos de Rede
-                Decimal totalValue = (opp.BDI__c != null ? opp.BDI__c : 0) +
-                    (opp.Rede3750__c != null ? opp.Rede3750__c : 0) +
-                    (opp.Pontos__c != null ? opp.Pontos__c : 0) +
-                    (opp.Direct__c != null ? opp.Direct__c : 0);
-                Decimal BDI_Percentage = 0;
-                Decimal Rede_Percentage = 0;
-                if(totalValue > 0){
-                    // Calcular a porcentagem de BDI em relação à soma de BDI e campos de Rede
-                    BDI_Percentage = (opp.BDI__c / totalValue);
-                    Rede_Percentage = 1 - BDI_Percentage;
-                }
-                Decimal BDI_Discount = opp.DescontoUFV__c * BDI_Percentage;
-                Decimal Rede_Discount = opp.DescontoUFV__c * Rede_Percentage;
-
-                // Aplicar o desconto aos campos propostos
-                updateOpp.ValorPropostoBDI__c = opp.BDI__c - BDI_Discount;
-                //updateOpp.ValorPropostoRede3750__c = opp.Rede3750__c - (Rede_Discount * (opp.Rede3750__c / totalValue));
-                //updateOpp.ValorPropostoPontos__c = opp.Pontos__c - (Rede_Discount * (opp.Pontos__c / totalValue));
-                //updateOpp.ValorPropostoDirect__c = opp.Direct__c - (Rede_Discount * (opp.Direct__c / totalValue));
-                // updateOpp.ValorPropostoRede3750__c = opp.Rede3750__c - (Rede_Discount * (opp.Rede3750__c / opp.rede__c));
-                // updateOpp.ValorPropostoPontos__c = opp.Pontos__c - (Rede_Discount * (opp.Pontos__c / opp.rede__c));
-                // updateOpp.ValorPropostoDirect__c = opp.Direct__c - (Rede_Discount * (opp.Direct__c / opp.rede__c));
-
-                Decimal redeTotal = opp.rede__c != null ? opp.rede__c :
-                    (opp.Rede3750__c != null ? opp.Rede3750__c : 0) +
-                    (opp.Pontos__c != null ? opp.Pontos__c : 0) +
-                    (opp.Direct__c != null ? opp.Direct__c : 0);
-
-                if(redeTotal != null && redeTotal > 0 && opp.Rede3750__c > 0 ){
-                    updateOpp.ValorPropostoRede3750__c = opp.Rede3750__c - (Rede_Discount * (opp.Rede3750__c / redeTotal));
-                }
-                if(opp.Pontos__c > 0 && redeTotal != null && redeTotal > 0 ){
-                    updateOpp.ValorPropostoPontos__c = opp.Pontos__c - (Rede_Discount * (opp.Pontos__c / redeTotal));
-                }
-                if(opp.Direct__c > 0 && redeTotal != null && redeTotal > 0 ){
-                    updateOpp.ValorPropostoDirect__c = opp.Direct__c - (Rede_Discount * (opp.Direct__c / redeTotal));
-                }
-
-                //fields original to approve
-
-                updateOpp.BDIOriginal__c = opp.BDI__c;
-                updateOpp.DirectOriginal__c = opp.Direct__c;
-                updateOpp.PontosOriginal__c = opp.Pontos__c;
-                updateOpp.TotalRedeOriginal__c = opp.Rede3750__c + opp.Pontos__c + opp.Direct__c;
-                updateOpp.RedeOriginal3750__c = opp.Rede3750__c;
-                updateOpp.ValorTotalPropostaOriginal__c = opp.ValorTotalProposta__c;
-
-                // Agora você pode usar a lógica anterior de verificação de índice
-                Integer currentIndex = stages.indexOf(opp.StageName);
-
-                // Se encontrou o estágio atual na lista
-                /*
-                if (currentIndex != -1) { 
-                    if (currentIndex < stages.indexOf('Análise de viabilidade')) {
-                        updateOpp.StageName = 'Elaboração de proposta';
-                    } else {
-                        updateOpp.StageName = 'Readequação de proposta';
-                    }
-                }*/
-
-                oppsToUpdate.add(updateOpp);
-
-                // Se já possui uma aprovação pendente, pule a Oportunidade
-                if (oppIdsWithActiveApproval.contains(opp.Id)) {
-                    continue;
-                }
-
-                // Iniciando o processo de aprovação
-                Approval.ProcessSubmitRequest req = new Approval.ProcessSubmitRequest();
-                req.setComments('Submissão automática para aprovação de desconto.');
-                req.setObjectId(opp.Id);
-                req.setSubmitterId(UserInfo.getUserId());
-                req.setProcessDefinitionNameOrId('Processo_de_Aprova_o_de_Desconto');
-                approvalRequests.add(req);
-                
-            }
-        }
-
-        // Atualize as oportunidades modificadas após sair do loop
-        if (!oppsToUpdate.isEmpty()) {
-            OpportunityTriggerHandler.disableTrigger();
-            update oppsToUpdate;
-            OpportunityTriggerHandler.enableTrigger();
-        }
-
-        // Submeter os registros para aprovação
-        if (!approvalRequests.isEmpty() && !Test.isRunningTest()) {
-            OpportunityTriggerHandler.disableTrigger();
-            Approval.process(approvalRequests);
-            OpportunityTriggerHandler.enableTrigger();
-        }
+        ApprovalProcessService.applyDiscountAndInitiateApproval(newMap, oldMap);
     }
 
     public static void applyApprovedDiscounts(Map<Id,Opportunity> newMap, Map<Id,Opportunity> oldMap) {
-        // Lista de Opportunities que foram aprovados
-        List<Opportunity> approvedOpportunities = new List<Opportunity>();
-        List<Id> approvedIds = new List<Id>();
-
-        for (Opportunity opp : newMap.values() ) {
-            Opportunity oldOpp = oldMap.get(opp.Id);
-            
-            // Verifica se o StatusAprovacaoDesconto foi alterado e é igual a "Approved"
-            if (opp.StatusAprovacaoDesconto__c == 'Aprovado' && opp.StatusAprovacaoDesconto__c != oldOpp.StatusAprovacaoDesconto__c) {
-                
-                Opportunity oppToUpdate = new Opportunity(Id = opp.Id);
-                
-                // Guardando os valores anteriores
-                oppToUpdate.ValorAnteriorBDI__c = opp.BDI__c;
-                oppToUpdate.ValorAnteriorRede3750__c = opp.Rede3750__c;
-                oppToUpdate.ValorAnteriorPontos__c = opp.Pontos__c;
-                oppToUpdate.ValorAnteriorDirect__c = opp.Direct__c;
-
-                // Atualizando com os valores propostos após a aprovação
-                oppToUpdate.BDI__c = opp.ValorPropostoBDI__c;
-                oppToUpdate.Rede3750__c = opp.ValorPropostoRede3750__c;
-                oppToUpdate.Pontos__c = opp.ValorPropostoPontos__c;
-                oppToUpdate.Direct__c = opp.ValorPropostoDirect__c;
-                approvedOpportunities.add(oppToUpdate);
-
-                oppToUpdate.PropostaAlterada__c = true;
-                // força nova geração/integracao após aprovação
-                oppToUpdate.PropostaGerada__c = false;
-                oppToUpdate.ReadequacaoSolicitada__c = true;
-                approvedIds.add(opp.Id);
-            }
-        }
-
-        // Se houver Opportunities aprovadas, chama o método applyApprovedDiscounts
-        if (!approvedOpportunities.isEmpty()) {
-            OpportunityTriggerHandler.disableTrigger();
-            update approvedOpportunities;
-            OpportunityTriggerHandler.enableTrigger();
-
-            // Enfileira geração de nova proposta após aprovação de desconto
-            for (Id oppId : approvedIds) {
-                if (!queuedProposalOpps.contains(oppId)) {
-                    queuedProposalOpps.add(oppId);
-                    System.enqueueJob(new PDFControllerExtension.SavePdfJob(oppId, true, true));
-                }
-            }
-            
-        }
+        ApprovalProcessService.applyApprovedDiscounts(newMap, oldMap);
     }
     
     public static void generateProposalAsync(Map<Id,Opportunity> newMap, Map<Id,Opportunity> oldMap) {
@@ -1824,12 +1647,7 @@ public class OpportunityBO {
                 Boolean shouldGenerate = false;
                 
                 if((opp.PropostaGerada__c == false && oldOpp.PropostaGerada__c == true)){
-                    if (!queuedProposalOpps.contains(opp.Id)) {
-                        queuedProposalOpps.add(opp.Id);
-                        System.enqueueJob(new PDFControllerExtension.SavePdfJob(opp.Id, true, true));
-                    } else {
-                        System.debug('generateProposalAsync - já enfileirado para opp ' + opp.Id);
-                    }
+                    ApprovalProcessService.enqueueProposalSavePdfJobIfAbsent(opp.Id, true, true);
                 }else{
                     if (opp.PropostaGerada__c == false) {
                         shouldGenerate = true;
@@ -1846,12 +1664,7 @@ public class OpportunityBO {
                     }
 
                     if (shouldGenerate) {
-                        if (!queuedProposalOpps.contains(opp.Id)) {
-                            queuedProposalOpps.add(opp.Id);
-                            System.enqueueJob(new PDFControllerExtension.SavePdfJob(opp.Id, true, false));
-                        } else {
-                            System.debug('generateProposalAsync - já enfileirado para opp ' + opp.Id);
-                        }
+                        ApprovalProcessService.enqueueProposalSavePdfJobIfAbsent(opp.Id, true, false);
                     }
                 }
             }
@@ -2456,19 +2269,7 @@ public class OpportunityBO {
     }
 
     public static void sendAprovalUpdate(List<Opportunity> newRecordList, Map<Id, Opportunity> oldRecordsMap) {
-
-        for(Opportunity opportunity: newRecordList) {
-            Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
-
-            if(opportunity.StatusAprovacaoDesconto__c != oldOpportunity.StatusAprovacaoDesconto__c) {
-                System.debug('sendAprovalUpdate: ' + opportunity.Id);
-                System.debug('Old Status: ' + oldOpportunity.StatusAprovacaoDesconto__c);
-                System.debug('New Status: ' + opportunity.StatusAprovacaoDesconto__c);
-                if(opportunity.StatusAprovacaoDesconto__c != oldOpportunity.StatusAprovacaoDesconto__c) {
-                    IntegracaoNivelloAprovacaoDesconto.enviarStatusAprovacaoDesconto(new Set<Id>{opportunity.Id});
-                }
-            }
-        }
+        ApprovalProcessService.sendAprovalUpdate(newRecordList, oldRecordsMap);
     }
 
     public static void handleOpportunityLeadConversion(List<Opportunity> opportunityList, Map<Id, Opportunity> oldRecordsMap) {
@@ -2723,13 +2524,7 @@ public class OpportunityBO {
     }
 
     public Static void updateApproveComment(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap) {
-        for( Opportunity opportunity : newRecords) {
-            Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
-            if(OpportunityUtils.hasDiscountApprovalStatusChangedToApprovedOrRejected(opportunity, oldOpportunity)){
-                opportunity.ObservacaoAprovacao__c = OpportunityUtils.getApproveComment(opportunity);
-            }
-        }
-        
+        ApprovalProcessService.updateApproveComment(newRecords, oldRecordsMap);
     }
 	
     public static String appendAutomationNote(String currentValue, String note, Integer maxLength) {
