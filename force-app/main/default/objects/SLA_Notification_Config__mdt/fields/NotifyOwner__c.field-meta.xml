@@ -3,6 +3,7 @@
     <fullName>NotifyOwner__c</fullName>
     <defaultValue>true</defaultValue>
     <description>Notificar o owner da Task (quando user).</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Notify Owner</label>
     <type>Checkbox</type>
 </CustomField>

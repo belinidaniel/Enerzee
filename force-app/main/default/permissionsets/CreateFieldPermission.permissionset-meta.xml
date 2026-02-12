@@ -2194,11 +2194,11 @@
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
-        <name>ManageTranslation</name>
+        <name>ManageCustomPermissions</name>
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
-        <name>ManageCustomPermissions</name>
+        <name>ManageTranslation</name>
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>

@@ -3,6 +3,7 @@
     <fullName>SendBell__c</fullName>
     <defaultValue>true</defaultValue>
     <description>Enviar notificacao no sino (Custom Notification).</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Send Bell</label>
     <type>Checkbox</type>
 </CustomField>
