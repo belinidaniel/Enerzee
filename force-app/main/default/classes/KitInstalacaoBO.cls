@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 11-04-2025
+ * @last modified on  : 02-12-2026
  * @last modified by  : Daniel Belini
 **/
 public without sharing class KitInstalacaoBO {
@@ -63,11 +63,13 @@ public without sharing class KitInstalacaoBO {
             System.debug('oppIdToKitId ' + oppIdToKitId);
 
             Map<Id, Opportunity> oppMap = new Map<Id, Opportunity>([
-                SELECT  Id, TipoTelhadoEstrutura__c, PotenciaNominalWp__c, TotalProdutos__c
+                SELECT  Id, TipoTelhadoEstrutura__c, PotenciaNominalWp__c, TotalProdutos__c, StatusAprovacaoDesconto__c
                 FROM    Opportunity 
                 WHERE   Id IN :oppIdToKitId.keySet()
             ]);
             System.debug('oppMap ' + oppMap);
+
+            Set<Id> oppIdsToRecallDiscountApproval = new Set<Id>();
     
             for (OpportunityLineItem item : [
                 SELECT  OpportunityId, Kit_Instalacao__c, Name, TotalPrice
@@ -91,6 +93,7 @@ public without sharing class KitInstalacaoBO {
                     opp.ValorTotalProdutos__c = kitRelacionado.ValorKit__c;
                 }
                 opp.StatusAprovacaoDesconto__c = null;
+                oppIdsToRecallDiscountApproval.add(opp.Id);
                 IntegracaoNivelloAprovacaoDesconto.enviarStatusAprovacaoDesconto(new Set<Id>{opp.Id});
 
             }
@@ -98,8 +101,18 @@ public without sharing class KitInstalacaoBO {
             update newRecordList;
             
             OpportunityTriggerHandler.disableTrigger();
-            update oppMap.values();
-            OpportunityTriggerHandler.enableTrigger();
+            try {
+                update oppMap.values();
+            } finally {
+                OpportunityTriggerHandler.enableTrigger();
+            }
+
+            if (!oppIdsToRecallDiscountApproval.isEmpty()) {
+                ApprovalProcessService.recallPendingApprovals(
+                    oppIdsToRecallDiscountApproval,
+                    'Approvacao cancelado automaticamente por readequacao no recalculo do kit.'
+                );
+            }
         } catch(Exception e){
             Utils.createLog(CLASS_NAME, 'calculateValueKit', e);
             throw e;

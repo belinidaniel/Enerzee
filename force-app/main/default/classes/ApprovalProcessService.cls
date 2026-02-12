@@ -316,24 +316,64 @@ public without sharing class ApprovalProcessService {
     @TestVisible
     static Set<Id> collectDiscountResetIds(Map<Id, Opportunity> newMap, Map<Id, Opportunity> oldMap) {
         Set<Id> targetObjectIds = new Set<Id>();
+
+        System.debug(
+            LoggingLevel.INFO,
+            'ApprovalProcessService.collectDiscountResetIds - start. newMapSize=' +
+            (newMap == null ? 0 : newMap.size()) +
+            ', oldMapSize=' +
+            (oldMap == null ? 0 : oldMap.size())
+        );
+
         if (newMap == null || oldMap == null) {
+            System.debug(
+                LoggingLevel.WARN,
+                'ApprovalProcessService.collectDiscountResetIds - abortado: newMap ou oldMap nulo.'
+            );
             return targetObjectIds;
         }
 
         for (Opportunity newOpportunity : newMap.values()) {
             Opportunity oldOpportunity = oldMap.get(newOpportunity.Id);
             if (oldOpportunity == null) {
+                System.debug(
+                    LoggingLevel.WARN,
+                    'ApprovalProcessService.collectDiscountResetIds - oldOpportunity nao encontrada para Id=' + newOpportunity.Id
+                );
                 continue;
             }
 
+            String oldStatus = oldOpportunity.StatusAprovacaoDesconto__c;
+            String newStatus = newOpportunity.StatusAprovacaoDesconto__c;
+            Boolean isNewStatusBlank = String.isBlank(newStatus);
             Boolean changedFromPendingToBlank =
-                oldOpportunity.StatusAprovacaoDesconto__c == DISCOUNT_STATUS_PENDING  && newOpportunity.StatusAprovacaoDesconto__c == null;
+                oldStatus == DISCOUNT_STATUS_PENDING && isNewStatusBlank;
+            Boolean alreadyBlankStatus = String.isBlank(oldStatus) && isNewStatusBlank;
 
-            if (changedFromPendingToBlank) {
+            System.debug(
+                LoggingLevel.INFO,
+                'ApprovalProcessService.collectDiscountResetIds - oppId=' + newOpportunity.Id +
+                ', oldStatus=' + oldStatus +
+                ', newStatus=' + newStatus +
+                ', changedFromPendingToBlank=' + changedFromPendingToBlank +
+                ', alreadyBlankStatus=' + alreadyBlankStatus
+            );
+
+            if (changedFromPendingToBlank || alreadyBlankStatus) {
                 targetObjectIds.add(newOpportunity.Id);
+                System.debug(
+                    LoggingLevel.INFO,
+                    'ApprovalProcessService.collectDiscountResetIds - oppId adicionado=' + newOpportunity.Id
+                );
             }
         }
 
+        System.debug(
+            LoggingLevel.INFO,
+            'ApprovalProcessService.collectDiscountResetIds - end. matchedCount=' +
+            targetObjectIds.size() +
+            ', matchedIds=' + targetObjectIds
+        );
         return targetObjectIds;
     }
 
