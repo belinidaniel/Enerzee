@@ -2,7 +2,11 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>RoutingMode__c</fullName>
     <description>MEMBERS, QUEUE_EMAIL ou NONE.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Routing Mode</label>
-    <type>Text</type>
     <length>30</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
 </CustomField>

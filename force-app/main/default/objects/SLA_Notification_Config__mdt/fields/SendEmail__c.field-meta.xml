@@ -3,6 +3,7 @@
     <fullName>SendEmail__c</fullName>
     <defaultValue>true</defaultValue>
     <description>Enviar email para destinatarios.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Send Email</label>
     <type>Checkbox</type>
 </CustomField>

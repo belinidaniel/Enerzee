@@ -3,6 +3,7 @@
     <fullName>Enabled__c</fullName>
     <defaultValue>false</defaultValue>
     <description>Habilita/desabilita o envio.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Enabled</label>
     <type>Checkbox</type>
 </CustomField>

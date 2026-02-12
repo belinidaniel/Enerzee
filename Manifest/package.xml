@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <types>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">    <types>
         <members>SendEmailLateTasks</members>
         <members>SendEmailLateTasksTest</members>
         <members>SendEmailSummaryTasks</members>
         <members>SendEmailSummaryTasksTest</members>
         <members>TaskDeadlineNotificationBatch</members>
         <members>TaskSlaConfig</members>
+        <members>TaskSlaCoreTest</members>
         <members>TaskSlaDailySummaryScheduler</members>
         <members>TaskSlaDailySummaryService</members>
         <members>TaskSlaDailySummaryServiceTest</members>
@@ -15,10 +15,6 @@
         <members>TaskSlaRecipientResolver</members>
         <members>TaskSlaUtils</members>
         <members>TaskTemplateFlowTest</members>
-        <members>WorkDeliveryReportPdfController</members>
-        <members>WorkDeliveryReportPdfService</members>
-        <members>WorkDeliveryReportPdfServiceTest</members>
-        <members>ExternalArchiveService</members>
         <members>IntegracaoNivelloAprovacaoDesconto</members>
         <members>IntegracaoNivelloValorTotalProposta</members>
         <members>InstalacaoBO</members>
@@ -29,10 +25,56 @@
         <members>OpportunityRecordsTO</members>
         <members>OpportunityUtils</members>
         <members>TaskBO</members>
+        <members>TaskBOTest</members>
+        <members>AccountBOTest</members>
+        <members>AccountTriggerHandlerTest</members>
+        <members>CaseBOTest</members>
+        <members>ClickSignDAOTest</members>
+        <members>ClickSignDTOTest</members>
+        <members>ClickSignInboundDTOTest</members>
+        <members>ClickSignLogViewerControllerTest</members>
+        <members>ClickSignQueueableTest</members>
+        <members>ClickSignRESTTest</members>
+        <members>ClickSignTemplateControllerTest</members>
+        <members>ConsultorTriggerHandlerTest</members>
+        <members>ContactTriggerHandlerTest</members>
+        <members>ContentDocumentLinkTriggerTest</members>
+        <members>ContentVersionTriggerHandlerTest</members>
+        <members>ExternalArchiveServiceTest</members>
+        <members>FormularioPDFControllerTest</members>
+        <members>GORecordsTOTest</members>
+        <members>HelpDeskAuthServiceTest</members>
+        <members>HelpDeskCaseDAOTest</members>
+        <members>HelpDeskCaseServiceTest</members>
+        <members>HelpDeskContactDAOTest</members>
+        <members>HelpDeskFilePayloadTest</members>
+        <members>InstalacaoTaskBOTest</members>
+        <members>InstalacaoTriggerHandlerTest</members>
+        <members>IntegracaoFormaPagamentoNegociacaoTest</members>
+        <members>IntegracaoNivelloAnaliseVTTest</members>
+        <members>IntegracaoNivelloDataVisitaTecnicaTest</members>
+        <members>IntegracaoNivelloPropostaTest</members>
+        <members>IntegracaoNivelloSimFinTest</members>
+        <members>IntegracaoNivelloValorTotalPropostaTest</members>
+        <members>IntegracaoNivelloViabilidadeTest</members>
+        <members>KitInstalacaoBOTest</members>
+        <members>LeadBOTest</members>
+        <members>OpportunityLogViewerControllerTest</members>
+        <members>OpportunityRecordsTOTest</members>
+        <members>ProjetoUtilsTest</members>
+        <members>ProposalCoverTriggerHandlerTest</members>
+        <members>ProposalPendingSendQueueableTest</members>
+        <members>RevoIntegrationServiceTest</members>
+        <members>RevoOpportunityErrorBatchTest</members>
+        <members>ServiceAppointmentBOTest</members>
+        <members>TemplateJornadaDoClienteControllerTest</members>
+        <members>TestMetadataUtils</members>
+        <members>TokenAPIVOWsTest</members>
+        <members>TriggerHandlerTest</members>
+        <members>ViabilityStudyControllerTest</members>
         <name>ApexClass</name>
     </types>
     <types>
-        <members>WorkDeliveryReportPdf</members>
         <name>ApexPage</name>
     </types>
     <types>
@@ -51,11 +93,13 @@
     </types>
     <types>
         <members>OpportunityAttachmentLink__c.ContentDocumentId__c</members>
+        <members>OpportunityAttachmentLink__c.InternalAttachmentURL__c</members>
         <members>Campaign.Investimento_Total_da_Meta__c</members>
         <members>Opportunity.Tempo_em_Aberto__c</members>
         <members>Opportunity.UC2JaneiroForaPonta__c</members>
         <members>Opportunity.Rede__c</members>
         <members>Opportunity.ValorTotalProposta__c</members>
+        <members>Activity.OwnerManagerName__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -108,5 +152,25 @@
         <members>SLA_Status_Config__mdt.Concluida</members>
         <name>CustomMetadata</name>
     </types>
-    <version>66.0</version>
+    <types>
+        <members>Dashboard_Executivo_Atividades</members>
+        <name>ReportFolder</name>
+    </types>
+    <types>
+        <members>Dashboard_Executivo_Atividades/Atividades_Atrasadas_por_Area</members>
+        <members>Dashboard_Executivo_Atividades/Atividades_Vencendo_Hoje_e_Amanha</members>
+        <members>Dashboard_Executivo_Atividades/Atividades_em_Aberto_por_Area</members>
+        <members>Dashboard_Executivo_Atividades/Atividades_por_Area_e_Status</members>
+        <members>Dashboard_Executivo_Atividades/Atividades_por_Gestor</members>
+        <name>Report</name>
+    </types>
+    <types>
+        <members>Dashboard_Executivo_Atividades</members>
+        <name>DashboardFolder</name>
+    </types>
+    <types>
+        <members>Dashboard_Executivo_Atividades/Dashboard_Executivo_Atividades</members>
+        <name>Dashboard</name>
+    </types>
+    <version>65.0</version>
 </Package>
