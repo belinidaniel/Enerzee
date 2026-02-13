@@ -9,7 +9,7 @@ public without sharing class HelpDeskContactDAO {
     public static Contact findByEmail(String email) {
         if (String.isBlank(email)) return null;
         List<Contact> contacts = [
-            SELECT Id, FirstName, LastName, Email, MobilePhone, AccountId, Verification_Code__c, Verification_Code_Expires__c
+            SELECT Id, FirstName, LastName, Email, MobilePhone, Phone, AccountId, Verification_Code__c, Verification_Code_Expires__c
             FROM Contact
             WHERE Email = :email
             LIMIT 1
@@ -30,7 +30,7 @@ public without sharing class HelpDeskContactDAO {
     public static Contact findById(Id contactId) {
         if (contactId == null) return null;
         List<Contact> contacts = [
-            SELECT Id, FirstName, LastName, Name, Email, MobilePhone, AccountId
+            SELECT Id, FirstName, LastName, Name, Email, MobilePhone, Phone, AccountId
             FROM Contact
             WHERE Id = :contactId
             LIMIT 1
@@ -45,6 +45,7 @@ public without sharing class HelpDeskContactDAO {
         c.FirstName = String.isNotBlank(firstName) ? firstName : 'Visitante';
         c.LastName = String.isNotBlank(lastName) ? lastName : 'Portal';
         c.MobilePhone = mobilePhone;
+        c.Phone = mobilePhone;
         c.AccountId = a != null ? a.Id : null;
         insert c;
         return c;

@@ -56,6 +56,24 @@ public without sharing class HelpDeskCaseDAO {
         insert versions;
     }
 
+    public static List<ContentVersion> queryVersionsById(Set<Id> versionIds) {
+        if (versionIds == null || versionIds.isEmpty()) {
+            return new List<ContentVersion>();
+        }
+        return [
+            SELECT Id, ContentDocumentId
+            FROM ContentVersion
+            WHERE Id IN :versionIds
+        ];
+    }
+
+    public static void insertLinks(List<ContentDocumentLink> links) {
+        if (links == null || links.isEmpty()) {
+            return;
+        }
+        insert links;
+    }
+
     public static Id resolveRecordTypeId(String sObjectName, String developerName) {
         Map<String, Schema.RecordTypeInfo> infos = Schema.getGlobalDescribe().get(sObjectName).getDescribe().getRecordTypeInfosByDeveloperName();
         Schema.RecordTypeInfo info = infos.get(developerName);

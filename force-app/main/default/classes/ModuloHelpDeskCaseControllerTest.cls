@@ -71,13 +71,16 @@ private class ModuloHelpDeskCaseControllerTest {
             fp.fileName = 'test.txt';
             fp.base64Data = EncodingUtil.base64Encode(Blob.valueOf('hello'));
             ModuloHelpDeskCaseController.uploadFiles(cs.Id, new List<HelpDeskFilePayload>{ fp }, c.Id);
+            ModuloHelpDeskCaseController.uploadFilesBypassLicense(cs.Id, new List<HelpDeskFilePayload>{ fp }, c.Id);
             List<ContentDocumentLink> afterLinks = ModuloHelpDeskCaseController.getCaseAttachments(cs.Id, c.Id);
+            List<HelpDeskCaseService.CaseCategoryOptionDTO> categoryOptions = ModuloHelpDeskCaseController.getCaseCategoryOptions();
             Test.stopTest();
 
             System.assertEquals(1, comments.size());
             System.assertNotEquals(null, created.Id);
             System.assertEquals(0, beforeLinks.size());
-            System.assertEquals(1, afterLinks.size());
+            System.assertEquals(2, afterLinks.size());
+            System.assertNotEquals(null, categoryOptions);
         }
     }
 

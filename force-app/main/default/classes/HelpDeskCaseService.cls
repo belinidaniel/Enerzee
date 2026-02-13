@@ -15,6 +15,13 @@ public without sharing class HelpDeskCaseService {
         @AuraEnabled public String accountName;
     }
 
+    public class CaseCategoryOptionDTO {
+        @AuraEnabled public String systemValue;
+        @AuraEnabled public String typeValue;
+        @AuraEnabled public String subtypeValue;
+        @AuraEnabled public Integer sortOrder;
+    }
+
     public static List<Case> getCases(String filterType, String searchTerm, Id contactId, UserContext ctx) {
         String ownershipFilter = buildOwnershipFilter(ctx, contactId);
         Boolean closed = (filterType != null && filterType.toLowerCase() == 'closed');
@@ -37,8 +44,8 @@ public without sharing class HelpDeskCaseService {
 
     public static List<ContentDocumentLink> getCaseAttachments(Id caseId, Id contactId, UserContext ctx) {
         enforceVisibility(caseId, contactId, ctx);
-        List<ContentDocumentLink> links = HelpDeskCaseDAO.queryAttachments(caseId);
-        return (List<ContentDocumentLink>) Security.stripInaccessible(AccessType.READABLE, links).getRecords();
+        // Bypass de leitura para Experience Cloud com autenticacao custom (sem User real do portal).
+        return HelpDeskCaseDAO.queryAttachments(caseId);
     }
 
     public static CaseComment addComment(Id caseId, String commentBody, Id contactId, UserContext ctx) {
@@ -58,21 +65,57 @@ public without sharing class HelpDeskCaseService {
         return sanitized[0];
     }
 
-    public static Id createCase(String subject, String description, String richDescription, String typeValue, String reasonValue, String priorityValue, String suppliedEmail, String suppliedPhone, Id contactId, Id accountId) {
+    public static List<CaseCategoryOptionDTO> getCaseCategoryOptions() {
+        List<CaseCategoryOptionDTO> options = new List<CaseCategoryOptionDTO>();
+        for (HelpDesk_Case_Category__mdt row : [
+            SELECT Sistema__c, Tipo__c, Subtipo__c, SortOrder__c
+            FROM HelpDesk_Case_Category__mdt
+            WHERE Active__c = true
+            ORDER BY SortOrder__c ASC NULLS LAST, Sistema__c ASC, Tipo__c ASC, Subtipo__c ASC
+        ]) {
+            if (String.isBlank(row.Sistema__c) || String.isBlank(row.Tipo__c) || String.isBlank(row.Subtipo__c)) {
+                continue;
+            }
+            CaseCategoryOptionDTO dto = new CaseCategoryOptionDTO();
+            dto.systemValue = row.Sistema__c;
+            dto.typeValue = row.Tipo__c;
+            dto.subtypeValue = row.Subtipo__c;
+            dto.sortOrder = row.SortOrder__c == null ? null : Integer.valueOf(row.SortOrder__c);
+            options.add(dto);
+        }
+        return options;
+    }
+
+    public static Id createCase(
+        String subject,
+        String description,
+        String richDescription,
+        String systemValue,
+        String typeValue,
+        String subtypeValue,
+        String priorityValue,
+        String suppliedEmail,
+        String suppliedPhone,
+        Id contactId,
+        Id accountId
+    ) {
         if (String.isBlank(subject)) {
             throw new AuraHandledException('Subject é obrigatório.');
         }
         Case newCase = new Case();
         newCase.Subject = subject;
-        newCase.Description = description;
+        newCase.Description = buildCaseDescription(description, systemValue);
         if (String.isNotBlank(richDescription)) {
             newCase.Description_Rich__c = richDescription;
         }
         if (String.isNotBlank(typeValue)) {
             newCase.Type = typeValue;
         }
-        if (String.isNotBlank(reasonValue)) {
-            newCase.Reason = reasonValue;
+        if (String.isNotBlank(subtypeValue)) {
+            newCase.Reason = subtypeValue;
+        }
+        if (String.isNotBlank(systemValue) && Schema.SObjectType.Case.fields.getMap().containsKey('HelpDesk_Sistema__c')) {
+            newCase.put('HelpDesk_Sistema__c', systemValue);
         }
         if (String.isNotBlank(priorityValue)) {
             newCase.Priority = priorityValue;
@@ -96,6 +139,14 @@ public without sharing class HelpDeskCaseService {
     }
 
     public static void uploadFiles(Id caseId, List<HelpDeskFilePayload> files, Id contactId, UserContext ctx) {
+        uploadFilesInternal(caseId, files, contactId, ctx, false);
+    }
+
+    public static void uploadFilesBypassLicense(Id caseId, List<HelpDeskFilePayload> files, Id contactId, UserContext ctx) {
+        uploadFilesInternal(caseId, files, contactId, ctx, true);
+    }
+
+    private static void uploadFilesInternal(Id caseId, List<HelpDeskFilePayload> files, Id contactId, UserContext ctx, Boolean bypassSecurity) {
         if (caseId == null) {
             throw new AuraHandledException('caseId é obrigatório para anexar arquivos.');
         }
@@ -103,22 +154,88 @@ public without sharing class HelpDeskCaseService {
             return;
         }
         enforceVisibility(caseId, contactId, ctx);
+        Id networkId = resolveCurrentNetworkId();
         List<ContentVersion> versions = new List<ContentVersion>();
+        Integer receivedFiles = 0;
+        Integer validFiles = 0;
         for (HelpDeskFilePayload file : files) {
-            if (file == null || String.isBlank(file.fileName) || String.isBlank(file.base64Data)) {
+            receivedFiles++;
+            if (file == null) {
+                continue;
+            }
+            String resolvedFileName = String.isNotBlank(file.fileName) ? file.fileName : file.name;
+            if (String.isBlank(resolvedFileName) || String.isBlank(file.base64Data)) {
                 continue;
             }
             ContentVersion cv = new ContentVersion();
-            cv.Title = file.fileName;
-            cv.PathOnClient = '/' + file.fileName;
+            cv.Title = resolvedFileName;
+            cv.PathOnClient = '/' + resolvedFileName;
             cv.VersionData = EncodingUtil.base64Decode(file.base64Data);
-            cv.FirstPublishLocationId = caseId;
+            if (networkId != null) {
+                cv.NetworkId = networkId;
+            }
             versions.add(cv);
+            validFiles++;
         }
-        if (!versions.isEmpty()) {
+        if (versions.isEmpty()) {
+            throw new AuraHandledException(
+                'Nenhum arquivo válido recebido. Enviados: ' + String.valueOf(receivedFiles) +
+                ', válidos: ' + String.valueOf(validFiles) +
+                '. Verifique fileName/name e base64Data no payload.'
+            );
+        }
+
+        List<ContentVersion> insertedVersions;
+        if (bypassSecurity) {
+            HelpDeskCaseDAO.insertVersions(versions);
+            insertedVersions = versions;
+        } else {
             List<ContentVersion> sanitized = (List<ContentVersion>) Security.stripInaccessible(AccessType.CREATABLE, versions).getRecords();
+            if (sanitized.isEmpty()) {
+                throw new AuraHandledException('Você não tem permissão para anexar arquivos.');
+            }
             HelpDeskCaseDAO.insertVersions(sanitized);
+            insertedVersions = sanitized;
         }
+
+        Set<Id> insertedVersionIds = new Set<Id>();
+        for (ContentVersion cvInserted : insertedVersions) {
+            if (cvInserted.Id != null) {
+                insertedVersionIds.add(cvInserted.Id);
+            }
+        }
+        if (insertedVersionIds.isEmpty()) {
+            return;
+        }
+
+        List<ContentVersion> storedVersions = HelpDeskCaseDAO.queryVersionsById(insertedVersionIds);
+        List<ContentDocumentLink> linksToInsert = new List<ContentDocumentLink>();
+        for (ContentVersion storedVersion : storedVersions) {
+            if (storedVersion.ContentDocumentId == null) {
+                continue;
+            }
+            linksToInsert.add(new ContentDocumentLink(
+                ContentDocumentId = storedVersion.ContentDocumentId,
+                LinkedEntityId = caseId,
+                ShareType = 'V',
+                Visibility = 'AllUsers'
+            ));
+        }
+
+        if (linksToInsert.isEmpty()) {
+            return;
+        }
+
+        if (bypassSecurity) {
+            HelpDeskCaseDAO.insertLinks(linksToInsert);
+            return;
+        }
+
+        List<ContentDocumentLink> sanitizedLinks = (List<ContentDocumentLink>) Security.stripInaccessible(AccessType.CREATABLE, linksToInsert).getRecords();
+        if (sanitizedLinks.isEmpty()) {
+            throw new AuraHandledException('Você não tem permissão para vincular anexos ao caso.');
+        }
+        HelpDeskCaseDAO.insertLinks(sanitizedLinks);
     }
 
     public static DefaultEntitiesDTO getDefaultEntities(Id contactId) {
@@ -133,7 +250,7 @@ public without sharing class HelpDeskCaseService {
             dto.contactId = c.Id;
             dto.contactName = c.Name;
             dto.contactEmail = c.Email;
-            dto.contactPhone = c.MobilePhone;
+            dto.contactPhone = String.isNotBlank(c.MobilePhone) ? c.MobilePhone : c.Phone;
         }
         return dto;
     }
@@ -170,6 +287,25 @@ public without sharing class HelpDeskCaseService {
             return '(SuppliedEmail = \'' + emailEscaped + '\' OR CreatedById = \'' + userIdEscaped + '\')';
         }
         return 'CreatedById = \'' + String.escapeSingleQuotes(String.valueOf(ctx.userId)) + '\'';
+    }
+
+    private static String buildCaseDescription(String description, String systemValue) {
+        List<String> parts = new List<String>();
+        if (String.isNotBlank(systemValue)) {
+            parts.add('Sistema: ' + systemValue);
+        }
+        if (String.isNotBlank(description)) {
+            parts.add(description);
+        }
+        return parts.isEmpty() ? null : String.join(parts, '\n');
+    }
+
+    private static Id resolveCurrentNetworkId() {
+        try {
+            return Network.getNetworkId();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static void enforceVisibility(Id caseId, Id overrideContactId, UserContext ctx) {

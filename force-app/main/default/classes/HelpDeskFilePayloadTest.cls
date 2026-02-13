@@ -5,7 +5,7 @@ private class HelpDeskFilePayloadTest {
         HelpDeskFilePayload payload = new HelpDeskFilePayload();
         payload.fileName = 'arquivo.txt';
         payload.contentType = 'text/plain';
-        payload.base64Data = TestMetadataUtils.base64('teste');
+        payload.base64Data = EncodingUtil.base64Encode(Blob.valueOf('teste'));
         payload.humanSize = '5 KB';
         payload.name = 'Arquivo';
 
