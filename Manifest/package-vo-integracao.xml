@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>IntegracaoVOClientePreCadastro</members>
+        <members>IntegracaoVOClientePreCadastroTest</members>
+        <members>IntegracaoVOPlano</members>
+        <members>IntegracaoVOPlanoTest</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityLogViewerController</members>
+        <members>VOAccountSyncQueueable</members>
+        <members>VOClient</members>
+        <members>VOIntegrationService</members>
+        <members>VOIntegrationServiceTest</members>
+        <members>VOLogService</members>
+        <members>VOManualSyncController</members>
+        <members>VOOpportunitySyncQueueable</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>ModeloPropostaA</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>Log__c.CallOrigin__c</members>
+        <members>Log__c.CorrelationId__c</members>
+        <members>Log__c.Erro_Enviado__c</members>
+        <members>Log__c.IntegrationType__c</members>
+        <members>Log__c.Operation__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Account-Cliente Pessoa Física</members>
+        <members>Account-Cliente Pessoa Jurídica</members>
+        <members>Account-Parceiros</members>
+        <members>Log__c-Layout de Log</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo A -  Mini - Elaboração de proposta</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo A - Micro - Elaboração de proposta</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo B - Micro - Elaboração de proposta</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo B - Mini - Elaboração de proposta</members>
+        <members>Opportunity-Inserir dados da viabilidade - Micro - Análise viabilidade</members>
+        <members>Opportunity-Inserir dados da viabilidade - Mini - Análise viabilidade</members>
+        <members>Opportunity-Opportunity Layout</members>
+        <members>Opportunity-Opportunity Layout Bow-e</members>
+        <members>Opportunity-Opportunity Layout Ezee Connect</members>
+        <members>Opportunity-Opportunity Layout Ezee Livre</members>
+        <members>Opportunity-Opportunity Layout Ezee Solar</members>
+        <members>Opportunity-Opportunity Layout Micro</members>
+        <members>Opportunity-Opportunity Layout Mini</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>voAccountSyncAction</members>
+        <members>voOpportunitySyncAction</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>Account.Sincronizar_com_VO</members>
+        <members>Opportunity.Enviar_para_VO</members>
+        <name>QuickAction</name>
+    </types>
+    <types>
+        <members>Opportunity.Valida_Id_Cliente</members>
+        <name>ValidationRule</name>
+    </types>
+    <version>64.0</version>
+</Package>

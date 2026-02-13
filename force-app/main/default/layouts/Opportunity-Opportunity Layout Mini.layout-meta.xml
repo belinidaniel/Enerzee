@@ -1062,6 +1062,11 @@
             <actionType>QuickAction</actionType>
             <sortOrder>13</sortOrder>
         </platformActionListItems>
+            <platformActionListItems>
+            <actionName>Opportunity.Enviar_para_VO</actionName>
+            <actionType>QuickAction</actionType>
+            <sortOrder>0</sortOrder>
+        </platformActionListItems>
     </platformActionList>
     <quickActionList>
         <quickActionListItems>
@@ -1084,6 +1089,9 @@
         </quickActionListItems>
         <quickActionListItems>
             <quickActionName>FeedItem.PollPost</quickActionName>
+        </quickActionListItems>
+            <quickActionListItems>
+            <quickActionName>Opportunity.Enviar_para_VO</quickActionName>
         </quickActionListItems>
     </quickActionList>
     <relatedLists>

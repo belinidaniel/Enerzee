@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 02-09-2026
+  @last modified on  : 02-13-2026
   @last modified by  : Daniel Belini
 -->
 <apex:page standardController="Opportunity" applyBodyTag="false" extensions="PDFControllerExtension,OpportunityDataController" action="{!salvarPDF}" standardStylesheets="false" showHeader="false"  sidebar="false" renderAs="PDF" cache="false">     
@@ -734,6 +734,7 @@
                 </tr>
             </table>
         </div>
+        
         <div style="position:relative; bottom:140px; left:209px; right:122px; font-size:18px;">
             {!IF(ISBLANK(Opportunity.PrazoEntregaDias__c), '-', Opportunity.PrazoEntregaDias__c)} 
         </div>

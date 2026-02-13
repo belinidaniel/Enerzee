@@ -30,11 +30,19 @@
                 <behavior>Readonly</behavior>
                 <field>Class__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>IntegrationType__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>Method__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Operation__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
@@ -58,6 +66,10 @@
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>LineNumber__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>CallOrigin__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
@@ -106,6 +118,14 @@
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>RequestURI__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>CorrelationId__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Erro_Enviado__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns/>

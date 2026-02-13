@@ -2132,8 +2132,6 @@ public class OpportunityBO {
 
             if (opportunity.StageName == oldOpportunity.StageName) continue;
 
-            Id opportunityId = opportunity.RecordTypeId;
-
             if (
                 OpportunityUtils.isRecordTypeSolar(opportunity)
                 || OpportunityUtils.isRecordTypeEzeeLivre(opportunity)
@@ -2163,7 +2161,11 @@ public class OpportunityBO {
         }
         
         if(!accountIds.isEmpty()){
-        	IntegracaoVOClientePreCadastro.sendCliente(accountIds);
+            VOIntegrationService.enqueueAccountSync(
+                accountIds,
+                'Trigger:Opportunity.afterUpdate:Contrato',
+                false
+            );
         }
 
     }
@@ -2196,7 +2198,11 @@ public class OpportunityBO {
         }
         
         if(!opportunityIds.isEmpty()){
-        	IntegracaoVOPlano.sendPlano(opportunityIds);
+            VOIntegrationService.enqueueOpportunitySync(
+                opportunityIds,
+                'Trigger:Opportunity.afterUpdate:GanhoFechado',
+                false
+            );
         }
 
     }
