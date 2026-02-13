@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Distributiontype__c</fullName>
-    <label>Tipo de Distribuição</label>
-    <required>false</required>
-    <trackFeedHistory>false</trackFeedHistory>
-    <trackHistory>false</trackHistory>
+    <fullName>Category__c</fullName>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Category</label>
+    <required>true</required>
     <type>Picklist</type>
     <valueSet>
         <restricted>true</restricted>
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Email</fullName>
+                <fullName>LeadValue</fullName>
                 <default>false</default>
-                <label>Email</label>
+                <label>Lead Value</label>
             </value>
             <value>
-                <fullName>Graduação</fullName>
+                <fullName>LeadSource</fullName>
                 <default>false</default>
-                <label>Graduação</label>
+                <label>Lead Source</label>
             </value>
             <value>
-                <fullName>B2B</fullName>
+                <fullName>LeadProduct</fullName>
                 <default>false</default>
-                <label>B2B</label>
+                <label>Lead Product</label>
             </value>
         </valueSetDefinition>
     </valueSet>

@@ -9,6 +9,16 @@
 public class LeadIntegrationBatchTest {
     @isTest
     static void testBatchExecution() {
+        Consultor__c consultor = (Consultor__c) TestFactory.createSObject(new Consultor__c(
+            Email__c = 'batch.consultor.' + System.currentTimeMillis() + '@test.com',
+            Ativo__c = true,
+            SendLead__c = true,
+            FreezeConsult__c = false,
+            CPF__c = '123.456.789-01',
+            CNPJ__c = '12.345.678/9012-34',
+            NumeroIdentificacao__c = '1234567890',
+            IdVirtualOffice__c = 'vo-batch-' + System.currentTimeMillis()
+        ), true);
 
     Lead testLead3 = new Lead(
             FirstName = 'Test3',
@@ -36,17 +46,23 @@ public class LeadIntegrationBatchTest {
             Complemento__c = 'Comp',
             PostalCode = '12345-678',
             Status = 'Distribuído',
+            ConsultorRegional__c = consultor.Id,
             RecordTypeId = Schema.SObjectType.Lead.getRecordTypeInfosByName().get('Qualificação de Clientes').getRecordTypeId()
 
         );
         insert testLead3;
 
-        Test.startTest();
         LeadIntegrationBatch batch = new LeadIntegrationBatch();
-        Database.executeBatch(batch, 1);
+        Test.startTest();
+        Database.QueryLocator queryLocator = batch.start(null);
+        batch.execute(null, new List<SObject>{ testLead3 });
+        batch.finish(null);
         Test.stopTest();
+
+        System.assertNotEquals(null, queryLocator, 'Start do batch deve retornar QueryLocator.');
 
         // Reload lead and check integration flag
         Lead updatedLead = [SELECT Lab065_IntegracaoDistribuicaoLead__c FROM Lead WHERE Id = :testLead3.Id LIMIT 1];
+        System.assertNotEquals(null, updatedLead, 'Lead de teste deve existir após execução.');
     }
 }

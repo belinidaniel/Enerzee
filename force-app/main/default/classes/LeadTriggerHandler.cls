@@ -23,13 +23,19 @@ public class LeadTriggerHandler extends TriggerHandler {
         enabled = false;
     }
     
-    public override void beforeInsert(){}
+    public override void beforeInsert(){
+        LeadDistributionService.applyAutomaticDistribution((List<Lead>) newRecordList, new Map<Id, Lead>());
+        LeadDistributionService.normalizeSdrLeadClassification((List<Lead>) newRecordList);
+    }
 
     public override void afterInsert(){
         LeadBO.createMessagingUser(newRecordList, new Map<Id, Lead>());
     }
 
     public override void beforeUpdate(){
+        LeadDistributionService.applyAutomaticDistribution((List<Lead>) newRecordList, (Map<Id, Lead>) oldMap);
+        LeadDistributionService.handleIntegrationFlagConsistency((List<Lead>) newRecordList, (Map<Id, Lead>) oldMap);
+        LeadDistributionService.normalizeSdrLeadClassification((List<Lead>) newRecordList);
         LeadBO.checkTasksConclusionBeforeStatusChange((List<Lead>) newRecordList, (Map<Id, Lead>) oldMap);
         LeadBO.LeadValidationHandler((List<Lead>) newRecordList);
         LeadBO.setRecordTypeAccount((List<Lead>) newRecordList);

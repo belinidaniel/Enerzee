@@ -8,11 +8,12 @@
 global class LeadIntegrationBatch implements Database.Batchable<SObject>, Database.AllowsCallouts {
     global Database.QueryLocator start(Database.BatchableContext BC) {
         // Query para selecionar os Leads desejados conforme filtros fornecidos
-        String query = 'SELECT Id, Status, Lab065_IntegracaoDistribuicaoLead__c, CreatedDate, LeadSource, RecordType.Name ' +
+        String query = 'SELECT Id, Status, Lab065_IntegracaoDistribuicaoLead__c, CreatedDate, LeadSource, RecordType.Name, RecordType.DeveloperName ' +
             'FROM Lead ' +
             'WHERE Lab065_IntegracaoDistribuicaoLead__c = false ' +
             'AND Status = \'Distribuído\' ' +
-            'AND RecordType.Name = \'Qualificação de Clientes\' AND ConsultorRegional__r.IdVirtualOffice__c != null ' +
+            'AND RecordType.DeveloperName IN (\'QualificacaodeClientes\', \'Cliente\') ' +
+            'AND ConsultorRegional__r.IdVirtualOffice__c != null ' +
             ' ORDER BY CreatedDate DESC LIMIT 10 ';
         return Database.getQueryLocator(query);
     }

@@ -144,6 +144,13 @@
                 <elementReference>Obter_Lead.Id</elementReference>
             </value>
         </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Novo</stringValue>
+            </value>
+        </filters>
         <inputAssignments>
             <field>InteresseEnergiaSolar__c</field>
             <value>
@@ -172,6 +179,13 @@
             <operator>EqualTo</operator>
             <value>
                 <elementReference>Obter_Lead.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Novo</stringValue>
             </value>
         </filters>
         <inputAssignments>
@@ -204,6 +218,13 @@
                 <elementReference>leadId</elementReference>
             </value>
         </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Novo</stringValue>
+            </value>
+        </filters>
         <inputAssignments>
             <field>Status</field>
             <value>
@@ -226,6 +247,13 @@
             <operator>EqualTo</operator>
             <value>
                 <elementReference>Obter_Lead.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Novo</stringValue>
             </value>
         </filters>
         <inputAssignments>
@@ -256,6 +284,13 @@
             <operator>EqualTo</operator>
             <value>
                 <elementReference>Obter_Lead.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Novo</stringValue>
             </value>
         </filters>
         <inputAssignments>

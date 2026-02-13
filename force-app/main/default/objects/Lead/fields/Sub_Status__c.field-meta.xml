@@ -24,6 +24,11 @@
                 <default>false</default>
                 <label>Email Agente Enviado</label>
             </value>
+            <value>
+                <fullName>Lead incompleto</fullName>
+                <default>false</default>
+                <label>Lead incompleto</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>
