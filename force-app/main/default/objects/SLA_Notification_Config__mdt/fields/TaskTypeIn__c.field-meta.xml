@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TaskTypeIn__c</fullName>
+    <description>Lista separada por virgula de Type permitidos.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Task Type In</label>
+    <length>131072</length>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

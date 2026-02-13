@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-29-2025
+ * @last modified on  : 02-09-2026
  * @last modified by  : Daniel Belini
 **/
 public with sharing class PDFControllerExtension {
@@ -28,7 +28,8 @@ public with sharing class PDFControllerExtension {
     public String paymentMethodLeftHtml { get; private set; }
     public String paymentMethodRightHtml { get; private set; }
     public List<String> mainViabilityStudyChunks { get; private set; }
-
+    Public Boolean showPaymentMethodNotes { get;  set; }
+    
     public PDFControllerExtension(ApexPages.StandardController controller) {
         
         this.controller = controller;
@@ -100,9 +101,12 @@ public with sharing class PDFControllerExtension {
         loadMainViabilityStudyData();
         paymentMethodLeftHtml = opportunity.ObservacaoPagamentoEsquerdo__c;
         paymentMethodRightHtml = opportunity.ObservacaoPagamentoDireito__c;
-        if(String.isBlank(paymentMethodLeftHtml) && !String.isBlank(opportunity.NotePaymentMethod__c)){
-            paymentMethodLeftHtml = opportunity.NotePaymentMethod__c; // fallback para dados antigos
+        this.showPaymentMethodNotes = false;
+        if(paymentMethodLeftHtml != null && paymentMethodRightHtml != null){
+            this.showPaymentMethodNotes = true;
         }
+
+        System.debug('paymentMethodLeftHtml: ' + this.showPaymentMethodNotes);
     }
 
     public String getLogoUrl() {
@@ -151,14 +155,11 @@ public with sharing class PDFControllerExtension {
             ];
             Set<Id> documentIds = new Set<Id>();
             for (ContentDocumentLink docLink : docLinks) {
-                documentIds.add(docLink.ContentDocument.LatestPublishedVersionId);
-                if (String.isBlank(paymentMethodNoteImageUrl)
-                    && (!String.isBlank(this.opportunity.NotePaymentMethod__c)
-                        || !String.isBlank(this.opportunity.ObservacaoPagamentoEsquerdo__c)
-                        || !String.isBlank(this.opportunity.ObservacaoPagamentoDireito__c))
-                    && docLink.ContentDocument != null
-                    && docLink.ContentDocument.Title == 'SEMPAGAMENTOS') {
+                System.debug('docklink ' + docLink.ContentDocument.Title);
+                if (docLink.ContentDocument.Title == 'SEMPAGAMENTOS') {
                     paymentMethodNoteImageUrl = '/sfc/servlet.shepherd/version/download/' + docLink.ContentDocument.LatestPublishedVersionId;
+                }else{
+                    documentIds.add(docLink.ContentDocument.LatestPublishedVersionId);
                 }
             }
         

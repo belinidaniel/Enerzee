@@ -6,7 +6,7 @@ import getCaseDetail from '@salesforce/apex/ModuloHelpDeskCaseController.getCase
 import getCaseComments from '@salesforce/apex/ModuloHelpDeskCaseController.getCaseComments';
 import addComment from '@salesforce/apex/ModuloHelpDeskCaseController.addComment';
 import getCaseAttachments from '@salesforce/apex/ModuloHelpDeskCaseController.getCaseAttachments';
-import uploadFiles from '@salesforce/apex/ModuloHelpDeskCaseController.uploadFiles';
+import uploadFilesBypassLicense from '@salesforce/apex/ModuloHelpDeskCaseController.uploadFilesBypassLicense';
 
 export default class HelpDeskCaseDetail extends LightningElement {
     @api recordId;
@@ -168,7 +168,11 @@ export default class HelpDeskCaseDetail extends LightningElement {
         addComment({ caseId: this.recordId, commentBody: this.newComment, contactId: this.contactId })
             .then(() => {
                 if (this.pendingFiles.length > 0) {
-                    return uploadFiles({ caseId: this.recordId, files: this.pendingFiles, contactId: this.contactId }).then(() => null);
+                    return uploadFilesBypassLicense({
+                        caseId: this.recordId,
+                        files: this.buildApexFilePayload(),
+                        contactId: this.contactId
+                    }).then(() => null);
                 }
                 return null;
             })
@@ -228,6 +232,16 @@ export default class HelpDeskCaseDetail extends LightningElement {
             .join('')
             .substring(0, 2)
             .toUpperCase();
+    }
+
+    buildApexFilePayload() {
+        return this.pendingFiles.map((file) => ({
+            fileName: file.fileName || file.name || '',
+            contentType: file.contentType || '',
+            base64Data: file.base64Data || '',
+            humanSize: file.humanSize || '',
+            name: file.name || file.fileName || ''
+        }));
     }
 
     handleError(title, error) {

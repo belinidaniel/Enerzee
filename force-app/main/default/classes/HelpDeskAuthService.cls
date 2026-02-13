@@ -14,15 +14,71 @@ public without sharing class HelpDeskAuthService {
         if (c == null) {
             c = HelpDeskContactDAO.createContact(email, firstName, lastName, mobilePhone);
         }
-        String code = String.valueOf(Math.abs(Crypto.getRandomInteger())).left(6);
+        String code = generateAccessCode();
         Datetime expiresAt = System.now().addHours(1);
         HelpDeskContactDAO.saveVerification(c, code, expiresAt);
+        sendAccessCodeEmail(email, code);
+    }
 
+    private static String generateAccessCode() {
+        Long seed = Long.valueOf(String.valueOf(Crypto.getRandomInteger()));
+        if (seed < 0) {
+            seed = seed * -1;
+        }
+        Integer randomValue = Integer.valueOf(Math.mod(seed, 1000000));
+        return String.valueOf(randomValue).leftPad(6, '0');
+    }
+
+    private static void sendAccessCodeEmail(String email, String code) {
         Messaging.SingleEmailMessage msg = new Messaging.SingleEmailMessage();
         msg.setToAddresses(new String[] { email });
         msg.setSubject('Código de acesso ao portal de casos');
         msg.setPlainTextBody('Seu código de acesso é: ' + code + '. Ele expira em 1 hora.');
-        Messaging.sendEmail(new Messaging.SingleEmailMessage[] { msg }, false);
+        Id orgWideEmailAddressId = resolveOrgWideEmailAddressId();
+        if (orgWideEmailAddressId != null) {
+            msg.setOrgWideEmailAddressId(orgWideEmailAddressId);
+        }
+
+        try {
+            Messaging.SendEmailResult[] results = Messaging.sendEmail(new Messaging.SingleEmailMessage[] { msg }, false);
+            if (!results.isEmpty() && !results[0].isSuccess()) {
+                String errorMessage = 'Falha ao enviar o código por e-mail.';
+                List<Messaging.SendEmailError> errors = results[0].getErrors();
+                if (errors != null && !errors.isEmpty()) {
+                    errorMessage += ' ' + errors[0].getMessage();
+                }
+                throw new AuraHandledException(errorMessage);
+            }
+        } catch (AuraHandledException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new AuraHandledException('Falha ao enviar o código por e-mail. ' + e.getMessage());
+        }
+    }
+
+    private static Id resolveOrgWideEmailAddressId() {
+        try {
+            List<OrgWideEmailAddress> allowAllProfiles = [
+                SELECT Id
+                FROM OrgWideEmailAddress
+                WHERE IsAllowAllProfiles = true
+                ORDER BY Address ASC
+                LIMIT 1
+            ];
+            if (!allowAllProfiles.isEmpty()) {
+                return allowAllProfiles[0].Id;
+            }
+
+            List<OrgWideEmailAddress> anyAddress = [
+                SELECT Id
+                FROM OrgWideEmailAddress
+                ORDER BY Address ASC
+                LIMIT 1
+            ];
+            return anyAddress.isEmpty() ? null : anyAddress[0].Id;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static Id validateAccessCode(String email, String code) {

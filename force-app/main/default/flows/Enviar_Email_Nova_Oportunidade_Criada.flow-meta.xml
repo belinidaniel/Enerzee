@@ -48,14 +48,10 @@
         <connector>
             <targetReference>Enviar_Email_Nova_Oportunidade</targetReference>
         </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Origem__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Nivello</stringValue>
-            </value>
-        </filters>
+        <filterFormula>AND(
+            TEXT({!$Record.Origem__c}) = &apos;Nivello&apos;,
+            {!$Record.RecordType.DeveloperName} != &apos;EzeeSolarA&apos;
+        )</filterFormula>
         <object>Opportunity</object>
         <recordTriggerType>Create</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>

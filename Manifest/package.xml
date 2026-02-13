@@ -1,76 +1,176 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <types>
-        <members>AttachmentFeedServiceTest</members>
-        <members>ClickSignIntegration</members>
-        <members>ClickSignLogViewerController</members>
-        <members>ClickSignQueueable</members>
-        <members>ClickSignService</members>
-        <members>ClickSignUtils</members>
-        <members>ClickSignUtilsTest</members>
-        <members>ConsultorTriggerHandler</members>
-        <members>HelpDeskCaseDAO</members>
-        <members>HelpDeskCaseService</members>
-        <members>IntegracaoGeradorPropostasTest</members>
-        <members>IntegracaoNivelloAdditionalTest</members>
-        <members>IntegracaoNivelloContrato</members>
-        <members>IntegracaoVOPlano</members>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">    <types>
+        <members>SendEmailLateTasks</members>
+        <members>SendEmailLateTasksTest</members>
+        <members>SendEmailSummaryTasks</members>
+        <members>SendEmailSummaryTasksTest</members>
+        <members>TaskDeadlineNotificationBatch</members>
+        <members>TaskSlaConfig</members>
+        <members>TaskSlaCoreTest</members>
+        <members>TaskSlaDailySummaryScheduler</members>
+        <members>TaskSlaDailySummaryService</members>
+        <members>TaskSlaDailySummaryServiceTest</members>
+        <members>TaskSlaNotificationService</members>
+        <members>TaskSlaNotificationServiceTest</members>
+        <members>TaskSlaRecipientResolver</members>
+        <members>TaskSlaUtils</members>
+        <members>TaskTemplateFlowTest</members>
+        <members>IntegracaoNivelloAprovacaoDesconto</members>
+        <members>IntegracaoNivelloValorTotalProposta</members>
+        <members>InstalacaoBO</members>
+        <members>InstalacaoBOTest</members>
         <members>KitInstalacaoBO</members>
-        <members>LeadBO</members>
-        <members>LeadDistributionSelector</members>
-        <members>LeadDistributionSelectorTest</members>
-        <members>ModuloHelpDeskCaseController</members>
-        <members>OpportunityDataController</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityBOEmailTest</members>
+        <members>OpportunityRecordsTO</members>
+        <members>OpportunityUtils</members>
+        <members>TaskBO</members>
+        <members>TaskBOTest</members>
+        <members>AccountBOTest</members>
+        <members>AccountTriggerHandlerTest</members>
+        <members>CaseBOTest</members>
+        <members>ClickSignDAOTest</members>
+        <members>ClickSignDTOTest</members>
+        <members>ClickSignInboundDTOTest</members>
+        <members>ClickSignLogViewerControllerTest</members>
+        <members>ClickSignQueueableTest</members>
+        <members>ClickSignRESTTest</members>
+        <members>ClickSignTemplateControllerTest</members>
+        <members>ConsultorTriggerHandlerTest</members>
+        <members>ContactTriggerHandlerTest</members>
+        <members>ContentDocumentLinkTriggerTest</members>
+        <members>ContentVersionTriggerHandlerTest</members>
+        <members>ExternalArchiveServiceTest</members>
+        <members>FormularioPDFControllerTest</members>
+        <members>GORecordsTOTest</members>
+        <members>HelpDeskAuthServiceTest</members>
+        <members>HelpDeskCaseDAOTest</members>
+        <members>HelpDeskCaseServiceTest</members>
+        <members>HelpDeskContactDAOTest</members>
+        <members>HelpDeskFilePayloadTest</members>
+        <members>InstalacaoTaskBOTest</members>
+        <members>InstalacaoTriggerHandlerTest</members>
+        <members>IntegracaoFormaPagamentoNegociacaoTest</members>
+        <members>IntegracaoNivelloAnaliseVTTest</members>
+        <members>IntegracaoNivelloDataVisitaTecnicaTest</members>
+        <members>IntegracaoNivelloPropostaTest</members>
+        <members>IntegracaoNivelloSimFinTest</members>
+        <members>IntegracaoNivelloValorTotalPropostaTest</members>
+        <members>IntegracaoNivelloViabilidadeTest</members>
+        <members>KitInstalacaoBOTest</members>
+        <members>LeadBOTest</members>
+        <members>OpportunityLogViewerControllerTest</members>
+        <members>OpportunityRecordsTOTest</members>
+        <members>ProjetoUtilsTest</members>
+        <members>ProposalCoverTriggerHandlerTest</members>
+        <members>ProposalPendingSendQueueableTest</members>
+        <members>RevoIntegrationServiceTest</members>
+        <members>RevoOpportunityErrorBatchTest</members>
+        <members>ServiceAppointmentBOTest</members>
+        <members>TemplateJornadaDoClienteControllerTest</members>
+        <members>TestMetadataUtils</members>
+        <members>TokenAPIVOWsTest</members>
+        <members>TriggerHandlerTest</members>
+        <members>ViabilityStudyControllerTest</members>
         <name>ApexClass</name>
     </types>
     <types>
-        <members>ModeloPropostaA</members>
-        <members>ModeloPropostaB</members>
         <name>ApexPage</name>
     </types>
     <types>
-        <members>ClickSign_Record_Page</members>
-        <members>ClickSign_Template_Record_Page</members>
-        <members>Projeto_Pagina_de_registro</members>
-        <members>Projeto_Pagina_de_registro_OLD</members>
-        <name>FlexiPage</name>
-    </types>
-    <types>
-        <members>Lead_Update_After_Distribui_o_do_Lead</members>
+        <members>Enviar_Email_Nova_Oportunidade_Criada</members>
+        <members>Viability_Solicitacao_de_Viabilidade_Local</members>
         <name>Flow</name>
     </types>
     <types>
-        <members>clickSignIntegrationLogs</members>
-        <members>helpDeskAuth</members>
-        <members>helpDeskCaseDetail</members>
-        <members>helpDeskHome</members>
-        <members>opportunityIntegrationLogs</members>
-        <members>opportunityProposalConsole</members>
+        <members>attachmentTabs</members>
+        <members>activityDocumentUpload</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
-        <members>Instalacao__c.All</members>
-        <name>ListView</name>
+        <members>GerenciadorBlobHomolog</members>
+        <name>RemoteSiteSetting</name>
     </types>
     <types>
-        <members>Case.Description_Rich__c</members>
-        <members>ClickSignLog__c.RelatedId__c</members>
-        <members>Opportunity.DescricaoBateria__c</members>
+        <members>OpportunityAttachmentLink__c.ContentDocumentId__c</members>
+        <members>OpportunityAttachmentLink__c.InternalAttachmentURL__c</members>
+        <members>Campaign.Investimento_Total_da_Meta__c</members>
+        <members>Opportunity.Tempo_em_Aberto__c</members>
+        <members>Opportunity.UC2JaneiroForaPonta__c</members>
+        <members>Opportunity.Rede__c</members>
         <members>Opportunity.ValorTotalProposta__c</members>
+        <members>Activity.OwnerManagerName__c</members>
         <name>CustomField</name>
     </types>
     <types>
-        <members>Opportunity.CamposObrigatorios_Parecer_EB</members>
-        <name>ValidationRule</name>
+        <members>Oportunidade_P_gina_de_registro</members>
+        <name>FlexiPage</name>
     </types>
     <types>
-        <members>Help_Desk_Guest</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo A -  Mini - Elaboração de proposta</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo A - Micro - Elaboração de proposta</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo B - Micro - Elaboração de proposta</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo B - Mini - Elaboração de proposta</members>
+        <members>Opportunity-Inserir dados da viabilidade - Micro - Análise viabilidade</members>
+        <members>Opportunity-Inserir dados da viabilidade - Mini - Análise viabilidade</members>
+        <members>Opportunity-Opportunity Layout</members>
+        <members>Opportunity-Opportunity Layout Mini</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>Acesso_a_sessao_custos_da_composicao_da_proposta</members>
+        <members>ConjuntoPermissaoPowerBI</members>
+        <members>CreateFieldPermission</members>
+        <members>Custom_permission_user</members>
         <name>PermissionSet</name>
     </types>
     <types>
-        <members>agentforceAgentAstro</members>
-        <members>salesforceCloudV3</members>
-        <name>StaticResource</name>
+        <members>Oportunidades_com_Projetos</members>
+        <members>Oportunidades_e_Projetos</members>
+        <name>ReportType</name>
     </types>
-    <version>63.0</version>
+    <types>
+        <members>SLA_Notification_Config__mdt</members>
+        <members>SLA_Queue_Routing_Config__mdt</members>
+        <members>SLA_Status_Config__mdt</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>SLA_Notification_Config__mdt.TASK_AFTER_DUE</members>
+        <members>SLA_Notification_Config__mdt.TASK_BEFORE_DUE</members>
+        <members>SLA_Notification_Config__mdt.TASK_DAILY_MANAGER_DUE_TOMORROW</members>
+        <members>SLA_Notification_Config__mdt.TASK_DAILY_MANAGER_OVERDUE</members>
+        <members>SLA_Notification_Config__mdt.TASK_DAILY_OWNER_OPEN</members>
+        <members>SLA_Notification_Config__mdt.TASK_SLA_ALERT</members>
+        <members>SLA_Queue_Routing_Config__mdt.DEFAULT</members>
+        <members>SLA_Status_Config__mdt.Canceled</members>
+        <members>SLA_Status_Config__mdt.Cancelada</members>
+        <members>SLA_Status_Config__mdt.Cancelado</members>
+        <members>SLA_Status_Config__mdt.Cancelled</members>
+        <members>SLA_Status_Config__mdt.Closed</members>
+        <members>SLA_Status_Config__mdt.Completed</members>
+        <members>SLA_Status_Config__mdt.Concluida</members>
+        <name>CustomMetadata</name>
+    </types>
+    <types>
+        <members>Dashboard_Executivo_Atividades</members>
+        <name>ReportFolder</name>
+    </types>
+    <types>
+        <members>Dashboard_Executivo_Atividades/Atividades_Atrasadas_por_Area</members>
+        <members>Dashboard_Executivo_Atividades/Atividades_Vencendo_Hoje_e_Amanha</members>
+        <members>Dashboard_Executivo_Atividades/Atividades_em_Aberto_por_Area</members>
+        <members>Dashboard_Executivo_Atividades/Atividades_por_Area_e_Status</members>
+        <members>Dashboard_Executivo_Atividades/Atividades_por_Gestor</members>
+        <name>Report</name>
+    </types>
+    <types>
+        <members>Dashboard_Executivo_Atividades</members>
+        <name>DashboardFolder</name>
+    </types>
+    <types>
+        <members>Dashboard_Executivo_Atividades/Dashboard_Executivo_Atividades</members>
+        <name>Dashboard</name>
+    </types>
+    <version>65.0</version>
 </Package>

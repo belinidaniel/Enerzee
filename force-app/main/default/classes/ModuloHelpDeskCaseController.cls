@@ -30,14 +30,49 @@ public without sharing class ModuloHelpDeskCaseController {
     }
 
     @AuraEnabled
-    public static Id createCase(String subject, String description, String richDescription, String typeValue, String reasonValue, String priorityValue, String suppliedEmail, String suppliedPhone, Id contactId, Id accountId) {
-        return HelpDeskCaseService.createCase(subject, description, richDescription, typeValue, reasonValue, priorityValue, suppliedEmail, suppliedPhone, contactId, accountId);
+    public static Id createCase(
+        String subject,
+        String description,
+        String richDescription,
+        String systemValue,
+        String typeValue,
+        String subtypeValue,
+        String priorityValue,
+        String suppliedEmail,
+        String suppliedPhone,
+        Id contactId,
+        Id accountId
+    ) {
+        return HelpDeskCaseService.createCase(
+            subject,
+            description,
+            richDescription,
+            systemValue,
+            typeValue,
+            subtypeValue,
+            priorityValue,
+            suppliedEmail,
+            suppliedPhone,
+            contactId,
+            accountId
+        );
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<HelpDeskCaseService.CaseCategoryOptionDTO> getCaseCategoryOptions() {
+        return HelpDeskCaseService.getCaseCategoryOptions();
     }
 
     @AuraEnabled
     public static void uploadFiles(Id caseId, List<HelpDeskFilePayload> files, Id contactId) {
         HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
         HelpDeskCaseService.uploadFiles(caseId, files, contactId, ctx);
+    }
+
+    @AuraEnabled
+    public static void uploadFilesBypassLicense(Id caseId, List<HelpDeskFilePayload> files, Id contactId) {
+        HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+        HelpDeskCaseService.uploadFilesBypassLicense(caseId, files, contactId, ctx);
     }
 
     @AuraEnabled

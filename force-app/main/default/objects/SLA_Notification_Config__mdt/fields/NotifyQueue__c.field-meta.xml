@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NotifyQueue__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>Notificar owners/membros de fila quando owner for Queue.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Notify Queue</label>
+    <type>Checkbox</type>
+</CustomField>

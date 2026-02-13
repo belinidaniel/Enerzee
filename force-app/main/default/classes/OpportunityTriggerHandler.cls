@@ -53,7 +53,7 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.updateOwnerOnFirstModification((List<Opportunity>) Trigger.new);
         OpportunityBO.controlsSubstatus((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.assignOwnerByPartner((List<Opportunity>) Trigger.new);
-        OpportunityBO.updateApproveComment((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
+        ApprovalProcessService.updateApproveComment((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
     }
 
     public override void afterUpdate(){
@@ -62,13 +62,13 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.validateSellBuyOrderAndContractRequiredFields((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.createSellBuyOrder((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.sendContractDataSAP((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
-        OpportunityBO.applyDiscountAndInitiateApproval( (Map<Id,Opportunity>) Trigger.newMap,(Map<Id, Opportunity>) Trigger.oldMap );
+        ApprovalProcessService.applyDiscountAndInitiateApproval((Map<Id, Opportunity>) Trigger.newMap, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.updateOpportunityPhaseOnStageChange((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.createProjectRecords((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.createRequiredFieldsReminderTasks((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.sendContractToExternalSystem((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.updateKitsOnPotenciaChange((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
-        OpportunityBO.applyApprovedDiscounts((Map<Id, Opportunity>) Trigger.newMap,(Map<Id, Opportunity>) Trigger.oldMap);
+        ApprovalProcessService.applyApprovedDiscounts((Map<Id, Opportunity>) Trigger.newMap, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.scheduleTechnicalVisit( (Map<Id,Opportunity>) Trigger.newMap, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.updateFinancingProcessSimulationInExternalSystem((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.updateOpportunityTotalValueIfNeeded((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
@@ -80,7 +80,8 @@ public class OpportunityTriggerHandler extends TriggerHandler {
         OpportunityBO.createCaseCustomerJourney((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.sendClienteRecordToVirtualOffice((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.addPlanToUserInVirtualOffice((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
-        OpportunityBO.sendAprovalUpdate((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
+        ApprovalProcessService.sendApprovalUpdate((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
+        ApprovalProcessService.recallPendingDiscountApprovals((Map<Id, Opportunity>) Trigger.newMap, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.handleOpportunityLeadConversion((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityBO.closeActivitiesAndFlowsForClosedLost((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
         OpportunityShareHandler.gerenciarCompartilhamentoOportunidade((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);

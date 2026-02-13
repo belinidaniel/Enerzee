@@ -608,13 +608,14 @@ public class TaskBO {
         if (!opportunityIds.isEmpty()) {
             List<Opportunity> oppsToUpdate = new List<Opportunity>();
             for (Opportunity opp : [
-                SELECT Id, StageName
+                SELECT Id, StageName, RecordTypeId
                 FROM Opportunity
                 WHERE Id IN :opportunityIds
             ]) {
+                String targetStage = OpportunityUtils.resolveStageForProjectCompletion(opp);
                 if (opp.StageName == null
-                    || !opp.StageName.equalsIgnoreCase(OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO)) {
-                    opp.StageName = OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO;
+                    || !opp.StageName.equalsIgnoreCase(targetStage)) {
+                    opp.StageName = targetStage;
                     oppsToUpdate.add(opp);
                 }
             }

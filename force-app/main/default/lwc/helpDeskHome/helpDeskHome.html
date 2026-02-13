@@ -45,23 +45,35 @@
                         </header>
                         <div class="slds-modal__content slds-p-around_medium">
                             <div class="slds-grid slds-wrap slds-gutters">
-                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                            <lightning-combobox
+                                name="systemValue"
+                                label="Sistema"
+                                value={systemValue}
+                                placeholder="Selecione o sistema"
+                                options={systemOptions}
+                                onchange={handleInputChange}
+                            ></lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
                             <lightning-combobox
                                 name="typeValue"
                                 label="Tipo"
                                 value={typeValue}
                                 placeholder="Selecione o tipo"
                                 options={typeOptions}
+                                disabled={disableType}
                                 onchange={handleInputChange}
                             ></lightning-combobox>
                                 </div>
-                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
                             <lightning-combobox
-                                name="reasonValue"
+                                name="subtypeValue"
                                 label="Subtipo"
-                                value={reasonValue}
+                                value={subtypeValue}
                                 placeholder="Selecione o subtipo"
-                                options={reasonOptions}
+                                options={subtypeOptions}
+                                disabled={disableSubtype}
                                 onchange={handleInputChange}
                             ></lightning-combobox>
                                 </div>
@@ -112,13 +124,29 @@
                                     accept={acceptedFormats}
                                     onchange={handleFilesChange}
                                 ></lightning-input>
+                                <input class="replace-file-input slds-hide" type="file" accept={acceptedFormats} onchange={handleReplaceFileChange} />
                             </div>
                             <template if:true={hasFiles}>
                                 <ul class="file-list slds-m-top_small">
                                     <template for:each={pendingFiles} for:item="file">
-                                        <li key={file.name} class="file-item slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                        <li key={file.clientKey} class="file-item slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
                                             <span>{file.name} ({file.humanSize})</span>
-                                            <lightning-button-icon icon-name="utility:close" alternative-text="Remover" onclick={removeFile} data-name={file.name}></lightning-button-icon>
+                                            <div class="file-item-actions">
+                                                <lightning-button-icon
+                                                    icon-name="utility:edit"
+                                                    alternative-text="Editar"
+                                                    title="Editar arquivo"
+                                                    onclick={handleEditFile}
+                                                    data-key={file.clientKey}
+                                                ></lightning-button-icon>
+                                                <lightning-button-icon
+                                                    icon-name="utility:close"
+                                                    alternative-text="Remover"
+                                                    title="Remover arquivo"
+                                                    onclick={removeFile}
+                                                    data-key={file.clientKey}
+                                                ></lightning-button-icon>
+                                            </div>
                                         </li>
                                     </template>
                                 </ul>
