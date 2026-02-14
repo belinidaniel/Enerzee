@@ -39,6 +39,20 @@ public with sharing class LeadIntegrationService {
         
         return results;
     }
+
+    @future(callout=true)
+    public static void integrateLeadAsync(Set<Id> leadIds) {
+        if (leadIds == null || leadIds.isEmpty()) {
+            return;
+        }
+
+        for (Id leadId : leadIds) {
+            if (leadId == null) {
+                continue;
+            }
+            integrateLead(String.valueOf(leadId));
+        }
+    }
     
     public static void integrateLead(String leadId) {
 		Lead leadRecord = [

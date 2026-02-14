@@ -23,21 +23,28 @@ public class LeadTriggerHandler extends TriggerHandler {
         enabled = false;
     }
     
-    public override void beforeInsert(){}
+    public override void beforeInsert(){
+        LeadBO.applySdrLeadRules((List<Lead>) newRecordList, null);
+    }
 
     public override void afterInsert(){
         LeadBO.createMessagingUser(newRecordList, new Map<Id, Lead>());
+        LeadBO.autoDistributeLeadsAfterSave((List<Lead>) newRecordList, null);
     }
 
     public override void beforeUpdate(){
         LeadBO.checkTasksConclusionBeforeStatusChange((List<Lead>) newRecordList, (Map<Id, Lead>) oldMap);
         LeadBO.LeadValidationHandler((List<Lead>) newRecordList);
+        LeadBO.applySdrLeadRules((List<Lead>) newRecordList, (Map<Id, Lead>) oldMap);
+        LeadBO.normalizeDistributionAndIntegrationBeforeUpdate((List<Lead>) newRecordList, (Map<Id, Lead>) oldMap);
         LeadBO.setRecordTypeAccount((List<Lead>) newRecordList);
         LeadBO.sendConsultorRecordToVirtualOffice((List<Lead>) newRecordList,(Map<Id, Lead>) oldMap);
     }
 
     public override void afterUpdate(){
         LeadBO.sendClientRecordToProposalGenerator((List<Lead>) newRecordList);
+        LeadBO.autoDistributeLeadsAfterSave((List<Lead>) newRecordList, (Map<Id, Lead>) oldMap);
+        LeadBO.triggerImmediateIntegrationAfterUpdate((List<Lead>) newRecordList);
         LeadBO.createMessagingUser(newRecordList, (Map<Id, Lead>) oldMap);
     }
 

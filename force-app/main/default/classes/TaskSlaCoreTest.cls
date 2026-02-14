@@ -132,6 +132,26 @@ private class TaskSlaCoreTest {
         System.assertEquals(cron, ct.CronExpression, 'Cron deve ser o informado.');
     }
 
+    @IsTest
+    static void testSchedulerScheduleDailyIdempotent() {
+        String firstCron = '0 0 0 1 1 ? 2099';
+        String secondCron = '0 30 0 1 1 ? 2099';
+
+        Test.startTest();
+        TaskSlaDailySummaryScheduler.scheduleDaily(firstCron);
+        TaskSlaDailySummaryScheduler.scheduleDaily(secondCron);
+        Test.stopTest();
+
+        List<CronTrigger> jobs = [
+            SELECT CronExpression, CronJobDetail.Name
+            FROM CronTrigger
+            WHERE CronJobDetail.Name = 'Task SLA Daily Summary'
+        ];
+
+        System.assertEquals(1, jobs.size(), 'Deve manter apenas um job com o nome fixo.');
+        System.assertEquals(secondCron, jobs[0].CronExpression, 'Reagendamento deve manter o cron mais recente.');
+    }
+
     private static User createUser(String email, Id managerId) {
         Profile p = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
         String unique = String.valueOf(System.currentTimeMillis());

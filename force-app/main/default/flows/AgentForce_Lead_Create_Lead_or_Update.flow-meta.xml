@@ -278,7 +278,7 @@
         <inputAssignments>
             <field>LeadSource</field>
             <value>
-                <stringValue> Agente SDR - Whatsapp</stringValue>
+                <stringValue>Agente SDR - Whatsapp</stringValue>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -297,6 +297,12 @@
             <field>Status</field>
             <value>
                 <stringValue>Novo</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>SDRAgent__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
             </value>
         </inputAssignments>
         <object>Lead</object>
