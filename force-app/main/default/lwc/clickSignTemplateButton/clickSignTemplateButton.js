@@ -24,7 +24,7 @@ export default class ClickSignTemplateButton extends NavigationMixin(LightningEl
     isCreateButtonTemplate = false;
     templateId;
     isModalLoading = false;
-
+    @api recordTypeFilter;
     labels = {
         ClickSign_Error,
         ClickSign_RecordIdNotFound,
@@ -66,16 +66,12 @@ export default class ClickSignTemplateButton extends NavigationMixin(LightningEl
         if (this.recordId) {
             getTemplates({recordId: this.recordId })
                 .then((data) => {
-                    this.buttonTemplates = Array.isArray(data) ? data : [];
+                    this.buttonTemplates = data;
                 })
                 .catch((error) => {
                     this.error = error;
                 });
         }
-    }
-
-    get hasButtonTemplates() {
-        return Array.isArray(this.buttonTemplates) && this.buttonTemplates.length > 0;
     }
 
     handleViewRecord(event) {

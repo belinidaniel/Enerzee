@@ -9,4 +9,9 @@
         <target>lightning__RecordAction</target>
         <target>lightning__Tab</target>
     </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
+            <property name="recordTypeFilter" type="String" label="Record Types Filter" description="Comma-separated list of Record Types to show this button (e.g., 'Bitrix,Bow-e,Contrato Micro')"/>
+        </targetConfig>
+    </targetConfigs>
 </LightningComponentBundle>

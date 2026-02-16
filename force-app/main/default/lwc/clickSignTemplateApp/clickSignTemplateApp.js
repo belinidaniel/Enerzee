@@ -187,12 +187,6 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
     }
     
     handleCreate(){
-        const buttonTemplateComponent = this.template.querySelector('c-click-sign-create-buttom-template');
-        if (buttonTemplateComponent && typeof buttonTemplateComponent.getButtonConfiguration === 'function') {
-            const buttonConfiguration = buttonTemplateComponent.getButtonConfiguration();
-            this.clickSignTemplate.ButtonLabel__c = buttonConfiguration.buttonLabel;
-            this.clickSignTemplate.VisibilityRule__c = buttonConfiguration.visibilityRuleJson;
-        }
         this.clickSignTemplate.IsActivate__c = true;
         this.updateTemplate();
         setTimeout(() => {
