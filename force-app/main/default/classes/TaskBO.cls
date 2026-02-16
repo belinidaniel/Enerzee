@@ -6,6 +6,7 @@
  * @last modified by  : Daniel Belini
 **/
 public class TaskBO {
+    private static Map<Id, Set<String>> existingTaskSubjectKeysByWhatId = new Map<Id, Set<String>>();
     
     public static Task createTask(Id whatId, String subject, String description, Id ownerId, Date dueDate, String deadline){
         return new Task(
@@ -990,21 +991,32 @@ public class TaskBO {
             return false;
         }
 
-        String normalized = subject.trim().toLowerCase();
-
-        for (Task existing : [
-            SELECT Subject
-            FROM Task
-            WHERE WhatId = :whatId
-                AND IsDeleted = false
-        ]) {
-            String existingNorm = existing.Subject == null ? '' : existing.Subject.trim().toLowerCase();
-            if (existingNorm == normalized) {
-                return true;
-            }
+        String normalized = normalizeTaskSubjectKey(subject);
+        if(String.isBlank(normalized)){
+            return false;
         }
 
-        return false;
+        if(!existingTaskSubjectKeysByWhatId.containsKey(whatId)){
+            Set<String> existingNormalizedSubjects = new Set<String>();
+            for (Task existing : [
+                SELECT Subject
+                FROM Task
+                WHERE WhatId = :whatId
+                    AND IsDeleted = false
+            ]) {
+                String existingNorm = normalizeTaskSubjectKey(existing.Subject);
+                if(!String.isBlank(existingNorm)){
+                    existingNormalizedSubjects.add(existingNorm);
+                }
+            }
+            existingTaskSubjectKeysByWhatId.put(whatId, existingNormalizedSubjects);
+        }
+
+        return existingTaskSubjectKeysByWhatId.get(whatId).contains(normalized);
+    }
+
+    private static String normalizeTaskSubjectKey(String subject){
+        return String.isBlank(subject) ? null : subject.trim().toLowerCase();
     }
 
     private class FieldRequirement {

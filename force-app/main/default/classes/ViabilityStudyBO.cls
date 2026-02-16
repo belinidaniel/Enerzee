@@ -89,17 +89,20 @@ public class ViabilityStudyBO {
             }
         }
 
-        Map<Id, Set<String>> existingSubjectsByViability = new Map<Id, Set<String>>();
+        Map<Id, Set<String>> existingSubjectKeysByViability = new Map<Id, Set<String>>();
         if(!viabilityIds.isEmpty()){
             for(Task task : [
                 SELECT  Id, Subject, WhatId
                 FROM    Task
                 WHERE   WhatId IN :viabilityIds
             ]){
-                if(!existingSubjectsByViability.containsKey(task.WhatId)){
-                    existingSubjectsByViability.put(task.WhatId, new Set<String>());
+                if(!existingSubjectKeysByViability.containsKey(task.WhatId)){
+                    existingSubjectKeysByViability.put(task.WhatId, new Set<String>());
                 }
-                existingSubjectsByViability.get(task.WhatId).add(task.Subject);
+                String subjectKey = normalizeTaskSubject(task.Subject);
+                if(!String.isBlank(subjectKey)){
+                    existingSubjectKeysByViability.get(task.WhatId).add(subjectKey);
+                }
             }
         }
 
@@ -143,8 +146,8 @@ public class ViabilityStudyBO {
                 continue;
             }
 
-            Set<String> existingSubjects = existingSubjectsByViability.containsKey(viability.Id) ?
-                existingSubjectsByViability.get(viability.Id) :
+            Set<String> existingSubjects = existingSubjectKeysByViability.containsKey(viability.Id) ?
+                existingSubjectKeysByViability.get(viability.Id) :
                 new Set<String>();
 
             for(TaskViabilityTableLine templateLine : templates){
@@ -152,11 +155,12 @@ public class ViabilityStudyBO {
                     continue;
                 }
 
-                if(existingSubjects.contains(templateLine.Assunto)){
+                String templateSubjectKey = normalizeTaskSubject(templateLine.Assunto);
+                if(String.isBlank(templateSubjectKey)){
                     continue;
                 }
 
-                if (TaskBO.taskSubjectExists(viability.Id, templateLine.Assunto)) {
+                if(existingSubjects.contains(templateSubjectKey)){
                     continue;
                 }
 
@@ -189,8 +193,8 @@ public class ViabilityStudyBO {
                 populateInterestedFields(task, interestedList);
 
                 tasksToInsert.add(task);
-                existingSubjects.add(templateLine.Assunto);
-                existingSubjectsByViability.put(viability.Id, existingSubjects);
+                existingSubjects.add(templateSubjectKey);
+                existingSubjectKeysByViability.put(viability.Id, existingSubjects);
             }
         }
 
@@ -287,6 +291,10 @@ public class ViabilityStudyBO {
             }
         }
         return interestedList;
+    }
+
+    private static String normalizeTaskSubject(String subject){
+        return String.isBlank(subject) ? null : subject.trim().toLowerCase();
     }
 
     private static Boolean shouldCreateTaskForSubject(String subject, ViabilityStudy__c viability){
