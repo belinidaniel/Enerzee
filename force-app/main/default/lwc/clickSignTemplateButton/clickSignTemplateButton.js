@@ -24,7 +24,7 @@ export default class ClickSignTemplateButton extends NavigationMixin(LightningEl
     isCreateButtonTemplate = false;
     templateId;
     isModalLoading = false;
-
+    @api recordTypeFilter;
     labels = {
         ClickSign_Error,
         ClickSign_RecordIdNotFound,

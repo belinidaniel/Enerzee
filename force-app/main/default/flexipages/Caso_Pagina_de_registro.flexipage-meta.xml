@@ -198,25 +198,6 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>clickSignTemplateButton</componentName>
-                <identifier>c_clickSignTemplateButton</identifier>
-                <visibilityRule>
-                    <booleanFilter>1 AND 2</booleanFilter>
-                    <criteria>
-                        <leftValue>{!Record.Status}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>Elaboração do Contrato</rightValue>
-                    </criteria>
-                    <criteria>
-                        <leftValue>{!$Permission.CustomPermission.Clicksign_to_assign}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>true</rightValue>
-                    </criteria>
-                </visibilityRule>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
                 <componentName>clickSignRelatedList</componentName>
                 <identifier>c_clickSignRelatedList</identifier>
             </componentInstance>

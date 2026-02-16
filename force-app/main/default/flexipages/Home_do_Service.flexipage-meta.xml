@@ -5,7 +5,7 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>dashboardName</name>
-                    <value>OnDaBaTxBOXHfyozUPJrMqbLSDyfHB</value>
+                    <value>Service_Exec_Overview</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>hideOnError</name>
@@ -47,10 +47,6 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>emptyStateImage</name>
-                    <value>/projRes/ui-home-private/emptyStates/noAssistant.svg</value>
-                </componentInstanceProperties>
                 <componentName>home:assistant</componentName>
                 <identifier>home_assistant</identifier>
             </componentInstance>

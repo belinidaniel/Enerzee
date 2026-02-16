@@ -155,19 +155,6 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>clickSignTemplateButton</componentName>
-                <identifier>c_clickSignTemplateButton</identifier>
-                <visibilityRule>
-                    <criteria>
-                        <leftValue>{!Record.Send_ClickSign__c}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>true</rightValue>
-                    </criteria>
-                </visibilityRule>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
                 <componentName>clickSignRelatedList</componentName>
                 <identifier>c_clickSignRelatedList</identifier>
             </componentInstance>

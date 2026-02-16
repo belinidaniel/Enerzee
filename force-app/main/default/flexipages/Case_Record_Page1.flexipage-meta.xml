@@ -330,6 +330,18 @@
                 <identifier>RecordOportunidade_Pai__cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.ContactName__c</fieldItem>
+                <identifier>RecordContactName__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.ContactPhone__c</fieldItem>
+                <identifier>RecordContactPhone__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-oportunidadePaiField</name>
         <type>Facet</type>
     </flexiPageRegions>

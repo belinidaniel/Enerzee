@@ -2265,25 +2265,6 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>clickSignTemplateButton</componentName>
-                <identifier>c_clickSignTemplateButton</identifier>
-                <visibilityRule>
-                    <booleanFilter>1 AND 2</booleanFilter>
-                    <criteria>
-                        <leftValue>{!$Permission.CustomPermission.Clicksign_to_assign}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>true</rightValue>
-                    </criteria>
-                    <criteria>
-                        <leftValue>{!Record.Send_ClickSign__c}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>true</rightValue>
-                    </criteria>
-                </visibilityRule>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
                 <componentInstanceProperties>
                     <name>label</name>
                     <value>Tabs</value>

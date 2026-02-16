@@ -63,7 +63,7 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentName>c:clickSignIntegrationLogs</componentName>
+                <componentName>clickSignIntegrationLogs</componentName>
                 <identifier>c_clickSignIntegrationLogs</identifier>
             </componentInstance>
         </itemInstances>

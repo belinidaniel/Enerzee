@@ -861,6 +861,46 @@
                 <identifier>RecordValorTotalReceber_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.DiscountLoyalty__c</fieldItem>
+                <identifier>RecordDiscountLoyalty_cField2</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.DiscountLoyaltyAdditional__c</fieldItem>
+                <identifier>RecordDiscountLoyaltyAdditional_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.DiscountLoyaltyQtdAdditional__c</fieldItem>
+                <identifier>RecordDiscountLoyaltyQtdAdditional_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.DiscountNotLoyalty__c</fieldItem>
+                <identifier>RecordDiscountNotLoyalty_cField2</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-9774536a-dc8c-48b3-a4f4-b8470d76f625</name>
         <type>Facet</type>
     </flexiPageRegions>

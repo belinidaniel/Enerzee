@@ -3877,12 +3877,6 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>clickSignTemplateButton</componentName>
-                <identifier>c_clickSignTemplateButton</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
                 <componentInstanceProperties>
                     <name>label</name>
                     <value>Tabs</value>
