@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 02-16-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class ClickSignTemplateController {
     public String errorMessage { get; set; }
     public String objectHomeUrl { get; set; }
@@ -39,7 +46,7 @@ public with sharing class ClickSignTemplateController {
     public static ClickSignTemplate__c getClickSignTemplateToSend(Id templateId, String recordId) {
         ClickSignTemplate__c clickSignTemplate= [SELECT Id, Name, ContactsMapping__c,Description__c,
         (SELECT id,Email__c,Role__c, RoleLabel__c, ContactsMapping__c,Name,SignerType__c from ClickSignSigners__r),
-        SourceObject__c, Stage__c,ObjectMappings__c ,FileName__c,ButtonLabel__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
+        SourceObject__c, Stage__c,ObjectMappings__c ,FileName__c,ButtonLabel__c, VisibilityRule__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
         
         for(ClickSignSigner__c signer : clickSignTemplate.ClickSignSigners__r) {
             if (signer.SignerType__c == 'object') {
@@ -55,7 +62,7 @@ public with sharing class ClickSignTemplateController {
     public static ClickSignTemplate__c getClickSignTemplate(Id templateId, String recordId) {
         ClickSignTemplate__c clickSignTemplate= [SELECT Id, Name, ContactsMapping__c,Description__c,
         (SELECT id,Email__c,Role__c, RoleLabel__c, ContactsMapping__c,Name,SignerType__c from ClickSignSigners__r),
-        SourceObject__c, Stage__c,ObjectMappings__c ,FileName__c,ButtonLabel__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
+        SourceObject__c, Stage__c,ObjectMappings__c ,FileName__c,ButtonLabel__c, VisibilityRule__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
         
         return clickSignTemplate;
     }
@@ -285,10 +292,11 @@ public with sharing class ClickSignTemplateController {
     }
 
     @AuraEnabled
-    public static void createButtonInLayout(Id templateId, String buttonLabel) {
+    public static void createButtonInLayout(Id templateId, String buttonLabel, String visibilityRuleJson) {
         try {
-            ClickSignTemplate__c template = [SELECT Id, SourceObject__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
+            ClickSignTemplate__c template = [SELECT Id, SourceObject__c, VisibilityRule__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
             template.ButtonLabel__c = buttonLabel;
+            template.VisibilityRule__c = visibilityRuleJson;
 
             update template;
             

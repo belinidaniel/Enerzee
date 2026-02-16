@@ -1,9 +1,16 @@
 <template>
     <div class="slds-card">
-        <template for:each={buttonTemplates} for:item="template">
-            <button key={template.Id} class="slds-button slds-button_brand" style="width: 80%; margin: 10px 10px 10px 40px" data-id={template.Id} onclick={handleOpenModal}>
-                {template.ButtonLabel__c}
-            </button>
+        <template if:true={hasButtonTemplates}>
+            <template for:each={buttonTemplates} for:item="template">
+                <button key={template.Id} class="slds-button slds-button_brand" style="width: 80%; margin: 10px 10px 10px 40px" data-id={template.Id} onclick={handleOpenModal}>
+                    {template.ButtonLabel__c}
+                </button>
+            </template>
+        </template>
+        <template if:false={hasButtonTemplates}>
+            <div class="slds-p-around_small slds-text-body_small">
+                Nenhum botão disponível para este registro.
+            </div>
         </template>
     </div>
     <template if:true={isCreateButtonTemplate}>

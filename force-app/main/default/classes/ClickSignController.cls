@@ -334,9 +334,60 @@ public with sharing class ClickSignController {
     @AuraEnabled
     public static List<ClickSignTemplate__c> getTemplates(Id recordId) {
         try {
-            return ClickSignDAO.getTemplatesByRecordId(recordId);
+            List<ClickSignTemplate__c> templates = ClickSignDAO.getTemplatesByRecordId(recordId);
+            return filterTemplatesByVisibilityRule(recordId, templates);
         } catch (Exception e) {
             throw new AuraHandledException('Error fetching templates: ' + e.getMessage());
         }
+    }
+
+    private static List<ClickSignTemplate__c> filterTemplatesByVisibilityRule(Id recordId, List<ClickSignTemplate__c> templates) {
+        if (recordId == null || templates == null || templates.isEmpty()) {
+            return templates;
+        }
+
+        Boolean hasVisibilityRule = false;
+        Set<String> requiredFields = new Set<String>();
+        for (ClickSignTemplate__c template : templates) {
+            if (!String.isBlank(template.VisibilityRule__c)) {
+                hasVisibilityRule = true;
+                requiredFields.addAll(ClickSignVisibilityRuleService.collectRequiredFields(template.VisibilityRule__c));
+            }
+        }
+
+        if (!hasVisibilityRule) {
+            return templates;
+        }
+
+        Map<String, Object> recordMap = new Map<String, Object>();
+        if (!requiredFields.isEmpty()) {
+            String query = ClickSignVisibilityRuleService.buildRecordQuery(
+                recordId.getSObjectType().getDescribe().getName(),
+                new List<String>(requiredFields)
+            );
+            if (String.isBlank(query)) {
+                return templates;
+            }
+
+            try {
+                SObject sourceRecord = Database.query(query);
+                for (String fieldApiName : requiredFields) {
+                    recordMap.put(fieldApiName, sourceRecord.get(fieldApiName));
+                }
+            } catch (Exception ex) {
+                System.debug(LoggingLevel.WARN, 'Failed to load fields for ClickSign visibility rule: ' + ex.getMessage());
+                return templates;
+            }
+        }
+
+        List<ClickSignTemplate__c> visibleTemplates = new List<ClickSignTemplate__c>();
+        for (ClickSignTemplate__c template : templates) {
+            if (String.isBlank(template.VisibilityRule__c) ||
+                ClickSignVisibilityRuleService.evaluate(template.VisibilityRule__c, recordMap)) {
+                visibleTemplates.add(template);
+            }
+        }
+
+        return visibleTemplates;
     }
 }
