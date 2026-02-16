@@ -777,9 +777,9 @@ public class TaskBO {
                     'Clique no link abaixo para conferir.<br>' +
                     (URL.getSalesforceBaseUrl().toExternalForm() + '/lightning/r/Opportunity/' + Tarefa.WhatId + '/view'),
 
-                    new String[]{ ownerEmail != null ? ownerEmail : 'vitor.avancini@lab065.com' },
+                    new String[]{ ownerEmail != null ? ownerEmail : 'daniel.belini@enerzee.com.br' },
 
-                    new String[]{ 'kaique.mathias@lab065.com' }
+                    new String[]{ 'daniel.belini@enerzee.com.br' }
                 ));
             }
         }

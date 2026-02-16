@@ -30,8 +30,8 @@ trigger ContentDocumentLinkTrigger on ContentDocumentLink (after insert, after u
                         'Clique no link abaixo para conferir.<br><br>' +
                         (URL.getOrgDomainUrl().toExternalForm() + '/lightning/r/Account/' + acc.Id + '/view'),
 
-                        new String[]{ 'kaique.mathias@lab065.com' },
-                        new String[]{ 'kaique.mathias@lab065.com' }
+                        new String[]{ 'daniel.belini@enerzee.com.br' },
+                        new String[]{ 'daniel.belini@enerzee.com.br' }
                     ));
 
                     if(!Test.isRunningTest()){

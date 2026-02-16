@@ -90,7 +90,7 @@
         <connector>
             <targetReference>Tipos_de_Caso</targetReference>
         </connector>
-        <filterFormula>{!$User.Email} != &quot;integracao@lab065.com&quot;</filterFormula>
+        <filterFormula>{!$User.Email} != &quot;daniel.belini@enerzee.com.br&quot;</filterFormula>
         <object>Case</object>
         <recordTriggerType>Create</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>

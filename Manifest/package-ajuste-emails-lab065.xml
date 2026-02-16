@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>OpportunityTriggerTest</members>
+        <members>ProjetoUtils</members>
+        <members>TaskBO</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>ContentDocumentLinkTrigger</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <members>Case_After_Insert</members>
+        <members>Copy_To_validate</members>
+        <members>Messaging_Session_Conversation_Update</members>
+        <members>Notificar_fases_da_proposta_financeiro</members>
+        <name>Flow</name>
+    </types>
+    <types>
+        <members>Formulário de viabilidade do consultor</members>
+        <members>Portal do Consultor</members>
+        <name>Network</name>
+    </types>
+    <types>
+        <members>Case</members>
+        <name>Settings</name>
+    </types>
+    <version>65.0</version>
+</Package>
