@@ -9,6 +9,12 @@ public class OpportunityBO {
 
     // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas
     public static Boolean skipAsyncProposalGeneration = false;
+    @TestVisible
+    private static String PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME = 'Financeiro';
+    @TestVisible
+    private static String PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE = 'financeiro@enerzee.com.br%';
+    @TestVisible
+    private static String FINANCING_SIMULATION_OWNER_EMAIL_LIKE = 'dayane.silva@enerzee.com.br%';
     //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
     public static void createSellBuyOrder(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
 
@@ -966,7 +972,15 @@ public class OpportunityBO {
 
         Id integrationUserId = integration.isEmpty() ? null : integration[0].Id;
 
-        Id financeiroQueue = [SELECT Id FROM User WHERE Email LIKE 'dayane.silva@enerzee.com.br%' LIMIT 1].Id;
+        Id financingSimulationOwnerId = resolveActiveUserIdByEmailLike(FINANCING_SIMULATION_OWNER_EMAIL_LIKE);
+        if (financingSimulationOwnerId == null) {
+            financingSimulationOwnerId = UserInfo.getUserId();
+        }
+
+        Id financePaymentQueueId = resolveQueueIdByDeveloperName(PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME);
+        Id financePaymentUserFallbackId = financePaymentQueueId == null
+            ? resolveActiveUserIdByEmailLike(PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE)
+            : null;
 
         Map<Id, String> opportunityIdToAccountName = new Map<Id, String>();
         Map<Id, Account> accountSet = new Map<Id, Account>([
@@ -1218,16 +1232,17 @@ public class OpportunityBO {
 
                 //  AGUARDANDO CONFIRMAÇÃO DO PAGAMENTO
                 if(OpportunityUtils.isSubStatusAwaitingPayment(opportunity)){
-                    if(taskNumberToOwnerUser.get(7) == null){
-                        taskNumberToOwnerUser.put(7, [
-                            SELECT Id FROM User WHERE Email LIKE 'financeiro@enerzee.com.br%' AND IsActive = TRUE LIMIT 1
-                        ]);
-                    }
+                    Id paymentTaskOwnerId = resolvePaymentReminderTaskOwner(
+                        financePaymentQueueId,
+                        financePaymentUserFallbackId,
+                        opportunity.OwnerId,
+                        isOwnerUserActive
+                    );
                     taskstoInsert.add(TaskBO.createTask(
                         opportunity.Id,
                         'É necessário  confirmar o pagamento da oportunidade ' + Opportunity.Name,
                         'PREENCHER OS CAMPOS:\n\n Fase com Valor Pagamento Confirmado \n\n',
-                        (taskNumberToOwnerUser.get(6) != null ? taskNumberToOwnerUser.get(6).Id : (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId())),
+                        paymentTaskOwnerId,
 
                         TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 3),
 
@@ -1246,7 +1261,7 @@ public class OpportunityBO {
                                 opportunity.Id,
                                 subjectFin,
                                 'PREENCHER OS CAMPOS: \n\nDetalhes do Processo de Financiamento\n',
-                                financeiroQueue,
+                                financingSimulationOwnerId,
                                 TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
                                 '1'
                             ));
@@ -1267,6 +1282,57 @@ public class OpportunityBO {
                 }
             }
         }
+    }
+
+    @TestVisible
+    private static Id resolvePaymentReminderTaskOwner(
+        Id financeQueueId,
+        Id financeUserId,
+        Id opportunityOwnerId,
+        Boolean isOpportunityOwnerActive
+    ) {
+        if (financeQueueId != null) {
+            return financeQueueId;
+        }
+        if (financeUserId != null) {
+            return financeUserId;
+        }
+        if (isOpportunityOwnerActive == true && opportunityOwnerId != null) {
+            return opportunityOwnerId;
+        }
+        return UserInfo.getUserId();
+    }
+
+    @TestVisible
+    private static Id resolveActiveUserIdByEmailLike(String emailLike) {
+        if (String.isBlank(emailLike)) {
+            return null;
+        }
+
+        List<User> users = [
+            SELECT Id
+            FROM User
+            WHERE Email LIKE :emailLike
+                AND IsActive = true
+            LIMIT 1
+        ];
+        return users.isEmpty() ? null : users[0].Id;
+    }
+
+    @TestVisible
+    private static Id resolveQueueIdByDeveloperName(String queueDeveloperName) {
+        if (String.isBlank(queueDeveloperName)) {
+            return null;
+        }
+
+        List<Group> queues = [
+            SELECT Id
+            FROM Group
+            WHERE Type = 'Queue'
+                AND DeveloperName = :queueDeveloperName
+            LIMIT 1
+        ];
+        return queues.isEmpty() ? null : queues[0].Id;
     }
 
     public static void validateSellBuyOrderAndContractRequiredFields(List<Opportunity> newList, Map<Id, Opportunity> oldMap){
