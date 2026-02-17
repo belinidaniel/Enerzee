@@ -3,7 +3,6 @@
     <fullName>MotivoRevisaoProposta__c</fullName>
     <label>Motivo revisão proposta</label>
     <length>32768</length>
-    <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

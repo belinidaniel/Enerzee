@@ -3,5 +3,6 @@
     <fullName>Verification_Code_Expires__c</fullName>
     <label>Expiração do Código de Verificação</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <type>DateTime</type>
 </CustomField>

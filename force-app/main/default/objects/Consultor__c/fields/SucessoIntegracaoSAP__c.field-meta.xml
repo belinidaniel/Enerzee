@@ -3,6 +3,7 @@
     <fullName>SucessoIntegracaoSAP__c</fullName>
     <defaultValue>false</defaultValue>
     <label>Sucesso Integração SAP</label>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Checkbox</type>

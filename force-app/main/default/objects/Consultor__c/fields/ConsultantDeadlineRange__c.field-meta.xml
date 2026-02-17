@@ -3,6 +3,7 @@
     <fullName>ConsultantDeadlineRange__c</fullName>
     <label>Faixa do Prazo Consultor</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>

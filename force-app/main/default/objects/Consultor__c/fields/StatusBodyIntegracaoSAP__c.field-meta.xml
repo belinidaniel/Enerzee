@@ -3,6 +3,7 @@
     <fullName>StatusBodyIntegracaoSAP__c</fullName>
     <label>Status Body Integração SAP</label>
     <length>32768</length>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>LongTextArea</type>

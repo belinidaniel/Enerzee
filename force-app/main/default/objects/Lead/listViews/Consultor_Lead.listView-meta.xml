@@ -8,9 +8,13 @@
     <columns>LEAD.STATUS</columns>
     <columns>LEAD.CREATED_DATE</columns>
     <columns>CORE.USERS.ALIAS</columns>
-    <filterScope>Queue</filterScope>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>LEAD.RECORDTYPE</field>
+        <operation>equals</operation>
+        <value>Lead.QualificacaodeConsultores</value>
+    </filters>
     <label>Qualificação de Consultores</label>
-    <queue>Consultor</queue>
     <sharedTo>
         <allInternalUsers></allInternalUsers>
     </sharedTo>
