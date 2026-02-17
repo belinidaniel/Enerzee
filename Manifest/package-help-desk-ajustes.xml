@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>HelpDeskAuthService</members>
-        <members>HelpDeskCaseDAO</members>
-        <members>HelpDeskCaseService</members>
-        <members>HelpDeskCaseServiceTest</members>
-        <members>HelpDeskContactDAO</members>
-        <members>HelpDeskFilePayload</members>
-        <members>HelpDeskFilePayloadTest</members>
-        <members>ModuloHelpDeskCaseController</members>
-        <members>ModuloHelpDeskCaseControllerTest</members>
+        <members>*</members>
         <name>ApexClass</name>
     </types>
     <types>
-        <members>helpDeskCaseDetail</members>
-        <members>helpDeskHome</members>
+        <members>*</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
+        <members>ClickSignTemplate__c.VisibilityRules__c</members>
         <members>Case.HelpDesk_Sistema__c</members>
         <members>HelpDesk_Case_Category__mdt.Active__c</members>
         <members>HelpDesk_Case_Category__mdt.Sistema__c</members>
