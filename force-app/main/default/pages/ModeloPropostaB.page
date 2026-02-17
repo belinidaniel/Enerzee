@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 02-09-2026
+  @last modified on  : 02-13-2026
   @last modified by  : Daniel Belini
 -->
 <apex:page standardController="Opportunity" applyBodyTag="false" extensions="PDFControllerExtension,OpportunityDataController" action="{!salvarPDF}" standardStylesheets="false" showHeader="false"  sidebar="false" renderAs="PDF" cache="false">     
@@ -537,7 +537,7 @@
             </apex:outputtext>
             m²
         </div>
-        <div style="position:relative; bottom: 80px; left:300px; font-size: 12px; font-weight: bold; margin-top:-200px">
+        <div style="position:relative; bottom: 70px; left:300px; font-size: 12px; font-weight: bold; margin-top:-200px">
             <apex:outputText value="{!description}" escape="false" style="white-space:pre-line;" />
         </div>
     </apex:outputPanel>

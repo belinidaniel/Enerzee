@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 02-09-2026
+ * @last modified on  : 02-13-2026
  * @last modified by  : Daniel Belini
 **/
 public with sharing class PDFControllerExtension {
@@ -72,7 +72,7 @@ public with sharing class PDFControllerExtension {
                             PropostaAlterada__c,
                             MainViability__c,
                             MainViability__r.TextStudy__c,
-                            (SELECT ID, Product2.Description FROM OpportunityLineItems where Description != null)
+                            (SELECT ID, Product2.Description FROM OpportunityLineItems where Product2.Description != null)
             FROM Opportunity
             WHERE Id = :opportunityId
             LIMIT 1

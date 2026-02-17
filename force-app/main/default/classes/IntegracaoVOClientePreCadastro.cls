@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 02-05-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class IntegracaoVOClientePreCadastro {
 
     @future(callout=true)
@@ -43,29 +50,64 @@ public with sharing class IntegracaoVOClientePreCadastro {
                 
             try {
                 HttpResponse response = chamadaIntegracao(JSON.serialize(corpoRequisicao), 'ClienteVO');
-                Utils.createLog('IntegracaoVOClientePreCadastro', logContext + ' ' + acc.Id, response);
-                
+                System.debug('Response Status: ' + response.getStatusCode() + ' ' + response.getStatus());
+                system.debug('Response Body: ' + response.getBody());
+
+                Log__c logRecord = Utils.createLogNoInsert(
+                    'IntegracaoVOClientePreCadastro',
+                    logContext + ' ' + acc.Id,
+                    response
+                );
+
                 if (response.getBody() != null && response.getBody() != '') {
-                    
+
                     Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
                     Boolean error = Boolean.valueOf(responseBody.get('erro'));
-                        
+
                     if (!error) {
                         String IdVirtualOffice = String.valueOf(responseBody.get('idusuario'));
                         acc.IdVirtualOffice2__c = IdVirtualOffice;
                         acc.LoginVirtualOffice__c = acc.Email__c;
+                    } else {
+                        String errorMessage = VOIntegrationEmailAlert.extractErrorMessage(
+                            responseBody,
+                            response.getBody()
+                        );
+                        VOIntegrationEmailAlert.sendError(
+                            'Cliente VO',
+                            acc.Name,
+                            acc.Id,
+                            errorMessage
+                        );
+                        logRecord.Erro_Enviado__c = true;
                     }
-                    
+
                     acc.SucessoIntegracaoVO__c = !error;
                     acc.StatusBodyIntegracaoVO__c = response.getStatusCode() + ' ' + response.getBody() + ' ' + response.getStatus();
-                    
+
                 }
+
+                insert logRecord;
                 
             } catch (Exception e) {
-                Utils.createLog('IntegracaoVOClientePreCadastro', logContext + ' ' + acc.Id, e);
+                Log__c logRecord = Utils.createLogNoInsert(
+                    'IntegracaoVOClientePreCadastro',
+                    logContext + ' ' + acc.Id,
+                    e
+                );
                 
                 acc.SucessoIntegracaoVO__c = false;
                 acc.StatusBodyIntegracaoVO__c = e.getMessage() + ' ' + e.getStackTraceString();
+
+                VOIntegrationEmailAlert.sendError(
+                    'Cliente VO',
+                    acc.Name,
+                    acc.Id,
+                    e.getMessage()
+                );
+
+                logRecord.Erro_Enviado__c = true;
+                insert logRecord;
             }
         }
 
