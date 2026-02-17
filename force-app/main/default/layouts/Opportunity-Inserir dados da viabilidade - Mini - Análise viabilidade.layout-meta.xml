@@ -36,11 +36,11 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>DescricaoMotivoPerda__c</field>
+                <field>MotivoRevisaoProposta__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>ReadequacaoSolicitada__c</field>
+                <field>RevisaoDeProposta__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
