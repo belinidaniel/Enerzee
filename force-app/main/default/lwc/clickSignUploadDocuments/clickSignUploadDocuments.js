@@ -3,6 +3,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getDocuments from '@salesforce/apex/ClickSignTemplateController.getDocuments';
 import uploadDocument from '@salesforce/apex/ClickSignTemplateController.uploadDocument';
 import deleteDocument from '@salesforce/apex/ClickSignTemplateController.deleteDocument';
+import generateTemplateFromMappings from '@salesforce/apex/ClickSignTemplateController.generateTemplateFromMappings';
 import ClickSign_Success from '@salesforce/label/c.ClickSign_Success';
 import ClickSign_Error from '@salesforce/label/c.ClickSign_Error';
 import ClickSign_FileProcessing from '@salesforce/label/c.ClickSign_FileProcessing';
@@ -103,8 +104,21 @@ export default class ClickSignUploadDocuments extends LightningElement {
         } catch (error) {
             console.error('Error uploading document:', error);
             this.showToastMessage(this.label.ClickSign_FileUploadError, 'error');
+            return;
         } finally {
             this.isLoading = false;
+        }
+
+        try {
+            const templateResult = await generateTemplateFromMappings({ templateId: this.templateId });
+            if (templateResult === 'no-mappings') {
+                this.showToastMessage('Campos do template ainda não foram definidos.', 'warning');
+            } else if (templateResult === 'no-document') {
+                this.showToastMessage('Arquivo do template não encontrado para gerar.', 'warning');
+            }
+        } catch (error) {
+            console.error('Error generating template:', error);
+            this.showToastMessage('Nao foi possivel gerar o template agora. Tente novamente.', 'warning');
         }
     }
 
@@ -130,12 +144,32 @@ export default class ClickSignUploadDocuments extends LightningElement {
     }
 
     showToastMessage(message, variant) {
+        const title = variant === 'success'
+            ? this.label.ClickSign_Success
+            : variant === 'warning'
+                ? 'Atencao'
+                : this.label.ClickSign_Error;
         const event = new ShowToastEvent({
-            title: variant === 'success' ? this.label.ClickSign_Success : this.label.ClickSign_Error,
+            title,
             message,
             variant,
         });
         this.dispatchEvent(event);
+        this.notifyParent(
+            title,
+            message,
+            variant
+        );
+    }
+
+    notifyParent(title, message, variant) {
+        this.dispatchEvent(
+            new CustomEvent('notify', {
+                detail: { title, message, variant },
+                bubbles: true,
+                composed: true
+            })
+        );
     }
 
     handleGeneratedFileNameChange(event) {

@@ -70,6 +70,7 @@ export default class ClickSignPreviewDocuments extends NavigationMixin(Lightning
     showToast(title, message, variant) {
         const event = new ShowToastEvent({ title, message, variant });
         this.dispatchEvent(event);
+        this.notifyParent(title, message, variant);
     }
 
     getFileType(fileName) {
@@ -145,6 +146,7 @@ export default class ClickSignPreviewDocuments extends NavigationMixin(Lightning
             })
             .catch((error) => {
                 console.error("Error generating preview:", error);
+                this.showToast('Error', 'Failed to generate preview. ' + (error?.body?.message || ''), 'error');
             })
             .finally(() => {
                 this.isLoading = false;
@@ -187,5 +189,15 @@ export default class ClickSignPreviewDocuments extends NavigationMixin(Lightning
 
     activateTemplate(){
         activateTemplate({ templateId: this.templateId }).then((result) => {});
+    }
+
+    notifyParent(title, message, variant) {
+        this.dispatchEvent(
+            new CustomEvent('notify', {
+                detail: { title, message, variant },
+                bubbles: true,
+                composed: true
+            })
+        );
     }
 }

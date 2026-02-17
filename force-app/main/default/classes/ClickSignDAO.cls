@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 01-26-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class ClickSignDAO {
     public static ClickSign__c getClickSignById(Id clickSignId) {
         return [SELECT Id, Name, CurrentStep__c, Status__c, ClickSignEnvelope__c, ClickSignTemplate__c 
@@ -55,7 +62,7 @@ public with sharing class ClickSignDAO {
         try {
             string objectName = recordId.getSObjectType().getDescribe().getName();
             return [
-                SELECT Id, OwnerId, IsDeleted, Name, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, SystemModstamp, LastViewedDate, LastReferencedDate, Mapping__c, Stage__c, ObjectMappings__c, ObjectMappings2__c, SourceObject__c, Description__c, ClickSignEnvelope__c, ExternalId__c, FileName__c, IsActivate__c, ContactsMapping__c, ButtonLabel__c, VisibilityRule__c
+                SELECT Id, OwnerId, IsDeleted, Name, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, SystemModstamp, LastViewedDate, LastReferencedDate, Mapping__c, Stage__c, ObjectMappings__c, ObjectMappings2__c, SourceObject__c, Description__c, ClickSignEnvelope__c, ExternalId__c, FileName__c, IsActivate__c, ContactsMapping__c, ButtonLabel__c
                 FROM ClickSignTemplate__c
                 WHERE SourceObject__c = :objectName
                 AND IsActivate__c = true
@@ -71,7 +78,7 @@ public with sharing class ClickSignDAO {
             return [
                 SELECT Id, OwnerId, IsDeleted, Name, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, SystemModstamp, LastViewedDate, LastReferencedDate, Mapping__c, Stage__c, ObjectMappings__c, ObjectMappings2__c,
                  SourceObject__c, Description__c, ClickSignEnvelope__c,
-                  ExternalId__c, FileName__c, IsActivate__c, ContactsMapping__c, ButtonLabel__c, VisibilityRule__c,
+                  ExternalId__c, FileName__c, IsActivate__c, ContactsMapping__c, ButtonLabel__c,
                   (SELECT Id, Name, Status__c, ClickSignEnvelope__c, ClickSign__c, Email__c, ExternalId__c, Role__c, SFexternalId__c, ClickSignTemplate__c, Contact__c, User__c, fieldName__c, SignerType__c, ContactsMapping__c, RoleLabel__c from ClickSignSigners__r)
                 FROM ClickSignTemplate__c
                 WHERE IsActivate__c = true

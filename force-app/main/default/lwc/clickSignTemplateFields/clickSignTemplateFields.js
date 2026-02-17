@@ -53,6 +53,7 @@ export default class ClickSignTemplateFields extends LightningElement {
                })
                 .catch((error) => {
                     console.error('Error fetching fields:', error);
+                    this.notifyParent('Error', 'Falha ao carregar os campos do objeto.', 'error');
                 });
         } else {
             getObjectFieldsPage({ objectName: this.objectName })
@@ -66,6 +67,7 @@ export default class ClickSignTemplateFields extends LightningElement {
                 })
                 .catch((error) => {
                     console.error('Error fetching fields:', error);
+                    this.notifyParent('Error', 'Falha ao carregar os campos do objeto.', 'error');
                 });
         }
     }
@@ -104,6 +106,7 @@ export default class ClickSignTemplateFields extends LightningElement {
             })
             .catch((error) => {
                 console.error('Error loading template:', JSON.stringify(error));
+                this.notifyParent('Error', 'Falha ao carregar o template para os campos.', 'error');
             });
     }
 
@@ -273,5 +276,15 @@ export default class ClickSignTemplateFields extends LightningElement {
             labelRoleField: field.labelRoleField || null,
         }));
         this.dispatchEvent(new CustomEvent('contactfieldschange', { detail: fieldsJson }));
+    }
+
+    notifyParent(title, message, variant) {
+        this.dispatchEvent(
+            new CustomEvent('notify', {
+                detail: { title, message, variant },
+                bubbles: true,
+                composed: true
+            })
+        );
     }
 }

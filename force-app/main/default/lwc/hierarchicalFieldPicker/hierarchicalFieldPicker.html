@@ -5,7 +5,7 @@
         <!-- Dropdown for selecting fields -->
         <div class="slds-form-element">
             <div class="slds-form-element__control">
-                <select class="slds-select" onchange={handleFieldChange}>
+                <select class="slds-select" onchange={handleFieldChange} value={selectedValue} data-role="main">
                     <option value="">{labels.selectField}</option>
                     <!-- Case Fields -->
                     <template if:true={options}>
@@ -53,7 +53,7 @@
                 <div class="slds-form-element" style="margin-left: 20px;">
                     <label class="slds-form-element__label" for="relatedFields">{labels.selectNameField}</label>
                     <div class="slds-form-element__control">
-                        <select id="Name" class="slds-select" onchange={handleContactChange}>
+                        <select id="Name" class="slds-select" onchange={handleContactChange} value={selectedRelatedField} data-role="contact-name">
                             <option value="">{labels.selectNameField}</option>
                             <template for:each={relatedFields} for:item="field">
                                 <option key={field.apiName} value={field.apiName}>{field.label}</option>
@@ -64,7 +64,7 @@
                 <div class="slds-form-element" style="margin-left: 20px;">
                     <label class="slds-form-element__label" for="emailFields">{labels.selectEmailField}</label>
                     <div class="slds-form-element__control">
-                        <select id="Email" class="slds-select" onchange={handleContactChange}>
+                        <select id="Email" class="slds-select" onchange={handleContactChange} value={emailField} data-role="contact-email">
                             <option value="">{labels.selectEmailField}</option>
                             <template for:each={emailFields} for:item="field">
                                 <option key={field.apiName} value={field.apiName}>{field.label}</option>
@@ -75,7 +75,7 @@
                 <div class="slds-form-element" style="margin-left: 20px;">
                     <label class="slds-form-element__label" for="roleOptions">{labels.selectRoleField}</label>
                     <div class="slds-form-element__control">
-                        <select id="Role" class="slds-select" onchange={handleContactChange}>
+                        <select id="Role" class="slds-select" onchange={handleContactChange} value={selectedRoleField} data-role="contact-role">
                             <option value="">{labels.selectRoleField}</option>
                             <template for:each={roleOptions} for:item="field">
                                 <option key={field.value} value={field.value}>{field.label}</option>
@@ -88,7 +88,7 @@
                 <div class="slds-form-element" style="margin-left: 20px;">
                     <label class="slds-form-element__label" for="relatedFields">{relatedObjectName} Fields</label>
                     <div class="slds-form-element__control">
-                        <select id="relatedFields" class="slds-select" onchange={handleRelatedFieldChange}>
+                        <select id="relatedFields" class="slds-select" onchange={handleRelatedFieldChange} value={selectedRelatedField} data-role="related">
                             <option value="">{labels.selectRelatedField}</option>
                             <template for:each={relatedFields} for:item="field">
                                 <option key={field.apiName} value={field.apiName}>{field.label}</option>

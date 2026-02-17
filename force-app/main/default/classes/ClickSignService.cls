@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 01-26-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class ClickSignService {
 
     public static void process(List<EnvelopeInput> envelopesInput,string currentStep){
@@ -31,7 +38,7 @@ public with sharing class ClickSignService {
         if(String.isNotBlank(clickSign.ClickSignEnvelope__c)){
             envelopeId = clickSign.ClickSignEnvelope__r.ExternalId__c;
         }else{
-            envelopeDTO = ClickSignIntegration.createEnvelope('New Envelope', envelopeInput.clickSignId);
+            envelopeDTO = ClickSignIntegration.createEnvelope('New Envelope');
             envelopeId = envelopeDTO.data.id;
         }
 
@@ -48,12 +55,12 @@ public with sharing class ClickSignService {
             
             if(!string.isBlank(clickSign.ClickSignTemplate__c)){
                 if(String.isBlank(doc.externalId)) { continue; }
-                documentDTO = ClickSignIntegration.createTemplateDocument(envelopeId, doc.filename, doc.externalId, doc.mergeFields, envelopeInput.clickSignId);
-                Blob fileMerged = ClickSignIntegration.getDocument(documentDTO.data.links.files.original, envelopeInput.clickSignId);
+                documentDTO = ClickSignIntegration.createTemplateDocument(envelopeId, doc.filename, doc.externalId, doc.mergeFields);
+                Blob fileMerged = ClickSignIntegration.getDocument(documentDTO.data.links.files.original);
                 ContentVersion v = uploadDocument(doc.filename, EncodingUtil.base64Encode(fileMerged), '', clickSign.Id, documentDTO.data.id);
                 versions.add(v);
             }else{  
-                documentDTO = ClickSignIntegration.createDocument(envelopeId, doc.filename, doc.file, envelopeInput.clickSignId);
+                documentDTO = ClickSignIntegration.createDocument(envelopeId, doc.filename, doc.file);
                 versions.add(new ContentVersion(
                     Id = doc.id,
                     ExternalId__c = documentDTO?.data?.id != null ? documentDTO?.data?.id : ''
@@ -90,7 +97,7 @@ public with sharing class ClickSignService {
 
             if(String.isNotBlank(signer.ExternalId__c)) { continue; }
 
-            ClickSignResponseDTO.Signer signerDTO = ClickSignIntegration.createSigner(envelope.ExternalId__c, signer.Name, signer.Email__c, envelopeInput.clickSignId);
+            ClickSignResponseDTO.Signer signerDTO = ClickSignIntegration.createSigner(envelope.ExternalId__c, signer.Name, signer.Email__c);
             signer.ExternalId__c = signerDTO.data.id;
         }
         
@@ -109,12 +116,12 @@ public with sharing class ClickSignService {
             System.debug('doc requirement: ' + doc);
             for(ClickSignSigner__c signer : signers){
                 System.debug('signer: ' + signer);
-                createRequirements(envelope.ExternalId__c, signer.ExternalId__c, doc.externalId, signer.Role__c, signer.Email__c, envelopeInput.clickSignId);
+                createRequirements(envelope.ExternalId__c, signer.ExternalId__c, doc.externalId, signer.Role__c, signer.Email__c);
             }
         }
         
-        activate(envelope.ExternalId__c, envelopeInput.clickSignId);
-        notification(envelope.ExternalId__c, envelopeInput.clickSignId);
+        activate(envelope.ExternalId__c);
+        notification(envelope.ExternalId__c);
 
         for(ClickSignSigner__c signer : signers){
             signer.Status__c = 'Notificado';
@@ -128,32 +135,25 @@ public with sharing class ClickSignService {
     }
 
     public static void createRequirements(String envelopeId, String signerId, String documentId, String role, String email){
-        createRequirements(envelopeId, signerId, documentId, role, email, null);
-    }
-
-    public static void createRequirements(String envelopeId, String signerId, String documentId, String role, String email, Id relatedId){
-        ClickSignIntegration.createRequirementQualification(envelopeId, signerId, documentId, role, relatedId);
-        ClickSignIntegration.createRequirementAutentication(envelopeId, signerId, documentId, email, relatedId);
+        ClickSignIntegration.createRequirementQualification(envelopeId, signerId, documentId, role);
+        ClickSignIntegration.createRequirementAutentication(envelopeId, signerId, documentId, email);
     }
 
     public static void activate(String envelopeId){
-        activate(envelopeId, null);
-    }
-
-    public static void activate(String envelopeId, Id relatedId){
-        ClickSignIntegration.activateEnvelope(envelopeId, relatedId);
+        ClickSignIntegration.activateEnvelope(envelopeId);
     }
 
     public static void notification(String envelopeId){
-        notification(envelopeId, null);
-    }
-
-    public static void notification(String envelopeId, Id relatedId){
-        ClickSignIntegration.notification(envelopeId, relatedId);
+        ClickSignIntegration.notification(envelopeId);
     }
 
     //Create Template
     public static void createTemplate(Document document){
+        createTemplate(document, false);
+    }
+
+    //Create Template with optional force creation
+    public static void createTemplate(Document document, Boolean forceCreate){
 
         ClickSignResponseDTO.Envelope envelopeDTO;
         ClickSignEnvelope__c envelopeSObj;
@@ -164,24 +164,46 @@ public with sharing class ClickSignService {
         if(String.isNotBlank(clickSignTemplate.ExternalId__c)){
 
             envelopeId = clickSignTemplate.ClickSignEnvelope__r.ExternalId__c;
-            envelopeDTO = ClickSignIntegration.getEnvelope(envelopeId, clickSignTemplate.Id);
+            try {
+                envelopeDTO = ClickSignIntegration.getEnvelope(envelopeId);
+            } catch (Exception ex) {
+                envelopeDTO = null;
+            }
 
-            ClickSignIntegration.deleteDocument(envelopeId, clickSignTemplate.ExternalId__c, clickSignTemplate.Id);
+            try {
+                ClickSignIntegration.deleteDocument(envelopeId, clickSignTemplate.ExternalId__c);
+            } catch (Exception ex) {
+                // Ignore delete failures; template may not exist or was removed externally.
+            }
 
             if(envelopeDTO == null || envelopeDTO?.data?.attributes?.status != 'draft'){
-                envelopeDTO = ClickSignIntegration.createEnvelope('Template Envelope', clickSignTemplate.Id);
+                envelopeDTO = ClickSignIntegration.createEnvelope('Template Envelope');
             }
 
         }else{
-            envelopeDTO = ClickSignIntegration.createEnvelope('Template Envelope', clickSignTemplate.Id);
+            envelopeDTO = ClickSignIntegration.createEnvelope('Template Envelope');
         }
 
-        ClickSignResponseDTO.Document templateDTO = ClickSignIntegration.createTemplate(document.filename, document.file, clickSignTemplate.Id);
-        ClickSignResponseDTO.Document documentDTO = ClickSignIntegration.createTemplateDocument(envelopeDTO.data.id, document.filename, templateDTO.data.id, document.mergeFields, clickSignTemplate.Id);
+        String templateId;
+        if (!forceCreate && String.isNotBlank(document.externalId)) {
+            templateId = document.externalId;
+        } else {
+            ClickSignResponseDTO.Document templateDTO = ClickSignIntegration.createTemplate(document.filename, document.file);
+            templateId = templateDTO.data.id;
+        }
 
-        Blob fileMerged = ClickSignIntegration.getDocument(documentDTO.data.links.files.original, clickSignTemplate.Id);
+        ClickSignResponseDTO.Document documentDTO = ClickSignIntegration.createTemplateDocument(
+            envelopeDTO.data.id,
+            document.filename,
+            templateId,
+            document.mergeFields
+        );
 
-        clickSignTemplate.ExternalId__c = templateDTO.data.id;
+        Blob fileMerged = ClickSignIntegration.getDocument(documentDTO.data.links.files.original);
+
+        if (String.isBlank(clickSignTemplate.ExternalId__c)) {
+            clickSignTemplate.ExternalId__c = templateId;
+        }
 
         if(String.isBlank(clickSignTemplate.ClickSignEnvelope__c)){
             envelopeSObj = createEnvelope(envelopeDTO);
@@ -202,6 +224,44 @@ public with sharing class ClickSignService {
         }
 
         uploadDocument(document.filename, EncodingUtil.base64Encode(fileMerged), '', clickSignTemplate.Id, documentDTO.data.id);
+    }
+
+    public static void createTemplateFromMappings(Id templateId){
+        ClickSignTemplate__c template = [
+            SELECT Id, Name, Description__c, ExternalId__c, SourceObject__c, ObjectMappings__c, ObjectMappings2__c,
+                Stage__c, fileName__c, ClickSignEnvelope__c, ClickSignEnvelope__r.ExternalId__c
+            FROM ClickSignTemplate__c
+            WHERE Id = :templateId
+            LIMIT 1
+        ];
+
+        if (String.isBlank(template.ObjectMappings__c)) {
+            return;
+        }
+
+        List<ContentDocument> documents = ClickSignUtils.getDocuments(templateId);
+        if (documents == null || documents.isEmpty()) {
+            return;
+        }
+
+        ClickSignService.Document document = new ClickSignService.Document(); 
+        document.id = templateId;
+        if (!template.fileName__c.endsWith('.docx')) {
+            document.filename = template.fileName__c + '.docx';
+        } else {
+            document.filename = template.fileName__c;
+        }
+        document.externalId  = template.ExternalId__c;
+        document.file = EncodingUtil.base64Encode(documents[0].LatestPublishedVersion.versionData);
+        document.mergeFields = ClickSignUtils.generateTagMapFromMappings(template.ObjectMappings__c);
+
+        // Force create a new template when uploading documents
+        ClickSignService.createTemplate(document, true);  
+    }
+
+    // Preview should reuse existing template id when available
+    public static void createTemplatePreview(Document document){
+        ClickSignService.createTemplate(document, false);
     }
 
     /*Criação e enriquecimento de SObjects*/

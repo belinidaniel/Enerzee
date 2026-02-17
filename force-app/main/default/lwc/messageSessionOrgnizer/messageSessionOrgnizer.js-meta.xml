@@ -6,15 +6,5 @@
         <target>lightning__RecordPage</target>
         <target>lightning__AppPage</target>
         <target>lightning__HomePage</target>
-        <target>lightning__FlowScreen</target>
     </targets>
-    <targetConfigs>
-        <targetConfig targets="lightning__FlowScreen">
-            <property name="recordId" type="String" role="inputOnly"/>
-            <property name="messageDefinitionName" type="String" role="outputOnly"/>
-            <property name="messagingChannelId" type="String" role="outputOnly"/>
-            <property name="messagingEndUserId" type="String" role="outputOnly"/>
-            <property name="messagingEndUserRecordTypeDeveloperName" type="String" role="outputOnly"/>
-        </targetConfig>
-    </targetConfigs>
 </LightningComponentBundle>
