@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 01-26-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class ClickSignTemplateController {
     public String errorMessage { get; set; }
     public String objectHomeUrl { get; set; }
@@ -39,7 +46,7 @@ public with sharing class ClickSignTemplateController {
     public static ClickSignTemplate__c getClickSignTemplateToSend(Id templateId, String recordId) {
         ClickSignTemplate__c clickSignTemplate= [SELECT Id, Name, ContactsMapping__c,Description__c,
         (SELECT id,Email__c,Role__c, RoleLabel__c, ContactsMapping__c,Name,SignerType__c from ClickSignSigners__r),
-        SourceObject__c, Stage__c,ObjectMappings__c ,FileName__c,ButtonLabel__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
+        SourceObject__c, Stage__c,ObjectMappings__c ,FileName__c,ButtonLabel__c,VisibilityRules__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
         
         for(ClickSignSigner__c signer : clickSignTemplate.ClickSignSigners__r) {
             if (signer.SignerType__c == 'object') {
@@ -55,7 +62,7 @@ public with sharing class ClickSignTemplateController {
     public static ClickSignTemplate__c getClickSignTemplate(Id templateId, String recordId) {
         ClickSignTemplate__c clickSignTemplate= [SELECT Id, Name, ContactsMapping__c,Description__c,
         (SELECT id,Email__c,Role__c, RoleLabel__c, ContactsMapping__c,Name,SignerType__c from ClickSignSigners__r),
-        SourceObject__c, Stage__c,ObjectMappings__c ,FileName__c,ButtonLabel__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
+        SourceObject__c, Stage__c,ObjectMappings__c ,FileName__c,ButtonLabel__c,VisibilityRules__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
         
         return clickSignTemplate;
     }
@@ -216,6 +223,9 @@ public with sharing class ClickSignTemplateController {
         //change limit ObjectMappings2__c
         ClickSignTemplate__c template = [SELECT Id, Name, Description__c,ExternalId__c, SourceObject__c,ObjectMappings__c,ObjectMappings2__c, Stage__c,fileName__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
         List<ContentDocument> documents = getDocuments(templateId);
+        if (documents == null || documents.isEmpty()) {
+            throw new AuraHandledException('Nenhum documento encontrado para gerar o preview.');
+        }
 
         ClickSignService.Document document = new ClickSignService.Document(); 
         document.id = templateId;
@@ -229,8 +239,23 @@ public with sharing class ClickSignTemplateController {
         System.debug('template.ObjectMappings__c ' + template.ObjectMappings__c);
         document.mergeFields = ClickSignUtils.generateMapFields(recordId,template.ObjectMappings__c,null,null);
         System.debug('document.mergeField ' + document.mergeFields);
-        ClickSignService.createTemplate(document);  
+        ClickSignService.createTemplatePreview(document);  
         return 'success'; 
+    }
+
+    @AuraEnabled
+    public static String generateTemplateFromMappings(String templateId){
+        ClickSignTemplate__c template = [SELECT Id, ObjectMappings__c FROM ClickSignTemplate__c WHERE Id = :templateId LIMIT 1];
+        if (String.isBlank(template.ObjectMappings__c)) {
+            return 'no-mappings';
+        }
+        List<ContentDocument> documents = getDocuments(templateId);
+        if (documents == null || documents.isEmpty()) {
+            return 'no-document';
+        }
+
+        System.enqueueJob(new ClickSignTemplateQueueable(templateId));
+        return 'queued';
     }
 
     @AuraEnabled
@@ -295,6 +320,130 @@ public with sharing class ClickSignTemplateController {
         } catch (Exception e) {
             throw new AuraHandledException('Error creating button in layout: ' + e.getMessage());
         }
+    }
+
+    /**
+     * @description Saves visibility rules for a template
+     * @param templateId The template ID
+     * @param visibilityRulesJson JSON string with visibility rules
+     */
+    @AuraEnabled
+    public static void saveVisibilityRules(Id templateId, String visibilityRulesJson) {
+        try {
+            // Validate rules before saving
+            List<String> validationErrors = ClickSignVisibilityRulesEngine.validateRules(visibilityRulesJson);
+            if (!validationErrors.isEmpty()) {
+                throw new AuraHandledException('Validation errors: ' + String.join(validationErrors, '; '));
+            }
+            
+            ClickSignTemplate__c template = new ClickSignTemplate__c();
+            template.Id = templateId;
+            template.VisibilityRules__c = visibilityRulesJson;
+            
+            update template;
+        } catch (AuraHandledException e) {
+            // Preserve original validation message for the LWC.
+            throw e;
+        } catch (Exception e) {
+            throw new AuraHandledException('Error saving visibility rules: ' + e.getMessage());
+        }
+    }
+
+    /**
+     * @description Gets all picklist fields available for a Salesforce object
+     * @param objectApiName The API name of the object
+     * @return List of maps containing field label and API name
+     */
+    @AuraEnabled
+    public static List<Map<String, String>> getPicklistFields(String objectApiName) {
+        List<Map<String, String>> fieldList = new List<Map<String, String>>();
+        try {
+            Schema.SObjectType sObjectType = Schema.getGlobalDescribe().get(objectApiName);
+            if (sObjectType != null) {
+                Map<String, Schema.SObjectField> fieldsMap = sObjectType.getDescribe().fields.getMap();
+                for (Schema.SObjectField field : fieldsMap.values()) {
+                    Schema.DescribeFieldResult fieldResult = field.getDescribe();
+                    // Only include accessible picklist fields
+                    if (fieldResult.isAccessible() && fieldResult.getType() == Schema.DisplayType.PICKLIST) {
+                        Map<String, String> fieldInfo = new Map<String, String>();
+                        fieldInfo.put('label', fieldResult.getLabel());
+                        fieldInfo.put('apiName', fieldResult.getName());
+                        fieldList.add(fieldInfo);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new AuraHandledException('Error fetching picklist fields: ' + e.getMessage());
+        }
+        return fieldList;
+    }
+
+    /**
+     * @description Gets all picklist values for a given picklist field
+     * @param objectApiName The API name of the object
+     * @param fieldApiName The API name of the picklist field
+     * @return List of picklist values
+     */
+    @AuraEnabled
+    public static List<String> getPicklistValues(String objectApiName, String fieldApiName) {
+        List<String> values = new List<String>();
+        try {
+            Schema.SObjectType sObjectType = Schema.getGlobalDescribe().get(objectApiName);
+            if (sObjectType != null) {
+                Schema.SObjectField field = sObjectType.getDescribe().fields.getMap().get(fieldApiName);
+                if (field != null) {
+                    Schema.DescribeFieldResult fieldResult = field.getDescribe();
+                    if (fieldResult.getType() == Schema.DisplayType.PICKLIST) {
+                        for (Schema.PicklistEntry entry : fieldResult.getPicklistValues()) {
+                            if (entry.isActive()) {
+                                values.add(entry.getValue());
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new AuraHandledException('Error fetching picklist values: ' + e.getMessage());
+        }
+        return values;
+    }
+
+    /**
+     * @description Gets all available record types for a given object
+     * @param objectApiName The API name of the object
+     * @return List of maps containing record type name and ID
+     */
+    @AuraEnabled
+    public static List<Map<String, String>> getRecordTypes(String objectApiName) {
+        List<Map<String, String>> recordTypes = new List<Map<String, String>>();
+        try {
+            List<RecordType> rts = [
+                SELECT Id, Name, DeveloperName 
+                FROM RecordType 
+                WHERE SObjectType = :objectApiName AND IsActive = true
+                ORDER BY Name ASC
+            ];
+            
+            for (RecordType rt : rts) {
+                Map<String, String> rtInfo = new Map<String, String>();
+                rtInfo.put('name', rt.Name);
+                rtInfo.put('id', rt.Id);
+                recordTypes.add(rtInfo);
+            }
+        } catch (Exception e) {
+            throw new AuraHandledException('Error fetching record types: ' + e.getMessage());
+        }
+        return recordTypes;
+    }
+
+    /**
+     * @description Validates visibility rules JSON
+     * @param visibilityRulesJson JSON string to validate
+     * @return List of validation error messages (empty if valid)
+     */
+    @AuraEnabled
+    public static List<String> validateVisibilityRules(String visibilityRulesJson) {
+        return ClickSignVisibilityRulesEngine.validateRules(visibilityRulesJson);
     }
 
 }

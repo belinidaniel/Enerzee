@@ -1,6 +1,7 @@
 import { api, LightningElement, track, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { getRecord } from 'lightning/uiRecordApi';
 import getClickSignRecords from '@salesforce/apex/ClickSignController.getClickSignRecords';
 import prepareToSend from '@salesforce/apex/ClickSignController.prepareToSend';
 import getTemplates from '@salesforce/apex/ClickSignController.getTemplates';
@@ -24,7 +25,8 @@ export default class ClickSignTemplateButton extends NavigationMixin(LightningEl
     isCreateButtonTemplate = false;
     templateId;
     isModalLoading = false;
-
+    @api recordTypeFilter;
+    recordStateHash;
     labels = {
         ClickSign_Error,
         ClickSign_RecordIdNotFound,
@@ -40,6 +42,47 @@ export default class ClickSignTemplateButton extends NavigationMixin(LightningEl
     connectedCallback() {
         this.fetchClickSignRecords();
         this.fetchTemplates();
+    }
+
+    @wire(getRecord, {
+        recordId: '$recordId',
+        layoutTypes: ['Compact'],
+        modes: ['View']
+    })
+    wiredRecordState({ data, error }) {
+        if (error || !data) {
+            return;
+        }
+
+        const nextHash = this.buildRecordStateHash(data);
+        if (!nextHash) {
+            return;
+        }
+
+        if (this.recordStateHash && this.recordStateHash !== nextHash) {
+            this.fetchTemplates();
+            this.fetchClickSignRecords();
+        }
+
+        this.recordStateHash = nextHash;
+    }
+
+    buildRecordStateHash(recordData) {
+        if (!recordData) {
+            return null;
+        }
+
+        const fields = recordData.fields || {};
+        const lastModifiedDateField = fields.LastModifiedDate;
+        if (lastModifiedDateField && lastModifiedDateField.value) {
+            return String(lastModifiedDateField.value);
+        }
+
+        try {
+            return JSON.stringify(fields);
+        } catch (e) {
+            return null;
+        }
     }
 
     fetchClickSignRecords() {
@@ -64,13 +107,39 @@ export default class ClickSignTemplateButton extends NavigationMixin(LightningEl
 
     fetchTemplates() {
         if (this.recordId) {
-            getTemplates({recordId: this.recordId })
+            getTemplates({ recordId: this.recordId })
                 .then((data) => {
                     this.buttonTemplates = data;
                 })
                 .catch((error) => {
                     this.error = error;
                 });
+        }
+    }
+
+    async isButtonVisible() {
+        if (!this.visibilityRules) {
+            return true;
+        }
+
+        try {
+            const rulesConfig = typeof this.visibilityRules === 'string' 
+                ? JSON.parse(this.visibilityRules) 
+                : this.visibilityRules;
+
+            if (!rulesConfig.visibilityRules || !rulesConfig.visibilityRules.enabled) {
+                return true;
+            }
+
+            const result = await evaluateVisibilityRule({
+                recordId: this.recordId,
+                rulesJson: JSON.stringify(rulesConfig.visibilityRules)
+            });
+
+            return result;
+        } catch (error) {
+            console.error('Error evaluating visibility rule:', error);
+            return true;
         }
     }
 
@@ -84,7 +153,6 @@ export default class ClickSignTemplateButton extends NavigationMixin(LightningEl
             },
         });
     }
-
 
     handleViewRecordId(event) {
         this[NavigationMixin.Navigate]({
@@ -159,6 +227,7 @@ export default class ClickSignTemplateButton extends NavigationMixin(LightningEl
                 });
         }, 1000);
     }
+    
     processClickSignRecipientsStage() {
         setTimeout(() => {
             process({ clickSign: this.clicksign, recordId: this.recordId, currentStep : 'Recipients'})
@@ -176,6 +245,7 @@ export default class ClickSignTemplateButton extends NavigationMixin(LightningEl
                 });
         }, 1000);
     }
+    
     processClickSignCompletionStage() {
         setTimeout(() => {
             process({ clickSign: this.clicksign, recordId: this.recordId, currentStep : 'Prepare & Send'})
@@ -194,7 +264,6 @@ export default class ClickSignTemplateButton extends NavigationMixin(LightningEl
                 });
         }, 1000);
     }
-
 
     handleOpenModal(event) {
         this.templateId = event.target.dataset.id;

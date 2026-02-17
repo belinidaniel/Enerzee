@@ -377,6 +377,17 @@ export default class ClickSignRecipients extends LightningElement {
     showToast(title, message, variant) {
         const event = new ShowToastEvent({ title, message, variant });
         this.dispatchEvent(event);
+        this.notifyParent(title, message, variant);
+    }
+
+    notifyParent(title, message, variant) {
+        this.dispatchEvent(
+            new CustomEvent('notify', {
+                detail: { title, message, variant },
+                bubbles: true,
+                composed: true
+            })
+        );
     }
 
     get hasRecipients() {

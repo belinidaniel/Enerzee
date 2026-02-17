@@ -228,7 +228,7 @@
                                     <!-- if Complete -->
                                     <template if:true={step.showComplete}>
                                         <li key={step.label} class="slds-path__item slds-is-complete" role="presentation">
-                                            <a aria-selected="false" class="slds-path__link" role="option">
+                                            <a aria-selected="false" class="slds-path__link" role="option" data-step={step.label} onclick={handleStepClick}>
                                                 <span class="slds-path__stage">
                                                     <lightning-icon icon-name="utility:check" variant="inverse" size="xx-small" class="slds-icon slds-icon_x-small"></lightning-icon>
                                                     <span class="slds-assistive-text">{label.DFP_Complete}</span>
@@ -242,7 +242,7 @@
                                     <!-- if Current -->
                                     <template if:true={step.showCurrent}>
                                         <li key={step.label} class="slds-path__item slds-is-current slds-is-active" role="presentation">
-                                            <a aria-selected="true" class="slds-path__link" role="option">
+                                            <a aria-selected="true" class="slds-path__link" role="option" data-step={step.label} onclick={handleStepClick}>
                                                 <span class="slds-path__stage">
                                                     <lightning-icon icon-name="utility:check" variant="inverse" size="xx-small" class="slds-icon slds-icon_x-small"></lightning-icon>
                                                     <span class="slds-assistive-text">{label.DFP_Current}</span>
@@ -256,7 +256,7 @@
                                     <!-- if Upcoming -->
                                     <template if:true={step.showUpcoming}>
                                         <li key={step.label} class="slds-path__item slds-is-incomplete" role="presentation">
-                                            <a aria-selected="false" class="slds-path__link" role="option">
+                                            <a aria-selected="false" class="slds-path__link" role="option" data-step={step.label} onclick={handleStepClick}>
                                                 <span class="slds-path__stage">
                                                     <lightning-icon icon-name="utility:check" variant="inverse" size="xx-small" class="slds-icon slds-icon_x-small"></lightning-icon>
                                                     <span class="slds-assistive-text">{label.DFP_Upcoming}</span>

@@ -603,7 +603,7 @@ public class OpportunityBO {
                 OpportunityUtils.isStatusProposalSimulation(oldOpp) ) &&
                 opp.ReadequacaoSolicitada__c
             ){
-                opp.ReadequacaoSolicitada__c = false;
+                // opp.ReadequacaoSolicitada__c = false;
             }
         }
     }   

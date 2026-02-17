@@ -21,8 +21,7 @@
                         type="search"
                         label="Buscar por telefone ou nome"
                         value={recipientSearch}
-                        oninput={handleRecipientSearchInput}
-                        onchange={handleRecipientSearchInput}>
+                        onchange={handleRecipientSearchChange}>
                     </lightning-input>
                     <lightning-button
                         variant="brand"
@@ -37,12 +36,12 @@
                             <article key={rec.id} class={rec.cssClass} data-id={rec.id} onclick={handleRecipientSelect}>
                                 <div class="tile-header">
                                     <div>
+                                        <p class="muted">{rec.type}</p>
                                         <p class="name">{rec.name}</p>
-                                        <template if:true={rec.detail}>
-                                            <p class="muted">{rec.detail}</p>
-                                        </template>
                                     </div>
-                                    <span class={rec.badgeClass}>{rec.badgeLabel}</span>
+                                    <template if:true={rec.detail}>
+                                        <lightning-badge label={rec.detail}></lightning-badge>
+                                    </template>
                                 </div>
                                 <p class="muted">{rec.phone}</p>
                             </article>
@@ -58,27 +57,19 @@
                 <div class="section-header">
                     <span class="section-title">Canal</span>
                 </div>
-                <template if:true={showChannelSelector}>
-                    <lightning-combobox
-                        name="channel"
-                        label="Selecione o canal"
-                        value={selectedChannelKey}
-                        options={channelOptions}
-                        onchange={handleChannelChange}>
-                    </lightning-combobox>
-                </template>
-                <template if:false={showChannelSelector}>
-                    <p class="muted">Canal definido pelo Messaging End User selecionado.</p>
-                </template>
+                <lightning-combobox
+                    name="channel"
+                    label="Selecione o canal"
+                    value={selectedChannelId}
+                    options={channels}
+                    onchange={handleChannelChange}>
+                </lightning-combobox>
             </div>
 
             <div class="section">
                 <div class="section-header">
                     <span class="section-title">Mensagem</span>
                 </div>
-                <template if:true={templatesLoading}>
-                    <div class="preview muted">Carregando mensagens...</div>
-                </template>
                 <lightning-combobox
                     name="messageTemplate"
                     label="Selecione a mensagem"
@@ -89,7 +80,7 @@
                 <template if:true={selectedTemplateText}>
                     <div class="preview">
                         <p class="muted">Texto da mensagem</p>
-                        <p class="preview-text">{selectedTemplateText}</p>
+                        <p class="name">{selectedTemplateText}</p>
                     </div>
                 </template>
             </div>

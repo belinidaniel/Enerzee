@@ -1,0 +1,175 @@
+<template>
+    <div class="builder-wrapper">
+        <h2 class="slds-text-heading_medium">{labels.titleVisibilityRules}</h2>
+
+        <template if:false={hasSourceObject}>
+            <div class="slds-text-color_error slds-m-top_small">
+                {labels.sourceObjectWarning}
+            </div>
+        </template>
+
+        <template if:true={hasSourceObject}>
+            <template if:true={isLoadingMetadata}>
+                <div class="slds-is-relative slds-p-vertical_medium">
+                    <lightning-spinner alternative-text={labels.spinnerLoading} size="small"></lightning-spinner>
+                </div>
+            </template>
+
+            <template if:false={isLoadingMetadata}>
+                <div class="section-card slds-m-top_small">
+                    <h3 class="slds-text-title_bold slds-m-bottom_small">{labels.filtersSectionTitle}</h3>
+
+                    <div class="filter-list">
+                        <template if:true={hasConditions}>
+                            <template for:each={conditionsView} for:item="condition">
+                                <div key={condition.id} class="filter-row">
+                                    <div class="filter-index">{condition.id}</div>
+                                    <div class="filter-pill">{condition.summary}</div>
+                                    <lightning-button-icon
+                                        icon-name="utility:close"
+                                        alternative-text={labels.remove}
+                                        title={labels.remove}
+                                        data-id={condition.id}
+                                        onclick={handleRemoveCondition}>
+                                    </lightning-button-icon>
+                                </div>
+                            </template>
+                        </template>
+
+                        <template if:false={hasConditions}>
+                            <div class="slds-text-color_weak">{labels.noFilters}</div>
+                        </template>
+                    </div>
+
+                    <div class="slds-m-top_small">
+                        <lightning-button
+                            label={labels.addFilter}
+                            variant="neutral"
+                            onclick={handleStartAddFilter}
+                            disabled={disableStartAddFilter}>
+                        </lightning-button>
+                    </div>
+
+                    <template if:true={isAddingFilter}>
+                        <div class="filter-editor slds-m-top_medium">
+                            <lightning-combobox
+                                label={labels.filterTypeLabel}
+                                value={selectedConditionType}
+                                options={conditionTypeOptions}
+                                onchange={handleConditionTypeChange}>
+                            </lightning-combobox>
+
+                            <template if:true={isPicklistConditionSelected}>
+                                <lightning-combobox
+                                    class="slds-m-top_small"
+                                    label={labels.fieldLabel}
+                                    value={selectedPicklistField}
+                                    options={picklistFieldOptions}
+                                    onchange={handlePicklistFieldChange}>
+                                </lightning-combobox>
+
+                                <lightning-combobox
+                                    class="slds-m-top_small"
+                                    label={labels.operatorLabel}
+                                    value={selectedOperator}
+                                    options={operatorOptions}
+                                    onchange={handleOperatorChange}>
+                                </lightning-combobox>
+
+                                <lightning-combobox
+                                    class="slds-m-top_small"
+                                    label={labels.valueLabel}
+                                    value={selectedPicklistValue}
+                                    options={picklistValueOptions}
+                                    onchange={handlePicklistValueChange}>
+                                </lightning-combobox>
+                            </template>
+
+                            <template if:true={isRecordTypeConditionSelected}>
+                                <lightning-combobox
+                                    class="slds-m-top_small"
+                                    label={labels.operatorLabel}
+                                    value={selectedOperator}
+                                    options={operatorOptions}
+                                    onchange={handleOperatorChange}>
+                                </lightning-combobox>
+
+                                <lightning-combobox
+                                    class="slds-m-top_small"
+                                    label={labels.recordTypeValueLabel}
+                                    value={selectedRecordTypeId}
+                                    options={recordTypeOptions}
+                                    onchange={handleRecordTypeValueChange}>
+                                </lightning-combobox>
+                            </template>
+
+                            <div class="slds-m-top_medium editor-actions">
+                                <lightning-button
+                                    variant="neutral"
+                                    label={labels.cancel}
+                                    onclick={handleCancelAddFilter}>
+                                </lightning-button>
+                                <lightning-button
+                                    class="slds-m-left_x-small"
+                                    variant="brand"
+                                    label={labels.done}
+                                    onclick={handleAddCondition}
+                                    disabled={disableAddCondition}>
+                                </lightning-button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="section-card slds-m-top_medium">
+                    <h3 class="slds-text-title_bold slds-m-bottom_small">{labels.showComponentWhen}</h3>
+
+                    <lightning-radio-group
+                        type="radio"
+                        value={logicMode}
+                        options={logicModeOptions}
+                        onchange={handleLogicModeChange}>
+                    </lightning-radio-group>
+
+                    <template if:true={showCustomLogicInput}>
+                        <lightning-textarea
+                            class="slds-m-top_small"
+                            label={labels.filterLogicLabel}
+                            value={logicExpression}
+                            onchange={handleLogicExpressionChange}
+                            placeholder={labels.filterLogicPlaceholder}>
+                        </lightning-textarea>
+
+                        <div class="slds-m-top_small">
+                            <lightning-button
+                                variant="neutral"
+                                label={labels.defaultLogicButton}
+                                onclick={handleUseDefaultLogic}
+                                disabled={disableUseDefaultLogic}>
+                            </lightning-button>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="section-card slds-m-top_medium">
+                    <h3 class="slds-text-title_bold slds-m-bottom_small">{labels.jsonPreviewTitle}</h3>
+                    <lightning-textarea value={rulesPreview} disabled>
+                    </lightning-textarea>
+                </div>
+
+                <div class="slds-m-top_medium slds-text-align_right">
+                    <lightning-button
+                        variant="brand"
+                        label={labels.saveRules}
+                        onclick={handleSaveRules}
+                        disabled={disableSave}>
+                    </lightning-button>
+                </div>
+
+                <template if:true={hasSaveMessage}>
+                    <div class={saveMessageClass}>{saveMessage}</div>
+                </template>
+            </template>
+        </template>
+    </div>
+</template>
