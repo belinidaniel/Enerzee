@@ -38,6 +38,15 @@
                         <template if:true={successMessage}>
                             <div class="success-message">{labels.successMessage}</div>
                         </template>
+                        <template if:false={isSendTemplate}>
+                            <div class="slds-var-m-top_large">
+                                <c-click-sign-visibility-rules-builder
+                                    template-id={template.Id}
+                                    source-object-api-name={template.SourceObject__c}
+                                    initial-rules-json={visibilityRulesJson}>
+                                </c-click-sign-visibility-rules-builder>
+                            </div>
+                        </template>
                     </div>
                     <div class="section">
                         <h2>{labels.recipients}</h2>
@@ -84,13 +93,6 @@
                             </tbody>
                         </table>
                     </div>
-                        <div class="slds-var-m-top_large">
-                            <c-click-sign-visibility-rules-builder
-                                template-id={template.Id}
-                                source-object-api-name={template.SourceObject__c}
-                                initial-rules-json={visibilityRulesJson}>
-                            </c-click-sign-visibility-rules-builder>
-                        </div>
                 </template>
 
                 <template if:false={template}>

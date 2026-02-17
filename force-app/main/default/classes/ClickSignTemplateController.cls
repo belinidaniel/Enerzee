@@ -341,6 +341,9 @@ public with sharing class ClickSignTemplateController {
             template.VisibilityRules__c = visibilityRulesJson;
             
             update template;
+        } catch (AuraHandledException e) {
+            // Preserve original validation message for the LWC.
+            throw e;
         } catch (Exception e) {
             throw new AuraHandledException('Error saving visibility rules: ' + e.getMessage());
         }

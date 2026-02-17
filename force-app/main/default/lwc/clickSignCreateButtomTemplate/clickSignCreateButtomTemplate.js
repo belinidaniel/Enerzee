@@ -32,6 +32,7 @@ export default class ClickSignCreateButtomTemplate extends LightningElement {
     @track contactsMapping = [];
     @track objectMappings = [];
     @track buttonLabel = '';
+    @track visibilityRulesJson = '';
     @track successMessage = '';
     @api isSendTemplate = false;
     @track title;
@@ -79,6 +80,7 @@ export default class ClickSignCreateButtomTemplate extends LightningElement {
                     this.contactsMapping = this.template.ClickSignSigners__r;
                     this.objectMappings = JSON.parse(this.template.ObjectMappings__c);
                     this.buttonLabel = this.template.ButtonLabel__c;
+                    this.visibilityRulesJson = this.template.VisibilityRules__c || '';
                     this.fetchObjectMappingValues();
                 }
             })
@@ -102,6 +104,7 @@ export default class ClickSignCreateButtomTemplate extends LightningElement {
                     this.contactsMapping = this.template.ClickSignSigners__r;
                     this.objectMappings = JSON.parse(this.template.ObjectMappings__c);
                     this.buttonLabel = this.template.ButtonLabel__c;
+                    this.visibilityRulesJson = this.template.VisibilityRules__c || '';
                     this.fetchObjectMappingValues();
                 }
             })

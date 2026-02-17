@@ -1,0 +1,76 @@
+.builder-wrapper {
+    border: 1px solid #d8dde6;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #fff;
+}
+
+.section-card {
+    border: 1px solid #dddbda;
+    border-radius: 8px;
+    padding: 12px;
+    background-color: #fff;
+}
+
+.filter-list {
+    display: grid;
+    gap: 10px;
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-index {
+    color: #5f6a72;
+    font-weight: 700;
+    text-align: center;
+}
+
+.filter-pill {
+    border: 1px solid #dddbda;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #032d60;
+    background: #fff;
+}
+
+.filter-editor {
+    border: 1px solid #dddbda;
+    border-radius: 8px;
+    padding: 12px;
+    background-color: #fafaf9;
+}
+
+.editor-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.save-message {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid;
+    border-radius: 6px;
+}
+
+.save-message_success {
+    background-color: #d4edda;
+    border-color: #8fd19e;
+    color: #155724;
+}
+
+.save-message_error {
+    background-color: #f8d7da;
+    border-color: #f1aeb5;
+    color: #842029;
+}
+
+.save-message_info {
+    background-color: #cff4fc;
+    border-color: #9eeaf9;
+    color: #055160;
+}

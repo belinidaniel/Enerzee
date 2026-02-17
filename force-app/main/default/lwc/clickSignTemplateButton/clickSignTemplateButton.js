@@ -1,6 +1,7 @@
 import { api, LightningElement, track, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { getRecord } from 'lightning/uiRecordApi';
 import getClickSignRecords from '@salesforce/apex/ClickSignController.getClickSignRecords';
 import prepareToSend from '@salesforce/apex/ClickSignController.prepareToSend';
 import getTemplates from '@salesforce/apex/ClickSignController.getTemplates';
@@ -25,6 +26,7 @@ export default class ClickSignTemplateButton extends NavigationMixin(LightningEl
     templateId;
     isModalLoading = false;
     @api recordTypeFilter;
+    recordStateHash;
     labels = {
         ClickSign_Error,
         ClickSign_RecordIdNotFound,
@@ -40,6 +42,47 @@ export default class ClickSignTemplateButton extends NavigationMixin(LightningEl
     connectedCallback() {
         this.fetchClickSignRecords();
         this.fetchTemplates();
+    }
+
+    @wire(getRecord, {
+        recordId: '$recordId',
+        layoutTypes: ['Compact'],
+        modes: ['View']
+    })
+    wiredRecordState({ data, error }) {
+        if (error || !data) {
+            return;
+        }
+
+        const nextHash = this.buildRecordStateHash(data);
+        if (!nextHash) {
+            return;
+        }
+
+        if (this.recordStateHash && this.recordStateHash !== nextHash) {
+            this.fetchTemplates();
+            this.fetchClickSignRecords();
+        }
+
+        this.recordStateHash = nextHash;
+    }
+
+    buildRecordStateHash(recordData) {
+        if (!recordData) {
+            return null;
+        }
+
+        const fields = recordData.fields || {};
+        const lastModifiedDateField = fields.LastModifiedDate;
+        if (lastModifiedDateField && lastModifiedDateField.value) {
+            return String(lastModifiedDateField.value);
+        }
+
+        try {
+            return JSON.stringify(fields);
+        } catch (e) {
+            return null;
+        }
     }
 
     fetchClickSignRecords() {
