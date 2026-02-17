@@ -2,13 +2,11 @@
 private class TaskCompletionServiceTest {
     @testSetup
     static void setup() {
-        Group contratos = new Group(DeveloperName = 'Contratos', Name = 'Contratos', Type = 'Queue');
-        insert contratos;
-        insert new QueueSobject(QueueId = contratos.Id, SObjectType = 'Task');
+        Id contratosId = ensureQueue('Contratos', 'Contratos');
+        ensureQueueSObject(contratosId, 'Task');
 
-        Group viabilidade = new Group(DeveloperName = 'AnalistaViabilidade', Name = 'Analistas de Viabilidade', Type = 'Queue');
-        insert viabilidade;
-        insert new QueueSobject(QueueId = viabilidade.Id, SObjectType = 'Task');
+        Id viabilidadeId = ensureQueue('AnalistaViabilidade', 'Analistas de Viabilidade');
+        ensureQueueSObject(viabilidadeId, 'Task');
     }
 
     @isTest
@@ -87,5 +85,42 @@ private class TaskCompletionServiceTest {
         System.assertEquals('AnalistaViabilidade', ownerQueue.DeveloperName, 'Follow-up should go to viabilidade queue');
         System.assert(followUp.Description.contains('Pendências de viabilidade.'), 'Should include comment in description');
         System.assert(followUp.Description.contains('Pendências da viabilidade técnica: Laudo de carga e memorial descritivo'), 'Should include missing viability info');
+    }
+
+    private static Id ensureQueue(String developerName, String queueName) {
+        List<Group> existing = [
+            SELECT Id
+            FROM Group
+            WHERE Type = 'Queue'
+                AND DeveloperName = :developerName
+            LIMIT 1
+        ];
+        if (!existing.isEmpty()) {
+            return existing[0].Id;
+        }
+
+        Group queue = new Group(
+            DeveloperName = developerName,
+            Name = queueName,
+            Type = 'Queue'
+        );
+        insert queue;
+        return queue.Id;
+    }
+
+    private static void ensureQueueSObject(Id queueId, String sObjectType) {
+        List<QueueSobject> existing = [
+            SELECT Id
+            FROM QueueSobject
+            WHERE QueueId = :queueId
+                AND SObjectType = :sObjectType
+            LIMIT 1
+        ];
+        if (existing.isEmpty()) {
+            insert new QueueSobject(
+                QueueId = queueId,
+                SObjectType = sObjectType
+            );
+        }
     }
 }

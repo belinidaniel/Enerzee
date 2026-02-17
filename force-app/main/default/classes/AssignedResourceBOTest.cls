@@ -16,10 +16,12 @@ private class AssignedResourceBOTest {
         );
         insert opp;
 
+        Datetime schedStart = System.now();
         ServiceAppointment app = new ServiceAppointment(
             ParentRecordId = opp.Id,
             Oportunidade__c = opp.Id,
-            SchedStartTime = System.now(),
+            SchedStartTime = schedStart,
+            SchedEndTime = schedStart.addMinutes(60),
             Duration = 60
         );
         insert app;

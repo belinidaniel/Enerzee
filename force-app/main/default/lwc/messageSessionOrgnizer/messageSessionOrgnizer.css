@@ -37,6 +37,9 @@
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 0.75rem;
     margin-top: 0.75rem;
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 0.25rem;
 }
 
 .tile {
@@ -78,6 +81,56 @@
     font-size: 0.875rem;
 }
 
+.tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.01em;
+    border: 1px solid transparent;
+    min-width: 110px;
+    text-align: center;
+}
+
+.tag-lead {
+    background: #fff7ed;
+    color: #c2410c;
+    border-color: #fdba74;
+}
+
+.tag-contact {
+    background: #eef2ff;
+    color: #1d4ed8;
+    border-color: #c7d2fe;
+}
+
+.tag-account {
+    background: #f5f3ff;
+    color: #6d28d9;
+    border-color: #ddd6fe;
+}
+
+.tag-opportunity {
+    background: #ecfdf3;
+    color: #047857;
+    border-color: #a7f3d0;
+}
+
+.tag-meu {
+    background: #ecfeff;
+    color: #0f766e;
+    border-color: #99f6e4;
+}
+
+.tag-other {
+    background: #f3f4f6;
+    color: #374151;
+    border-color: #e5e7eb;
+}
+
 .footer {
     display: flex;
     justify-content: flex-end;
@@ -97,4 +150,11 @@
     border: 1px dashed #cbd5e1;
     border-radius: 0.5rem;
     background: #f8fafc;
+}
+
+.preview-text {
+    margin: 0.25rem 0 0;
+    white-space: pre-line;
+    color: #111827;
+    font-weight: 600;
 }

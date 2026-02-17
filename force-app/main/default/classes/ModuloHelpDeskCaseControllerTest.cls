@@ -30,11 +30,13 @@ private class ModuloHelpDeskCaseControllerTest {
         User u = createUser();
         insert u;
         Contact c = createContact();
+        String openStatus = [SELECT MasterLabel FROM CaseStatus WHERE IsClosed = false ORDER BY SortOrder ASC LIMIT 1].MasterLabel;
+        String closedStatus = [SELECT MasterLabel FROM CaseStatus WHERE IsClosed = true ORDER BY SortOrder ASC LIMIT 1].MasterLabel;
 
         System.runAs(u) {
-            Case openCase = new Case(Subject = 'Open Case', Status = 'Novo', Origin = 'Phone', ContactId = c.Id);
+            Case openCase = new Case(Subject = 'Open Case', Status = openStatus, Origin = 'Phone', ContactId = c.Id);
             insert openCase;
-            Case closedCase = new Case(Subject = 'Closed Case', Status = 'Fechado', Origin = 'Phone', ContactId = c.Id);
+            Case closedCase = new Case(Subject = 'Closed Case', Status = closedStatus, Origin = 'Phone', ContactId = c.Id);
             insert closedCase;
 
             Test.startTest();
@@ -43,10 +45,8 @@ private class ModuloHelpDeskCaseControllerTest {
             Case detail = ModuloHelpDeskCaseController.getCaseDetail(openCase.Id, c.Id);
             Test.stopTest();
 
-            System.assertEquals(1, openCases.size());
-            System.assertEquals('Novo', openCases[0].Status);
-            System.assertEquals(1, closedCases.size());
-            System.assertEquals('Fechado', closedCases[0].Status);
+            System.assertEquals(new Set<Id>{ openCase.Id }, new Map<Id, Case>(openCases).keySet());
+            System.assertEquals(new Set<Id>{ closedCase.Id }, new Map<Id, Case>(closedCases).keySet());
             System.assertEquals(openCase.Id, detail.Id);
         }
     }
@@ -86,9 +86,12 @@ private class ModuloHelpDeskCaseControllerTest {
 
     @IsTest
     static void testAccessCodeFlow() {
-        System.runAs(createUser()) {
+        User u = createUser();
+        insert u;
+        insert new Account(Name = 'Enerzee Test Account');
+        System.runAs(u) {
             Test.startTest();
-            ModuloHelpDeskCaseController.requestAccessCode('newguest@example.com', 'Guest', 'User', null);
+            ModuloHelpDeskCaseController.requestAccessCode('newguest@example.com', 'Guest', 'User', '11999999999');
             Id cid = ModuloHelpDeskCaseController.validateAccessCode('newguest@example.com', [SELECT Verification_Code__c FROM Contact WHERE Email = 'newguest@example.com' LIMIT 1].Verification_Code__c);
             Test.stopTest();
             System.assertNotEquals(null, cid);

@@ -21,6 +21,9 @@ private class ProposalConsoleControllerTest {
         ), true);
 
         Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(new Parceiro__c(
+            Name = 'Parceiro Teste',
+            Produto__c = 'Solar',
+            GrupoTarifario__c = 'Grupo B',
             CapaProposta__c = cover.Id,
             CapaPromocional__c = cover.Id
         ), true);

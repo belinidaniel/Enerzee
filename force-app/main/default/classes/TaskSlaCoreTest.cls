@@ -123,13 +123,13 @@ private class TaskSlaCoreTest {
         TaskSlaDailySummaryScheduler.scheduleDaily(cron);
         Test.stopTest();
 
-        CronTrigger ct = [
+        List<CronTrigger> jobs = [
             SELECT CronExpression, CronJobDetail.Name
             FROM CronTrigger
             WHERE CronJobDetail.Name = 'Task SLA Daily Summary'
-            LIMIT 1
+                AND CronExpression = :cron
         ];
-        System.assertEquals(cron, ct.CronExpression, 'Cron deve ser o informado.');
+        System.assert(!jobs.isEmpty(), 'Cron deve ser o informado.');
     }
 
     private static User createUser(String email, Id managerId) {

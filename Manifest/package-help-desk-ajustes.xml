@@ -5,7 +5,44 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>*</members>
+        <members>activityDocumentUpload</members>
+        <members>attachmentPreviewModal</members>
+        <members>attachmentTabs</members>
+        <members>clickSign</members>
+        <members>clickSignCreateButtomTemplate</members>
+        <members>clickSignDataSource</members>
+        <members>clickSignDocument</members>
+        <members>clickSignIntegrationLogs</members>
+        <members>clickSignPrepareSend</members>
+        <members>clickSignPreviewDocuments</members>
+        <members>clickSignRecipients</members>
+        <members>clickSignRelatedList</members>
+        <members>clickSignTemplateApp</members>
+        <members>clickSignTemplateButton</members>
+        <members>clickSignTemplateFields</members>
+        <members>clickSignUploadDocuments</members>
+        <members>clickSignVisibilityRulesBuilder</members>
+        <members>customSpinner</members>
+        <members>dynamicFieldsetForm</members>
+        <members>feedbackConsultant</members>
+        <members>fileUploadSobject</members>
+        <members>formByIntegrator</members>
+        <members>helpDeskAuth</members>
+        <members>helpDeskCaseDetail</members>
+        <members>helpDeskCaseList</members>
+        <members>helpDeskHome</members>
+        <members>hierarchicalFieldPicker</members>
+        <members>leadOpportunityAlert</members>
+        <members>lookup</members>
+        <members>messageSessionOrgnizer</members>
+        <members>navigateToRecord</members>
+        <members>omniChannelAutoLogin</members>
+        <members>opportunityIntegrationLogs</members>
+        <members>opportunityProposalConsole</members>
+        <members>opportunityViabilityForm</members>
+        <members>path</members>
+        <members>proposalPendingPanel</members>
+        <members>showPdfById</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
@@ -33,6 +70,10 @@
         <members>HelpDesk_Case_Category__mdt.VO_Integracao_Falha_API</members>
         <members>HelpDesk_Case_Category__mdt.VO_Integracao_Timeout</members>
         <name>CustomMetadata</name>
+    </types>
+    <types>
+        <members>WorkDeliveryReportPdf</members>
+        <name>ApexPage</name>
     </types>
     <version>65.0</version>
 </Package>

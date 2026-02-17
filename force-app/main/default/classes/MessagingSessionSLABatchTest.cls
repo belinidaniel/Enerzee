@@ -1,5 +1,6 @@
 @IsTest
 private class MessagingSessionSLABatchTest {
+    private static final Id TEST_CONVERSATION_ID = '0dwU50000034lLBIAY';
 
     @IsTest
     static void shouldNotifyQueueDefinedInQueueN1Field() {
@@ -77,7 +78,7 @@ private class MessagingSessionSLABatchTest {
             MessagingChannelId = channelId,
             Status = 'Waiting',
             MessagingEndUserId = endUserId,
-            ConversationId = 'TEST-CONV-' + String.valueOf(DateTime.now().getTime()),
+            ConversationId = TEST_CONVERSATION_ID,
             OwnerId = ownerId,
             OwnerAssignmentDate__c = System.now().addMinutes(-120),
             MinuteSLAN1__c = 1,

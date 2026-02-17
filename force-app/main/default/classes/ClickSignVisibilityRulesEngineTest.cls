@@ -1,13 +1,19 @@
 @IsTest
 private class ClickSignVisibilityRulesEngineTest {
-    @IsTest
-    static void shouldEvaluateExpressionRuleWithPicklistAndRecordType() {
+    private static Opportunity createOpportunity(String name, String stageName, Integer closeInDays) {
         Opportunity opp = new Opportunity(
-            Name = 'Rule Eval Opportunity',
-            StageName = 'Prospecting',
-            CloseDate = Date.today().addDays(10)
+            Name = name,
+            StageName = stageName,
+            CloseDate = Date.today().addDays(closeInDays),
+            IdVirtualOffice__c = 'vo-' + String.valueOf(System.now().getTime())
         );
         insert opp;
+        return opp;
+    }
+
+    @IsTest
+    static void shouldEvaluateExpressionRuleWithPicklistAndRecordType() {
+        Opportunity opp = createOpportunity('Rule Eval Opportunity', 'Prospecting', 10);
 
         Opportunity insertedOpp = [
             SELECT Id, StageName, RecordTypeId
@@ -78,12 +84,7 @@ private class ClickSignVisibilityRulesEngineTest {
 
     @IsTest
     static void shouldEvaluateLegacyGroupRule() {
-        Opportunity opp = new Opportunity(
-            Name = 'Legacy Rule Opportunity',
-            StageName = 'Prospecting',
-            CloseDate = Date.today().addDays(7)
-        );
-        insert opp;
+        Opportunity opp = createOpportunity('Legacy Rule Opportunity', 'Prospecting', 7);
 
         String legacyRuleJson = '{"version":1,"logic":"OR","groups":[{"logic":"AND","conditions":[{"type":"picklist","field":"StageName","op":"IN","values":["Prospecting"]}]}]}';
 
@@ -96,12 +97,7 @@ private class ClickSignVisibilityRulesEngineTest {
 
     @IsTest
     static void shouldEvaluateAllModeAndAnyModeWithoutCustomExpression() {
-        Opportunity opp = new Opportunity(
-            Name = 'Mode Rule Opportunity',
-            StageName = 'Prospecting',
-            CloseDate = Date.today().addDays(5)
-        );
-        insert opp;
+        Opportunity opp = createOpportunity('Mode Rule Opportunity', 'Prospecting', 5);
 
         Opportunity insertedOpp = [
             SELECT Id, StageName, RecordTypeId
@@ -158,12 +154,7 @@ private class ClickSignVisibilityRulesEngineTest {
 
     @IsTest
     static void shouldEvaluateNotEqualOperator() {
-        Opportunity opp = new Opportunity(
-            Name = 'Not Equal Rule Opportunity',
-            StageName = 'Prospecting',
-            CloseDate = Date.today().addDays(5)
-        );
-        insert opp;
+        Opportunity opp = createOpportunity('Not Equal Rule Opportunity', 'Prospecting', 5);
 
         String neqRuleJson = JSON.serialize(new Map<String, Object>{
             'version' => 2,
@@ -185,12 +176,7 @@ private class ClickSignVisibilityRulesEngineTest {
 
     @IsTest
     static void shouldReturnTrueWhenRuleHasNoConditions() {
-        Opportunity opp = new Opportunity(
-            Name = 'No Condition Opportunity',
-            StageName = 'Prospecting',
-            CloseDate = Date.today().addDays(5)
-        );
-        insert opp;
+        Opportunity opp = createOpportunity('No Condition Opportunity', 'Prospecting', 5);
 
         String emptyExpressionRule = '{"version":2,"mode":"expression","logicMode":"ALL","conditions":[]}';
         String emptyLegacyRule = '{"version":1,"logic":"OR","groups":[]}';
