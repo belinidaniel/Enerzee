@@ -78,6 +78,25 @@ private class AdditionalCoverageNewClassesTest {
     }
 
     @IsTest
+    static void taskUtils_nullSafetyChecks() {
+        Task taskWithoutValues = new Task();
+        Task oldTask = new Task(Status = TaskUtils.STATUS_OPEN);
+
+        System.assertEquals(false, TaskUtils.isTaskOpen(null));
+        System.assertEquals(false, TaskUtils.isTaskOpen(taskWithoutValues));
+        System.assertEquals(false, TaskUtils.isTaskConcluded(null));
+        System.assertEquals(false, TaskUtils.isTaskNotStarted(null));
+        System.assertEquals(false, TaskUtils.isTaskBeingConcluded(null, oldTask));
+        System.assertEquals(false, TaskUtils.isTaskBeingConcluded(oldTask, null));
+        System.assertEquals(false, TaskUtils.isSubjectContratarIntegrador(null));
+        System.assertEquals(false, TaskUtils.isSubjectContratarIntegrador(taskWithoutValues));
+        System.assertEquals(false, TaskUtils.isSubjectSolicitarCompraMateriais(null));
+        System.assertEquals(false, TaskUtils.isSubjectSolicitarCompraMateriais(taskWithoutValues));
+        System.assertEquals(false, TaskUtils.isSubjectSolicitarCompraMateriaisComplementares(null));
+        System.assertEquals(false, TaskUtils.isSubjectSolicitarCompraMateriaisComplementares(taskWithoutValues));
+    }
+
+    @IsTest
     static void externalArchiveService_guardClauses() {
         try {
             ExternalArchiveService.uploadExternalArchive(null, null, '', null, null, null);

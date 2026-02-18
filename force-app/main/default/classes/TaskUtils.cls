@@ -62,32 +62,47 @@ public with sharing class TaskUtils {
 
     //  Validação de Status
     public static Boolean isTaskOpen(Task task){
-        return  task.Status.equalsIgnoreCase(STATUS_OPEN);
+        return task != null &&
+            !String.isBlank(task.Status) &&
+            task.Status.equalsIgnoreCase(STATUS_OPEN);
     }
 
     public static Boolean isTaskConcluded(Task task){
-        return  task.Status.equalsIgnoreCase(STATUS_CONCLUIDO);
+        return task != null &&
+            !String.isBlank(task.Status) &&
+            task.Status.equalsIgnoreCase(STATUS_CONCLUIDO);
     }
 
     public static Boolean isTaskNotStarted(Task task){
-        return  task.Status.equalsIgnoreCase(STATUS_NAO_INICIADO);
+        return task != null &&
+            !String.isBlank(task.Status) &&
+            task.Status.equalsIgnoreCase(STATUS_NAO_INICIADO);
     }
 
     public static Boolean isTaskBeingConcluded(Task oldTask, Task newTask){
-        return  !isTaskConcluded(oldTask) && isTaskConcluded(newTask);
+        if(oldTask == null || newTask == null){
+            return false;
+        }
+        return !isTaskConcluded(oldTask) && isTaskConcluded(newTask);
     }
 
 
     //  Validação de Assunto
     public static Boolean isSubjectContratarIntegrador(Task task){
-        return  task.Subject.equalsIgnoreCase(SUBJECT_CONTRATAR_INTEGRADOR);
+        return task != null &&
+            !String.isBlank(task.Subject) &&
+            task.Subject.equalsIgnoreCase(SUBJECT_CONTRATAR_INTEGRADOR);
     }
 
     public static Boolean isSubjectSolicitarCompraMateriais(Task task){
-        return  task.Subject.equalsIgnoreCase(SUBJECT_SOLICITAR_COMPRA_DE_MATERIAIS);
+        return task != null &&
+            !String.isBlank(task.Subject) &&
+            task.Subject.equalsIgnoreCase(SUBJECT_SOLICITAR_COMPRA_DE_MATERIAIS);
     }
     
     public static Boolean isSubjectSolicitarCompraMateriaisComplementares(Task task){
-        return  task.Subject.equalsIgnoreCase(SUBJECT_SOLICITAR_COMPRA_DE_MATERIAIS_COMPLEMENTARES);
+        return task != null &&
+            !String.isBlank(task.Subject) &&
+            task.Subject.equalsIgnoreCase(SUBJECT_SOLICITAR_COMPRA_DE_MATERIAIS_COMPLEMENTARES);
     }
 }
