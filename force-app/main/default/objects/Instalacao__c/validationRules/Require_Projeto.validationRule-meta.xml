@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Projeto</fullName>
+    <active>true</active>
+    <description>Impede instalação sem projeto associado.</description>
+    <errorConditionFormula>ISBLANK(Projeto__c)</errorConditionFormula>
+    <errorMessage>A Instalação deve estar vinculada a um Projeto.</errorMessage>
+</ValidationRule>

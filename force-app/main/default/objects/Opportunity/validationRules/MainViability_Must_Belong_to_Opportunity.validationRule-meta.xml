@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MainViability_Must_Belong_to_Opportunity</fullName>
+    <active>true</active>
+    <description>Garante que a viabilidade principal selecionada pertença a mesma oportunidade.</description>
+    <errorConditionFormula>AND(
+NOT(ISBLANK(MainViability__c)),
+MainViability__r.Opportunity__c &lt;&gt; Id
+)</errorConditionFormula>
+    <errorMessage>A Viabilidade Principal deve pertencer a esta Oportunidade.</errorMessage>
+</ValidationRule>

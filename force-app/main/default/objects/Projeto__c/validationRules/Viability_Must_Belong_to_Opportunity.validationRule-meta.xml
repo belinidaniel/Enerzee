@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Viability_Must_Belong_to_Opportunity</fullName>
+    <active>true</active>
+    <description>Garante consistência entre Oportunidade do projeto e Oportunidade da viabilidade.</description>
+    <errorConditionFormula>AND(
+NOT(ISBLANK(Oportunidade__c)),
+NOT(ISBLANK(Viabilidade__c)),
+Viabilidade__r.Opportunity__c &lt;&gt; Oportunidade__c
+)</errorConditionFormula>
+    <errorMessage>A Viabilidade selecionada deve pertencer à mesma Oportunidade do Projeto.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Oportunidade_Must_Match_Projeto</fullName>
+    <active>true</active>
+    <description>Garante consistência entre Oportunidade da instalação e Oportunidade do projeto.</description>
+    <errorConditionFormula>AND(
+NOT(ISBLANK(Oportunidade__c)),
+NOT(ISBLANK(Projeto__c)),
+Oportunidade__c &lt;&gt; Projeto__r.Oportunidade__c
+)</errorConditionFormula>
+    <errorMessage>A Oportunidade da Instalação deve ser a mesma Oportunidade do Projeto.</errorMessage>
+</ValidationRule>

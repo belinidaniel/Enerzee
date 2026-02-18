@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>ClickSignCreateButtomTemplate</members>
-        <name>LightningComponentBundle</name>
+        <members>Instalacao__c.Oportunidade_Must_Match_Projeto</members>
+        <members>Instalacao__c.Require_Projeto</members>
+        <members>Opportunity.MainViability_Must_Belong_to_Opportunity</members>
+        <members>Projeto__c.Require_Opp_and_Viability</members>
+        <members>Projeto__c.Viability_Must_Belong_to_Opportunity</members>
+        <members>ViabilityStudy__c.Require_Opportunity</members>
+        <name>ValidationRule</name>
+    </types>
+    <types>
+        <members>Instalacao__c.Oportunidade__c</members>
+        <members>Instalacao__c.Projeto__c</members>
+        <members>Opportunity.MainViability__c</members>
+        <members>Projeto__c.Oportunidade__c</members>
+        <members>Projeto__c.Viabilidade__c</members>
+        <members>ViabilityStudy__c.Opportunity__c</members>
+        <name>CustomField</name>
     </types>
     <types>
         <members>ClickSignVisibilityRuleService</members>
@@ -16,5 +30,17 @@
         <members>ClickSignUtils</members>
         <name>ApexClass</name>
     </types>
-    <version>58.0</version>
+    <types>
+        <members>Projeto_Before_Save_Viabilidade_Principal</members>
+        <name>Flow</name>
+    </types>
+    <types>
+        <members>Oportunidades_com_Viabilidade_Projeto_Instalacao</members>
+        <name>ReportType</name>
+    </types>
+    <types>
+        <members>RelatriosViabilidade/Lifecycle_Oportunidade_Viabilidade_Projeto_Instalacao</members>
+        <name>Report</name>
+    </types>
+    <version>64.0</version>
 </Package>
