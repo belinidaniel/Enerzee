@@ -50,7 +50,7 @@
         <inputParameters>
             <name>ccRecipientAddressList</name>
             <value>
-                <stringValue>kaique.mathias@lab065.com</stringValue>
+                <stringValue>daniel.belini@enerzee.com.br</stringValue>
             </value>
         </inputParameters>
         <nameSegment>emailSimple</nameSegment>
@@ -226,7 +226,7 @@
             <targetReference>Waiting_4_minutes</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Draft</status>
     <textTemplates>
         <name>BodyFirstNotification</name>
         <isViewedAsPlainText>false</isViewedAsPlainText>

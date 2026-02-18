@@ -1134,7 +1134,7 @@
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <variables>
         <name>currentItem_Filter_Rating_Hot</name>
         <dataType>SObject</dataType>

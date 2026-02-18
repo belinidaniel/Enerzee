@@ -28,7 +28,7 @@
     <decisions>
         <name>conta_parceiro</name>
         <label>É conta parceiro?</label>
-        <locationX>1766</locationX>
+        <locationX>1898</locationX>
         <locationY>492</locationY>
         <defaultConnectorLabel>Não</defaultConnectorLabel>
         <rules>
@@ -50,7 +50,7 @@
     <decisions>
         <name>Copia_de_Tipo_de_Registro</name>
         <label>Cópia de Tipo de Registro</label>
-        <locationX>1964</locationX>
+        <locationX>2096</locationX>
         <locationY>384</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -86,7 +86,7 @@
     <decisions>
         <name>Deseja_ser_consultor</name>
         <label>Deseja ser consultor?</label>
-        <locationX>710</locationX>
+        <locationX>842</locationX>
         <locationY>1356</locationY>
         <defaultConnectorLabel>Não</defaultConnectorLabel>
         <rules>
@@ -106,9 +106,31 @@
         </rules>
     </decisions>
     <decisions>
+        <name>has_Elaborar_Contrato_do_Integrador</name>
+        <label>has Elaborar Contrato do Integrador</label>
+        <locationX>50</locationX>
+        <locationY>1140</locationY>
+        <defaultConnector>
+            <targetReference>TAREFA_ElaborarContratodoIntegrador</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Outcome_1_of_has_Elaborar_Contrato_do_Integrador</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>get_task_Elaborar_Contrato_do_Integrador</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>Outcome 1 of has Elaborar Contrato do Integrador</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>Status</name>
         <label>Status</label>
-        <locationX>578</locationX>
+        <locationX>644</locationX>
         <locationY>816</locationY>
         <defaultConnectorLabel>Resultado padrão</defaultConnectorLabel>
         <rules>
@@ -160,7 +182,7 @@
     <decisions>
         <name>Tipo_de_Registro</name>
         <label>Tipo de Registro</label>
-        <locationX>974</locationX>
+        <locationX>1073</locationX>
         <locationY>384</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -251,7 +273,7 @@
     <recordCreates>
         <name>Create_contract</name>
         <label>Create contract</label>
-        <locationX>314</locationX>
+        <locationX>446</locationX>
         <locationY>1140</locationY>
         <assignRecordIdToReference>contractID</assignRecordIdToReference>
         <connector>
@@ -281,7 +303,7 @@
         <description>Cria uma conta de parceiro</description>
         <name>Criar_conta</name>
         <label>Criar conta</label>
-        <locationX>314</locationX>
+        <locationX>446</locationX>
         <locationY>924</locationY>
         <assignRecordIdToReference>IDConta</assignRecordIdToReference>
         <connector>
@@ -328,7 +350,7 @@
         <description>Cria um novo integrador</description>
         <name>Criar_integrador</name>
         <label>Criar integrador</label>
-        <locationX>710</locationX>
+        <locationX>842</locationX>
         <locationY>1140</locationY>
         <assignRecordIdToReference>IDIntegrador</assignRecordIdToReference>
         <connector>
@@ -459,7 +481,7 @@
         <description>Cria um novo Lead</description>
         <name>Criar_Lead</name>
         <label>Criar Lead</label>
-        <locationX>578</locationX>
+        <locationX>710</locationX>
         <locationY>1572</locationY>
         <assignRecordIdToReference>IDLead</assignRecordIdToReference>
         <filterLogic>and</filterLogic>
@@ -538,7 +560,7 @@
     <recordCreates>
         <name>Criar_usuario_parceiro</name>
         <label>Criar usuário</label>
-        <locationX>1634</locationX>
+        <locationX>1766</locationX>
         <locationY>600</locationY>
         <assignRecordIdToReference>IDUsuario</assignRecordIdToReference>
         <filterLogic>or</filterLogic>
@@ -648,7 +670,7 @@
     <recordCreates>
         <name>TAREFA_Anexar_Contrato_Integrador</name>
         <label>TAREFA - Anexar Contrato Integrador</label>
-        <locationX>314</locationX>
+        <locationX>446</locationX>
         <locationY>1356</locationY>
         <filterLogic>and</filterLogic>
         <filters>
@@ -711,8 +733,8 @@
     <recordCreates>
         <name>TAREFA_ElaborarContratodoIntegrador</name>
         <label>TAREFA - Elaborar Contrato do Integrador</label>
-        <locationX>50</locationX>
-        <locationY>1032</locationY>
+        <locationX>182</locationX>
+        <locationY>1248</locationY>
         <filterLogic>and</filterLogic>
         <filters>
             <field>Subject</field>
@@ -774,7 +796,7 @@
     <recordLookups>
         <name>Contrato</name>
         <label>Usuário Contrato</label>
-        <locationX>578</locationX>
+        <locationX>644</locationX>
         <locationY>600</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -802,7 +824,7 @@
     <recordLookups>
         <name>Copia_de_Obt_m_RecordType_Qualifica_o_de_Integradores</name>
         <label>Cópia de Obtém RecordType Qualificação de Integradores</label>
-        <locationX>1964</locationX>
+        <locationX>2096</locationX>
         <locationY>276</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -830,7 +852,7 @@
     <recordLookups>
         <name>Fila_de_Contratos</name>
         <label>Fila de Contratos</label>
-        <locationX>578</locationX>
+        <locationX>644</locationX>
         <locationY>492</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -858,7 +880,7 @@
     <recordLookups>
         <name>Fila_de_Coordenacao</name>
         <label>Fila de Coordenação</label>
-        <locationX>578</locationX>
+        <locationX>644</locationX>
         <locationY>708</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -886,7 +908,7 @@
     <recordLookups>
         <name>get_contract</name>
         <label>get contract</label>
-        <locationX>314</locationX>
+        <locationX>446</locationX>
         <locationY>1032</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -914,9 +936,37 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
+        <name>get_task_Elaborar_Contrato_do_Integrador</name>
+        <label>get task Elaborar Contrato do Integrador</label>
+        <locationX>50</locationX>
+        <locationY>1032</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>has_Elaborar_Contrato_do_Integrador</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Subject</field>
+            <operator>Contains</operator>
+            <value>
+                <stringValue>Elaborar Contrato do Integrador </stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>WhatId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Task</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
         <name>RecordType_Qualificacao_de_Consultores</name>
         <label>Obtém RecordType Qualificação de Consultores</label>
-        <locationX>578</locationX>
+        <locationX>710</locationX>
         <locationY>1464</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -944,7 +994,7 @@
     <recordLookups>
         <name>RecordType_Qualificacao_de_Integradores</name>
         <label>Obtém RecordType Qualificação de Integradores</label>
-        <locationX>974</locationX>
+        <locationX>1073</locationX>
         <locationY>276</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -973,7 +1023,7 @@
         <description>Atualiza caso com a conta recém criada</description>
         <name>Atualizar_caso</name>
         <label>Atualizar caso</label>
-        <locationX>314</locationX>
+        <locationX>446</locationX>
         <locationY>1248</locationY>
         <connector>
             <targetReference>TAREFA_Anexar_Contrato_Integrador</targetReference>
@@ -996,7 +1046,7 @@
         <description>Ativa como conta parceiro</description>
         <name>Atualizar_conta</name>
         <label>Atualizar conta</label>
-        <locationX>710</locationX>
+        <locationX>842</locationX>
         <locationY>924</locationY>
         <connector>
             <targetReference>Atualizar_contato</targetReference>
@@ -1021,7 +1071,7 @@
         <description>Atualiza contato com a conta recém criada</description>
         <name>Atualizar_contato</name>
         <label>Atualizar contato</label>
-        <locationX>710</locationX>
+        <locationX>842</locationX>
         <locationY>1032</locationY>
         <connector>
             <targetReference>Criar_integrador</targetReference>
@@ -1048,7 +1098,7 @@
         <locationX>50</locationX>
         <locationY>924</locationY>
         <connector>
-            <targetReference>TAREFA_ElaborarContratodoIntegrador</targetReference>
+            <targetReference>get_task_Elaborar_Contrato_do_Integrador</targetReference>
         </connector>
         <inputAssignments>
             <field>OwnerId</field>
@@ -1061,7 +1111,7 @@
     <recordUpdates>
         <name>C_pia_1_de_Atualiza_Propriet_rio_do_Caso</name>
         <label>Atualiza Proprietário do Caso</label>
-        <locationX>710</locationX>
+        <locationX>842</locationX>
         <locationY>1248</locationY>
         <connector>
             <targetReference>Deseja_ser_consultor</targetReference>
@@ -1075,7 +1125,7 @@
         <inputReference>$Record</inputReference>
     </recordUpdates>
     <start>
-        <locationX>1343</locationX>
+        <locationX>1458</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>RecordType_Qualificacao_de_Integradores</targetReference>

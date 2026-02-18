@@ -25,12 +25,12 @@
     <language>pt_BR</language>
     <messageLayouts>
         <externalTemplates>
-            <accountIdentifier>526540573881145</accountIdentifier>
-            <accountName>Enerzee Cliente</accountName>
+            <accountIdentifier>484573188070302</accountIdentifier>
+            <accountName>Enerzee Geral Externo (8852)</accountName>
             <language>pt_BR</language>
             <status>Pending</status>
             <templateName>iniciar_conversa_por_motivos_diversos</templateName>
-            <templateVersionIdentifier>734830449443698</templateVersionIdentifier>
+            <templateVersionIdentifier>1123961102627855</templateVersionIdentifier>
             <type>Legacy</type>
         </externalTemplates>
         <formatType>ExternalTemplate</formatType>
@@ -79,7 +79,7 @@
                                     <name>textValue</name>
                                     <primitiveValues>
                                         <type>SourceSobjectFormula</type>
-                                        <valueFormula>Owner:User.FirstName +&apos; &apos;+ Owner:User.LastName</valueFormula>
+                                        <valueFormula>Owner:User.FirstName + &quot; &quot; + Owner:User.LastName</valueFormula>
                                         <valueSourceReference>Parameters.MessagingSession</valueSourceReference>
                                     </primitiveValues>
                                 </layoutItems>

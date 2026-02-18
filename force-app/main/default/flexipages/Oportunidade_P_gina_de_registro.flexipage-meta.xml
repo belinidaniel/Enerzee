@@ -178,28 +178,28 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.RevisaoDeProposta__c</fieldItem>
+                <identifier>RecordRevisaoDeProposta_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.MotivoReadequacaoProposta__c</fieldItem>
+                <identifier>RecordMotivoReadequacaoProposta_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.DescricaoMotivoPerda__c</fieldItem>
                 <identifier>RecordDescricaoMotivoPerda_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.ReadequacaoSolicitada__c</fieldItem>
-                <identifier>RecordReadequacaoSolicitada_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.PedidoReadequacao__c</fieldItem>
-                <identifier>RecordPedidoReadequacao_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
