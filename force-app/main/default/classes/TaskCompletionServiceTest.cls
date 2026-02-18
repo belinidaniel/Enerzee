@@ -11,18 +11,12 @@ private class TaskCompletionServiceTest {
 
     @isTest
     static void createsFollowUpForDocumentacaoComercial() {
-        Projeto__c project = (Projeto__c) TestFactory.createSObject(new Projeto__c(), true);
+        Projeto__c project = createProject();
         project.DocumentacaoComercialPendencia__c = 'RG e CPF do responsável';
         project.DocumentacaoCriarAtividadeContratos__c = true;
         update project;
 
-        Task task = new Task(
-            Subject = TaskUtils.SUBJECT_VERIFICAR_DOCUMENTACAO_COMERCIAL,
-            Status = 'Open',
-            WhatId = project.Id,
-            OwnerId = UserInfo.getUserId()
-        );
-        insert task;
+        Task task = getOrCreateOpenTask(project.Id, TaskUtils.SUBJECT_VERIFICAR_DOCUMENTACAO_COMERCIAL);
 
         Test.startTest();
         TaskCompletionService.CompletionResult result = TaskCompletionService.completeWithComment(task.Id, 'Favor anexar documentos.', null, null);
@@ -50,18 +44,12 @@ private class TaskCompletionServiceTest {
 
     @isTest
     static void createsFollowUpForViabilidadeTecnica() {
-        Projeto__c project = (Projeto__c) TestFactory.createSObject(new Projeto__c(), true);
+        Projeto__c project = createProject();
         project.ViabilidadeTecnicaPendencia__c = 'Laudo de carga e memorial descritivo';
         project.CriarAtividadeViabilidadeTecnica__c = true;
         update project;
 
-        Task task = new Task(
-            Subject = TaskUtils.SUBJECT_VERIFICAR_VIABILIDADE_TECNICA,
-            Status = 'Open',
-            WhatId = project.Id,
-            OwnerId = UserInfo.getUserId()
-        );
-        insert task;
+        Task task = getOrCreateOpenTask(project.Id, TaskUtils.SUBJECT_VERIFICAR_VIABILIDADE_TECNICA);
 
         Test.startTest();
         TaskCompletionService.CompletionResult result = TaskCompletionService.completeWithComment(task.Id, 'Pendências de viabilidade.', null, null);
@@ -122,5 +110,38 @@ private class TaskCompletionServiceTest {
                 SObjectType = sObjectType
             );
         }
+    }
+
+    private static Projeto__c createProject() {
+        Account account = (Account) TestFactory.createSObject(new Account(
+            Name = 'Conta Projeto ' + String.valueOf(System.now().getTime())
+        ), true);
+        return (Projeto__c) TestFactory.createSObject(new Projeto__c(
+            Conta__c = account.Id
+        ), true);
+    }
+
+    private static Task getOrCreateOpenTask(Id whatId, String subject) {
+        List<Task> existing = [
+            SELECT Id, Subject, Status, WhatId, OwnerId
+            FROM Task
+            WHERE WhatId = :whatId
+                AND Subject = :subject
+                AND IsClosed = false
+            ORDER BY CreatedDate DESC
+            LIMIT 1
+        ];
+        if (!existing.isEmpty()) {
+            return existing[0];
+        }
+
+        Task task = new Task(
+            Subject = subject,
+            Status = 'Open',
+            WhatId = whatId,
+            OwnerId = UserInfo.getUserId()
+        );
+        insert task;
+        return task;
     }
 }

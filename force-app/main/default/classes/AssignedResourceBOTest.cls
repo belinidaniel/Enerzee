@@ -26,7 +26,13 @@ private class AssignedResourceBOTest {
         );
         insert app;
 
-        ServiceResource sr = new ServiceResource(Name = 'SR Test', IsActive = true);
+        ServiceResource sr = new ServiceResource(
+            Name = 'SR Test',
+            IsActive = true,
+            ResourceType = 'T',
+            OwnerId = UserInfo.getUserId(),
+            RelatedRecordId = UserInfo.getUserId()
+        );
         insert sr;
 
         AssignedResource ar = new AssignedResource(
