@@ -36,6 +36,16 @@
     <columns>
         <field>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r$DataConclusao__c</field>
     </columns>
+    <filter>
+        <criteriaItems>
+            <column>Opportunity$MainViability__c</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>notEqual</operator>
+            <value></value>
+        </criteriaItems>
+        <language>en_US</language>
+    </filter>
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>

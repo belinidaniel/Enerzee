@@ -907,6 +907,7 @@ public class OpportunityBO {
                             Name                = opportunity.Name + ' - ' + projectNameConcatenate,
                             Status__c           = statusByRecordType.get(workProjectType) == 'STATUS_PLANEJAMENTO_DE_PROJETO' ? ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO : ProjetoUtils.STATUS_PLANEJAMENTO,
                             Oportunidade__c     = opportunity.Id,
+                            Viabilidade__c      = opportunity.MainViability__c,
                             Concessionaria__c   = opportunity.ConcessionariaEnergia__c,
                             UFConcessionaria__c = opportunity.UF_Concessionaria__c,
                             Consultor__c        = opportunity.ConsultorOportunidade__c,

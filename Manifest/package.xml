@@ -19,20 +19,10 @@
         <name>CustomField</name>
     </types>
     <types>
-        <members>ClickSignVisibilityRuleService</members>
+
+        <members>OpportunityBO</members>
+        <members>OpportunityTriggerTest</members>
         <name>ApexClass</name>
-    </types>
-    <types>
-        <members>ClickSignTemplateController</members>
-        <name>ApexClass</name>
-    </types>
-    <types>
-        <members>ClickSignUtils</members>
-        <name>ApexClass</name>
-    </types>
-    <types>
-        <members>Projeto_Before_Save_Viabilidade_Principal</members>
-        <name>Flow</name>
     </types>
     <types>
         <members>Oportunidades_com_Viabilidade_Projeto_Instalacao</members>
