@@ -285,6 +285,11 @@ public class OpportunityTriggerTest {
         opportunity.Name = 'Teste 2';
         update opportunity;
 
+        delete [
+            SELECT Id
+            FROM ViabilityStudy__c
+            WHERE Opportunity__c = :opportunity.Id
+        ];
         delete opportunity;
 
         OpportunityTriggerHandler.disableTrigger();
