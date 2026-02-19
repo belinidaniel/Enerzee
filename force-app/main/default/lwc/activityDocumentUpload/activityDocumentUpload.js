@@ -87,7 +87,7 @@ export default class ActivityDocumentUpload extends LightningElement {
             const [attachments, completionStates] = await Promise.all([
                 getAttachments({
                     sobjectId: this.sobjectId,
-                    activitySubject: this.subject
+                    activitySubject: activity
                 }),
                 getDocumentCompletionStates({
                     sobjectId: this.sobjectId,
@@ -110,18 +110,6 @@ export default class ActivityDocumentUpload extends LightningElement {
                     name: item.name,
                     url: item.url || item.downloadUrl
                 }));
-                const deduped = new Map();
-                for (const att of matches) {
-                    const url = att.url || att.downloadUrl;
-                    const key = `${att.name || ''}::${url || ''}`;
-                    if (!deduped.has(key)) {
-                        deduped.set(key, {
-                            name: att.name,
-                            url
-                        });
-                    }
-                }
-                const existingFiles = Array.from(deduped.values());
 
                 const existingCount = existingFiles.length;
                 const completed = completionMap.has(this.normalizeDocKey(row.name));
@@ -274,17 +262,21 @@ export default class ActivityDocumentUpload extends LightningElement {
             }
 
             this.rows = this.rows.map((r) =>
-                r.id == idx
+                r.id == rowId
                     ? {
                           ...r,
                           pendingFiles: [],
-                          status: this.resolveStatus((r.existingCount || 0) + pendingFiles.length, 0),
+                          status: this.resolveStatus(
+                              r.completed,
+                              (r.existingCount || 0) + pendingFiles.length,
+                              0
+                          ),
                           canSend: false,
                           disableSend: true
                       }
                     : r
             );
-            this.clearFileInputForRow(idx);
+            this.clearFileInputForRow(rowId);
             this.showToast('Sucesso', 'Arquivo enviado com sucesso.', 'success');
             this.dispatchEvent(new CustomEvent('uploaded'));
             await this.loadExistingAttachments();
@@ -292,6 +284,13 @@ export default class ActivityDocumentUpload extends LightningElement {
             this.showToast('Erro', this.normalizeError(error), 'error');
         } finally {
             this.loading = false;
+        }
+    }
+
+    clearFileInputForRow(rowId) {
+        const input = this.template.querySelector(`input[data-index="${rowId}"]`);
+        if (input) {
+            input.value = null;
         }
     }
 
@@ -420,6 +419,7 @@ export default class ActivityDocumentUpload extends LightningElement {
                     ? `data:${file.type};base64,`
                     : 'data:application/octet-stream;base64,';
                 resolve({
+                    localId: `${file.name}-${file.size}-${file.lastModified}`,
                     fileName: file.name,
                     base64: prefix + base64Body
                 });
