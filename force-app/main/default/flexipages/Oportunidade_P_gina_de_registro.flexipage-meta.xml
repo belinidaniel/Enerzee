@@ -178,6 +178,16 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.DescricaoMotivoPerda__c</fieldItem>
+                <identifier>RecordDescricaoMotivoPerda_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.RevisaoDeProposta__c</fieldItem>
                 <identifier>RecordRevisaoDeProposta_cField</identifier>
             </fieldInstance>
@@ -190,16 +200,6 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.MotivoReadequacaoProposta__c</fieldItem>
                 <identifier>RecordMotivoReadequacaoProposta_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.DescricaoMotivoPerda__c</fieldItem>
-                <identifier>RecordDescricaoMotivoPerda_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -3827,6 +3827,16 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>proposalPendingPanel</componentName>
+                <identifier>c_proposalPendingPanel</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-5a8f04b1-b8d2-4053-88cc-6d5f62fe3e9d</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>active</name>
                     <value>true</value>
@@ -3869,6 +3879,20 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>flexipage_tab</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-5a8f04b1-b8d2-4053-88cc-6d5f62fe3e9d</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Pendências</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>flexipage_tab_pendencias</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-9a8e9493-6a99-4ad6-be40-f4c3005a32ca</name>

@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 02-19-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class InstalacaoFinalReportService {
     private static final Integer MAX_PER_RUN = 5;
 
@@ -85,10 +92,10 @@ public with sharing class InstalacaoFinalReportService {
         }
 
         List<OpportunityAttachmentLink__c> links = [
-            SELECT Id, SObjectId__c, ContentDocumentId__c, InternalAttachmentURL__c, AttachmentURL__c
+            SELECT Id, SObjectId__c, ActivityName__c, ContentDocumentId__c, InternalAttachmentURL__c, AttachmentURL__c
             FROM OpportunityAttachmentLink__c
             WHERE SObjectId__c IN :instIdStrings
-            AND ActivityName__c = :TaskUtils.SUBJECT_RELATORIO_FINAL_DE_OBRA
+            AND ActivityName__c IN :TaskUtils.getRelatorioExecucaoDeObraSubjects()
         ];
 
         Map<Id, List<OpportunityAttachmentLink__c>> linksByInst = new Map<Id, List<OpportunityAttachmentLink__c>>();
@@ -120,6 +127,7 @@ public with sharing class InstalacaoFinalReportService {
             storeDocOrVersion(instId, idFromAttachment, docIdsByInst, versionIdsByInst);
         }
 
+        Map<Id, String> activityByInst = resolveActivityByInstallation(linksByInst);
         List<ContentVersion> pdfVersions = new List<ContentVersion>();
         Set<Id> successInstIds = new Set<Id>();
 
@@ -129,12 +137,17 @@ public with sharing class InstalacaoFinalReportService {
                 continue;
             }
 
-            Blob pdfBlob = generatePdf(instId);
+            String activityName = activityByInst.get(instId);
+            if (String.isBlank(activityName)) {
+                activityName = TaskUtils.SUBJECT_RELATORIO_DE_EXECUCAO_DE_OBRA;
+            }
+
+            Blob pdfBlob = generatePdf(instId, activityName);
             if (pdfBlob == null) {
                 continue;
             }
 
-            String baseName = 'Relatorio Final de Obra';
+            String baseName = 'Relatorio de Execucao de Obra';
             String timestamp = Datetime.now().format('yyyyMMdd-HHmm');
             Instalacao__c inst = instById.get(instId);
             String title = baseName + ' - ' + timestamp;
@@ -236,14 +249,14 @@ public with sharing class InstalacaoFinalReportService {
         }
     }
 
-    private static Blob generatePdf(Id instalacaoId) {
+    private static Blob generatePdf(Id instalacaoId, String activityName) {
         if (Test.isRunningTest()) {
             return Blob.valueOf('PDF');
         }
 
         PageReference pdfPage = Page.WorkDeliveryReportPdf;
         pdfPage.getParameters().put('sobjectId', String.valueOf(instalacaoId));
-        pdfPage.getParameters().put('activityName', TaskUtils.SUBJECT_RELATORIO_FINAL_DE_OBRA);
+        pdfPage.getParameters().put('activityName', activityName);
 
         try {
             return pdfPage.getContent();
@@ -251,6 +264,25 @@ public with sharing class InstalacaoFinalReportService {
             Utils.createLog('InstalacaoFinalReportService', 'generatePdf', ex, String.valueOf(instalacaoId));
             return null;
         }
+    }
+
+    private static String resolveActivityNameForInstallation(List<OpportunityAttachmentLink__c> links) {
+        if (links == null || links.isEmpty()) {
+            return null;
+        }
+        String fallback;
+        for (OpportunityAttachmentLink__c link : links) {
+            if (link == null || String.isBlank(link.ActivityName__c)) {
+                continue;
+            }
+            if (link.ActivityName__c == TaskUtils.SUBJECT_RELATORIO_DE_EXECUCAO_DE_OBRA) {
+                return link.ActivityName__c;
+            }
+            if (TaskUtils.isRelatorioExecucaoDeObraSubject(link.ActivityName__c) && String.isBlank(fallback)) {
+                fallback = link.ActivityName__c;
+            }
+        }
+        return fallback;
     }
 
     private static Id parseId(String value) {
@@ -303,5 +335,37 @@ public with sharing class InstalacaoFinalReportService {
             }
             docIdsByInst.get(instId).add(parsedId);
         }
+    }
+
+    private static Map<Id, String> resolveActivityByInstallation(Map<Id, List<OpportunityAttachmentLink__c>> linksByInst) {
+        Map<Id, String> result = new Map<Id, String>();
+        if (linksByInst == null || linksByInst.isEmpty()) {
+            return result;
+        }
+
+        for (Id instId : linksByInst.keySet()) {
+            List<OpportunityAttachmentLink__c> links = linksByInst.get(instId);
+            if (links == null || links.isEmpty()) {
+                continue;
+            }
+
+            String resolved = null;
+            for (OpportunityAttachmentLink__c link : links) {
+                if (link != null && TaskUtils.isRelatorioExecucaoDeObraSubject(link.ActivityName__c)) {
+                    if (link.ActivityName__c == TaskUtils.SUBJECT_RELATORIO_DE_EXECUCAO_DE_OBRA) {
+                        resolved = link.ActivityName__c;
+                        break;
+                    }
+                    if (resolved == null) {
+                        resolved = link.ActivityName__c;
+                    }
+                }
+            }
+            if (resolved != null) {
+                result.put(instId, resolved);
+            }
+        }
+
+        return result;
     }
 }

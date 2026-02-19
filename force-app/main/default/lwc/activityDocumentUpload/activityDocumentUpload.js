@@ -3,14 +3,17 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getRequiredDocuments from '@salesforce/apex/ActivityDocumentController.getRequiredDocuments';
 import uploadExternalArchive from '@salesforce/apex/ExternalArchiveService.uploadExternalArchive';
 import getAttachments from '@salesforce/apex/ActivityDocumentController.getAttachments';
+import deleteAttachment from '@salesforce/apex/ActivityDocumentController.deleteAttachment';
+import getDocumentCompletionStates from '@salesforce/apex/ActivityDocumentController.getDocumentCompletionStates';
+import setDocumentCompleted from '@salesforce/apex/ActivityDocumentController.setDocumentCompleted';
 import getTaskContext from '@salesforce/apex/ActivityDocumentController.getTaskContext';
 
 export default class ActivityDocumentUpload extends LightningElement {
-    @api recordId; // Task Id
-    @api activitySubject; // override opcional
-    @api activityName; // override opcional
-    @track sobjectId; // projeto/instalacao/viabilidade
-    @track opportunityId; // para IdProposal
+    @api recordId;
+    @api activitySubject;
+    @api activityName;
+    @track sobjectId;
+    @track opportunityId;
     @track subject;
 
     @track rows = [];
@@ -37,10 +40,6 @@ export default class ActivityDocumentUpload extends LightningElement {
         return this.isRelatorioFinalSubject(this.activityName || this.subject);
     }
 
-    get maxFilesPerRow() {
-        return this.isRelatorioFinalDeObra ? null : 1;
-    }
-
     get acceptedFormats() {
         return this.isRelatorioFinalDeObra ? 'image/png,image/jpeg' : 'application/pdf';
     }
@@ -56,19 +55,20 @@ export default class ActivityDocumentUpload extends LightningElement {
         this.loading = true;
         try {
             const docs = await getRequiredDocuments({ activitySubject: this.subject });
-            this.rows = (docs || []).map((d, index) => ({
+            this.rows = (docs || []).map((doc, index) => ({
                 id: index,
-                name: d.name,
-                observation: d.observation,
+                name: doc.name,
+                observation: doc.observation,
                 status: 'Pendente',
+                completed: false,
+                canComplete: false,
+                disableComplete: true,
                 existingFiles: [],
                 existingCount: 0,
                 pendingFiles: [],
                 canUpload: true,
                 canSend: false,
-                disableSend: true,
-                maxFiles: this.maxFilesPerRow,
-                remainingSlots: null
+                disableSend: true
             }));
         } catch (error) {
             this.showToast('Erro', this.normalizeError(error), 'error');
@@ -78,46 +78,73 @@ export default class ActivityDocumentUpload extends LightningElement {
     }
 
     async loadExistingAttachments() {
-        if (!this.sobjectId) return;
-        try {
-            const attachments = await getAttachments({
-                sobjectId: this.sobjectId,
-                activitySubject: this.subject
-            });
-            this.existingAttachments = attachments || [];
-            const isRelatorio = this.isRelatorioFinalDeObra;
+        if (!this.sobjectId) {
+            return;
+        }
 
-            this.rows = (this.rows || []).map((r) => {
+        try {
+            const activity = this.activityName || this.subject;
+            const [attachments, completionStates] = await Promise.all([
+                getAttachments({
+                    sobjectId: this.sobjectId,
+                    activitySubject: this.subject
+                }),
+                getDocumentCompletionStates({
+                    sobjectId: this.sobjectId,
+                    activitySubject: activity
+                })
+            ]);
+
+            this.existingAttachments = attachments || [];
+            const completionMap = this.buildCompletionMap(completionStates || []);
+
+            this.rows = (this.rows || []).map((row) => {
                 const matches = this.existingAttachments.filter(
-                    (att) =>
-                        (att.docRequiredName && att.docRequiredName === r.name) ||
-                        att.name === r.name
+                    (item) =>
+                        (item.docRequiredName && this.normalizeDocKey(item.docRequiredName) === this.normalizeDocKey(row.name)) ||
+                        this.normalizeDocKey(item.name) === this.normalizeDocKey(row.name)
                 );
 
-                const existingFiles = matches.map((att) => ({
-                    name: att.name,
-                    url: att.url || att.downloadUrl
+                const existingFiles = matches.map((item) => ({
+                    id: item.id,
+                    name: item.name,
+                    url: item.url || item.downloadUrl
                 }));
+                const deduped = new Map();
+                for (const att of matches) {
+                    const url = att.url || att.downloadUrl;
+                    const key = `${att.name || ''}::${url || ''}`;
+                    if (!deduped.has(key)) {
+                        deduped.set(key, {
+                            name: att.name,
+                            url
+                        });
+                    }
+                }
+                const existingFiles = Array.from(deduped.values());
 
                 const existingCount = existingFiles.length;
-                const canUpload = isRelatorio ? true : existingCount === 0;
-                const remainingSlots = null;
-                const canSend = (r.pendingFiles || []).length > 0;
+                const completed = completionMap.has(this.normalizeDocKey(row.name));
+                const pendingFiles = completed ? [] : (row.pendingFiles || []);
+                const canComplete = existingCount > 0;
+                const canUpload = !completed && (this.isRelatorioFinalDeObra ? true : existingCount === 0);
+                const canSend = !completed && pendingFiles.length > 0;
 
                 return {
-                    ...r,
-                    status: existingCount > 0 ? 'Enviado' : r.status,
+                    ...row,
+                    completed,
+                    canComplete,
+                    disableComplete: !canComplete,
                     existingFiles,
                     existingCount,
-                    pendingFiles: r.pendingFiles || [],
+                    pendingFiles,
                     canUpload,
                     canSend,
                     disableSend: !canSend,
-                    remainingSlots
+                    status: this.resolveStatus(completed, existingCount, pendingFiles.length)
                 };
             });
         } catch (error) {
-            // nao bloqueia UI
             // eslint-disable-next-line no-console
             console.error('Erro ao carregar anexos existentes', error);
         }
@@ -142,9 +169,11 @@ export default class ActivityDocumentUpload extends LightningElement {
     }
 
     async handleFileChange(event) {
-        const idx = event.target.dataset.index;
-        const row = this.rows.find((r) => r.id == idx);
-        if (!row) return;
+        const rowId = event.target.dataset.index;
+        const row = this.rows.find((item) => item.id == rowId);
+        if (!row || row.completed) {
+            return;
+        }
 
         const files = Array.from(event.target.files || []);
         if (!files.length) {
@@ -161,16 +190,16 @@ export default class ActivityDocumentUpload extends LightningElement {
 
             try {
                 const payloads = await Promise.all(files.map((file) => this.readFile(file)));
-                this.rows = this.rows.map((r) =>
-                    r.id == idx
+                this.rows = this.rows.map((item) =>
+                    item.id == rowId
                         ? {
-                              ...r,
-                          pendingFiles: payloads,
-                          status: 'Pronto para enviar',
-                          canSend: payloads.length > 0,
-                          disableSend: payloads.length === 0
-                      }
-                        : r
+                              ...item,
+                              pendingFiles: payloads,
+                              canSend: payloads.length > 0,
+                              disableSend: payloads.length === 0,
+                              status: this.resolveStatus(false, item.existingCount || 0, payloads.length)
+                          }
+                        : item
                 );
             } catch (error) {
                 this.showToast('Erro', 'Falha ao ler a imagem.', 'error');
@@ -185,22 +214,22 @@ export default class ActivityDocumentUpload extends LightningElement {
             (file.name && file.name.toLowerCase().endsWith('.pdf'));
         if (!isPdf) {
             this.showToast('Aviso', 'Apenas arquivos PDF sao aceitos para este envio.', 'warning');
-            event.target.value = null; // limpa selecao
+            event.target.value = null;
             return;
         }
 
         try {
             const payload = await this.readFile(file);
-            this.rows = this.rows.map((r) =>
-                r.id == idx
+            this.rows = this.rows.map((item) =>
+                item.id == rowId
                     ? {
-                          ...r,
+                          ...item,
                           pendingFiles: [payload],
-                          status: 'Pronto para enviar',
                           canSend: true,
-                          disableSend: false
+                          disableSend: false,
+                          status: this.resolveStatus(false, item.existingCount || 0, 1)
                       }
-                    : r
+                    : item
             );
         } catch (error) {
             this.showToast('Erro', 'Falha ao ler o arquivo.', 'error');
@@ -209,12 +238,11 @@ export default class ActivityDocumentUpload extends LightningElement {
     }
 
     async handleUpload(event) {
-        const idx = event.target.dataset.index;
-        const row = this.rows.find((r) => r.id == idx);
+        const rowId = event.target.dataset.index;
+        const row = this.rows.find((item) => item.id == rowId);
         if (!row) {
             return;
         }
-
         if (!this.opportunityId) {
             this.showToast('Erro', 'opportunityId e obrigatorio para enviar o arquivo.', 'error');
             return;
@@ -222,10 +250,10 @@ export default class ActivityDocumentUpload extends LightningElement {
 
         const pendingFiles = row.pendingFiles || [];
         if (!pendingFiles.length) {
-            const msg = this.isRelatorioFinalDeObra
+            const message = this.isRelatorioFinalDeObra
                 ? 'Selecione ao menos 1 imagem para enviar.'
                 : 'Selecione um arquivo antes de enviar.';
-            this.showToast('Aviso', msg, 'warning');
+            this.showToast('Aviso', message, 'warning');
             return;
         }
 
@@ -250,16 +278,69 @@ export default class ActivityDocumentUpload extends LightningElement {
                     ? {
                           ...r,
                           pendingFiles: [],
-                          status: 'Enviado',
+                          status: this.resolveStatus((r.existingCount || 0) + pendingFiles.length, 0),
                           canSend: false,
                           disableSend: true
                       }
                     : r
             );
+            this.clearFileInputForRow(idx);
             this.showToast('Sucesso', 'Arquivo enviado com sucesso.', 'success');
             this.dispatchEvent(new CustomEvent('uploaded'));
             await this.loadExistingAttachments();
         } catch (error) {
+            this.showToast('Erro', this.normalizeError(error), 'error');
+        } finally {
+            this.loading = false;
+        }
+    }
+
+    async handleRemove(event) {
+        const attachmentId = event.currentTarget?.dataset?.attachmentId;
+        if (!attachmentId) {
+            return;
+        }
+
+        this.loading = true;
+        try {
+            await deleteAttachment({ attachmentId });
+            this.showToast('Sucesso', 'Arquivo removido com sucesso.', 'success');
+            this.dispatchEvent(new CustomEvent('uploaded'));
+            await this.loadExistingAttachments();
+        } catch (error) {
+            this.showToast('Erro', this.normalizeError(error), 'error');
+        } finally {
+            this.loading = false;
+        }
+    }
+
+    async handleToggleCompleted(event) {
+        const rowId = event.target.dataset.index;
+        const markCompleted = event.target.checked;
+        const row = this.rows.find((item) => item.id == rowId);
+        if (!row) {
+            return;
+        }
+
+        if (markCompleted && !row.canComplete) {
+            event.target.checked = false;
+            this.showToast('Aviso', 'Anexe evidências antes de concluir esta atividade.', 'warning');
+            return;
+        }
+
+        this.loading = true;
+        try {
+            await setDocumentCompleted({
+                sobjectId: this.sobjectId,
+                activitySubject: this.activityName || this.subject,
+                docRequiredName: row.name,
+                completed: markCompleted
+            });
+            const message = markCompleted ? 'Atividade concluída.' : 'Conclusão removida.';
+            this.showToast('Sucesso', message, 'success');
+            await this.loadExistingAttachments();
+        } catch (error) {
+            event.target.checked = row.completed;
             this.showToast('Erro', this.normalizeError(error), 'error');
         } finally {
             this.loading = false;
@@ -271,11 +352,41 @@ export default class ActivityDocumentUpload extends LightningElement {
     }
 
     isRelatorioFinalSubject(value) {
-        return this.normalizeSubject(value) === 'RELATORIO FINAL DE OBRA';
+        const normalized = this.normalizeSubject(value);
+        return normalized === 'RELATORIO DE EXECUCAO DE OBRA' || normalized === 'RELATORIO FINAL DE OBRA';
+    }
+
+    buildCompletionMap(states) {
+        const map = new Set();
+        for (const state of states || []) {
+            if (state && state.completed && state.docRequiredName) {
+                map.add(this.normalizeDocKey(state.docRequiredName));
+            }
+        }
+        return map;
+    }
+
+    resolveStatus(completed, existingCount, pendingCount) {
+        if (completed) {
+            return 'Concluído';
+        }
+        if (pendingCount > 0) {
+            return 'Pronto para enviar';
+        }
+        if (existingCount > 0) {
+            return 'Enviado';
+        }
+        return 'Pendente';
+    }
+
+    normalizeDocKey(value) {
+        return this.normalizeSubject(value);
     }
 
     normalizeSubject(value) {
-        if (!value) return '';
+        if (!value) {
+            return '';
+        }
         try {
             return value
                 .toString()
@@ -323,10 +434,13 @@ export default class ActivityDocumentUpload extends LightningElement {
     }
 
     normalizeError(error) {
-        if (!error) return 'Erro desconhecido';
+        if (!error) {
+            return 'Erro desconhecido';
+        }
         if (Array.isArray(error.body)) {
-            return error.body.map((e) => e.message).join(', ');
-        } else if (error.body && error.body.message) {
+            return error.body.map((item) => item.message).join(', ');
+        }
+        if (error.body && error.body.message) {
             return error.body.message;
         }
         return error.message || JSON.stringify(error);
