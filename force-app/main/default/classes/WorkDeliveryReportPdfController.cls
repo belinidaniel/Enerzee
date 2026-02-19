@@ -6,6 +6,7 @@
  * @last modified by  : Daniel Belini
 **/
 public with sharing class WorkDeliveryReportPdfController {
+    private static final Integer IMAGES_PER_PAGE = 2;
     private static final List<String> COVER_NAMES = new List<String>{
         'Relatorio de entrega de obra',
         'Relatório de entrega de obra'
@@ -252,7 +253,7 @@ public with sharing class WorkDeliveryReportPdfController {
         if (String.isNotBlank(activityName)) {
             return 'Relatorio - ' + activityName;
         }
-        return 'Relatorio Final de Obra';
+        return 'Relatorio de Execucao de Obra';
     }
 
     private void loadCoverImages() {
@@ -495,11 +496,11 @@ public with sharing class WorkDeliveryReportPdfController {
         if (String.isBlank(firstActivityTitle)) {
             firstActivityTitle = title;
         }
-        Integer total = (Integer) Math.ceil(images.size() / 3.0);
+        Integer total = (Integer) Math.ceil(images.size() / (Decimal) IMAGES_PER_PAGE);
         Integer pageIndex = 0;
-        for (Integer i = 0; i < images.size(); i += 3) {
+        for (Integer i = 0; i < images.size(); i += IMAGES_PER_PAGE) {
             pageIndex++;
-            Integer endIndex = Math.min(i + 3, images.size());
+            Integer endIndex = Math.min(i + IMAGES_PER_PAGE, images.size());
             List<String> slice = new List<String>();
             for (Integer j = i; j < endIndex; j++) {
                 slice.add(images[j]);
@@ -515,7 +516,7 @@ public with sharing class WorkDeliveryReportPdfController {
             page.templateType = page.imageCount;
             page.image1 = slice.size() > 0 ? slice[0] : null;
             page.image2 = slice.size() > 1 ? slice[1] : null;
-            page.image3 = slice.size() > 2 ? slice[2] : null;
+            page.image3 = null;
             pages.add(page);
         }
     }
@@ -526,12 +527,25 @@ public with sharing class WorkDeliveryReportPdfController {
             return ordered;
         }
 
-        Set<String> seen = new Set<String>();
+        List<String> subjects = TaskUtils.isRelatorioExecucaoDeObraSubject(subject)
+            ? TaskUtils.getRelatorioExecucaoDeObraSubjects()
+            : new List<String>{subject};
+
+        Map<String, ActivityRequiredDocument__mdt> bySubject = new Map<String, ActivityRequiredDocument__mdt>();
         for (ActivityRequiredDocument__mdt rec : [
-            SELECT RequiredFiles__c
+            SELECT ActivitySubject__c, RequiredFiles__c
             FROM ActivityRequiredDocument__mdt
-            WHERE ActivitySubject__c = :subject
+            WHERE ActivitySubject__c IN :subjects
         ]) {
+            bySubject.put(rec.ActivitySubject__c, rec);
+        }
+
+        Set<String> seen = new Set<String>();
+        for (String subjectName : subjects) {
+            ActivityRequiredDocument__mdt rec = bySubject.get(subjectName);
+            if (rec == null) {
+                continue;
+            }
             if (String.isBlank(rec.RequiredFiles__c)) {
                 continue;
             }

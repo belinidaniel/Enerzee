@@ -126,10 +126,7 @@ public with sharing class ExternalArchiveService {
     }
 
     private static Boolean isRelatorioFinalDeObra(String activityName) {
-        if (String.isBlank(activityName)) {
-            return false;
-        }
-        return activityName.trim().equalsIgnoreCase(TaskUtils.SUBJECT_RELATORIO_FINAL_DE_OBRA);
+        return TaskUtils.isRelatorioExecucaoDeObraSubject(activityName);
     }
 
     private static Blob decodeBase64File(String base64File) {
