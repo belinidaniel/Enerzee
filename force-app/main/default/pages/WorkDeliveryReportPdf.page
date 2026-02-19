@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 02-10-2026
+  @last modified on  : 02-19-2026
   @last modified by  : Daniel Belini
 -->
 <apex:page controller="WorkDeliveryReportPdfController"
@@ -14,7 +14,7 @@
     renderAs="PDF"
     title="{!documentTitle}">
     <head>
-        <style type="text/css" media="print">
+        <style type="text/css">
             @page {
                 size: A4 landscape;
                 margin: 0;
@@ -97,7 +97,7 @@
                     <div style="font-size:20pt;font-weight:700;color:#1e2a5a;">Imagens para Aprovação da Finalização da Obra</div>
                     <div style="font-size:17pt;font-weight:600;color:#4b5563;">{!page.displayTitle}</div>
                 </div>
-                <div class="content-body" style="position:absolute;left:16mm;right:16mm;top:40mm;bottom:12mm;display:flex;align-items:center;justify-content:center;">
+                <div class="content-body" style="position:absolute;left:16mm;right:16mm;top:40mm;bottom:12mm;">
                     <apex:outputPanel rendered="{!page.templateType == 1}" layout="none">
                         <table class="page-image-grid" style="max-width:70%;">
                             <tr>

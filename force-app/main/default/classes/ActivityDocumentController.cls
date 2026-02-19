@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 02-19-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class ActivityDocumentController {
 
     public class RequiredDoc {
@@ -81,6 +88,7 @@ public with sharing class ActivityDocumentController {
         List<String> subjects = resolveActivitySubjects(activitySubject);
         List<OpportunityAttachmentLink__c> links;
         if (subjects.isEmpty()) {
+        if (subjects.isEmpty()) {
             links = [
                 SELECT Id, AttachmentDescription__c, ActivityName__c, AttachmentURL__c,
                     InternalAttachmentURL__c, CreatedDate, DocRequiredName__c
@@ -109,10 +117,8 @@ public with sharing class ActivityDocumentController {
             item.activityName = link.ActivityName__c;
             item.docRequiredName = link.DocRequiredName__c;
             item.createdDate = link.CreatedDate;
-            item.url = String.isNotBlank(link.InternalAttachmentURL__c)
-                ? link.InternalAttachmentURL__c
-                : link.AttachmentURL__c;
-            item.downloadUrl = item.url;
+            item.url = link.AttachmentURL__c;
+            item.downloadUrl = link.AttachmentURL__c;
             results.add(item);
         }
         return results;

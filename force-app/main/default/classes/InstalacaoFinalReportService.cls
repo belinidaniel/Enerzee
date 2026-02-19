@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 02-19-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class InstalacaoFinalReportService {
     private static final Integer MAX_PER_RUN = 5;
 
@@ -140,7 +147,7 @@ public with sharing class InstalacaoFinalReportService {
                 continue;
             }
 
-            String baseName = 'Relatorio Final de Obra';
+            String baseName = 'Relatorio de Execucao de Obra';
             String timestamp = Datetime.now().format('yyyyMMdd-HHmm');
             Instalacao__c inst = instById.get(instId);
             String title = baseName + ' - ' + timestamp;
@@ -257,6 +264,25 @@ public with sharing class InstalacaoFinalReportService {
             Utils.createLog('InstalacaoFinalReportService', 'generatePdf', ex, String.valueOf(instalacaoId));
             return null;
         }
+    }
+
+    private static String resolveActivityNameForInstallation(List<OpportunityAttachmentLink__c> links) {
+        if (links == null || links.isEmpty()) {
+            return null;
+        }
+        String fallback;
+        for (OpportunityAttachmentLink__c link : links) {
+            if (link == null || String.isBlank(link.ActivityName__c)) {
+                continue;
+            }
+            if (link.ActivityName__c == TaskUtils.SUBJECT_RELATORIO_DE_EXECUCAO_DE_OBRA) {
+                return link.ActivityName__c;
+            }
+            if (TaskUtils.isRelatorioExecucaoDeObraSubject(link.ActivityName__c) && String.isBlank(fallback)) {
+                fallback = link.ActivityName__c;
+            }
+        }
+        return fallback;
     }
 
     private static Id parseId(String value) {

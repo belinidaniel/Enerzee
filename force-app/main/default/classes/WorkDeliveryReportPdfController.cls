@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 02-10-2026
+ * @last modified on  : 02-19-2026
  * @last modified by  : Daniel Belini
 **/
 public with sharing class WorkDeliveryReportPdfController {
@@ -356,12 +356,16 @@ public with sharing class WorkDeliveryReportPdfController {
             return;
         }
 
+        List<String> subjects = TaskUtils.isRelatorioExecucaoDeObraSubject(activityName)
+            ? TaskUtils.getRelatorioExecucaoDeObraSubjects()
+            : new List<String>{activityName};
+
         List<OpportunityAttachmentLink__c> links = [
             SELECT ContentDocumentId__c, AttachmentURL__c, InternalAttachmentURL__c,
                 DocRequiredName__c, AttachmentDescription__c, CreatedDate
             FROM OpportunityAttachmentLink__c
             WHERE SObjectId__c = :String.valueOf(sobjectId)
-            AND ActivityName__c = :activityName
+            AND ActivityName__c IN :subjects
             ORDER BY CreatedDate ASC
         ];
 

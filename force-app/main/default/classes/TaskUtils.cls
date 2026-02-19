@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 02-19-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class TaskUtils {
     //  Status
     public static String STATUS_OPEN         = 'Open';

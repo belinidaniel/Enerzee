@@ -40,6 +40,10 @@
                 <field>Loss_Reason__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Edit</behavior>
+                <field>DescricaoMotivoPerda__c</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Required</behavior>
                 <field>IdVirtualOffice__c</field>
             </layoutItems>
