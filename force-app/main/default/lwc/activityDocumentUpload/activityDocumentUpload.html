@@ -52,8 +52,9 @@
 
                                     <template if:true={row.pendingFiles.length}>
                                         <div class="file-list pending">
+                                            <div class="pending-label">Selecionados para envio:</div>
                                             <template for:each={row.pendingFiles} for:item="file">
-                                                <div key={file.fileName} class="file-item">
+                                                <div key={file.localId} class="file-item">
                                                     {file.fileName}
                                                 </div>
                                             </template>
@@ -62,14 +63,13 @@
 
                                     <template if:true={row.canUpload}>
                                         <input
+                                            class="file-input"
                                             type="file"
                                             accept={acceptedFormats}
                                             multiple={allowMultipleFiles}
                                             data-index={row.id}
                                             onchange={handleFileChange}
                                         />
-                                    </template>
-                                    <template if:false={row.canUpload}>
                                     </template>
                                 </td>
                                 <td>

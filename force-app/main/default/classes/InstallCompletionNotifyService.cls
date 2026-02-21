@@ -26,8 +26,8 @@ public with sharing class InstallCompletionNotifyService {
         }
 
         Map<Id, Instalacao__c> installationsById = new Map<Id, Instalacao__c>([
-            SELECT Id, Name, Status__c, ClienteConta__r.Name,
-                Oportunidade__r.Name, Oportunidade__r.NumeroInstalacao__c
+            SELECT Id, Name, Status__c, ClienteConta__r.Name, Oportunidade__c,
+                Oportunidade__r.Name, Oportunidade__r.NumeroInstalacao__c, Oportunidade__r.Account.Name
             FROM Instalacao__c
             WHERE Id IN :installationIds
         ]);
@@ -43,6 +43,7 @@ public with sharing class InstallCompletionNotifyService {
             message.setToAddresses(config.recipientEmails);
             message.setSubject(buildSubject(installation));
             message.setHtmlBody(buildBody(installation));
+            message.setUseSignature(false);
             message.setSaveAsActivity(false);
             emails.add(message);
         }
@@ -138,9 +139,11 @@ public with sharing class InstallCompletionNotifyService {
     }
 
     private static String buildBody(Instalacao__c installation) {
-        String cliente = installation.ClienteConta__r != null ? installation.ClienteConta__r.Name : null;
-        if (String.isBlank(cliente) && installation.Oportunidade__r != null && String.isNotBlank(installation.Oportunidade__r.Name)) {
-            cliente = installation.Oportunidade__r.Name;
+        String accountName = (installation.Oportunidade__r != null && installation.Oportunidade__r.Account != null)
+            ? installation.Oportunidade__r.Account.Name
+            : null;
+        if (String.isBlank(accountName) && installation.ClienteConta__r != null) {
+            accountName = installation.ClienteConta__r.Name;
         }
 
         String installationLabel = String.isNotBlank(installation.Oportunidade__r != null ? installation.Oportunidade__r.NumeroInstalacao__c : null)
@@ -150,14 +153,25 @@ public with sharing class InstallCompletionNotifyService {
             installationLabel = String.valueOf(installation.Id);
         }
 
+        String opportunityName = installation.Oportunidade__r != null ? installation.Oportunidade__r.Name : null;
         String status = String.isNotBlank(installation.Status__c) ? installation.Status__c : '-';
         String nowValue = Datetime.now().format('dd/MM/yyyy HH:mm');
         String recordUrl = URL.getOrgDomainUrl().toExternalForm() + '/' + installation.Id;
+        String opportunityUrl = installation.Oportunidade__c != null
+            ? URL.getOrgDomainUrl().toExternalForm() + '/' + installation.Oportunidade__c
+            : null;
 
         return ''
             + '<p>Instalação concluída.</p>'
             + '<p><strong>Instalação:</strong> ' + escapeHtml(installationLabel) + '</p>'
-            + '<p><strong>Cliente:</strong> ' + escapeHtml(String.isNotBlank(cliente) ? cliente : '-') + '</p>'
+            + '<p><strong>Conta:</strong> ' + escapeHtml(String.isNotBlank(accountName) ? accountName : '-') + '</p>'
+            + '<p><strong>Oportunidade:</strong> '
+            + (
+                String.isNotBlank(opportunityName) && String.isNotBlank(opportunityUrl)
+                    ? '<a href="' + escapeHtml(opportunityUrl) + '">' + escapeHtml(opportunityName) + '</a>'
+                    : escapeHtml(String.isNotBlank(opportunityName) ? opportunityName : '-')
+            )
+            + '</p>'
             + '<p><strong>Status:</strong> ' + escapeHtml(status) + '</p>'
             + '<p><strong>Data/Hora:</strong> ' + escapeHtml(nowValue) + '</p>'
             + '<p><strong>Registro:</strong> <a href="' + escapeHtml(recordUrl) + '">' + escapeHtml(recordUrl) + '</a></p>';

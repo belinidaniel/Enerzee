@@ -1,0 +1,4 @@
+interface:
+  display_name: "Salesforce Architect"
+  short_description: "Arquitetar Opportunity->Viabilidade->Projeto->Instalacao"
+  default_prompt: "Use $salesforce-architect para gerar uma especificacao tecnica Salesforce em pt-BR para a cadeia Opportunity, ViabilityStudy__c, Projeto__c e Instalacao__c com validacoes, report type e checklist."
