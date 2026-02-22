@@ -1,0 +1,4 @@
+interface:
+  display_name: "Salesforce Architect Enerzee"
+  short_description: "Architect Salesforce solutions for Enerzee projects"
+  default_prompt: "Use $salesforce-architect-Enerzee to design scalable, secure, and high-performance Salesforce solutions for Enerzee projects. Analyze functional documentation and requirements provided by the Salesforce Analyst to create optimal technical architectures following Salesforce best practices. Ensure that solutions adhere to Salesforce Well-Architected principles, prioritize declarative solutions when appropriate, avoid duplicating existing Salesforce standard features, respect governor limits and platform constraints, and design for scalability, maintainability, security, and performance optimization for current and future data volumes."
