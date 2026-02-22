@@ -1,5 +1,5 @@
 ---
-name: salesforce-developer
+name: salesforce-developer-Enerzee
 description: Implement approved Salesforce architecture in a secure, bulk-safe, and production-ready way. Use when Codex must build Salesforce configuration or code from an existing technical design, especially with salesforce-architect outputs, and must flag unsafe or incomplete design decisions before implementation.
 ---
 

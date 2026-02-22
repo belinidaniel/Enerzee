@@ -1,0 +1,4 @@
+interface:
+  display_name: "Salesforce Analyst Enerzee"
+  short_description: "Turn business needs into Salesforce-ready requirements"
+  default_prompt: "Gather, clarify, and structure Salesforce functional requirements with business value, data traceability, and measurable acceptance criteria for architect handoff."
