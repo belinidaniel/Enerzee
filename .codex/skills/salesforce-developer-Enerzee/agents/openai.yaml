@@ -1,0 +1,4 @@
+interface:
+  display_name: "Salesforce Developer Enerzee"
+  short_description: "Implement Salesforce designs safely and at scale"
+  default_prompt: "Implement approved Salesforce architecture with secure, bulk-safe, production-ready Salesforce development and explicit risk escalation."
