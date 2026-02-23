@@ -7,6 +7,7 @@
 **/
 public without sharing class KitInstalacaoBO {
     private static final String CLASS_NAME = 'KitInstalacaoBO';
+    private class SendKitUpdateException extends Exception {}
 
     public static void sendKitRecordsToSAP(List<Kit_Instalacao__c> newRecordList){
         if(newRecordList == null || newRecordList.isEmpty()){
@@ -176,7 +177,12 @@ public without sharing class KitInstalacaoBO {
                         Id relatedKitId = oppIdToKitIdMap.get(opp.Id);
                         opportunitiesToUpdate.add(createOpportunityForUpdate(opp, response, relatedKitId));
                     } else {
-                        Utils.createLog(CLASS_NAME, 'SendKitUpdate - enviarKit sem resposta ' + opp.Id, new AuraHandledException('IntegracaoNivelloContrato.enviarKit retornou nulo.'), opp.Id);
+                        Utils.createLog(
+                            CLASS_NAME,
+                            'SendKitUpdate - enviarKit sem resposta ' + opp.Id,
+                            new SendKitUpdateException('IntegracaoNivelloContrato.enviarKit retornou nulo.'),
+                            opp.Id
+                        );
                     }
                 } catch(Exception e){
                     Utils.createLog(CLASS_NAME, 'SendKitUpdate - opp ' + opp.Id, e, opp.Id);
@@ -185,15 +191,18 @@ public without sharing class KitInstalacaoBO {
 
             if (!opportunitiesToUpdate.isEmpty()) {
                 OpportunityTriggerHandler.disableTrigger();
-                update opportunitiesToUpdate;
-                OpportunityTriggerHandler.enableTrigger();
+                try {
+                    update opportunitiesToUpdate;
+                } finally {
+                    OpportunityTriggerHandler.enableTrigger();
+                }
                 System.debug(opportunitiesToUpdate.size() + ' opportunities updated successfully.');
             } else {
                 System.debug('No opportunities were updated.');
             }
         } catch(Exception e){
             Utils.createLog(CLASS_NAME, 'SendKitUpdate', e);
-            throw e;
+            // @future should log and finish without rethrow to avoid unhandled async exception e-mails.
         }
     }
 

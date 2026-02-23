@@ -31,7 +31,9 @@ export default class HierarchicalFieldPicker extends LightningElement {
     @api emailField;
     @api labelEmailField;
     @api labelRoleField;
+    @api roleValueField;
     @track emailFields = [];
+    @track selectedRoleField = '';
 
     labels = {
         selectField: ClickSign_SelectField,
@@ -63,10 +65,19 @@ export default class HierarchicalFieldPicker extends LightningElement {
         if (this.jsonData) {
             this.populateFieldsFromJson(this.jsonData);
         }
+
+        if (this.roleValueField) {
+            this.selectedRoleField = this.roleValueField;
+        }
     }
 
     disconnectedCallback() {
         document.removeEventListener('click', this.closeDropdown.bind(this));
+    }
+
+    renderedCallback() {
+        this.ensureRelatedObject();
+        this.syncSelectValues();
     }
 
     handleFieldChange(event) {
@@ -217,6 +228,47 @@ export default class HierarchicalFieldPicker extends LightningElement {
                 },
             })
         );
+    }
+
+    ensureRelatedObject() {
+        if (this.isContactInfo || this.relatedObjectName || !this.selectedValue) {
+            return;
+        }
+        const relationshipOption = (this.optionsRelationship || []).find(
+            (option) => option.apiName === this.selectedValue
+        );
+        if (relationshipOption && relationshipOption.relatedObject) {
+            this.relatedObjectName = relationshipOption.relatedObject;
+            this.showRelatedField = true;
+            this.fetchRelatedFields(this.relatedObjectName);
+        }
+    }
+
+    syncSelectValues() {
+        const mainSelect = this.template.querySelector('select[data-role="main"]');
+        if (mainSelect && this.selectedValue && mainSelect.value !== this.selectedValue) {
+            mainSelect.value = this.selectedValue;
+        }
+
+        const relatedSelect = this.template.querySelector('select[data-role="related"]');
+        if (relatedSelect && this.selectedRelatedField && relatedSelect.value !== this.selectedRelatedField) {
+            relatedSelect.value = this.selectedRelatedField;
+        }
+
+        const contactNameSelect = this.template.querySelector('select[data-role="contact-name"]');
+        if (contactNameSelect && this.selectedRelatedField && contactNameSelect.value !== this.selectedRelatedField) {
+            contactNameSelect.value = this.selectedRelatedField;
+        }
+
+        const contactEmailSelect = this.template.querySelector('select[data-role="contact-email"]');
+        if (contactEmailSelect && this.emailField && contactEmailSelect.value !== this.emailField) {
+            contactEmailSelect.value = this.emailField;
+        }
+
+        const contactRoleSelect = this.template.querySelector('select[data-role="contact-role"]');
+        if (contactRoleSelect && this.selectedRoleField && contactRoleSelect.value !== this.selectedRoleField) {
+            contactRoleSelect.value = this.selectedRoleField;
+        }
     }
 
     closeDropdown() {

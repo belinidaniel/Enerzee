@@ -1,36 +1,52 @@
 public without sharing class OpportunityShareHandler {
     public static void gerenciarCompartilhamentoOportunidade(List<Opportunity> newRecordList, Map<Id, Opportunity> oldRecordsMap){
-        List<OpportunityShare> shares = new List<OpportunityShare>();
-
-        Map<Id, Consultor__c> consultoresMap = new Map<Id, Consultor__c>();
-        
-        for (Opportunity opp : newRecordList) {
-            if (opp.ConsultorOportunidade__c != null) {
-                consultoresMap.put(opp.ConsultorOportunidade__c, null);
-            }
+        if(newRecordList == null || newRecordList.isEmpty()){
+            return;
         }
 
-        if (!consultoresMap.isEmpty()) {
+        List<OpportunityShare> shares = new List<OpportunityShare>();
+        Set<Id> consultorIds = new Set<Id>();
+        Map<Id, Id> opportunityToConsultor = new Map<Id, Id>();
+        
+        for (Opportunity opp : newRecordList) {
+            if (opp == null || opp.Id == null || opp.ConsultorOportunidade__c == null) {
+                continue;
+            }
+
+            Opportunity oldOpp = oldRecordsMap != null ? oldRecordsMap.get(opp.Id) : null;
+            Boolean hasConsultorChanged = oldOpp == null || oldOpp.ConsultorOportunidade__c != opp.ConsultorOportunidade__c;
+            if(!hasConsultorChanged){
+                continue;
+            }
+
+            opportunityToConsultor.put(opp.Id, opp.ConsultorOportunidade__c);
+            consultorIds.add(opp.ConsultorOportunidade__c);
+        }
+
+        if(opportunityToConsultor.isEmpty()){
+            return;
+        }
+
+        Map<Id, Consultor__c> consultoresMap = new Map<Id, Consultor__c>();
+        if (!consultorIds.isEmpty()) {
             consultoresMap.putAll([
                 SELECT Id, Usuario__c 
                 FROM Consultor__c 
-                WHERE Id IN :consultoresMap.keySet()
+                WHERE Id IN :consultorIds
             ]);
         }
 
-        for (Opportunity opp : newRecordList) {
-            if (opp.ConsultorOportunidade__c != null) {
-                Consultor__c consultor = consultoresMap.get(opp.ConsultorOportunidade__c);
+        for (Id opportunityId : opportunityToConsultor.keySet()) {
+            Consultor__c consultor = consultoresMap.get(opportunityToConsultor.get(opportunityId));
 
-                if (consultor != null && consultor.Usuario__c != null) {
-                    OpportunityShare share = new OpportunityShare();
-                    share.OpportunityId = opp.Id;
-                    share.UserOrGroupId = consultor.Usuario__c;
-                    share.OpportunityAccessLevel = 'Edit';
-                    share.RowCause = Schema.OpportunityShare.RowCause.Manual; 
+            if (consultor != null && consultor.Usuario__c != null) {
+                OpportunityShare share = new OpportunityShare();
+                share.OpportunityId = opportunityId;
+                share.UserOrGroupId = consultor.Usuario__c;
+                share.OpportunityAccessLevel = 'Edit';
+                share.RowCause = Schema.OpportunityShare.RowCause.Manual;
 
-                    shares.add(share);
-                }
+                shares.add(share);
             }
         }
 

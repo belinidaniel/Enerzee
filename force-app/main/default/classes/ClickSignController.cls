@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 01-26-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class ClickSignController {
 
     @AuraEnabled
@@ -334,7 +341,17 @@ public with sharing class ClickSignController {
     @AuraEnabled
     public static List<ClickSignTemplate__c> getTemplates(Id recordId) {
         try {
-            return ClickSignDAO.getTemplatesByRecordId(recordId);
+            List<ClickSignTemplate__c> allTemplates = ClickSignDAO.getTemplatesByRecordId(recordId);
+            List<ClickSignTemplate__c> visibleTemplates = new List<ClickSignTemplate__c>();
+            
+            // Filter templates based on visibility rules
+            for (ClickSignTemplate__c template : allTemplates) {
+                if (ClickSignVisibilityRulesEngine.evaluateRules(template.VisibilityRules__c, recordId)) {
+                    visibleTemplates.add(template);
+                }
+            }
+            
+            return visibleTemplates;
         } catch (Exception e) {
             throw new AuraHandledException('Error fetching templates: ' + e.getMessage());
         }

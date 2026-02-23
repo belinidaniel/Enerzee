@@ -4,9 +4,30 @@ import { api, LightningElement } from 'lwc';
 
 export default class path extends LightningElement {
     @api indicatorType;
-    @api stepList;
-    @api currentStep;
-    @api currentStepPercentage;
+    @api
+    get stepList() {
+        return this._stepList;
+    }
+    set stepList(value) {
+        this._stepList = value;
+        this.requestRecalc();
+    }
+    @api
+    get currentStep() {
+        return this._currentStep;
+    }
+    set currentStep(value) {
+        this._currentStep = value;
+        this.requestRecalc();
+    }
+    @api
+    get currentStepPercentage() {
+        return this._currentStepPercentage;
+    }
+    set currentStepPercentage(value) {
+        this._currentStepPercentage = value;
+        this.requestRecalc();
+    }
     
     // Expose the labels to use in the template
     label = {
@@ -31,12 +52,44 @@ export default class path extends LightningElement {
 
     progressLabel;
     
-    connectedCallback(){
-        
+    connectedCallback() {
+        this.requestRecalc();
+    }
+
+    renderedCallback() {
+        this.recalculateIfNeeded();
+    }
+
+    requestRecalc() {
+        this._pendingRecalc = true;
+        this.recalculateIfNeeded();
+    }
+
+    recalculateIfNeeded() {
+        const indicatorDirty = this.indicatorType || '';
+        const stepListValue = this._stepList || '';
+        if (!indicatorDirty || !stepListValue) {
+            return;
+        }
+
+        const configKey = `${indicatorDirty}|${stepListValue}|${this._currentStep || ''}|${this._currentStepPercentage || ''}`;
+        if (!this._pendingRecalc && configKey === this._configKey) {
+            return;
+        }
+        this._pendingRecalc = false;
+        this._configKey = configKey;
+
         // clean the indicatorType variable of any leading/trailing spaces and convert to lowercase
-        let indicatorDirty = this.indicatorType;
         let indicatorClean = indicatorDirty.trim().toLowerCase();
         let considerCurrentStepPercentage = false;
+
+        // reset indicators
+        this.showTypeVertical = false;
+        this.showTypeVertNav = false;
+        this.showTypeHorizontal = false;
+        this.showTypePath = false;
+        this.showTypeBar = false;
+        this.showTypeRing = false;
 
         // set conditions for which indicator type displays
         switch (indicatorClean) {
@@ -64,9 +117,9 @@ export default class path extends LightningElement {
                 this.showTypeHorizontal = true;
                 break;
         }
-        
+
         // convert stepList from string of comma-separated values to an array
-        const stepListArray = this.stepList.split(',');
+        const stepListArray = stepListValue.split(',');
 
         let countTotalSteps = stepListArray.length;
         let stepsArrayTemp = [];
@@ -84,24 +137,24 @@ export default class path extends LightningElement {
             
             let cleanArrayValue = stepListArray[i].trim();
             
-            if(afterCurrent == false) {
+            if (afterCurrent == false) {
                 
                 // this step might be Completed or Current
-                if(cleanArrayValue == this.currentStep) {
+                if (cleanArrayValue == this._currentStep) {
                     
                     if(isFinalStep == true) {
                         switch (indicatorClean) {
                             case 'vertical':
                                 // this is the final step for the vertnav indicator type, but it needs to be display as Current
-                                stepsArrayTemp.push({
-                                    'label': cleanArrayValue,
-                                    'status': 'Complete',
-                                    'showCurrent' : false,
-                                    'showComplete' : false,
-                                    'showFinalComplete' : true,
-                                    'showUpcoming' : false,
-                                    'finalStep' : true
-                                });
+                        stepsArrayTemp.push({
+                            'label': cleanArrayValue,
+                            'status': 'Complete',
+                            'showCurrent' : false,
+                            'showComplete' : false,
+                            'showFinalComplete' : true,
+                            'showUpcoming' : false,
+                            'finalStep' : true
+                        });
                                 break;
                             case 'vertnav':
                                 // this is the final step for the vertnav indicator type, but it needs to be display as Current
@@ -117,15 +170,15 @@ export default class path extends LightningElement {
                                 break;
                             default:
                                 // this is the current step, but since it is the final one, it is marked as Complete instead
-                                stepsArrayTemp.push({
-                                    'label': cleanArrayValue,
-                                    'status': 'Complete',
-                                    'showCurrent' : false,
-                                    'showComplete' : true,
-                                    'showFinalComplete' : false,
-                                    'showUpcoming' : false,
-                                    'finalStep' : true
-                                });
+                        stepsArrayTemp.push({
+                            'label': cleanArrayValue,
+                            'status': 'Complete',
+                            'showCurrent' : false,
+                            'showComplete' : true,
+                            'showFinalComplete' : false,
+                            'showUpcoming' : false,
+                            'finalStep' : true
+                        });
                                 break;
                         }
 
@@ -184,7 +237,7 @@ export default class path extends LightningElement {
         // set pathProgress to number of steps unless currentStepPercentage is set
         if(considerCurrentStepPercentage == true) {
 
-            let percentProperty = this.currentStepPercentage;
+            let percentProperty = this._currentStepPercentage;
 
             if(percentProperty > 0) {
                 this.pathProgress = percentProperty;
@@ -224,5 +277,19 @@ export default class path extends LightningElement {
 
         // store list of steps to iterate over in the html
         this.stepsArray = stepsArrayTemp;
+    }
+
+    handleStepClick(event) {
+        const stepValue = event.currentTarget?.dataset?.step;
+        if (!stepValue) {
+            return;
+        }
+        this.dispatchEvent(
+            new CustomEvent('stepchange', {
+                detail: { value: stepValue },
+                bubbles: true,
+                composed: true
+            })
+        );
     }
 }

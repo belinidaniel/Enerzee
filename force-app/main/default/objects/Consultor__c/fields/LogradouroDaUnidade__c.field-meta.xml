@@ -4,6 +4,7 @@
     <description>Endereço da unidade franqueada</description>
     <label>Logradouro da Unidade</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>TextArea</type>

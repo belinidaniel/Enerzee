@@ -16,15 +16,23 @@ private class AssignedResourceBOTest {
         );
         insert opp;
 
+        Datetime schedStart = System.now();
         ServiceAppointment app = new ServiceAppointment(
             ParentRecordId = opp.Id,
             Oportunidade__c = opp.Id,
-            SchedStartTime = System.now(),
+            SchedStartTime = schedStart,
+            SchedEndTime = schedStart.addMinutes(60),
             Duration = 60
         );
         insert app;
 
-        ServiceResource sr = new ServiceResource(Name = 'SR Test', IsActive = true);
+        ServiceResource sr = new ServiceResource(
+            Name = 'SR Test',
+            IsActive = true,
+            ResourceType = 'T',
+            OwnerId = UserInfo.getUserId(),
+            RelatedRecordId = UserInfo.getUserId()
+        );
         insert sr;
 
         AssignedResource ar = new AssignedResource(

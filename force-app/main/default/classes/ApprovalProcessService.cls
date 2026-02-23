@@ -2,7 +2,7 @@
  * @description       : Centraliza regras de Approval Process da Opportunity
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 02-12-2026
+ * @last modified on  : 02-17-2026
  * @last modified by  : Daniel Belini
  **/
 public without sharing class ApprovalProcessService {
@@ -198,7 +198,7 @@ public without sharing class ApprovalProcessService {
 
                 oppToUpdate.PropostaAlterada__c = true;
                 oppToUpdate.PropostaGerada__c = false;
-                oppToUpdate.ReadequacaoSolicitada__c = true;
+                // oppToUpdate.ReadequacaoSolicitada__c = true;
 
                 approvedOpportunities.add(oppToUpdate);
                 approvedIds.add(opp.Id);

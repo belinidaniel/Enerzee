@@ -9,10 +9,5 @@
     <columns>CASES.CREATED_DATE</columns>
     <columns>CORE.USERS.ALIAS</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>CASES.RECORDTYPE</field>
-        <operation>equals</operation>
-        <value>Case.QualificacaoDeIntegradores</value>
-    </filters>
     <label>Todos os Casos Qualificação Integradores</label>
 </ListView>

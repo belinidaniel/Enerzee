@@ -6,6 +6,7 @@
     <inlineHelpText>abcd@gmail.com</inlineHelpText>
     <label>E-mail</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Email</type>

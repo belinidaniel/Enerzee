@@ -3,6 +3,7 @@
     <fullName>Descricao__c</fullName>
     <label>Descrição</label>
     <length>32768</length>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>LongTextArea</type>

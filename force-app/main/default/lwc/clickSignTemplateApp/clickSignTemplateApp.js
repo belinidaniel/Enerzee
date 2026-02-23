@@ -30,6 +30,10 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
     @track fileName = '';
     @track showModal = false;
     @track isCreateButtonTemplate = false;
+    @track showBanner = false;
+    @track bannerTitle = '';
+    @track bannerMessage = '';
+    @track bannerVariant = 'info';
 
     objectName;
     phases = [
@@ -106,6 +110,8 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
         })
         .catch(error => {
             console.error('Error fetching ClickSignTemplate:', error);
+            this.showBannerMessage('Error', 'Falha ao carregar o template do ClickSign.', 'error');
+            this.showToast('Error', 'Falha ao carregar o template do ClickSign.', 'error');
         });
     }
 
@@ -122,6 +128,8 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
         })
         .catch(error => {
             console.error('Error updating ClickSignTemplate:', error);
+            this.showBannerMessage('Error', 'Falha ao atualizar o template do ClickSign.', 'error');
+            this.showToast('Error', 'Falha ao atualizar o template do ClickSign.', 'error');
             this.isLoading = false;
         });
     }
@@ -147,6 +155,8 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
             }
         } catch (error) {
             console.error('Error creating ClickSignTemplate:', error);
+            this.showBannerMessage('Error', 'Falha ao criar o template do ClickSign.', 'error');
+            this.showToast('Error', 'Falha ao criar o template do ClickSign.', 'error');
         }
 
         this.closeModal();
@@ -190,7 +200,7 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
         this.clickSignTemplate.IsActivate__c = true;
         this.updateTemplate();
         setTimeout(() => {
-            this.navigateToRecordPage();
+            this.navigateToRecentListView();
         }, 1000); // Add a delay of 1 second before navigating
     }
 
@@ -204,6 +214,22 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
         console.log('currentStep ' ,this.currentStep );
         this.clickSignTemplate.Stage__c = this.currentStep;
         console.log('this.clickSignTemplate. ' ,this.clickSignTemplate );
+        this.refreshComponent();
+        this.updateTemplate();
+    }
+
+    handlePathStepChange(event) {
+        const nextStep = event.detail?.value;
+        if (!nextStep || nextStep === this.currentStep) {
+            return;
+        }
+        const isValidStep = this.phases.some((phase) => phase.value === nextStep);
+        if (!isValidStep) {
+            return;
+        }
+        this.currentStep = nextStep;
+        this.updatePhaseFlags();
+        this.clickSignTemplate.Stage__c = this.currentStep;
         this.refreshComponent();
         this.updateTemplate();
     }
@@ -229,6 +255,45 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
             variant: variant,
         });
         this.dispatchEvent(event);
+    }
+
+    handleNotify(event) {
+        const detail = event.detail || {};
+        this.showBannerMessage(detail.title || 'Aviso', detail.message || '', detail.variant || 'info');
+    }
+
+    showBannerMessage(title, message, variant) {
+        this.bannerTitle = title;
+        this.bannerMessage = message;
+        this.bannerVariant = variant;
+        this.showBanner = true;
+        this.clearBannerTimeout();
+        this.bannerTimeoutId = setTimeout(() => {
+            this.showBanner = false;
+        }, 5000);
+    }
+
+    handleBannerClose() {
+        this.showBanner = false;
+        this.clearBannerTimeout();
+    }
+
+    clearBannerTimeout() {
+        if (this.bannerTimeoutId) {
+            clearTimeout(this.bannerTimeoutId);
+            this.bannerTimeoutId = null;
+        }
+    }
+
+    get bannerClass() {
+        const themeClass = this.bannerVariant === 'success'
+            ? 'slds-theme_success'
+            : this.bannerVariant === 'warning'
+                ? 'slds-theme_warning'
+                : this.bannerVariant === 'error'
+                    ? 'slds-theme_error'
+                    : 'slds-theme_info';
+        return `slds-notify slds-notify_alert slds-theme_alert-texture ${themeClass}`;
     }
 
     navigateToRecordPage() {
@@ -257,5 +322,74 @@ export default class ClickSignTemplateApp extends NavigationMixin(LightningEleme
                 actionName: 'list'
             }
         });
+    }
+
+    navigateToRecentListView() {
+        const pageRef = {
+            type: 'standard__objectPage',
+            attributes: {
+                objectApiName: 'ClickSignTemplate__c',
+                actionName: 'list'
+            },
+            state: {
+                filterName: '__Recent'
+            }
+        };
+
+        // Fallback for Visualforce context where NavigationMixin may not redirect
+        this[NavigationMixin.GenerateUrl](pageRef)
+            .then((url) => {
+                const targetUrl = '/lightning/o/ClickSignTemplate__c/list?filterName=__Recent';
+                // Dispatch a global event for Visualforce to catch
+                try {
+                    const globalEvent = new CustomEvent('clicksign:navigate', {
+                        detail: { url: targetUrl }
+                    });
+                    window.dispatchEvent(globalEvent);
+                } catch (e) {
+                    // ignore
+                }
+                // Try explicit VF helper in top window
+                try {
+                    if (window.top && typeof window.top.navigateToClickSignList === 'function') {
+                        window.top.navigateToClickSignList(targetUrl);
+                        return;
+                    }
+                } catch (e) {
+                    // fall through
+                }
+                // Try sforce.one in top window when running inside Visualforce
+                try {
+                    if (window.top && window.top.sforce && window.top.sforce.one) {
+                        window.top.sforce.one.navigateToURL(targetUrl);
+                        return;
+                    }
+                } catch (e) {
+                    // fall through
+                }
+                // Try postMessage to parent (Visualforce / Lightning Out)
+                try {
+                    if (window.top && window.top !== window) {
+                        window.top.postMessage({ type: 'clicksign:navigate', url: targetUrl }, '*');
+                        return;
+                    }
+                } catch (e) {
+                    // fall through to direct navigation
+                }
+                // Visualforce may be embedded in an iframe, so use top-level navigation
+                if (window.top) {
+                    window.top.location.assign(targetUrl);
+                } else {
+                    window.location.assign(targetUrl);
+                }
+            })
+            .catch(() => {
+                const fallbackUrl = '/lightning/o/ClickSignTemplate__c/list?filterName=__Recent';
+                if (window.top) {
+                    window.top.location.assign(fallbackUrl);
+                } else {
+                    window.location.assign(fallbackUrl);
+                }
+            });
     }
 }

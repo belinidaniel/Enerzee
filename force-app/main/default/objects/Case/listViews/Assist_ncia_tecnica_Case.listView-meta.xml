@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Assist_ncia_tecnica_Case</fullName>
-    <booleanFilter>(1 OR 2)</booleanFilter>
+    <booleanFilter>(1 OR 2) AND 3</booleanFilter>
     <columns>CASES.CASE_NUMBER</columns>
     <columns>NAME</columns>
     <columns>CASES.SUBJECT</columns>
@@ -20,6 +20,11 @@
         <field>CASES.RECORDTYPE</field>
         <operation>equals</operation>
         <value>Case.Assistencia_Tecnica,Case.Assist_ncia_T_cnica_Gest_o_de_Faturas_e_Concession_rias_Interno,Case.Assistencia_Tecnica_Gestao_de_Faturas_e_Concessionarias,Case.Assistencia_Tecnica_Manutencao_Garantia,Case.Assist_ncia_T_cnica_Manuten_es_e_Garantias_Servi_os</value>
+    </filters>
+    <filters>
+        <field>CORE.USERS.FIRST_NAME</field>
+        <operation>equals</operation>
+        <value>THIAGO</value>
     </filters>
     <label>Assistência tecnica - Todos</label>
     <sharedTo>

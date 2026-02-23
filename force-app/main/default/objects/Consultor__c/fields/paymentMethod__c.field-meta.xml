@@ -3,6 +3,7 @@
     <fullName>paymentMethod__c</fullName>
     <label>Forma de Pagamento</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>

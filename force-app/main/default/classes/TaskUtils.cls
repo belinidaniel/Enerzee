@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 02-19-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class TaskUtils {
     //  Status
     public static String STATUS_OPEN         = 'Open';
@@ -34,6 +41,8 @@ public with sharing class TaskUtils {
     public static String SUBJECT_SOLICITAR_DE_VISTORIA_TROCA_DE_MEDIDOR                      = 'SOLICITAR DE VISTORIA/TROCA DE MEDIDOR';
     public static String SUBJECT_START_USINA                                                 = 'START USINA';
     public static String SUBJECT_RELATORIO_FINAL_DE_OBRA_E_TERMO_CONCLUSAO                   = 'RELATÓRIO FINAL DE OBRA E TERMO CONCLUSÃO';
+    public static String SUBJECT_RELATORIO_DE_EXECUCAO_DE_OBRA                               = 'RELATÓRIO DE EXECUCAO DE OBRA';
+    public static String SUBJECT_RELATORIO_FINAL_DE_OBRA_LEGACY                              = 'RELATÓRIO FINAL DE OBRA';
     public static String SUBJECT_SOLICITACAO_DE_VISTORIA_TROCA_DE_MEDIDOR                    = 'SOLICITAÇÃO DE VISTORIA/TROCA DE MEDIDOR';
     public static String SUBJECT_INSERIR_PEDIDO_WEG                                          = 'INSERIR PEDIDO WEG';
     public static String SUBJECT_RECEBIMENTO_DO_PEDIDO_WEG                                   = 'RECEBIMENTO DO PEDIDO WEG';
@@ -42,7 +51,8 @@ public with sharing class TaskUtils {
     public static String SUBJECT_SOLICITAR_COMPRA_DE_MATERIAIS                               = 'SOLICITAR COMPRA DE MATERIAIS';
     public static String SUBJECT_RECEBIMENTO_DOS_MATERIAIS                                   = 'RECEBIMENTO DOS MATERIAIS';
     public static String SUBJECT_TESTES_DE_OPERACAO                                          = 'TESTES DE OPERAÇÃO';
-    public static String SUBJECT_RELATORIO_FINAL_DE_OBRA                                     = 'RELATÓRIO FINAL DE OBRA';
+    // Mantido por compatibilidade: o nome atual da atividade é RELATÓRIO DE EXECUCAO DE OBRA.
+    public static String SUBJECT_RELATORIO_FINAL_DE_OBRA                                     = SUBJECT_RELATORIO_DE_EXECUCAO_DE_OBRA;
     public static String SUBJECT_SOLICITAR_DISPONIBILIDADE                                   = 'SOLICITAR DISPONIBILIDADE';
     public static String SUBJECT_APROVACAO_DA_DISPONIBILIDADE                                = 'APROVAÇÃO DA DISPONIBILIDADE';
     public static String SUBJECT_PROTOCOLAR_PROJETO                                          = 'PROTOCOLAR PROJETO';
@@ -62,32 +72,62 @@ public with sharing class TaskUtils {
 
     //  Validação de Status
     public static Boolean isTaskOpen(Task task){
-        return  task.Status.equalsIgnoreCase(STATUS_OPEN);
+        return task != null &&
+            !String.isBlank(task.Status) &&
+            task.Status.equalsIgnoreCase(STATUS_OPEN);
     }
 
     public static Boolean isTaskConcluded(Task task){
-        return  task.Status.equalsIgnoreCase(STATUS_CONCLUIDO);
+        return task != null &&
+            !String.isBlank(task.Status) &&
+            task.Status.equalsIgnoreCase(STATUS_CONCLUIDO);
     }
 
     public static Boolean isTaskNotStarted(Task task){
-        return  task.Status.equalsIgnoreCase(STATUS_NAO_INICIADO);
+        return task != null &&
+            !String.isBlank(task.Status) &&
+            task.Status.equalsIgnoreCase(STATUS_NAO_INICIADO);
     }
 
     public static Boolean isTaskBeingConcluded(Task oldTask, Task newTask){
-        return  !isTaskConcluded(oldTask) && isTaskConcluded(newTask);
+        if(oldTask == null || newTask == null){
+            return false;
+        }
+        return !isTaskConcluded(oldTask) && isTaskConcluded(newTask);
     }
 
 
     //  Validação de Assunto
     public static Boolean isSubjectContratarIntegrador(Task task){
-        return  task.Subject.equalsIgnoreCase(SUBJECT_CONTRATAR_INTEGRADOR);
+        return task != null &&
+            !String.isBlank(task.Subject) &&
+            task.Subject.equalsIgnoreCase(SUBJECT_CONTRATAR_INTEGRADOR);
     }
 
     public static Boolean isSubjectSolicitarCompraMateriais(Task task){
-        return  task.Subject.equalsIgnoreCase(SUBJECT_SOLICITAR_COMPRA_DE_MATERIAIS);
+        return task != null &&
+            !String.isBlank(task.Subject) &&
+            task.Subject.equalsIgnoreCase(SUBJECT_SOLICITAR_COMPRA_DE_MATERIAIS);
     }
     
     public static Boolean isSubjectSolicitarCompraMateriaisComplementares(Task task){
-        return  task.Subject.equalsIgnoreCase(SUBJECT_SOLICITAR_COMPRA_DE_MATERIAIS_COMPLEMENTARES);
+        return task != null &&
+            !String.isBlank(task.Subject) &&
+            task.Subject.equalsIgnoreCase(SUBJECT_SOLICITAR_COMPRA_DE_MATERIAIS_COMPLEMENTARES);
+    }
+
+    public static Boolean isRelatorioExecucaoDeObraSubject(String subject) {
+        if (String.isBlank(subject)) {
+            return false;
+        }
+        return subject.equalsIgnoreCase(SUBJECT_RELATORIO_DE_EXECUCAO_DE_OBRA)
+            || subject.equalsIgnoreCase(SUBJECT_RELATORIO_FINAL_DE_OBRA_LEGACY);
+    }
+
+    public static List<String> getRelatorioExecucaoDeObraSubjects() {
+        return new List<String>{
+            SUBJECT_RELATORIO_DE_EXECUCAO_DE_OBRA,
+            SUBJECT_RELATORIO_FINAL_DE_OBRA_LEGACY
+        };
     }
 }

@@ -4,11 +4,11 @@
         <name>Agenteforce_Gerar_resumo_completo_desse_lead_Action_1</name>
         <label>[Agenteforce] - Gerar resumo completo desse lead Action 1</label>
         <locationX>446</locationX>
-        <locationY>384</locationY>
+        <locationY>600</locationY>
         <actionName>Agenteforce_Gerar_resumo_completo_desse_lead</actionName>
         <actionType>generatePromptResponse</actionType>
         <connector>
-            <targetReference>get_interaction</targetReference>
+            <targetReference>update_lead</targetReference>
         </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
@@ -25,7 +25,7 @@
         <name>Detect_Remarketing_in_Conversation_Action_1</name>
         <label>Detect Remarketing in Conversation Action 1</label>
         <locationX>446</locationX>
-        <locationY>276</locationY>
+        <locationY>492</locationY>
         <actionName>RemarketingRouter</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -56,6 +56,28 @@
     </actionCalls>
     <apiVersion>62.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>has_interaction</name>
+        <label>has interaction</label>
+        <locationX>578</locationX>
+        <locationY>384</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>yes2</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>get_interaction.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Detect_Remarketing_in_Conversation_Action_1</targetReference>
+            </connector>
+            <label>yes</label>
+        </rules>
+    </decisions>
     <decisions>
         <name>Has_record</name>
         <label>Has record</label>
@@ -108,11 +130,11 @@
     <recordLookups>
         <name>get_interaction</name>
         <label>get interaction</label>
-        <locationX>446</locationX>
-        <locationY>492</locationY>
+        <locationX>578</locationX>
+        <locationY>276</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>update_lead</targetReference>
+            <targetReference>has_interaction</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -184,7 +206,7 @@
         <name>update_lead</name>
         <label>update lead</label>
         <locationX>446</locationX>
-        <locationY>600</locationY>
+        <locationY>708</locationY>
         <filterLogic>and</filterLogic>
         <filters>
             <field>Id</field>
@@ -208,7 +230,7 @@
         <object>Lead</object>
     </recordUpdates>
     <start>
-        <locationX>122</locationX>
+        <locationX>188</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Get_Lead_Interaction</targetReference>
@@ -219,7 +241,7 @@
         <scheduledPaths>
             <name>Update_historical</name>
             <connector>
-                <targetReference>Detect_Remarketing_in_Conversation_Action_1</targetReference>
+                <targetReference>get_interaction</targetReference>
             </connector>
             <label>Update historical</label>
             <offsetNumber>1</offsetNumber>

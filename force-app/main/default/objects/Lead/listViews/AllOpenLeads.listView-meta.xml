@@ -5,27 +5,19 @@
     <columns>FULL_NAME</columns>
     <columns>LEAD.STATUS</columns>
     <columns>Sub_Status__c</columns>
-    <columns>LEAD.LEAD_SOURCE</columns>
-    <columns>LEAD.RATING</columns>
     <columns>ConsultorRegional__c</columns>
     <columns>CustoEnergiaMes__c</columns>
-    <columns>Lb065_ProdutoInteresse__c</columns>
-    <columns>InteresseEnergiaSolar__c</columns>
     <columns>LEAD.STATE</columns>
-    <columns>Origem_do_Tr_fego__c</columns>
-    <columns>Nome_da_Campanha_Meta__c</columns>
-    <columns>Nome_do_Conjunto_de_An_ncios_Meta__c</columns>
-    <columns>Nome_do_An_ncio_Meta__c</columns>
+    <columns>LEAD.CITY</columns>
+    <columns>LEAD.LEAD_SOURCE</columns>
+    <columns>Lb065_ProdutoInteresse__c</columns>
+    <columns>LEAD.RATING</columns>
+    <columns>LEAD.RECORDTYPE</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>LEAD.STATUS</field>
-        <operation>notEqual</operation>
-        <value>Novo</value>
-    </filters>
-    <filters>
-        <field>LEAD.LEAD_SOURCE</field>
         <operation>notContain</operation>
-        <value>Web-To-Lead Integrador,Web-To-Lead Cliente</value>
+        <value>Novo</value>
     </filters>
     <label>Todos os leads Abertos</label>
 </ListView>

@@ -113,7 +113,6 @@
                 <legendPosition>Bottom</legendPosition>
                 <report>Dashboard_Executivo_Atividades/Atividades_Vencendo_Hoje_e_Amanha</report>
                 <showPercentage>false</showPercentage>
-                <showPicturesOnCharts>false</showPicturesOnCharts>
                 <showValues>true</showValues>
                 <sortBy>RowValueDescending</sortBy>
                 <sortLegendValues>false</sortLegendValues>

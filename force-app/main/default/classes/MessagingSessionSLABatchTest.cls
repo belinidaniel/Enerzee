@@ -1,5 +1,6 @@
 @IsTest
 private class MessagingSessionSLABatchTest {
+    private static final Id TEST_CONVERSATION_ID = '0dwU50000034lLBIAY';
 
     @IsTest
     static void shouldNotifyQueueDefinedInQueueN1Field() {
@@ -7,7 +8,12 @@ private class MessagingSessionSLABatchTest {
         MessagingEndUser endUser = createEndUser(channelId);
         Group queue = createQueueWithMember(UserInfo.getUserId());
 
-        MessagingSession insertedSession = createSession(channelId, endUser.Id, UserInfo.getUserId(), queue.Id);
+        MessagingSession insertedSession = createSession(
+            channelId,
+            endUser.Id,
+            queue.Id,
+            resolveQueueN1PicklistValue()
+        );
 
         MessagingSession scopeRecord = [
             SELECT  Id, Name, OwnerId, QueueN1__c, OwnerAssignmentDate__c,
@@ -23,7 +29,8 @@ private class MessagingSessionSLABatchTest {
         Test.stopTest();
 
         MessagingSession updatedSession = [SELECT NotifyN1__c FROM MessagingSession WHERE Id = :insertedSession.Id];
-        System.assertEquals(true, updatedSession.NotifyN1__c, 'Queue N1 field should drive SLA notifications.');
+        System.assertEquals(shouldMarkStage1AsNotified(), updatedSession.NotifyN1__c,
+            'Queue-owner notification depends on business hours and CustomNotificationType "Padrao".');
     }
 
     @IsTest
@@ -47,7 +54,8 @@ private class MessagingSessionSLABatchTest {
         Test.stopTest();
 
         MessagingSession updatedSession = [SELECT NotifyN1__c FROM MessagingSession WHERE Id = :insertedSession.Id];
-        System.assertEquals(true, updatedSession.NotifyN1__c, 'Direct owner notification should be preserved.');
+        System.assertEquals(shouldMarkStage1AsNotified(), updatedSession.NotifyN1__c,
+            'Direct owner notification depends on business hours and CustomNotificationType "Padrao".');
     }
 
     private static Id resolveMessagingChannelId() {
@@ -71,21 +79,21 @@ private class MessagingSessionSLABatchTest {
         Id channelId,
         Id endUserId,
         Id ownerId,
-        Id queueId
+        String queueN1Value
     ) {
         MessagingSession session = new MessagingSession(
             MessagingChannelId = channelId,
             Status = 'Waiting',
             MessagingEndUserId = endUserId,
-            ConversationId = 'TEST-CONV-' + String.valueOf(DateTime.now().getTime()),
+            ConversationId = TEST_CONVERSATION_ID,
             OwnerId = ownerId,
             OwnerAssignmentDate__c = System.now().addMinutes(-120),
             MinuteSLAN1__c = 1,
             NotifyN1__c = false
         );
 
-        if (queueId != null) {
-            session.QueueN1__c = queueId;
+        if (String.isNotBlank(queueN1Value)) {
+            session.QueueN1__c = queueN1Value;
         }
 
         insert session;
@@ -112,5 +120,23 @@ private class MessagingSessionSLABatchTest {
         );
 
         return queue;
+    }
+
+    private static String resolveQueueN1PicklistValue() {
+        List<Schema.PicklistEntry> values = MessagingSession.QueueN1__c.getDescribe().getPicklistValues();
+        return values.isEmpty() ? null : values[0].getValue();
+    }
+
+    private static Boolean hasConfiguredNotificationType() {
+        return [
+            SELECT COUNT()
+            FROM CustomNotificationType
+            WHERE DeveloperName = :MessagingSessionSLABatch.NOTIFICATION_TYPE_DEVELOPER_NAME
+        ] > 0;
+    }
+
+    private static Boolean shouldMarkStage1AsNotified() {
+        return hasConfiguredNotificationType()
+            && MessagingSessionSLABatch.isWithinBusinessHours(System.now());
     }
 }

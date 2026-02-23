@@ -1,3 +1,10 @@
+<!--
+  @description       : 
+  @author            : Daniel Belini
+  @group             : 
+  @last modified on  : 02-16-2026
+  @last modified by  : Daniel Belini
+-->
 <template>
     <lightning-card title={title}>
         <div class="container">
@@ -30,6 +37,15 @@
                         </div>
                         <template if:true={successMessage}>
                             <div class="success-message">{labels.successMessage}</div>
+                        </template>
+                        <template if:false={isSendTemplate}>
+                            <div class="slds-var-m-top_large">
+                                <c-click-sign-visibility-rules-builder
+                                    template-id={template.Id}
+                                    source-object-api-name={template.SourceObject__c}
+                                    initial-rules-json={visibilityRulesJson}>
+                                </c-click-sign-visibility-rules-builder>
+                            </div>
                         </template>
                     </div>
                     <div class="section">

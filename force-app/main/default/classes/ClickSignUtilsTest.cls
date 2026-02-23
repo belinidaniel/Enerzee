@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 01-22-2026
+ * @last modified by  : Daniel Belini
+**/
 @IsTest
 public with sharing class ClickSignUtilsTest {
     
@@ -20,19 +27,17 @@ public with sharing class ClickSignUtilsTest {
         Exception source = new DmlException('Test exception');
 
         // Act
-        Id relatedId = UserInfo.getUserId();
-        ClickSignLog__c log = ClickSignUtils.createLog(className, methodName, source, relatedId);
+        ClickSignLog__c log = ClickSignUtils.createLog(className, methodName, source);
 
         // Assert
         System.assertNotEquals(null, log);
         System.assertEquals(className, log.Class__c);
         System.assertEquals(methodName, log.Method__c);
         System.assertEquals('Test exception', log.Message__c);
-        System.assertEquals(relatedId, log.RelatedId__c);
     }
 
     @IsTest
-    static void testCreateLogWithHttpResponse() {
+    static void testCreateLogWithHttpResponse() {   
         // Arrange
         String className = 'TestClass';
         String methodName = 'testMethod';
@@ -41,8 +46,7 @@ public with sharing class ClickSignUtilsTest {
         response.setBody('{"message":"success"}');
 
         // Act
-        Id relatedId = UserInfo.getUserId();
-        ClickSignLog__c log = ClickSignUtils.createLog(className, methodName, response, relatedId);
+        ClickSignLog__c log = ClickSignUtils.createLog(className, methodName, response);
 
         // Assert
         System.assertNotEquals(null, log);
@@ -50,7 +54,6 @@ public with sharing class ClickSignUtilsTest {
         System.assertEquals(methodName, log.Method__c);
         System.assertEquals(200, log.StatusCode__c);
         System.assertEquals('{"message":"success"}', log.ResponseBody__c);
-        System.assertEquals(relatedId, log.RelatedId__c);
     }
 
     @IsTest

@@ -3,6 +3,7 @@
     <fullName>SpecialRange__c</fullName>
     <label>Faixa Especial</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>

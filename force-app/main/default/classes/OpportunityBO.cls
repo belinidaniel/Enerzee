@@ -2,13 +2,19 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 12-29-2025
+ * @last modified on  : 02-23-2026
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
 
     // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas
     public static Boolean skipAsyncProposalGeneration = false;
+    @TestVisible
+    private static String PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME = 'Financeiro';
+    @TestVisible
+    private static String PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE = 'financeiro@enerzee.com.br%';
+    @TestVisible
+    private static String FINANCING_SIMULATION_OWNER_EMAIL_LIKE = 'dayane.silva@enerzee.com.br%';
     //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
     public static void createSellBuyOrder(List<Opportunity> newRecords, Map<Id, Opportunity> oldRecordsMap){
 
@@ -597,7 +603,7 @@ public class OpportunityBO {
                 OpportunityUtils.isStatusProposalSimulation(oldOpp) ) &&
                 opp.ReadequacaoSolicitada__c
             ){
-                opp.ReadequacaoSolicitada__c = false;
+                // opp.ReadequacaoSolicitada__c = false;
             }
         }
     }   
@@ -901,6 +907,7 @@ public class OpportunityBO {
                             Name                = opportunity.Name + ' - ' + projectNameConcatenate,
                             Status__c           = statusByRecordType.get(workProjectType) == 'STATUS_PLANEJAMENTO_DE_PROJETO' ? ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO : ProjetoUtils.STATUS_PLANEJAMENTO,
                             Oportunidade__c     = opportunity.Id,
+                            Viabilidade__c      = opportunity.MainViability__c,
                             Concessionaria__c   = opportunity.ConcessionariaEnergia__c,
                             UFConcessionaria__c = opportunity.UF_Concessionaria__c,
                             Consultor__c        = opportunity.ConsultorOportunidade__c,
@@ -966,14 +973,15 @@ public class OpportunityBO {
 
         Id integrationUserId = integration.isEmpty() ? null : integration[0].Id;
 
-        List<User> financeOwners = [
-            SELECT Id
-            FROM User
-            WHERE Email LIKE 'dayane.silva@enerzee.com.br%'
-            AND IsActive = true
-            LIMIT 1
-        ];
-        Id financeiroQueue = financeOwners.isEmpty() ? UserInfo.getUserId() : financeOwners[0].Id;
+        Id financingSimulationOwnerId = resolveActiveUserIdByEmailLike(FINANCING_SIMULATION_OWNER_EMAIL_LIKE);
+        if (financingSimulationOwnerId == null) {
+            financingSimulationOwnerId = UserInfo.getUserId();
+        }
+
+        Id financePaymentQueueId = resolveQueueIdByDeveloperName(PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME);
+        Id financePaymentUserFallbackId = financePaymentQueueId == null
+            ? resolveActiveUserIdByEmailLike(PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE)
+            : null;
 
         Map<Id, String> opportunityIdToAccountName = new Map<Id, String>();
         Map<Id, Account> accountSet = new Map<Id, Account>([
@@ -1029,47 +1037,47 @@ public class OpportunityBO {
                 if((OpportunityUtils.isStatusProposalElaboration(opportunity) || OpportunityUtils.isStatusProposalSimulation(opportunity)) && opportunity.GrupoTarifario__c != null){
 
                     //  GRUPO A
-                    if(opportunity.GrupoTarifario__c.equalsIgnoreCase('Grupo A')){
-                        // if(taskNumberToOwnerUser.get(1) == null){
-                        //     taskNumberToOwnerUser.put(1, [
-                        //         SELECT Id FROM User WHERE Email LIKE 'amanda@enerzee.com.br%' LIMIT 1
-                        //     ]);
-                        // }
-                        String subjectGrupoA = 'Informe os dados da proposta - Grupo A - ' + accountName;
-                        String normSubjectGrupoA = subjectGrupoA.trim().toLowerCase();
-                        if (!existingSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoA)
-                            && !newSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoA)) {
-                            taskstoInsert.add(TaskBO.createTask(
-                                opportunity.Id,
+                    // if(opportunity.GrupoTarifario__c.equalsIgnoreCase('Grupo A')){
+                    //     // if(taskNumberToOwnerUser.get(1) == null){
+                    //     //     taskNumberToOwnerUser.put(1, [
+                    //     //         SELECT Id FROM User WHERE Email LIKE 'amanda@enerzee.com.br%' LIMIT 1
+                    //     //     ]);
+                    //     // }
+                    //     String subjectGrupoA = 'Informe os dados da proposta - Grupo A - ' + accountName;
+                    //     String normSubjectGrupoA = subjectGrupoA.trim().toLowerCase();
+                    //     if (!existingSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoA)
+                    //         && !newSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoA)) {
+                    //         taskstoInsert.add(TaskBO.createTask(
+                    //             opportunity.Id,
 
-                                subjectGrupoA,
+                    //             subjectGrupoA,
 
-                                'PREENCHER OS CAMPOS:\n\n Modalidade de Venda\n Tipo da venda\n ' +
-                                'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
-                                'Tipo do telhado - Estrutura de fixação\n Logradouro\n ' +
-                                'Município Instalação\n Consumo Anual\n ' +
-                                'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
-                                'Validade da proposta (dias)\n Demanda Contratada - Fora Ponta\n ' +
-                                'Tarifa Demanda - Fora Ponta\n Consumo Médio - Fora Ponta\n ' +
-                                'Tarifa - Fora Ponta\n Consumo Médio - Ponta\n Tarifa - Ponta\n ' +
-                                'Tensão de Alimentação\n Potência Pico do Sistema (kWp)\n ' +
-                                'Geração mensal estimada\n Geração anual estimada\n ' +
-                                'Número de Módulos\n Potência Nominal do Módulo\n Fabricante Módulos\n ' +
-                                'Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
-                                'Potência Nominal do Sistema (kW)\n' +
-                                'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
+                    //             'PREENCHER OS CAMPOS:\n\n Modalidade de Venda\n Tipo da venda\n ' +
+                    //             'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
+                    //             'Tipo do telhado - Estrutura de fixação\n Logradouro\n ' +
+                    //             'Município Instalação\n Consumo Anual\n ' +
+                    //             'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
+                    //             'Validade da proposta (dias)\n Demanda Contratada - Fora Ponta\n ' +
+                    //             'Tarifa Demanda - Fora Ponta\n Consumo Médio - Fora Ponta\n ' +
+                    //             'Tarifa - Fora Ponta\n Consumo Médio - Ponta\n Tarifa - Ponta\n ' +
+                    //             'Tensão de Alimentação\n Potência Pico do Sistema (kWp)\n ' +
+                    //             'Geração mensal estimada\n Geração anual estimada\n ' +
+                    //             'Número de Módulos\n Potência Nominal do Módulo\n Fabricante Módulos\n ' +
+                    //             'Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
+                    //             'Potência Nominal do Sistema (kW)\n' +
+                    //             'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
 
-                                (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
+                    //             (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
 
-                                TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
+                    //             TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
                                 
-                                '1'
-                            ));
-                            existingSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoA);
-                            newSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoA);
-                        }
-                        continue;
-                    }
+                    //             '1'
+                    //         ));
+                    //         existingSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoA);
+                    //         newSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoA);
+                    //     }
+                    //     continue;
+                    // }
 
                     //  GRUPO B
                     if(opportunity.GrupoTarifario__c.equalsIgnoreCase('Grupo B')){
@@ -1228,11 +1236,12 @@ public class OpportunityBO {
 
                 //  AGUARDANDO CONFIRMAÇÃO DO PAGAMENTO
                 if(OpportunityUtils.isSubStatusAwaitingPayment(opportunity)){
-                    if(taskNumberToOwnerUser.get(7) == null){
-                        taskNumberToOwnerUser.put(7, [
-                            SELECT Id FROM User WHERE Email LIKE 'financeiro@enerzee.com.br%' AND IsActive = TRUE LIMIT 1
-                        ]);
-                    }
+                    Id paymentTaskOwnerId = resolvePaymentReminderTaskOwner(
+                        financePaymentQueueId,
+                        financePaymentUserFallbackId,
+                        opportunity.OwnerId,
+                        isOwnerUserActive
+                    );
                     taskstoInsert.add(TaskBO.createTask(
                         opportunity.Id,
                         'É necessário  confirmar o pagamento da oportunidade ' + Opportunity.Name,
@@ -1256,7 +1265,7 @@ public class OpportunityBO {
                                 opportunity.Id,
                                 subjectFin,
                                 'PREENCHER OS CAMPOS: \n\nDetalhes do Processo de Financiamento\n',
-                                financeiroQueue,
+                                financingSimulationOwnerId,
                                 TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
                                 '1'
                             ));
@@ -1277,6 +1286,57 @@ public class OpportunityBO {
                 }
             }
         }
+    }
+
+    @TestVisible
+    private static Id resolvePaymentReminderTaskOwner(
+        Id financeQueueId,
+        Id financeUserId,
+        Id opportunityOwnerId,
+        Boolean isOpportunityOwnerActive
+    ) {
+        if (financeQueueId != null) {
+            return financeQueueId;
+        }
+        if (financeUserId != null) {
+            return financeUserId;
+        }
+        if (isOpportunityOwnerActive == true && opportunityOwnerId != null) {
+            return opportunityOwnerId;
+        }
+        return UserInfo.getUserId();
+    }
+
+    @TestVisible
+    private static Id resolveActiveUserIdByEmailLike(String emailLike) {
+        if (String.isBlank(emailLike)) {
+            return null;
+        }
+
+        List<User> users = [
+            SELECT Id
+            FROM User
+            WHERE Email LIKE :emailLike
+                AND IsActive = true
+            LIMIT 1
+        ];
+        return users.isEmpty() ? null : users[0].Id;
+    }
+
+    @TestVisible
+    private static Id resolveQueueIdByDeveloperName(String queueDeveloperName) {
+        if (String.isBlank(queueDeveloperName)) {
+            return null;
+        }
+
+        List<Group> queues = [
+            SELECT Id
+            FROM Group
+            WHERE Type = 'Queue'
+                AND DeveloperName = :queueDeveloperName
+            LIMIT 1
+        ];
+        return queues.isEmpty() ? null : queues[0].Id;
     }
 
     public static void validateSellBuyOrderAndContractRequiredFields(List<Opportunity> newList, Map<Id, Opportunity> oldMap){

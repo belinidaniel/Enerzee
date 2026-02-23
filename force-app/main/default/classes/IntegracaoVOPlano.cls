@@ -2,8 +2,8 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 02-13-2026
- * @last modified by  : GPT-5 Codex
+ * @last modified on  : 02-23-2026
+ * @last modified by  : Daniel Belini
 **/
 public with sharing class IntegracaoVOPlano {
 

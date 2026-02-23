@@ -71,6 +71,16 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>proposalPendingPanel</componentName>
+                <identifier>c_proposalPendingPanel</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>pendingTabContent</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>active</name>
                     <value>true</value>
@@ -113,6 +123,20 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>collaborateTab</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>pendingTabContent</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Pendências</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>pendingTab</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>

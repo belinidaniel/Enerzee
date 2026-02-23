@@ -1,5 +1,8 @@
 public with sharing class TaskSlaNotificationService {
     private static Map<String, Id> notificationTypeCache = new Map<String, Id>();
+    private static final String SYSTEM_SENDER_DISPLAY_NAME = 'Enerzee Sistema';
+    private static Boolean orgWideSenderResolved = false;
+    private static Id cachedOrgWideSenderId;
 
     public static void processDeadlineNotifications(List<Task> scope) {
         if (scope == null || scope.isEmpty()) {
@@ -236,7 +239,62 @@ public with sharing class TaskSlaNotificationService {
         email.setSubject('[Tarefas] ' + (isAfter ? 'Tarefa vencida' : 'Tarefa proxima do vencimento'));
         email.setPlainTextBody(body);
         email.setHtmlBody(html);
+        applySystemSender(email);
         return email;
+    }
+
+    public static void applySystemSender(Messaging.SingleEmailMessage email) {
+        if (email == null) {
+            return;
+        }
+        Id orgWideEmailAddressId = resolveSystemOrgWideEmailAddressId();
+        if (orgWideEmailAddressId != null) {
+            email.setOrgWideEmailAddressId(orgWideEmailAddressId);
+            return;
+        }
+        email.setSenderDisplayName(SYSTEM_SENDER_DISPLAY_NAME);
+    }
+
+    private static Id resolveSystemOrgWideEmailAddressId() {
+        if (orgWideSenderResolved) {
+            return cachedOrgWideSenderId;
+        }
+        orgWideSenderResolved = true;
+        cachedOrgWideSenderId = null;
+
+        try {
+            List<OrgWideEmailAddress> addresses = [
+                SELECT Id, DisplayName, Address
+                FROM OrgWideEmailAddress
+                WHERE IsAllowAllProfiles = true
+                ORDER BY DisplayName ASC, Address ASC
+                LIMIT 50
+            ];
+            if (addresses.isEmpty()) {
+                return null;
+            }
+
+            for (OrgWideEmailAddress address : addresses) {
+                if (!String.isBlank(address.DisplayName)
+                    && address.DisplayName.equalsIgnoreCase(SYSTEM_SENDER_DISPLAY_NAME)) {
+                    cachedOrgWideSenderId = address.Id;
+                    return cachedOrgWideSenderId;
+                }
+            }
+
+            for (OrgWideEmailAddress address : addresses) {
+                String normalizedAddress = address.Address != null ? address.Address.toLowerCase() : '';
+                if (normalizedAddress.contains('no-reply') || normalizedAddress.contains('noreply')) {
+                    cachedOrgWideSenderId = address.Id;
+                    return cachedOrgWideSenderId;
+                }
+            }
+
+            cachedOrgWideSenderId = addresses[0].Id;
+            return cachedOrgWideSenderId;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static String buildDeadlineHtml(

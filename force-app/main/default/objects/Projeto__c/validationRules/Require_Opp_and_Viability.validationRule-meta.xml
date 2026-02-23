@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Opp_and_Viability</fullName>
+    <active>false</active>
+    <description>Impede criação/edição de projeto sem oportunidade e viabilidade, com bypass para perfil administrador (EN/PT-BR).</description>
+    <errorConditionFormula>AND(
+NOT(
+OR(
+LOWER($Profile.Name) = "system administrator",
+LOWER($Profile.Name) = "administrador do sistema"
+)
+),
+OR(
+ISBLANK(Oportunidade__c),
+ISBLANK(Viabilidade__c)
+)
+)</errorConditionFormula>
+    <errorMessage>Projeto exige Oportunidade e Viabilidade preenchidas.</errorMessage>
+</ValidationRule>

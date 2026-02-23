@@ -13,6 +13,7 @@
                             <th scope="col">Observacao</th>
                             <th scope="col">Arquivo</th>
                             <th scope="col"></th>
+                            <th scope="col">Concluir</th>
                             <th scope="col">Status</th>
                         </tr>
                     </thead>
@@ -25,7 +26,7 @@
                                     <template if:true={row.existingFiles.length}>
                                         <div class="file-list">
                                             <template for:each={row.existingFiles} for:item="file">
-                                                <div key={file.url} class="file-item">
+                                                <div key={file.id} class="file-item">
                                                     <a
                                                         href={file.url}
                                                         data-url={file.url}
@@ -34,6 +35,16 @@
                                                     >
                                                         {file.name}
                                                     </a>
+                                                    <lightning-button-icon
+                                                        icon-name="utility:delete"
+                                                        alternative-text="Remover"
+                                                        title="Remover"
+                                                        variant="bare"
+                                                        size="small"
+                                                        class="slds-m-left_x-small"
+                                                        data-attachment-id={file.id}
+                                                        onclick={handleRemove}
+                                                    ></lightning-button-icon>
                                                 </div>
                                             </template>
                                         </div>
@@ -41,8 +52,9 @@
 
                                     <template if:true={row.pendingFiles.length}>
                                         <div class="file-list pending">
+                                            <div class="pending-label">Selecionados para envio:</div>
                                             <template for:each={row.pendingFiles} for:item="file">
-                                                <div key={file.fileName} class="file-item">
+                                                <div key={file.localId} class="file-item">
                                                     {file.fileName}
                                                 </div>
                                             </template>
@@ -51,14 +63,13 @@
 
                                     <template if:true={row.canUpload}>
                                         <input
+                                            class="file-input"
                                             type="file"
                                             accept={acceptedFormats}
                                             multiple={allowMultipleFiles}
                                             data-index={row.id}
                                             onchange={handleFileChange}
                                         />
-                                    </template>
-                                    <template if:false={row.canUpload}>
                                     </template>
                                 </td>
                                 <td>
@@ -69,6 +80,16 @@
                                         variant="brand"
                                         disabled={row.disableSend}
                                     ></lightning-button>
+                                </td>
+                                <td>
+                                    <lightning-input
+                                        type="checkbox"
+                                        variant="label-hidden"
+                                        checked={row.completed}
+                                        disabled={row.disableComplete}
+                                        data-index={row.id}
+                                        onchange={handleToggleCompleted}
+                                    ></lightning-input>
                                 </td>
                                 <td>{row.status}</td>
                             </tr>

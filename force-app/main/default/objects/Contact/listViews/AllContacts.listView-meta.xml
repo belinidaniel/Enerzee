@@ -9,10 +9,5 @@
     <columns>CORE.USERS.FIRST_NAME</columns>
     <columns>CORE.USERS.LAST_NAME</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>FULL_NAME</field>
-        <operation>equals</operation>
-        <value>sergio volpatto</value>
-    </filters>
     <label>Todos os contatos</label>
 </ListView>

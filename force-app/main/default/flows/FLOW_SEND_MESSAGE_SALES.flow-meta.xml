@@ -3,8 +3,8 @@
     <actionCalls>
         <name>Send_Message_Iniciar_conversa</name>
         <label>Send Message Iniciar conversa</label>
-        <locationX>126</locationX>
-        <locationY>410</locationY>
+        <locationX>50</locationX>
+        <locationY>350</locationY>
         <actionName>sendConversationMessages</actionName>
         <actionType>sendConversationMessages</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -54,15 +54,15 @@
     <actionCalls>
         <name>Send_Message_Sessao_Inativa</name>
         <label>Send Message Sessao Inativa</label>
-        <locationX>426</locationX>
-        <locationY>410</locationY>
+        <locationX>314</locationX>
+        <locationY>350</locationY>
         <actionName>sendConversationMessages</actionName>
         <actionType>sendConversationMessages</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>messageDefinitionName</name>
             <value>
-                <stringValue>X01_SessaoInativaFaltaInteracao</stringValue>
+                <stringValue>X02_Sess_o_Inativa_por_falta_de_intera_o_Venda</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -107,8 +107,8 @@
     <assignments>
         <name>BuildCollection</name>
         <label>Build Messaging End User Collection</label>
-        <locationX>276</locationX>
-        <locationY>210</locationY>
+        <locationX>314</locationX>
+        <locationY>134</locationY>
         <assignmentItems>
             <assignToReference>messagingEndUserIds</assignToReference>
             <operator>Add</operator>
@@ -120,6 +120,43 @@
             <targetReference>Select_Message</targetReference>
         </connector>
     </assignments>
+    <decisions>
+        <name>Select_Message</name>
+        <label>Select Message</label>
+        <locationX>314</locationX>
+        <locationY>242</locationY>
+        <defaultConnectorLabel>Default</defaultConnectorLabel>
+        <rules>
+            <name>X01_Iniciar_conversa</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>selectedMessageComponentName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>01_Iniciar_conversa</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Message_Iniciar_conversa</targetReference>
+            </connector>
+            <label>01_Iniciar_conversa</label>
+        </rules>
+        <rules>
+            <name>X02_Sessao_Inativa</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>selectedMessageComponentName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>02_Sessao_Inativa</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Message_Sessao_Inativa</targetReference>
+            </connector>
+            <label>02_Sessao_Inativa</label>
+        </rules>
+    </decisions>
     <environments>Default</environments>
     <interviewLabel>FLOW SEND MESSAGE SALES {!$Flow.CurrentDateTime}</interviewLabel>
     <label>FLOW SEND MESSAGE SALES</label>
@@ -142,34 +179,9 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
-    <decisions>
-        <name>Select_Message</name>
-        <label>Select Message</label>
-        <locationX>276</locationX>
-        <locationY>300</locationY>
-        <defaultConnector>
-            <targetReference>Send_Message_Iniciar_conversa</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Default</defaultConnectorLabel>
-        <rules>
-            <name>Msg_02</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>selectedMessageComponentName</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>02_Sessao_Inativa</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Send_Message_Sessao_Inativa</targetReference>
-            </connector>
-            <label>Mensagem 02</label>
-        </rules>
-    </decisions>
     <start>
-        <locationX>276</locationX>
-        <locationY>50</locationY>
+        <locationX>188</locationX>
+        <locationY>0</locationY>
         <connector>
             <targetReference>BuildCollection</targetReference>
         </connector>

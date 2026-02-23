@@ -76,14 +76,14 @@ public class OpportunityTriggerTest {
         Id nivelloUserId = [
                 SELECT  Id
                 FROM    User
-                WHERE   Email = 'integracao@lab065.com'
+                WHERE   Email = 'daniel.belini@enerzee.com.br'
                 LIMIT   1
         ].Id;
         
         Id defaultUserId = [
             SELECT  Id
             FROM    User
-            WHERE   Email LIKE '%integracao@lab065.com'
+            WHERE   Email LIKE '%daniel.belini@enerzee.com.br'
             LIMIT   1
         ].Id;
         
@@ -285,6 +285,11 @@ public class OpportunityTriggerTest {
         opportunity.Name = 'Teste 2';
         update opportunity;
 
+        delete [
+            SELECT Id
+            FROM ViabilityStudy__c
+            WHERE Opportunity__c = :opportunity.Id
+        ];
         delete opportunity;
 
         OpportunityTriggerHandler.disableTrigger();

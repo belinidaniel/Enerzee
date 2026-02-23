@@ -390,6 +390,7 @@ public with sharing class TaskSlaDailySummaryService {
         email.setSaveAsActivity(false);
         email.setSubject(subjectPrefix + ' - ' + formatDate(Date.today()));
         email.setHtmlBody(buildManagerSummaryBody(manager.Name, tasks, config, relatedNames));
+        TaskSlaNotificationService.applySystemSender(email);
         return email;
     }
 
@@ -408,6 +409,7 @@ public with sharing class TaskSlaDailySummaryService {
         email.setSubject(subjectPrefix + ' - ' + formatDate(Date.today()));
         email.setHtmlBody(buildManagerSummaryBody(queueName, tasks, config, relatedNames));
         email.setSaveAsActivity(false);
+        TaskSlaNotificationService.applySystemSender(email);
         return email;
     }
 
@@ -425,6 +427,7 @@ public with sharing class TaskSlaDailySummaryService {
         email.setSubject(subjectPrefix + ' - ' + formatDate(Date.today()));
         email.setHtmlBody(buildSummaryBody(queueName, tasks, config));
         email.setSaveAsActivity(false);
+        TaskSlaNotificationService.applySystemSender(email);
         return email;
     }
 
@@ -446,6 +449,7 @@ public with sharing class TaskSlaDailySummaryService {
         email.setSaveAsActivity(false);
         email.setSubject('Resumo Diario - ' + formatDate(today));
         email.setHtmlBody(buildOwnerSummaryBody(owner.Name, tasks, config, today, tomorrow));
+        TaskSlaNotificationService.applySystemSender(email);
         return email;
     }
 
@@ -456,6 +460,7 @@ public with sharing class TaskSlaDailySummaryService {
         cloneEmail.setTargetObjectId(userId);
         cloneEmail.setTreatTargetObjectAsRecipient(true);
         cloneEmail.setSaveAsActivity(false);
+        TaskSlaNotificationService.applySystemSender(cloneEmail);
         return cloneEmail;
     }
 
@@ -468,6 +473,7 @@ public with sharing class TaskSlaDailySummaryService {
         cloneEmail.setHtmlBody(baseEmail.getHtmlBody());
         cloneEmail.setToAddresses(new String[]{ address });
         cloneEmail.setSaveAsActivity(false);
+        TaskSlaNotificationService.applySystemSender(cloneEmail);
         return cloneEmail;
     }
 

@@ -139,7 +139,7 @@
                 <leftValueReference>selectedMessageComponentName</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
-                    <stringValue>Iniciar_conversa</stringValue>
+                    <stringValue>01_Iniciar_conversa</stringValue>
                 </rightValue>
             </conditions>
             <connector>

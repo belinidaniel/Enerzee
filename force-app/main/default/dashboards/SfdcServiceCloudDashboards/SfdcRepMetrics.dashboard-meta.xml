@@ -57,7 +57,7 @@
                 </groupingSortProperties>
                 <header>Total de Trabalho dos Representantes por Canal</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkByQueue</report>
+                <report>SfdcRepWorkReports/SfdcRepWorkByQueue</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowValueDescending</sortBy>
@@ -97,7 +97,7 @@
                 </groupingSortProperties>
                 <header>Total de Trabalho dos Representantes por Fila</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkByQueue</report>
+                <report>SfdcRepWorkReports/SfdcRepWorkByQueue</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowValueDescending</sortBy>
@@ -138,7 +138,7 @@
                 </groupingSortProperties>
                 <header>Tempo Médio de Atendimento por Representante</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkAndProductivity</report>
+                <report>SfdcRepWorkReports/SfdcRepWorkAndProductivity</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowValueDescending</sortBy>
@@ -179,7 +179,7 @@
                 </groupingSortProperties>
                 <header>Tempo Médio Ativo por Representante</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkAndProductivity</report>
+                <report>SfdcRepWorkReports/SfdcRepWorkAndProductivity</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowValueAscending</sortBy>
@@ -221,7 +221,7 @@
                 </groupingSortProperties>
                 <header>Tempo Médio de Resposta por Representante</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkAndProductivity</report>
+                <report>SfdcRepWorkReports/SfdcRepWorkAndProductivity</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowValueDescending</sortBy>
@@ -260,7 +260,7 @@
                 </groupingSortProperties>
                 <header>Total de Trabalho dos Representantes por Data de Criação</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkByCreatedDate</report>
+                <report>SfdcRepWorkReports/SfdcRepWorkByCreatedDate</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
@@ -301,7 +301,7 @@
                 <header>Total de Trabalhos Encerrados por Representante</header>
                 <legendPosition>Right</legendPosition>
                 <maxValuesDisplayed>6</maxValuesDisplayed>
-                <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcClosedWorkByRep</report>
+                <report>SfdcRepWorkReports/SfdcClosedWorkByRep</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowValueDescending</sortBy>
@@ -346,7 +346,7 @@
                 </groupingSortProperties>
                 <header>Tempo Médio Ativo e de Atendimento por Representante</header>
                 <legendPosition>Right</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepWorkAndProductivity</report>
+                <report>SfdcRepWorkReports/SfdcRepWorkAndProductivity</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
@@ -392,7 +392,7 @@
                 </groupingSortProperties>
                 <header>Duração Média por Status de Presença e Representante</header>
                 <legendPosition>Right</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepPresenceStatus</report>
+                <report>SfdcRepWorkReports/SfdcRepPresenceStatus</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
@@ -433,7 +433,7 @@
                 </groupingSortProperties>
                 <header>Duração Média de Ociosidade por Representante</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcRepPresenceStatus</report>
+                <report>SfdcRepWorkReports/SfdcRepPresenceStatus</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
@@ -472,7 +472,7 @@
                 </groupingSortProperties>
                 <header>Total de Trabalhos Recusados por Motivo</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcDeclinedWorkByRep</report>
+                <report>SfdcRepWorkReports/SfdcDeclinedWorkByRep</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowValueDescending</sortBy>
@@ -512,7 +512,7 @@
                 </groupingSortProperties>
                 <header>Total de Trabalhos Recusados por Representante</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkReports/SfdcDeclinedWorkByRep</report>
+                <report>SfdcRepWorkReports/SfdcDeclinedWorkByRep</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowValueDescending</sortBy>

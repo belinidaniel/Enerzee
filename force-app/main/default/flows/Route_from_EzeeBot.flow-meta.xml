@@ -48,7 +48,7 @@
         <inputParameters>
             <name>queueId</name>
             <value>
-                <stringValue>00GU5000001ehthMAA</stringValue>
+                <stringValue>00GU5000001ehvJMAQ</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -63,7 +63,7 @@
         <inputParameters>
             <name>queueLabel</name>
             <value>
-                <stringValue>Assistência tecnica</stringValue>
+                <stringValue>Atendimento ao Cliente</stringValue>
             </value>
         </inputParameters>
         <inputParameters>

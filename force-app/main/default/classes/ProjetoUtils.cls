@@ -88,13 +88,13 @@ public class ProjetoUtils {
     //  Usuários chave
     public static User COORDENADOR_DE_ENGENHARIA {
         get {
-            populateUserEmailMap(); return Test.isRunningTest() == true ? userEmailToUser.get('integracao@lab065.com'): userEmailToUser.get('wellington.santos@enerzee.com.br');
+            populateUserEmailMap(); return Test.isRunningTest() == true ? userEmailToUser.get('daniel.belini@enerzee.com.br'): userEmailToUser.get('wellington.santos@enerzee.com.br');
         }
     }
 
     public static User COORDENADOR_DE_VIABILIDADE {
         get {
-            populateUserEmailMap(); return Test.isRunningTest() == true ? userEmailToUser.get('integracao@lab065.com'): userEmailToUser.get('wellington.santos@enerzee.com.br');
+            populateUserEmailMap(); return Test.isRunningTest() == true ? userEmailToUser.get('daniel.belini@enerzee.com.br'): userEmailToUser.get('wellington.santos@enerzee.com.br');
         }
     }
 

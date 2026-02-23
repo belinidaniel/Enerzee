@@ -56,7 +56,7 @@
                 </groupingSortProperties>
                 <header>Total Cases by Priority</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcRepWorkByCasePriorityAndOrigin</report>
+                <report>SfdcRepWorkWithCasesReports/SfdcRepWorkByCasePriorityAndOrigin</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
@@ -95,7 +95,7 @@
                 </groupingSortProperties>
                 <header>Total Cases by Origin</header>
                 <legendPosition>Right</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcRepWorkByCasePriorityAndOrigin</report>
+                <report>SfdcRepWorkWithCasesReports/SfdcRepWorkByCasePriorityAndOrigin</report>
                 <showPercentage>false</showPercentage>
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
@@ -135,7 +135,7 @@
                 </groupingSortProperties>
                 <header>Total Cases by Case Type</header>
                 <legendPosition>Right</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcRepWorkByCaseType</report>
+                <report>SfdcRepWorkWithCasesReports/SfdcRepWorkByCaseType</report>
                 <showPercentage>false</showPercentage>
                 <showValues>false</showValues>
                 <sortBy>RowValueDescending</sortBy>
@@ -169,7 +169,7 @@
                 <indicatorHighColor>#00716B</indicatorHighColor>
                 <indicatorLowColor>#C23934</indicatorLowColor>
                 <indicatorMiddleColor>#FFB75D</indicatorMiddleColor>
-                <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcOpenCasesByRepAndStatus</report>
+                <report>SfdcRepWorkWithCasesReports/SfdcOpenCasesByRepAndStatus</report>
                 <showPercentage>false</showPercentage>
                 <showRange>false</showRange>
                 <showTotal>true</showTotal>
@@ -202,7 +202,7 @@
                 <indicatorHighColor>#00716B</indicatorHighColor>
                 <indicatorLowColor>#C23934</indicatorLowColor>
                 <indicatorMiddleColor>#FFB75D</indicatorMiddleColor>
-                <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcClosedCasesByRep</report>
+                <report>SfdcRepWorkWithCasesReports/SfdcClosedCasesByRep</report>
                 <showPercentage>false</showPercentage>
                 <showRange>false</showRange>
                 <showTotal>true</showTotal>
@@ -236,7 +236,7 @@
                 <indicatorHighColor>#00716B</indicatorHighColor>
                 <indicatorLowColor>#C23934</indicatorLowColor>
                 <indicatorMiddleColor>#CA8501</indicatorMiddleColor>
-                <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcRepWorkByCasePriorityAndOrigin</report>
+                <report>SfdcRepWorkWithCasesReports/SfdcRepWorkByCasePriorityAndOrigin</report>
                 <showPercentage>false</showPercentage>
                 <showRange>false</showRange>
                 <showTotal>true</showTotal>
@@ -279,7 +279,7 @@
                 </groupingSortProperties>
                 <header>Total Open Cases by Rep</header>
                 <legendPosition>Right</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcOpenCasesByRepAndStatus</report>
+                <report>SfdcRepWorkWithCasesReports/SfdcOpenCasesByRepAndStatus</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
@@ -318,7 +318,7 @@
                 </groupingSortProperties>
                 <header>Total Closed Cases by Rep</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcClosedCasesByRep</report>
+                <report>SfdcRepWorkWithCasesReports/SfdcClosedCasesByRep</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>
@@ -353,7 +353,7 @@
                 <indicatorHighColor>#00716B</indicatorHighColor>
                 <indicatorLowColor>#C23934</indicatorLowColor>
                 <indicatorMiddleColor>#FFB75D</indicatorMiddleColor>
-                <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcCaseProductivity</report>
+                <report>SfdcRepWorkWithCasesReports/SfdcCaseProductivity</report>
                 <showPercentage>false</showPercentage>
                 <showRange>false</showRange>
                 <showTotal>true</showTotal>
@@ -387,7 +387,7 @@
                 <indicatorHighColor>#00716B</indicatorHighColor>
                 <indicatorLowColor>#C23934</indicatorLowColor>
                 <indicatorMiddleColor>#FFB75D</indicatorMiddleColor>
-                <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcCaseProductivity</report>
+                <report>SfdcRepWorkWithCasesReports/SfdcCaseProductivity</report>
                 <showPercentage>false</showPercentage>
                 <showRange>false</showRange>
                 <showTotal>true</showTotal>
@@ -421,7 +421,7 @@
                 <indicatorHighColor>#00716B</indicatorHighColor>
                 <indicatorLowColor>#C23934</indicatorLowColor>
                 <indicatorMiddleColor>#FFB75D</indicatorMiddleColor>
-                <report>SfdcServiceCloudReports/SfdcRepWorkWithCasesReports/SfdcCaseProductivity</report>
+                <report>SfdcRepWorkWithCasesReports/SfdcCaseProductivity</report>
                 <showPercentage>false</showPercentage>
                 <showRange>false</showRange>
                 <showTotal>true</showTotal>

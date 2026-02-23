@@ -39,6 +39,14 @@
                 <field>DescricaoMotivoPerda__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Edit</behavior>
+                <field>MotivoRevisaoProposta__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>RevisaoDeProposta__c</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>TotalProdutos__c</field>
             </layoutItems>

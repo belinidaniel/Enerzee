@@ -237,7 +237,8 @@ export default class AttachmentTabs extends LightningElement {
     }
 
     isRelatorioFinalSubject(value) {
-        return this.normalizeSubject(value) === 'RELATORIO FINAL DE OBRA';
+        const normalized = this.normalizeSubject(value);
+        return normalized === 'RELATORIO DE EXECUCAO DE OBRA' || normalized === 'RELATORIO FINAL DE OBRA';
     }
 
     normalizeSubject(value) {

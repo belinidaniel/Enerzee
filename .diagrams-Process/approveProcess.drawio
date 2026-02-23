@@ -1,0 +1,49 @@
+<mxfile host="65bd71144e">
+    <diagram id="discount-approval-arch" name="SolicitacaoDesconto">
+        <mxGraphModel dx="3109" dy="871" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="lwc" value="LWC Quick Action&#xa;Solicitar Desconto" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="-30" y="80" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="apex" value="Apex Controller/Service&#xa;with sharing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="80" width="240" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="opp" value="Opportunity&#xa;IdVirtualOffice__c&#xa;DescontoUFV__c&#xa;StatusAprovacaoDesconto__c&#xa;ObservacaoSolicitacaoAprovacaoDesconto__c&#xa;URL__c" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="50" width="300" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="mdt" value="Integrador__mdt&#xa;Solicitacao_Desconto" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="270" width="240" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="api" value="Endpoint Externo&#xa;POST /api/Proposal/discount" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="740" y="270" width="300" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="approval" value="Approval Process&#xa;Processo_de_Aprova_o_de_Desconto" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="1130" y="80" width="280" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="log" value="Log__c&#xa;(evidência técnica)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="630" y="450" width="280" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" value="abre modal / envia" style="endArrow=block;html=1;" parent="1" source="lwc" target="apex" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" value="consulta endpoint config" style="endArrow=block;html=1;" parent="1" source="apex" target="mdt" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" value="callout" style="endArrow=block;html=1;" parent="1" source="apex" target="api" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" value="update campos de solicitação" style="endArrow=block;html=1;" parent="1" source="apex" target="opp" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e5" value="submissão de aprovação" style="endArrow=block;html=1;" parent="1" source="opp" target="approval" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e6" value="auditoria request/response" style="endArrow=block;html=1;" parent="1" source="apex" target="log" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

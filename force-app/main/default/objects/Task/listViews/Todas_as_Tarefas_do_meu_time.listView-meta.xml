@@ -16,10 +16,5 @@
         <operation>equals</operation>
         <value>Open</value>
     </filters>
-    <filters>
-        <field>STATUS</field>
-        <operation>equals</operation>
-        <value>Open</value>
-    </filters>
     <label>Todas as Tarefas do meu time</label>
 </ListView>
