@@ -249,6 +249,47 @@ private class VOIntegrationServiceTest {
         System.assertEquals('654321', accountRecord.IdVirtualOffice2__c, 'Fila manual deve sincronizar Account com VO.');
     }
 
+    @IsTest
+    static void validationRuleShouldAllowContractStageWithoutAccountVo2ToEnableAutomaticSyncTrigger() {
+        Account accountRecord = new Account(
+            Name = 'Conta Sem VO2 Contrato',
+            CPF__c = '123.456.789-20'
+        );
+        insert accountRecord;
+
+        Opportunity opportunityRecord = new Opportunity(
+            Name = 'Opp Contrato Sem VO2',
+            AccountId = accountRecord.Id,
+            RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId(),
+            StageName = 'Prospecção',
+            CloseDate = Date.today().addDays(7)
+        );
+        insert opportunityRecord;
+
+        opportunityRecord.StageName = 'Contrato';
+        update opportunityRecord;
+
+        Opportunity updatedOpp = [SELECT StageName FROM Opportunity WHERE Id = :opportunityRecord.Id];
+        System.assertEquals('Contrato', updatedOpp.StageName, 'A regra deve permitir a transição para Contrato para disparar sync automático da Account.');
+    }
+
+    @IsTest
+    static void hasSyncedRulesShouldIgnorePlaceholderValues() {
+        System.assertEquals(false, VOIntegrationService.hasSyncedOpportunityVoId(null));
+        System.assertEquals(false, VOIntegrationService.hasSyncedOpportunityVoId(''));
+        System.assertEquals(false, VOIntegrationService.hasSyncedOpportunityVoId('000000'));
+        System.assertEquals(false, VOIntegrationService.hasSyncedOpportunityVoId('N/A'));
+        System.assertEquals(false, VOIntegrationService.hasSyncedOpportunityVoId('--'));
+        System.assertEquals(false, VOIntegrationService.hasSyncedOpportunityVoId('***'));
+        System.assertEquals(true, VOIntegrationService.hasSyncedOpportunityVoId('OPP-VO-001'));
+
+        System.assertEquals(false, VOIntegrationService.hasSyncedAccountVoId(null));
+        System.assertEquals(false, VOIntegrationService.hasSyncedAccountVoId(''));
+        System.assertEquals(false, VOIntegrationService.hasSyncedAccountVoId('0000'));
+        System.assertEquals(false, VOIntegrationService.hasSyncedAccountVoId('ABC'));
+        System.assertEquals(true, VOIntegrationService.hasSyncedAccountVoId('12345'));
+    }
+
     private static Boolean hasMessageLike(List<Log__c> logs, String fragment) {
         if (logs == null || logs.isEmpty() || String.isBlank(fragment)) {
             return false;

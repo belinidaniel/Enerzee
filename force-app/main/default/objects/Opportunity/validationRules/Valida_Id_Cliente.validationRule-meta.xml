@@ -8,10 +8,6 @@
     NOT(ISBLANK(AccountId)),
     ISBLANK(Account.IdVirtualOffice2__c),
     OR(
-        ISPICKVAL(StageName, &quot;Contrato&quot;),
-        ISPICKVAL(StageName, &quot;Viabilidade Técnica&quot;),
-        ISPICKVAL(StageName, &quot;Viabilidade Tecnica&quot;),
-        ISPICKVAL(StageName, &quot;Validação&quot;),
         ISPICKVAL(StageName, &quot;Parecer de acesso&quot;),
         ISPICKVAL(StageName, &quot;Ganho fechado&quot;)
     )

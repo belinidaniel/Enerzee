@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 02-23-2026
+ * @last modified by  : Daniel Belini
+**/
 public with sharing class VOIntegrationService {
     private static final String CLASS_NAME = 'VOIntegrationService';
     private static final String OPERATION_SEND_CLIENTE = 'sendCliente';
@@ -786,6 +793,26 @@ public with sharing class VOIntegrationService {
         }
 
         String trimmedValue = opportunityVoId.trim();
-        return !Pattern.matches('^0+$', trimmedValue);
+        String normalizedValue = trimmedValue.toLowerCase();
+
+        Set<String> invalidPlaceholders = new Set<String>{
+            'null',
+            'n/a',
+            'na',
+            'none',
+            'undefined',
+            '-',
+            '--'
+        };
+
+        if (invalidPlaceholders.contains(normalizedValue)) {
+            return false;
+        }
+
+        if (Pattern.matches('^0+$', trimmedValue)) {
+            return false;
+        }
+
+        return Pattern.matches('.*[a-zA-Z0-9].*', trimmedValue);
     }
 }

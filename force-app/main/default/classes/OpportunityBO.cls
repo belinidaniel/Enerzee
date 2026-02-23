@@ -966,7 +966,14 @@ public class OpportunityBO {
 
         Id integrationUserId = integration.isEmpty() ? null : integration[0].Id;
 
-        Id financeiroQueue = [SELECT Id FROM User WHERE Email LIKE 'dayane.silva@enerzee.com.br%' LIMIT 1].Id;
+        List<User> financeOwners = [
+            SELECT Id
+            FROM User
+            WHERE Email LIKE 'dayane.silva@enerzee.com.br%'
+            AND IsActive = true
+            LIMIT 1
+        ];
+        Id financeiroQueue = financeOwners.isEmpty() ? UserInfo.getUserId() : financeOwners[0].Id;
 
         Map<Id, String> opportunityIdToAccountName = new Map<Id, String>();
         Map<Id, Account> accountSet = new Map<Id, Account>([
@@ -1007,6 +1014,9 @@ public class OpportunityBO {
         List<Task> taskstoInsert = new List<Task>();
         Map<Id, Set<String>> newSubjectsByOpp = new Map<Id, Set<String>>();
         for(Opportunity opportunity : newList){
+            if (!newSubjectsByOpp.containsKey(opportunity.Id)) {
+                newSubjectsByOpp.put(opportunity.Id, new Set<String>());
+            }
             
             if(opportunity.OwnerId == integrationUserId) { continue; }
             
@@ -1227,7 +1237,7 @@ public class OpportunityBO {
                         opportunity.Id,
                         'É necessário  confirmar o pagamento da oportunidade ' + Opportunity.Name,
                         'PREENCHER OS CAMPOS:\n\n Fase com Valor Pagamento Confirmado \n\n',
-                        (taskNumberToOwnerUser.get(6) != null ? taskNumberToOwnerUser.get(6).Id : (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId())),
+                        (taskNumberToOwnerUser.get(7) != null ? taskNumberToOwnerUser.get(7).Id : (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId())),
 
                         TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 3),
 
