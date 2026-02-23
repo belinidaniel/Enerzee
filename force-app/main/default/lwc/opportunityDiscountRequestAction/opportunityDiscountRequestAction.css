@@ -1,0 +1,14 @@
+.discount-action {
+    min-height: 220px;
+}
+
+.spinner-wrapper {
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.context-box p {
+    margin: 0.2rem 0;
+}

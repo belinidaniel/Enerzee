@@ -75,7 +75,6 @@
                 <identifier>c_proposalPendingPanel</identifier>
             </componentInstance>
         </itemInstances>
-        
         <name>pendingTabContent</name>
         <type>Facet</type>
     </flexiPageRegions>
