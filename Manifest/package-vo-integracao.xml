@@ -6,9 +6,6 @@
         <members>IntegracaoVOPlano</members>
         <members>IntegracaoVOPlanoTest</members>
         <members>OpportunityBO</members>
-        <members>OpportunityBOIntegrationVOFixesTest</members>
-        <members>OpportunityDiscountRequestController</members>
-        <members>OpportunityDiscountRequestControllerTest</members>
         <members>OpportunityLogViewerController</members>
         <members>VOAccountSyncQueueable</members>
         <members>VOClient</members>
@@ -20,6 +17,10 @@
         <name>ApexClass</name>
     </types>
     <types>
+        <members>ModeloPropostaA</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
         <members>Log__c.CallOrigin__c</members>
         <members>Log__c.CorrelationId__c</members>
         <members>Log__c.Erro_Enviado__c</members>
@@ -28,19 +29,26 @@
         <name>CustomField</name>
     </types>
     <types>
-        <members>Integrador.ProposalDiscount</members>
-        <name>CustomMetadata</name>
+        <members>Account-Cliente Pessoa Física</members>
+        <members>Account-Cliente Pessoa Jurídica</members>
+        <members>Account-Parceiros</members>
+        <members>Log__c-Layout de Log</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo A -  Mini - Elaboração de proposta</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo A - Micro - Elaboração de proposta</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo B - Micro - Elaboração de proposta</members>
+        <members>Opportunity-Informe os dados da proposta - Grupo B - Mini - Elaboração de proposta</members>
+        <members>Opportunity-Inserir dados da viabilidade - Micro - Análise viabilidade</members>
+        <members>Opportunity-Inserir dados da viabilidade - Mini - Análise viabilidade</members>
+        <members>Opportunity-Opportunity Layout</members>
+        <members>Opportunity-Opportunity Layout Bow-e</members>
+        <members>Opportunity-Opportunity Layout Ezee Connect</members>
+        <members>Opportunity-Opportunity Layout Ezee Livre</members>
+        <members>Opportunity-Opportunity Layout Ezee Solar</members>
+        <members>Opportunity-Opportunity Layout Micro</members>
+        <members>Opportunity-Opportunity Layout Mini</members>
+        <name>Layout</name>
     </types>
     <types>
-        <members>OportunidadePaginaDeRegistroEzeeBowE</members>
-        <members>Oportunidade_P_gina_de_registro</members>
-        <members>Oportunidade_P_gina_de_registro1</members>
-        <members>Oportunidade_P_gina_de_registro1_Ezee_Solar</members>
-        <members>Oportunidade_P_gina_de_registro_Ezee_Connect</members>
-        <name>FlexiPage</name>
-    </types>
-    <types>
-        <members>opportunityDiscountRequestAction</members>
         <members>voAccountSyncAction</members>
         <members>voOpportunitySyncAction</members>
         <name>LightningComponentBundle</name>
@@ -48,7 +56,6 @@
     <types>
         <members>Account.Sincronizar_com_VO</members>
         <members>Opportunity.Enviar_para_VO</members>
-        <members>Opportunity.Solicitar_Desconto</members>
         <name>QuickAction</name>
     </types>
     <types>
@@ -56,5 +63,4 @@
         <name>ValidationRule</name>
     </types>
     <version>64.0</version>
-    
 </Package>

@@ -26,7 +26,8 @@ public with sharing class OpportunityLogViewerController {
 
         List<Log__c> logs = [
             SELECT Id, Name, CreatedDate, StatusCode__c, Status__c, Class__c, Method__c,
-                   HTTPMethod__c, RequestURI__c
+                   HTTPMethod__c, RequestURI__c, IntegrationType__c, Operation__c,
+                   CallOrigin__c, CorrelationId__c, Erro_Enviado__c
             FROM Log__c
             WHERE RelatedId__c = :opportunityId
             ORDER BY CreatedDate DESC
@@ -50,7 +51,9 @@ public with sharing class OpportunityLogViewerController {
         List<Log__c> logs = [
             SELECT Id, Name, CreatedDate, StatusCode__c, Status__c, Class__c, Method__c,
                    HTTPMethod__c, RequestURI__c, Message__c, RequestBody__c,
-                   ResponseBody__c, StackTraceString__c, LineNumber__c, Type__c
+                   ResponseBody__c, StackTraceString__c, LineNumber__c, Type__c,
+                   IntegrationType__c, Operation__c, CallOrigin__c,
+                   CorrelationId__c, Erro_Enviado__c
             FROM Log__c
             WHERE Id = :logId
             LIMIT 1

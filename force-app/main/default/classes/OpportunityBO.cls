@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 02-17-2026
+ * @last modified on  : 02-23-2026
  * @last modified by  : Daniel Belini
 **/
 public class OpportunityBO {
@@ -1022,6 +1022,9 @@ public class OpportunityBO {
         List<Task> taskstoInsert = new List<Task>();
         Map<Id, Set<String>> newSubjectsByOpp = new Map<Id, Set<String>>();
         for(Opportunity opportunity : newList){
+            if (!newSubjectsByOpp.containsKey(opportunity.Id)) {
+                newSubjectsByOpp.put(opportunity.Id, new Set<String>());
+            }
             
             if(opportunity.OwnerId == integrationUserId) { continue; }
             
@@ -1243,7 +1246,7 @@ public class OpportunityBO {
                         opportunity.Id,
                         'É necessário  confirmar o pagamento da oportunidade ' + Opportunity.Name,
                         'PREENCHER OS CAMPOS:\n\n Fase com Valor Pagamento Confirmado \n\n',
-                        paymentTaskOwnerId,
+                        (taskNumberToOwnerUser.get(7) != null ? taskNumberToOwnerUser.get(7).Id : (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId())),
 
                         TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 3),
 
@@ -2199,8 +2202,6 @@ public class OpportunityBO {
 
             if (opportunity.StageName == oldOpportunity.StageName) continue;
 
-            Id opportunityId = opportunity.RecordTypeId;
-
             if (
                 OpportunityUtils.isRecordTypeSolar(opportunity)
                 || OpportunityUtils.isRecordTypeEzeeLivre(opportunity)
@@ -2230,7 +2231,11 @@ public class OpportunityBO {
         }
         
         if(!accountIds.isEmpty()){
-        	IntegracaoVOClientePreCadastro.sendCliente(accountIds);
+            VOIntegrationService.enqueueAccountSync(
+                accountIds,
+                'Trigger:Opportunity.afterUpdate:Contrato',
+                false
+            );
         }
 
     }
@@ -2263,7 +2268,11 @@ public class OpportunityBO {
         }
         
         if(!opportunityIds.isEmpty()){
-        	IntegracaoVOPlano.sendPlano(opportunityIds);
+            VOIntegrationService.enqueueOpportunitySync(
+                opportunityIds,
+                'Trigger:Opportunity.afterUpdate:GanhoFechado',
+                false
+            );
         }
 
     }

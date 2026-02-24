@@ -3,6 +3,7 @@ private class IntegracaoVOClientePreCadastroTest {
 
     @isTest static void testSendCliente() {
         Test.setMock(HttpCalloutMock.class, new MockVirtualOfficeWS());
+        TokenAPIVOWs.access_token = 'test-token';
         
         Consultor__c consultor = new Consultor__c(
             Name = 'Consultor Teste',
@@ -38,6 +39,8 @@ private class IntegracaoVOClientePreCadastroTest {
     }
 
     @isTest static void testSendClienteWithException() {
+        TokenAPIVOWs.access_token = 'test-token';
+
         Account acc = new Account(
             Name = 'Cliente Teste Erro',
             Email__c = 'erro@teste.com',
@@ -58,6 +61,6 @@ private class IntegracaoVOClientePreCadastroTest {
 
         acc = [SELECT Id, SucessoIntegracaoVO__c, StatusBodyIntegracaoVO__c FROM Account WHERE Id = :acc.Id];
 
-        System.assertEquals(false, acc.SucessoIntegracaoVO__c, 'A integração não foi bem-sucedida');
+        System.assertEquals(false, acc.SucessoIntegracaoVO__c, 'A integração deveria registrar falha sem mock de callout.');
     }
 }

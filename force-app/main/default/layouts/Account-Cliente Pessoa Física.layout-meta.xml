@@ -241,6 +241,11 @@
             <actionType>QuickAction</actionType>
             <sortOrder>9</sortOrder>
         </platformActionListItems>
+            <platformActionListItems>
+            <actionName>Account.Sincronizar_com_VO</actionName>
+            <actionType>QuickAction</actionType>
+            <sortOrder>0</sortOrder>
+        </platformActionListItems>
     </platformActionList>
     <quickActionList>
         <quickActionListItems>
@@ -263,6 +268,9 @@
         </quickActionListItems>
         <quickActionListItems>
             <quickActionName>FeedItem.PollPost</quickActionName>
+        </quickActionListItems>
+            <quickActionListItems>
+            <quickActionName>Account.Sincronizar_com_VO</quickActionName>
         </quickActionListItems>
     </quickActionList>
     <relatedLists>

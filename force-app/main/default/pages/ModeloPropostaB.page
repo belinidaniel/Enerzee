@@ -734,6 +734,7 @@
                 </tr>
             </table>
         </div>
+        
         <div style="position:relative; bottom:140px; left:209px; right:122px; font-size:18px;">
             {!IF(ISBLANK(Opportunity.PrazoEntregaDias__c), '-', Opportunity.PrazoEntregaDias__c)} 
         </div>
