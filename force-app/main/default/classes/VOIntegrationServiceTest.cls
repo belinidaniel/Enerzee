@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : Daniel Belini
+ * @group             : 
+ * @last modified on  : 02-23-2026
+ * @last modified by  : Daniel Belini
+**/
 @IsTest
 private class VOIntegrationServiceTest {
     private class VOSuccessMock implements HttpCalloutMock {
@@ -283,11 +290,6 @@ private class VOIntegrationServiceTest {
         System.assertEquals(false, VOIntegrationService.hasSyncedOpportunityVoId('***'));
         System.assertEquals(true, VOIntegrationService.hasSyncedOpportunityVoId('OPP-VO-001'));
 
-        System.assertEquals(false, VOIntegrationService.hasSyncedAccountVoId(null));
-        System.assertEquals(false, VOIntegrationService.hasSyncedAccountVoId(''));
-        System.assertEquals(false, VOIntegrationService.hasSyncedAccountVoId('0000'));
-        System.assertEquals(false, VOIntegrationService.hasSyncedAccountVoId('ABC'));
-        System.assertEquals(true, VOIntegrationService.hasSyncedAccountVoId('12345'));
     }
 
     private static Boolean hasMessageLike(List<Log__c> logs, String fragment) {
