@@ -99,7 +99,7 @@ public class ViabilityStudyBO {
                 if(!existingSubjectsByViability.containsKey(task.WhatId)){
                     existingSubjectsByViability.put(task.WhatId, new Set<String>());
                 }
-                existingSubjectsByViability.get(task.WhatId).add(task.Subject);
+                existingSubjectsByViability.get(task.WhatId).add(normalizeTaskSubject(task.Subject));
             }
         }
 
@@ -152,11 +152,8 @@ public class ViabilityStudyBO {
                     continue;
                 }
 
-                if(existingSubjects.contains(templateLine.Assunto)){
-                    continue;
-                }
-
-                if (TaskBO.taskSubjectExists(viability.Id, templateLine.Assunto)) {
+                String normalizedSubject = normalizeTaskSubject(templateLine.Assunto);
+                if(existingSubjects.contains(normalizedSubject)){
                     continue;
                 }
 
@@ -189,7 +186,7 @@ public class ViabilityStudyBO {
                 populateInterestedFields(task, interestedList);
 
                 tasksToInsert.add(task);
-                existingSubjects.add(templateLine.Assunto);
+                existingSubjects.add(normalizedSubject);
                 existingSubjectsByViability.put(viability.Id, existingSubjects);
             }
         }
@@ -287,6 +284,10 @@ public class ViabilityStudyBO {
             }
         }
         return interestedList;
+    }
+
+    private static String normalizeTaskSubject(String subject){
+        return subject == null ? '' : subject.trim().toLowerCase();
     }
 
     private static Boolean shouldCreateTaskForSubject(String subject, ViabilityStudy__c viability){

@@ -267,6 +267,7 @@ private class VOIntegrationServiceTest {
         Opportunity opportunityRecord = new Opportunity(
             Name = 'Opp Contrato Sem VO2',
             AccountId = accountRecord.Id,
+            IdVirtualOffice__c = '0000000000000000000',
             RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName().get('Solar').getRecordTypeId(),
             StageName = 'Prospecção',
             CloseDate = Date.today().addDays(7)

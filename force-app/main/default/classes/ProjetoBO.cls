@@ -280,6 +280,13 @@ public class ProjetoBO {
             ProjetoUtils.RT_UFV_MINI_ACIMA_DE_300
         };
 
+        Set<Id> projectIds = new Set<Id>();
+        for (Projeto__c projectCollector : newRecordList) {
+            if (projectCollector != null && projectCollector.Id != null) {
+                projectIds.add(projectCollector.Id);
+            }
+        }
+        Map<Id, Set<String>> existingTaskSubjectsByProject = TaskBO.getExistingTaskSubjectSetByWhatIds(projectIds);
 
         List<Task> tasksToInsert = new List<Task>();
         for(Projeto__c project : newRecordList){
@@ -336,7 +343,7 @@ public class ProjetoBO {
                     if (line == null || String.isBlank(line.Assunto)) {
                         continue;
                     }
-                    if (TaskBO.taskSubjectExists(project.Id, line.Assunto)) {
+                    if (taskSubjectExistsInMemory(existingTaskSubjectsByProject, project.Id, line.Assunto)) {
                         System.debug('skip subjectExists (new project) ' + line.Assunto + ' proj ' + project.Id);
                         continue;
                     }
@@ -347,6 +354,7 @@ public class ProjetoBO {
                     Task generated = createTask(line, project, interessadosList, isDelegar, roleToUser, queueMap);
                     if(generated != null){
                         tasksToInsert.add(generated);
+                        registerTaskSubjectInMemory(existingTaskSubjectsByProject, project.Id, generated.Subject);
                     }
 
                     if(isDelegar && interessadosList != null && recordTypesToValidateTwoResponsibles.contains(project.RecordTypeId)){
@@ -358,6 +366,7 @@ public class ProjetoBO {
                         Task generatedTwo = createTask(secondLine != null ? secondLine : line, project, interestedTwo, true, roleToUser, queueMap);
                         if(generatedTwo != null){
                             tasksToInsert.add(generatedTwo);
+                            registerTaskSubjectInMemory(existingTaskSubjectsByProject, project.Id, generatedTwo.Subject);
                         }
                     }
                 }
@@ -389,7 +398,7 @@ public class ProjetoBO {
                         if (line == null || String.isBlank(line.Assunto)) {
                             continue;
                         }
-                        if (TaskBO.taskSubjectExists(project.Id, line.Assunto)) {
+                        if (taskSubjectExistsInMemory(existingTaskSubjectsByProject, project.Id, line.Assunto)) {
                             System.debug('skip subjectExists (planning) ' + line.Assunto + ' proj ' + project.Id);
                             continue;
                         }
@@ -406,6 +415,7 @@ public class ProjetoBO {
                                 Task generatedPlanning = createTask(line, project, interessadosList, false, roleToUser, queueMap);
                                 if(generatedPlanning != null){
                                     tasksToInsert.add(generatedPlanning);
+                                    registerTaskSubjectInMemory(existingTaskSubjectsByProject, project.Id, generatedPlanning.Subject);
                                 }
                             }
                         }
@@ -446,7 +456,7 @@ public class ProjetoBO {
                                 if (line == null || String.isBlank(line.Assunto)) {
                                     continue;
                                 }
-                                if (TaskBO.taskSubjectExists(project.Id, line.Assunto)) {
+                                if (taskSubjectExistsInMemory(existingTaskSubjectsByProject, project.Id, line.Assunto)) {
                                     System.debug('skip subjectExists (status change) ' + line.Assunto + ' proj ' + project.Id);
                                     continue;
                                 }
@@ -457,6 +467,7 @@ public class ProjetoBO {
                                     Task generatedStatus = createTask(line, project, interessadosList, false, roleToUser, queueMap);
                                     if(generatedStatus != null){
                                         tasksToInsert.add(generatedStatus);
+                                        registerTaskSubjectInMemory(existingTaskSubjectsByProject, project.Id, generatedStatus.Subject);
                                     } else {
                                         System.debug('skip createTask null (status change) ' + line.Assunto + ' proj ' + project.Id);
                                     }
@@ -488,6 +499,41 @@ public class ProjetoBO {
                 Utils.createLog('ProjetoBO', 'createTasks', ex, relatedId);
             }
         }
+    }
+
+    private static Boolean taskSubjectExistsInMemory(
+        Map<Id, Set<String>> existingTaskSubjectsByProject,
+        Id projectId,
+        String subject
+    ) {
+        if (projectId == null || String.isBlank(subject)) {
+            return false;
+        }
+
+        Set<String> subjects = existingTaskSubjectsByProject != null && existingTaskSubjectsByProject.containsKey(projectId)
+            ? existingTaskSubjectsByProject.get(projectId)
+            : null;
+        if (subjects == null || subjects.isEmpty()) {
+            return false;
+        }
+
+        return subjects.contains(subject.trim().toLowerCase());
+    }
+
+    private static void registerTaskSubjectInMemory(
+        Map<Id, Set<String>> existingTaskSubjectsByProject,
+        Id projectId,
+        String subject
+    ) {
+        if (existingTaskSubjectsByProject == null || projectId == null || String.isBlank(subject)) {
+            return;
+        }
+
+        if (!existingTaskSubjectsByProject.containsKey(projectId)) {
+            existingTaskSubjectsByProject.put(projectId, new Set<String>());
+        }
+
+        existingTaskSubjectsByProject.get(projectId).add(subject.trim().toLowerCase());
     }
 
     public static Task createTask(
