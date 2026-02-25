@@ -33,6 +33,28 @@ private class OpportunityDiscountRequestControllerTest {
     }
   }
 
+  private class Http500Mock implements HttpCalloutMock {
+    public HttpResponse respond(HttpRequest req) {
+      HttpResponse res = new HttpResponse();
+      res.setStatusCode(500);
+      res.setStatus('Server Error');
+      res.setHeader('Content-Type', 'application/json');
+      res.setBody('{"error":"internal error"}');
+      return res;
+    }
+  }
+
+  private class Http302Mock implements HttpCalloutMock {
+    public HttpResponse respond(HttpRequest req) {
+      HttpResponse res = new HttpResponse();
+      res.setStatusCode(302);
+      res.setStatus('Found');
+      res.setHeader('Content-Type', 'application/json');
+      res.setBody('{"redirect":true}');
+      return res;
+    }
+  }
+
   private class TimeoutMock implements HttpCalloutMock {
     public HttpResponse respond(HttpRequest req) {
       throw new CalloutException('Read timed out');
@@ -259,6 +281,129 @@ private class OpportunityDiscountRequestControllerTest {
       );
     }
     Test.stopTest();
+  }
+
+  @IsTest
+  static void shouldHandleHttp500Error() {
+    Opportunity opp = createOpportunity(
+      TARGET_STAGE,
+      'VO-500',
+      1000,
+      'https://example.com/file.pdf'
+    );
+    createAttachment(
+      opp.Id,
+      'https://example.com/file.pdf',
+      PROPOSAL_ATTACHMENT_TYPE
+    );
+    Test.setMock(HttpCalloutMock.class, new Http500Mock());
+    TokenAPINivelloWs.access_token = 'token';
+
+    Test.startTest();
+    try {
+      OpportunityDiscountRequestController.submitDiscountRequest(
+        opp.Id,
+        100,
+        null,
+        'Teste erro 500'
+      );
+      System.assert(false, 'Era esperado erro para retorno 500.');
+    } catch (AuraHandledException ex) {
+      System.assertNotEquals(null, ex.getMessage());
+    }
+    Test.stopTest();
+  }
+
+  @IsTest
+  static void shouldHandleUnexpectedHttpStatusCode() {
+    Opportunity opp = createOpportunity(
+      TARGET_STAGE,
+      'VO-302',
+      1000,
+      'https://example.com/file.pdf'
+    );
+    createAttachment(
+      opp.Id,
+      'https://example.com/file.pdf',
+      PROPOSAL_ATTACHMENT_TYPE
+    );
+    Test.setMock(HttpCalloutMock.class, new Http302Mock());
+    TokenAPINivelloWs.access_token = 'token';
+
+    Test.startTest();
+    try {
+      OpportunityDiscountRequestController.submitDiscountRequest(
+        opp.Id,
+        100,
+        null,
+        'Teste status 302'
+      );
+      System.assert(false, 'Era esperado erro para retorno inesperado.');
+    } catch (AuraHandledException ex) {
+      System.assertNotEquals(null, ex.getMessage());
+    }
+    Test.stopTest();
+  }
+
+  @IsTest
+  static void shouldValidateNullOpportunityIdAndInvalidStage() {
+    try {
+      OpportunityDiscountRequestController.getContext(null);
+      System.assert(false, 'Era esperado erro para Id nulo.');
+    } catch (AuraHandledException ex) {
+      System.assertNotEquals(null, ex.getMessage());
+    }
+
+    Opportunity oppInvalidStage = createOpportunity(
+      'Fechado Perdido',
+      'VO-STAGE',
+      1000,
+      'https://example.com/file.pdf'
+    );
+    createAttachment(
+      oppInvalidStage.Id,
+      'https://example.com/file.pdf',
+      PROPOSAL_ATTACHMENT_TYPE
+    );
+
+    try {
+      OpportunityDiscountRequestController.submitDiscountRequest(
+        oppInvalidStage.Id,
+        100,
+        null,
+        'Etapa inválida'
+      );
+      System.assert(false, 'Era esperado erro de etapa inválida.');
+    } catch (AuraHandledException ex) {
+      System.assertNotEquals(null, ex.getMessage());
+    }
+  }
+
+  @IsTest
+  static void shouldValidateNonPositiveDiscountFields() {
+    Opportunity opp = createOpportunity(
+      TARGET_STAGE,
+      'VO-ZERO',
+      1000,
+      'https://example.com/file.pdf'
+    );
+    createAttachment(
+      opp.Id,
+      'https://example.com/file.pdf',
+      PROPOSAL_ATTACHMENT_TYPE
+    );
+
+    try {
+      OpportunityDiscountRequestController.submitDiscountRequest(
+        opp.Id,
+        null,
+        0,
+        'Desconto inválido'
+      );
+      System.assert(false, 'Era esperado erro para desconto percentual <= 0.');
+    } catch (AuraHandledException ex) {
+      System.assertNotEquals(null, ex.getMessage());
+    }
   }
 
   @IsTest
