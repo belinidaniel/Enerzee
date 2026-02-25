@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+        <members>AccountBO</members>
+        <members>ConsultorBO</members>
+        <members>ContactBO</members>
+        <members>ContactBOTest</members>
+        <members>EzeeConnectProposalPendingService</members>
+        <members>EzeeConnectProposalPendingServiceTest</members>
         <members>IntegracaoVOClientePreCadastro</members>
         <members>IntegracaoVOClientePreCadastroTest</members>
         <members>IntegracaoVOPlano</members>
         <members>IntegracaoVOPlanoTest</members>
+        <members>IntegradorBO</members>
+        <members>IntegradorBOTest</members>
+        <members>IntegrationHubService</members>
+        <members>IntegrationHubServiceTest</members>
+        <members>MessagingEndUserService</members>
+        <members>MessagingEndUserServiceTest</members>
         <members>OpportunityBO</members>
         <members>OpportunityCommentNotificationService</members>
         <members>OpportunityCommentNotifServiceTest</members>

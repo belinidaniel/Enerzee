@@ -556,13 +556,7 @@ public with sharing class OpportunityDiscountRequestController {
   }
 
   private static HttpResponse sendRequest(HttpRequest request) {
-    String endpoint = request.getEndpoint() != null
-      ? request.getEndpoint().toLowerCase()
-      : '';
-    Boolean useNivello = endpoint.contains('geradorproposta');
-    return useNivello
-      ? Utils.callIntegrationNivello(request)
-      : Utils.callIntegrationVO(request);
+    return IntegrationHubService.send(request);
   }
 
   private static void registerLog(
