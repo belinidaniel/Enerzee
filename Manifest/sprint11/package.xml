@@ -10,6 +10,8 @@
         <members>OpportunityDiscountRequestController</members>
         <members>OpportunityDiscountRequestControllerTest</members>
         <members>OpportunityLogViewerController</members>
+        <members>ProjetoBO</members>
+        <members>TaskBO</members>
         <members>VOAccountSyncQueueable</members>
         <members>VOClient</members>
         <members>VOIntegrationService</members>
@@ -17,6 +19,7 @@
         <members>VOLogService</members>
         <members>VOManualSyncController</members>
         <members>VOOpportunitySyncQueueable</members>
+        <members>ViabilityStudyBO</members>
         <name>ApexClass</name>
     </types>
     <types>

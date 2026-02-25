@@ -990,7 +990,7 @@ public class TaskBO {
             return false;
         }
 
-        String normalized = subject.trim().toLowerCase();
+        String normalized = normalizeTaskSubject(subject);
 
         for (Task existing : [
             SELECT Subject
@@ -998,13 +998,39 @@ public class TaskBO {
             WHERE WhatId = :whatId
                 AND IsDeleted = false
         ]) {
-            String existingNorm = existing.Subject == null ? '' : existing.Subject.trim().toLowerCase();
+            String existingNorm = normalizeTaskSubject(existing.Subject);
             if (existingNorm == normalized) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    public static Map<Id, Set<String>> getExistingTaskSubjectSetByWhatIds(Set<Id> whatIds) {
+        Map<Id, Set<String>> subjectsByWhatId = new Map<Id, Set<String>>();
+        if (whatIds == null || whatIds.isEmpty()) {
+            return subjectsByWhatId;
+        }
+
+        for (Task existing : [
+            SELECT WhatId, Subject
+            FROM Task
+            WHERE WhatId IN :whatIds
+                AND IsDeleted = false
+        ]) {
+            if (!subjectsByWhatId.containsKey(existing.WhatId)) {
+                subjectsByWhatId.put(existing.WhatId, new Set<String>());
+            }
+            subjectsByWhatId.get(existing.WhatId).add(normalizeTaskSubject(existing.Subject));
+        }
+
+        return subjectsByWhatId;
+    }
+
+    @TestVisible
+    private static String normalizeTaskSubject(String subject) {
+        return subject == null ? '' : subject.trim().toLowerCase();
     }
 
     private class FieldRequirement {

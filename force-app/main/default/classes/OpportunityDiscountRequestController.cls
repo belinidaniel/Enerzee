@@ -263,16 +263,29 @@ public with sharing class OpportunityDiscountRequestController {
     }
 
     private static ProposalAttachmentInfo resolveLatestProposalInfo(Id opportunityId, Boolean throwWhenMissing) {
-        validateAttachmentLinkReadAccess();
+        Boolean canReadAttachmentLink = hasAttachmentLinkReadAccess();
+        if (!canReadAttachmentLink && !throwWhenMissing) {
+            ProposalAttachmentInfo info = new ProposalAttachmentInfo();
+            info.hasLatestProposal = false;
+            info.latestProposalUrl = null;
+            return info;
+        }
 
-        List<OpportunityAttachmentLink__c> links = [
-            SELECT AttachmentURL__c
-            FROM OpportunityAttachmentLink__c
-            WHERE OpportunityId__c = :opportunityId
-                AND Type__c = :PROPOSAL_ATTACHMENT_TYPE
-            ORDER BY CreatedDate DESC
-            LIMIT 1
-        ];
+        List<OpportunityAttachmentLink__c> links = new List<OpportunityAttachmentLink__c>();
+        try {
+            links = [
+                SELECT AttachmentURL__c
+                FROM OpportunityAttachmentLink__c
+                WHERE OpportunityId__c = :opportunityId
+                    AND Type__c = :PROPOSAL_ATTACHMENT_TYPE
+                ORDER BY CreatedDate DESC
+                LIMIT 1
+            ];
+        } catch (Exception ex) {
+            if (throwWhenMissing) {
+                throw new AuraHandledException('Sem permissão para acessar os anexos externos da oportunidade.');
+            }
+        }
 
         ProposalAttachmentInfo info = new ProposalAttachmentInfo();
         info.hasLatestProposal = !links.isEmpty();
@@ -301,23 +314,11 @@ public with sharing class OpportunityDiscountRequestController {
         return info;
     }
 
-    private static void validateAttachmentLinkReadAccess() {
-        if (!OpportunityAttachmentLink__c.SObjectType.getDescribe().isAccessible()) {
-            throw new AuraHandledException('Sem permissão para acessar os anexos externos da oportunidade.');
-        }
-
-        ensureReadableField(
-            OpportunityAttachmentLink__c.OpportunityId__c.getDescribe(),
-            'OpportunityAttachmentLink__c.OpportunityId__c'
-        );
-        ensureReadableField(
-            OpportunityAttachmentLink__c.Type__c.getDescribe(),
-            'OpportunityAttachmentLink__c.Type__c'
-        );
-        ensureReadableField(
-            OpportunityAttachmentLink__c.AttachmentURL__c.getDescribe(),
-            'OpportunityAttachmentLink__c.AttachmentURL__c'
-        );
+    private static Boolean hasAttachmentLinkReadAccess() {
+        return OpportunityAttachmentLink__c.SObjectType.getDescribe().isAccessible()
+            && OpportunityAttachmentLink__c.OpportunityId__c.getDescribe().isAccessible()
+            && OpportunityAttachmentLink__c.Type__c.getDescribe().isAccessible()
+            && OpportunityAttachmentLink__c.AttachmentURL__c.getDescribe().isAccessible();
     }
 
     private static String normalizeText(String value) {

@@ -1,0 +1,176 @@
+<mxfile host="65bd71144e" agent="Codex" version="1.0">
+  <diagram id="sap-cliente" name="01-Cliente">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="c1" value="Account/Opportunity Trigger" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1"><mxGeometry x="20" y="120" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="c2" value="AccountBO / OpportunityBO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1"><mxGeometry x="300" y="120" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="c3" value="IntegracaoSAPCliente&#xa;@future(callout=true)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="580" y="120" width="250" height="90" as="geometry"/></mxCell>
+        <mxCell id="c4" value="Integrador__mdt&#xa;ClienteSAP + TokenSAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="580" y="260" width="250" height="80" as="geometry"/></mxCell>
+        <mxCell id="c5" value="Utils.callIntegrationSAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1"><mxGeometry x="900" y="120" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="c6" value="SAP Endpoint&#xa;POST /Cliente" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1"><mxGeometry x="1180" y="120" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="c7" value="Update Account&#xa;SucessoIntegracaoSAP__c&#xa;StatusBodyIntegracaoSAP__c" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1"><mxGeometry x="900" y="250" width="260" height="100" as="geometry"/></mxCell>
+        <mxCell id="c8" value="Log__c&#xa;request/response/exception" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="1180" y="260" width="220" height="80" as="geometry"/></mxCell>
+        <mxCell id="c9" value="Gap: sem retry/dlq" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="1460" y="120" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="ce1" value="after update" style="endArrow=block;html=1;" parent="1" source="c1" target="c2" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ce2" value="sendCliente" style="endArrow=block;html=1;" parent="1" source="c2" target="c3" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ce3" value="resolve config" style="endArrow=block;html=1;" parent="1" source="c3" target="c4" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ce4" value="callout" style="endArrow=block;html=1;" parent="1" source="c3" target="c5" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ce5" value="POST" style="endArrow=block;html=1;" parent="1" source="c5" target="c6" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ce6" value="persist result" style="endArrow=block;html=1;" parent="1" source="c3" target="c7" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ce7" value="log" style="endArrow=block;html=1;" parent="1" source="c5" target="c8" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ce8" value="risk" style="endArrow=block;html=1;" parent="1" source="c5" target="c9" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="sap-consultor" name="02-Consultor-Fornecedor-Representante">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="s1" value="ConsultorTriggerHandler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1"><mxGeometry x="20" y="120" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="s2" value="ConsultorBO.sendFornecedorRepresentanteRecordToSAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1"><mxGeometry x="300" y="120" width="300" height="80" as="geometry"/></mxCell>
+        <mxCell id="s3" value="IntegracaoSAPRepresentante" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="680" y="60" width="240" height="80" as="geometry"/></mxCell>
+        <mxCell id="s4" value="IntegracaoSAPFornecedor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="680" y="180" width="240" height="80" as="geometry"/></mxCell>
+        <mxCell id="s5" value="Integrador__mdt&#xa;RepresentanteSAP / FornecedorSAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="980" y="120" width="280" height="80" as="geometry"/></mxCell>
+        <mxCell id="s6" value="SAP /Vendedor e /Fornecedor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1"><mxGeometry x="1320" y="120" width="230" height="80" as="geometry"/></mxCell>
+        <mxCell id="s7" value="Update Consultor__c&#xa;SucessoIntegracaoSAP__c" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1"><mxGeometry x="980" y="260" width="260" height="90" as="geometry"/></mxCell>
+        <mxCell id="s8" value="Log__c" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="1320" y="260" width="230" height="70" as="geometry"/></mxCell>
+        <mxCell id="s9" value="Observacao: IntegracaoSAPConsultor existe no codigo, mas sem disparo identificado no fluxo atual" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="300" y="280" width="620" height="80" as="geometry"/></mxCell>
+        <mxCell id="se1" value="after insert/update" style="endArrow=block;html=1;" parent="1" source="s1" target="s2" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se2" value="sendRepresentante" style="endArrow=block;html=1;" parent="1" source="s2" target="s3" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se3" value="sendFornecedor" style="endArrow=block;html=1;" parent="1" source="s2" target="s4" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se4" value="config/token" style="endArrow=block;html=1;" parent="1" source="s3" target="s5" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se5" value="config/token" style="endArrow=block;html=1;" parent="1" source="s4" target="s5" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se6" value="callout" style="endArrow=block;html=1;" parent="1" source="s5" target="s6" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se7" value="persist" style="endArrow=block;html=1;" parent="1" source="s4" target="s7" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="se8" value="log" style="endArrow=block;html=1;" parent="1" source="s5" target="s8" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="sap-integrador" name="03-Integrador">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="i1" value="IntegradorTriggerHandler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1"><mxGeometry x="20" y="120" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="i2" value="IntegradorBO.sendIntegradorToSAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1"><mxGeometry x="300" y="120" width="250" height="70" as="geometry"/></mxCell>
+        <mxCell id="i3" value="IntegracaoSAPIntegrador" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="620" y="120" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="i4" value="Integrador__mdt&#xa;FornecedorSAP + TokenSAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="900" y="120" width="260" height="80" as="geometry"/></mxCell>
+        <mxCell id="i5" value="SAP /Fornecedor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1"><mxGeometry x="1220" y="120" width="190" height="70" as="geometry"/></mxCell>
+        <mxCell id="i6" value="Update Integradores__c status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1"><mxGeometry x="900" y="250" width="260" height="80" as="geometry"/></mxCell>
+        <mxCell id="i7" value="Log__c" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="1220" y="250" width="190" height="70" as="geometry"/></mxCell>
+        <mxCell id="i8" value="Defeito: trigger nao reabilitado apos update" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="300" y="250" width="540" height="80" as="geometry"/></mxCell>
+        <mxCell id="ie1" value="after insert/update" style="endArrow=block;html=1;" parent="1" source="i1" target="i2" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ie2" value="sendIntegrador" style="endArrow=block;html=1;" parent="1" source="i2" target="i3" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ie3" value="resolve config" style="endArrow=block;html=1;" parent="1" source="i3" target="i4" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ie4" value="POST" style="endArrow=block;html=1;" parent="1" source="i4" target="i5" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ie5" value="persist" style="endArrow=block;html=1;" parent="1" source="i3" target="i6" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ie6" value="log" style="endArrow=block;html=1;" parent="1" source="i4" target="i7" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="sap-kit" name="04-Kit">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="k1" value="KitInstalacaoTriggerHandler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1"><mxGeometry x="20" y="120" width="240" height="70" as="geometry"/></mxCell>
+        <mxCell id="k2" value="KitInstalacaoBO.sendKitRecordsToSAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1"><mxGeometry x="320" y="120" width="280" height="80" as="geometry"/></mxCell>
+        <mxCell id="k3" value="IntegracaoSAPKit @future" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="670" y="120" width="230" height="70" as="geometry"/></mxCell>
+        <mxCell id="k4" value="Query OpportunityLineItem&#xa;monta ProductTreeLines" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1"><mxGeometry x="670" y="230" width="230" height="90" as="geometry"/></mxCell>
+        <mxCell id="k5" value="Integrador__mdt&#xa;KitSAP + TokenSAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="960" y="120" width="250" height="80" as="geometry"/></mxCell>
+        <mxCell id="k6" value="SAP /Kits/Kit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1"><mxGeometry x="1270" y="120" width="190" height="70" as="geometry"/></mxCell>
+        <mxCell id="k7" value="Update Kit_Instalacao__c status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1"><mxGeometry x="960" y="250" width="250" height="80" as="geometry"/></mxCell>
+        <mxCell id="k8" value="Log__c" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="1270" y="250" width="190" height="70" as="geometry"/></mxCell>
+        <mxCell id="k9" value="Gap: sem idempotencia e sem retry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="20" y="250" width="580" height="80" as="geometry"/></mxCell>
+        <mxCell id="ke1" value="after insert/update" style="endArrow=block;html=1;" parent="1" source="k1" target="k2" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke2" value="sendKit" style="endArrow=block;html=1;" parent="1" source="k2" target="k3" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke3" value="build payload" style="endArrow=block;html=1;" parent="1" source="k3" target="k4" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke4" value="config" style="endArrow=block;html=1;" parent="1" source="k3" target="k5" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke5" value="POST" style="endArrow=block;html=1;" parent="1" source="k5" target="k6" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke6" value="persist" style="endArrow=block;html=1;" parent="1" source="k3" target="k7" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke7" value="log" style="endArrow=block;html=1;" parent="1" source="k5" target="k8" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="sap-pedidos" name="05-Pedido-Compra-e-Venda">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="p1" value="OpportunityTriggerHandler.afterUpdate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1"><mxGeometry x="20" y="120" width="280" height="70" as="geometry"/></mxCell>
+        <mxCell id="p2" value="OpportunityBO.createSellBuyOrder&#xa;(when Closed Won)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1"><mxGeometry x="360" y="110" width="280" height="90" as="geometry"/></mxCell>
+        <mxCell id="p3" value="IntegracaoSAPPedidoVenda" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="720" y="60" width="230" height="70" as="geometry"/></mxCell>
+        <mxCell id="p4" value="IntegracaoSAPPedidoCompra" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="720" y="170" width="230" height="70" as="geometry"/></mxCell>
+        <mxCell id="p5" value="Integrador__mdt&#xa;PedidoCompraVendaSAP + TokenSAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="1020" y="110" width="300" height="90" as="geometry"/></mxCell>
+        <mxCell id="p6" value="SAP /pedidovenda&#xa;SAP /pedidocompra" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1"><mxGeometry x="1380" y="110" width="220" height="90" as="geometry"/></mxCell>
+        <mxCell id="p7" value="Update Opportunity status SAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1"><mxGeometry x="1020" y="260" width="300" height="80" as="geometry"/></mxCell>
+        <mxCell id="p8" value="Log__c (RelatedId = Opportunity)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="1380" y="260" width="220" height="80" as="geometry"/></mxCell>
+        <mxCell id="p9" value="Defeito critico: mapa de kits usa kits[0] como chave&#xa;(risco de itens irem para oportunidade errada)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="20" y="260" width="930" height="90" as="geometry"/></mxCell>
+        <mxCell id="pe1" value="after update" style="endArrow=block;html=1;" parent="1" source="p1" target="p2" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pe2" value="sendPedidoVenda" style="endArrow=block;html=1;" parent="1" source="p2" target="p3" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pe3" value="sendPedidoCompra" style="endArrow=block;html=1;" parent="1" source="p2" target="p4" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pe4" value="resolve endpoint/token" style="endArrow=block;html=1;" parent="1" source="p3" target="p5" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pe5" value="resolve endpoint/token" style="endArrow=block;html=1;" parent="1" source="p4" target="p5" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pe6" value="POST" style="endArrow=block;html=1;" parent="1" source="p5" target="p6" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pe7" value="persist" style="endArrow=block;html=1;" parent="1" source="p4" target="p7" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="pe8" value="log" style="endArrow=block;html=1;" parent="1" source="p5" target="p8" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="sap-contrato" name="06-Contrato">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="t1" value="OpportunityTriggerHandler.afterUpdate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1"><mxGeometry x="20" y="120" width="280" height="70" as="geometry"/></mxCell>
+        <mxCell id="t2" value="OpportunityBO.sendContractDataSAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1"><mxGeometry x="360" y="120" width="280" height="70" as="geometry"/></mxCell>
+        <mxCell id="t3" value="IntegracaoSAPContrato @future" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="710" y="120" width="250" height="70" as="geometry"/></mxCell>
+        <mxCell id="t4" value="Monta documentLines a partir de Kit_Instalacao__c" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1"><mxGeometry x="710" y="230" width="250" height="90" as="geometry"/></mxCell>
+        <mxCell id="t5" value="Integrador__mdt&#xa;ContratoSAP + TokenSAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="1030" y="120" width="260" height="80" as="geometry"/></mxCell>
+        <mxCell id="t6" value="SAP /Contrato" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1"><mxGeometry x="1350" y="120" width="200" height="70" as="geometry"/></mxCell>
+        <mxCell id="t7" value="Update Opportunity status SAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1"><mxGeometry x="1030" y="250" width="260" height="80" as="geometry"/></mxCell>
+        <mxCell id="t8" value="Log__c (RelatedId Opportunity)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="1350" y="250" width="200" height="80" as="geometry"/></mxCell>
+        <mxCell id="t9" value="Defeito critico: mapa de kits usa kits[0]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="20" y="250" width="620" height="80" as="geometry"/></mxCell>
+        <mxCell id="te1" value="after update" style="endArrow=block;html=1;" parent="1" source="t1" target="t2" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="te2" value="sendContract" style="endArrow=block;html=1;" parent="1" source="t2" target="t3" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="te3" value="build payload" style="endArrow=block;html=1;" parent="1" source="t3" target="t4" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="te4" value="resolve config" style="endArrow=block;html=1;" parent="1" source="t3" target="t5" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="te5" value="POST" style="endArrow=block;html=1;" parent="1" source="t5" target="t6" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="te6" value="persist" style="endArrow=block;html=1;" parent="1" source="t3" target="t7" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="te7" value="log" style="endArrow=block;html=1;" parent="1" source="t5" target="t8" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="sap-observability" name="07-Logs-Observability">
+    <mxGraphModel dx="1800" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="o1" value="Integracoes SAP (todas)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1"><mxGeometry x="20" y="120" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="o2" value="Utils.createLog / callIntegrationSAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1"><mxGeometry x="300" y="120" width="280" height="70" as="geometry"/></mxCell>
+        <mxCell id="o3" value="Log__c" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1"><mxGeometry x="640" y="120" width="200" height="70" as="geometry"/></mxCell>
+        <mxCell id="o4" value="Tab Log__c" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1"><mxGeometry x="900" y="60" width="180" height="60" as="geometry"/></mxCell>
+        <mxCell id="o5" value="LWC opportunityIntegrationLogs&#xa;+ OpportunityLogViewerController" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1"><mxGeometry x="900" y="140" width="320" height="80" as="geometry"/></mxCell>
+        <mxCell id="o6" value="Report Logs_Erros_Enviados" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1"><mxGeometry x="1280" y="60" width="240" height="60" as="geometry"/></mxCell>
+        <mxCell id="o7" value="Dashboard Erros_Integracoes_VO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1"><mxGeometry x="1280" y="150" width="240" height="60" as="geometry"/></mxCell>
+        <mxCell id="o8" value="Gap: CorrelationId e Erro_Enviado sem padrao nas integracoes SAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="20" y="250" width="560" height="80" as="geometry"/></mxCell>
+        <mxCell id="o9" value="Gap: acesso detalhado via LWC restrito a perfil admin" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1"><mxGeometry x="640" y="250" width="430" height="80" as="geometry"/></mxCell>
+        <mxCell id="oe1" value="technical logs" style="endArrow=block;html=1;" parent="1" source="o1" target="o2" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="oe2" value="insert" style="endArrow=block;html=1;" parent="1" source="o2" target="o3" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="oe3" value="list/detail" style="endArrow=block;html=1;" parent="1" source="o3" target="o4" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="oe4" value="query by RelatedId" style="endArrow=block;html=1;" parent="1" source="o3" target="o5" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="oe5" value="filter Erro_Enviado" style="endArrow=block;html=1;" parent="1" source="o3" target="o6" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="oe6" value="component" style="endArrow=block;html=1;" parent="1" source="o6" target="o7" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

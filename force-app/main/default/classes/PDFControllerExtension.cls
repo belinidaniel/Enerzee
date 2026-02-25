@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Daniel Belini
  * @group             : 
- * @last modified on  : 02-13-2026
+ * @last modified on  : 02-24-2026
  * @last modified by  : Daniel Belini
 **/
 public with sharing class PDFControllerExtension {
@@ -102,7 +102,7 @@ public with sharing class PDFControllerExtension {
         paymentMethodLeftHtml = opportunity.ObservacaoPagamentoEsquerdo__c;
         paymentMethodRightHtml = opportunity.ObservacaoPagamentoDireito__c;
         this.showPaymentMethodNotes = false;
-        if(paymentMethodLeftHtml != null && paymentMethodRightHtml != null){
+        if(paymentMethodLeftHtml != null || paymentMethodRightHtml != null){
             this.showPaymentMethodNotes = true;
         }
 
