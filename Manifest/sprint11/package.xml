@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>IntegracaoVOClientePreCadastro</members>
@@ -6,10 +6,13 @@
         <members>IntegracaoVOPlano</members>
         <members>IntegracaoVOPlanoTest</members>
         <members>OpportunityBO</members>
+        <members>OpportunityCommentNotificationService</members>
+        <members>OpportunityCommentNotifServiceTest</members>
         <members>OpportunityBOIntegrationVOFixesTest</members>
         <members>OpportunityDiscountRequestController</members>
         <members>OpportunityDiscountRequestControllerTest</members>
         <members>OpportunityLogViewerController</members>
+        <members>OpportunityTriggerHandler</members>
         <members>ProjetoBO</members>
         <members>TaskBO</members>
         <members>VOAccountSyncQueueable</members>
