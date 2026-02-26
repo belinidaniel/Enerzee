@@ -1,9 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>62.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <environments>Default</environments>
-    <interviewLabel>Finish Viability study {!$Flow.CurrentDateTime}</interviewLabel>
+    <formulas>
+        <name>f_GeracaoMensal</name>
+        <dataType>Number</dataType>
+        <expression>{!$Record.EstimatedAnnualGeneration__c} / 12</expression>
+        <scale>2</scale>
+    </formulas>
+    <interviewLabel
+  >Finish Viability study {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Finish Viability Study</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -40,7 +47,20 @@
         <inputAssignments>
             <field>GeracaoAnualEstimada__c</field>
             <value>
-                <elementReference>$Record.EstimatedAnnualGeneration__c</elementReference>
+                <elementReference
+        >$Record.EstimatedAnnualGeneration__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>GeracaoMedioMensal__c</field>
+            <value>
+                <elementReference>f_GeracaoMensal</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>GeracaoMensalEstimada__c</field>
+            <value>
+                <elementReference>f_GeracaoMensal</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -52,7 +72,8 @@
         <inputAssignments>
             <field>PotenciaPicoSistema__c</field>
             <value>
-                <elementReference>$Record.InstalledPowerKwp__c</elementReference>
+                <elementReference
+        >$Record.InstalledPowerKwp__c</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
