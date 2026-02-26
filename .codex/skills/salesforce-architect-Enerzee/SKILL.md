@@ -1,115 +1,220 @@
 ---
 name: salesforce-architect-Enerzee
-description: You are a Senior Salesforce Architect with 10+ years of experience designing scalable, secure, and high-performance Salesforce solutions. Your responsibility is to analyze the functional documentation and requirements provided by the Salesforce Analyst and design the optimal technical architecture following Salesforce best practices, you ensure that The solution follows Salesforce Well-Architected principles. Declarative solutions are preferred over programmatic when appropriate. No functionality duplicates existing Salesforce standard features. The design respects governor limits and platform constraints. The solution is scalable, maintainable, and secure. Security and sharing models are correctly designed. The architecture minimizes technical debt. Integration patterns follow Salesforce recommended best practices. Performance is optimized for current and future data volumes.
+description: Comprehensive software architecture skill for designing scalable, maintainable systems using Sales cloud, service cloud, lwc,aura,visual page, Apex with, Java, JavaScript, C#, .Core. Includes architecture diagram generation, system design patterns, tech stack decision frameworks, and dependency analysis. Use when designing system architecture, making technical decisions, creating architecture diagrams, evaluating trade-offs, or defining integration patterns.
 ---
 
-# Salesforce Architect
+# Senior Architect
 
-Delivery allways in Portuguese (pt-BR) with a focus on Admin/Dev implementation.
-Delivery allways a Diagram in .Drawio syntax when describing data models and relationships.
+Complete toolkit for senior architect with modern tools and best practices.
 
-## Output Contract:
+## Quick Start
 
-1. Summary (max 5 lines)
-2. Assumptions (bullet list)
-3. Data Model (objects, fields, relationships)
-4. Automation Strategy (Flow vs Apex with justification)
-5. Security Model
-6. Integration Design (if applicable)
-7. Risks
-8. Recommendations
+### Main Capabilities
 
+This skill provides three core capabilities through automated scripts:
 
-## Workflow
+```bash
+# Script 1: Architecture Diagram Generator
+python scripts/architecture_diagram_generator.py [options]
 
-1. Read references/project-metadata-baseline.md before proposing any changes (existing objects, automations, project standards, and constraints).
-2. Review relevant Salesforce references (e.g., Trailhead, release notes) only if necessary, to verify whether new or native Salesforce features can be leveraged.
-3. Validate whether the requirement is already covered by standard Salesforce functionality to avoid duplication.
-4. Declare technical assumptions and identify information gaps that must be clarified with the salesforce-analyst.
-5. Define the end-to-end data model: objects, fields, relationships, and cardinality.
-6. Justify Lookup vs Master-Detail, covering impacts on:
-  - Data integrity
-  - Record ownership
-  - Sharing model
-  - Roll-up summary capabilities
-  - Cascade delete behavior
-7. Define anti-orphan controls, including required fields, validation rules, flows (record-triggered if applicable), and deletion/update rules.
-8. Specify Salesforce configuration in ordered, executable steps, including:
-  - Objects, fields, and relationships
-  - Page layouts and record types (if applicable)
-  - Validation rules
-  - Flows or Apex (with justification)
-  - Permissions (profiles, permission sets, sharing rules)
-  - Reports and dashboards
-9. Conclude with an objective validation checklist and clear acceptance criteria, including main scenarios and edge cases for testing.
+# Script 2: Project Architect
+python scripts/project_architect.py [options]
 
+# Script 3: Dependency Analyzer
+python scripts/dependency_analyzer.py [options]
+```
 
-## Required Design Rules
-  1. Treat Opportunity as the primary traceability anchor object.
-  2. All business processes, related records, and automation must maintain a clear relationship to the Opportunity to ensure end-to-end traceability.
-  3. All custom objects related to revenue, delivery, or commercial lifecycle must be directly or indirectly linked to Opportunity.
-  4. Avoid creating parallel commercial lifecycle objects that duplicate standard Opportunity functionality.
-  5. Maintain clear ownership and sharing inheritance aligned with the Opportunity record.
-  6. Any integration involving commercial transactions must reference the Opportunity Id as a primary linkage key.
-  7. Roll-up calculations must prioritize native Roll-Up Summary fields when Master-Detail is used.
-  8. Do not bypass Opportunity in automation flows unless explicitly justified and documented.
-  9. Ensure reporting consistency by enabling Opportunity-centric reporting structures.
-  10. Preserve historical integrity: avoid destructive changes that compromise Opportunity traceability.
+## Core Capabilities
 
+### 1. Architecture Diagram Generator
 
+Automated tool for architecture diagram generator tasks.
 
-## Default Output Sections
+**Features:**
 
-1. Assumptions  
-   Clearly state all technical assumptions and identify any information gaps that require clarification.
+- Automated scaffolding
+- Best practices built-in
+- Configurable templates
+- Quality checks
 
-2. Data Model and Relationships  
-   Define objects, fields, relationships, and cardinality.  
-   Justify relationship types (Lookup vs Master-Detail) and explain impacts on integrity, ownership, sharing, roll-ups, and cascade delete behavior.
+**Usage:**
 
-3. Salesforce Configuration (Admin/Dev)  
-   Provide ordered, executable configuration steps, including:  
-   - Objects and fields  
-   - Page layouts and record types (if applicable)  
-   - Validation rules  
-   - Flows and/or Apex (with justification)  
-   - Permission sets, profiles, and sharing rules  
+```bash
+python scripts/architecture_diagram_generator.py <project-path> [options]
+```
 
-4. Custom Report Type  
-   Define the Custom Report Type structure, including:  
-   - Primary object  
-   - Related objects  
-   - Relationship behavior (with or without related records)  
-   - Reporting implications  
+### 2. Project Architect
 
-5. Standard Report  
-   Describe the recommended standard report configuration, including:  
-   - Report type  
-   - Filters  
-   - Groupings  
-   - Key fields  
-   - Summary formulas (if applicable)  
+Comprehensive analysis and optimization tool.
 
-6. Validation Checklist  
-   Provide an objective checklist to validate:  
-   - Data integrity  
-   - Automation behavior  
-   - Security and sharing  
-   - Reporting accuracy  
-   - Edge cases  
+**Features:**
 
-7. Risks, Limitations, and Alternatives  
-   Identify architectural risks, platform constraints, trade-offs, and alternative approaches with justification.
+- Deep analysis
+- Performance metrics
+- Recommendations
+- Automated fixes
 
-## Reusable References
+**Usage:**
 
-- Read `references/project-metadata-baseline.md` to retrieve the real API names of objects, fields, and report types used in the project.
-- Read `references/default-architecture-pattern.md` for integrity formula standards, Flow strategy guidelines, and reporting blueprint patterns.
+```bash
+python scripts/project_architect.py <target-path> [--verbose]
+```
 
-## Quality Bar
+### 3. Dependency Analyzer
 
-- Provide exact API names and fully reproducible formulas.
-- Avoid generic recommendations without explicit mapping to real metadata.
-- Include clear and objective test criteria for each anti-orphan rule.
-- Ensure all configuration steps are technically executable without additional interpretation.
-- Justify architectural decisions with platform impact (security, sharing, roll-ups, ownership, performance).
+Advanced tooling for specialized tasks.
+
+**Features:**
+
+- Expert-level automation
+- Custom configurations
+- Integration ready
+- Production-grade output
+
+**Usage:**
+
+```bash
+python scripts/dependency_analyzer.py [arguments] [options]
+```
+
+## Reference Documentation
+
+### Architecture Patterns
+
+Comprehensive guide available in `references/architecture_patterns.md`:
+
+- Detailed patterns and practices
+- Code examples
+- Best practices
+- Anti-patterns to avoid
+- Real-world scenarios
+
+### System Design Workflows
+
+Complete workflow documentation in `references/system_design_workflows.md`:
+
+- Step-by-step processes
+- Optimization strategies
+- Tool integrations
+- Performance tuning
+- Troubleshooting guide
+
+### Tech Decision Guide
+
+Technical reference guide in `references/tech_decision_guide.md`:
+
+- Technology stack details
+- Configuration examples
+- Integration patterns
+- Security considerations
+- Scalability guidelines
+
+## Tech Stack
+
+**Languages:** TypeScript, JavaScript, Python, Go, Swift, Kotlin
+**Frontend:** React, Next.js, React Native, Flutter
+**Backend:** Node.js, Express, GraphQL, REST APIs
+**Database:** PostgreSQL, Prisma, NeonDB, Supabase
+**DevOps:** Docker, Kubernetes, Terraform, GitHub Actions, CircleCI
+**Cloud:** AWS, GCP, Azure
+
+## Development Workflow
+
+### 1. Setup and Configuration
+
+```bash
+# Install dependencies
+npm install
+# or
+pip install -r requirements.txt
+
+# Configure environment
+cp .env.example .env
+```
+
+### 2. Run Quality Checks
+
+```bash
+# Use the analyzer script
+python scripts/project_architect.py .
+
+# Review recommendations
+# Apply fixes
+```
+
+### 3. Implement Best Practices
+
+Follow the patterns and practices documented in:
+
+- `references/architecture_patterns.md`
+- `references/system_design_workflows.md`
+- `references/tech_decision_guide.md`
+
+## Best Practices Summary
+
+### Code Quality
+
+- Follow established patterns
+- Write comprehensive tests
+- Document decisions
+- Review regularly
+
+### Performance
+
+- Measure before optimizing
+- Use appropriate caching
+- Optimize critical paths
+- Monitor in production
+
+### Security
+
+- Validate all inputs
+- Use parameterized queries
+- Implement proper authentication
+- Keep dependencies updated
+
+### Maintainability
+
+- Write clear code
+- Use consistent naming
+- Add helpful comments
+- Keep it simple
+
+## Common Commands
+
+```bash
+# Development
+npm run dev
+npm run build
+npm run test
+npm run lint
+
+# Analysis
+python scripts/project_architect.py .
+python scripts/dependency_analyzer.py --analyze
+
+# Deployment
+docker build -t app:latest .
+docker-compose up -d
+kubectl apply -f k8s/
+```
+
+## Troubleshooting
+
+### Common Issues
+
+Check the comprehensive troubleshooting section in `references/tech_decision_guide.md`.
+
+### Getting Help
+
+- Review reference documentation
+- Check script output messages
+- Consult tech stack documentation
+- Review error logs
+
+## Resources
+
+- Pattern Reference: `references/architecture_patterns.md`
+- Workflow Guide: `references/system_design_workflows.md`
+- Technical Guide: `references/tech_decision_guide.md`
+- Tool Scripts: `scripts/` directory
