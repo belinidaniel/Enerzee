@@ -311,9 +311,33 @@
         <scale>2</scale>
     </formulas>
     <formulas>
+        <name>f_EconomiaAnualEstimadaAtualizada</name>
+        <dataType>Currency</dataType>
+        <expression>((BLANKVALUE({!$Record.GeracaoAnualEstimada__c}, 0) / 2) * BLANKVALUE({!f_TarifaFinal}, 0) * 0.7) + ((BLANKVALUE({!$Record.GeracaoAnualEstimada__c}, 0) / 2) * BLANKVALUE({!f_TarifaFinal}, 0))</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
         <name>f_EconomiaAnualPromocional</name>
         <dataType>Currency</dataType>
         <expression>{!v_Economia2MesesPromocional} + {!v_Economia10MesesFixo}</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
+        <name>f_EconomiaMensalEstimadaAtualizada</name>
+        <dataType>Currency</dataType>
+        <expression>IF({!f_EconomiaAnualEstimadaAtualizada} &gt; 0, {!f_EconomiaAnualEstimadaAtualizada} / 12, 0)</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
+        <name>f_EconomiaAcumuladaAtualizada</name>
+        <dataType>Currency</dataType>
+        <expression>IF({!f_EconomiaAnualEstimadaAtualizada} &gt; 0, ({!f_EconomiaAnualEstimadaAtualizada} * 25) - BLANKVALUE({!$Record.ValorTotalProposta__c}, 0), 0)</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
+        <name>f_PaybackAnosAtualizado</name>
+        <dataType>Number</dataType>
+        <expression>IF({!f_EconomiaAnualEstimadaAtualizada} &gt; 0, BLANKVALUE({!$Record.ValorTotalProposta__c}, 0) / {!f_EconomiaAnualEstimadaAtualizada}, 0)</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
@@ -456,7 +480,25 @@
         <inputAssignments>
             <field>EconomiaAnualEstimada__c</field>
             <value>
-                <elementReference>v_EconomiaAnualPromocional</elementReference>
+                <elementReference>f_EconomiaAnualEstimadaAtualizada</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>EconomiaMensalEstimada__c</field>
+            <value>
+                <elementReference>f_EconomiaMensalEstimadaAtualizada</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>EconomiaAcumulada__c</field>
+            <value>
+                <elementReference>f_EconomiaAcumuladaAtualizada</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>PaybackAnos__c</field>
+            <value>
+                <elementReference>f_PaybackAnosAtualizado</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -521,7 +563,7 @@
         <connector>
             <targetReference>RecordTypeIsEzeeConnect</targetReference>
         </connector>
-        <filterLogic>(1 AND 2 AND 3) AND (4 OR 5 OR 6 OR 7)</filterLogic>
+        <filterLogic>(1 AND 2 AND 3) AND (4 OR 5 OR 6 OR 7 OR 8 OR 9)</filterLogic>
         <filters>
             <field>ConcessionariaEnergia__c</field>
             <operator>IsNull</operator>
@@ -566,6 +608,20 @@
         </filters>
         <filters>
             <field>Parceiro__c</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>GeracaoAnualEstimada__c</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>ViabilityStudyFinished__c</field>
             <operator>IsChanged</operator>
             <value>
                 <booleanValue>true</booleanValue>
