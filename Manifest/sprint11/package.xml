@@ -27,6 +27,8 @@
         <members>OpportunityTriggerHandler</members>
         <members>ProjetoBO</members>
         <members>TaskBO</members>
+        <members>TaskSlaNotificationService</members>
+        <members>TaskSlaNotificationServiceEmailLimitTest</members>
         <members>VOAccountSyncQueueable</members>
         <members>VOClient</members>
         <members>VOIntegrationService</members>
@@ -72,6 +74,10 @@
     <types>
         <members>Opportunity.Valida_Id_Cliente</members>
         <name>ValidationRule</name>
+    </types>
+    <types>
+        <members>Opportunity_Contrato_Assinado_WhatsApp</members>
+        <name>Flow</name>
     </types>
     <version>64.0</version>
     
