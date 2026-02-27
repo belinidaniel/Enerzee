@@ -1339,34 +1339,8 @@ public class OpportunityBO {
 
         //  AGENDAMENTO DA VISITA TÉCNICA
         if (OpportunityUtils.isSubStatusTechnicalVisitScheduling(opportunity)) {
-          /*if(taskNumberToOwnerUser.get(3) == null){
-                        taskNumberToOwnerUser.put(3, [
-                            SELECT Id FROM User WHERE Email LIKE 'felipe.ramos@enerzee.com.br%' LIMIT 1
-                        ]);
-                    }*/
-          Id groupId = [
-            SELECT Id
-            FROM Group
-            WHERE DEVELOPERNAME = :'AnalistaViabilidadeCompromisso'
-            LIMIT 1
-          ]
-          .id;
-          taskstoInsert.add(
-            TaskBO.createTask(
-              opportunity.Id,
-              'Defina no compromisso de serviço os campos necessários - ' +
-              accountName,
-              'PREENCHER OS CAMPOS:\n\n Equipe própria ou Terceira?\n Início agendado\n Duração',
-              //(taskNumberToOwnerUser.get(3) != null ? taskNumberToOwnerUser.get(3).Id : opportunity.OwnerId),
-              (groupId != null
-                ? groupId
-                : (isOwnerUserActive == true
-                    ? opportunity.OwnerId
-                    : UserInfo.getUserId())),
-              TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
-              '1'
-            )
-          );
+          // Regra de negócio: não criar automaticamente a task
+          // "Defina no compromisso de serviço os campos necessários - ...".
           continue;
         }
 
