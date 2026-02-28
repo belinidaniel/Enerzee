@@ -14,7 +14,9 @@ public class OpportunityLineItemTriggerTest {
       true
     );
     Product2 product = (Product2) TestFactory.createSObject(
-      new Product2(),
+      new Product2(
+        ExternalId__c = 'oli-prod-' + String.valueOf(DateTime.now().getTime())
+      ),
       true
     );
   }

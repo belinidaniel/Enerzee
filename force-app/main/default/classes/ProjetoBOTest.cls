@@ -1,202 +1,229 @@
 @isTest
 public with sharing class ProjetoBOTest {
+  @isTest
+  static void testPopulateUserEmailMap() {
+    // Setup test data
+    User testUser = new User(
+      Username = 'testuser' + System.currentTimeMillis() + '@example.com',
+      Email = 'testuser@example.com',
+      Alias = 'tuser',
+      LastName = 'test',
+      TimeZoneSidKey = 'America/Los_Angeles',
+      LocaleSidKey = 'en_US',
+      EmailEncodingKey = 'UTF-8',
+      ProfileId = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1]
+      .Id,
+      LanguageLocaleKey = 'en_US'
+    );
+    insert testUser;
 
-    @isTest
-    static void testPopulateUserEmailMap() {
+    // Call the method
+    ProjetoBO.populateUserEmailMap();
+  }
 
-        // Setup test data
-        User testUser = new User(
-            Username = 'testuser' + System.currentTimeMillis() + '@example.com',
-            Email = 'testuser@example.com',
-            Alias = 'tuser',
-            LastName = 'test',
-            TimeZoneSidKey = 'America/Los_Angeles',
-            LocaleSidKey = 'en_US',
-            EmailEncodingKey = 'UTF-8',
-            ProfileId = [SELECT Id FROM Profile WHERE Name='Standard User' LIMIT 1].Id,
-            LanguageLocaleKey = 'en_US'
-        );
-        insert testUser;
+  @isTest
+  static void testCreateTasks() {
+    // Setup test data
+    Account testAccount = new Account(Name = 'Test Account');
+    insert testAccount;
 
-        // Call the method
-        ProjetoBO.populateUserEmailMap();
+    Id projetoRtId = getAvailableProjetoRecordTypeId();
 
+    Opportunity opportunity = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = testAccount.id),
+      true
+    );
+    ViabilityStudy__c viability = createViability(opportunity.Id);
+
+    Projeto__c testProject = new Projeto__c(
+      Name = 'Test Project',
+      Status__c = 'Planejamento',
+      Conta__c = testAccount.Id,
+      Oportunidade__c = opportunity.Id,
+      Viabilidade__c = viability.Id
+    );
+    if (projetoRtId != null) {
+      testProject.RecordTypeId = projetoRtId;
     }
+    insert testProject;
 
-    @isTest
-    static void testCreateTasks() {
-        // Setup test data
-        Account testAccount = new Account(Name = 'Test Account');
-        insert testAccount;
+    Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>();
 
-        Id projetoRtId = getAvailableProjetoRecordTypeId();
+    Test.startTest();
+    // Call the method
+    ProjetoBO.createTasks(new List<Projeto__c>{ testProject }, oldMap);
+    testProject.Status__c = 'Projeto aprovado';
+    oldMap.put(testProject.Id, testProject);
+    ProjetoBO.createTasks(new List<Projeto__c>{ testProject }, oldMap);
+    Test.stopTest();
 
-        Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
-            AccountId = testAccount.id
-        ), true);
+    // Verify the results
+    // Add assertions to verify the expected behavior
+  }
 
-        Projeto__c testProject = new Projeto__c(
-            Name = 'Test Project',
-            Status__c = 'Planejamento',
-            Conta__c = testAccount.Id,
-            Oportunidade__c = opportunity.Id
-        );
-        if (projetoRtId != null) {
-            testProject.RecordTypeId = projetoRtId;
-        }
-        insert testProject;
+  @isTest
+  static void testCreateTasks2() {
+    // Setup test data
+    Account testAccount = new Account(Name = 'Test Account');
+    insert testAccount;
 
-        Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>();
+    Id projetoRtId = getAvailableProjetoRecordTypeId();
 
-        Test.startTest();
-        // Call the method
-        ProjetoBO.createTasks(new List<Projeto__c>{testProject}, oldMap);
-        testProject.Status__c = 'Projeto aprovado';
-        oldMap.put(testProject.Id, testProject);
-        ProjetoBO.createTasks(new List<Projeto__c>{testProject}, oldMap);
-        Test.stopTest();
+    Opportunity opportunity = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = testAccount.id),
+      true
+    );
+    ViabilityStudy__c viability = createViability(opportunity.Id);
 
-        // Verify the results
-        // Add assertions to verify the expected behavior
+    Projeto__c testProject = new Projeto__c(
+      Name = 'Test Project',
+      Status__c = 'Planejamento',
+      Conta__c = testAccount.Id,
+      Oportunidade__c = opportunity.Id,
+      Viabilidade__c = viability.Id
+    );
+    if (projetoRtId != null) {
+      testProject.RecordTypeId = projetoRtId;
     }
+    insert testProject;
+    Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>();
 
-    @isTest
-    static void testCreateTasks2() {
-        // Setup test data
-        Account testAccount = new Account(Name = 'Test Account');
-        insert testAccount;
+    Test.startTest();
+    // Call the method
+    testProject.Status__c = 'Projeto aprovado';
+    oldMap.put(testProject.Id, testProject);
+    ProjetoBO.createTasks(new List<Projeto__c>{ testProject }, oldMap);
+    Test.stopTest();
 
-        Id projetoRtId = getAvailableProjetoRecordTypeId();
+    // Verify the results
+    // Add assertions to verify the expected behavior
+  }
 
-        Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
-            AccountId = testAccount.id
-        ), true);
+  @isTest
+  static void testCreateTaskOnboarding() {
+    // Setup test data
+    Account testAccount = new Account(Name = 'Test Account');
+    insert testAccount;
+    Id projetoRtId = getAvailableProjetoRecordTypeId();
+    Opportunity opportunity = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = testAccount.id),
+      true
+    );
+    ViabilityStudy__c viability = createViability(opportunity.Id);
 
-        Projeto__c testProject = new Projeto__c(
-            Name = 'Test Project',
-            Status__c = 'Planejamento',
-            Conta__c = testAccount.Id,
-            Oportunidade__c = opportunity.Id
-        );
-        if (projetoRtId != null) {
-            testProject.RecordTypeId = projetoRtId;
-        }
-        insert testProject;
-        Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>();
-
-        Test.startTest();
-        // Call the method
-        testProject.Status__c = 'Projeto aprovado';
-        oldMap.put(testProject.Id, testProject);
-        ProjetoBO.createTasks(new List<Projeto__c>{testProject}, oldMap);
-        Test.stopTest();
-
-        // Verify the results
-        // Add assertions to verify the expected behavior
+    Projeto__c testProject = new Projeto__c(
+      Name = 'Test Project',
+      Status__c = 'Planejamento',
+      Conta__c = testAccount.Id,
+      Oportunidade__c = opportunity.Id,
+      Viabilidade__c = viability.Id
+    );
+    if (projetoRtId != null) {
+      testProject.RecordTypeId = projetoRtId;
     }
+    insert testProject;
 
+    Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>();
 
-    @isTest
-    static void testCreateTaskOnboarding() {
-        // Setup test data
-        Account testAccount = new Account(Name = 'Test Account');
-        insert testAccount;
-        Id projetoRtId = getAvailableProjetoRecordTypeId();
-        Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
-            AccountId = testAccount.id
-        ), true);
+    Test.startTest();
+    // Call the method
+    ProjetoBO.createTaskOnboarding(new List<Projeto__c>{ testProject }, oldMap);
+    Test.stopTest();
 
-        Projeto__c testProject = new Projeto__c(
-            Name = 'Test Project',
-            Status__c = 'Planejamento',
-            Conta__c = testAccount.Id,
-            Oportunidade__c = opportunity.Id // Ensure this field is populated
-        );
-        if (projetoRtId != null) {
-            testProject.RecordTypeId = projetoRtId;
-        }
-        insert testProject;
+    // Verify the results
+    // Add assertions to verify the expected behavior
+  }
 
-        Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>();
+  @isTest
+  static void testCreateTaskOnboarding2() {
+    // Setup test data
+    Account testAccount = new Account(Name = 'Test Account');
+    insert testAccount;
+    Id projetoRtId = getAvailableProjetoRecordTypeId();
+    Opportunity opportunity = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = testAccount.id),
+      true
+    );
+    ViabilityStudy__c viability = createViability(opportunity.Id);
 
-        Test.startTest();
-        // Call the method
-        ProjetoBO.createTaskOnboarding(new List<Projeto__c>{testProject}, oldMap);
-        Test.stopTest();
-
-        // Verify the results
-        // Add assertions to verify the expected behavior
+    Projeto__c testProject = new Projeto__c(
+      Name = 'Test Project',
+      Status__c = 'Planejamento',
+      Conta__c = testAccount.Id,
+      Oportunidade__c = opportunity.Id,
+      Viabilidade__c = viability.Id
+    );
+    if (projetoRtId != null) {
+      testProject.RecordTypeId = projetoRtId;
     }
+    insert testProject;
 
-    @isTest
-    static void testCreateTaskOnboarding2() {
-        // Setup test data
-        Account testAccount = new Account(Name = 'Test Account');
-        insert testAccount;
-        Id projetoRtId = getAvailableProjetoRecordTypeId();
-        Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
-            AccountId = testAccount.id
-        ), true);
+    Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>();
 
-        Projeto__c testProject = new Projeto__c(
-            Name = 'Test Project',
-            Status__c = 'Planejamento',
-            Conta__c = testAccount.Id,
-            Oportunidade__c = opportunity.Id // Ensure this field is populated
-        );
-        if (projetoRtId != null) {
-            testProject.RecordTypeId = projetoRtId;
-        }
-        insert testProject;
+    Test.startTest();
+    // Call the method
+    oldMap.put(testProject.Id, testProject);
+    ProjetoBO.createTaskOnboarding(new List<Projeto__c>{ testProject }, oldMap);
+    Test.stopTest();
 
-        Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>();
+    // Verify the results
+    // Add assertions to verify the expected behavior
+  }
 
-        Test.startTest();
-        // Call the method
-        oldMap.put(testProject.Id, testProject);
-        ProjetoBO.createTaskOnboarding(new List<Projeto__c>{testProject}, oldMap);
-        Test.stopTest();
+  @isTest
+  static void testCreateTaskProjectApproved() {
+    // Setup test data
+    Account testAccount = new Account(Name = 'Test Account');
+    insert testAccount;
 
-        // Verify the results
-        // Add assertions to verify the expected behavior
+    Id projetoRtId = getAvailableProjetoRecordTypeId();
+
+    Opportunity opportunity = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = testAccount.id),
+      true
+    );
+    ViabilityStudy__c viability = createViability(opportunity.Id);
+
+    Projeto__c testProject = new Projeto__c(
+      Name = 'Test Project',
+      Status__c = 'Planejamento',
+      Conta__c = testAccount.Id,
+      Oportunidade__c = opportunity.Id,
+      Viabilidade__c = viability.Id
+    );
+    if (projetoRtId != null) {
+      testProject.RecordTypeId = projetoRtId;
     }
+    insert testProject;
 
-    @isTest
-    static void testCreateTaskProjectApproved() {
-        // Setup test data
-        Account testAccount = new Account(Name = 'Test Account');
-        insert testAccount;
+    Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>();
 
-        Id projetoRtId = getAvailableProjetoRecordTypeId();
+    Test.startTest();
+    ProjetoBO.createTaskProjectApproved(
+      new List<Projeto__c>{ testProject },
+      oldMap
+    );
+    Test.stopTest();
+  }
 
-        Opportunity opportunity = (Opportunity) TestFactory.createSObject(new Opportunity(
-            AccountId = testAccount.id
-        ), true);
-
-        Projeto__c testProject = new Projeto__c(
-            Name = 'Test Project',
-            Status__c = 'Planejamento',
-            Conta__c = testAccount.Id,
-            Oportunidade__c = opportunity.Id // Ensure this field is populated
-        );
-        if (projetoRtId != null) {
-            testProject.RecordTypeId = projetoRtId;
-        }
-        insert testProject;
-
-        Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>();
-
-        Test.startTest();
-        ProjetoBO.createTaskProjectApproved(new List<Projeto__c>{testProject}, oldMap);
-        Test.stopTest();
+  private static Id getAvailableProjetoRecordTypeId() {
+    for (
+      Schema.RecordTypeInfo rti : Projeto__c.SObjectType.getDescribe()
+        .getRecordTypeInfos()
+    ) {
+      if (rti.isAvailable() && !rti.isMaster()) {
+        return rti.getRecordTypeId();
+      }
     }
+    return null;
+  }
 
-    private static Id getAvailableProjetoRecordTypeId() {
-        for (Schema.RecordTypeInfo rti : Projeto__c.SObjectType.getDescribe().getRecordTypeInfos()) {
-            if (rti.isAvailable() && !rti.isMaster()) {
-                return rti.getRecordTypeId();
-            }
-        }
-        return null;
-    }
+  private static ViabilityStudy__c createViability(Id opportunityId) {
+    ViabilityStudy__c viability = new ViabilityStudy__c(
+      Opportunity__c = opportunityId,
+      TypeWorkProjectFeasibility__c = 'UFV Micro'
+    );
+    insert viability;
+    return viability;
+  }
 }

@@ -1,200 +1,69 @@
-# Apex Coverage Snapshot (Legacy Export)
+# Apex Coverage Snapshot
 
-Raw export preserved from the original `README.md` tracked in Git.
+## Execução mais recente (RunLocalTests)
 
-```text
-│ PDFControllerExtension               │ 0               │ 508              │ 0.00% │
-│ ClickSignIntegration                 │ 0               │ 268              │ 0.00% │
-│ LeadDistributionSelector             │ 0               │ 211              │ 0.00% │
-│ ClickSignUtils                       │ 0               │ 198              │ 0.00% │
-│ ClickSignTemplateController          │ 0               │ 162              │ 0.00% │
-│ MessagingSessionSLABatch             │ 0               │ 154              │ 0.00% │
-│ ClickSignService                     │ 0               │ 147              │ 0.00% │
-│ KitInstalacaoBO                      │ 0               │ 138              │ 0.00% │
-│ ProposalConsoleController            │ 0               │ 137              │ 0.00% │
-│ LeadBO                               │ 0               │ 134              │ 0.00% │
-│ IntegracaoVOPlano                    │ 0               │ 129              │ 0.00% │
-│ HelpDeskCaseService                  │ 0               │ 114              │ 0.00% │
-│ RevoIntegrationService               │ 0               │ 81               │ 0.00% │
-│ IntegracaoVOClientePreCadastro       │ 0               │ 79               │ 0.00% │
-│ ClickSignREST                        │ 0               │ 72               │ 0.00% │
-│ IntegracaoNivelloViabilidade         │ 0               │ 72               │ 0.00% │
-AccountBO                              │ 0               │ 56               │ 0.00% │
-│ IntegracaoGeradorPropostas           │ 0               │ 56               │ 0.00% │
-│ ClickSignInboundDTO                  │ 0               │ 55               │ 0.00% │
-│ IntegracaoNivelloContrato            │ 0               │ 49               │ 0.00% │
-│ IntegracaoNivelloAnaliseVisitaTecnica │ 0               │ 48               │ 0.00% │
-│ IntegracaoNivelloValorTotalProposta  │ 0               │ 45               │ 0.00% │
-│ OpportunityDataController            │ 0               │ 44               │ 0.00% │
-│ IntegracaoNivelloSimulacaoFinanciamento │ 0               │ 43               │ 0.00% │
-│ TemplateJornadaDoClienteController   │ 0               │ 39               │ 0.00% │
-│ ClickSignLogViewerController         │ 0               │ 37               │ 0.00% │
-│ OpportunityLogViewerController       │ 0               │ 37               │ 0.00% │
-│ VOIntegrationEmailAlert              │ 0               │ 31               │ 0.00% │
-│ HelpDeskCaseDAO                      │ 0               │ 30               │ 0.00% │
-│ HelpDeskContactDAO                   │ 0               │ 27               │ 0.00% │
-│ MessagingSessionSLAScheduler         │ 0               │ 27               │ 0.00% │
-│ AccountTriggerHandler                │ 0               │ 26               │ 0.00% │
-│ ModuloHelpDeskCaseController         │ 0               │ 26               │ 0.00% │
-│ ConsultorTriggerHandler              │ 0               │ 25               │ 0.00% │
-│ HelpDeskAuthService                  │ 0               │ 25               │ 0.00% │
-│ TriggerHandler                       │ 0               │ 24               │ 0.00% │
-│ AttachmentFeedService                │ 0               │ 15               │ 0.00% │
-│ RevoOpportunityErrorBatch            │ 0               │ 11               │ 0.00% │
-│ ViabilityStudyController             │ 0               │ 7                │ 0.00% │
-│ ClickSignQueueable                   │ 0               │ 6                │ 0.00% │
-│ RecordTypes                          │ 0               │ 5                │ 0.00% │
-│ AccountTrigger                       │ 0               │ 2                │ 0.00% │
-│ Permissions                          │ 0               │ 2                │ 0.00% │
-│ ClickSignDTO                         │ 0               │ 0                │ 0.00% │
-│ FormularioPDFController              │ 0               │ 0                │ 0.00% │
-│ GORecordsTO                          │ 0               │ 0                │ 0.00% │
-│ HelpDeskFilePayload                  │ 0               │ 0                │ 0.00% │
-│ OpportunityRecordsTO                 │ 0               │ 0                │ 0.00% │
-│ TokenAPIVOWs                         │ 1               │ 28               │ 3.45% │
-│ ExternalArchiveService               │ 3               │ 42               │ 6.67% │
-│ IntegracaoFormaPagamentoNegociacao   │ 3               │ 37               │ 7.50% │
-│ EmailWithAttachmentById              │ 9               │ 52               │ 14.75% │
-│ TaskCompletionService                │ 37              │ 113              │ 24.67% │
-│ MessagingComposerController          │ 168             │ 460              │ 26.75% │
-│ LeadIntegrationBatch                 │ 4               │ 8                │ 33.33% │
-│ ClickSignDAO                         │ 14              │ 27               │ 34.15% │
-│ ActivityDocumentController           │ 23              │ 43               │ 34.85% │
-│ OpportunityEntryRest                 │ 82              │ 112              │ 42.27% │
-│ TaskTemplateUtils                    │ 48              │ 55               │ 46.60% │
-│ ContentDocumentLinkTrigger           │ 15              │ 15               │ 50.00% │
-│ IntegracaoNivelloProposta            │ 79              │ 74               │ 51.63% │
-│ TaskDeadlineNotificationBatch        │ 44              │ 40               │ 52.38% │
-│ TaskDeadlineNotificationScheduler    │ 18              │ 16               │ 52.94% │
-│ InstalacaoTaskBO                     │ 157             │ 121              │ 56.47% │
-│ ContentVersionTriggerHandler         │ 12              │ 9                │ 57.14% │
-│ ProjetoStatusIntegrationService      │ 43              │ 31               │ 58.11% │
-│ ContactTriggerHandler                │ 13              │ 9                │ 59.09% │
-│ ProposalCoverTriggerHandler          │ 12              │ 8                │ 60.00% │
-│ APIOpcoesCondicaoPagamento           │ 116             │ 72               │ 61.70% │
-│ CaseBO                               │ 123             │ 74               │ 62.44% │
-│ ProposalPendingSendQueueable         │ 22              │ 12               │ 64.71% │
-│ OpportunityLineItemTriggerHandler    │ 35              │ 19               │ 64.81% │
-│ ProposalPendingResponseRest          │ 59              │ 31               │ 65.56% │
-│ TaskBO                               │ 422             │ 221              │ 65.63% │
-│ RestLeadConvert                      │ 46              │ 21               │ 68.66% │
-│ ProjetoUtils                         │ 57              │ 26               │ 68.67% │
-│ DataSourceController                 │ 69              │ 31               │ 69.00% │
-│ IntegracaoNivelloDataVisitaTecnica   │ 48              │ 21               │ 69.57% │
-│ ServiceAppointmentBO                 │ 48              │ 21               │ 69.57% │
-│ InstalacaoTriggerHandler             │ 16              │ 7                │ 69.57% │
-│ ClickSignController                  │ 133             │ 56               │ 70.37% │
-│ ContentVersionBO                     │ 5               │ 2                │ 71.43% │
-│ OpportunityUtils                     │ 168             │ 67               │ 71.49% │
-│ IntegradorTriggerHandler             │ 16              │ 6                │ 72.73% │
-│ ProposalPendingStatusQueueable       │ 17              │ 6                │ 73.91% │
-│ ViabilityStudyBO                     │ 308             │ 103              │ 74.94% │
-│ OpportunityBO                        │ 1078            │ 357              │ 75.12% │
-│ EzeeConnectProposalPendingService    │ 41              │ 13               │ 75.93% │
-│ IntegracaoNivelloProjetos            │ 51              │ 16               │ 76.12% │
-│ CommunitiesSelfRegController         │ 32              │ 10               │ 76.19% │
-│ MessagingTrigger                     │ 7               │ 2                │ 77.78% │
-│ GeolocationController                │ 11              │ 3                │ 78.57% │
-│ IntegracaoSAPContrato                │ 125             │ 34               │ 78.62% │
-│ Utils                                │ 115             │ 30               │ 79.31% │
-│ IntegracaoSAPPedidoCompra            │ 79              │ 20               │ 79.80% │
-│ ProposalPendingController            │ 144             │ 36               │ 80.00% │
-│ MicrobatchSelfRegController          │ 32              │ 8                │ 80.00% │
-│ OpportunityController                │ 12              │ 3                │ 80.00% │
-│ ProjetoBO                            │ 517             │ 125              │ 80.53% │
-│ LeadIntegrationService               │ 151             │ 36               │ 80.75% │
-│ AssignedResourceTriggerHandler       │ 17              │ 4                │ 80.95% │
-│ ProductUpdateEntryRest               │ 152             │ 35               │ 81.28% │
-│ FileUploadController                 │ 22              │ 5                │ 81.48% │
-│ SiteRegisterController               │ 22              │ 5                │ 81.48% │
-│ ProposalCoverBO                      │ 9               │ 2                │ 81.82% │
-│ ViabilityController                  │ 14              │ 3                │ 82.35% │
-│ ViabilityStudyTriggerHandler         │ 29              │ 6                │ 82.86% │
-│ ReassignMessagingSessionBatch        │ 15              │ 3                │ 83.33% │
-│ CheckBusinessHour                    │ 5               │ 1                │ 83.33% │
-│ InstalacaoBO                         │ 119             │ 23               │ 83.80% │
-│ CaseTriggerHandler                   │ 21              │ 4                │ 84.00% │
-│ OpportunityAttachmentLinkService     │ 21              │ 4                │ 84.00% │
-│ IntegracaoVOConsultorPreCadastro     │ 43              │ 8                │ 84.31% │
-│ IntegracaoSAPPedidoVenda             │ 78              │ 14               │ 84.78% │
-│ IntegracaoNivelloAprovacaoDesconto   │ 41              │ 7                │ 85.42% │
-│ CommunityFormController              │ 73              │ 12               │ 85.88% │
-│ MyProfilePageController              │ 21              │ 3                │ 87.50% │
-│ ProposalService                      │ 72              │ 9                │ 88.89% │
-│ ProductBO                            │ 16              │ 2                │ 88.89% │
-│ ForgotPasswordController             │ 8               │ 1                │ 88.89% │
-│ IntegracaoSAPConsultor               │ 107             │ 13               │ 89.17% │
-│ IntegradorBO                         │ 33              │ 4                │ 89.19% │
-│ MetadataService                      │ 6470            │ 773              │ 89.33% │
-│ CustomerAssignMessagingSessionBatch  │ 34              │ 4                │ 89.47% │
-│ Collection                           │ 18              │ 2                │ 90.00% │
-│ FeedbackController                   │ 9               │ 1                │ 90.00% │
-│ RemarketingRouter                    │ 57              │ 6                │ 90.48% │
-│ ContactBO                            │ 29              │ 3                │ 90.62% │
-│ LeadIntegrationScheduler             │ 30              │ 3                │ 90.91% │
-│ TaskWhoName                          │ 21              │ 2                │ 91.30% │
-│ FieldSetConfigurationService         │ 126             │ 11               │ 91.97% │
-│ LeadTriggerHandler                   │ 25              │ 2                │ 92.59% │
-│ ServiceAppointmentTriggerHandler     │ 25              │ 2                │ 92.59% │
-│ TaskWhatName                         │ 26              │ 2                │ 92.86% │
-│ lookupController                     │ 30              │ 2                │ 93.75% │
-│ OpportunityLineItemBO                │ 46              │ 3                │ 93.88% │
-│ ProjetoTriggerHandler                │ 34              │ 2                │ 94.44% │
-│ ReadJsonString                       │ 21              │ 1                │ 95.45% │
-│ IntegracaoSAPIntegrador              │ 119             │ 5                │ 95.97% │
-│ TaskUtils                            │ 68              │ 2                │ 97.14% │
-│ StringListParser                     │ 34              │ 1                │ 97.14% │
-│ IntegracaoSAPCliente                 │ 119             │ 3                │ 97.54% │
-│ StatusEnumMap                        │ 135             │ 3                │ 97.83% │
-│ ConsultorBO                          │ 49              │ 1                │ 98.00% │
-│ IntegracaoSAPFornecedor              │ 89              │ 1                │ 98.89% │
-│ SendEmailSummaryTasks                │ 259             │ 2                │ 99.23% │
-│ SendEmailLateTasks                   │ 260             │ 2                │ 99.24% │
-│ IntegracaoSAPKit                     │ 64              │ 0                │ 100.00% │
-│ OpportunityTriggerHandler            │ 64              │ 0                │ 100.00% │
-│ StatusEnum                           │ 60              │ 0                │ 100.00% │
-│ IntegracaoSAPRepresentante           │ 46              │ 0                │ 100.00% │
-│ CSVReader                            │ 41              │ 0                │ 100.00% │
-│ TokenAPINivelloWs                    │ 40              │ 0                │ 100.00% │
-│ TaskTriggerHandler                   │ 29              │ 0                │ 100.00% │
-│ OpportunityShareHandler              │ 27              │ 0                │ 100.00% │
-│ KitInstalacaoTriggerHandler          │ 23              │ 0                │ 100.00% │
-│ FaturamentoBO                        │ 22              │ 0                │ 100.00% │
-│ FaturamentoTriggerHandler            │ 22              │ 0                │ 100.00% │
-│ ProductTriggerHandler                │ 22              │ 0                │ 100.00% │
-│ FlowFileUploader                     │ 19              │ 0                │ 100.00% │
-│ OmniChannelLoginHelper               │ 11              │ 0                │ 100.00% │
-│ OpportunityTriggerHandlerToggle      │ 10              │ 0                │ 100.00% │
-│ AssignedResourceBO                   │ 9               │ 0                │ 100.00% │
-│ TaskStateService                     │ 9               │ 0                │ 100.00% │
-│ EmailUtils                           │ 7               │ 0                │ 100.00% │
-│ ChangePasswordController             │ 6               │ 0                │ 100.00% │
-│ SiteLoginController                  │ 6               │ 0                │ 100.00% │
-│ CommunitiesLoginController           │ 5               │ 0                │ 100.00% │
-│ StringListDelimiterHelper            │ 4               │ 0                │ 100.00% │
-│ CommunitiesLandingController         │ 3               │ 0                │ 100.00% │
-│ MessagingSessionHandler              │ 3               │ 0                │ 100.00% │
-│ AssignedResourceTrigger              │ 2               │ 0                │ 100.00% │
-│ CaseTrigger                          │ 2               │ 0                │ 100.00% │
-│ ClickSignRequestDTO                  │ 2               │ 0                │ 100.00% │
-│ ConsultorTrigger                     │ 2               │ 0                │ 100.00% │
-│ ContactTrigger                       │ 2               │ 0                │ 100.00% │
-│ ContentVersionTrigger                │ 2               │ 0                │ 100.00% │
-│ FaturamentoTrigger                   │ 2               │ 0                │ 100.00% │
-│ InstalacaoTrigger                    │ 2               │ 0                │ 100.00% │
-│ IntegradorTrigger                    │ 2               │ 0                │ 100.00% │
-│ KitInstalacaoTrigger                 │ 2               │ 0                │ 100.00% │
-│ LeadTrigger                          │ 2               │ 0                │ 100.00% │
-│ NivelloTokenRequest                  │ 2               │ 0                │ 100.00% │
-│ NivelloTokenResponse                 │ 2               │ 0                │ 100.00% │
-│ OpportunityLineItemTrigger           │ 2               │ 0                │ 100.00% │
-│ OpportunityTrigger                   │ 2               │ 0                │ 100.00% │
-│ ProductTrigger                       │ 2               │ 0                │ 100.00% │
-│ ProjetoTrigger                       │ 2               │ 0                │ 100.00% │
-│ ProposalCoverTrigger                 │ 2               │ 0                │ 100.00% │
-│ ServiceAppointmentTrigger            │ 2               │ 0                │ 100.00% │
-│ TaskTrigger                          │ 2               │ 0                │ 100.00% │
-│ ViabilityStudyTrigger                │ 2               │ 0                │ 100.00% │
-│ ClickSignResponseDTO                 │ 1               │ 0                │ 100.00% │
-│ CommunitiesSelfRegConfirmController  │ 1               │ 0                │ 100.00% │
-```
+- Data: 2026-02-27
+- Org alvo: `jean.carlos@enerzee.com.br.qa` (`enrz--qa.sandbox.my.salesforce.com`)
+- Deploy validation id: `0AfHZ00000MnE8P0AV`
+- Resultado: `Failed` (ainda há falhas de testes e cobertura < 75%)
+- Testes: `477` totais | `447` pass | `30` fail
+- Cobertura global calculada: `72.47%` (`19694/27174`)
+- Linhas faltantes para `85%`: `3404`
+
+## Evolução desta sessão
+
+- Baseline inicial: `67.24%` (`18273/27174`) no deploy `0AfHZ00000Mn3wC0AR`
+- Após bloco anterior: `68.86%` (`18712/27174`) no deploy `0AfHZ00000Mn7wX0AR`
+- Atual (após estabilização do bloco de falhas): `72.47%` (`19694/27174`) no deploy `0AfHZ00000MnE8P0AV`
+- Ganho total nesta sessão: `+5.23 p.p.` e `+1421` linhas cobertas
+
+## Bloco executado agora (estabilização de testes críticos)
+
+Classes tratadas:
+
+- `IntegracaoSAPTest`
+- `InstalacaoBOTest`
+- `ProjetoBOTest`
+- `TaskTriggerTest`
+- `ClickSignVisibilityRulesEngineTest`
+
+Validação do bloco:
+
+- Deploy id `0AfHZ00000MnE6n0AF`
+- Resultado: `36/36` testes passados
+
+## Top classes por linhas não cobertas (maior -> menor)
+
+1. `MetadataService`: 773
+2. `TaskSlaDailySummaryService`: 487
+3. `OpportunityBO`: 359
+4. `ProjetoBO`: 302
+5. `WorkDeliveryReportService`: 296
+6. `TaskBO`: 241
+7. `ClickSignTemplateController`: 183
+8. `ViabilityStudyBO`: 182
+9. `OpportunityCommentNotificationService`: 170
+10. `MessagingSessionSLABatch`: 154
+11. `PDFControllerExtension`: 147
+12. `InstalacaoTaskBO`: 144
+13. `ProposalConsoleController`: 137
+14. `ClickSignVisibilityRulesEngine`: 117
+15. `ActivityDocumentController`: 113
+
+## Testes ainda falhando no RunLocalTests (top)
+
+1. `ProductTriggerTest` (3)
+2. `TaskTemplateFlowTest` (3)
+3. `WorkDeliveryReportServiceTest` (3)
+4. `KitInstalacaoTriggerTest` (2)
+5. `ModuloHelpDeskCaseControllerTest` (2)
+6. `OpportunityBOPaymentReminderTaskTest` (2)
+7. `OpportunityLineItemTriggerTest` (2)
+8. `ProjetoTriggerTest` (2)
+9. `ProposalConsoleControllerTest` (2)
+10. `TaskCompletionServiceTest` (2)
+
+## Próximo bloco recomendado
+
+1. Estabilizar os 10 testes acima (reduz risco de regressão e destrava RunLocalTests com menos ruído).
+2. Em paralelo, ampliar cobertura em `TaskSlaDailySummaryService`, `ProjetoBO` e `TaskBO` (maior impacto por volume de linhas descobertas).
