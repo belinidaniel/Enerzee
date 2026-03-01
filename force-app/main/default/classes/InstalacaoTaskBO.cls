@@ -5,7 +5,7 @@
  * @last modified on  : 12-21-2025
  * @last modified by  : Daniel Belini
 **/
-public class InstalacaoTaskBO {
+public with sharing class InstalacaoTaskBO {
 
     public static void createTasks(List<Instalacao__c> newRecords, Map<Id, Instalacao__c> oldMap){
         if(newRecords == null || newRecords.isEmpty()){

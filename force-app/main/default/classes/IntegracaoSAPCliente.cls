@@ -19,6 +19,7 @@ public with sharing class IntegracaoSAPCliente {
                     SucessoIntegracaoSAP__c, StatusBodyIntegracaoSAP__c
             FROM    Account
             WHERE   Id IN :triggerIds
+            WITH SECURITY_ENFORCED
         ];
 
         Map<String, String> stateNameToAbbreviation = new Map<String, String>{
@@ -164,22 +165,28 @@ public with sharing class IntegracaoSAPCliente {
             }
         }
 
+        // try-finally ensures enableTrigger() is always called, even if update throws
         AccountTriggerHandler.disableTrigger();
-        update accountList;
-        AccountTriggerHandler.enableTrigger();
+        try {
+            update accountList;
+        } finally {
+            AccountTriggerHandler.enableTrigger();
+        }
     }
 
     private static HttpResponse chamadaIntegracao(String body, String endpointName){
         Integrador__mdt parametrosIntegracao = [
             SELECT  Id, URL__c
-            FROM    Integrador__mdt 
+            FROM    Integrador__mdt
             WHERE   DeveloperName = :endpointName
+            WITH SECURITY_ENFORCED
         ];
         
         String tokenSAP = [
             SELECT  Id, LastToken__c
-            FROM    Integrador__mdt 
+            FROM    Integrador__mdt
             WHERE   DeveloperName = 'TokenSAP'
+            WITH SECURITY_ENFORCED
         ].LastToken__c;
 
         Http httpObj = new Http();

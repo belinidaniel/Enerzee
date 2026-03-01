@@ -1,4 +1,4 @@
-public class ConsultorBO {
+public with sharing class ConsultorBO {
   public static Id consultorRT = Schema.SObjectType.Consultor__c.getRecordTypeInfosByDeveloperName()
     .get('Consultor')
     .getRecordTypeId();

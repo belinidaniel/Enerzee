@@ -5,7 +5,7 @@
  * @last modified on  : 12-23-2025
  * @last modified by  : Daniel Belini
 **/
-public class ProjetoBO {
+public with sharing class ProjetoBO {
 
     public static Map<String, User> userEmailToUser = new Map<String, User>();
     private static Map<Id, User> ownerUserCache = new Map<Id, User>();

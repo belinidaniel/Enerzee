@@ -1,4 +1,4 @@
-public class AssignedResourceBO {
+public with sharing class AssignedResourceBO {
     public static void assignServiceResourceToAppointmentVisitAssignee(List<AssignedResource> newRecords){
         Map<Id, ServiceAppointment> contextAppointmentsMap = new Map<Id, ServiceAppointment>([
             SELECT  Id, ResponsavelVisita__c

@@ -1,4 +1,4 @@
-public class FaturamentoBO {
+public with sharing class FaturamentoBO {
 
     // Atribuir cliente ao campo correspondente no Faturamento, ao receber ID externo da Conta via integração
     public static void assignClientToIntegratedBilling(List<Faturamento__c> newRecords){
