@@ -1,0 +1,651 @@
+<mxfile host="65bd71144e">
+    <diagram id="asis" name="AS-IS Architecture">
+        <mxGraphModel dx="446" dy="827" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t1" value="AS-IS Architecture — Enerzee Salesforce Org" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="20" width="800" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1" value="LAYER 1 — Triggers (21)" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="90" width="1200" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1a" value="OpportunityTrigger" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l1" vertex="1">
+                    <mxGeometry x="20" y="35" width="140" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1b" value="ViabilityStudyTrigger" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l1" vertex="1">
+                    <mxGeometry x="170" y="35" width="150" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1c" value="ProjetoTrigger" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l1" vertex="1">
+                    <mxGeometry x="330" y="35" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1d" value="InstalacaoTrigger" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l1" vertex="1">
+                    <mxGeometry x="470" y="35" width="140" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1e" value="CaseTrigger" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l1" vertex="1">
+                    <mxGeometry x="620" y="35" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1f" value="TaskTrigger" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l1" vertex="1">
+                    <mxGeometry x="740" y="35" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1g" value="+ 15 others..." style="rounded=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" parent="l1" vertex="1">
+                    <mxGeometry x="860" y="35" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l2" value="LAYER 2 — TriggerHandlers (19) extends TriggerHandler (without sharing)" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="200" width="1200" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="l2a" value="OpportunityTriggerHandler&#xa;224 lines | afterUpdate: 34 calls ⚠️" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="l2" vertex="1">
+                    <mxGeometry x="20" y="30" width="200" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="l2b" value="ViabilityStudyTriggerHandler&#xa;66 lines | Clean ✅" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l2" vertex="1">
+                    <mxGeometry x="230" y="30" width="175" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="l2c" value="ProjetoTriggerHandler&#xa;63 lines | Circular dep ⚠️" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="l2" vertex="1">
+                    <mxGeometry x="415" y="30" width="175" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="l2d" value="InstalacaoTriggerHandler&#xa;50 lines | Clean ✅" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l2" vertex="1">
+                    <mxGeometry x="600" y="30" width="165" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="l2e" value="+ 15 others..." style="rounded=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" parent="l2" vertex="1">
+                    <mxGeometry x="775" y="30" width="110" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3" value="LAYER 3 — Business Objects (20) — ⚠️ MEGA CLASSES / Missing with sharing" style="swimlane;startSize=30;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="310" width="1200" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3a" value="OpportunityBO&#xa;3,301 lines | 80+ methods&#xa;🔴 No with sharing" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="l3" vertex="1">
+                    <mxGeometry x="20" y="30" width="165" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3b" value="TaskBO&#xa;1,175 lines&#xa;🔴 No with sharing" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="l3" vertex="1">
+                    <mxGeometry x="195" y="30" width="140" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3c" value="ProjetoBO&#xa;1,218 lines&#xa;🔴 No with sharing" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="l3" vertex="1">
+                    <mxGeometry x="345" y="30" width="140" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3d" value="ViabilityStudyBO&#xa;762 lines&#xa;🔴 No with sharing" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="l3" vertex="1">
+                    <mxGeometry x="495" y="30" width="150" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3e" value="InstalacaoBO&#xa;254 lines&#xa;🟡 Partial" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l3" vertex="1">
+                    <mxGeometry x="655" y="30" width="130" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3f" value="CaseBO, FaturamentoBO&#xa;OpportunityLineItemBO&#xa;+ 14 others..." style="rounded=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" parent="l3" vertex="1">
+                    <mxGeometry x="795" y="30" width="175" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l4" value="LAYER 4 — Services (partial / inconsistent)" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="440" width="1200" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="l4a" value="ApprovalProcessService&#xa;393 lines" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="l4" vertex="1">
+                    <mxGeometry x="20" y="30" width="160" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="l4b" value="TaskSlaNotificationService&#xa;648 lines" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="l4" vertex="1">
+                    <mxGeometry x="190" y="30" width="165" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="l4c" value="InstalacaoFinalReportService&#xa;371 lines" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="l4" vertex="1">
+                    <mxGeometry x="365" y="30" width="175" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="l4d" value="VOIntegrationService&#xa;999 lines ⚠️" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="l4" vertex="1">
+                    <mxGeometry x="550" y="30" width="150" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="l4e" value="ClickSignService, ProposalService&#xa;+ others (scattered)" style="rounded=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" parent="l4" vertex="1">
+                    <mxGeometry x="710" y="30" width="200" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="l5" value="LAYER 5 — Integrations — 37+ @future methods (NO retry / NO chaining) 🔴" style="swimlane;startSize=30;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="550" width="1200" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="l5a" value="SAP (14 classes)&#xa;@future only" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="l5" vertex="1">
+                    <mxGeometry x="20" y="30" width="200" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l5b" value="Nivello (12 classes)&#xa;@future only" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="l5" vertex="1">
+                    <mxGeometry x="230" y="30" width="200" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l5c" value="Virtual Office (5 classes)&#xa;@future only" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="l5" vertex="1">
+                    <mxGeometry x="440" y="30" width="180" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l5d" value="ClickSign (8 classes)&#xa;1 Queueable ✅" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l5" vertex="1">
+                    <mxGeometry x="630" y="30" width="160" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l5e" value="Revo, Geradores&#xa;@future only" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="l5" vertex="1">
+                    <mxGeometry x="800" y="30" width="160" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l6" value="LAYER 6 — Utils / Helpers (inconsistent — mixed responsibilities)" style="swimlane;startSize=30;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="680" width="1200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="l6a" value="OpportunityUtils (540 lines)" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l6" vertex="1">
+                    <mxGeometry x="20" y="20" width="180" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="l6b" value="ClickSignUtils (384 lines)" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l6" vertex="1">
+                    <mxGeometry x="210" y="20" width="165" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="l6c" value="EmailUtils" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l6" vertex="1">
+                    <mxGeometry x="385" y="20" width="100" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="l6d" value="TaskUtils, ProjetoUtils, StringListParser..." style="rounded=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" parent="l6" vertex="1">
+                    <mxGeometry x="495" y="20" width="250" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="l7" value="❌ DAO LAYER — Does NOT exist (SOQL scattered across all BOs, Services, Controllers)" style="swimlane;startSize=30;fillColor=#f5f5f5;strokeColor=#b85450;fontStyle=1;fontSize=11;fontColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="770" width="1200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg" value="Legend" style="swimlane;startSize=25;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="850" width="500" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg1" value="🔴 Critical Issue" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" parent="leg" vertex="1">
+                    <mxGeometry x="10" y="30" width="100" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg2" value="🟡 Medium Issue" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;" parent="leg" vertex="1">
+                    <mxGeometry x="120" y="30" width="100" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg3" value="⚠️ Warning" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;" parent="leg" vertex="1">
+                    <mxGeometry x="230" y="30" width="100" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg4" value="✅ Good Pattern" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="leg" vertex="1">
+                    <mxGeometry x="340" y="30" width="110" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="tobe" name="TO-BE Architecture">
+        <mxGraphModel dx="446" dy="827" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t1" value="TO-BE Architecture — Enerzee Salesforce Org (Clean Code Layered)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="20" width="900" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1" value="LAYER 1 — Trigger (1 per object — NO logic, delegates only)" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="90" width="1300" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1a" value="OpportunityTrigger" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="l1" vertex="1">
+                    <mxGeometry x="20" y="25" width="150" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1b" value="ViabilityStudyTrigger" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="l1" vertex="1">
+                    <mxGeometry x="180" y="25" width="155" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1c" value="ProjetoTrigger" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="l1" vertex="1">
+                    <mxGeometry x="345" y="25" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1d" value="InstalacaoTrigger" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="l1" vertex="1">
+                    <mxGeometry x="485" y="25" width="140" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l1e" value="[Other Triggers — unchanged]" style="rounded=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" parent="l1" vertex="1">
+                    <mxGeometry x="635" y="25" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l2" value="LAYER 2 — TriggerHandler (extends TriggerHandler — orchestration only, with sharing)" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="190" width="1300" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="l2a" value="OpportunityTriggerHandler&#xa;(delegates to BO only)" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l2" vertex="1">
+                    <mxGeometry x="20" y="25" width="185" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="l2b" value="ViabilityStudyTriggerHandler&#xa;(delegates to BO only)" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l2" vertex="1">
+                    <mxGeometry x="215" y="25" width="185" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="l2c" value="ProjetoTriggerHandler&#xa;(delegates to BO only)" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l2" vertex="1">
+                    <mxGeometry x="410" y="25" width="175" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="l2d" value="InstalacaoTriggerHandler&#xa;(delegates to BO only)" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l2" vertex="1">
+                    <mxGeometry x="595" y="25" width="175" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="l2e" value="Rule: max ~100 lines per handler" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontStyle=2;" parent="l2" vertex="1">
+                    <mxGeometry x="800" y="30" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3" value="LAYER 3 — Business Object (domain rules only — with sharing — max ~300 lines each)" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="300" width="1300" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3a" value="OpportunityBO&#xa;(domain rules only)&#xa;~300 lines" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l3" vertex="1">
+                    <mxGeometry x="20" y="25" width="150" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3b" value="OpportunityMapperBO&#xa;(field mapping)&#xa;~200 lines" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l3" vertex="1">
+                    <mxGeometry x="180" y="25" width="150" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3c" value="ViabilityStudyBO&#xa;(domain rules)&#xa;~300 lines" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l3" vertex="1">
+                    <mxGeometry x="340" y="25" width="145" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3d" value="ProjetoBO&#xa;(domain rules)&#xa;~300 lines" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l3" vertex="1">
+                    <mxGeometry x="495" y="25" width="130" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3e" value="InstalacaoBO&#xa;(domain rules)&#xa;~200 lines" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l3" vertex="1">
+                    <mxGeometry x="635" y="25" width="130" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3f" value="TaskBO&#xa;(domain rules)&#xa;~300 lines" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l3" vertex="1">
+                    <mxGeometry x="775" y="25" width="120" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l3g" value="CaseBO, FaturamentoBO&#xa;OpportunityLineItemBO&#xa;+ others (focused)" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l3" vertex="1">
+                    <mxGeometry x="905" y="25" width="175" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="l4" value="LAYER 4 — Service (cross-domain operations, integrations, complex workflows — with sharing)" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="430" width="1300" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="l4a" value="OpportunityIntegrationService&#xa;(orchestrates SAP/Nivello/VO/Revo)&#xa;~300 lines" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="l4" vertex="1">
+                    <mxGeometry x="20" y="25" width="195" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="l4b" value="OpportunityTaskService&#xa;(task creation/closure logic)&#xa;~200 lines" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="l4" vertex="1">
+                    <mxGeometry x="225" y="25" width="175" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="l4c" value="OpportunityProjetoService&#xa;(project creation from opp)&#xa;~150 lines" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="l4" vertex="1">
+                    <mxGeometry x="410" y="25" width="175" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="l4d" value="ApprovalProcessService&#xa;(approval workflows)&#xa;~200 lines" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="l4" vertex="1">
+                    <mxGeometry x="595" y="25" width="160" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="l4e" value="NotificationService&#xa;(emails, messaging)&#xa;~200 lines" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="l4" vertex="1">
+                    <mxGeometry x="765" y="25" width="150" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="l4f" value="ClickSignService&#xa;InstalacaoFinalReportService&#xa;TaskSlaNotificationService" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="l4" vertex="1">
+                    <mxGeometry x="925" y="25" width="190" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="l5" value="LAYER 5 — Integration (ALL Queueable — with retry + chaining — with sharing)" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="570" width="1300" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="l5a" value="SAPIntegrationQueueable&#xa;(replaces 14 @future classes)&#xa;Retry + chaining" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l5" vertex="1">
+                    <mxGeometry x="20" y="25" width="195" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="l5b" value="NivelloIntegrationQueueable&#xa;(replaces 12 @future classes)&#xa;Retry + chaining" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l5" vertex="1">
+                    <mxGeometry x="225" y="25" width="195" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="l5c" value="VOIntegrationQueueable&#xa;(replaces 5 @future classes)&#xa;Retry + chaining" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l5" vertex="1">
+                    <mxGeometry x="430" y="25" width="185" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="l5d" value="ClickSignQueueable&#xa;(already exists ✅)&#xa;Keep + improve" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="l5" vertex="1">
+                    <mxGeometry x="625" y="25" width="175" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="l5e" value="HttpCalloutService (abstract)&#xa;+ IntegrationPayloadBuilder&#xa;(shared utilities)" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="l5" vertex="1">
+                    <mxGeometry x="810" y="25" width="195" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="l6" value="LAYER 6 — DAO — Data Access Object (ALL SOQL centralized here — WITH SECURITY_ENFORCED)" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="710" width="1300" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="l6a" value="OpportunityDAO" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="l6" vertex="1">
+                    <mxGeometry x="20" y="25" width="140" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="l6b" value="ViabilityStudyDAO" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="l6" vertex="1">
+                    <mxGeometry x="170" y="25" width="145" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="l6c" value="ProjetoDAO" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="l6" vertex="1">
+                    <mxGeometry x="325" y="25" width="120" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="l6d" value="InstalacaoDAO" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="l6" vertex="1">
+                    <mxGeometry x="455" y="25" width="130" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="l6e" value="AccountDAO" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="l6" vertex="1">
+                    <mxGeometry x="595" y="25" width="115" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="l6f" value="TaskDAO" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="l6" vertex="1">
+                    <mxGeometry x="720" y="25" width="100" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="l6g" value="CaseDAO, IntegradorDAO, MetadataDAO..." style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="l6" vertex="1">
+                    <mxGeometry x="830" y="25" width="250" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="l7" value="LAYER 7 — Helper / Utils (pure static methods — no DML, no SOQL)" style="swimlane;startSize=30;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="820" width="1300" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="l7a" value="OpportunityHelper" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l7" vertex="1">
+                    <mxGeometry x="20" y="22" width="140" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l7b" value="StringUtils" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l7" vertex="1">
+                    <mxGeometry x="170" y="22" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l7c" value="DateUtils" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l7" vertex="1">
+                    <mxGeometry x="280" y="22" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l7d" value="CollectionUtils" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l7" vertex="1">
+                    <mxGeometry x="390" y="22" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l7e" value="EmailUtils" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l7" vertex="1">
+                    <mxGeometry x="520" y="22" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l7f" value="TaskUtils" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l7" vertex="1">
+                    <mxGeometry x="630" y="22" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="l7g" value="ClickSignUtils (existing)" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="l7" vertex="1">
+                    <mxGeometry x="740" y="22" width="155" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="rules" value="Architecture Rules" style="swimlane;startSize=25;fillColor=#f5f5f5;strokeColor=#333333;fontStyle=1;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="920" width="1300" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="r1" value="✅ Every class: with sharing" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;" parent="rules" vertex="1">
+                    <mxGeometry x="10" y="25" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="r2" value="✅ All SOQL in DAO only | WITH SECURITY_ENFORCED" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;" parent="rules" vertex="1">
+                    <mxGeometry x="220" y="25" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="r3" value="✅ No DML/SOQL in loops | Bulkified lists always" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;" parent="rules" vertex="1">
+                    <mxGeometry x="530" y="25" width="290" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="r4" value="✅ Max ~300 lines per class | Single Responsibility" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;" parent="rules" vertex="1">
+                    <mxGeometry x="830" y="25" width="290" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="oppbo" name="OpportunityBO Decomposition">
+        <mxGraphModel dx="645" dy="827" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t1" value="OpportunityBO Decomposition — 3,301 lines → 7 focused classes" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="150" y="20" width="900" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="asis" value="AS-IS: OpportunityBO — 3,301 lines / 80+ methods / God Class" style="swimlane;startSize=35;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="80" width="480" height="480" as="geometry"/>
+                </mxCell>
+                <mxCell id="as1" value="Domain Rules" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="50" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as2" value="Field Mapping (~500 lines)" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="90" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as3" value="SAP Integration calls (~400 lines)" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="130" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as4" value="Nivello/VO/Revo calls (~300 lines)" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="170" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as5" value="Task creation (~600 lines)" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="210" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as6" value="Project creation calls (~200 lines)" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="250" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as7" value="Approval logic (~200 lines)" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="290" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as8" value="Notification/Email (~300 lines)" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="330" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as9" value="REST payload mapping (~200 lines)" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="370" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as10" value="Inline SOQL queries (no DAO)" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="410" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="asLabel" value="Issues:&#xa;❌ No with sharing&#xa;❌ No single responsibility&#xa;❌ SOQL scattered inline&#xa;❌ 80+ methods in one class&#xa;❌ Hardcoded emails/config" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#b85450;" parent="asis" vertex="1">
+                    <mxGeometry x="240" y="50" width="220" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow1" value="REFACTOR →" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="540" y="290" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="tobe" value="TO-BE: 7 Focused Classes" style="swimlane;startSize=35;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="80" width="900" height="480" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb1" value="OpportunityBO&#xa;~300 lines | Domain rules only&#xa;+ Delegates to services" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="tobe" vertex="1">
+                    <mxGeometry x="20" y="50" width="200" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb1a" value="validateStatusTransition()" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="tb1" vertex="1">
+                    <mxGeometry x="10" y="35" width="175" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb1b" value="setDefaultValues()" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="tb1" vertex="1">
+                    <mxGeometry x="10" y="58" width="175" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb2" value="OpportunityMapperBO&#xa;~200 lines | Field mapping only&#xa;REST ↔ Salesforce" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="tobe" vertex="1">
+                    <mxGeometry x="230" y="50" width="200" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb2a" value="mapFromRestPayload()" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="tb2" vertex="1">
+                    <mxGeometry x="10" y="35" width="175" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb2b" value="mapLineItems()" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="tb2" vertex="1">
+                    <mxGeometry x="10" y="58" width="175" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb3" value="OpportunityIntegrationService&#xa;~300 lines | Calls integrations&#xa;SAP / Nivello / VO / Revo" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="tobe" vertex="1">
+                    <mxGeometry x="440" y="50" width="210" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb3a" value="triggerSAPSync(Set&lt;Id&gt; ids)" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" parent="tb3" vertex="1">
+                    <mxGeometry x="10" y="35" width="185" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb3b" value="triggerNivelloSync(Set&lt;Id&gt; ids)" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" parent="tb3" vertex="1">
+                    <mxGeometry x="10" y="58" width="185" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb4" value="OpportunityTaskService&#xa;~200 lines | Task lifecycle&#xa;Create, close, validate" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="tobe" vertex="1">
+                    <mxGeometry x="660" y="50" width="200" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb4a" value="createTasksForStatus(opps)" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" parent="tb4" vertex="1">
+                    <mxGeometry x="10" y="35" width="175" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb4b" value="closeCompletedTasks(opps)" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" parent="tb4" vertex="1">
+                    <mxGeometry x="10" y="58" width="175" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb5" value="OpportunityProjetoService&#xa;~150 lines | Project creation&#xa;from Opportunity" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="tobe" vertex="1">
+                    <mxGeometry x="20" y="175" width="200" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb5a" value="createProjectFromOpportunity(opps)" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" parent="tb5" vertex="1">
+                    <mxGeometry x="10" y="35" width="175" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb5b" value="validateProjectPrerequisites(opp)" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;" parent="tb5" vertex="1">
+                    <mxGeometry x="10" y="58" width="175" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb6" value="OpportunityDAO&#xa;~150 lines | ALL SOQL&#xa;WITH SECURITY_ENFORCED" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="tobe" vertex="1">
+                    <mxGeometry x="230" y="175" width="200" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb6a" value="getByIds(Set&lt;Id&gt; ids)" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" parent="tb6" vertex="1">
+                    <mxGeometry x="10" y="35" width="175" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb6b" value="getWithLineItems(Set&lt;Id&gt; ids)" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" parent="tb6" vertex="1">
+                    <mxGeometry x="10" y="58" width="175" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb7" value="OpportunityHelper&#xa;~100 lines | Pure utils&#xa;No DML / No SOQL" style="swimlane;startSize=30;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="tobe" vertex="1">
+                    <mxGeometry x="440" y="175" width="200" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb7a" value="formatCurrency(Decimal val)" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;" parent="tb7" vertex="1">
+                    <mxGeometry x="10" y="35" width="175" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb7b" value="buildIdToRecordMap(List&lt;SObject&gt;)" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;" parent="tb7" vertex="1">
+                    <mxGeometry x="10" y="58" width="175" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="sum" value="Result: 3,301 lines in 1 class → ~1,400 total lines across 7 focused classes | Each class: single responsibility | Max ~300 lines" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" parent="tobe" vertex="1">
+                    <mxGeometry x="20" y="290" width="860" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="lbl1" value="Layer 3: BO" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=2;fontColor=#82b366;" parent="tobe" vertex="1">
+                    <mxGeometry x="20" y="130" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="lbl2" value="Layer 3: BO" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=2;fontColor=#82b366;" parent="tobe" vertex="1">
+                    <mxGeometry x="230" y="130" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="lbl3" value="Layer 4: Service" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=2;fontColor=#9673a6;" parent="tobe" vertex="1">
+                    <mxGeometry x="440" y="130" width="210" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="lbl4" value="Layer 4: Service" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=2;fontColor=#9673a6;" parent="tobe" vertex="1">
+                    <mxGeometry x="660" y="130" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="lbl5" value="Layer 4: Service" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=2;fontColor=#9673a6;" parent="tobe" vertex="1">
+                    <mxGeometry x="20" y="255" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="lbl6" value="Layer 6: DAO" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=2;fontColor=#6c8ebf;" parent="tobe" vertex="1">
+                    <mxGeometry x="230" y="255" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="lbl7" value="Layer 7: Helper" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=9;fontStyle=2;fontColor=#d6b656;" parent="tobe" vertex="1">
+                    <mxGeometry x="440" y="255" width="200" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="integration" name="Integration Refactoring">
+        <mxGraphModel dx="645" dy="827" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t1" value="Integration Layer Refactoring — @future → Queueable" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="150" y="20" width="900" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="asis" value="AS-IS — @future Pattern (No Retry / No Chaining)" style="swimlane;startSize=35;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="80" width="480" height="400" as="geometry"/>
+                </mxCell>
+                <mxCell id="as1" value="OpportunityBO.afterUpdate()" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="asis" vertex="1">
+                    <mxGeometry x="140" y="50" width="195" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as2" value="IntegracaoSAPCliente.sendCliente()" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="120" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as3" value="IntegracaoSAPContrato.sendContrato()" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="160" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as4" value="IntegracaoNivelloProjetos.send()" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="200" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as5" value="IntegracaoNivelloProposta.send()" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="240" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as6" value="IntegracaoVOClientePre.send()" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="280" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="as7" value="... 31+ more @future calls" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#b85450;fontStyle=2;" parent="asis" vertex="1">
+                    <mxGeometry x="20" y="320" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="asLabel" value="❌ No retry on failure&#xa;❌ No object parameters&#xa;❌ No execution order guarantee&#xa;❌ 37+ separate classes&#xa;❌ Duplicate HTTP logic&#xa;❌ Token management duplicated" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#b85450;" parent="asis" vertex="1">
+                    <mxGeometry x="250" y="115" width="220" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="arr" value="MIGRATE →" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="540" y="260" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="tobe" value="TO-BE — Queueable Pattern (Retry / Chaining / Monitoring)" style="swimlane;startSize=35;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="80" width="760" height="450" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb0" value="HttpCalloutService (abstract base)" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="tobe" vertex="1">
+                    <mxGeometry x="20" y="50" width="700" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb0a" value="execute(payload)" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" parent="tb0" vertex="1">
+                    <mxGeometry x="10" y="30" width="120" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb0b" value="buildRequest()" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" parent="tb0" vertex="1">
+                    <mxGeometry x="140" y="30" width="120" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb0c" value="handleResponse()" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" parent="tb0" vertex="1">
+                    <mxGeometry x="270" y="30" width="120" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb0d" value="getTokenFromMetadata()" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" parent="tb0" vertex="1">
+                    <mxGeometry x="400" y="30" width="155" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb1" value="SAPIntegrationQueueable implements Queueable, Database.AllowsCallouts" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="tobe" vertex="1">
+                    <mxGeometry x="20" y="140" width="320" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb1a" value="IntegrationType type (enum)" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="tb1" vertex="1">
+                    <mxGeometry x="10" y="32" width="295" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb1b" value="Set&lt;Id&gt; recordIds (object param)" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="tb1" vertex="1">
+                    <mxGeometry x="10" y="56" width="295" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb1c" value="Integer retryCount (max 3)" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="tb1" vertex="1">
+                    <mxGeometry x="10" y="80" width="295" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb1d" value="✅ On failure: re-enqueue with retryCount+1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=9;fontColor=#82b366;" parent="tb1" vertex="1">
+                    <mxGeometry x="10" y="102" width="295" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb2" value="NivelloIntegrationQueueable implements Queueable" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="tobe" vertex="1">
+                    <mxGeometry x="360" y="140" width="320" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb2a" value="IntegrationType type (enum)" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="tb2" vertex="1">
+                    <mxGeometry x="10" y="32" width="295" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb2b" value="Set&lt;Id&gt; recordIds (object param)" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="tb2" vertex="1">
+                    <mxGeometry x="10" y="56" width="295" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb2c" value="Integer retryCount (max 3)" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="tb2" vertex="1">
+                    <mxGeometry x="10" y="80" width="295" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb2d" value="✅ On failure: re-enqueue with retryCount+1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=9;fontColor=#82b366;" parent="tb2" vertex="1">
+                    <mxGeometry x="10" y="102" width="295" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb3" value="VOIntegrationQueueable implements Queueable" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="tobe" vertex="1">
+                    <mxGeometry x="20" y="280" width="320" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb3a" value="(same pattern as SAP/Nivello)" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" parent="tb3" vertex="1">
+                    <mxGeometry x="10" y="32" width="295" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb4" value="IntegrationType (Enum)" style="swimlane;startSize=30;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="tobe" vertex="1">
+                    <mxGeometry x="360" y="280" width="320" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb4a" value="SAP_CLIENTE, SAP_CONTRATO, SAP_KIT..." style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;" parent="tb4" vertex="1">
+                    <mxGeometry x="10" y="32" width="295" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="tb4b" value="NIVELLO_PROJETO, NIVELLO_PROPOSTA..." style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;" parent="tb4" vertex="1">
+                    <mxGeometry x="10" y="56" width="295" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="ben" value="✅ Object params (no Set&lt;Id&gt; primitive limit)&#xa;✅ Retry on failure (up to 3x)&#xa;✅ Chain jobs in sequence&#xa;✅ Single HTTP utility base&#xa;✅ Token from Integrador__mdt (centralized)&#xa;✅ 37 classes → 4 Queueables + 1 enum" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=10;fontColor=#82b366;" parent="tobe" vertex="1">
+                    <mxGeometry x="20" y="400" width="700" height="35" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="roadmap" name="Roadmap">
+        <mxGraphModel dx="645" dy="827" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t1" value="Refactoring Roadmap — Priority Order" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="20" width="800" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0" value="P0 — Security (Do ASAP — Non-negotiable)" style="swimlane;startSize=35;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="80" width="1200" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0a" value="1. Add with sharing to 13 BO classes&#xa;(OpportunityBO, ProjetoBO, ViabilityStudyBO, InstalacaoBO, TaskBO + others)" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;fontSize=10;" parent="p0" vertex="1">
+                    <mxGeometry x="10" y="40" width="380" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0b" value="2. Add WITH SECURITY_ENFORCED to SOQL&#xa;— Start with REST endpoints + BO classes&#xa;— All new queries must have it from now on" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;fontSize=10;" parent="p0" vertex="1">
+                    <mxGeometry x="400" y="40" width="380" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0c" value="3. Fix try-finally in trigger disable/enable&#xa;— IntegracaoSAPCliente + others&#xa;— Prevents handler staying disabled on error" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;fontSize=10;" parent="p0" vertex="1">
+                    <mxGeometry x="790" y="40" width="380" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1" value="P1 — Architecture Foundation (Phased per object)" style="swimlane;startSize=35;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="240" width="1200" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1a" value="4. Create DAO layer&#xa;— Start: OpportunityDAO, ProjetoDAO&#xa;— Move all SOQL from BOs to DAOs&#xa;— Add WITH SECURITY_ENFORCED to all" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;fontSize=10;" parent="p1" vertex="1">
+                    <mxGeometry x="10" y="45" width="280" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1b" value="5. Decompose OpportunityBO&#xa;— Extract OpportunityMapperBO&#xa;— Extract OpportunityTaskService&#xa;— Extract OpportunityProjetoService&#xa;— Extract OpportunityIntegrationService&#xa;— Remaining BO: domain rules only" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;fontSize=10;" parent="p1" vertex="1">
+                    <mxGeometry x="300" y="45" width="280" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1c" value="6. Decompose ProjetoBO + TaskBO&#xa;— Apply same pattern as OpportunityBO&#xa;— Each max ~300 lines&#xa;— Extract ProjetoDAO, TaskDAO&#xa;— Focused single-responsibility methods" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;fontSize=10;" parent="p1" vertex="1">
+                    <mxGeometry x="590" y="45" width="280" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1d" value="7. Standardize Utils/Helper naming&#xa;— Rename: OpportunityUtils → OpportunityHelper&#xa;— Create StringUtils, DateUtils, CollectionUtils&#xa;— Consolidate duplicate utilities&#xa;— Rule: no DML/SOQL in helpers" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;fontSize=10;" parent="p1" vertex="1">
+                    <mxGeometry x="880" y="45" width="295" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2" value="P2 — Integration Modernization" style="swimlane;startSize=35;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="470" width="1200" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2a" value="8. Create SAPIntegrationQueueable&#xa;— Single class replaces 14 @future classes&#xa;— IntegrationType enum for routing&#xa;— Retry logic (max 3 attempts)&#xa;— Token from Integrador__mdt" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;fontSize=10;" parent="p2" vertex="1">
+                    <mxGeometry x="10" y="45" width="280" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2b" value="9. Create NivelloIntegrationQueueable&#xa;— Replaces 12 @future classes&#xa;— Same pattern as SAP&#xa;— Handles: projetos, proposta, contrato, etc." style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;fontSize=10;" parent="p2" vertex="1">
+                    <mxGeometry x="300" y="45" width="280" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2c" value="10. Create VOIntegrationQueueable&#xa;— Replaces 5 @future classes&#xa;— Absorbs VOIntegrationService (999 lines)&#xa;— Retry + monitoring" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;fontSize=10;" parent="p2" vertex="1">
+                    <mxGeometry x="590" y="45" width="280" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2d" value="11. Move hardcoded config to Custom Metadata&#xa;— State map (Acre→AC, etc.) → Metadata&#xa;— Email addresses (financeiro@...) → Metadata&#xa;— All token/URL config already in Integrador__mdt" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;fontSize=10;" parent="p2" vertex="1">
+                    <mxGeometry x="880" y="45" width="295" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="p3" value="P3 — Long Term / Continuous Improvement" style="swimlane;startSize=35;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="660" width="1200" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="p3a" value="12. Platform Events for decoupling&#xa;— Replace some @future calls with Platform Events&#xa;— Enables better monitoring + replay" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;fontSize=10;" parent="p3" vertex="1">
+                    <mxGeometry x="10" y="40" width="270" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="p3b" value="13. Coverage improvements&#xa;— Add negative test cases&#xa;— Test all retry paths in Queueables&#xa;— Coverage for OpportunityBO decomposed classes" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;fontSize=10;" parent="p3" vertex="1">
+                    <mxGeometry x="290" y="40" width="290" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="p3c" value="14. Activate Validation Rules&#xa;— Audit inactive rules in ViabilityStudy__c&#xa;— Audit inactive rules in Projeto__c&#xa;— Reduce dependency on trigger automation for integrity" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;fontSize=10;" parent="p3" vertex="1">
+                    <mxGeometry x="590" y="40" width="290" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="p3d" value="15. Consider API Gateway pattern&#xa;— Single entry point for SAP/Nivello/VO&#xa;— Centralize auth, retry, logging&#xa;— Long-term scalability" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;fontSize=10;" parent="p3" vertex="1">
+                    <mxGeometry x="890" y="40" width="280" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="naming" value="Naming Convention by Layer" style="swimlane;startSize=35;fillColor=#f5f5f5;strokeColor=#333333;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="820" width="1200" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="n1" value="TriggerHandler → ObjectNameTriggerHandler&#xa;e.g.: OpportunityTriggerHandler" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;align=left;" parent="naming" vertex="1">
+                    <mxGeometry x="10" y="40" width="220" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="n2" value="BO → ObjectNameBO&#xa;e.g.: OpportunityBO, OpportunityMapperBO" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;align=left;" parent="naming" vertex="1">
+                    <mxGeometry x="240" y="40" width="220" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="n3" value="Service → DomainActionService&#xa;e.g.: OpportunityIntegrationService" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;align=left;" parent="naming" vertex="1">
+                    <mxGeometry x="470" y="40" width="215" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="n4" value="DAO → ObjectNameDAO&#xa;e.g.: OpportunityDAO, ProjetoDAO" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;align=left;" parent="naming" vertex="1">
+                    <mxGeometry x="695" y="40" width="215" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="n5" value="Helper/Utils → ObjectNameHelper or DomainUtils&#xa;e.g.: OpportunityHelper, StringUtils" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;align=left;" parent="naming" vertex="1">
+                    <mxGeometry x="920" y="40" width="255" height="50" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
