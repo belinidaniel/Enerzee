@@ -8,7 +8,7 @@ on:
 
 jobs:
   validate:
-    name: Validate against Sandbox
+    name: Validate against Production
     runs-on: ubuntu-latest
 
     steps:
@@ -27,13 +27,13 @@ jobs:
       - name: Install SF CLI
         run: npm install --global @salesforce/cli@latest
 
-      # ─── Authenticate to Sandbox ─────────────────────────────────────────────
-      # Secret: SFDX_AUTH_URL_UAT
+      # ─── Authenticate to Production ──────────────────────────────────────────
+      # Secret: SFDX_AUTH_URL_PRD
       # Como gerar: sf org display --verbose --target-org <alias> | grep "Sfdx Auth Url"
-      - name: Authenticate UAT
+      - name: Authenticate Production
         run: |
-          echo "${{ secrets.SFDX_AUTH_URL_UAT }}" > /tmp/auth_url.txt
-          sf org login sfdx-url --sfdx-url-file /tmp/auth_url.txt --alias enerzee-UAT --set-default
+          echo "${{ secrets.SFDX_AUTH_URL_PRD }}" > /tmp/auth_url.txt
+          sf org login sfdx-url --sfdx-url-file /tmp/auth_url.txt --alias enerzee-PRD --set-default
           rm /tmp/auth_url.txt
 
       # ─── Identify changed files ───────────────────────────────────────────────
@@ -97,7 +97,7 @@ jobs:
 
           sf project deploy start \
             --source-dir force-app \
-            --target-org enerzee-UAT \
+            --target-org enerzee-PRD \
             --dry-run \
             --test-level $TEST_LEVEL \
             $TEST_ARGS \
@@ -144,7 +144,7 @@ jobs:
             const body = `## PR Validation Report ${deployStatus}
 
             **Branch:** \`${{ github.head_ref }}\` → \`main\`
-            **Org:** UAT (enerzee-UAT)
+            **Org:** Production (enerzee-PRD)
 
             ### 📦 Escopo
             **Apex alterado:** ${changedApex || '_nenhum_'}
