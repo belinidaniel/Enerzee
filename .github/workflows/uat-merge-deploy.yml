@@ -1,0 +1,170 @@
+name: UAT Deploy
+
+on:
+  push:
+    branches:
+      - UAT
+
+jobs:
+  deploy:
+    name: Deploy to UAT
+    runs-on: ubuntu-latest
+
+    steps:
+      # ─── Checkout ────────────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history needed for git diff
+
+      # ─── Setup Node + SF CLI ─────────────────────────────────────────────────
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install SF CLI
+        run: npm install --global @salesforce/cli@latest
+
+      # ─── Authenticate to UAT ─────────────────────────────────────────────────
+      # Secret: SFDX_AUTH_URL_UAT
+      # Como gerar: sf org display --verbose --target-org enerzee-UAT | grep "Sfdx Auth Url"
+      - name: Authenticate UAT
+        run: |
+          echo "${{ secrets.SFDX_AUTH_URL_UAT }}" > /tmp/auth_url.txt
+          sf org login sfdx-url --sfdx-url-file /tmp/auth_url.txt --alias enerzee-UAT --set-default
+          rm /tmp/auth_url.txt
+
+      # ─── Identify changed files in this merge ─────────────────────────────────
+      - name: Get changed metadata files
+        id: changed
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1..HEAD | grep -E 'force-app/' || true)
+          echo "Changed files in this merge:"
+          echo "$CHANGED"
+
+          APEX=$(echo "$CHANGED" | grep '\.cls$' | grep -v 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
+
+          TESTS=$(echo "$CHANGED" | grep 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
+          for cls in $APEX; do
+            test_file="force-app/main/default/classes/${cls}Test.cls"
+            if [ -f "$test_file" ]; then
+              TESTS="$TESTS ${cls}Test"
+            fi
+          done
+
+          TESTS=$(echo "$TESTS" | tr ' ' '\n' | sort -u | tr '\n' ' ' | xargs)
+
+          echo "apex_classes=$APEX" >> $GITHUB_OUTPUT
+          echo "test_classes=$TESTS" >> $GITHUB_OUTPUT
+          echo "has_changes=$([ -n "$CHANGED" ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+
+      # ─── Nothing changed — skip deploy ───────────────────────────────────────
+      - name: Skip if no metadata changes
+        if: steps.changed.outputs.has_changes == 'false'
+        run: |
+          echo "No Salesforce metadata changed in this merge. Skipping deploy."
+
+      # ─── Deploy to UAT ────────────────────────────────────────────────────────
+      - name: Deploy to UAT
+        if: steps.changed.outputs.has_changes == 'true'
+        id: deploy
+        run: |
+          TEST_LEVEL="RunLocalTests"
+          TEST_ARGS=""
+
+          if [ -n "${{ steps.changed.outputs.test_classes }}" ]; then
+            TEST_LEVEL="RunSpecifiedTests"
+            TEST_ARGS="--tests ${{ steps.changed.outputs.test_classes }}"
+          fi
+
+          echo "Test level: $TEST_LEVEL"
+          echo "Tests: ${{ steps.changed.outputs.test_classes }}"
+
+          sf project deploy start \
+            --source-dir force-app \
+            --target-org enerzee-UAT \
+            --test-level $TEST_LEVEL \
+            $TEST_ARGS \
+            --json > /tmp/deploy_result.json 2>&1
+
+          cat /tmp/deploy_result.json
+
+          STATUS=$(cat /tmp/deploy_result.json | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('status', 1))")
+          exit $STATUS
+
+      # ─── Create GitHub Deployment status ─────────────────────────────────────
+      - name: Report deploy result
+        if: always() && steps.changed.outputs.has_changes == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const deploySuccess = '${{ steps.deploy.outcome }}' === 'success';
+
+            let details = '';
+            let testSummary = '';
+            try {
+              const raw = fs.readFileSync('/tmp/deploy_result.json', 'utf8');
+              const json = JSON.parse(raw);
+              const result = json?.result;
+
+              if (result?.details?.componentFailures?.length > 0) {
+                const failures = result.details.componentFailures.map(e =>
+                  `| \`${e.fileName}\` | ${e.lineNumber || '-'} | ${e.problem} |`
+                ).join('\n');
+                details = `\n\n### ❌ Component Failures\n| File | Line | Error |\n|---|---|---|\n${failures}`;
+              }
+
+              if (result?.details?.runTestResult) {
+                const tests = result.details.runTestResult;
+                const coverage = tests.codeCoverage?.map(c =>
+                  `| ${c.name} | ${c.numLocations - c.numLocationsNotCovered}/${c.numLocations} | ${Math.round(((c.numLocations - c.numLocationsNotCovered) / c.numLocations) * 100)}% |`
+                ).join('\n') || '';
+
+                testSummary = `\n\n### 🧪 Test Results\n` +
+                  `- Passed: ${tests.numTestsRun - (tests.failures?.length || 0)}\n` +
+                  `- Failed: ${tests.failures?.length || 0}\n` +
+                  (tests.failures?.length > 0 ? `\n**Failures:**\n${tests.failures.map(f => `- \`${f.name}.${f.methodName}\`: ${f.message}`).join('\n')}` : '') +
+                  (coverage ? `\n\n**Coverage:**\n| Class | Lines | % |\n|---|---|---|\n${coverage}` : '');
+              }
+            } catch (e) {
+              details = '\n\n⚠️ Não foi possível ler resultado detalhado do deploy.';
+            }
+
+            const status = deploySuccess ? '✅' : '❌';
+            const summary = deploySuccess
+              ? '**Deploy concluído com sucesso**'
+              : '**Deploy falhou — rollback automático pelo Salesforce**';
+
+            const body = `## UAT Deploy Report ${status}
+
+            **Commit:** [\`${{ github.sha }}\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+            **Org:** UAT (enerzee-UAT)
+            **Apex deployado:** ${{ steps.changed.outputs.apex_classes || '_nenhum_' }}
+            **Testes executados:** ${{ steps.changed.outputs.test_classes || 'RunLocalTests' }}
+
+            ### 🚀 Resultado
+            ${summary}${details}${testSummary}
+
+            ---
+            _[Ver log completo](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})_`;
+
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: deploySuccess ? 'success' : 'failure',
+              target_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              description: deploySuccess ? 'Deploy to UAT succeeded' : 'Deploy to UAT failed',
+              context: 'UAT Deploy / UAT'
+            });
+
+            console.log(body);
+
+      # ─── Notify on failure ───────────────────────────────────────────────────
+      - name: Fail job if deploy failed
+        if: steps.deploy.outcome == 'failure'
+        run: |
+          echo "Deploy to UAT FAILED. Check the logs above."
+          exit 1
