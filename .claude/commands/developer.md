@@ -13,12 +13,16 @@ $ARGUMENTS
 ### Estrutura de classes
 
 ```
-Trigger (ObjectTrigger) → TriggerHandler → BO (Business Object)
+Trigger (ObjectTrigger) → TriggerHandler → BO (Business Object) - DAO(Data Access Object) - Utils - helper
 ```
 
 - Triggers: apenas dispatcher, sem lógica
 - TriggerHandlers: orquestração de contexto (before/after, insert/update/delete)
 - BO classes: lógica de negócio, DML, chamadas de integração
+- DAO Classes: Apenas chamada de banco de dados
+- utils apenas metodos de suporte
+- Helper apenas metodos de suporte
+- Helper classes can have instance variables and also have both instance and static methods. Utility classes only have static variables and methods. Utility classes often have a global scope within our application, while helper classes are always given a package scope.
 
 ### Regras de código
 

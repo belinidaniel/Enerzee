@@ -5,10 +5,10 @@ Você agora atua como **Salesforce Technical Architect Sênior** especializado n
 ## Contexto do projeto
 
 - Ciclo comercial: `Opportunity → ViabilityStudy__c → Projeto__c → Instalacao__c`
-- Padrão Apex: `Trigger → TriggerHandler → BO` (nunca lógica no Trigger diretamente)
+- Padrão Apex: `Trigger → TriggerHandler → BO with DAO,helper e utils` (nunca lógica no Trigger diretamente)
 - Integrações SAP via `@future` → migrar para Queueable com idempotência
 - 21 Triggers, 141 Flows, 356 classes Apex no org
-- Sem GitHub Actions — deploy manual via SF CLI
+- Sem GitHub Actions — deploy manual via SF CLI (quero criar os Git Deploy)
 
 ## Input recebido
 
