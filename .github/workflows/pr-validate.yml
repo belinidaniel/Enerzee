@@ -1,0 +1,164 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  validate:
+    name: Validate against Sandbox
+    runs-on: ubuntu-latest
+
+    steps:
+      # ─── Checkout ────────────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history needed for git diff
+
+      # ─── Setup Node + SF CLI ─────────────────────────────────────────────────
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install SF CLI
+        run: npm install --global @salesforce/cli@latest
+
+      # ─── Authenticate to Sandbox ─────────────────────────────────────────────
+      # Secret: SFDX_AUTH_URL_SANDBOX
+      # Como gerar: sf org display --verbose --target-org <alias> | grep "Sfdx Auth Url"
+      - name: Authenticate Sandbox
+        run: |
+          echo "${{ secrets.SFDX_AUTH_URL_SANDBOX }}" > /tmp/auth_url.txt
+          sf org login sfdx-url --sfdx-url-file /tmp/auth_url.txt --alias enerzee-sandbox --set-default
+          rm /tmp/auth_url.txt
+
+      # ─── Identify changed files ───────────────────────────────────────────────
+      - name: Get changed files
+        id: changed
+        run: |
+          CHANGED=$(git diff --name-only origin/main...HEAD | grep -E '\.(cls|trigger|lwc|flow-meta\.xml|object-meta\.xml|field-meta\.xml|permissionset-meta\.xml|flexipage-meta\.xml|labels-meta\.xml)' || true)
+          echo "Changed metadata files:"
+          echo "$CHANGED"
+
+          # Apex classes and triggers changed (for test mapping)
+          APEX=$(git diff --name-only origin/main...HEAD | grep '\.cls$' | grep -v 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
+          TESTS=$(git diff --name-only origin/main...HEAD | grep 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
+
+          # Auto-discover test classes for changed non-test classes
+          for cls in $APEX; do
+            test_file="force-app/main/default/classes/${cls}Test.cls"
+            if [ -f "$test_file" ]; then
+              TESTS="$TESTS ${cls}Test"
+            fi
+          done
+
+          TESTS=$(echo "$TESTS" | tr ' ' '\n' | sort -u | tr '\n' ' ' | xargs)
+          echo "apex_classes=$APEX" >> $GITHUB_OUTPUT
+          echo "test_classes=$TESTS" >> $GITHUB_OUTPUT
+          echo "has_changes=$([ -n "$CHANGED" ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+
+      # ─── Static Analysis (PMD via Salesforce Code Analyzer) ──────────────────
+      - name: Run Code Analyzer
+        if: steps.changed.outputs.has_changes == 'true'
+        id: analysis
+        continue-on-error: true
+        run: |
+          sf plugins install @salesforce/sfdx-scanner
+
+          CHANGED_APEX=$(git diff --name-only origin/main...HEAD | grep '\.cls$' | tr '\n' ',' | sed 's/,$//')
+
+          if [ -n "$CHANGED_APEX" ]; then
+            sf scanner run \
+              --target "$CHANGED_APEX" \
+              --format table \
+              --severity-threshold 2 \
+              --engine pmd \
+              2>&1 | tee /tmp/analysis_result.txt || true
+          else
+            echo "No Apex files changed." | tee /tmp/analysis_result.txt
+          fi
+
+      # ─── Dry-run Deploy (Validation) ─────────────────────────────────────────
+      - name: Dry-run Deploy Validation
+        if: steps.changed.outputs.has_changes == 'true'
+        id: deploy
+        run: |
+          TEST_LEVEL="RunLocalTests"
+          TEST_ARGS=""
+
+          if [ -n "${{ steps.changed.outputs.test_classes }}" ]; then
+            TEST_LEVEL="RunSpecifiedTests"
+            TEST_ARGS="--tests ${{ steps.changed.outputs.test_classes }}"
+          fi
+
+          sf project deploy start \
+            --source-dir force-app \
+            --target-org enerzee-sandbox \
+            --dry-run \
+            --test-level $TEST_LEVEL \
+            $TEST_ARGS \
+            --json > /tmp/deploy_result.json 2>&1 || true
+
+          cat /tmp/deploy_result.json
+
+      # ─── Parse & Comment on PR ────────────────────────────────────────────────
+      - name: Comment validation result on PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            let deployResult = '⚠️ Deploy result not available';
+            let deployStatus = '⚠️';
+            try {
+              const raw = fs.readFileSync('/tmp/deploy_result.json', 'utf8');
+              const json = JSON.parse(raw);
+              if (json.status === 0) {
+                deployStatus = '✅';
+                deployResult = '✅ **Dry-run passed** — sem erros de compilação ou testes';
+              } else {
+                deployStatus = '❌';
+                const errors = json?.result?.details?.componentFailures?.map(e =>
+                  `- \`${e.fileName}\` linha ${e.lineNumber}: ${e.problem}`
+                ).join('\n') || json.message || 'Erro desconhecido';
+                deployResult = `❌ **Dry-run falhou**\n${errors}`;
+              }
+            } catch (e) {
+              deployResult = '⚠️ Não foi possível ler resultado do deploy';
+            }
+
+            let analysisResult = '';
+            try {
+              const analysis = fs.readFileSync('/tmp/analysis_result.txt', 'utf8');
+              analysisResult = analysis.trim() ? `\n\n### 🔍 Code Analyzer\n\`\`\`\n${analysis.substring(0, 3000)}\n\`\`\`` : '\n\n### 🔍 Code Analyzer\n✅ Sem problemas encontrados';
+            } catch (e) {}
+
+            const changedApex = `${{ steps.changed.outputs.apex_classes }}`;
+            const testClasses = `${{ steps.changed.outputs.test_classes }}`;
+
+            const body = `## PR Validation Report ${deployStatus}
+
+            **Branch:** \`${{ github.head_ref }}\` → \`main\`
+            **Org:** Sandbox (enerzee-sandbox)
+
+            ### 📦 Escopo
+            **Apex alterado:** ${changedApex || '_nenhum_'}
+            **Testes mapeados:** ${testClasses || '_nenhum — RunLocalTests usado_'}
+
+            ### 🚀 Dry-run Deploy
+            ${deployResult}${analysisResult}
+
+            ---
+            _Gerado automaticamente por [PR Validation workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})_`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
