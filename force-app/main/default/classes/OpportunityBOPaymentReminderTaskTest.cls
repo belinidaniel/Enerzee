@@ -94,7 +94,7 @@ private class OpportunityBOPaymentReminderTaskTest {
       FROM Task
       WHERE
         WhatId = :oldOpp.Id
-        AND Subject LIKE 'É necessário  confirmar o pagamento da oportunidade%'
+        AND Subject LIKE 'É necessário	confirmar o pagamento da oportunidade%'
       LIMIT 1
     ];
 
@@ -134,7 +134,7 @@ private class OpportunityBOPaymentReminderTaskTest {
       FROM Task
       WHERE
         WhatId = :oldOpp.Id
-        AND Subject LIKE 'É necessário  confirmar o pagamento da oportunidade%'
+        AND Subject LIKE 'É necessário	confirmar o pagamento da oportunidade%'
       LIMIT 1
     ];
 
@@ -172,7 +172,7 @@ private class OpportunityBOPaymentReminderTaskTest {
       FROM Task
       WHERE
         WhatId = :oldOpp.Id
-        AND Subject LIKE 'É necessário  confirmar o pagamento da oportunidade%'
+        AND Subject LIKE 'É necessário	confirmar o pagamento da oportunidade%'
       LIMIT 1
     ];
 
@@ -250,7 +250,7 @@ private class OpportunityBOPaymentReminderTaskTest {
 
     Task existingTask = new Task(
       WhatId = oldOpp.Id,
-      Subject = 'É necessário  confirmar o pagamento da oportunidade ' +
+      Subject = 'É necessário	 confirmar o pagamento da oportunidade ' +
         oldOpp.Name,
       Status = TaskUtils.STATUS_NAO_INICIADO,
       OwnerId = existingTaskOwner.Id,

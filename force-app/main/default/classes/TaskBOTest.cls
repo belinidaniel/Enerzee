@@ -1,9 +1,9 @@
 /**
- * @description       :
- * @author            : Daniel Belini
- * @group             :
- * @last modified on  : 02-11-2026
- * @last modified by  : Daniel Belini
+ * @description						 :
+ * @author											 : Daniel Belini
+ * @group												 :
+ * @last modified on	 : 02-11-2026
+ * @last modified by	 : Daniel Belini
  **/
 @IsTest
 private class TaskBOTest {
@@ -192,7 +192,7 @@ private class TaskBOTest {
 
     Task existing = new Task(
       WhatId = acc.Id,
-      Subject = '  Assunto com Espaco  ',
+      Subject = '	 Assunto com Espaco	 ',
       Status = TaskUtils.STATUS_OPEN
     );
     insert existing;
