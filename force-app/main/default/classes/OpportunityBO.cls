@@ -2026,7 +2026,7 @@ public class OpportunityBO {
 
     // Buscar OpportunityLineItems associados às Oportunidades que tiveram mudança
     List<OpportunityLineItem> changedItems = [
-      SELECT Id, Kit_Instalacao__c
+      SELECT Id, OpportunityId, Kit_Instalacao__c
       FROM OpportunityLineItem
       WHERE OpportunityId IN :opportunityIdsWithChangedPotencia
     ];

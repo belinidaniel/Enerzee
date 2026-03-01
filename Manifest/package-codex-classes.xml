@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>CaseTriggerTest</members>
+        <members>ClickSignVisibilityRulesEngineTest</members>
+        <members>CustomerAssignMessagingSessionBatchTest</members>
+        <members>HelpDeskCaseServiceTest</members>
+        <members>InstalacaoBOTest</members>
+        <members>InstalacaoFinalReportServiceTest</members>
+        <members>IntegracaoSAPTest</members>
+        <members>KitInstalacaoTriggerTest</members>
+        <members>MessagingComposerControllerTest</members>
+        <members>MessagingTriggerTest</members>
+        <members>ModuloHelpDeskCaseControllerTest</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityBOCoverageTest</members>
+        <members>OpportunityBOPaymentReminderTaskTest</members>
+        <members>OpportunityLineItemTriggerTest</members>
+        <members>OpportunityTriggerTest</members>
+        <members>ProductTriggerTest</members>
+        <members>ProjetoBOTest</members>
+        <members>ProjetoStatusIntegrationServiceTest</members>
+        <members>ProjetoTriggerTest</members>
+        <members>ProposalConsoleControllerTest</members>
+        <members>ReassignMessagingSessionBatchTest</members>
+        <members>TaskBOTest</members>
+        <members>TaskCompletionServiceTest</members>
+        <members>TaskSlaDailySummaryServiceTest</members>
+        <members>TaskTemplateFlowTest</members>
+        <members>TaskTriggerTest</members>
+        <members>ViabilityStudyBOTest</members>
+        <members>WorkDeliveryReportPdfControllerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <version>64.0</version>
+</Package>
