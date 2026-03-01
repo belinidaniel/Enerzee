@@ -27,12 +27,12 @@ jobs:
         run: npm install --global @salesforce/cli@latest
 
       # ─── Authenticate to Production ──────────────────────────────────────────
-      # Secret: SFDX_AUTH_URL_PROD
+      # Secret: SFDX_AUTH_URL_PRD
       # Como gerar: sf org display --verbose --target-org <alias> | grep "Sfdx Auth Url"
       - name: Authenticate Production
         run: |
-          echo "${{ secrets.SFDX_AUTH_URL_PROD }}" > /tmp/auth_url.txt
-          sf org login sfdx-url --sfdx-url-file /tmp/auth_url.txt --alias enerzee-prod --set-default
+          echo "${{ secrets.SFDX_AUTH_URL_PRD }}" > /tmp/auth_url.txt
+          sf org login sfdx-url --sfdx-url-file /tmp/auth_url.txt --alias enerzee-PRD --set-default
           rm /tmp/auth_url.txt
 
       # ─── Identify changed files in this merge ─────────────────────────────────
@@ -86,7 +86,7 @@ jobs:
 
           sf project deploy start \
             --source-dir force-app \
-            --target-org enerzee-prod \
+            --target-org enerzee-PRD \
             --test-level $TEST_LEVEL \
             $TEST_ARGS \
             --json > /tmp/deploy_result.json 2>&1
@@ -144,7 +144,7 @@ jobs:
             const body = `## Merge Deploy Report ${status}
 
             **Commit:** [\`${{ github.sha }}\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-            **Org:** Production (enerzee-prod)
+            **Org:** Production (enerzee-PRD)
             **Apex deployado:** ${{ steps.changed.outputs.apex_classes || '_nenhum_' }}
             **Testes executados:** ${{ steps.changed.outputs.test_classes || 'RunLocalTests' }}
 

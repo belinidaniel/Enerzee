@@ -28,12 +28,12 @@ jobs:
         run: npm install --global @salesforce/cli@latest
 
       # ─── Authenticate to Sandbox ─────────────────────────────────────────────
-      # Secret: SFDX_AUTH_URL_SANDBOX
+      # Secret: SFDX_AUTH_URL_UAT
       # Como gerar: sf org display --verbose --target-org <alias> | grep "Sfdx Auth Url"
-      - name: Authenticate Sandbox
+      - name: Authenticate UAT
         run: |
-          echo "${{ secrets.SFDX_AUTH_URL_SANDBOX }}" > /tmp/auth_url.txt
-          sf org login sfdx-url --sfdx-url-file /tmp/auth_url.txt --alias enerzee-sandbox --set-default
+          echo "${{ secrets.SFDX_AUTH_URL_UAT }}" > /tmp/auth_url.txt
+          sf org login sfdx-url --sfdx-url-file /tmp/auth_url.txt --alias enerzee-UAT --set-default
           rm /tmp/auth_url.txt
 
       # ─── Identify changed files ───────────────────────────────────────────────
@@ -97,7 +97,7 @@ jobs:
 
           sf project deploy start \
             --source-dir force-app \
-            --target-org enerzee-sandbox \
+            --target-org enerzee-UAT \
             --dry-run \
             --test-level $TEST_LEVEL \
             $TEST_ARGS \
@@ -144,7 +144,7 @@ jobs:
             const body = `## PR Validation Report ${deployStatus}
 
             **Branch:** \`${{ github.head_ref }}\` → \`main\`
-            **Org:** Sandbox (enerzee-sandbox)
+            **Org:** UAT (enerzee-UAT)
 
             ### 📦 Escopo
             **Apex alterado:** ${changedApex || '_nenhum_'}
