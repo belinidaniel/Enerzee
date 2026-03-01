@@ -5,7 +5,7 @@
  * @last modified on  : 12-23-2025
  * @last modified by  : Daniel Belini
 **/
-public class ViabilityStudyBO {
+public with sharing class ViabilityStudyBO {
 
     private static final String STATIC_RESOURCE_NAME = 'TabelaTarefasViabilidade';
 

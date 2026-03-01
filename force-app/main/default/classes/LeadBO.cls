@@ -5,7 +5,7 @@
  * @last modified on  : 01-28-2026
  * @last modified by  : Daniel Belini
 **/
-public class LeadBO {
+public with sharing class LeadBO {
 	public static Id QualificarClienteRT = Schema.SObjectType.Lead.getRecordTypeInfosByDeveloperName().get('QualificacaodeClientes').getRecordTypeId();
     public static Id QualificarClienteQUEUE = getQueueIdByName('QualificacaodeClientes');
 

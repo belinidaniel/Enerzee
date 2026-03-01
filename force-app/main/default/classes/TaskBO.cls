@@ -5,7 +5,7 @@
  * @last modified on  : 12-16-2025
  * @last modified by  : Daniel Belini
 **/
-public class TaskBO {
+public with sharing class TaskBO {
     
     public static Task createTask(Id whatId, String subject, String description, Id ownerId, Date dueDate, String deadline){
         return new Task(

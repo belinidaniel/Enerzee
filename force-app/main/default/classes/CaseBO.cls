@@ -1,4 +1,4 @@
-public class CaseBO {
+public with sharing class CaseBO {
     public static void CreateAttachments(List<Case> newRecords){
         List<Attachment> attachments = new List<Attachment>();
         For(Case c : newRecords){

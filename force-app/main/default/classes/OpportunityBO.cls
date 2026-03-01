@@ -5,7 +5,7 @@
  * @last modified on  : 02-23-2026
  * @last modified by  : Daniel Belini
  **/
-public class OpportunityBO {
+public with sharing class OpportunityBO {
   // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas
   public static Boolean skipAsyncProposalGeneration = false;
   @TestVisible

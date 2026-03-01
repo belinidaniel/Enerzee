@@ -1,4 +1,4 @@
-public class ServiceAppointmentBO {
+public with sharing class ServiceAppointmentBO {
 
     public static void sendTechnicalVisitDate(Map<Id, ServiceAppointment> newRecordsMap){
         IntegracaoNivelloDataVisitaTecnica.sendTechnicalVisitDate(newRecordsMap.keySet(), true);

@@ -1,4 +1,4 @@
-public class AccountBO {
+public with sharing class AccountBO {
   // Atribuir consultor ao campo correspondente na Conta (Cliente), ao receber ID externo do consultor via integração
   public static void assignSellerToIntegratedClient(List<Account> newRecords) {
     Set<String> externalSellerIds = new Set<String>();

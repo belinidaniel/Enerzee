@@ -27,6 +27,7 @@ global with sharing class OpportunityEntryRest {
                 SELECT  Id
                 FROM    Pricebook2
                 WHERE   Name = 'Standard Price Book'
+                WITH SECURITY_ENFORCED
                 LIMIT   1
             ]).Id;
 
@@ -149,6 +150,7 @@ global with sharing class OpportunityEntryRest {
                     SELECT Id, ProductCode
                     FROM Product2
                     WHERE ProductCode IN :productExternalIds
+                    WITH SECURITY_ENFORCED
                 ]) {
                     externalIdToProductId.put(product.ProductCode, product.Id);
                 }
@@ -161,6 +163,7 @@ global with sharing class OpportunityEntryRest {
                     SELECT Id, Numeroproposta__c
                     FROM Opportunity
                     WHERE Id IN :opportunityIds
+                    WITH SECURITY_ENFORCED
                 ];
 
                 // Response customizada apresentando ID e Numeroproposta__c para cada Oportunidade inserida/atualizada
@@ -207,7 +210,7 @@ global with sharing class OpportunityEntryRest {
         }
 
         // Buscar a oportunidade
-        Opportunity opp = [SELECT Id, Name, Pricebook2Id FROM Opportunity WHERE Id = :opportunityId LIMIT 1];
+        Opportunity opp = [SELECT Id, Name, Pricebook2Id FROM Opportunity WHERE Id = :opportunityId WITH SECURITY_ENFORCED LIMIT 1];
         if (opp == null) {
             RestContext.response.statusCode = 404;
             RestContext.response.responseBody = Blob.valueOf('Opportunity not found');
@@ -232,12 +235,12 @@ global with sharing class OpportunityEntryRest {
             }
         }
         Map<String, Id> productCodeToId = new Map<String, Id>();
-        for (Product2 p : [SELECT Id, Id_Externo__c FROM Product2 WHERE Id_Externo__c IN :productCodes]) {
+        for (Product2 p : [SELECT Id, Id_Externo__c FROM Product2 WHERE Id_Externo__c IN :productCodes WITH SECURITY_ENFORCED]) {
             productCodeToId.put(p.Id_Externo__c, p.Id);
         }
 
         // Deletar OpportunityLineItems existentes da oportunidade
-        List<OpportunityLineItem> itemsToDelete = [SELECT Id FROM OpportunityLineItem WHERE OpportunityId = :opp.Id];
+        List<OpportunityLineItem> itemsToDelete = [SELECT Id FROM OpportunityLineItem WHERE OpportunityId = :opp.Id WITH SECURITY_ENFORCED];
         if (!itemsToDelete.isEmpty()) {
             delete itemsToDelete;
         }
@@ -299,6 +302,7 @@ global with sharing class OpportunityEntryRest {
                 SELECT Id, Name
                 FROM Account
                 WHERE Id IN :accountIdsFromPayload
+                WITH SECURITY_ENFORCED
             ]) {
                 externalIdToAccounts.put(account.Id, account);
             }
@@ -330,7 +334,7 @@ global with sharing class OpportunityEntryRest {
                 response.message = 'Invalid input provided.';
                 //return response;
             }
-            opp = [SELECT Id, DescontoUFV__c FROM Opportunity WHERE IdVirtualOffice__c = :requestBody.id LIMIT 1];
+            opp = [SELECT Id, DescontoUFV__c FROM Opportunity WHERE IdVirtualOffice__c = :requestBody.id WITH SECURITY_ENFORCED LIMIT 1];
             if(opp == null) {
                 response.status = 'Error';
                 response.message = 'Opportunity not found for the provided Id.';

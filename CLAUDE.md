@@ -9,7 +9,7 @@ This file is auto-loaded by Claude Code in every session. It provides stable pro
 - **Org**: Enerzee Salesforce (Sales Cloud + Service Cloud + FSL)
 - **Stack**: Apex, LWC, Aura (legacy), Visualforce (legacy), Flows, SFDX / SF CLI
 - **Integrations**: SAP (REST via `@future(callout=true)` → migrating to Queueable), ClickSign, Nivello
-- **Deployment**: Manual via `sf project deploy` — no GitHub Actions in place
+- **Deployment**: Manual via `sf project deploy` + GitHub Actions (PR validation + merge deploy)
 - **Language**: Code in English. Comments/docs can be PT-BR or EN. User speaks both.
 
 ---
@@ -65,9 +65,22 @@ Key architectural risks (from docs/):
 
 ---
 
-## Deployment Workflow (No CI/CD)
+## Deployment Workflow
 
-Since there are no GitHub Actions, deployments are manual:
+### GitHub Actions (automated)
+
+| Workflow | Trigger | Action |
+|---|---|---|
+| `pr-validate.yml` | PR aberto/atualizado → `main` | Dry-run + Code Analyzer + comment no PR |
+| `merge-deploy.yml` | Push em `main` (após merge) | Deploy real + testes + commit status |
+
+**Secrets necessários no repositório:**
+- `SFDX_AUTH_URL_SANDBOX` — para validação no sandbox
+- `SFDX_AUTH_URL_PROD` — para deploy em produção
+
+Como gerar: `sf org display --verbose --target-org <alias> | grep "Sfdx Auth Url"`
+
+### Manual (SF CLI)
 
 ```bash
 # Deploy specific components
@@ -137,8 +150,10 @@ Run these with `/command-name` in Claude Code:
 | `/jira`        | Generate a structured Jira ticket from a description or conversation                |
 | `/deploy`      | Generate a deployment package (package.xml) from changed/specified files            |
 | `/impact`      | Analyze the blast radius of a change across the data model and automations          |
-| `/apex-review` | Deep review of an Apex class against Enerzee standards                              |
-| `/flow-review` | Review a Flow for correctness, performance, and best practices                      |
+| `/apex-review`    | Deep review of an Apex class against Enerzee standards                              |
+| `/flow-review`    | Review a Flow for correctness, performance, and best practices                      |
+| `/pr-validate`    | Full PR validation: apex review + dry-run deploy + test mapping                     |
+| `/merge-deploy`   | Deploy after merge: changed files → package.xml → deploy with tests                 |
 
 ---
 

@@ -5,7 +5,7 @@
  * @last modified on  : 12-16-2025
  * @last modified by  : Daniel Belini
 **/
-public class InstalacaoBO {
+public with sharing class InstalacaoBO {
 
     private static final Integer INSTALLATION_NAME_MAX_LENGTH = Schema.SObjectType.Instalacao__c.fields.Name.getLength();
 
