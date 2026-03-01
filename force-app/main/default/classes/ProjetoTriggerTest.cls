@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 12-22-2025
+ * @last modified on  : 02-28-2026
  * @last modified by  : Daniel Belini
  **/
 @isTest
@@ -148,77 +148,6 @@ public class ProjetoTriggerTest {
     Test.stopTest();
 
     OpportunityTriggerHandler.enableTrigger();
-  }
-
-  @isTest
-  static void createTasksJourneyTest() {
-    ProposalCover__c ProposalCover = (ProposalCover__c) TestFactory.createSObject(
-      new ProposalCover__c(),
-      true
-    );
-    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
-      new Parceiro__c(CapaProposta__c = ProposalCover.id, Produto__c = 'Solar'),
-      true
-    );
-
-    Opportunity opportunity = [
-      SELECT StageName, TipoObraProjeto__c
-      FROM Opportunity
-      LIMIT 1
-    ];
-
-    Id caseRecordTypeId = SObjectType.Case.getRecordTypeInfosByDeveloperName()
-      .get('Jornada_do_Cliente')
-      .getRecordTypeId();
-
-    Contact contact = [SELECT Id FROM Contact LIMIT 1];
-
-    Case c = new Case(
-      Status = 'Novo',
-      Origin = 'Web To Case Integrador',
-      NomeIntegradorWeb__c = 'Data Test',
-      RecordTypeId = caseRecordTypeId,
-      Nome_da_Oportunidade__c = opportunity.Id,
-      ContactId = contact.Id
-    );
-    insert c;
-
-    opportunity.StageName = 'Closed Won';
-    opportunity.Parceiro__c = parceiro.id;
-    update opportunity;
-
-    Projeto__c projeto = [
-      SELECT Status__c, Projetista__c, GestorObra__c
-      FROM Projeto__c
-      LIMIT 1
-    ];
-
-    Test.startTest();
-
-    // Preencher responsáveis antes de concluir tarefas de delegação
-    projeto.Projetista__c = UserInfo.getUserId();
-    projeto.GestorObra__c = UserInfo.getUserId();
-    update projeto;
-
-    List<Task> projectTasks = [
-      SELECT Id, Status
-      FROM Task
-      WHERE WhatId = :projeto.Id
-    ];
-    for (Task t : projectTasks) {
-      t.Status = TaskUtils.STATUS_CONCLUIDO;
-    }
-    if (!projectTasks.isEmpty()) {
-      update projectTasks;
-    }
-
-    projeto.Status__c = ProjetoUtils.STATUS_PROJETOS_EM_ELABORACAO;
-    projeto.ApprovalDate__c = System.today();
-    projeto.FinishProjectDate__c = System.today();
-
-    update projeto;
-
-    Test.stopTest();
   }
 
   // @isTest

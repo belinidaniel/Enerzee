@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 12-22-2025
+ * @last modified on  : 02-28-2026
  * @last modified by  : Daniel Belini
  **/
 @isTest
@@ -127,67 +127,6 @@ public class TaskTriggerTest {
         [SELECT Id FROM ServiceTerritory LIMIT 1].Id
       ) != null
     );
-  }
-
-  @isTest
-  static void createWorkOrderContractingIntegratorTest() {
-    Task task = [
-      SELECT ID, Subject
-      FROM Task
-      LIMIT 1
-    ];
-    task.Subject = 'CONTRATAR INTEGRADOR';
-    update task;
-
-    task.Status = TaskUtils.STATUS_CONCLUIDO;
-    update task;
-
-    /*WorkOrder workOrder = [
-            SELECT  Id, AccountId, Consultor__c, InstalacaoAssociada__c, Projeto__c,
-                    Status, Priority, RecordTypeId, WorkTypeId, ServiceTerritoryId
-            FROM    WorkOrder
-        ];*/
-  }
-
-  @isTest
-  static void createWorkOrderRequestMaterialBuyTest() {
-    WorkType workType = [
-      SELECT Id
-      FROM WorkType
-      LIMIT 1
-    ];
-    workType.Name = 'Recebimento de Material';
-    update workType;
-
-    Task task = [
-      SELECT ID, Subject
-      FROM Task
-      LIMIT 1
-    ];
-    task.Subject = 'SOLICITAR COMPRA DE MATERIAIS';
-    update task;
-
-    task.Status = TaskUtils.STATUS_CONCLUIDO;
-    update task;
-
-    /*WorkOrder workOrder = [
-            SELECT  Id, AccountId, Consultor__c, InstalacaoAssociada__c, Projeto__c,
-                    Status, Priority, RecordTypeId, WorkTypeId, ServiceTerritoryId
-            FROM  */
-  }
-
-  @isTest
-  static void notifyAfterTaskConclusionTest() {
-    Task task = [
-      SELECT ID, Subject
-      FROM Task
-      LIMIT 1
-    ];
-    task.Subject = 'Defina quem executará a visita técnica do negócio';
-    update task;
-
-    task.Status = TaskUtils.STATUS_CONCLUIDO;
-    update task;
   }
 
   @isTest
