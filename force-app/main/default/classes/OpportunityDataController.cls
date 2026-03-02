@@ -1,9 +1,9 @@
 /**
- * @description       :
- * @author            : Daniel Belini
- * @group             :
- * @last modified on  : 10-06-2025
- * @last modified by  : Daniel Belini
+ * @description						 :
+ * @author											 : Daniel Belini
+ * @group												 :
+ * @last modified on	 : 10-06-2025
+ * @last modified by	 : Daniel Belini
  **/
 public with sharing class OpportunityDataController {
   private final Opportunity opportunity;

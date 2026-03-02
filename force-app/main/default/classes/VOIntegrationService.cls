@@ -1,9 +1,9 @@
 /**
- * @description       :
- * @author            : Daniel Belini
- * @group             :
- * @last modified on  : 02-26-2026
- * @last modified by  : Daniel Belini
+ * @description						 :
+ * @author											 : Daniel Belini
+ * @group												 :
+ * @last modified on	 : 02-26-2026
+ * @last modified by	 : Daniel Belini
  **/
 public with sharing class VOIntegrationService {
   private static final String CLASS_NAME = 'VOIntegrationService';

@@ -1,9 +1,9 @@
 /**
- * @description       : Solicitação de desconto da proposta na Opportunity via endpoint externo.
- * @author            : Daniel Belini
- * @group             :
- * @last modified on  : 02-23-2026
- * @last modified by  : Daniel Belini
+ * @description						 : Solicitação de desconto da proposta na Opportunity via endpoint externo.
+ * @author											 : Daniel Belini
+ * @group												 :
+ * @last modified on	 : 02-23-2026
+ * @last modified by	 : Daniel Belini
  **/
 public with sharing class OpportunityDiscountRequestController {
   private static final List<String> TARGET_STAGES = new List<String>{

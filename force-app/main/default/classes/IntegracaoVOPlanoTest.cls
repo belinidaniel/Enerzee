@@ -1,9 +1,9 @@
 /**
- * @description       :
- * @author            : Daniel Belini
- * @group             :
- * @last modified on  : 02-13-2026
- * @last modified by  : GPT-5 Codex
+ * @description						 :
+ * @author											 : Daniel Belini
+ * @group												 :
+ * @last modified on	 : 02-13-2026
+ * @last modified by	 : GPT-5 Codex
  **/
 @isTest
 private class IntegracaoVOPlanoTest {

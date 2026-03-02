@@ -1,9 +1,9 @@
 /**
- * @description       :
- * @author            : Daniel Belini
- * @group             :
- * @last modified on  : 12-11-2025
- * @last modified by  : Daniel Belini
+ * @description						 :
+ * @author											 : Daniel Belini
+ * @group												 :
+ * @last modified on	 : 12-11-2025
+ * @last modified by	 : Daniel Belini
  **/
 @isTest
 private class OpportunityBOCoverageTest {

@@ -1,9 +1,9 @@
 /**
- * @description       :
- * @author            : Daniel Belini
- * @group             :
- * @last modified on  : 02-28-2026
- * @last modified by  : Daniel Belini
+ * @description						 :
+ * @author											 : Daniel Belini
+ * @group												 :
+ * @last modified on	 : 02-28-2026
+ * @last modified by	 : Daniel Belini
  **/
 @isTest
 public class ProjetoTriggerTest {
@@ -152,70 +152,70 @@ public class ProjetoTriggerTest {
 
   // @isTest
   // static void checkTasksConclusionBeforeStatusChangeTest(){
-  //     Opportunity opportunity = [
-  //         SELECT  StageName, TipoObraProjeto__c
-  //         FROM    Opportunity
-  //         LIMIT   1
-  //     ];
+  //				 Opportunity opportunity = [
+  //								 SELECT	 StageName, TipoObraProjeto__c
+  //								 FROM			 Opportunity
+  //								 LIMIT		 1
+  //				 ];
 
-  //     ViabilityStudy__c viability = new ViabilityStudy__c();
-  //     viability.Opportunity__c = opportunity.Id;
-  //     viability.TypeWorkProjectFeasibility__c = 'UFV Micro';
-  //     insert viability;
+  //				 ViabilityStudy__c viability = new ViabilityStudy__c();
+  //				 viability.Opportunity__c = opportunity.Id;
+  //				 viability.TypeWorkProjectFeasibility__c = 'UFV Micro';
+  //				 insert viability;
 
-  //     Test.startTest();
+  //				 Test.startTest();
 
-  //     opportunity.ViabilityStudyFinished__c = true;
-  //     opportunity.StageName = OpportunityUtils.STATUS_CONTRATO_FIRMADO_ASSINADO;
-  //     update opportunity;
+  //				 opportunity.ViabilityStudyFinished__c = true;
+  //				 opportunity.StageName = OpportunityUtils.STATUS_CONTRATO_FIRMADO_ASSINADO;
+  //				 update opportunity;
 
-  //     Projeto__c projeto = [
-  //         SELECT  Status__c, Projetista__c, GestorObra__c
-  //         FROM    Projeto__c
-  //         WHERE   Oportunidade__c = :opportunity.Id
-  //         LIMIT   1
-  //     ];
+  //				 Projeto__c projeto = [
+  //								 SELECT	 Status__c, Projetista__c, GestorObra__c
+  //								 FROM			 Projeto__c
+  //								 WHERE		 Oportunidade__c = :opportunity.Id
+  //								 LIMIT		 1
+  //				 ];
 
-  //     try {
-  //         projeto.Status__c = ProjetoUtils.STATUS_PROJETOS_EM_ELABORACAO;
-  //         update projeto;
-  //     } catch(Exception e){
-  //     }
+  //				 try {
+  //								 projeto.Status__c = ProjetoUtils.STATUS_PROJETOS_EM_ELABORACAO;
+  //								 update projeto;
+  //				 } catch(Exception e){
+  //				 }
   // }
 
   // @isTest
   // static void coverageOtherTriggerMethods(){
-  //     Account account = [
-  //         SELECT  Id
-  //         FROM    Account
-  //         LIMIT   1
-  //     ];
-  //     Opportunity opportunity = [
-  //         SELECT  Id
-  //         FROM    Opportunity
-  //         LIMIT   1
-  //     ];
+  //				 Account account = [
+  //								 SELECT	 Id
+  //								 FROM			 Account
+  //								 LIMIT		 1
+  //				 ];
+  //				 Opportunity opportunity = [
+  //								 SELECT	 Id
+  //								 FROM			 Opportunity
+  //								 LIMIT		 1
+  //				 ];
 
-  //     ViabilityStudy__c viability = new ViabilityStudy__c();
-  //     viability.Opportunity__c = opportunity.Id;
-  //     viability.TypeWorkProjectFeasibility__c = 'UFV Micro';
-  //     insert viability;
+  //				 ViabilityStudy__c viability = new ViabilityStudy__c();
+  //				 viability.Opportunity__c = opportunity.Id;
+  //				 viability.TypeWorkProjectFeasibility__c = 'UFV Micro';
+  //				 insert viability;
 
-  //     opportunity.ViabilityStudyFinished__c = true;
-  //     update opportunity;
+  //				 opportunity.ViabilityStudyFinished__c = true;
+  //				 update opportunity;
 
-  //     Projeto__c projeto = (Projeto__c) TestFactory.createSObject(new Projeto__c(
-  //         Conta__c        = account.id,
-  //         Oportunidade__c = opportunity.Id
-  //     ), true);
+  //				 Projeto__c projeto = (Projeto__c) TestFactory.createSObject(new Projeto__c(
+  //								 Conta__c							 = account.id,
+  //								 Oportunidade__c = opportunity.Id
+  //				 ), true);
 
-  //     update projeto;
-  //     delete projeto;
+  //				 update projeto;
+  //				 delete projeto;
 
-  //     ProjetoTriggerHandler.disableTrigger();
-  //     System.assert(!ProjetoTriggerHandler.isTriggerEnabled());
+  //				 ProjetoTriggerHandler.disableTrigger();
+  //				 System.assert(!ProjetoTriggerHandler.isTriggerEnabled());
 
-  //     ProjetoTriggerHandler.enableTrigger();
-  //     System.assert(ProjetoTriggerHandler.isTriggerEnabled());
+  //				 ProjetoTriggerHandler.enableTrigger();
+  //				 System.assert(ProjetoTriggerHandler.isTriggerEnabled());
   // }
 }

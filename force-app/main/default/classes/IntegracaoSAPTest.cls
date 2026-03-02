@@ -3,17 +3,17 @@ public class IntegracaoSAPTest {
   private static Boolean positiveResult = true;
 
   private static String positiveResponse =
-    '    {' +
-    '        "codigoHttp": "201",' +
-    '        "mensagem": "Inserido com sucesso",' +
-    '        "resultado": null' +
-    '    }';
+    '		 {' +
+    '				 "codigoHttp": "201",' +
+    '				 "mensagem": "Inserido com sucesso",' +
+    '				 "resultado": null' +
+    '		 }';
   private static String negativeResponse =
-    '    {' +
-    '        "codigoHttp": "400",' +
-    '        "mensagem": "Erro",' +
-    '        "resultado": null' +
-    '    }';
+    '		 {' +
+    '				 "codigoHttp": "400",' +
+    '				 "mensagem": "Erro",' +
+    '				 "resultado": null' +
+    '		 }';
 
   @TestSetup
   static void makeData() {
@@ -85,50 +85,50 @@ public class IntegracaoSAPTest {
 
   // @isTest
   // static void sendFornecedorPositive(){
-  //     Test.setMock(HttpCalloutMock.class, new IntegracaoSAPMock());
+  //		 Test.setMock(HttpCalloutMock.class, new IntegracaoSAPMock());
 
-  //     Test.startTest();
+  //		 Test.startTest();
 
-  //     positiveResult = true;
-  //     Consultor__c fornecedor = (Consultor__c) TestFactory.createSObject(new Consultor__c(), 'TestFactoryDefaults.FranchisedSeller', true);
+  //		 positiveResult = true;
+  //		 Consultor__c fornecedor = (Consultor__c) TestFactory.createSObject(new Consultor__c(), 'TestFactoryDefaults.FranchisedSeller', true);
 
-  //     Test.stopTest();
+  //		 Test.stopTest();
 
-  //     fornecedor = [
-  //         SELECT  Id, SucessoIntegracaoSAP__c, StatusBodyIntegracaoSAP__c
-  //         FROM    Consultor__c
-  //         WHERE   Id = :fornecedor.Id
-  //     ];
+  //		 fornecedor = [
+  //				 SELECT	 Id, SucessoIntegracaoSAP__c, StatusBodyIntegracaoSAP__c
+  //				 FROM		 Consultor__c
+  //				 WHERE	 Id = :fornecedor.Id
+  //		 ];
 
-  //     System.assertEquals(true, fornecedor.SucessoIntegracaoSAP__c);
-  //     System.assertEquals(
-  //         '201 ' + positiveResponse + ' OK',
-  //         fornecedor.StatusBodyIntegracaoSAP__c
-  //     );
+  //		 System.assertEquals(true, fornecedor.SucessoIntegracaoSAP__c);
+  //		 System.assertEquals(
+  //				 '201 ' + positiveResponse + ' OK',
+  //				 fornecedor.StatusBodyIntegracaoSAP__c
+  //		 );
   // }
 
   // @isTest
   // static void sendFornecedorNegative(){
-  //     Test.setMock(HttpCalloutMock.class, new IntegracaoSAPMock());
+  //		 Test.setMock(HttpCalloutMock.class, new IntegracaoSAPMock());
 
-  //     Test.startTest();
+  //		 Test.startTest();
 
-  //     positiveResult = false;
-  //     Consultor__c fornecedor = (Consultor__c) TestFactory.createSObject(new Consultor__c(), 'TestFactoryDefaults.FranchisedSeller', true);
+  //		 positiveResult = false;
+  //		 Consultor__c fornecedor = (Consultor__c) TestFactory.createSObject(new Consultor__c(), 'TestFactoryDefaults.FranchisedSeller', true);
 
-  //     Test.stopTest();
+  //		 Test.stopTest();
 
-  //     fornecedor = [
-  //         SELECT  Id, SucessoIntegracaoSAP__c, StatusBodyIntegracaoSAP__c
-  //         FROM    Consultor__c
-  //         WHERE   Id = :fornecedor.Id
-  //     ];
+  //		 fornecedor = [
+  //				 SELECT	 Id, SucessoIntegracaoSAP__c, StatusBodyIntegracaoSAP__c
+  //				 FROM		 Consultor__c
+  //				 WHERE	 Id = :fornecedor.Id
+  //		 ];
 
-  //     System.assertEquals(false, fornecedor.SucessoIntegracaoSAP__c);
-  //     System.assertEquals(
-  //         '400 ' + negativeResponse + ' Error',
-  //         fornecedor.StatusBodyIntegracaoSAP__c
-  //     );
+  //		 System.assertEquals(false, fornecedor.SucessoIntegracaoSAP__c);
+  //		 System.assertEquals(
+  //				 '400 ' + negativeResponse + ' Error',
+  //				 fornecedor.StatusBodyIntegracaoSAP__c
+  //		 );
   // }
 
   @isTest

@@ -623,12 +623,7 @@ private class OpportunityDiscountRequestControllerTest {
   @IsTest
   static void shouldRequireVirtualOfficeId() {
     try {
-      createOpportunity(
-        TARGET_STAGE,
-        '   ',
-        1000,
-        'https://example.com/file.pdf'
-      );
+      createOpportunity(TARGET_STAGE, '		', 1000, 'https://example.com/file.pdf');
       System.assert(
         false,
         'Era esperado erro por ausência de IdVirtualOffice__c.'

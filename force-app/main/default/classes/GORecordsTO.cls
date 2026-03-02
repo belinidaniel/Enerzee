@@ -1,67 +1,65 @@
 public class GORecordsTO {
-    
-    // - ProposalService
-    public String   IdSalesForce;
-    public Integer  Status;
-    public Integer  SubStatus;
-    public String   Obs;
-    public Integer  LossReason;
-    public String   DescriptionReasonLoss;
+  // - ProposalService
+  public String IdSalesForce;
+  public Integer Status;
+  public Integer SubStatus;
+  public String Obs;
+  public Integer LossReason;
+  public String DescriptionReasonLoss;
 
-    // - IntegracaoNivelloProjetos
-    public String   StatusProjeto;
-    public String   Category;
-    public String   CodigoRegistroProjetoSF;
-    public String   NumeroProjeto;
-    public String   NomeProjeto;
-    public String   DataInicioContrato;
-    public Integer  PrazoContrato;
-    public String   DataContagemdoPrazo;
-    public String   DataTermino;
-    public Integer  DiasFaltantes;
-    public String   PotenciaDoSistema;
-    public String   Projetista;
-    public String   GestordaObra;
-    public String   DataUltimaModificacao;
+  // - IntegracaoNivelloProjetos
+  public String StatusProjeto;
+  public String Category;
+  public String CodigoRegistroProjetoSF;
+  public String NumeroProjeto;
+  public String NomeProjeto;
+  public String DataInicioContrato;
+  public Integer PrazoContrato;
+  public String DataContagemdoPrazo;
+  public String DataTermino;
+  public Integer DiasFaltantes;
+  public String PotenciaDoSistema;
+  public String Projetista;
+  public String GestordaObra;
+  public String DataUltimaModificacao;
 
-    // - Pagamento
-    public String   ReceivingDate;
-    public Boolean  Refused;
-    public String   RefusedReason;
+  // - Pagamento
+  public String ReceivingDate;
+  public Boolean Refused;
+  public String RefusedReason;
 
-    // - IntegracaoNivelloAprovacaoDesconto
-    public Integer  StatusDiscount;
-    public String   JustifyObs;
-    public String   discountReturnApprovalComments;
-    public Decimal  ReturnRequestDiscount;
+  // - IntegracaoNivelloAprovacaoDesconto
+  public Integer StatusDiscount;
+  public String JustifyObs;
+  public String discountReturnApprovalComments;
+  public Decimal ReturnRequestDiscount;
 
-    // - IntegracaoNivelloContrato / SAP / IntegracaoNivelloProposta
-    public Boolean  Approved;
-    public string   Contract;
-    public string   Adequacy;
+  // - IntegracaoNivelloContrato / SAP / IntegracaoNivelloProposta
+  public Boolean Approved;
+  public string Contract;
+  public string Adequacy;
 
-    // - IntegracaoNivelloContrato
-    public String   URL;
+  // - IntegracaoNivelloContrato
+  public String URL;
 
-    // - IntegracaoNivelloDataVisitaTecnica
-    public String   TechnicalVisitDate;
+  // - IntegracaoNivelloDataVisitaTecnica
+  public String TechnicalVisitDate;
 
-    // - IntegracaoNivelloAnaliseVisitaTecnica
-    public String study;
-    public String reason;
+  // - IntegracaoNivelloAnaliseVisitaTecnica
+  public String study;
+  public String reason;
 
-    // - IntegracaoNivelloProposta
-    public String   UrlSimulation;
+  // - IntegracaoNivelloProposta
+  public String UrlSimulation;
 
-    // - ValorDaProposta
-    public Decimal  Value;
+  // - ValorDaProposta
+  public Decimal Value;
 
-    // - IntegracaoNivelloValorTotalProposta
-    public Decimal  AdditionalCost;
+  // - IntegracaoNivelloValorTotalProposta
+  public Decimal AdditionalCost;
 
-    // - DetalhesDoProcessoFinanceiro
-    public String   FinancingProcessDetail;
+  // - DetalhesDoProcessoFinanceiro
+  public String FinancingProcessDetail;
 
-    public Datetime AppointmentDateTime;
-
+  public Datetime AppointmentDateTime;
 }
