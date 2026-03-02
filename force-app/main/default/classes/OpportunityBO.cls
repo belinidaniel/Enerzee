@@ -1454,8 +1454,8 @@ public class OpportunityBO {
           taskstoInsert.add(
             TaskBO.createTask(
               opportunity.Id,
-              'É necessário	 confirmar o pagamento da oportunidade ' +
-              Opportunity.Name,
+              'É necessário	confirmar o pagamento da oportunidade ' +
+              opportunity.Name,
               'PREENCHER OS CAMPOS:\n\n Fase com Valor Pagamento Confirmado \n\n',
               paymentTaskOwnerId,
               TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 3),
