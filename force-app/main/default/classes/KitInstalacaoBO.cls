@@ -132,9 +132,93 @@ public without sharing class KitInstalacaoBO {
           'Approvacao cancelado automaticamente por readequacao no recalculo do kit.'
         );
       }
+
+      recalculateFinancialFields(oppMap.keySet());
     } catch (Exception e) {
       Utils.createLog(CLASS_NAME, 'calculateValueKit', e);
       throw e;
+    }
+  }
+
+  /**
+   * @description Recalculates financial simulation fields on Opportunity after kit value changes.
+   *              Re-queries ValorTotalProposta__c (formula field) so it reflects the updated ValorTotalProdutos__c.
+   *              Formula: EconomiaAnual = (GRA/2 * Tariff * 0.7) + (GRA/2 * Tariff)
+   * @param oppIds Set of Opportunity IDs to recalculate
+   */
+  @TestVisible
+  private static void recalculateFinancialFields(Set<Id> oppIds) {
+    if (oppIds == null || oppIds.isEmpty()) {
+      return;
+    }
+
+    // Re-query to get ValorTotalProposta__c after the previous DML (formula field now recalculated)
+    List<Opportunity> opportunities = [
+      SELECT
+        Id,
+        GeracaoAnualEstimada__c,
+        TarifaEnergia__c,
+        TarifaForaPonta__c,
+        TarifaComTributosB__c,
+        GrupoTarifario__c,
+        ValorTotalProposta__c
+      FROM Opportunity
+      WHERE Id IN :oppIds
+    ];
+
+    List<Opportunity> toUpdate = new List<Opportunity>();
+    for (Opportunity opp : opportunities) {
+      Decimal geracaoAnual = opp.GeracaoAnualEstimada__c;
+
+      // TarifaEnergia__c is set by EzeeConnect Flow; Solar opps use group-specific tariff fields
+      Decimal tariff = opp.TarifaEnergia__c;
+      if ((tariff == null || tariff <= 0) && opp.GrupoTarifario__c != null) {
+        tariff = opp.GrupoTarifario__c == 'Grupo A'
+          ? opp.TarifaForaPonta__c
+          : opp.TarifaComTributosB__c;
+      }
+
+      if (
+        geracaoAnual == null ||
+        geracaoAnual <= 0 ||
+        tariff == null ||
+        tariff <= 0
+      ) {
+        continue;
+      }
+
+      // ((GRA / 2) * tariff * 0.7) + ((GRA / 2) * tariff)
+      Decimal economiaAnual = ((geracaoAnual / 2) * tariff * 0.7 +
+        (geracaoAnual / 2) * tariff)
+        .setScale(2, System.RoundingMode.HALF_UP);
+
+      Opportunity oppToUpdate = new Opportunity(Id = opp.Id);
+      oppToUpdate.EconomiaAnualEstimada__c = economiaAnual;
+
+      if (economiaAnual > 0) {
+        Decimal investimento = opp.ValorTotalProposta__c != null
+          ? opp.ValorTotalProposta__c
+          : 0;
+        oppToUpdate.EconomiaMensalEstimada__c = (economiaAnual / 12)
+          .setScale(2, System.RoundingMode.HALF_UP);
+        oppToUpdate.EconomiaAcumulada__c = (economiaAnual * 25 - investimento)
+          .setScale(2, System.RoundingMode.HALF_UP);
+        if (investimento > 0) {
+          oppToUpdate.PaybackAnos__c = (investimento / economiaAnual)
+            .setScale(2, System.RoundingMode.HALF_UP);
+        }
+      }
+
+      toUpdate.add(oppToUpdate);
+    }
+
+    if (!toUpdate.isEmpty()) {
+      OpportunityTriggerHandler.disableTrigger();
+      try {
+        update toUpdate;
+      } finally {
+        OpportunityTriggerHandler.enableTrigger();
+      }
     }
   }
 

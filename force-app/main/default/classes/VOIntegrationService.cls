@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 02-26-2026
+ * @last modified on	 : 03-02-2026
  * @last modified by	 : Daniel Belini
  **/
 public with sharing class VOIntegrationService {
@@ -842,19 +842,7 @@ public with sharing class VOIntegrationService {
   private static String resolveOpportunityExternalId(
     Opportunity opportunityRecord
   ) {
-    if (opportunityRecord == null) {
-      return null;
-    }
-
-    if (String.isNotBlank(opportunityRecord.IdVirtualOffice__c)) {
-      return opportunityRecord.IdVirtualOffice__c;
-    }
-
-    if (String.isNotBlank(opportunityRecord.Numeroproposta__c)) {
-      return opportunityRecord.Numeroproposta__c;
-    }
-
-    return String.valueOf(opportunityRecord.Id);
+    return opportunityRecord.Numeroproposta__c;
   }
 
   private static Boolean isOpportunityAutomaticallyEligible(

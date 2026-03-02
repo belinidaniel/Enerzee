@@ -1,3 +1,10 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-02-2026
+ * @last modified by  : Daniel Belini
+ **/
 @IsTest
 private class KitInstalacaoBOTest {
   @IsTest
