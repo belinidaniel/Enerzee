@@ -1,3 +1,10 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-02-2026
+ * @last modified by  : Daniel Belini
+ **/
 public class TokenAPINivelloWs {
   public String erro { get; set; }
   public NivelloTokenResponse tokenResponse { get; set; }
