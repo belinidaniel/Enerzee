@@ -27,6 +27,9 @@ jobs:
       - name: Install SF CLI
         run: npm install --global @salesforce/cli@latest
 
+      - name: Install sfdx-git-delta
+        run: echo y | sf plugins install sfdx-git-delta
+
       # ─── Authenticate to Production ──────────────────────────────────────────
       # Secret: SFDX_AUTH_URL_PRD
       # Como gerar: sf org display --verbose --target-org <alias> | grep "Sfdx Auth Url"
@@ -60,6 +63,22 @@ jobs:
           echo "apex_classes=$APEX" >> $GITHUB_OUTPUT
           echo "test_classes=$TESTS" >> $GITHUB_OUTPUT
           echo "has_changes=$([ -n "$CHANGED" ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+
+      # ─── Generate delta package (only PR changes) ────────────────────────────
+      - name: Generate delta package
+        if: steps.changed.outputs.has_changes == 'true'
+        run: |
+          MERGE_BASE=$(git merge-base HEAD origin/main)
+          echo "Delta from: $MERGE_BASE → HEAD (${{ github.sha }})"
+          sf sgd source delta \
+            --from "$MERGE_BASE" \
+            --to HEAD \
+            --source force-app \
+            --output .
+          echo "--- package.xml ---"
+          cat package/package.xml
+          echo "--- destructiveChanges.xml ---"
+          cat destructiveChanges/destructiveChanges.xml
 
       # ─── Static Analysis (PMD via Salesforce Code Analyzer) ──────────────────
       - name: Run Code Analyzer
@@ -95,12 +114,18 @@ jobs:
             TEST_ARGS="--tests ${{ steps.changed.outputs.test_classes }}"
           fi
 
+          DESTRUCTIVE_ARG=""
+          if grep -q '<types>' ./destructiveChanges/destructiveChanges.xml 2>/dev/null; then
+            DESTRUCTIVE_ARG="--post-destructive-changes destructiveChanges/destructiveChanges.xml"
+          fi
+
           sf project deploy start \
-            --source-dir force-app \
+            --manifest package/package.xml \
             --target-org enerzee-PRD \
             --dry-run \
             --test-level $TEST_LEVEL \
             $TEST_ARGS \
+            $DESTRUCTIVE_ARG \
             --json > /tmp/deploy_result.json 2>&1 || true
 
           cat /tmp/deploy_result.json

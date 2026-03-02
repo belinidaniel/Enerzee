@@ -59,7 +59,7 @@ private class OpportunityCommentNotifServiceTest {
       Name = 'Opp Sem Mudanca',
       OwnerId = activeUserId,
       PropostaGerada__c = false,
-      ComentarioSolicitante__c = 'comentario com   espacos'
+      ComentarioSolicitante__c = 'comentario com	 espacos'
     );
 
     Opportunity newOpportunity = new Opportunity(
@@ -67,7 +67,7 @@ private class OpportunityCommentNotifServiceTest {
       Name = 'Opp Sem Mudanca',
       OwnerId = activeUserId,
       PropostaGerada__c = false,
-      ComentarioSolicitante__c = '  comentario com espacos   '
+      ComentarioSolicitante__c = '	comentario com espacos	 '
     );
 
     Test.startTest();
@@ -152,7 +152,7 @@ private class OpportunityCommentNotifServiceTest {
       Id = opportunityId,
       Name = 'Opp Comentario Vazio',
       OwnerId = activeUserId,
-      ComentarioSolicitante__c = '   '
+      ComentarioSolicitante__c = '	 '
     );
 
     Test.startTest();
@@ -180,7 +180,7 @@ private class OpportunityCommentNotifServiceTest {
   @isTest
   static void shouldNormalizeCommentSafely() {
     String normalized = OpportunityCommentNotificationService.normalizeComment(
-      ' Linha 1' + '\n' + '\t' + 'Linha 2   '
+      ' Linha 1' + '\n' + '\t' + 'Linha 2		'
     );
     System.assertEquals('Linha 1 Linha 2', normalized);
   }
