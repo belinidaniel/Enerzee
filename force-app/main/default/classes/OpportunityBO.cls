@@ -2,7 +2,7 @@
  * @description				:
  * @author						: Daniel Belini
  * @group							:
- * @last modified on	: 03-01-2026
+ * @last modified on	: 03-02-2026
  * @last modified by	: Daniel Belini
  **/
 public class OpportunityBO {
@@ -1454,8 +1454,8 @@ public class OpportunityBO {
           taskstoInsert.add(
             TaskBO.createTask(
               opportunity.Id,
-              'É necessário	 confirmar o pagamento da oportunidade ' +
-              Opportunity.Name,
+              'É necessário	confirmar o pagamento da oportunidade ' +
+              opportunity.Name,
               'PREENCHER OS CAMPOS:\n\n Fase com Valor Pagamento Confirmado \n\n',
               paymentTaskOwnerId,
               TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 3),
