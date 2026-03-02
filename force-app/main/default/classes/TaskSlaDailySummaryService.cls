@@ -1,9 +1,9 @@
 /**
- * @description       :
- * @author            : Daniel Belini
- * @group             :
- * @last modified on  : 02-11-2026
- * @last modified by  : Daniel Belini
+ * @description						 :
+ * @author											 : Daniel Belini
+ * @group												 :
+ * @last modified on	 : 02-11-2026
+ * @last modified by	 : Daniel Belini
  **/
 public with sharing class TaskSlaDailySummaryService {
   private static final String DAILY_CONSOLIDATED_LOG_TYPE = 'TASK_DAILY_CONSOLIDATED';

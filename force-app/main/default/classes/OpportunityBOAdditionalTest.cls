@@ -1,92 +1,95 @@
 /**
- * @description       : 
- * @author            : Daniel Belini
- * @group             : 
- * @last modified on  : 12-22-2025
- * @last modified by  : Daniel Belini
-**/
+ * @description						 :
+ * @author											 : Daniel Belini
+ * @group												 :
+ * @last modified on	 : 12-22-2025
+ * @last modified by	 : Daniel Belini
+ **/
 @IsTest
 private class OpportunityBOAdditionalTest {
+  private static User createCloserUser() {
+    Id profileId = [SELECT Id FROM Profile LIMIT 1].Id;
+    User u = new User(
+      Alias = 'wagner',
+      Email = 'wagner.sampaio@enerzee.com.br.test',
+      Username = 'wagner.sampaio@enerzee.com.br.test',
+      LastName = 'Closer',
+      TimeZoneSidKey = 'America/Los_Angeles',
+      LocaleSidKey = 'en_US',
+      EmailEncodingKey = 'UTF-8',
+      LanguageLocaleKey = 'en_US',
+      ProfileId = profileId
+    );
+    insert u;
+    return u;
+  }
 
-    private static User createCloserUser() {
-        Id profileId = [SELECT Id FROM Profile LIMIT 1].Id;
-        User u = new User(
-            Alias = 'wagner',
-            Email = 'wagner.sampaio@enerzee.com.br.test',
-            Username = 'wagner.sampaio@enerzee.com.br.test',
-            LastName = 'Closer',
-            TimeZoneSidKey = 'America/Los_Angeles',
-            LocaleSidKey = 'en_US',
-            EmailEncodingKey = 'UTF-8',
-            LanguageLocaleKey = 'en_US',
-            ProfileId = profileId
-        );
-        insert u;
-        return u;
-    }
+  @IsTest
+  static void shouldCloseFollowUpCallTasks() {
+    User closer = createCloserUser();
+    Account acc = new Account(Name = 'Opp Acc');
+    insert acc;
 
-    @IsTest
-    static void shouldCloseFollowUpCallTasks() {
-        User closer = createCloserUser();
-        Account acc = new Account(Name = 'Opp Acc');
-        insert acc;
+    Opportunity oldOpp = new Opportunity(
+      Name = 'Opp FollowUp',
+      IdVirtualOffice__c = 'vo-followup',
+      StageName = OpportunityUtils.STATUS_PROPOSTA_ENVIADA,
+      CloseDate = Date.today().addDays(10),
+      AccountId = acc.Id
+    );
+    insert oldOpp;
+    Opportunity newOpp = oldOpp.clone(false, true, true, true);
+    newOpp.StageName = OpportunityUtils.STATUS_NEGOCIACAO;
 
-        Opportunity oldOpp = new Opportunity(
-            Name = 'Opp FollowUp',
-            IdVirtualOffice__c = 'vo-followup',
-            StageName = OpportunityUtils.STATUS_PROPOSTA_ENVIADA,
-            CloseDate = Date.today().addDays(10),
-            AccountId = acc.Id
-        );
-        insert oldOpp;
-        Opportunity newOpp = oldOpp.clone(false, true, true, true);
-        newOpp.StageName = OpportunityUtils.STATUS_NEGOCIACAO;
+    Task t = new Task(
+      WhatId = oldOpp.Id,
+      OwnerId = closer.Id,
+      Status = 'Open',
+      Subject = 'Ligação de follow-up - teste'
+    );
+    insert t;
 
-        Task t = new Task(
-            WhatId = oldOpp.Id,
-            OwnerId = closer.Id,
-            Status = 'Open',
-            Subject = 'Ligação de follow-up - teste'
-        );
-        insert t;
+    Test.startTest();
+    OpportunityBO.checksAndClosesTaskFollowUpCall(
+      new List<Opportunity>{ newOpp },
+      new Map<Id, Opportunity>{ newOpp.Id => oldOpp }
+    );
+    Test.stopTest();
 
-        Test.startTest();
-        OpportunityBO.checksAndClosesTaskFollowUpCall(
-            new List<Opportunity>{ newOpp },
-            new Map<Id, Opportunity>{ newOpp.Id => oldOpp }
-        );
-        Test.stopTest();
+    Task updated = [
+      SELECT Status, MetodoDeFollowup__c
+      FROM Task
+      WHERE Id = :t.Id
+    ];
+  }
 
-        Task updated = [SELECT Status, MetodoDeFollowup__c FROM Task WHERE Id = :t.Id];
-    }
+  @IsTest
+  static void handleLeadConversionNoActions() {
+    Lead lead = new Lead(LastName = 'Lead', Company = 'Company');
+    insert lead;
 
-    @IsTest
-    static void handleLeadConversionNoActions() {
-        Lead lead = new Lead(LastName = 'Lead', Company = 'Company');
-        insert lead;
+    Account acc = new Account(Name = 'Lead Acc');
+    insert acc;
 
-        Account acc = new Account(Name = 'Lead Acc');
-        insert acc;
+    Opportunity oppOld = new Opportunity(
+      Name = 'Opp Lead',
+      StageName = OpportunityUtils.STATUS_PROPOSTA_GERADA,
+      CloseDate = Date.today().addDays(5),
+      AccountId = acc.Id,
+      IdVirtualOffice__c = 'vo-lead',
+      Lead__c = lead.Id
+    );
+    insert oppOld;
+    Opportunity oppNew = oppOld.clone(false, true, true, true);
+    oppNew.StageName = OpportunityUtils.STATUS_PROPOSTA_ENVIADA;
 
-        Opportunity oppOld = new Opportunity(
-            Name = 'Opp Lead',
-            StageName = OpportunityUtils.STATUS_PROPOSTA_GERADA,
-            CloseDate = Date.today().addDays(5),
-            AccountId = acc.Id,
-            IdVirtualOffice__c = 'vo-lead',
-            Lead__c = lead.Id
-        );
-        insert oppOld;
-        Opportunity oppNew = oppOld.clone(false, true, true, true);
-        oppNew.StageName = OpportunityUtils.STATUS_PROPOSTA_ENVIADA;
+    Test.startTest();
+    OpportunityBO.handleOpportunityLeadConversion(
+      new List<Opportunity>{ oppNew },
+      new Map<Id, Opportunity>{ oppNew.Id => oppOld }
+    );
+    Test.stopTest();
 
-        Test.startTest();
-        OpportunityBO.handleOpportunityLeadConversion(
-            new List<Opportunity>{ oppNew },
-            new Map<Id, Opportunity>{ oppNew.Id => oppOld }
-        );
-        Test.stopTest();
-
-        System.assert(true, 'Method executed without errors.');
-    }
+    System.assert(true, 'Method executed without errors.');
+  }
 }

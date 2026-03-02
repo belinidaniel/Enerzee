@@ -17,7 +17,7 @@ public with sharing class ConsultorBO {
     List<Consultor__c> newRecordList
   ) {
     // Representante (SAP) = Consultor = Vendedor
-    // Fornecedor (SAP) = Franqueado =  Integrador (DESCONTINUADA)
+    // Fornecedor (SAP) = Franqueado =	Integrador (DESCONTINUADA)
 
     User runningUser = [
       SELECT Id, Name, Profile.Name

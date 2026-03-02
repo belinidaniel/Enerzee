@@ -1,9 +1,9 @@
 /**
- * @description       :
- * @author            : Daniel Belini
- * @group             :
- * @last modified on  : 02-25-2026
- * @last modified by  : Daniel Belini
+ * @description						 :
+ * @author											 : Daniel Belini
+ * @group												 :
+ * @last modified on	 : 02-25-2026
+ * @last modified by	 : Daniel Belini
  **/
 public with sharing class MessagingEndUserService {
   public static final String TEST_CHANNEL_ID = '0MjU50000011EhtKAE';
