@@ -156,7 +156,10 @@ public without sharing class Utils {
       TokenAPINivelloWs.access_token != null &&
       TokenAPINivelloWs.access_token != ''
     ) {
-      request.setHeader('Bearer', TokenAPINivelloWs.access_token);
+      request.setHeader(
+        'Authorization',
+        'Bearer ' + TokenAPINivelloWs.access_token
+      );
     }
     //depois verifica nos parâmetros
     else {
@@ -167,7 +170,7 @@ public without sharing class Utils {
       ];
 
       if (token.LastToken__c != null && token.LastToken__c != '') {
-        request.setHeader('Bearer', token.LastToken__c);
+        request.setHeader('Authorization', 'Bearer ' + token.LastToken__c);
       }
       //se não achar, precisa de um novo token
       else {
