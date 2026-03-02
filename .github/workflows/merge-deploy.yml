@@ -1,4 +1,4 @@
-name: Merge Deploy
+name: PRD Deploy
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # full history needed for git diff
+          fetch-depth: 0
 
       # ─── Setup Node + SF CLI ─────────────────────────────────────────────────
       - name: Setup Node
@@ -26,29 +26,29 @@ jobs:
       - name: Install SF CLI
         run: npm install --global @salesforce/cli@latest
 
+      - name: Install sfdx-git-delta
+        run: echo y | sf plugins install sfdx-git-delta
+
       # ─── Authenticate to Production ──────────────────────────────────────────
       # Secret: SFDX_AUTH_URL_PRD
-      # Como gerar: sf org display --verbose --target-org <alias> | grep "Sfdx Auth Url"
+      # Como gerar: sf org display --verbose --target-org enerzee-PRD | grep "Sfdx Auth Url"
       - name: Authenticate Production
         run: |
           echo "${{ secrets.SFDX_AUTH_URL_PRD }}" > /tmp/auth_url.txt
           sf org login sfdx-url --sfdx-url-file /tmp/auth_url.txt --alias enerzee-PRD --set-default
           rm /tmp/auth_url.txt
 
-      # ─── Identify changed files in this merge ─────────────────────────────────
-      - name: Get changed metadata files
+      # ─── Identify changed files in this merge ────────────────────────────────
+      - name: Get changed files
         id: changed
         run: |
-          # Compare last two commits (HEAD~1..HEAD covers the merge commit)
           CHANGED=$(git diff --name-only HEAD~1..HEAD | grep -E 'force-app/' || true)
           echo "Changed files in this merge:"
           echo "$CHANGED"
 
-          # Apex classes (non-test) for test discovery
           APEX=$(echo "$CHANGED" | grep '\.cls$' | grep -v 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
-
-          # Auto-discover test classes from changed + existing test files
           TESTS=$(echo "$CHANGED" | grep 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
+
           for cls in $APEX; do
             test_file="force-app/main/default/classes/${cls}Test.cls"
             if [ -f "$test_file" ]; then
@@ -57,16 +57,29 @@ jobs:
           done
 
           TESTS=$(echo "$TESTS" | tr ' ' '\n' | sort -u | tr '\n' ' ' | xargs)
-
           echo "apex_classes=$APEX" >> $GITHUB_OUTPUT
           echo "test_classes=$TESTS" >> $GITHUB_OUTPUT
           echo "has_changes=$([ -n "$CHANGED" ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
 
-      # ─── Nothing changed — skip deploy ───────────────────────────────────────
+      # ─── Skip if no metadata changed ─────────────────────────────────────────
       - name: Skip if no metadata changes
         if: steps.changed.outputs.has_changes == 'false'
+        run: echo "No Salesforce metadata changed. Skipping deploy."
+
+      # ─── Generate delta package ───────────────────────────────────────────────
+      - name: Generate delta package
+        if: steps.changed.outputs.has_changes == 'true'
         run: |
-          echo "No Salesforce metadata changed in this merge. Skipping deploy."
+          echo "Delta from: HEAD~1 → HEAD (${{ github.sha }})"
+          sf sgd source delta \
+            --from HEAD~1 \
+            --to HEAD \
+            --source force-app \
+            --output .
+          echo "--- package.xml ---"
+          cat package/package.xml
+          echo "--- destructiveChanges.xml ---"
+          cat destructiveChanges/destructiveChanges.xml
 
       # ─── Deploy to Production ─────────────────────────────────────────────────
       - name: Deploy to Production
@@ -81,23 +94,28 @@ jobs:
             TEST_ARGS="--tests ${{ steps.changed.outputs.test_classes }}"
           fi
 
+          DESTRUCTIVE_ARG=""
+          if grep -q '<types>' ./destructiveChanges/destructiveChanges.xml 2>/dev/null; then
+            DESTRUCTIVE_ARG="--post-destructive-changes destructiveChanges/destructiveChanges.xml"
+          fi
+
           echo "Test level: $TEST_LEVEL"
           echo "Tests: ${{ steps.changed.outputs.test_classes }}"
 
           sf project deploy start \
-            --source-dir force-app \
+            --manifest package/package.xml \
             --target-org enerzee-PRD \
             --test-level $TEST_LEVEL \
             $TEST_ARGS \
+            $DESTRUCTIVE_ARG \
             --json > /tmp/deploy_result.json 2>&1
 
           cat /tmp/deploy_result.json
 
-          # Exit with deploy status code
           STATUS=$(cat /tmp/deploy_result.json | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('status', 1))")
           exit $STATUS
 
-      # ─── Create GitHub Deployment status ─────────────────────────────────────
+      # ─── Report result ────────────────────────────────────────────────────────
       - name: Report deploy result
         if: always() && steps.changed.outputs.has_changes == 'true'
         uses: actions/github-script@v7
@@ -122,10 +140,10 @@ jobs:
 
               if (result?.details?.runTestResult) {
                 const tests = result.details.runTestResult;
-                const coverage = tests.codeCoverage?.map(c =>
-                  `| ${c.name} | ${c.numLocations - c.numLocationsNotCovered}/${c.numLocations} | ${Math.round(((c.numLocations - c.numLocationsNotCovered) / c.numLocations) * 100)}% |`
-                ).join('\n') || '';
-
+                const coverage = tests.codeCoverage?.map(c => {
+                  const pct = Math.round(((c.numLocations - c.numLocationsNotCovered) / c.numLocations) * 100);
+                  return `| ${c.name} | ${c.numLocations - c.numLocationsNotCovered}/${c.numLocations} | ${pct}% |`;
+                }).join('\n') || '';
                 testSummary = `\n\n### 🧪 Test Results\n` +
                   `- Passed: ${tests.numTestsRun - (tests.failures?.length || 0)}\n` +
                   `- Failed: ${tests.failures?.length || 0}\n` +
@@ -141,35 +159,18 @@ jobs:
               ? '**Deploy concluído com sucesso**'
               : '**Deploy falhou — rollback automático pelo Salesforce**';
 
-            const body = `## Merge Deploy Report ${status}
-
-            **Commit:** [\`${{ github.sha }}\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-            **Org:** Production (enerzee-PRD)
-            **Apex deployado:** ${{ steps.changed.outputs.apex_classes || '_nenhum_' }}
-            **Testes executados:** ${{ steps.changed.outputs.test_classes || 'RunLocalTests' }}
-
-            ### 🚀 Resultado
-            ${summary}${details}${testSummary}
-
-            ---
-            _[Ver log completo](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})_`;
-
-            // Create a commit status
             github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
               sha: context.sha,
               state: deploySuccess ? 'success' : 'failure',
               target_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-              description: deploySuccess ? 'Deploy to production succeeded' : 'Deploy to production failed',
-              context: 'Merge Deploy / Production'
+              description: deploySuccess ? 'Deploy to PRD succeeded' : 'Deploy to PRD failed',
+              context: 'PRD Deploy'
             });
 
-            console.log(body);
+            console.log(`## PRD Deploy Report ${status}\n**Org:** Production (enerzee-PRD)\n**Apex:** ${{ steps.changed.outputs.apex_classes || 'none' }}\n${summary}${details}${testSummary}`);
 
-      # ─── Notify on failure ───────────────────────────────────────────────────
       - name: Fail job if deploy failed
         if: steps.deploy.outcome == 'failure'
-        run: |
-          echo "Deploy to production FAILED. Check the logs above."
-          exit 1
+        run: exit 1
