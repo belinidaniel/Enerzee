@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 02-12-2026
+ * @last modified on	 : 03-03-2026
  * @last modified by	 : Daniel Belini
  **/
 public without sharing class KitInstalacaoBO {
@@ -132,9 +132,152 @@ public without sharing class KitInstalacaoBO {
           'Approvacao cancelado automaticamente por readequacao no recalculo do kit.'
         );
       }
+
+      recalculateFinancialFields(oppMap.keySet());
     } catch (Exception e) {
       Utils.createLog(CLASS_NAME, 'calculateValueKit', e);
       throw e;
+    }
+  }
+
+  /**
+   * @description Recalculates financial simulation fields on Opportunity after kit value changes.
+   *              Re-queries ValorTotalProposta__c (formula field) so it reflects the updated ValorTotalProdutos__c.
+   *              Formula: EconomiaAnual = (GRA/2 * Tariff * 0.7) + (GRA/2 * Tariff)
+   * @param oppIds Set of Opportunity IDs to recalculate
+   */
+  @TestVisible
+  private static void recalculateFinancialFields(Set<Id> oppIds) {
+    if (oppIds == null || oppIds.isEmpty()) {
+      return;
+    }
+
+    // Re-query to get ValorTotalProposta__c after the previous DML (formula field now recalculated)
+    List<Opportunity> opportunities = [
+      SELECT
+        Id,
+        GeracaoAnualEstimada__c,
+        TarifaEnergia__c,
+        TarifaForaPonta__c,
+        TarifaComTributosB__c,
+        GrupoTarifario__c,
+        ValorTotalProposta__c
+      FROM Opportunity
+      WHERE Id IN :oppIds
+    ];
+
+    System.debug(
+      '[recalculateFinancialFields] oppIds=' +
+        oppIds +
+        ' | queried=' +
+        opportunities.size()
+    );
+
+    List<Opportunity> toUpdate = new List<Opportunity>();
+    for (Opportunity opp : opportunities) {
+      Decimal geracaoAnual = opp.GeracaoAnualEstimada__c;
+
+      // TarifaEnergia__c is set by EzeeConnect Flow; Solar opps use group-specific tariff fields
+      Decimal tariff = opp.TarifaEnergia__c;
+      String tariffSource = 'TarifaEnergia__c';
+      if ((tariff == null || tariff <= 0) && opp.GrupoTarifario__c != null) {
+        tariff = opp.GrupoTarifario__c == 'Grupo A'
+          ? opp.TarifaForaPonta__c
+          : opp.TarifaComTributosB__c;
+        tariffSource = opp.GrupoTarifario__c == 'Grupo A'
+          ? 'TarifaForaPonta__c'
+          : 'TarifaComTributosB__c';
+      }
+
+      System.debug(
+        '[recalculateFinancialFields] oppId=' +
+          opp.Id +
+          ' | GrupoTarifario=' +
+          opp.GrupoTarifario__c +
+          ' | TarifaEnergia=' +
+          opp.TarifaEnergia__c +
+          ' | TarifaForaPonta=' +
+          opp.TarifaForaPonta__c +
+          ' | TarifaComTributosB=' +
+          opp.TarifaComTributosB__c +
+          ' | tariffResolved=' +
+          tariff +
+          ' (source=' +
+          tariffSource +
+          ')' +
+          ' | GeracaoAnual=' +
+          geracaoAnual +
+          ' | ValorTotalProposta=' +
+          opp.ValorTotalProposta__c
+      );
+
+      if (
+        geracaoAnual == null ||
+        geracaoAnual <= 0 ||
+        tariff == null ||
+        tariff <= 0
+      ) {
+        System.debug(
+          '[recalculateFinancialFields] SKIP oppId=' +
+            opp.Id +
+            ' | geracaoAnual=' +
+            geracaoAnual +
+            ' | tariff=' +
+            tariff
+        );
+        continue;
+      }
+
+      // ((GRA / 2) * tariff * 0.7) + ((GRA / 2) * tariff)
+      Decimal economiaAnual = ((geracaoAnual / 2) * tariff * 0.7 +
+        (geracaoAnual / 2) * tariff)
+        .setScale(2, System.RoundingMode.HALF_UP);
+
+      Opportunity oppToUpdate = new Opportunity(Id = opp.Id);
+      oppToUpdate.EconomiaAnualEstimada__c = economiaAnual;
+
+      if (economiaAnual > 0) {
+        Decimal investimento = opp.ValorTotalProposta__c != null
+          ? opp.ValorTotalProposta__c
+          : 0;
+        oppToUpdate.EconomiaMensalEstimada__c = (economiaAnual / 12)
+          .setScale(2, System.RoundingMode.HALF_UP);
+        oppToUpdate.EconomiaAcumulada__c = (economiaAnual * 25 - investimento)
+          .setScale(2, System.RoundingMode.HALF_UP);
+        if (investimento > 0) {
+          oppToUpdate.PaybackAnos__c = (investimento / economiaAnual)
+            .setScale(2, System.RoundingMode.HALF_UP);
+        }
+        System.debug(
+          '[recalculateFinancialFields] CALC oppId=' +
+            opp.Id +
+            ' | EconomiaAnual=' +
+            economiaAnual +
+            ' | EconomiaMensal=' +
+            oppToUpdate.EconomiaMensalEstimada__c +
+            ' | EconomiaAcumulada=' +
+            oppToUpdate.EconomiaAcumulada__c +
+            ' | Payback=' +
+            oppToUpdate.PaybackAnos__c +
+            ' | investimento=' +
+            investimento
+        );
+      }
+
+      toUpdate.add(oppToUpdate);
+    }
+
+    System.debug(
+      '[recalculateFinancialFields] toUpdate.size()=' + toUpdate.size()
+    );
+
+    if (!toUpdate.isEmpty()) {
+      OpportunityTriggerHandler.disableTrigger();
+      try {
+        update toUpdate;
+      } finally {
+        OpportunityTriggerHandler.enableTrigger();
+      }
     }
   }
 
@@ -190,7 +333,7 @@ public without sharing class KitInstalacaoBO {
           CustoAdicionalFixo__c,
           Instalacao__c,
           CustoFinanceiroWeg__c,
-          ConsumoAlvo__c,
+          ConsumoInformadoB__c,
           TipoTelhadoEstrutura__c,
           (
             SELECT
@@ -213,8 +356,22 @@ public without sharing class KitInstalacaoBO {
           IntegracaoNivelloContrato.EnviarKitRequest requestBody = buildKitRequest(
             opp
           );
+          System.debug(
+            '[SendKitUpdate] oppId=' +
+              opp.Id +
+              ' | IdVirtualOffice=' +
+              opp.IdVirtualOffice__c +
+              ' | request=' +
+              JSON.serialize(requestBody)
+          );
           IntegracaoNivelloContrato.EnviarKitResponse response = IntegracaoNivelloContrato.enviarKit(
             requestBody
+          );
+          System.debug(
+            '[SendKitUpdate] oppId=' +
+              opp.Id +
+              ' | response=' +
+              JSON.serialize(response)
           );
 
           if (response != null) {
@@ -271,7 +428,7 @@ public without sharing class KitInstalacaoBO {
   ) {
     IntegracaoNivelloContrato.EnviarKitRequest request = new IntegracaoNivelloContrato.EnviarKitRequest();
     request.Id = opp.IdVirtualOffice__c;
-    request.ConsumoDesejado = opp.ConsumoAlvo__c;
+    request.ConsumoDesejado = opp.ConsumoInformadoB__c;
     request.PotenciaPicoSistema = opp.PotenciaPicoSistema__c;
     request.QtdModulos = (opp.NumeroModulos__c != null)
       ? (Integer) opp.NumeroModulos__c

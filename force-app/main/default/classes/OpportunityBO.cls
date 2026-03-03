@@ -2,7 +2,7 @@
  * @description				:
  * @author						: Daniel Belini
  * @group							:
- * @last modified on	: 03-01-2026
+ * @last modified on	: 03-03-2026
  * @last modified by	: Daniel Belini
  **/
 public class OpportunityBO {
@@ -139,6 +139,7 @@ public class OpportunityBO {
     }
     if (singleOpportunity.TargetConsume != null) {
       opportunity.ConsumoAlvo__c = singleOpportunity.TargetConsume;
+      opportunity.ConsumoInformadoB__c = singleOpportunity.TargetConsume;
     }
     if (singleOpportunity.PercentageIncreaseInConsumption != null) {
       opportunity.PorcentagemAumentoConsumo__c = singleOpportunity.PercentageIncreaseInConsumption;
@@ -3297,5 +3298,43 @@ public class OpportunityBO {
       return;
     }
     Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ email });
+  }
+
+  /**
+   * @description Triggers SendKitUpdate to Nivello when ConsumoInformadoB__c changes.
+   *              Collects all affected Opportunity IDs, queries their related Kit_Instalacao__c
+   *              records and dispatches a single async callout to /api/Proposal/updateInfosKit.
+   * @param newList Updated Opportunity records
+   * @param oldMap  Previous state of the same records
+   */
+  public static void sendKitUpdateOnGeracaoDesejadaChange(
+    List<Opportunity> newList,
+    Map<Id, Opportunity> oldMap
+  ) {
+    Set<Id> opportunityIds = new Set<Id>();
+
+    for (Opportunity newOpp : newList) {
+      Opportunity oldOpp = oldMap.get(newOpp.Id);
+      if (newOpp.ConsumoInformadoB__c != oldOpp.ConsumoInformadoB__c) {
+        opportunityIds.add(newOpp.Id);
+      }
+    }
+
+    if (opportunityIds.isEmpty()) {
+      return;
+    }
+
+    Set<Id> kitIds = new Set<Id>();
+    for (Kit_Instalacao__c kit : [
+      SELECT Id
+      FROM Kit_Instalacao__c
+      WHERE Nome_da_Oportunidade__c IN :opportunityIds
+    ]) {
+      kitIds.add(kit.Id);
+    }
+
+    if (!kitIds.isEmpty()) {
+      KitInstalacaoBO.SendKitUpdate(kitIds);
+    }
   }
 }
