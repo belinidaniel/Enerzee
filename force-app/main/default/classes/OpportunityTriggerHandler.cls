@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 12-22-2025
+ * @last modified on	 : 03-03-2026
  * @last modified by	 : Daniel Belini
  **/
 public class OpportunityTriggerHandler extends TriggerHandler {
@@ -212,6 +212,10 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (Map<Id, Opportunity>) Trigger.oldMap
     );
     OpportunityCommentNotificationService.notifyOnConsultantCommentChange(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
+    OpportunityBO.sendKitUpdateOnGeracaoDesejadaChange(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
