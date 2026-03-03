@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+	<columns>
+		<field>Instalacao__c$Name</field>
+	</columns>
+	<columns>
+		<field>Instalacao__c$Status__c</field>
+	</columns>
+	<columns>
+		<field>Instalacao__c$CreatedDate</field>
+	</columns>
+	<columns>
+		<field>Instalacao__c$InstallDate__c</field>
+	</columns>
+	<columns>
+		<aggregateTypes>Average</aggregateTypes>
+		<field>Instalacao__c$DiasAtePlanejamento__c</field>
+	</columns>
+	<description
+  >Tempo médio de planejamento das Instalações (Criação → Data de Início/Obra Agendada), agrupado por Gestor de Obra. Registros sem InstallDate__c são excluídos da média. DEPENDÊNCIA: confirmar se InstallDate__c é o marco de "obra agendada".</description>
+	<filter>
+		<criteriaItems>
+			<column>Instalacao__c$DiasAtePlanejamento__c</column>
+			<columnToColumn>false</columnToColumn>
+			<isUnlocked>true</isUnlocked>
+			<operator>greaterThan</operator>
+			<value>0</value>
+		</criteriaItems>
+		<language>en_US</language>
+	</filter>
+	<format>Summary</format>
+	<groupingsDown>
+		<dateGranularity>Day</dateGranularity>
+		<field>Instalacao__c$GestorObra__c</field>
+		<sortOrder>Asc</sortOrder>
+	</groupingsDown>
+	<name>INS — Planejamento por Gestor</name>
+	<params>
+		<name>co</name>
+		<value>1</value>
+	</params>
+	<reportType>Instalacao__c</reportType>
+	<scope>organization</scope>
+	<showDetails>false</showDetails>
+	<showGrandTotal>true</showGrandTotal>
+	<showSubTotals>true</showSubTotals>
+	<timeFrameFilter>
+		<dateColumn>Instalacao__c$CreatedDate</dateColumn>
+		<interval>INTERVAL_CUSTOM</interval>
+	</timeFrameFilter>
+</Report>

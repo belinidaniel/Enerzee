@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 02-24-2026
+ * @last modified on	 : 03-03-2026
  * @last modified by	 : Daniel Belini
  **/
 public with sharing class PDFControllerExtension {
@@ -86,13 +86,13 @@ public with sharing class PDFControllerExtension {
     this.salvar = ApexPages.currentPage().getParameters().get('salvar');
     pdfUrls = new List<String>();
     String descriptionSource = null;
+    if (this.opportunity.DescricaoBateria__c != null) {
+      descriptionSource = this.opportunity.DescricaoBateria__c;
+    }
     if (this.opportunity.OpportunityLineItems.size() > 0) {
       descriptionSource = this.opportunity.OpportunityLineItems[0]
         ?.Product2
         ?.Description;
-    }
-    if (String.isBlank(descriptionSource)) {
-      descriptionSource = this.opportunity.DescricaoBateria__c;
     }
     this.description = String.isBlank(descriptionSource)
       ? 'Descrição não disponível'
