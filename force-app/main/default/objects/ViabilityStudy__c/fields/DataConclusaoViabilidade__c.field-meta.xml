@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+	<fullName>DataConclusaoViabilidade__c</fullName>
+	<description
+  >Data oficial de conclusão da Viabilidade (marco de "Viabilidade Finalizada"). Preenchida manualmente ou por automação. Usada no indicador Tempo Médio da Operação de Viabilidade (Engenharia).</description>
+	<externalId>false</externalId>
+	<label>Data de Conclusão da Viabilidade</label>
+	<required>false</required>
+	<trackFeedHistory>false</trackFeedHistory>
+	<trackHistory>true</trackHistory>
+	<trackTrending>false</trackTrending>
+	<type>Date</type>
+</CustomField>

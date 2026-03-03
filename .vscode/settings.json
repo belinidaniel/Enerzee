@@ -7,5 +7,11 @@
   },
   "xml.preferences.showSchemaDocumentationType": "none",
   "salesforcedx-vscode-core.show-cli-success-msg": false,
-  "chatgpt.openOnStartup": true
+  "chatgpt.openOnStartup": true,
+  "salesforce.einsteinForDevelopers.enableAutocompletions": false,
+  "[apex]": {
+    "editor.insertSpaces": false,
+    "editor.tabSize": 4,
+    "editor.detectIndentation": false
+  }
 }

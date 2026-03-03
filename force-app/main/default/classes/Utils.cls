@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 11-24-2025
+ * @last modified on	 : 03-02-2026
  * @last modified by	 : Daniel Belini
  **/
 public without sharing class Utils {
@@ -156,7 +156,10 @@ public without sharing class Utils {
       TokenAPINivelloWs.access_token != null &&
       TokenAPINivelloWs.access_token != ''
     ) {
-      request.setHeader('Bearer', TokenAPINivelloWs.access_token);
+      request.setHeader(
+        'Authorization',
+        'Bearer ' + TokenAPINivelloWs.access_token
+      );
     }
     //depois verifica nos parâmetros
     else {
@@ -167,7 +170,7 @@ public without sharing class Utils {
       ];
 
       if (token.LastToken__c != null && token.LastToken__c != '') {
-        request.setHeader('Bearer', token.LastToken__c);
+        request.setHeader('Authorization', 'Bearer ' + token.LastToken__c);
       }
       //se não achar, precisa de um novo token
       else {

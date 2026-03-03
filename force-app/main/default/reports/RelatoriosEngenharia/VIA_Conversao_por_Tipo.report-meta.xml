@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+	<columns>
+		<field>Opportunity$Name</field>
+	</columns>
+	<columns>
+		<field>Opportunity.Estudos_de_Viabilidades__r$Name</field>
+	</columns>
+	<columns>
+		<field>Opportunity.Estudos_de_Viabilidades__r$StatusFeasibility__c</field>
+	</columns>
+	<description
+  >Taxa de conversão: Viabilidades Finalizadas versus Oportunidades com StageName "Ganho Fechado", segmentado por Tipo de Oportunidade.</description>
+	<filter>
+		<criteriaItems>
+			<column>Opportunity.Estudos_de_Viabilidades__r$StatusFeasibility__c</column>
+			<columnToColumn>false</columnToColumn>
+			<isUnlocked>true</isUnlocked>
+			<operator>equals</operator>
+			<value>Viabilidade Finalizada</value>
+		</criteriaItems>
+		<language>en_US</language>
+	</filter>
+	<format>Summary</format>
+	<groupingsDown>
+		<dateGranularity>Day</dateGranularity>
+		<field>Opportunity.Estudos_de_Viabilidades__r$OpportunityType__c</field>
+		<sortOrder>Asc</sortOrder>
+	</groupingsDown>
+	<groupingsDown>
+		<dateGranularity>Day</dateGranularity>
+		<field>Opportunity$StageName</field>
+		<sortOrder>Asc</sortOrder>
+	</groupingsDown>
+	<name>VIA — Conversão por Tipo de Oportunidade</name>
+	<params>
+		<name>co</name>
+		<value>1</value>
+	</params>
+	<reportType>Oportunidades_com_Viabilidade_Projeto_Instalacao__c</reportType>
+	<scope>organization</scope>
+	<showDetails>false</showDetails>
+	<showGrandTotal>true</showGrandTotal>
+	<showSubTotals>true</showSubTotals>
+	<timeFrameFilter>
+		<dateColumn>Opportunity$CloseDate</dateColumn>
+		<interval>INTERVAL_CUSTOM</interval>
+	</timeFrameFilter>
+</Report>
