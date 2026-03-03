@@ -60,6 +60,15 @@
         <members>EngenhariaDashboards/Painel_Engenharia</members>
         <name>Dashboard</name>
     </types>
+    
+    <!-- 8. Classes Apex -->
+    <types>
+        <members>KitInstalacaoBO</members>
+        <members>KitInstalacaoBOTest</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityTriggerHandler</members>
+        <name>ApexClass</name>
+    </types>
 
     <version>62.0</version>
 </Package>

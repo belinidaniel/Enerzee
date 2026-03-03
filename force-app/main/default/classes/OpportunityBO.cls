@@ -3315,7 +3315,9 @@ public class OpportunityBO {
 
     for (Opportunity newOpp : newList) {
       Opportunity oldOpp = oldMap.get(newOpp.Id);
-      if (newOpp.ConsumoInformadoB__c != oldOpp.ConsumoInformadoB__c) {
+      if (
+        newOpp.GeracaoDesejadaMensalB__c != oldOpp.GeracaoDesejadaMensalB__c
+      ) {
         opportunityIds.add(newOpp.Id);
       }
     }

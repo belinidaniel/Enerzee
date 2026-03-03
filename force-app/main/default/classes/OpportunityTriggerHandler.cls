@@ -46,10 +46,7 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (List<Opportunity>) Trigger.new,
       new Map<Id, Opportunity>()
     );
-    OpportunityShareHandler.gerenciarCompartilhamentoOportunidade(
-      (List<Opportunity>) Trigger.new,
-      (Map<Id, Opportunity>) Trigger.oldMap
-    );
+    // OpportunityShareHandler.gerenciarCompartilhamentoOportunidade((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
     OpportunityCommentNotificationService.notifyOnConsultantCommentChange(
       (List<Opportunity>) Trigger.new,
       new Map<Id, Opportunity>()
@@ -203,10 +200,7 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
-    OpportunityShareHandler.gerenciarCompartilhamentoOportunidade(
-      (List<Opportunity>) Trigger.new,
-      (Map<Id, Opportunity>) Trigger.oldMap
-    );
+    // OpportunityShareHandler.gerenciarCompartilhamentoOportunidade((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
     OpportunityBO.generateProposalAsync(
       (Map<Id, Opportunity>) Trigger.newMap,
       (Map<Id, Opportunity>) Trigger.oldMap
