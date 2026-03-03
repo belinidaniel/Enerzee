@@ -101,20 +101,26 @@ public without sharing class IntegracaoNivelloContrato {
         response
       );
 
+      System.debug(
+        '[enviarKit] status=' +
+          response.getStatusCode() +
+          ' | body=' +
+          response.getBody()
+      );
+
       //Sucesso
       if (response.getStatusCode() == 200) {
-        System.debug('SUCCESS');
         KitResponseWrapper responseWrapper = (KitResponseWrapper) JSON.deserialize(
           response.getBody(),
           KitResponseWrapper.class
+        );
+        System.debug(
+          '[enviarKit] parsed response=' + JSON.serialize(responseWrapper.data)
         );
         return responseWrapper.data;
       }
       //Erro
       else {
-        System.debug('ERROR');
-        // You might want to handle the error differently,
-        // for example, by throwing an exception or returning null.
         return null;
       }
     } catch (Exception e) {
