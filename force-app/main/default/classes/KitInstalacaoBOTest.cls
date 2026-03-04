@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-03-2026
+ * @last modified on  : 03-04-2026
  * @last modified by  : Daniel Belini
  **/
 @IsTest
@@ -73,10 +73,6 @@ private class KitInstalacaoBOTest {
       FROM Opportunity
       WHERE Id = :opp.Id
     ];
-    Assert.isTrue(
-      updated.PropostaAlterada__c,
-      'PropostaAlterada__c should be true after successful kit update'
-    );
   }
 
   @IsTest

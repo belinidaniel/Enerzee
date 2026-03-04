@@ -67,6 +67,7 @@
         <members>KitInstalacaoBOTest</members>
         <members>OpportunityBO</members>
         <members>OpportunityTriggerHandler</members>
+        <members>OpportunityBOPaymentReminderTaskTest</members>
         <name>ApexClass</name>
     </types>
 

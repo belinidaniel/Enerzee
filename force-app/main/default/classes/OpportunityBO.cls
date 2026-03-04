@@ -2,7 +2,7 @@
  * @description				:
  * @author						: Daniel Belini
  * @group							:
- * @last modified on	: 03-03-2026
+ * @last modified on	: 03-04-2026
  * @last modified by	: Daniel Belini
  **/
 public class OpportunityBO {
@@ -3315,9 +3315,7 @@ public class OpportunityBO {
 
     for (Opportunity newOpp : newList) {
       Opportunity oldOpp = oldMap.get(newOpp.Id);
-      if (
-        newOpp.GeracaoDesejadaMensalB__c != oldOpp.GeracaoDesejadaMensalB__c
-      ) {
+      if (newOpp.ConsumoInformadoB__c != oldOpp.ConsumoInformadoB__c) {
         opportunityIds.add(newOpp.Id);
       }
     }
