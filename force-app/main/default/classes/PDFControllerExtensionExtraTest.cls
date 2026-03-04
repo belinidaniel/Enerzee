@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 12-23-2025
+ * @last modified on	 : 03-04-2026
  * @last modified by	 : Daniel Belini
  **/
 @IsTest
@@ -149,6 +149,74 @@ private class PDFControllerExtensionExtraTest {
     System.assertNotEquals(null, ext.getMainViabilityChunkCount());
     ext.getActiveCovers();
     ext.getLogoUrl();
+  }
+
+  @IsTest
+  static void shouldPrioritizeOpportunityBatteryDescriptionOverProductDescription() {
+    ProposalCover__c proposalCover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(),
+      true
+    );
+    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(CapaProposta__c = proposalCover.Id, Produto__c = 'Solar'),
+      true
+    );
+
+    Opportunity opp = createOpp();
+    opp.Parceiro__c = parceiro.Id;
+    opp.DescricaoBateria__c = 'Descricao da bateria informada na modal';
+    insert opp;
+
+    Pricebook2 pb = new Pricebook2(Name = 'Battery Test PB', IsActive = true);
+    insert pb;
+    opp.Pricebook2Id = pb.Id;
+    update opp;
+
+    Product2 prod = new Product2(
+      Name = 'Bateria Produto',
+      Description = 'Descricao padrao do produto',
+      IsActive = true,
+      Id_Externo__c = 'EXT-BATT',
+      ExternalId__c = 'EXT-BATT'
+    );
+    insert prod;
+
+    Id stdPbId = Test.getStandardPricebookId();
+    insert new PricebookEntry(
+      Pricebook2Id = stdPbId,
+      Product2Id = prod.Id,
+      UnitPrice = 1,
+      IsActive = true
+    );
+
+    PricebookEntry pbe = new PricebookEntry(
+      Pricebook2Id = pb.Id,
+      Product2Id = prod.Id,
+      UnitPrice = 1,
+      IsActive = true
+    );
+    insert pbe;
+
+    insert new OpportunityLineItem(
+      OpportunityId = opp.Id,
+      PricebookEntryId = pbe.Id,
+      Quantity = 1,
+      TotalPrice = 1
+    );
+
+    PageReference pref = new PageReference('/apex/dummy');
+    pref.getParameters().put('id', opp.Id);
+    Test.setCurrentPage(pref);
+
+    PDFControllerExtension ext = new PDFControllerExtension(
+      new ApexPages.StandardController(opp)
+    );
+
+    System.assertEquals(
+      'Descricao da bateria informada na modal',
+      ext.description,
+      'DescricaoBateria__c deve prevalecer sobre a descricao do produto.'
+    );
   }
 
   @IsTest
