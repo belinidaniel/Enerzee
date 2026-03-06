@@ -2,7 +2,7 @@
  * @description				:
  * @author						: Daniel Belini
  * @group							:
- * @last modified on	: 03-04-2026
+ * @last modified on	: 03-05-2026
  * @last modified by	: Daniel Belini
  **/
 public class OpportunityBO {
@@ -292,36 +292,6 @@ public class OpportunityBO {
       opportunityIds.add(
         restObjectsToInsertedOpportunity.get(singleOpportunity).Id
       );
-    }
-
-    if (!newProducts.isEmpty()) {
-      // Criar produtos novos
-      List<Product2> productsToInsert = new List<Product2>();
-
-      // ID externo do Produto -> Valor unitário
-      Map<String, Double> productExternalIdToPrice = new Map<String, Double>();
-
-      for (OpportunityRecordsTO.Product product : newProducts) {
-        productExternalIdToPrice.put(
-          String.valueOf(product.Id),
-          product.UnitaryValue
-        );
-
-        productsToInsert.add(
-          new Product2(
-            Id_Externo__c = product.Id,
-            ProductCode = product.Id,
-            Preco_Unitario__c = product.UnitaryValue,
-            Name = product.Name,
-            ExternalId__c = product.Id
-          )
-        );
-      }
-      upsert productsToInsert Id_Externo__c;
-
-      for (Product2 product : productsToInsert) {
-        externalIdToProductId.put(product.ProductCode, product.Id);
-      }
     }
 
     // Deletar itens e kits existentes para fazer inserção dos valores atualizados

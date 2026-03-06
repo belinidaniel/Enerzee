@@ -1,0 +1,283 @@
+<template>
+  <div class="selector-container">
+    <template if:true={isLoadingContext}>
+      <div class="spinner-wrapper">
+        <lightning-spinner
+          size="medium"
+          alternative-text="Carregando contexto da oportunidade"
+        ></lightning-spinner>
+      </div>
+    </template>
+
+    <template if:false={isLoadingContext}>
+      <div class="context-grid slds-m-bottom_medium">
+        <div class="context-item">
+          <span class="context-label">Estado de instalação</span>
+          <span class="context-value">{estadoInstalacaoLabel}</span>
+        </div>
+        <div class="context-item">
+          <span class="context-label">Região padrão</span>
+          <span class="context-value">{regiaoInstalacaoLabel}</span>
+        </div>
+      </div>
+
+      <template if:true={isBlocked}>
+        <div
+          class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning slds-m-bottom_medium"
+          role="alert"
+        >
+          <span class="slds-assistive-text">Aviso</span>
+          <h2>{blockingMessage}</h2>
+        </div>
+      </template>
+
+      <template if:true={isSelectionStep}>
+        <div class="filters slds-m-bottom_small">
+          <lightning-input
+            type="search"
+            label="Buscar produto"
+            value={searchText}
+            placeholder="Digite nome, código, external id ou descrição"
+            oninput={handleSearchInput}
+            onchange={handleSearchInput}
+            disabled={disableSearch}
+          ></lightning-input>
+
+          <div class="filter-grid slds-m-top_small">
+            <lightning-combobox
+              label="Região"
+              value={selectedRegion}
+              options={regionOptions}
+              onchange={handleRegionFilterChange}
+              disabled={disableRegionFilter}
+            ></lightning-combobox>
+
+            <lightning-combobox
+              label="Tipo do telhado - Estrutura de fixação"
+              value={selectedStructureType}
+              options={structureTypeOptions}
+              onchange={handleStructureTypeFilterChange}
+              disabled={disableSearch}
+            ></lightning-combobox>
+
+            <lightning-combobox
+              label="Tipo Kit Promocional"
+              value={selectedKitPromotional}
+              options={kitPromotionalOptions}
+              onchange={handleKitPromotionalFilterChange}
+              disabled={disableSearch}
+            ></lightning-combobox>
+          </div>
+
+          <lightning-input
+            type="checkbox"
+            label="Mostrar todas as regiões"
+            checked={showAllRegions}
+            onchange={handleShowAllRegionsChange}
+            disabled={disableSearch}
+            class="slds-m-top_small"
+          ></lightning-input>
+        </div>
+
+        <template if:true={canToggleSelected}>
+          <div class="selected-toggle-row slds-m-bottom_small">
+            <button
+              type="button"
+              class="slds-button slds-button_reset selected-toggle"
+              onclick={handleToggleShowSelected}
+            >
+              {selectedToggleLabel}
+            </button>
+          </div>
+        </template>
+
+        <template if:true={isLoadingProducts}>
+          <div class="spinner-wrapper">
+            <lightning-spinner
+              size="small"
+              alternative-text="Buscando produtos"
+            ></lightning-spinner>
+          </div>
+        </template>
+
+        <template if:false={isLoadingProducts}>
+          <template if:true={hasProducts}>
+            <div class="product-table-wrapper">
+              <lightning-datatable
+                key-field="pricebookEntryId"
+                data={displayedProducts}
+                columns={columns}
+                selected-rows={selectedRowIds}
+                onrowselection={handleRowSelection}
+              ></lightning-datatable>
+            </div>
+
+            <template if:true={showPagination}>
+              <div class="pagination slds-m-top_small">
+                <lightning-button
+                  label="Anterior"
+                  onclick={handlePreviousPage}
+                  disabled={isPreviousDisabled}
+                ></lightning-button>
+                <span class="pagination-label">{currentPageLabel}</span>
+                <lightning-button
+                  label="Próximo"
+                  onclick={handleNextPage}
+                  disabled={isNextDisabled}
+                ></lightning-button>
+              </div>
+            </template>
+          </template>
+
+          <template if:false={hasProducts}>
+            <div
+              class="slds-text-body_small slds-text-color_weak slds-m-vertical_medium"
+            >
+              Nenhum produto encontrado para os filtros informados.
+            </div>
+          </template>
+        </template>
+      </template>
+
+      <template if:true={isQuantityStep}>
+        <div class="editor-box slds-m-top_medium">
+          <h3 class="editor-title">Edit Selected Products</h3>
+
+          <div class="editor-table-wrapper">
+            <table class="editor-table">
+              <thead>
+                <tr>
+                  <th class="col-index"></th>
+                  <th>
+                    <abbr class="required" title="required">*</abbr>Product
+                  </th>
+                  <th>
+                    <abbr class="required" title="required">*</abbr>Quantity
+                  </th>
+                  <th>
+                    <abbr class="required" title="required">*</abbr>Sales Price
+                  </th>
+                  <th>Date</th>
+                  <th>Line Description</th>
+                  <th class="col-action"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={selectedProductsForEdit} for:item="item">
+                  <tr key={item.pricebookEntryId}>
+                    <td class="col-index">{item.rowNumber}</td>
+                    <td class="product-cell">
+                      <div class="product-name">{item.name}</div>
+                      <div class="product-code">{item.productCode}</div>
+                    </td>
+                    <td>
+                      <lightning-input
+                        type="text"
+                        variant="label-hidden"
+                        value={item.quantity}
+                        data-entry-id={item.pricebookEntryId}
+                        data-field="quantity"
+                        onchange={handleEditorInputChange}
+                      ></lightning-input>
+                    </td>
+                    <td>
+                      <lightning-input
+                        type="text"
+                        variant="label-hidden"
+                        value={item.salesPrice}
+                        disabled
+                      ></lightning-input>
+                    </td>
+                    <td>
+                      <lightning-input
+                        type="date"
+                        variant="label-hidden"
+                        value={item.serviceDate}
+                        data-entry-id={item.pricebookEntryId}
+                        data-field="serviceDate"
+                        onchange={handleEditorInputChange}
+                      ></lightning-input>
+                    </td>
+                    <td>
+                      <lightning-input
+                        type="text"
+                        variant="label-hidden"
+                        value={item.lineDescription}
+                        data-entry-id={item.pricebookEntryId}
+                        data-field="lineDescription"
+                        onchange={handleEditorInputChange}
+                      ></lightning-input>
+                    </td>
+                    <td class="col-action">
+                      <lightning-button-icon
+                        icon-name="utility:delete"
+                        variant="bare"
+                        alternative-text="Remover item"
+                        title="Remover item"
+                        data-entry-id={item.pricebookEntryId}
+                        onclick={handleRemoveSelectedItem}
+                      ></lightning-button-icon>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </template>
+
+      <template if:true={hasFeedback}>
+        <div class="feedback-box slds-m-top_medium">
+          <h3 class="slds-text-heading_small slds-m-bottom_small">
+            Resultado por item
+          </h3>
+          <template for:each={feedbackItems} for:item="feedback">
+            <div key={feedback.pricebookEntryId} class={feedback.rowClass}>
+              <lightning-icon
+                icon-name={feedback.iconName}
+                size="x-small"
+                class="slds-m-right_x-small"
+              ></lightning-icon>
+              <span>
+                <strong>{feedback.productName}</strong>
+                <template if:true={feedback.productCode}>
+                  ({feedback.productCode})</template
+                >
+                : {feedback.message}
+              </span>
+            </div>
+          </template>
+        </div>
+      </template>
+
+      <div class="actions slds-m-top_large">
+        <lightning-button
+          label="Cancelar"
+          onclick={handleCancel}
+        ></lightning-button>
+
+        <template if:true={isSelectionStep}>
+          <lightning-button
+            variant="brand"
+            label="Próxima Etapa"
+            onclick={handleNextStep}
+            disabled={isNextStepDisabled}
+          ></lightning-button>
+        </template>
+
+        <template if:true={isQuantityStep}>
+          <lightning-button
+            label="Voltar"
+            onclick={handleBackStep}
+          ></lightning-button>
+          <lightning-button
+            variant="brand"
+            label={addButtonLabel}
+            onclick={handleAddProducts}
+            disabled={isAddDisabled}
+          ></lightning-button>
+        </template>
+      </div>
+    </template>
+  </div>
+</template>

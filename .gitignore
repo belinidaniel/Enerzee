@@ -41,8 +41,10 @@ $RECYCLE.BIN/
 
 # Local environment variables
 .env
+.claude
 
 # Python Salesforce Functions
 **/__pycache__/
 **/.venv/
 **/venv/
+scripts/clockify-log
