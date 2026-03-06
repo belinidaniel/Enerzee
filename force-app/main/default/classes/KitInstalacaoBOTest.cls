@@ -178,6 +178,91 @@ private class KitInstalacaoBOTest {
     ];
   }
 
+  @IsTest
+  static void shouldNotUpdateFieldsWhenResponseHasNegativeValues() {
+    OpportunityTriggerHandler.disableTrigger();
+    KitInstalacaoTriggerHandler.disableTrigger();
+
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        IdVirtualOffice__c = 'VO-NEGATIVE',
+        GeracaoDesejadaMensalB__c = 500,
+        BDI__c = 10.0,
+        Rede3750__c = 50.0,
+        Pontos__c = 200.0,
+        Direct__c = 100.0,
+        CustoAdicionalFixo__c = 5.0,
+        ValorInstalacao__c = 2000.0,
+        CustoFinanceiroWeg__c = 150.0
+      ),
+      true
+    );
+    TestFactory.createSObject(
+      new Kit_Instalacao__c(Nome_da_Oportunidade__c = opp.Id),
+      true
+    );
+
+    OpportunityTriggerHandler.enableTrigger();
+    KitInstalacaoTriggerHandler.enableTrigger();
+
+    Test.setMock(HttpCalloutMock.class, new NegativeKitResponseMock());
+
+    Test.startTest();
+    opp.GeracaoDesejadaMensalB__c = 750;
+    update opp;
+    Test.stopTest();
+
+    Opportunity updated = [
+      SELECT
+        BDI__c,
+        Rede3750__c,
+        Pontos__c,
+        Direct__c,
+        CustoAdicionalFixo__c,
+        ValorInstalacao__c,
+        CustoFinanceiroWeg__c
+      FROM Opportunity
+      WHERE Id = :opp.Id
+    ];
+    Assert.areEqual(
+      10.0,
+      updated.BDI__c,
+      'BDI__c should not change when response is negative'
+    );
+    Assert.areEqual(
+      50.0,
+      updated.Rede3750__c,
+      'Rede3750__c should not change when response is negative'
+    );
+    Assert.areEqual(
+      200.0,
+      updated.Pontos__c,
+      'Pontos__c should not change when response is negative'
+    );
+    Assert.areEqual(
+      100.0,
+      updated.Direct__c,
+      'Direct__c should not change when response is negative'
+    );
+    Assert.areEqual(
+      5.0,
+      updated.CustoAdicionalFixo__c,
+      'CustoAdicionalFixo__c should not change when response is negative'
+    );
+    Assert.areEqual(
+      2000.0,
+      updated.ValorInstalacao__c,
+      'ValorInstalacao__c should not change when response is negative'
+    );
+    Assert.areEqual(
+      150.0,
+      updated.CustoFinanceiroWeg__c,
+      'CustoFinanceiroWeg__c should not change when response is negative'
+    );
+  }
+
   /**
    * Returns a valid KitResponseWrapper payload for /api/Proposal/updateInfosKit.
    * Also handles any other Nivello endpoint called in the same transaction.
@@ -191,6 +276,24 @@ private class KitInstalacaoBOTest {
       res.setBody(
         '{"success":true,"data":{"Direct":100.0,"Pontos":200.0,"Rede":50.0,' +
         '"Bdi":10.0,"AdditionalFixedCost":5.0,"Installation":2000.0,"FinancialCostWeg":150.0}}'
+      );
+      return res;
+    }
+  }
+
+  /**
+   * Returns a KitResponseWrapper with all negative values.
+   * Fields should not be updated when response values are negative.
+   */
+  public class NegativeKitResponseMock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest req) {
+      HttpResponse res = new HttpResponse();
+      res.setHeader('Content-Type', 'application/json');
+      res.setStatusCode(200);
+      res.setStatus('OK');
+      res.setBody(
+        '{"success":true,"data":{"Direct":-1.0,"Pontos":-1.0,"Rede":-1.0,' +
+        '"Bdi":-1.0,"AdditionalFixedCost":-1.0,"Installation":-1.0,"FinancialCostWeg":-1.0}}'
       );
       return res;
     }

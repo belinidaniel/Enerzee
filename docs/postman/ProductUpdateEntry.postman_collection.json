@@ -1,0 +1,528 @@
+{
+  "info": {
+    "name": "Enerzee — ProductUpdateEntry API",
+    "description": "CRUD completo de Product2 + PricebookEntry via Salesforce REST API.\n\n**Endpoint base:** `{{sf_instance_url}}/services/apexrest/ProductUpdateEntry`\n\n**Autenticação:** OAuth 2.0 — Bearer Token no header `Authorization`.\n\n**Variáveis de ambiente necessárias:**\n- `sf_instance_url` — Ex: https://enerzee.my.salesforce.com\n- `sf_access_token` — Token OAuth obtido via `/services/oauth2/token`\n\n---\n**Formato de resposta padrão:**\n```json\n{\n  \"status\": \"Success\" | \"Error\",\n  \"message\": \"...\",\n  \"results\": [\n    {\n      \"productId\": \"01t...\",\n      \"pricebookEntryId\": \"01u...\",\n      \"productCode\": \"ITM10002NORTE\",\n      \"externalId\": \"34547NORTE\",\n      \"name\": \"600 Wp - BYD BIFACIAL [FINAME]\",\n      \"family\": \"NORTE\",\n      \"unitPrice\": \"930.36\",\n      \"status\": \"Created | Updated | NotFound | AlreadyExists | Deactivated | BlockedByActiveLineItems | Active | Inactive\",\n      \"message\": null\n    }\n  ]\n}\n```",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "sf_instance_url",
+      "value": "https://enerzee.my.salesforce.com",
+      "description": "URL da instância Salesforce (sem barra no final)"
+    },
+    {
+      "key": "sf_access_token",
+      "value": "",
+      "description": "Access Token OAuth 2.0. Obter via: POST /services/oauth2/token"
+    },
+    {
+      "key": "base_url",
+      "value": "{{sf_instance_url}}/services/apexrest/ProductUpdateEntry",
+      "description": "URL base do endpoint (calculada automaticamente)"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Obtenção do Access Token OAuth 2.0 para autenticação nas chamadas.",
+      "item": [
+        {
+          "name": "OAuth 2.0 — Username-Password Flow",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.access_token) {",
+                  "    pm.collectionVariables.set('sf_access_token', json.access_token);",
+                  "    pm.collectionVariables.set('sf_instance_url', json.instance_url);",
+                  "    console.log('Token obtido com sucesso.');",
+                  "} else {",
+                  "    console.error('Falha ao obter token:', JSON.stringify(json));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "grant_type", "value": "password" },
+                { "key": "client_id", "value": "{{sf_client_id}}" },
+                { "key": "client_secret", "value": "{{sf_client_secret}}" },
+                { "key": "username", "value": "{{sf_username}}" },
+                {
+                  "key": "password",
+                  "value": "{{sf_password}}{{sf_security_token}}"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://login.salesforce.com/services/oauth2/token",
+              "protocol": "https",
+              "host": ["login", "salesforce", "com"],
+              "path": ["services", "oauth2", "token"]
+            },
+            "description": "Obtém um access token via Username-Password Flow.\n\nVariáveis adicionais necessárias no environment:\n- `sf_client_id` — Consumer Key do Connected App\n- `sf_client_secret` — Consumer Secret do Connected App\n- `sf_username` — Usuário Salesforce\n- `sf_password` — Senha do usuário\n- `sf_security_token` — Security Token do usuário\n\nO script de teste salva automaticamente o token em `sf_access_token`."
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET — Buscar Produtos",
+      "description": "Busca produtos com filtros opcionais via query parameters.\nTodos os parâmetros são opcionais. Sem filtros, retorna até 200 produtos ordenados por Name.\n\nstatus possíveis no resultado: 'Active', 'Inactive'",
+      "item": [
+        {
+          "name": "Buscar todos os produtos ativos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}?active=true",
+              "host": ["{{base_url}}"],
+              "query": [
+                {
+                  "key": "active",
+                  "value": "true",
+                  "description": "true = apenas ativos | false = apenas inativos | ausente = todos"
+                }
+              ]
+            },
+            "description": "Retorna todos os produtos com IsActive = true.\nLimitado a 200 registros, ordenados por Name ASC."
+          }
+        },
+        {
+          "name": "Buscar por Family",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}?family=NORTE&active=true",
+              "host": ["{{base_url}}"],
+              "query": [
+                {
+                  "key": "family",
+                  "value": "NORTE",
+                  "description": "Filtro exato por Product2.Family"
+                },
+                { "key": "active", "value": "true" }
+              ]
+            },
+            "description": "Filtra produtos por Family exata + IsActive = true."
+          }
+        },
+        {
+          "name": "Buscar por ProductCode",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}?productCode=ITM10002NORTE",
+              "host": ["{{base_url}}"],
+              "query": [
+                {
+                  "key": "productCode",
+                  "value": "ITM10002NORTE",
+                  "description": "Filtro exato por Product2.ProductCode"
+                }
+              ]
+            },
+            "description": "Busca produto por ProductCode exato. Retorna lista com 0 ou 1 item."
+          }
+        },
+        {
+          "name": "Buscar sem filtros (todos)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            },
+            "description": "Retorna até 200 produtos sem filtro (ativos e inativos), ordenados por Name ASC."
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST — Criar Produto",
+      "description": "Cria um produto novo e sua PricebookEntry no Standard Pricebook.\nRetorna erro se o produto já existir (por externalId ou productCode).\nAo menos um dos dois identificadores é obrigatório.\n\nstatus possíveis: 'Created', 'AlreadyExists'",
+      "item": [
+        {
+          "name": "Criar produto completo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"externalId\":    \"34547NORTE\",\n    \"productCode\":   \"ITM10002NORTE\",\n    \"name\":          \"600 Wp - BYD BIFACIAL [FINAME]\",\n    \"price\":         930.36,\n    \"productFamily\": \"NORTE\",\n    \"description\":   \"Painel solar bifacial 600Wp, linha FINAME\"\n}",
+              "options": {
+                "raw": { "language": "json" }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            },
+            "description": "Cria produto com todos os campos.\nSe já existir um produto com o mesmo externalId OU productCode, retorna status 'AlreadyExists'."
+          }
+        },
+        {
+          "name": "Criar produto — apenas externalId (sem productCode)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"externalId\": \"EXT-NOVO-001\",\n    \"name\":       \"Produto Sem Code\",\n    \"price\":      500.00\n}",
+              "options": {
+                "raw": { "language": "json" }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            },
+            "description": "Cria produto usando apenas externalId como identificador.\nNeste caso, ProductCode = externalId (fallback automático)."
+          }
+        },
+        {
+          "name": "Criar produto — sem identificador (erro esperado)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\":  \"Produto Sem ID\",\n    \"price\": 100.00\n}",
+              "options": {
+                "raw": { "language": "json" }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            },
+            "description": "Cenário de erro: nenhum identificador informado.\nEsperado: status 'Error', message 'externalId ou productCode é obrigatório.'"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PATCH — Upsert em Massa",
+      "description": "Upsert em massa de produtos e preços no Standard Pricebook.\n- Produto existe → atualiza preço + campos (name, family, description)\n- Produto não existe → cria produto + PricebookEntry\n\nAceita array ([{...}]) ou objeto único ({...}).\nBulkificado: qualquer volume resulta em no máximo 2 SOQL e 4 DML.\n\nstatus possíveis por item: 'Created', 'Updated', 'NotFound'",
+      "item": [
+        {
+          "name": "Upsert — array com payload real",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n    {\n        \"externalId\":    \"34547NORTE\",\n        \"productCode\":   \"ITM10002NORTE\",\n        \"name\":          \"600 Wp - BYD BIFACIAL [FINAME]\",\n        \"price\":         930.357780930,\n        \"productFamily\": \"NORTE\",\n        \"description\":   \"Painel solar bifacial 600Wp\"\n    },\n    {\n        \"externalId\":    \"34548NORTE\",\n        \"productCode\":   \"ITM10003NORTE\",\n        \"name\":          \"550 Wp - BYD BIFACIAL [FINAME]\",\n        \"price\":         850.00,\n        \"productFamily\": \"NORTE\"\n    }\n]",
+              "options": {
+                "raw": { "language": "json" }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            },
+            "description": "Array de produtos. Cada item será criado (se não existir) ou atualizado (se existir).\nProdutos existentes têm preço e campos atualizados. Novos são criados com PBE."
+          }
+        },
+        {
+          "name": "Upsert — objeto único (sem array)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"externalId\":    \"34547NORTE\",\n    \"productCode\":   \"ITM10002NORTE\",\n    \"name\":          \"600 Wp - BYD BIFACIAL [FINAME]\",\n    \"price\":         930.357780930,\n    \"productFamily\": \"NORTE\"\n}",
+              "options": {
+                "raw": { "language": "json" }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            },
+            "description": "Aceita objeto único (sem array). Internamente convertido para lista de 1 elemento."
+          }
+        },
+        {
+          "name": "Upsert — apenas atualização de preço",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n    {\n        \"externalId\": \"34547NORTE\",\n        \"price\":      999.99\n    }\n]",
+              "options": {
+                "raw": { "language": "json" }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            },
+            "description": "Atualiza apenas o preço de um produto existente. Campos não enviados não são alterados."
+          }
+        },
+        {
+          "name": "Upsert — payload inválido (erro esperado)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "ISTO_NAO_EH_JSON",
+              "options": {
+                "raw": { "language": "text" }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            },
+            "description": "Cenário de erro: body não é JSON válido.\nEsperado: status 'Error', message 'Payload inválido ou vazio.'"
+          }
+        }
+      ]
+    },
+    {
+      "name": "DELETE — Desativar Produto",
+      "description": "Desativa um produto (IsActive = false) e todas as suas PricebookEntries.\nBloqueado se houver OpportunityLineItem em oportunidade aberta.\n\nAceita identificador via body JSON (prioridade) ou query parameter (fallback).\nAo menos um dos dois identificadores é obrigatório.\n\nstatus possíveis: 'Deactivated', 'BlockedByActiveLineItems'",
+      "item": [
+        {
+          "name": "Desativar por externalId (body JSON)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"externalId\": \"34547NORTE\"\n}",
+              "options": {
+                "raw": { "language": "json" }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            },
+            "description": "Desativa o produto com ExternalId__c = '34547NORTE'.\nTambém desativa todas as PricebookEntries associadas (todos os pricebooks)."
+          }
+        },
+        {
+          "name": "Desativar por productCode (body JSON)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productCode\": \"ITM10002NORTE\"\n}",
+              "options": {
+                "raw": { "language": "json" }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            },
+            "description": "Desativa o produto com ProductCode = 'ITM10002NORTE'."
+          }
+        },
+        {
+          "name": "Desativar via query param (fallback)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}?externalId=34547NORTE",
+              "host": ["{{base_url}}"],
+              "query": [
+                {
+                  "key": "externalId",
+                  "value": "34547NORTE",
+                  "description": "ExternalId__c do produto a desativar"
+                }
+              ]
+            },
+            "description": "Fallback: identificador via query parameter quando não há body.\nÚtil para clientes que não suportam body em DELETE."
+          }
+        },
+        {
+          "name": "Desativar — produto inexistente (erro esperado)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"externalId\": \"EXT-INEXISTENTE\"\n}",
+              "options": {
+                "raw": { "language": "json" }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            },
+            "description": "Cenário de erro: produto não encontrado no org.\nEsperado: status 'Error', message 'Produto não encontrado.'"
+          }
+        },
+        {
+          "name": "Desativar — bloqueado por OLI ativa (erro esperado)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sf_access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"externalId\": \"EXT-PRODUTO-EM-OPP\"\n}",
+              "options": {
+                "raw": { "language": "json" }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            },
+            "description": "Cenário de erro: produto possui OpportunityLineItem em oportunidade aberta.\nEsperado: status 'Error', result.status 'BlockedByActiveLineItems'.\nO produto NÃO é desativado."
+          }
+        }
+      ]
+    }
+  ]
+}
