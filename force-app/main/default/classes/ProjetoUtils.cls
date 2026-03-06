@@ -130,6 +130,7 @@ public class ProjetoUtils {
     for (Group g : [
       SELECT Id, DeveloperName, Name
       FROM Group
+      WHERE Type = 'Queue'
     ]) {
       addKeyToQueueMap(queueIdByName, normalizeKey(g.DeveloperName), g);
       addKeyToQueueMap(queueIdByName, normalizeKey(g.Name), g);
