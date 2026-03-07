@@ -1,4 +1,4 @@
-public with sharing class IntegracaoSAPFornecedor {
+public without sharing class IntegracaoSAPFornecedor {
   @future(callout=true)
   public static void sendFornecedor(Set<Id> triggerIds) {
     List<Consultor__c> consultorList = [
@@ -30,6 +30,7 @@ public with sharing class IntegracaoSAPFornecedor {
         NumeroRuaEntrega__c,
         SucessoIntegracaoSAP__c,
         StatusBodyIntegracaoSAP__c,
+        TipoErroIntegracaoSAP__c,
         Banco__c,
         Conta__c,
         Agencia__c
@@ -144,11 +145,13 @@ public with sharing class IntegracaoSAPFornecedor {
           if (successSAPResponseCodes.contains(statusCode)) {
             System.debug('SUCCESS');
             consultor.SucessoIntegracaoSAP__c = true;
+            consultor.TipoErroIntegracaoSAP__c = null;
           }
           //Erro
           else {
             System.debug('ERROR');
             consultor.SucessoIntegracaoSAP__c = false;
+            consultor.TipoErroIntegracaoSAP__c = 'Dados';
           }
           consultor.StatusBodyIntegracaoSAP__c =
             statusCode +
@@ -165,6 +168,7 @@ public with sharing class IntegracaoSAPFornecedor {
         );
 
         consultor.SucessoIntegracaoSAP__c = false;
+        consultor.TipoErroIntegracaoSAP__c = classifyException(e);
         consultor.StatusBodyIntegracaoSAP__c =
           e.getMessage() +
           ' ' +
@@ -175,6 +179,27 @@ public with sharing class IntegracaoSAPFornecedor {
     ConsultorTriggerHandler.disableTrigger();
     update consultorList;
     ConsultorTriggerHandler.enableTrigger();
+  }
+
+  private static String classifyException(Exception e) {
+    String msg = e.getMessage() != null ? e.getMessage() : '';
+    if (
+      msg.contains('INSUFFICIENT_ACCESS_OR_READONLY') ||
+      msg.contains('INSUFFICIENT_ACCESS')
+    ) {
+      return 'Permissao';
+    }
+    if (e instanceof System.CalloutException) {
+      return 'Disponibilidade_SAP';
+    }
+    if (
+      msg.contains('REQUIRED_FIELD_MISSING') ||
+      msg.contains('FIELD_INTEGRITY_EXCEPTION') ||
+      msg.contains('STRING_TOO_LONG')
+    ) {
+      return 'Dados';
+    }
+    return 'Outros';
   }
 
   private static HttpResponse chamadaIntegracao(

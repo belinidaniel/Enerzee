@@ -1,5 +1,5 @@
 @IsTest
-public with sharing class IntegracaoSAPConsultorTest {
+public with sharing class IntegracaoSAPRepresentanteTest {
   private static final String SUCCESS_RESPONSE = '{"codigoHttp": "201", "mensagem": "Inserido com sucesso", "resultado": null}';
   private static final String ERROR_RESPONSE = '{"codigoHttp": "400", "mensagem": "Erro de dados", "resultado": null}';
 
@@ -27,17 +27,18 @@ public with sharing class IntegracaoSAPConsultorTest {
 
   @TestSetup
   static void makeData() {
+    // ConsultorDefaults sets RecordType = 'Consultor', required by ConsultorBO routing
     TestFactory.createSObject(new Consultor__c(), true);
   }
 
   @IsTest
-  static void sendConsultor_success() {
+  static void sendRepresentante_success() {
     Test.setMock(HttpCalloutMock.class, new SuccessMock());
 
     Consultor__c consultor = [SELECT Id FROM Consultor__c LIMIT 1];
 
     Test.startTest();
-    IntegracaoSAPConsultor.sendConsultor(new Set<Id>{ consultor.Id });
+    IntegracaoSAPRepresentante.sendRepresentante(new Set<Id>{ consultor.Id });
     Test.stopTest();
 
     Consultor__c result = [
@@ -61,13 +62,13 @@ public with sharing class IntegracaoSAPConsultorTest {
   }
 
   @IsTest
-  static void sendConsultor_sapError() {
+  static void sendRepresentante_sapError() {
     Test.setMock(HttpCalloutMock.class, new ErrorMock());
 
     Consultor__c consultor = [SELECT Id FROM Consultor__c LIMIT 1];
 
     Test.startTest();
-    IntegracaoSAPConsultor.sendConsultor(new Set<Id>{ consultor.Id });
+    IntegracaoSAPRepresentante.sendRepresentante(new Set<Id>{ consultor.Id });
     Test.stopTest();
 
     Consultor__c result = [
@@ -92,14 +93,14 @@ public with sharing class IntegracaoSAPConsultorTest {
   }
 
   @IsTest
-  static void sendConsultor_bulk() {
+  static void sendRepresentante_bulk() {
     Test.setMock(HttpCalloutMock.class, new SuccessMock());
 
     List<Consultor__c> consultores = new List<Consultor__c>();
     for (Integer i = 0; i < 5; i++) {
       consultores.add(
         (Consultor__c) TestFactory.createSObject(
-          new Consultor__c(Name = 'Consultor Bulk ' + i),
+          new Consultor__c(Name = 'Representante Bulk ' + i),
           false
         )
       );
@@ -109,7 +110,7 @@ public with sharing class IntegracaoSAPConsultorTest {
     Set<Id> ids = new Map<Id, Consultor__c>(consultores).keySet();
 
     Test.startTest();
-    IntegracaoSAPConsultor.sendConsultor(ids);
+    IntegracaoSAPRepresentante.sendRepresentante(ids);
     Test.stopTest();
 
     List<Consultor__c> results = [

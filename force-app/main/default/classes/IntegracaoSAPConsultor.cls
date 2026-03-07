@@ -1,4 +1,4 @@
-public with sharing class IntegracaoSAPConsultor {
+public without sharing class IntegracaoSAPConsultor {
   @future(callout=true)
   public static void sendConsultor(Set<Id> triggerIds) {
     List<Consultor__c> consultorList = [
@@ -28,7 +28,8 @@ public with sharing class IntegracaoSAPConsultor {
         ComplementoEntrega__c,
         NumeroRuaEntrega__c,
         SucessoIntegracaoSAP__c,
-        StatusBodyIntegracaoSAP__c
+        StatusBodyIntegracaoSAP__c,
+        TipoErroIntegracaoSAP__c
       FROM Consultor__c
       WHERE Id IN :triggerIds
     ];
@@ -180,11 +181,13 @@ public with sharing class IntegracaoSAPConsultor {
           if (successSAPResponseCodes.contains(statusCode)) {
             System.debug('SUCCESS');
             acc.SucessoIntegracaoSAP__c = true;
+            acc.TipoErroIntegracaoSAP__c = null;
           }
           //Erro
           else {
             System.debug('ERROR');
             acc.SucessoIntegracaoSAP__c = false;
+            acc.TipoErroIntegracaoSAP__c = 'Dados';
           }
           acc.StatusBodyIntegracaoSAP__c =
             statusCode +
@@ -197,6 +200,7 @@ public with sharing class IntegracaoSAPConsultor {
         Utils.createLog('IntegracaoSAPConsultor', 'sendConsultor ' + acc.Id, e);
 
         acc.SucessoIntegracaoSAP__c = false;
+        acc.TipoErroIntegracaoSAP__c = classifyException(e);
         acc.StatusBodyIntegracaoSAP__c =
           e.getMessage() +
           ' ' +
@@ -207,6 +211,27 @@ public with sharing class IntegracaoSAPConsultor {
     ConsultorTriggerHandler.disableTrigger();
     update consultorList;
     ConsultorTriggerHandler.enableTrigger();
+  }
+
+  private static String classifyException(Exception e) {
+    String msg = e.getMessage() != null ? e.getMessage() : '';
+    if (
+      msg.contains('INSUFFICIENT_ACCESS_OR_READONLY') ||
+      msg.contains('INSUFFICIENT_ACCESS')
+    ) {
+      return 'Permissao';
+    }
+    if (e instanceof System.CalloutException) {
+      return 'Disponibilidade_SAP';
+    }
+    if (
+      msg.contains('REQUIRED_FIELD_MISSING') ||
+      msg.contains('FIELD_INTEGRITY_EXCEPTION') ||
+      msg.contains('STRING_TOO_LONG')
+    ) {
+      return 'Dados';
+    }
+    return 'Outros';
   }
 
   private static HttpResponse chamadaIntegracao(
