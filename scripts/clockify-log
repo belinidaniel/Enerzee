@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# clockify-log — lança horas no Clockify para tickets SAL
+#
+# Uso:
+#   clockify-log SAL-386 "14:00" "15:30"
+#   clockify-log SAL-386 "14:00" "15:30" "2026-03-04"          (data opcional, default: hoje)
+#   clockify-log SAL-386 "14:00" "15:30" "2026-03-04" "DEV"    (tag opcional, default: BUG)
+#
+# Tags disponíveis: BUG, DEV, FEATURE, ENHANCEMENT, REFACTOR, UPDATE, TEST, SUPPORT, CALL
+
+set -euo pipefail
+
+CLOCKIFY_API_KEY="YmUzMWEyN2QtOWJmZS00MjkxLTk4ODMtMWYwYzVlN2NhZWJj"
+WORKSPACE_ID="6911f737f738e858444f4362"
+PROJECT_ID="69120757f738e8584453d790"
+BASE_URL="https://api.clockify.me/api/v1"
+
+TICKET="${1:-}"
+START_TIME="${2:-}"
+END_TIME="${3:-}"
+DATE="${4:-$(date +%Y-%m-%d)}"
+TAG_NAME="${5:-BUG}"
+
+# Mapa de tags (nome → ID)
+TAG_NAME_UPPER=$(echo "$TAG_NAME" | tr '[:lower:]' '[:upper:]')
+case "$TAG_NAME_UPPER" in
+  BUG)           TAG_ID="6924bdedf022b730ecc8098c" ;;
+  DEV)           TAG_ID="6924bd5e86551137a9482725" ;;
+  FEATURE)       TAG_ID="6924794a98c5040c51d40f29" ;;
+  ENHANCEMENT)   TAG_ID="692510d386551137a9529b6b" ;;
+  REFACTOR)      TAG_ID="69274149f4d93e54024e3af4" ;;
+  UPDATE)        TAG_ID="69272e2e34742a75af804db2" ;;
+  TEST)          TAG_ID="6925f177f022b730ecf92c81" ;;
+  SUPPORT)       TAG_ID="6925bbe634742a75af4486df" ;;
+  CALL)          TAG_ID="6924d35186551137a94badbe" ;;
+  HOTFIX)        TAG_ID="69273e38f4d93e54024d8c30" ;;
+  INVESTIGATION) TAG_ID="692219eadc2513417bd3bb5d" ;;
+  *)             TAG_ID="" ;;
+esac
+
+if [[ -z "$TICKET" || -z "$START_TIME" || -z "$END_TIME" ]]; then
+  echo "Uso: clockify-log <TICKET> <HH:MM> <HH:MM> [YYYY-MM-DD] [TAG]"
+  echo "Ex:  clockify-log SAL-386 14:00 15:30"
+  echo "Ex:  clockify-log SAL-386 14:00 15:30 2026-03-04"
+  echo "Ex:  clockify-log SAL-386 14:00 15:30 2026-03-04 DEV"
+  exit 1
+fi
+
+if [[ -z "$TAG_ID" ]]; then
+  echo "Tag '$TAG_NAME' não reconhecida. Disponíveis: BUG DEV FEATURE ENHANCEMENT REFACTOR UPDATE TEST SUPPORT CALL HOTFIX INVESTIGATION"
+  exit 1
+fi
+
+# Busca task pelo nome do ticket
+TASK_JSON=$(curl -sf \
+  -H "X-Api-Key: $CLOCKIFY_API_KEY" \
+  "$BASE_URL/workspaces/$WORKSPACE_ID/projects/$PROJECT_ID/tasks?name=$TICKET")
+
+TASK_ID=$(echo "$TASK_JSON" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+TASK_NAME=$(echo "$TASK_JSON" | grep -o '"name":"[^"]*"' | head -1 | cut -d'"' -f4)
+
+if [[ -z "$TASK_ID" ]]; then
+  echo "Ticket '$TICKET' não encontrado no projeto Salesforce do Clockify."
+  exit 1
+fi
+
+START_ISO="${DATE}T${START_TIME}:00-03:00"
+END_ISO="${DATE}T${END_TIME}:00-03:00"
+
+RESPONSE=$(curl -sf -X POST \
+  -H "X-Api-Key: $CLOCKIFY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"start\": \"$START_ISO\",
+    \"end\": \"$END_ISO\",
+    \"description\": \"$TICKET: $TASK_NAME\",
+    \"projectId\": \"$PROJECT_ID\",
+    \"taskId\": \"$TASK_ID\",
+    \"tagIds\": [\"$TAG_ID\"],
+    \"billable\": true
+  }" \
+  "$BASE_URL/workspaces/$WORKSPACE_ID/time-entries")
+
+ENTRY_ID=$(echo "$RESPONSE" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+
+if [[ -n "$ENTRY_ID" ]]; then
+  # calcula duração
+  START_EPOCH=$(date -jf "%H:%M" "$START_TIME" +%s 2>/dev/null || date -d "$START_TIME" +%s)
+  END_EPOCH=$(date -jf "%H:%M" "$END_TIME" +%s 2>/dev/null || date -d "$END_TIME" +%s)
+  DIFF=$(( (END_EPOCH - START_EPOCH) / 60 ))
+  echo "✓ Lançado: $TICKET | $DATE $START_TIME–$END_TIME (${DIFF}min) | entry: $ENTRY_ID"
+else
+  echo "Erro ao lançar tempo. Resposta: $RESPONSE"
+  exit 1
+fi
