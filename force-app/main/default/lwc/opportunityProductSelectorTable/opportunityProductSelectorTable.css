@@ -1,0 +1,25 @@
+.spinner-wrapper {
+  position: relative;
+  min-height: 4rem;
+}
+
+.product-table-wrapper {
+  max-height: 46vh;
+  overflow-y: auto;
+  border: 1px solid #d8dde6;
+  border-radius: 0.5rem;
+}
+
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-label {
+  color: #444444;
+  font-size: 0.95rem;
+  min-width: 5.5rem;
+  text-align: center;
+}

@@ -1,0 +1,27 @@
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(11rem, 1fr));
+  gap: 0.75rem;
+}
+
+.selected-toggle-row {
+  display: flex;
+  align-items: center;
+}
+
+.selected-toggle {
+  color: #0b5cab;
+  font-size: 1.45rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.selected-toggle:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,84 @@
+<template>
+  <div class="editor-box slds-m-top_medium">
+    <h3 class="editor-title">Editar Produtos Selecionados</h3>
+
+    <div class="editor-table-wrapper">
+      <table class="editor-table">
+        <thead>
+          <tr>
+            <th class="col-index"></th>
+            <th><abbr class="required" title="obrigatório">*</abbr>Produto</th>
+            <th>
+              <abbr class="required" title="obrigatório">*</abbr>Quantidade
+            </th>
+            <th>
+              <abbr class="required" title="obrigatório">*</abbr>Preço de Venda
+            </th>
+            <th>Data</th>
+            <th>Descrição da Linha</th>
+            <th class="col-action"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <template for:each={products} for:item="item">
+            <tr key={item.pricebookEntryId}>
+              <td class="col-index">{item.rowNumber}</td>
+              <td class="product-cell">
+                <div class="product-name">{item.name}</div>
+                <div class="product-code">{item.productCode}</div>
+              </td>
+              <td>
+                <lightning-input
+                  type="text"
+                  variant="label-hidden"
+                  value={item.quantity}
+                  data-entry-id={item.pricebookEntryId}
+                  data-field="quantity"
+                  onchange={handleFieldChange}
+                ></lightning-input>
+              </td>
+              <td>
+                <lightning-input
+                  type="text"
+                  variant="label-hidden"
+                  value={item.salesPrice}
+                  disabled
+                ></lightning-input>
+              </td>
+              <td>
+                <lightning-input
+                  type="date"
+                  variant="label-hidden"
+                  value={item.serviceDate}
+                  data-entry-id={item.pricebookEntryId}
+                  data-field="serviceDate"
+                  onchange={handleFieldChange}
+                ></lightning-input>
+              </td>
+              <td>
+                <lightning-input
+                  type="text"
+                  variant="label-hidden"
+                  value={item.lineDescription}
+                  data-entry-id={item.pricebookEntryId}
+                  data-field="lineDescription"
+                  onchange={handleFieldChange}
+                ></lightning-input>
+              </td>
+              <td class="col-action">
+                <lightning-button-icon
+                  icon-name="utility:delete"
+                  variant="bare"
+                  alternative-text="Remover item"
+                  title="Remover item"
+                  data-entry-id={item.pricebookEntryId}
+                  onclick={handleRemoveItem}
+                ></lightning-button-icon>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>

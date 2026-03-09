@@ -7,7 +7,9 @@
     </types>
     <types>
         <members>opportunityProductSelector</members>
-        <members>opportunityProductSelectorAction</members>
+        <members>opportunityProductSelectorEditor</members>
+        <members>opportunityProductSelectorFilters</members>
+        <members>opportunityProductSelectorTable</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>

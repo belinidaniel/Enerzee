@@ -1,0 +1,60 @@
+<template>
+  <div class="filters slds-m-bottom_small">
+    <lightning-input
+      type="search"
+      label="Buscar produto"
+      value={searchText}
+      placeholder="Digite nome, código, external id ou descrição"
+      oninput={handleSearchInput}
+      onchange={handleSearchInput}
+      disabled={disabled}
+    ></lightning-input>
+
+    <div class="filter-grid slds-m-top_small">
+      <lightning-combobox
+        label="Região"
+        value={selectedRegion}
+        options={regionOptions}
+        onchange={handleRegionFilterChange}
+        disabled={disableRegionFilter}
+      ></lightning-combobox>
+
+      <lightning-combobox
+        label="Tipo do telhado - Estrutura de fixação"
+        value={selectedStructureType}
+        options={structureTypeOptions}
+        onchange={handleStructureTypeFilterChange}
+        disabled={disabled}
+      ></lightning-combobox>
+
+      <lightning-combobox
+        label="Tipo Kit Promocional"
+        value={selectedKitPromotional}
+        options={kitPromotionalOptions}
+        onchange={handleKitPromotionalFilterChange}
+        disabled={disabled}
+      ></lightning-combobox>
+    </div>
+
+    <lightning-input
+      type="checkbox"
+      label="Mostrar todas as regiões"
+      checked={showAllRegions}
+      onchange={handleShowAllRegionsChange}
+      disabled={disabled}
+      class="slds-m-top_small"
+    ></lightning-input>
+  </div>
+
+  <template if:true={canToggleSelected}>
+    <div class="selected-toggle-row slds-m-bottom_small">
+      <button
+        type="button"
+        class="slds-button slds-button_reset selected-toggle"
+        onclick={handleToggleShowSelected}
+      >
+        {selectedToggleLabel}
+      </button>
+    </div>
+  </template>
+</template>

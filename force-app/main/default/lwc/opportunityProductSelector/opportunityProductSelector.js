@@ -41,40 +41,17 @@ const KIT_PROMOTIONAL_OPTIONS = [
 const SALESFORCE_ID_REGEX = /^[a-zA-Z0-9]{15}(?:[a-zA-Z0-9]{3})?$/;
 
 const TABLE_COLUMNS = [
-  {
-    label: "Produto",
-    fieldName: "name",
-    type: "text"
-  },
-  {
-    label: "Código",
-    fieldName: "productCode",
-    type: "text"
-  },
-  {
-    label: "External Id",
-    fieldName: "externalId",
-    type: "text"
-  },
-  {
-    label: "Região",
-    fieldName: "family",
-    type: "text"
-  },
+  { label: "Produto", fieldName: "name", type: "text" },
+  { label: "Código", fieldName: "productCode", type: "text" },
+  { label: "External Id", fieldName: "externalId", type: "text" },
+  { label: "Região", fieldName: "family", type: "text" },
   {
     label: "Preço",
     fieldName: "unitPrice",
     type: "currency",
-    typeAttributes: {
-      currencyCode: "BRL"
-    }
+    typeAttributes: { currencyCode: "BRL" }
   },
-  {
-    label: "Descrição",
-    fieldName: "description",
-    type: "text",
-    wrapText: true
-  }
+  { label: "Descrição", fieldName: "description", type: "text", wrapText: true }
 ];
 
 export default class OpportunityProductSelector extends LightningElement {
@@ -132,6 +109,8 @@ export default class OpportunityProductSelector extends LightningElement {
     }
   }
 
+  // ─── Getters ────────────────────────────────────────────────────────────────
+
   get hasContext() {
     return !!this.context;
   }
@@ -188,16 +167,6 @@ export default class OpportunityProductSelector extends LightningElement {
     return this.selectedEntryOrder.length;
   }
 
-  get canToggleSelected() {
-    return this.selectedCount > 0;
-  }
-
-  get selectedToggleLabel() {
-    return this.showSelectedOnly
-      ? "Voltar aos resultados"
-      : `Mostrar selecionados (${this.selectedCount})`;
-  }
-
   get selectedEntriesList() {
     return this.selectedEntryOrder
       .map((entryId) => this.selectedEntriesById[entryId])
@@ -209,7 +178,6 @@ export default class OpportunityProductSelector extends LightningElement {
     if (!normalizedSearch) {
       return this.selectedEntriesList;
     }
-
     return this.selectedEntriesList.filter((entry) =>
       this.matchesSearch(entry, normalizedSearch)
     );
@@ -260,10 +228,6 @@ export default class OpportunityProductSelector extends LightningElement {
     }));
   }
 
-  get hasSelectedProductsForEdit() {
-    return this.selectedProductsForEdit.length > 0;
-  }
-
   get hasInvalidEditorValues() {
     return this.selectedProductsForEdit.some((entry) => {
       const quantity = this.parseDecimal(entry.quantity);
@@ -275,7 +239,7 @@ export default class OpportunityProductSelector extends LightningElement {
     return (
       this.isBlocked ||
       this.isSubmitting ||
-      !this.hasSelectedProductsForEdit ||
+      this.selectedProductsForEdit.length === 0 ||
       this.hasInvalidEditorValues
     );
   }
@@ -287,6 +251,8 @@ export default class OpportunityProductSelector extends LightningElement {
   get hasFeedback() {
     return this.feedbackItems.length > 0;
   }
+
+  // ─── Lifecycle ──────────────────────────────────────────────────────────────
 
   async initialize() {
     if (!this.recordId || this.isLoadingContext) {
@@ -331,21 +297,22 @@ export default class OpportunityProductSelector extends LightningElement {
     this.hasMore = false;
   }
 
+  // ─── Filter handlers (delegated from child component events) ─────────────────
+
   handleSearchInput(event) {
     this.feedbackItems = [];
-    this.searchText = event.detail?.value ?? event.target?.value ?? "";
+    this.searchText = event.detail?.value ?? "";
 
     if (this.showSelectedOnly) {
       this.syncSelectedRowsForTable();
       return;
     }
-
     this.scheduleSearch();
   }
 
   handleShowAllRegionsChange(event) {
     this.feedbackItems = [];
-    this.showAllRegions = event.target.checked;
+    this.showAllRegions = event.detail?.checked ?? false;
     this.fetchProducts(true);
   }
 
@@ -368,7 +335,7 @@ export default class OpportunityProductSelector extends LightningElement {
   }
 
   async handleToggleShowSelected() {
-    if (!this.canToggleSelected) {
+    if (!this.hasSelectedProducts) {
       return;
     }
 
@@ -378,9 +345,10 @@ export default class OpportunityProductSelector extends LightningElement {
       await this.fetchProducts(true);
       return;
     }
-
     this.syncSelectedRowsForTable();
   }
+
+  // ─── Search / Pagination ─────────────────────────────────────────────────────
 
   scheduleSearch() {
     if (!this.isSelectionStep) {
@@ -448,7 +416,6 @@ export default class OpportunityProductSelector extends LightningElement {
     if (this.isPreviousDisabled) {
       return;
     }
-
     const previousOffset = Math.max(this.offset - this.pageSize, 0);
     this.fetchProducts(false, previousOffset);
   }
@@ -457,9 +424,10 @@ export default class OpportunityProductSelector extends LightningElement {
     if (this.isNextDisabled) {
       return;
     }
-
     this.fetchProducts(false, this.offset + this.pageSize);
   }
+
+  // ─── Row selection ───────────────────────────────────────────────────────────
 
   handleRowSelection(event) {
     this.feedbackItems = [];
@@ -620,12 +588,13 @@ export default class OpportunityProductSelector extends LightningElement {
     );
   }
 
+  // ─── Step navigation ─────────────────────────────────────────────────────────
+
   handleNextStep() {
     if (!this.hasSelectedProducts) {
       this.showToast("Aviso", "Selecione ao menos um produto.", "warning");
       return;
     }
-
     this.currentStep = "quantity";
   }
 
@@ -633,20 +602,17 @@ export default class OpportunityProductSelector extends LightningElement {
     this.currentStep = "selection";
   }
 
-  handleEditorInputChange(event) {
-    const entryId = event.target.dataset.entryId;
-    const fieldName = event.target.dataset.field;
-    const value = event.detail?.value ?? event.target?.value ?? "";
+  // ─── Editor handlers (delegated from child component events) ─────────────────
+
+  handleEditorFieldChange(event) {
+    const { entryId, fieldName, value } = event.detail;
 
     if (!entryId || !fieldName || !this.selectedEntriesById[entryId]) {
       return;
     }
 
     const nextSelectionById = { ...this.selectedEntriesById };
-    const nextEntry = {
-      ...nextSelectionById[entryId],
-      [fieldName]: value
-    };
+    const nextEntry = { ...nextSelectionById[entryId], [fieldName]: value };
 
     if (fieldName === "quantity") {
       const quantity = this.parseDecimal(value);
@@ -656,16 +622,14 @@ export default class OpportunityProductSelector extends LightningElement {
     }
 
     nextSelectionById[entryId] = nextEntry;
-
     this.selectedEntriesById = nextSelectionById;
   }
 
   handleRemoveSelectedItem(event) {
-    const entryId = event.currentTarget?.dataset?.entryId;
+    const entryId = event.detail?.entryId;
     if (!entryId) {
       return;
     }
-
     this.removeSelectedEntry(entryId);
   }
 
@@ -695,6 +659,8 @@ export default class OpportunityProductSelector extends LightningElement {
     }
   }
 
+  // ─── Add products ────────────────────────────────────────────────────────────
+
   async handleAddProducts() {
     if (this.isAddDisabled) {
       return;
@@ -720,12 +686,12 @@ export default class OpportunityProductSelector extends LightningElement {
       return;
     }
 
+    // Build a clean plain-object array to avoid LWC proxy serialization issues.
     const selectedItems = validEntries.reduce((items, entry) => {
       const entryId = this.resolveEntryId(entry);
       if (!entryId) {
         return items;
       }
-
       items.push({
         pricebookEntryId: entryId,
         quantity: this.parseDecimal(entry.quantity),
@@ -735,6 +701,15 @@ export default class OpportunityProductSelector extends LightningElement {
       });
       return items;
     }, []);
+
+    if (selectedItems.length === 0) {
+      this.showToast(
+        "Aviso",
+        "Nenhum produto válido para adicionar.",
+        "warning"
+      );
+      return;
+    }
 
     this.isSubmitting = true;
     try {
@@ -772,23 +747,14 @@ export default class OpportunityProductSelector extends LightningElement {
           .filter((item) => item.success && item.pricebookEntryId)
           .map((item) => item.pricebookEntryId)
       );
-      if (!successEntryIds.isEmpty()) {
+      if (successEntryIds.size > 0) {
         this.removeEntriesById(successEntryIds);
       }
 
-      if (this.selectedCount === 0) {
-        this.currentStep = "selection";
-      } else {
-        this.currentStep = "quantity";
-      }
+      this.currentStep = this.selectedCount === 0 ? "selection" : "quantity";
 
       this.dispatchEvent(
-        new CustomEvent("added", {
-          detail: {
-            successCount,
-            errorCount
-          }
-        })
+        new CustomEvent("added", { detail: { successCount, errorCount } })
       );
 
       if (successCount > 0) {
@@ -808,7 +774,6 @@ export default class OpportunityProductSelector extends LightningElement {
         return `Quantidade inválida para o produto ${entry.name}.`;
       }
     }
-
     return null;
   }
 
@@ -816,12 +781,7 @@ export default class OpportunityProductSelector extends LightningElement {
     this.dispatchEvent(new CustomEvent("close"));
   }
 
-  clearSelection() {
-    this.selectedEntriesById = {};
-    this.selectedEntryOrder = [];
-    this.selectedRowIds = [];
-    this.showSelectedOnly = false;
-  }
+  // ─── Selection helpers ───────────────────────────────────────────────────────
 
   removeEntriesById(entryIds) {
     if (!entryIds || entryIds.size === 0) {
@@ -866,6 +826,8 @@ export default class OpportunityProductSelector extends LightningElement {
     this.selectedEntryOrder = nextSelectionOrder;
   }
 
+  // ─── ID helpers ─────────────────────────────────────────────────────────────
+
   resolveEntryId(row) {
     if (!row) {
       return null;
@@ -892,11 +854,10 @@ export default class OpportunityProductSelector extends LightningElement {
     const normalizedEntryId = this.normalizeEntryId(
       item.pricebookEntryId || item.Id || item.id
     );
-    return {
-      ...item,
-      pricebookEntryId: normalizedEntryId
-    };
+    return { ...item, pricebookEntryId: normalizedEntryId };
   }
+
+  // ─── Search helpers ──────────────────────────────────────────────────────────
 
   normalizeSearchText(rawValue) {
     if (!rawValue) {
@@ -912,13 +873,14 @@ export default class OpportunityProductSelector extends LightningElement {
       product?.externalId,
       product?.description
     ];
-
     return searchTargets.some((value) =>
       String(value || "")
         .toLowerCase()
         .includes(normalizedSearch)
     );
   }
+
+  // ─── Number helpers ──────────────────────────────────────────────────────────
 
   parseDecimal(rawValue) {
     if (rawValue === null || rawValue === undefined || rawValue === "") {
@@ -968,7 +930,6 @@ export default class OpportunityProductSelector extends LightningElement {
     if (parsedValue === null) {
       return "";
     }
-
     return new Intl.NumberFormat("pt-BR", {
       minimumFractionDigits: scale,
       maximumFractionDigits: scale
@@ -985,18 +946,13 @@ export default class OpportunityProductSelector extends LightningElement {
     ) {
       return null;
     }
-
     return baseUnitPrice * quantity;
   }
 
+  // ─── Toast / Error ───────────────────────────────────────────────────────────
+
   showToast(title, message, variant) {
-    this.dispatchEvent(
-      new ShowToastEvent({
-        title,
-        message,
-        variant
-      })
-    );
+    this.dispatchEvent(new ShowToastEvent({ title, message, variant }));
   }
 
   reduceError(error) {
