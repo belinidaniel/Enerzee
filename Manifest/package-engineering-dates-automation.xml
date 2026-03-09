@@ -16,8 +16,6 @@
         <name>Report</name>
     </types>
     <types>
-        <members>EngineeringDateBackfillBatch</members>
-        <members>EngineeringDateBackfillBatchTest</members>
         <members>EngineeringDateStampFlowTest</members>
         <name>ApexClass</name>
     </types>
