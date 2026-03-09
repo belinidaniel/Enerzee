@@ -312,9 +312,11 @@ public with sharing class ClickSignUtils {
         String fullPath = relationshipField + '.' + relatedField;
         fields.add(fullPath);
         fieldMappings.put(tag, fullPath);
-      } else {
+      } else if (String.isNotBlank(fieldName)) {
         fields.add(fieldName);
         fieldMappings.put(tag, fieldName);
+      } else {
+        continue;
       }
       tagToLabelMap.put(tag, tagLabel);
     }
