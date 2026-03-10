@@ -1,5 +1,12 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-10-2026
+ * @last modified by  : Daniel Belini
+ **/
 @IsTest
-public with sharing class IntegracaoSAPConsultorTest {
+public without sharing class IntegracaoSAPConsultorTest {
   @IsTest
   static void testSendConsultor() {
     // Arrange

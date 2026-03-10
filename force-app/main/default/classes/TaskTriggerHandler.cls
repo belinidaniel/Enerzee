@@ -62,6 +62,10 @@ public class TaskTriggerHandler extends TriggerHandler {
       (List<Task>) newRecordList,
       (Map<Id, Task>) oldMap
     );
+    TaskBO.createNFConfirmationTask(
+      (List<Task>) newRecordList,
+      (Map<Id, Task>) oldMap
+    );
   }
 
   public override void beforeDelete() {
