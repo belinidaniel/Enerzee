@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 11-04-2025
+ * @last modified on	 : 03-05-2026
  * @last modified by	 : Daniel Belini
  **/
 @RestResource(urlMapping='/OpportunityEntry/*')
@@ -299,12 +299,12 @@ global with sharing class OpportunityEntryRest {
     }
     Map<String, Id> productCodeToId = new Map<String, Id>();
     for (Product2 p : [
-      SELECT Id, Id_Externo__c
+      SELECT Id, ExternalId__c
       FROM Product2
-      WHERE Id_Externo__c IN :productCodes
+      WHERE ExternalId__c IN :productCodes
       WITH SECURITY_ENFORCED
     ]) {
-      productCodeToId.put(p.Id_Externo__c, p.Id);
+      productCodeToId.put(p.ExternalId__c, p.Id);
     }
 
     // Deletar OpportunityLineItems existentes da oportunidade

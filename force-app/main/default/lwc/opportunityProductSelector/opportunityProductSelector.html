@@ -1,0 +1,133 @@
+<template>
+  <div class="selector-container">
+    <template if:true={isLoadingContext}>
+      <div class="spinner-wrapper">
+        <lightning-spinner
+          size="medium"
+          alternative-text="Carregando contexto da oportunidade"
+        ></lightning-spinner>
+      </div>
+    </template>
+
+    <template if:false={isLoadingContext}>
+      <div class="context-grid slds-m-bottom_medium">
+        <div class="context-item">
+          <span class="context-label">Estado de instalação</span>
+          <span class="context-value">{estadoInstalacaoLabel}</span>
+        </div>
+        <div class="context-item">
+          <span class="context-label">Região padrão</span>
+          <span class="context-value">{regiaoInstalacaoLabel}</span>
+        </div>
+      </div>
+
+      <template if:true={isBlocked}>
+        <div
+          class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning slds-m-bottom_medium"
+          role="alert"
+        >
+          <span class="slds-assistive-text">Aviso</span>
+          <h2>{blockingMessage}</h2>
+        </div>
+      </template>
+
+      <template if:true={isSelectionStep}>
+        <c-opportunity-product-selector-filters
+          search-text={searchText}
+          show-all-regions={showAllRegions}
+          selected-region={selectedRegion}
+          selected-structure-type={selectedStructureType}
+          selected-kit-promotional={selectedKitPromotional}
+          region-options={regionOptions}
+          structure-type-options={structureTypeOptions}
+          kit-promotional-options={kitPromotionalOptions}
+          disabled={disableSearch}
+          disable-region-filter={disableRegionFilter}
+          selected-count={selectedCount}
+          show-selected-only={showSelectedOnly}
+          onsearchchange={handleSearchInput}
+          onallregionschange={handleShowAllRegionsChange}
+          onregionchange={handleRegionFilterChange}
+          onstructuretypechange={handleStructureTypeFilterChange}
+          onkitpromotionalchange={handleKitPromotionalFilterChange}
+          ontoggleselected={handleToggleShowSelected}
+        ></c-opportunity-product-selector-filters>
+
+        <c-opportunity-product-selector-table
+          products={displayedProducts}
+          columns={columns}
+          selected-row-ids={selectedRowIds}
+          is-loading={isLoadingProducts}
+          show-pagination={showPagination}
+          is-previous-disabled={isPreviousDisabled}
+          is-next-disabled={isNextDisabled}
+          current-page-label={currentPageLabel}
+          onrowselection={handleRowSelection}
+          onpreviouspage={handlePreviousPage}
+          onnextpage={handleNextPage}
+        ></c-opportunity-product-selector-table>
+      </template>
+
+      <template if:true={isQuantityStep}>
+        <c-opportunity-product-selector-editor
+          products={selectedProductsForEdit}
+          onfieldchange={handleEditorFieldChange}
+          onremoveitem={handleRemoveSelectedItem}
+        ></c-opportunity-product-selector-editor>
+      </template>
+
+      <template if:true={hasFeedback}>
+        <div class="feedback-box slds-m-top_medium">
+          <h3 class="slds-text-heading_small slds-m-bottom_small">
+            Resultado por item
+          </h3>
+          <template for:each={feedbackItems} for:item="feedback">
+            <div key={feedback.pricebookEntryId} class={feedback.rowClass}>
+              <lightning-icon
+                icon-name={feedback.iconName}
+                size="x-small"
+                class="slds-m-right_x-small"
+              ></lightning-icon>
+              <span>
+                <strong>{feedback.productName}</strong>
+                <template if:true={feedback.productCode}>
+                  ({feedback.productCode})</template
+                >
+                : {feedback.message}
+              </span>
+            </div>
+          </template>
+        </div>
+      </template>
+
+      <div class="actions slds-m-top_large">
+        <lightning-button
+          label="Cancelar"
+          onclick={handleCancel}
+        ></lightning-button>
+
+        <template if:true={isSelectionStep}>
+          <lightning-button
+            variant="brand"
+            label="Próxima Etapa"
+            onclick={handleNextStep}
+            disabled={isNextStepDisabled}
+          ></lightning-button>
+        </template>
+
+        <template if:true={isQuantityStep}>
+          <lightning-button
+            label="Voltar"
+            onclick={handleBackStep}
+          ></lightning-button>
+          <lightning-button
+            variant="brand"
+            label={addButtonLabel}
+            onclick={handleAddProducts}
+            disabled={isAddDisabled}
+          ></lightning-button>
+        </template>
+      </div>
+    </template>
+  </div>
+</template>

@@ -491,20 +491,35 @@ public without sharing class KitInstalacaoBO {
   ) {
     Opportunity oppToUpdate = new Opportunity(Id = originalOpp.Id);
 
-    // Store previous values
-    oppToUpdate.ValorAnteriorBDI__c = originalOpp.BDI__c;
-    oppToUpdate.ValorAnteriorRede3750__c = originalOpp.Rede3750__c;
-    oppToUpdate.ValorAnteriorPontos__c = originalOpp.Pontos__c;
-    oppToUpdate.ValorAnteriorDirect__c = originalOpp.Direct__c;
-
-    // Update with new values from the response
-    oppToUpdate.BDI__c = response.Bdi;
-    oppToUpdate.Rede3750__c = response.Rede;
-    oppToUpdate.Pontos__c = response.Pontos;
-    oppToUpdate.Direct__c = response.Direct;
-    oppToUpdate.CustoAdicionalFixo__c = response.AdditionalFixedCost;
-    oppToUpdate.ValorInstalacao__c = response.Installation;
-    oppToUpdate.CustoFinanceiroWeg__c = response.FinancialCostWeg;
+    // Only update fields when the response value is non-negative
+    if (response.Bdi != null && response.Bdi >= 0) {
+      oppToUpdate.ValorAnteriorBDI__c = originalOpp.BDI__c;
+      oppToUpdate.BDI__c = response.Bdi;
+    }
+    if (response.Rede != null && response.Rede >= 0) {
+      oppToUpdate.ValorAnteriorRede3750__c = originalOpp.Rede3750__c;
+      oppToUpdate.Rede3750__c = response.Rede;
+    }
+    if (response.Pontos != null && response.Pontos >= 0) {
+      oppToUpdate.ValorAnteriorPontos__c = originalOpp.Pontos__c;
+      oppToUpdate.Pontos__c = response.Pontos;
+    }
+    if (response.Direct != null && response.Direct >= 0) {
+      oppToUpdate.ValorAnteriorDirect__c = originalOpp.Direct__c;
+      oppToUpdate.Direct__c = response.Direct;
+    }
+    if (
+      response.AdditionalFixedCost != null &&
+      response.AdditionalFixedCost >= 0
+    ) {
+      oppToUpdate.CustoAdicionalFixo__c = response.AdditionalFixedCost;
+    }
+    if (response.Installation != null && response.Installation >= 0) {
+      oppToUpdate.ValorInstalacao__c = response.Installation;
+    }
+    if (response.FinancialCostWeg != null && response.FinancialCostWeg >= 0) {
+      oppToUpdate.CustoFinanceiroWeg__c = response.FinancialCostWeg;
+    }
 
     oppToUpdate.PropostaAlterada__c = true;
 

@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 03-04-2026
+ * @last modified on	 : 03-05-2026
  * @last modified by	 : Daniel Belini
  **/
 @IsTest
@@ -44,7 +44,7 @@ private class PDFControllerExtensionExtraTest {
     Product2 prod = new Product2(
       Name = 'Prod',
       IsActive = true,
-      Id_Externo__c = 'EXT-PROD',
+      ExternalId__c = 'EXT-PROD',
       ExternalId__c = 'EXT-PROD'
     );
     insert prod;
@@ -176,7 +176,7 @@ private class PDFControllerExtensionExtraTest {
       Name = 'Bateria Produto',
       Description = 'Descricao padrao do produto',
       IsActive = true,
-      Id_Externo__c = 'EXT-BATT',
+      ExternalId__c = 'EXT-BATT',
       ExternalId__c = 'EXT-BATT'
     );
     insert prod;

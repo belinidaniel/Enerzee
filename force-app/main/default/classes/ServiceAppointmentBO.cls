@@ -41,7 +41,7 @@ public with sharing class ServiceAppointmentBO {
         if (Trigger.isInsert) {
           if (app.SchedStartTime != null) {
             opp.PrazoAprovacaoViabilidade__c = app.SchedStartTime;
-            opp.StageName = OpportunityUtils.STATUS_ANALISE_DE_VIABILIDADE;
+            // opp.StageName = OpportunityUtils.STATUS_ANALISE_DE_VIABILIDADE;
 
             opportunitiesToUpdate.add(opp);
           }
@@ -53,7 +53,7 @@ public with sharing class ServiceAppointmentBO {
             app.SchedStartTime != null
           ) {
             opp.PrazoAprovacaoViabilidade__c = app.SchedStartTime;
-            opp.StageName = OpportunityUtils.STATUS_ANALISE_DE_VIABILIDADE;
+            // opp.StageName = OpportunityUtils.STATUS_ANALISE_DE_VIABILIDADE;
 
             opportunitiesToUpdate.add(opp);
           }

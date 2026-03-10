@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>OpportunityProductSelectorController</members>
+        <members>OpportunityProductSelectorControllerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>opportunityProductSelector</members>
+        <members>opportunityProductSelectorEditor</members>
+        <members>opportunityProductSelectorFilters</members>
+        <members>opportunityProductSelectorTable</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>Opportunity.RegiaoInstalacao__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Opportunity.Selecionar_Produtos_por_Regiao</members>
+        <name>QuickAction</name>
+    </types>
+    <types>
+        <members>Oportunidade_P_gina_de_registro</members>
+        <members>Oportunidade_P_gina_de_registro1</members>
+        <members>Oportunidade_P_gina_de_registro1_Ezee_Solar</members>
+        <members>Oportunidade_P_gina_de_registro_Ezee_Connect</members>
+        <members>OportunidadePaginaDeRegistroEzeeBowE</members>
+        <name>FlexiPage</name>
+    </types>
+    <types>
+        <members
+    >Opportunity-Informe os dados da proposta - Grupo A -  Mini - Elaboração de proposta</members>
+        <members
+    >Opportunity-Informe os dados da proposta - Grupo A - Micro - Elaboração de proposta</members>
+        <members
+    >Opportunity-Informe os dados da proposta - Grupo B - Micro - Elaboração de proposta</members>
+        <members
+    >Opportunity-Informe os dados da proposta - Grupo B - Mini - Elaboração de proposta</members>
+        <members
+    >Opportunity-Inserir dados da viabilidade - Micro - Análise viabilidade</members>
+        <members
+    >Opportunity-Inserir dados da viabilidade - Mini - Análise viabilidade</members>
+        <members>Opportunity-Opportunity Layout</members>
+        <members>Opportunity-Opportunity Layout Ezee Livre</members>
+        <members>Opportunity-Opportunity Layout Ezee Solar</members>
+        <members>Opportunity-Opportunity Layout Micro</members>
+        <members>Opportunity-Opportunity Layout Mini</members>
+        <name>Layout</name>
+    </types>
+    <version>64.0</version>
+</Package>
