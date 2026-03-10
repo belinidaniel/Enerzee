@@ -5,8 +5,7 @@
   >Tempo em dias corridos entre a criação da Instalação e a Data de Início da Instalação (obra agendada). Usado no indicador Tempo Médio de Planejamento de Instalações (Engenharia).</description>
 	<externalId>false</externalId>
 	<formula
-  >IF(InstallDate__c != NULL, DATEVALUE(InstallDate__c) - DATEVALUE(CreatedDate), NULL)</formula>
-	<formulaTreatBlanksAs>BlankAsBlank</formulaTreatBlanksAs>
+  >IF(!ISBLANK(InstallDate__c), DATEVALUE(InstallDate__c) - DATEVALUE(CreatedDate), NULL)</formula>
 	<label>Dias Criação → Obra Agendada</label>
 	<precision>18</precision>
 	<required>false</required>
