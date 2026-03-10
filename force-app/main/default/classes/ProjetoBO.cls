@@ -586,7 +586,9 @@ public with sharing class ProjetoBO {
             Description            = line.Acoes,
             WhatId                 = projeto.Id,
             PrazoDiasUteis__c      = line.PrazoDiasUteis,
-            OwnerId                = ownerId
+            OwnerId                = ownerId,
+            // SAL-403: tasks de config bloqueiam avanço (false); respeita exceções da tabela CSV
+            IgnorarValidacao__c    = line.IgnorarValidacao == true
         );
 
         if(
@@ -766,6 +768,9 @@ public with sharing class ProjetoBO {
                     line.Ordem = null;
                 }
             }
+            // SAL-403: parse IgnorarValidacao column (default false — tasks de config bloqueiam avanço)
+            String ignorarStr = getCsvValue(headerIndex, tableBodyLine, 'IGNORARVALIDACAO');
+            line.IgnorarValidacao = 'true'.equalsIgnoreCase(ignorarStr);
 
             if(String.isBlank(line.TipoProjetoObra) || line.TipoProjetoObra.equalsIgnoreCase('EXCLUIR')){
                 tableBodyLine = tableBodyCSVReader.readLine();
@@ -1198,6 +1203,8 @@ public with sharing class ProjetoBO {
         public String TipoDeProprietario;
         public Integer Ordem;
         public Integer RowNumber;
+        // SAL-403: quando true, tasks criadas a partir desta linha não bloqueiam avanço de etapa
+        public Boolean IgnorarValidacao;
     }
 
     public class TaskProjectTable{

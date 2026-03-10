@@ -1074,15 +1074,8 @@ public class OpportunityBO {
     }
     insert projectsToInsert;
     if (!projectsToInsert.isEmpty()) {
-      System.debug('Creating installations for Fast Track projects...');
-      Map<Id, Opportunity> opportunityById = new Map<Id, Opportunity>();
-      for (Opportunity opp : newRecords) {
-        opportunityById.put(opp.Id, opp);
-      }
-      InstalacaoBO.createInstallationsForFastTrackProjects(
-        projectsToInsert,
-        opportunityById
-      );
+      // SAL-401: cria Instalacao__c para todos os projetos, independente da categoria
+      InstalacaoBO.createInstallationsOnProjectCreation(projectsToInsert);
     }
   }
 

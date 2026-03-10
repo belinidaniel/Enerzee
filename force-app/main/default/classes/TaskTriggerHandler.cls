@@ -23,6 +23,8 @@ public class TaskTriggerHandler extends TriggerHandler {
   }
 
   public override void beforeInsert() {
+    // SAL-403: marca tasks avulsas (não mapeadas nas tabelas de config) como IgnorarValidacao__c = true
+    TaskBO.markManualTasksAsIgnoreValidation((List<Task>) newRecordList);
     TaskBO.preventDuplicateOpenTasks((List<Task>) newRecordList);
   }
 
