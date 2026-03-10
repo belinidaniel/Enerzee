@@ -85,14 +85,17 @@ public with sharing class PDFControllerExtension {
     this.selectedCoverId = this.opportunity.Parceiro__r.CapaProposta__c;
     this.salvar = ApexPages.currentPage().getParameters().get('salvar');
     pdfUrls = new List<String>();
-    String descriptionSource = null;
-    if (this.opportunity.DescricaoBateria__c != null) {
-      descriptionSource = this.opportunity.DescricaoBateria__c;
-    }
-    if (this.opportunity.OpportunityLineItems.size() > 0) {
-      descriptionSource = this.opportunity.OpportunityLineItems[0]
-        ?.Product2
-        ?.Description;
+    String descriptionSource = this.opportunity.DescricaoBateria__c;
+    if (String.isBlank(descriptionSource)) {
+      for (
+        OpportunityLineItem lineItem : this.opportunity.OpportunityLineItems
+      ) {
+        String productDescription = lineItem?.Product2?.Description;
+        if (String.isNotBlank(productDescription)) {
+          descriptionSource = productDescription;
+          break;
+        }
+      }
     }
     this.description = String.isBlank(descriptionSource)
       ? 'Descrição não disponível'

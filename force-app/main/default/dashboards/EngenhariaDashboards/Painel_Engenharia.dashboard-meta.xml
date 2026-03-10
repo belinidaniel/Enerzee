@@ -310,8 +310,7 @@
 		</dashboardGridComponents>
 	</dashboardGridLayout>
 	<dashboardType>SpecifiedUser</dashboardType>
-	<runningUser>jean.carlos@enerzee.com.br.qa</runningUser>
-	<description
+	<runningUser>daniel.belini@enerzee.com.br</runningUser>	<description
   >Painel operacional de Engenharia com indicadores de Viabilidade, Projetos, Instalacoes e Assistencia Tecnica.</description>
 	<isGridLayout>true</isGridLayout>
 	<title>Painel de Engenharia</title>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+
+    <!-- 1. Campo customizado novo (deve ser deployado primeiro) -->
+    <types>
+        <members>Activity.IgnorarValidacao__c</members>
+        <name>CustomField</name>
+    </types>
+
+    <!-- 2. Static Resource com configuração de tarefas da Viabilidade -->
+    <types>
+        <members>TabelaTarefasViabilidade</members>
+        <name>StaticResource</name>
+    </types>
+
+    <!-- 3. Classes Apex modificadas + test classes obrigatórias -->
+    <types>
+        <members>TaskBO</members>
+        <members>TaskBOTest</members>
+        <members>TaskTriggerHandler</members>
+        <members>TaskTriggerTest</members>
+        <members>ViabilityStudyBO</members>
+        <members>ViabilityStudyBOTest</members>
+        <name>ApexClass</name>
+    </types>
+
+    <!-- 4. Permission Set com FLS do novo campo -->
+    <types>
+        <members>Task_Manager</members>
+        <name>PermissionSet</name>
+    </types>
+
+    <version>62.0</version>
+</Package>

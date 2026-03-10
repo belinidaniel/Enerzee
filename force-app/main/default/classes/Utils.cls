@@ -191,6 +191,8 @@ public without sharing class Utils {
 
         TokenAPINivelloWs.access_token = '';
         sucesso = sts.callService();
+      } else {
+        return response;
       }
 
       //se precisar pegar token, faz a chamada do serviço

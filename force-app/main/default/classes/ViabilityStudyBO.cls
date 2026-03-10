@@ -211,7 +211,8 @@ public with sharing class ViabilityStudyBO {
           Description = templateLine.Acoes,
           WhatId = viability.Id,
           OwnerId = ownerId,
-          PrazoDiasUteis__c = templateLine.PrazoDiasUteis
+          PrazoDiasUteis__c = templateLine.PrazoDiasUteis,
+          IgnorarValidacao__c = templateLine.IgnorarValidacao == true
         );
 
         if (!String.isBlank(templateLine.Observacoes)) {
@@ -783,6 +784,7 @@ public with sharing class ViabilityStudyBO {
       line.PrazoDiasUteis = safeArrayGet(row, 7);
       line.DataVencimentoDMais = safeArrayGet(row, 8);
       line.TipoProprietario = safeArrayGet(row, 9);
+      line.IgnorarValidacao = Boolean.valueOf(safeArrayGet(row, 10));
 
       table.tableLines.add(line);
       row = reader.readLine();
@@ -866,6 +868,7 @@ public with sharing class ViabilityStudyBO {
     public String PrazoDiasUteis;
     public String DataVencimentoDMais;
     public String TipoProprietario;
+    public Boolean IgnorarValidacao;
   }
 
   public class TaskViabilityTable {
