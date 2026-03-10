@@ -3,7 +3,6 @@
 
     <!-- 1. Campos fórmula e campos novos (deploy antes dos flows e relatórios) -->
     <types>
-        <members>Case.DiasAteResolucao__c</members>
         <members>Instalacao__c.DataObraEmExecucao__c</members>
         <members>Instalacao__c.DiasAtePlanejamento__c</members>
         <members>Instalacao__c.DiasDeExecucao__c</members>
@@ -12,53 +11,6 @@
         <members>ViabilityStudy__c.DataConclusaoViabilidade__c</members>
         <members>ViabilityStudy__c.DiasAteConclusao__c</members>
         <name>CustomField</name>
-    </types>
-
-    <!-- 2. Flow Before-Save: carimba DataObraEmExecucao__c ao entrar em "Obra em execução" -->
-    <types>
-        <members>Instalacao_CaptureDataObraEmExecucao</members>
-        <name>Flow</name>
-    </types>
-
-    <!-- 3. Tipos de relatório (novo: Instalacao; atualizados: Projeto + chain Opp-Via-Prj-Ins) -->
-    <types>
-        <members>Instalacao</members>
-        <members>Oportunidades_com_Viabilidade_Projeto_Instalacao</members>
-        <members>Projeto</members>
-        <name>ReportType</name>
-    </types>
-
-    <!-- 4. Pasta de relatórios de Engenharia -->
-    <types>
-        <members>RelatoriosEngenharia</members>
-        <name>ReportFolder</name>
-    </types>02
-
-    <!-- 5. Relatórios (dependem da pasta e dos tipos de relatório) -->
-    <types>
-        <members>RelatoriosEngenharia/AT_Chamados_por_Status</members>
-        <members>RelatoriosEngenharia/AT_Chamados_por_Tipo</members>
-        <members>RelatoriosEngenharia/AT_TempoMedio_Resolucao</members>
-        <members>RelatoriosEngenharia/INS_TempoMedio_Execucao</members>
-        <members>RelatoriosEngenharia/INS_TempoMedio_Planejamento</members>
-        <members
-    >RelatoriosEngenharia/PRJ_TempoMedio_Aprovacao_SCEE_FastTrack</members>
-        <members>RelatoriosEngenharia/PRJ_TempoMedio_Execucao</members>
-        <members>RelatoriosEngenharia/VIA_Conversao_por_Tipo</members>
-        <members>RelatoriosEngenharia/VIA_TempoMedio_Operacao</members>
-        <name>Report</name>
-    </types>
-
-    <!-- 6. Pasta do painel de Engenharia -->
-    <types>
-        <members>EngenhariaDashboards</members>
-        <name>DashboardFolder</name>
-    </types>
-
-    <!-- 7. Painel (depende dos relatórios acima) -->
-    <types>
-        <members>EngenhariaDashboards/Painel_Engenharia</members>
-        <name>Dashboard</name>
     </types>
 
     <version>62.0</version>

@@ -5,8 +5,7 @@
   >Tempo em dias corridos entre o início da Obra em Execução e a Conclusão da Obra (aguardando troca de medidor). Depende de DataObraEmExecucao__c e DataConclusao__c. Usado no indicador Tempo Médio de Execução de Instalações (Engenharia).</description>
 	<externalId>false</externalId>
 	<formula
-  >IF(DataConclusao__c != NULL &amp;&amp; DataObraEmExecucao__c != NULL, DataConclusao__c - DataObraEmExecucao__c, NULL)</formula>
-	<formulaTreatBlanksAs>BlankAsBlank</formulaTreatBlanksAs>
+  >IF(!ISBLANK(DataConclusao__c) &amp;&amp; !ISBLANK(DataObraEmExecucao__c), DataConclusao__c - DataObraEmExecucao__c, NULL)</formula>
 	<label>Dias Execução → Conclusão</label>
 	<precision>18</precision>
 	<required>false</required>
