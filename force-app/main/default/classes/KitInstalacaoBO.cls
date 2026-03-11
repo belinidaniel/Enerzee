@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 03-09-2026
+ * @last modified on	 : 03-11-2026
  * @last modified by	 : Daniel Belini
  **/
 public without sharing class KitInstalacaoBO {

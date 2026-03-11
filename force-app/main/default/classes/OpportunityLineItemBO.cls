@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 08-21-2025
+ * @last modified on	 : 03-11-2026
  * @last modified by	 : Daniel Belini
  **/
 public without sharing class OpportunityLineItemBO {
@@ -25,7 +25,6 @@ public without sharing class OpportunityLineItemBO {
       kits.add(kit.Id);
     }
     KitInstalacaoBO.calculateValueKit(kitsToUpdate);
-    syncOpportunityTechnicalQuantitiesByKitSelection(newRecordsList);
     KitInstalacaoBO.SendKitUpdate(kits);
   }
 
@@ -114,156 +113,6 @@ public without sharing class OpportunityLineItemBO {
     }
 
     return true; // Não há bloqueio
-  }
-
-  @TestVisible
-  private static void syncOpportunityTechnicalQuantitiesByKitSelection(
-    List<OpportunityLineItem> changedItems
-  ) {
-    if (changedItems == null || changedItems.isEmpty()) {
-      return;
-    }
-
-    Set<Id> opportunityIds = new Set<Id>();
-    for (OpportunityLineItem item : changedItems) {
-      if (item != null && item.OpportunityId != null) {
-        opportunityIds.add(item.OpportunityId);
-      }
-    }
-
-    if (opportunityIds.isEmpty()) {
-      return;
-    }
-
-    Map<Id, Opportunity> opportunityById = new Map<Id, Opportunity>(
-      [
-        SELECT
-          Id,
-          NumeroModulos__c,
-          NumeroInversores__c,
-          GeracaoAnualEstimada__c,
-          GeracaoMensalEstimada__c,
-          GeracaoMedioMensal__c,
-          PotenciaPicoSistema__c,
-          PotenciaNominalWp__c
-        FROM Opportunity
-        WHERE Id IN :opportunityIds
-      ]
-    );
-
-    Map<Id, Decimal> kitQuantityByOpportunityId = new Map<Id, Decimal>();
-    for (OpportunityLineItem item : [
-      SELECT OpportunityId, Quantity, Product2.Name, Product2.Family
-      FROM OpportunityLineItem
-      WHERE OpportunityId IN :opportunityIds
-    ]) {
-      if (!isKitProductLine(item)) {
-        continue;
-      }
-
-      Decimal quantity = item.Quantity != null ? item.Quantity : 0;
-      Decimal current = kitQuantityByOpportunityId.containsKey(
-          item.OpportunityId
-        )
-        ? kitQuantityByOpportunityId.get(item.OpportunityId)
-        : 0;
-      kitQuantityByOpportunityId.put(item.OpportunityId, current + quantity);
-    }
-
-    List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
-    for (Id opportunityId : kitQuantityByOpportunityId.keySet()) {
-      Opportunity source = opportunityById.get(opportunityId);
-      Decimal selectedKitQuantity = kitQuantityByOpportunityId.get(
-        opportunityId
-      );
-      if (
-        source == null ||
-        selectedKitQuantity == null ||
-        selectedKitQuantity <= 0
-      ) {
-        continue;
-      }
-
-      Integer targetInverters = Integer.valueOf(
-        selectedKitQuantity.setScale(0, System.RoundingMode.HALF_UP)
-      );
-      if (targetInverters <= 0) {
-        continue;
-      }
-
-      Decimal targetModules = calculateTargetModuleQuantity(
-        source,
-        selectedKitQuantity
-      );
-      Opportunity updateOpp = new Opportunity(Id = opportunityId);
-      Boolean hasChanges = false;
-
-      if (
-        source.NumeroInversores__c == null ||
-        source.NumeroInversores__c.intValue() != targetInverters
-      ) {
-        updateOpp.NumeroInversores__c = targetInverters;
-        hasChanges = true;
-      }
-
-      Decimal generationMultiplier = null;
-      if (
-        source.NumeroInversores__c != null &&
-        source.NumeroInversores__c > 0 &&
-        source.NumeroInversores__c.intValue() != targetInverters
-      ) {
-        generationMultiplier =
-          Decimal.valueOf(targetInverters) / source.NumeroInversores__c;
-      }
-
-      if (targetModules != null) {
-        Decimal roundedModules = targetModules.setScale(
-          0,
-          System.RoundingMode.HALF_UP
-        );
-        if (
-          source.NumeroModulos__c == null ||
-          source.NumeroModulos__c != roundedModules
-        ) {
-          updateOpp.NumeroModulos__c = roundedModules;
-          hasChanges = true;
-        }
-      }
-
-      if (generationMultiplier != null && generationMultiplier > 0) {
-        if (source.GeracaoAnualEstimada__c != null) {
-          updateOpp.GeracaoAnualEstimada__c = (source.GeracaoAnualEstimada__c *
-            generationMultiplier)
-            .setScale(2, System.RoundingMode.HALF_UP);
-          hasChanges = true;
-        }
-        if (source.GeracaoMensalEstimada__c != null) {
-          updateOpp.GeracaoMensalEstimada__c = (source.GeracaoMensalEstimada__c *
-            generationMultiplier)
-            .setScale(2, System.RoundingMode.HALF_UP);
-          hasChanges = true;
-        }
-        if (source.GeracaoMedioMensal__c != null) {
-          updateOpp.GeracaoMedioMensal__c = (source.GeracaoMedioMensal__c *
-            generationMultiplier)
-            .setScale(2, System.RoundingMode.HALF_UP);
-          hasChanges = true;
-        }
-      }
-
-      if (hasChanges) {
-        opportunitiesToUpdate.add(updateOpp);
-      }
-    }
-
-    if (!opportunitiesToUpdate.isEmpty()) {
-      OpportunityTriggerHandler.disableTrigger();
-      try {
-        update opportunitiesToUpdate;
-      } finally {
-        OpportunityTriggerHandler.enableTrigger();
-      }
-    }
   }
 
   private static Decimal calculateTargetModuleQuantity(
