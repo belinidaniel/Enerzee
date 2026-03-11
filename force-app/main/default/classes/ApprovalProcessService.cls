@@ -442,8 +442,6 @@ public without sharing class ApprovalProcessService {
       Boolean isNewStatusBlank = String.isBlank(newStatus);
       Boolean changedFromPendingToBlank =
         oldStatus == DISCOUNT_STATUS_PENDING && isNewStatusBlank;
-      Boolean alreadyBlankStatus =
-        String.isBlank(oldStatus) && isNewStatusBlank;
 
       System.debug(
         LoggingLevel.INFO,
@@ -454,12 +452,10 @@ public without sharing class ApprovalProcessService {
           ', newStatus=' +
           newStatus +
           ', changedFromPendingToBlank=' +
-          changedFromPendingToBlank +
-          ', alreadyBlankStatus=' +
-          alreadyBlankStatus
+          changedFromPendingToBlank
       );
 
-      if (changedFromPendingToBlank || alreadyBlankStatus) {
+      if (changedFromPendingToBlank) {
         targetObjectIds.add(newOpportunity.Id);
         System.debug(
           LoggingLevel.INFO,
