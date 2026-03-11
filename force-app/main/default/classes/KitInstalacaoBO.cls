@@ -132,8 +132,6 @@ public without sharing class KitInstalacaoBO {
           'Approvacao cancelado automaticamente por readequacao no recalculo do kit.'
         );
       }
-
-      recalculateFinancialFields(oppMap.keySet());
     } catch (Exception e) {
       Utils.createLog(CLASS_NAME, 'calculateValueKit', e);
       throw e;
