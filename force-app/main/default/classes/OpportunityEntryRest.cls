@@ -185,6 +185,12 @@ global with sharing class OpportunityEntryRest {
         );
       }
 
+      // Upsert das Composições vinculadas às Oportunidades inseridas
+      Map<String, Id> compositionExternalIdToId = CompositionBO.upsertFromRest(
+        results.SingleOpportunity,
+        externalIdToOpportunitiesToInsert
+      );
+
       // Popular Map de todos os Produtos
       for (Product2 product : [
         SELECT Id, ProductCode, Id_Externo__c, ExternalId__c
@@ -209,7 +215,8 @@ global with sharing class OpportunityEntryRest {
       // Oportunidades da Integração, Map linkando com Oportunidades inseridas, e Map de todos os Produtos
       OpportunityBO.mapOpportunityLineItemFieldsRest(
         restObjectsToInsertedOpportunity,
-        externalIdToProductId
+        externalIdToProductId,
+        compositionExternalIdToId
       );
 
       // Consultar as Oportunidades para obter o campo Numeroproposta__c
