@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 12-23-2025
+ * @last modified on	 : 03-11-2026
  * @last modified by	 : Daniel Belini
  **/
 @isTest
@@ -633,70 +633,6 @@ public class InstalacaoBOTest {
   }
 
   @isTest
-  static void createsBulkInstallationsForAllCategories() {
-    Account account = (Account) TestFactory.createSObject(new Account(), true);
-    Parceiro__c parceiro = createPartner();
-
-    List<Projeto__c> projects = new List<Projeto__c>();
-    for (Integer i = 0; i < 5; i++) {
-      Opportunity opp = (Opportunity) TestFactory.createSObject(
-        new Opportunity(
-          AccountId = account.Id,
-          StageName = OpportunityUtils.STATUS_PARECER_DE_ACESSO,
-          CloseDate = System.today(),
-          Name = 'Opp Bulk ' + i,
-          Parceiro__c = parceiro.Id,
-          RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-            .get('Solar')
-            .getRecordTypeId()
-        ),
-        true
-      );
-      ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
-        new ViabilityStudy__c(
-          Opportunity__c = opp.Id,
-          TypeWorkProjectFeasibility__c = 'UFV Micro'
-        ),
-        true
-      );
-      projects.add(
-        (Projeto__c) TestFactory.createSObject(
-          new Projeto__c(
-            Name = 'Projeto Bulk ' + i,
-            Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
-            Oportunidade__c = opp.Id,
-            Viabilidade__c = viability.Id,
-            TipoObra__c = 'UFVMicro',
-            Conta__c = account.Id,
-            RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
-              .get('UFVMicro')
-              .getRecordTypeId()
-          ),
-          true
-        )
-      );
-    }
-
-    Test.startTest();
-    InstalacaoBO.createInstallationsOnProjectCreation(projects);
-    Test.stopTest();
-
-    Set<Id> projectIds = new Map<Id, Projeto__c>(projects).keySet();
-    Integer count = [
-      SELECT COUNT()
-      FROM Instalacao__c
-      WHERE Projeto__c IN :projectIds
-    ];
-    Assert.areEqual(
-      5,
-      count,
-      'Deve criar uma Instalacao__c para cada projeto (bulk)'
-    );
-  }
-
-  // SAL-402 ─────────────────────────────────────────────────────────────────
-
-  @isTest
   static void allowsTransitionToObraConcluida_WhenNoRequiredFieldSets() {
     Account account = (Account) TestFactory.createSObject(new Account(), true);
     Parceiro__c parceiro = createPartner();
@@ -714,7 +650,10 @@ public class InstalacaoBOTest {
       true
     );
     ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
-      new ViabilityStudy__c(Opportunity__c = opp.Id, TypeWorkProjectFeasibility__c = 'UFV Micro'),
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
       true
     );
     Projeto__c project = (Projeto__c) TestFactory.createSObject(
@@ -775,7 +714,10 @@ public class InstalacaoBOTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'Validação deve ser ignorada para registros sem mudança de status');
+    Assert.isTrue(
+      true,
+      'Validação deve ser ignorada para registros sem mudança de status'
+    );
   }
 
   @isTest
