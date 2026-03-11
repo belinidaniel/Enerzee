@@ -266,7 +266,8 @@ public class OpportunityBO {
 
   public static void mapOpportunityLineItemFieldsRest(
     Map<OpportunityRecordsTO.SingleOpportunity, Opportunity> restObjectsToInsertedOpportunity,
-    Map<String, Id> externalIdToProductId
+    Map<String, Id> externalIdToProductId,
+    Map<String, Id> compositionExternalIdToId
   ) {
     List<OpportunityLineItem> itemsToInsert = new List<OpportunityLineItem>();
 
@@ -360,13 +361,19 @@ public class OpportunityBO {
       for (OpportunityRecordsTO.Product product : singleOpportunity.Products) {
         String productExternalId = String.valueOf(product.Id);
 
+        Id compositionId = (compositionExternalIdToId != null && !String.isBlank(product.CompositionExternalId))
+          ? compositionExternalIdToId.get(product.CompositionExternalId)
+          : null;
+
         //Cria item
         OpportunityLineItem item = new OpportunityLineItem(
           OpportunityId = opportunityId,
           Product2Id = externalIdToProductId.get(productExternalId),
           UnitPrice = product.UnitaryValue,
           Quantity = product.Quantity,
-          Description = product.Description
+          Description = product.Description,
+          byIntegration__c = true,
+          Composition__c = compositionId
         );
 
         itemsToInsert.add(item);
