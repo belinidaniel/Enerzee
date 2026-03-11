@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 12-16-2025
+ * @last modified on  : 03-11-2026
  * @last modified by  : Daniel Belini
  **/
 public with sharing class TaskBO {
@@ -112,6 +112,110 @@ public with sharing class TaskBO {
     normalized = normalized.replaceAll('[^a-z0-9]+', '_');
     normalized = normalized.replaceAll('^_+|_+$', '');
     return normalized;
+  }
+
+  /**
+   * SAL-403: Em beforeInsert, marca automaticamente como IgnorarValidacao__c = true
+   * tasks cujo Subject não consta nas tabelas de configuração do objeto pai.
+   * Tasks de config (sujeito reconhecido) permanecem com IgnorarValidacao__c = false.
+   */
+  public static void markManualTasksAsIgnoreValidation(List<Task> newTasks) {
+    if (newTasks == null || newTasks.isEmpty()) {
+      return;
+    }
+    if (
+      !Schema.sObjectType.Task.fields.getMap()
+        .containsKey('IgnorarValidacao__c')
+    ) {
+      return;
+    }
+
+    Schema.SObjectType projetoType = Schema.SObjectType.Projeto__c.getSObjectType();
+    Schema.SObjectType instalacaoType = Schema.SObjectType.Instalacao__c.getSObjectType();
+    Schema.SObjectType viabilityType = Schema.SObjectType.ViabilityStudy__c.getSObjectType();
+
+    // Verifica quais tipos de objeto estão representados para carregar apenas os CSVs necessários
+    Boolean hasProjetoTasks = false;
+    Boolean hasInstalacaoTasks = false;
+    Boolean hasViabilityTasks = false;
+    for (Task t : newTasks) {
+      if (t.WhatId == null) {
+        continue;
+      }
+      Schema.SObjectType whatType = t.WhatId.getSObjectType();
+      if (whatType == projetoType) {
+        hasProjetoTasks = true;
+      } else if (whatType == instalacaoType) {
+        hasInstalacaoTasks = true;
+      } else if (whatType == viabilityType) {
+        hasViabilityTasks = true;
+      }
+    }
+
+    // Lazy-load subjects apenas para os tipos presentes — evita SOQL desnecessário
+    Set<String> projetoSubjects = hasProjetoTasks
+      ? loadNormalizedSubjectsFromStaticResource('TabelaTarefasProjetos')
+      : new Set<String>();
+    Set<String> instalacaoSubjects = hasInstalacaoTasks
+      ? loadNormalizedSubjectsFromStaticResource('TabelaTarefasInstalacao')
+      : new Set<String>();
+    Set<String> viabilitySubjects = hasViabilityTasks
+      ? loadNormalizedSubjectsFromStaticResource('TabelaTarefasViabilidade')
+      : new Set<String>();
+
+    for (Task t : newTasks) {
+      if (t.WhatId == null || String.isBlank(t.Subject)) {
+        continue;
+      }
+      // Respeita se já foi explicitamente marcado como true (ex: via código externo)
+      if (t.IgnorarValidacao__c == true) {
+        continue;
+      }
+
+      Schema.SObjectType whatType = t.WhatId.getSObjectType();
+      Set<String> validSubjects;
+      if (whatType == projetoType) {
+        validSubjects = projetoSubjects;
+      } else if (whatType == instalacaoType) {
+        validSubjects = instalacaoSubjects;
+      } else if (whatType == viabilityType) {
+        validSubjects = viabilitySubjects;
+      } else {
+        continue; // outros objetos: não interferir
+      }
+
+      if (!validSubjects.contains(t.Subject.trim().toLowerCase())) {
+        t.IgnorarValidacao__c = true;
+      }
+    }
+  }
+
+  @TestVisible
+  private static Set<String> loadNormalizedSubjectsFromStaticResource(
+    String staticResourceName
+  ) {
+    Set<String> subjects = new Set<String>();
+    try {
+      ProjetoBO.TaskProjectTable table = ProjetoBO.getTaskTableFromStaticResource(
+        staticResourceName
+      );
+      if (table == null || table.tableLines == null) {
+        return subjects;
+      }
+      for (ProjetoBO.TaskProjectTableLine line : table.tableLines) {
+        if (line != null && !String.isBlank(line.Assunto)) {
+          subjects.add(line.Assunto.trim().toLowerCase());
+        }
+      }
+    } catch (Exception e) {
+      System.debug(
+        '### TaskBO.loadNormalizedSubjectsFromStaticResource - Error loading ' +
+          staticResourceName +
+          ': ' +
+          e.getMessage()
+      );
+    }
+    return subjects;
   }
 
   public static Boolean hasOpenTasks(Id whatId) {

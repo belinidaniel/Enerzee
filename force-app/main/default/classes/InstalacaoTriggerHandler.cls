@@ -42,6 +42,11 @@ public class InstalacaoTriggerHandler extends TriggerHandler {
       (List<Instalacao__c>) newRecordList,
       (Map<Id, Instalacao__c>) oldMap
     );
+    // SAL-402: bloqueia avanço para Obra Concluída sem campos obrigatórios
+    InstalacaoBO.validateRequiredFieldsOnObraConluida(
+      (List<Instalacao__c>) newRecordList,
+      (Map<Id, Instalacao__c>) oldMap
+    );
   }
   public override void afterUpdate() {
     InstalacaoTaskBO.createTasks(
