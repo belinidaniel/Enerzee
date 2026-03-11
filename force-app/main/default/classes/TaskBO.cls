@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 12-16-2025
+ * @last modified on  : 03-11-2026
  * @last modified by  : Daniel Belini
  **/
 public with sharing class TaskBO {
@@ -123,7 +123,10 @@ public with sharing class TaskBO {
     if (newTasks == null || newTasks.isEmpty()) {
       return;
     }
-    if (!Schema.sObjectType.Task.fields.getMap().containsKey('IgnorarValidacao__c')) {
+    if (
+      !Schema.sObjectType.Task.fields.getMap()
+        .containsKey('IgnorarValidacao__c')
+    ) {
       return;
     }
 
@@ -207,9 +210,9 @@ public with sharing class TaskBO {
     } catch (Exception e) {
       System.debug(
         '### TaskBO.loadNormalizedSubjectsFromStaticResource - Error loading ' +
-        staticResourceName +
-        ': ' +
-        e.getMessage()
+          staticResourceName +
+          ': ' +
+          e.getMessage()
       );
     }
     return subjects;
