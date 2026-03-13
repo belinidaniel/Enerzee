@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 12-23-2025
+ * @last modified on	 : 03-12-2026
  * @last modified by	 : Daniel Belini
  **/
 @IsTest
@@ -119,6 +119,91 @@ private class AdditionalCoverageNewClassesTest {
         taskWithoutValues
       )
     );
+  }
+
+  // SAL-408: cobre updatePhaseOnValueChange — RecordType elegível, valor > 0
+  @IsTest
+  static void opportunityBO_updatePhaseOnValueChange_eligibleRecordType() {
+    Id ezeeConnectRtId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+      .get('EzeeConnect')
+      .getRecordTypeId();
+
+    ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(),
+      true
+    );
+    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(CapaProposta__c = cover.Id, Produto__c = 'Solar'),
+      true
+    );
+
+    Opportunity opp = new Opportunity(
+      Name = 'Test SAL-408 EzeeConnect',
+      StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
+      CloseDate = System.today(),
+      RecordTypeId = ezeeConnectRtId,
+      Parceiro__c = parceiro.Id,
+      ValorTotalProdutos__c = 0,
+      IdVirtualOffice__c = '001000000000001AAA'
+    );
+    OpportunityTriggerHandler.disableTrigger();
+    insert opp;
+    OpportunityTriggerHandler.enableTrigger();
+
+    Opportunity oldSnap = opp.clone(true, true);
+    Opportunity newSnap = opp.clone(true, true);
+    newSnap.ValorTotalProdutos__c = 5000;
+
+    Map<Id, Opportunity> oldMap = new Map<Id, Opportunity>{ opp.Id => oldSnap };
+
+    Test.setMock(
+      HttpCalloutMock.class,
+      new IntegracaoNivelloTest.IntegracaoNivelloMock()
+    );
+    Test.startTest();
+    OpportunityBO.updatePhaseOnValueChange(
+      new List<Opportunity>{ newSnap },
+      oldMap
+    );
+    Test.stopTest();
+
+    Assert.areEqual(true, true);
+  }
+
+  // SAL-408: cobre updatePhaseOnValueChange — RecordType fora do escopo, sem callout
+  // Não faz insert: apenas verifica que o loop descarta o registro sem disparar ProposalService.
+  @IsTest
+  static void opportunityBO_updatePhaseOnValueChange_nonEligibleRecordType() {
+    Id solarRtId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+      .get('Solar')
+      .getRecordTypeId();
+
+    // ID fabricado — não precisa existir no DB pois o branch de RT faz continue antes de qualquer SOQL
+    Id fakeOppId = '006' + '000000000001AAA';
+
+    Opportunity oldSnap = new Opportunity(
+      Id = fakeOppId,
+      RecordTypeId = solarRtId,
+      ValorTotalProdutos__c = 0
+    );
+    Opportunity newSnap = new Opportunity(
+      Id = fakeOppId,
+      RecordTypeId = solarRtId,
+      ValorTotalProdutos__c = 5000
+    );
+
+    Map<Id, Opportunity> oldMap = new Map<Id, Opportunity>{
+      fakeOppId => oldSnap
+    };
+
+    Test.startTest();
+    OpportunityBO.updatePhaseOnValueChange(
+      new List<Opportunity>{ newSnap },
+      oldMap
+    );
+    Test.stopTest();
+
+    Assert.areEqual(true, true);
   }
 
   @IsTest

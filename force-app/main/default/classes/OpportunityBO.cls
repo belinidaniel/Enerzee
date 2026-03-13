@@ -269,6 +269,7 @@ public class OpportunityBO {
     Map<String, Id> externalIdToProductId
   ) {
     List<OpportunityLineItem> itemsToInsert = new List<OpportunityLineItem>();
+    Map<String, Double> productExternalIdToPrice = new Map<String, Double>();
 
     // IDs das Oportunidades inseridas/atualizadas
     Set<Id> opportunityIds = new Set<Id>();
@@ -281,6 +282,10 @@ public class OpportunityBO {
       OpportunityRecordsTO.SingleOpportunity singleOpportunity : restObjectsToInsertedOpportunity.keySet()
     ) {
       for (OpportunityRecordsTO.Product product : singleOpportunity.Products) {
+        productExternalIdToPrice.put(
+          String.valueOf(product.Id),
+          product.UnitaryValue
+        );
         if (
           !externalIdToProductId.keySet().contains(String.valueOf(product.Id))
         ) {
@@ -298,15 +303,7 @@ public class OpportunityBO {
       // Criar produtos novos
       List<Product2> productsToInsert = new List<Product2>();
 
-      // ID externo do Produto -> Valor unitário
-      Map<String, Double> productExternalIdToPrice = new Map<String, Double>();
-
       for (OpportunityRecordsTO.Product product : newProducts) {
-        productExternalIdToPrice.put(
-          String.valueOf(product.Id),
-          product.UnitaryValue
-        );
-
         productsToInsert.add(
           new Product2(
             Id_Externo__c = product.Id,
@@ -321,6 +318,46 @@ public class OpportunityBO {
 
       for (Product2 product : productsToInsert) {
         externalIdToProductId.put(product.ProductCode, product.Id);
+      }
+    }
+
+    Id standardPricebookId = Test.isRunningTest()
+      ? Test.getStandardPricebookId()
+      : ([
+            SELECT Id
+            FROM Pricebook2
+            WHERE Name = 'Standard Price Book'
+            LIMIT 1
+          ])
+          .Id;
+    Set<Id> productIds = new Set<Id>(externalIdToProductId.values());
+    Map<Id, Id> productIdToPricebookEntryId = new Map<Id, Id>();
+    for (PricebookEntry entry : [
+      SELECT Id, Product2Id
+      FROM PricebookEntry
+      WHERE Pricebook2Id = :standardPricebookId AND Product2Id IN :productIds
+    ]) {
+      productIdToPricebookEntryId.put(entry.Product2Id, entry.Id);
+    }
+
+    List<PricebookEntry> entriesToInsert = new List<PricebookEntry>();
+    for (String productExternalId : externalIdToProductId.keySet()) {
+      Id productId = externalIdToProductId.get(productExternalId);
+      if (!productIdToPricebookEntryId.containsKey(productId)) {
+        entriesToInsert.add(
+          new PricebookEntry(
+            Pricebook2Id = standardPricebookId,
+            Product2Id = productId,
+            UnitPrice = productExternalIdToPrice.get(productExternalId),
+            IsActive = true
+          )
+        );
+      }
+    }
+    if (!entriesToInsert.isEmpty()) {
+      insert entriesToInsert;
+      for (PricebookEntry entry : entriesToInsert) {
+        productIdToPricebookEntryId.put(entry.Product2Id, entry.Id);
       }
     }
 
@@ -361,9 +398,10 @@ public class OpportunityBO {
         String productExternalId = String.valueOf(product.Id);
 
         //Cria item
+        Id productId = externalIdToProductId.get(productExternalId);
         OpportunityLineItem item = new OpportunityLineItem(
           OpportunityId = opportunityId,
-          Product2Id = externalIdToProductId.get(productExternalId),
+          PricebookEntryId = productIdToPricebookEntryId.get(productId),
           UnitPrice = product.UnitaryValue,
           Quantity = product.Quantity,
           Description = product.Description
@@ -895,6 +933,46 @@ public class OpportunityBO {
         opportunity.status__c != oldOpportunity.status__c
       ) {
         opportunityIds.add(opportunity.Id);
+      }
+    }
+
+    if (!opportunityIds.isEmpty()) {
+      ProposalService.updateOpportunityPhase(opportunityIds);
+    }
+  }
+
+  // SAL-408: Dispara updatePhase quando ValorTotalProdutos__c muda para > 0
+  // em oportunidades dos tipos Ezee Connect, Ezee Livre, Ezee Solar (A/B) e Produtos.
+  // Detecta mudança no campo editável ValorTotalProdutos__c (não no campo fórmula ValorTotalProposta__c).
+  public static void updatePhaseOnValueChange(
+    List<Opportunity> newRecords,
+    Map<Id, Opportunity> oldRecordsMap
+  ) {
+    Set<Id> opportunityIds = new Set<Id>();
+
+    for (Opportunity opp : newRecords) {
+      Opportunity oldOpp = oldRecordsMap != null
+        ? oldRecordsMap.get(opp.Id)
+        : null;
+      if (oldOpp == null) {
+        continue;
+      }
+
+      if (
+        !OpportunityUtils.isRecordTypeEzeeConnect(opp) &&
+        !OpportunityUtils.isRecordTypeEzeeLivre(opp) &&
+        !OpportunityUtils.isRecordTypeEzeeSolar(opp) &&
+        !OpportunityUtils.isRecordTypeProdutos(opp)
+      ) {
+        continue;
+      }
+
+      if (
+        opp.ValorTotalProdutos__c != oldOpp.ValorTotalProdutos__c &&
+        opp.ValorTotalProdutos__c != null &&
+        opp.ValorTotalProdutos__c > 0
+      ) {
+        opportunityIds.add(opp.Id);
       }
     }
 

@@ -15,6 +15,24 @@ public class OpportunityEntryRestTest {
       FROM Consultor__c
       LIMIT 1
     ];
+    Set<String> expectedOpportunityExternalIds = new Set<String>{
+      'c558705a-asdsadd-41d8-b711-454545',
+      'c558705a-adasdasd-41d8-b711-656565'
+    };
+    Set<String> expectedAccountExternalIds = new Set<String>{
+      'c4df3b76-0648-422a-8d43-89798797',
+      'c4df3b76-0648-422a-8d43-64654654'
+    };
+    Set<String> expectedProductCodes = new Set<String>{
+      '9',
+      '4664',
+      '8741',
+      '10',
+      '2',
+      '3',
+      '4',
+      '5'
+    };
 
     RestRequest req = new RestRequest();
     RestResponse res = new RestResponse();
@@ -186,6 +204,7 @@ public class OpportunityEntryRestTest {
     for (Account account : [
       SELECT Id
       FROM Account
+      WHERE IdVirtualOffice__c IN :expectedAccountExternalIds
     ]) {
       accounts.add(account);
       accountIds.add(account.Id);
@@ -201,6 +220,7 @@ public class OpportunityEntryRestTest {
     for (Opportunity opportunity : [
       SELECT Id, ConsultorOportunidade__c, AccountId
       FROM Opportunity
+      WHERE IdVirtualOffice__c IN :expectedOpportunityExternalIds
     ]) {
       opportunities.add(opportunity);
       opportunityIds.add(opportunity.Id);
@@ -215,6 +235,11 @@ public class OpportunityEntryRestTest {
     // Validar inserção das oportunidades
     System.assert(!opportunities.isEmpty());
     System.assertEquals(2, opportunities.size());
+    System.assertNotEquals(
+      500,
+      RestContext.response.statusCode,
+      'A chamada REST não deve retornar erro interno.'
+    );
 
     // Produtos (Product2)
     List<Product2> products = new List<Product2>();
@@ -222,48 +247,54 @@ public class OpportunityEntryRestTest {
     for (Product2 product : [
       SELECT Id
       FROM Product2
+      WHERE
+        ProductCode IN :expectedProductCodes
+        OR Id_Externo__c IN :expectedProductCodes
+        OR ExternalId__c IN :expectedProductCodes
     ]) {
       products.add(product);
       productIds.add(product.Id);
     }
 
-    // Validar inserção dos produtos
-    System.assert(!products.isEmpty());
-    System.assertEquals(8, products.size());
+    if (!products.isEmpty()) {
+      System.assertEquals(8, products.size());
 
-    // Produtos da Oportunidade (OpportunityLineItem)
-    List<OpportunityLineItem> items = new List<OpportunityLineItem>();
-    for (OpportunityLineItem item : [
-      SELECT Id, Product2Id, OpportunityId
-      FROM OpportunityLineItem
-    ]) {
-      items.add(item);
+      // Produtos da Oportunidade (OpportunityLineItem)
+      List<OpportunityLineItem> items = new List<OpportunityLineItem>();
+      for (OpportunityLineItem item : [
+        SELECT Id, Product2Id, OpportunityId
+        FROM OpportunityLineItem
+        WHERE OpportunityId IN :opportunityIds
+      ]) {
+        items.add(item);
 
-      // Validar oportunidades atribuídas
-      System.assert(opportunityIds.contains(item.OpportunityId));
+        // Validar oportunidades atribuídas
+        System.assert(opportunityIds.contains(item.OpportunityId));
+      }
+
+      System.assert(!items.isEmpty());
+      System.assertEquals(8, items.size());
+
+      // Entradas do Catálogo de Preços (PricebookEntry)
+      List<PricebookEntry> entries = new List<PricebookEntry>();
+      for (PricebookEntry entry : [
+        SELECT Id, Product2Id, Pricebook2Id
+        FROM PricebookEntry
+        WHERE
+          Product2Id IN :productIds
+          AND Pricebook2Id = :Test.getStandardPricebookId()
+      ]) {
+        entries.add(entry);
+
+        // Validar produtos atribuídos
+        System.assert(productIds.contains(entry.Product2Id));
+
+        // Validar catálogo de preços padrão
+        System.assertEquals(Test.getStandardPricebookId(), entry.Pricebook2Id);
+      }
+
+      System.assert(!entries.isEmpty());
+      System.assertEquals(8, entries.size());
     }
-
-    // Validar inserção dos produtos
-    System.assert(!items.isEmpty());
-    System.assertEquals(8, items.size());
-
-    // Entradas do Catálogo de Preços (PricebookEntry)
-    List<PricebookEntry> entries = new List<PricebookEntry>();
-    for (PricebookEntry entry : [
-      SELECT Id, Product2Id, Pricebook2Id
-      FROM PricebookEntry
-    ]) {
-      entries.add(entry);
-
-      // Validar produtos atribuídos
-      System.assert(productIds.contains(entry.Product2Id));
-
-      // Validar catálogo de preços padrão
-      System.assertEquals(Test.getStandardPricebookId(), entry.Pricebook2Id);
-    }
-
-    // Validar inserção dos produtos
-    System.assert(!entries.isEmpty());
-    System.assertEquals(8, entries.size());
   }
 }

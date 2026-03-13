@@ -1611,6 +1611,25 @@ public with sharing class TaskBO {
       return;
     }
 
+    // SAL-409: criar task apenas quando OwnTeamThirdParty__c for 'Integrador' ou 'Não cadastrado'
+    List<ViabilityStudy__c> eligibleViabilities = [
+      SELECT Id
+      FROM ViabilityStudy__c
+      WHERE
+        Id IN :viabilityIds
+        AND OwnTeamThirdParty__c IN ('Integrador', 'Nao_cadastrado')
+      WITH SECURITY_ENFORCED
+    ];
+
+    Set<Id> eligibleIds = new Set<Id>();
+    for (ViabilityStudy__c vs : eligibleViabilities) {
+      eligibleIds.add(vs.Id);
+    }
+
+    if (eligibleIds.isEmpty()) {
+      return;
+    }
+
     List<User> contabilidadeUsers = [
       SELECT Id
       FROM User
@@ -1625,7 +1644,7 @@ public with sharing class TaskBO {
     Id contabilidadeOwnerId = contabilidadeUsers[0].Id;
 
     List<Task> tasksToCreate = new List<Task>();
-    for (Id viabilityId : viabilityIds) {
+    for (Id viabilityId : eligibleIds) {
       tasksToCreate.add(
         new Task(
           Subject = 'CONFIRMAÇÃO DE LANÇAMENTO DE NF',
