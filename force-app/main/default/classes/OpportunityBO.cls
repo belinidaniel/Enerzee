@@ -2412,7 +2412,7 @@ public class OpportunityBO {
         Id closerId = [
           SELECT Id
           FROM User
-          WHERE Email LIKE 'wagner.sampaio@enerzee.com.br%'
+          WHERE Email LIKE 'wagner.sampaio@enerzee.com.br%' AND IsActive = TRUE
           LIMIT 1
         ]
         .Id;

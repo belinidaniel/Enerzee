@@ -2,6 +2,8 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>AdditionalCoverageNewClassesTest</members>
+        <members>IntegracaoGeradorPropostasTest</members>
+        <members>LeadIntegrationServiceTest</members>
         <members>OpportunityBO</members>
         <members>OpportunityBOHighCoverageTest</members>
         <members>OpportunityBOPaymentReminderTaskTest</members>
