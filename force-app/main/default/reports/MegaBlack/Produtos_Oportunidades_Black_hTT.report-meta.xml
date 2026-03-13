@@ -104,7 +104,7 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Viabilidade Técnica,Viabilidade Tecnica,Ganho fechado</value>
+            <value>Viabilidade Técnica,Ganho fechado</value>
         </criteriaItems>
         <criteriaItems>
             <column>Opportunity.ConsultorOportunidade__c</column>

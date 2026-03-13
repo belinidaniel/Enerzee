@@ -85,7 +85,7 @@
         <connector>
             <targetReference>Proprietario_ativo_possui_Email</targetReference>
         </connector>
-        <filterLogic>(1 OR 2 OR 3 OR 4 OR 5 OR 6 OR 7 OR 8 OR 9 OR 11 OR 12 OR 13 ) AND 10</filterLogic>
+        <filterLogic>(1 OR 2 OR 3 OR 4 OR 5 OR 6 OR 7 OR 8 OR 9 OR 11 OR 12) AND 10</filterLogic>
         <filters>
             <field>StageName</field>
             <operator>EqualTo</operator>
@@ -161,13 +161,6 @@
             <operator>EqualTo</operator>
             <value>
                 <stringValue>Proposta Gerada</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>StageName</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Viabilidade Tecnica</stringValue>
             </value>
         </filters>
         <filters>

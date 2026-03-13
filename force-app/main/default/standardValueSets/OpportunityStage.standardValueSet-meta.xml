@@ -244,9 +244,9 @@
         <won>false</won>
     </standardValue>
     <standardValue>
-        <fullName>Viabilidade Tecnica</fullName>
+        <fullName>Viabilidade Técnica</fullName>
         <default>false</default>
-        <label>Viabilidade Tecnica</label>
+        <label>Viabilidade Técnica</label>
         <closed>false</closed>
         <forecastCategory>Pipeline</forecastCategory>
         <probability>75</probability>

@@ -75,7 +75,7 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Viabilidade Técnica,Viabilidade Tecnica,Parecer de acesso,Equipamento,Instalação,Fase de obra,Ganho fechado</value>
+            <value>Viabilidade Técnica,Parecer de acesso,Equipamento,Instalação,Fase de obra,Ganho fechado</value>
         </criteriaItems>
         <language>pt_BR</language>
     </filter>

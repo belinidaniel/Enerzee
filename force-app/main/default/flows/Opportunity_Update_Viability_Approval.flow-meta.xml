@@ -55,7 +55,7 @@
         </rules>
         <rules>
             <name>Ezee_Solar_To_Parecer</name>
-            <conditionLogic>1 AND 2 AND (3 OR 4)</conditionLogic>
+            <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference>$Record.StageName</leftValueReference>
                 <operator>EqualTo</operator>
@@ -75,13 +75,6 @@
                 <operator>EqualTo</operator>
                 <rightValue>
                     <stringValue>Viabilidade Técnica</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>$Record__Prior.StageName</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Viabilidade Tecnica</stringValue>
                 </rightValue>
             </conditions>
             <connector>

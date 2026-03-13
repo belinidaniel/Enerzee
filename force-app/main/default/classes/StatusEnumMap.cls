@@ -33,7 +33,7 @@ public class StatusEnumMap {
     'Análise de Crédito' => 21,
     'Informações adicionais' => 22,
     'Contrato' => 23,
-    'Viabilidade Tecnica' => 24,
+    'Viabilidade Técnica' => 24,
     'Parecer de acesso' => 25,
     'Equipamento' => 25,
     'Instalação' => 25,
