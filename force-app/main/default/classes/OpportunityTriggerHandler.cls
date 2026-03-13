@@ -200,6 +200,10 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
+    OpportunityBO.disqualifyLinkedLeads(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
     OpportunityBO.closeActivitiesAndFlowsForClosedLost(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
