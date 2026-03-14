@@ -10,6 +10,11 @@
         <members>OpportunityEntryRestTest</members>
         <members>OpportunityTriggerHandler</members>
         <members>TaskBO</members>
+        <members>OpportunityBOCoverageTest</members>
+        <members>OpportunityBOAdditionalTest</members>
+        <members>TaskBOTest</members>
+        <members>ViabilityStudyBO</members>
+        <members>ViabilityStudyBOTest</members>
         <name>ApexClass</name>
     </types>
     <version>62.0</version>

@@ -369,16 +369,9 @@ public with sharing class ViabilityStudyBO {
 
     String normalizedSubject = subject.trim().toLowerCase();
 
-    if (normalizedSubject == 'solicitar novo integrador') {
-      if (viability == null || String.isBlank(viability.OwnTeamThirdParty__c)) {
-        return false;
-      }
-
-      String option = viability.OwnTeamThirdParty__c.trim().toLowerCase();
-      return option == 'nao_cadastrado' || option == 'não cadastrado';
-    }
-
+    // Tarefas criadas apenas quando a equipe responsável é Integrador ou não cadastrado
     if (
+      normalizedSubject == 'solicitar pagamento de integrador' ||
       normalizedSubject == 'confirmação de lançamento de nf' ||
       normalizedSubject == 'confirmação de lancaçamento de nf'
     ) {
@@ -387,7 +380,16 @@ public with sharing class ViabilityStudyBO {
       }
 
       String option = viability.OwnTeamThirdParty__c.trim().toLowerCase();
-      return option != 'enerzee' && option != 'consultor';
+      return option == 'integrador' || option == 'nao_cadastrado';
+    }
+
+    if (normalizedSubject == 'solicitar novo integrador') {
+      if (viability == null || String.isBlank(viability.OwnTeamThirdParty__c)) {
+        return false;
+      }
+
+      String option = viability.OwnTeamThirdParty__c.trim().toLowerCase();
+      return option == 'nao_cadastrado' || option == 'não cadastrado';
     }
 
     return true;

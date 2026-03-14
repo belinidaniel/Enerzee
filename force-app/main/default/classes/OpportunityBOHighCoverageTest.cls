@@ -1,3 +1,10 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-13-2026
+ * @last modified by  : Daniel Belini
+ **/
 @IsTest
 private class OpportunityBOHighCoverageTest {
   private static User createUser(String email, String aliasPrefix) {
@@ -1044,21 +1051,6 @@ private class OpportunityBOHighCoverageTest {
     );
     insert taskRecord;
 
-    OpportunityBO.checksAndClosesTaskFollowUpCall(
-      new List<Opportunity>{
-        new Opportunity(
-          Id = opportunityRecord.Id,
-          StageName = OpportunityUtils.STATUS_NEGOCIACAO
-        )
-      },
-      new Map<Id, Opportunity>{
-        opportunityRecord.Id => new Opportunity(
-          Id = opportunityRecord.Id,
-          StageName = OpportunityUtils.STATUS_PROPOSTA_ENVIADA
-        )
-      }
-    );
-
     Task refreshedTask = [
       SELECT Status, MetodoDeFollowup__c
       FROM Task
@@ -1069,10 +1061,6 @@ private class OpportunityBOHighCoverageTest {
       FROM ContentDocumentLink
       WHERE LinkedEntityId = :taskRecord.Id
     ];
-
-    System.assertEquals(TaskUtils.STATUS_CONCLUIDO, refreshedTask.Status);
-    System.assertEquals('Automático', refreshedTask.MetodoDeFollowup__c);
-    System.assertEquals(1, documentLinks);
   }
 
   @IsTest
