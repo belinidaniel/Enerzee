@@ -122,7 +122,12 @@ jobs:
             $DESTRUCTIVE_ARG \
             --json > /tmp/deploy_result.json 2>&1
           DEPLOY_EXIT=$?
-          cat /tmp/deploy_result.json
+
+          # Surface errors as GitHub Actions annotations
+          jq -r '.result.details.componentFailures[]? | "::error file=\(.fileName),line=\(.lineNumber)::\(.problem)"' /tmp/deploy_result.json 2>/dev/null || true
+          jq -r '.result.details.runTestResult.failures[]? | "::error::\(.testName): \(.message)"' /tmp/deploy_result.json 2>/dev/null || true
+          jq -r '.result.details.runTestResult.codeCoverageWarnings[]? | "::warning::\(.message)"' /tmp/deploy_result.json 2>/dev/null || true
+
           exit $DEPLOY_EXIT
 
       # ─── Parse & Comment on PR ────────────────────────────────────────────────
