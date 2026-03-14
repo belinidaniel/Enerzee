@@ -10,6 +10,8 @@ jobs:
   validate:
     name: Validate against UAT
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
 
     steps:
       # ─── Checkout ────────────────────────────────────────────────────────────
@@ -22,7 +24,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install SF CLI
         run: npm install --global @salesforce/cli@latest
@@ -58,6 +60,7 @@ jobs:
           done
 
           TESTS=$(echo "$TESTS" | tr ' ' '\n' | sort -u | tr '\n' ' ' | xargs)
+          APEX=$(echo "$APEX" | tr '\n' ' ' | xargs)
           echo "apex_classes=$APEX" >> $GITHUB_OUTPUT
           echo "test_classes=$TESTS" >> $GITHUB_OUTPUT
           echo "has_changes=$([ -n "$CHANGED" ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
