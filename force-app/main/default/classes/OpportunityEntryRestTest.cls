@@ -1,5 +1,58 @@
 @isTest
 public class OpportunityEntryRestTest {
+  private static Product2 createProductForRest(
+    String externalId,
+    String name,
+    Decimal unitPrice
+  ) {
+    Product2 productRecord = (Product2) TestFactory.createSObject(
+      new Product2(
+        Name = name,
+        ProductCode = externalId,
+        ExternalId__c = externalId,
+        Id_Externo__c = externalId,
+        Preco_Unitario__c = unitPrice
+      ),
+      true
+    );
+
+    List<PricebookEntry> standardEntries = [
+      SELECT Id
+      FROM PricebookEntry
+      WHERE
+        Pricebook2Id = :Test.getStandardPricebookId()
+        AND Product2Id = :productRecord.Id
+      LIMIT 1
+    ];
+    if (standardEntries.isEmpty()) {
+      insert new PricebookEntry(
+        Pricebook2Id = Test.getStandardPricebookId(),
+        Product2Id = productRecord.Id,
+        UnitPrice = unitPrice,
+        IsActive = true
+      );
+    }
+
+    return productRecord;
+  }
+
+  private static Opportunity createOpportunityForRest(Account accountRecord) {
+    Opportunity opportunityRecord = new Opportunity(
+      Name = 'Opportunity REST Test',
+      AccountId = accountRecord.Id,
+      Pricebook2Id = Test.getStandardPricebookId(),
+      StageName = 'Prospecção',
+      CloseDate = Date.today(),
+      IdVirtualOffice__c = 'VO-REST-' +
+        String.valueOf(DateTime.now().getTime()),
+      RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+        .get('Solar')
+        .getRecordTypeId()
+    );
+    insert opportunityRecord;
+    return opportunityRecord;
+  }
+
   @TestSetup
   public static void makeData() {
     Consultor__c seller = (Consultor__c) TestFactory.createSObject(
@@ -296,5 +349,138 @@ public class OpportunityEntryRestTest {
       System.assert(!entries.isEmpty());
       System.assertEquals(8, entries.size());
     }
+  }
+
+  @isTest
+  static void testUpdateOpportunityProductsSuccess() {
+    Account accountRecord = (Account) TestFactory.createSObject(
+      new Account(Name = 'REST Update Account'),
+      true
+    );
+    Opportunity opportunityRecord = createOpportunityForRest(accountRecord);
+    Product2 firstProduct = createProductForRest(
+      'REST-PROD-1',
+      'Produto 1',
+      10
+    );
+    Product2 secondProduct = createProductForRest(
+      'REST-PROD-2',
+      'Produto 2',
+      20
+    );
+
+    insert new OpportunityLineItem(
+      OpportunityId = opportunityRecord.Id,
+      PricebookEntryId = [
+        SELECT Id
+        FROM PricebookEntry
+        WHERE
+          Pricebook2Id = :Test.getStandardPricebookId()
+          AND Product2Id = :firstProduct.Id
+        LIMIT 1
+      ]
+      .Id,
+      Quantity = 1,
+      UnitPrice = 10
+    );
+
+    RestRequest req = new RestRequest();
+    RestResponse res = new RestResponse();
+    req.requestBody = Blob.valueOf(
+      '{"opportunityId":"' +
+        opportunityRecord.Id +
+        '","Products":[{"Id":"REST-PROD-1","Quantity":2,"UnitaryValue":150.5,"Description":"Atualizado"},{"Id":"REST-PROD-2","Quantity":1,"UnitaryValue":300}]}'
+    );
+    RestContext.request = req;
+    RestContext.response = res;
+
+    Test.startTest();
+    OpportunityEntryRest.updateOpportunityProducts();
+    Test.stopTest();
+
+    List<OpportunityLineItem> items = [
+      SELECT Quantity, UnitPrice, Description, Product2.ProductCode
+      FROM OpportunityLineItem
+      WHERE OpportunityId = :opportunityRecord.Id
+      ORDER BY Product2.ProductCode ASC
+    ];
+    Map<String, OpportunityLineItem> itemsByCode = new Map<String, OpportunityLineItem>();
+    for (OpportunityLineItem item : items) {
+      itemsByCode.put(item.Product2.ProductCode, item);
+    }
+
+    System.assertEquals(2, items.size());
+    System.assertEquals(2, itemsByCode.get('REST-PROD-1').Quantity);
+    System.assertEquals(150.5, itemsByCode.get('REST-PROD-1').UnitPrice);
+    System.assertEquals(
+      'Atualizado',
+      itemsByCode.get('REST-PROD-1').Description
+    );
+    System.assertEquals(1, itemsByCode.get('REST-PROD-2').Quantity);
+    System.assertEquals(300, itemsByCode.get('REST-PROD-2').UnitPrice);
+    System.assert(
+      RestContext.response.responseBody.toString().contains('"insertedItems"')
+    );
+  }
+
+  @isTest
+  static void testUpdateOpportunityProductsMissingOpportunityId() {
+    RestRequest req = new RestRequest();
+    RestResponse res = new RestResponse();
+    req.requestBody = Blob.valueOf('{"Products":[{"Id":"REST-PROD-404"}]}');
+    RestContext.request = req;
+    RestContext.response = res;
+
+    Test.startTest();
+    OpportunityEntryRest.updateOpportunityProducts();
+    Test.stopTest();
+
+    System.assertEquals(400, RestContext.response.statusCode);
+    System.assertEquals(
+      'Missing opportunityId',
+      RestContext.response.responseBody.toString()
+    );
+  }
+
+  @isTest
+  static void testUpdateOpportunityProductsMissingProducts() {
+    Account accountRecord = (Account) TestFactory.createSObject(
+      new Account(Name = 'REST Missing Products'),
+      true
+    );
+    Opportunity opportunityRecord = createOpportunityForRest(accountRecord);
+
+    RestRequest req = new RestRequest();
+    RestResponse res = new RestResponse();
+    req.requestBody = Blob.valueOf(
+      '{"opportunityId":"' + opportunityRecord.Id + '"}'
+    );
+    RestContext.request = req;
+    RestContext.response = res;
+
+    Test.startTest();
+    OpportunityEntryRest.updateOpportunityProducts();
+    Test.stopTest();
+
+    System.assertEquals(400, RestContext.response.statusCode);
+    System.assertEquals(
+      'Missing Products',
+      RestContext.response.responseBody.toString()
+    );
+  }
+
+  @isTest
+  static void testUpdateDiscountHandlesUnknownOpportunity() {
+    RestContext.response = new RestResponse();
+    Test.startTest();
+    OpportunityEntryRest.testPatchRequest(
+      '{"id":"VO-DISCOUNT-INEXISTENTE","discount":12.5,"discountApprovalComments":"Aprovacao teste","url":"https://enerzee.example/discount"}'
+    );
+    Test.stopTest();
+    System.assertNotEquals(
+      null,
+      RestContext.response,
+      'A rotina de PATCH deve lidar com oportunidade inexistente sem quebrar o teste.'
+    );
   }
 }

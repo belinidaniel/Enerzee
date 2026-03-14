@@ -23,16 +23,24 @@ private class ModuloHelpDeskCaseControllerTest {
   }
 
   private static Contact createContact() {
-    Account a = new Account(Name = 'Enerzee');
-    insert a;
-    Contact c = new Contact(
-      FirstName = 'Portal',
-      LastName = 'Tester',
-      Email = 'tester@example.com',
-      AccountId = a.Id
-    );
-    insert c;
-    return c;
+    ContactTriggerHandler.disableTrigger();
+    try {
+      Account accountRecord = (Account) TestFactory.createSObject(
+        new Account(Name = 'Enerzee'),
+        true
+      );
+      Contact contactRecord = new Contact(
+        FirstName = 'Portal',
+        LastName = 'Tester',
+        Email = 'tester@example.com',
+        AccountId = accountRecord.Id,
+        Phone = '(11) 99999-9999'
+      );
+      insert contactRecord;
+      return contactRecord;
+    } finally {
+      ContactTriggerHandler.enableTrigger();
+    }
   }
 
   @IsTest
@@ -48,14 +56,16 @@ private class ModuloHelpDeskCaseControllerTest {
       LIMIT 1
     ]
     .MasterLabel;
-    String closedStatus = [
+    List<CaseStatus> closedStatuses = [
       SELECT MasterLabel
       FROM CaseStatus
       WHERE IsClosed = TRUE
       ORDER BY SortOrder ASC
       LIMIT 1
-    ]
-    .MasterLabel;
+    ];
+    String closedStatus = closedStatuses.isEmpty()
+      ? null
+      : closedStatuses[0].MasterLabel;
 
     System.runAs(u) {
       Case openCase = new Case(
@@ -65,13 +75,17 @@ private class ModuloHelpDeskCaseControllerTest {
         ContactId = c.Id
       );
       insert openCase;
-      Case closedCase = new Case(
-        Subject = 'Closed Case',
-        Status = closedStatus,
-        Origin = 'Phone',
-        ContactId = c.Id
-      );
-      insert closedCase;
+      Id closedCaseId;
+      if (String.isNotBlank(closedStatus)) {
+        Case closedCase = new Case(
+          Subject = 'Closed Case',
+          Status = closedStatus,
+          Origin = 'Phone',
+          ContactId = c.Id
+        );
+        insert closedCase;
+        closedCaseId = closedCase.Id;
+      }
 
       Test.startTest();
       List<Case> openCases = ModuloHelpDeskCaseController.getCases(
@@ -91,7 +105,15 @@ private class ModuloHelpDeskCaseControllerTest {
       Test.stopTest();
 
       System.assert(new Map<Id, Case>(openCases).containsKey(openCase.Id));
-      System.assert(new Map<Id, Case>(closedCases).containsKey(closedCase.Id));
+      if (closedCaseId != null) {
+        System.assert(new Map<Id, Case>(closedCases).containsKey(closedCaseId));
+      } else {
+        System.assertEquals(
+          0,
+          closedCases.size(),
+          'Quando a org não possui status fechado configurado, a lista de closed deve vir vazia.'
+        );
+      }
       System.assertEquals(openCase.Id, detail.Id);
     }
   }
