@@ -3,9 +3,27 @@ private class IntegracaoVOConsultorPreCadastroTest {
   private static Lead buildSafeLead(String lastName, String company) {
     Lead leadRecord = new Lead(LastName = lastName, Company = company);
     Map<String, Schema.SObjectField> leadFields = Schema.SObjectType.Lead.fields.getMap();
+    Map<String, Schema.RecordTypeInfo> leadRecordTypes = Schema.SObjectType.Lead.getRecordTypeInfosByDeveloperName();
+
+    if (leadRecordTypes.containsKey('QualificacaodeConsultores')) {
+      leadRecord.RecordTypeId = leadRecordTypes.get('QualificacaodeConsultores')
+        .getRecordTypeId();
+    }
 
     if (leadFields.containsKey('FalarComAgente__c')) {
       leadRecord.put('FalarComAgente__c', true);
+    }
+
+    if (leadFields.containsKey('LeadSource')) {
+      leadRecord.put('LeadSource', 'Web-To-Lead Integrador');
+    }
+
+    if (leadFields.containsKey('Lb065_ProdutoInteresse__c')) {
+      leadRecord.put('Lb065_ProdutoInteresse__c', 'Solar');
+    }
+
+    if (leadFields.containsKey('CustoEnergiaMes__c')) {
+      leadRecord.put('CustoEnergiaMes__c', 'até R$ 300');
     }
 
     String safeStatus = getLeadStatusExcluding(
@@ -55,7 +73,12 @@ private class IntegracaoVOConsultorPreCadastroTest {
     lead.complemento__c = 'Apto 101';
     lead.ConsultorRegional__c = consultor.id;
 
-    insert lead;
+    LeadTriggerHandler.disableTrigger();
+    try {
+      insert lead;
+    } finally {
+      LeadTriggerHandler.enableTrigger();
+    }
 
     Set<Id> triggerIds = new Set<Id>{ lead.Id };
 
@@ -87,7 +110,12 @@ private class IntegracaoVOConsultorPreCadastroTest {
     lead.Email = 'erro@teste.com';
     lead.CPFCNPJ__c = '123.456.789-00';
 
-    insert lead;
+    LeadTriggerHandler.disableTrigger();
+    try {
+      insert lead;
+    } finally {
+      LeadTriggerHandler.enableTrigger();
+    }
 
     Set<Id> triggerIds = new Set<Id>{ lead.Id };
 

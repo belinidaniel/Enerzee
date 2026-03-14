@@ -25,9 +25,14 @@ public class IntegracaoSAPTest {
       ),
       true
     );
+    String productExternalId =
+      'prod-ext-' + String.valueOf(DateTime.now().getTime());
     Product2 product = (Product2) TestFactory.createSObject(
       new Product2(
-        ExternalId__c = 'prod-ext-' + String.valueOf(DateTime.now().getTime())
+        ExternalId__c = productExternalId,
+        Id_Externo__c = productExternalId,
+        ProductCode = productExternalId,
+        Name = 'Produto SAP Teste'
       ),
       true
     );
