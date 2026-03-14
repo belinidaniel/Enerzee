@@ -109,6 +109,8 @@ jobs:
         if: steps.changed.outputs.has_changes == 'true'
         id: deploy
         run: |
+          set -euo pipefail
+
           DESTRUCTIVE_ARG=""
           if grep -q '<types>' ./destructiveChanges/destructiveChanges.xml 2>/dev/null; then
             DESTRUCTIVE_ARG="--post-destructive-changes destructiveChanges/destructiveChanges.xml"
@@ -120,15 +122,58 @@ jobs:
             --dry-run \
             --test-level RunLocalTests \
             $DESTRUCTIVE_ARG \
-            --json > /tmp/deploy_result.json 2>&1
-          DEPLOY_EXIT=$?
+            --async \
+            --json > /tmp/deploy_start.json
+
+          DEPLOY_ID=$(jq -r '.result.id // empty' /tmp/deploy_start.json)
+          if [ -z "$DEPLOY_ID" ]; then
+            echo "::error::Não foi possível obter o deploy id."
+            cat /tmp/deploy_start.json
+            exit 1
+          fi
+
+          echo "Deploy ID: $DEPLOY_ID"
+
+          while true; do
+            sf project deploy report \
+              --job-id "$DEPLOY_ID" \
+              --target-org enerzee-PRD \
+              --json > /tmp/deploy_result.json
+
+            DEPLOY_STATUS=$(jq -r '.result.status // "Unknown"' /tmp/deploy_result.json)
+            COMPONENTS_DONE=$(jq -r '.result.numberComponentsDeployed // 0' /tmp/deploy_result.json)
+            COMPONENTS_TOTAL=$(jq -r '.result.numberComponentsTotal // 0' /tmp/deploy_result.json)
+            TESTS_DONE=$(jq -r '.result.numberTestsCompleted // 0' /tmp/deploy_result.json)
+            TESTS_TOTAL=$(jq -r '.result.numberTestsTotal // 0' /tmp/deploy_result.json)
+
+            echo "Status atual: $DEPLOY_STATUS | Componentes: ${COMPONENTS_DONE}/${COMPONENTS_TOTAL} | Testes: ${TESTS_DONE}/${TESTS_TOTAL}"
+
+            case "$DEPLOY_STATUS" in
+              Pending|InProgress|Canceling)
+                sleep 15
+                ;;
+              Succeeded)
+                break
+                ;;
+              Failed|Canceled|SucceededPartial)
+                break
+                ;;
+              *)
+                echo "::warning::Status inesperado do deploy: $DEPLOY_STATUS"
+                sleep 15
+                ;;
+            esac
+          done
 
           # Surface errors as GitHub Actions annotations
           jq -r '.result.details.componentFailures[]? | "::error file=\(.fileName),line=\(.lineNumber)::\(.problem)"' /tmp/deploy_result.json 2>/dev/null || true
           jq -r '.result.details.runTestResult.failures[]? | "::error::\(.testName): \(.message)"' /tmp/deploy_result.json 2>/dev/null || true
           jq -r '.result.details.runTestResult.codeCoverageWarnings[]? | "::warning::\(.message)"' /tmp/deploy_result.json 2>/dev/null || true
 
-          exit $DEPLOY_EXIT
+          FINAL_STATUS=$(jq -r '.result.status // "Unknown"' /tmp/deploy_result.json)
+          if [ "$FINAL_STATUS" != "Succeeded" ]; then
+            exit 1
+          fi
 
       # ─── Job Summary + Comment on PR ─────────────────────────────────────────
       - name: Write job summary and comment on PR
@@ -147,7 +192,13 @@ jobs:
 
             try {
               const json = JSON.parse(fs.readFileSync('/tmp/deploy_result.json', 'utf8'));
-              if (json.status === 0) {
+              const cliStatus = json.status;
+              const deployStatusText = json?.result?.status;
+              const deploySucceeded =
+                cliStatus === 0 &&
+                (!deployStatusText || deployStatusText === 'Succeeded');
+
+              if (deploySucceeded) {
                 deployStatus = '✅';
                 deployResult = '✅ **Dry-run passed** — sem erros de compilação ou testes';
               } else {
@@ -158,7 +209,7 @@ jobs:
                 coverageWarnings = (details.runTestResult?.codeCoverageWarnings || []);
                 deployResult = `❌ **Dry-run falhou** — ${compileErrors.length} erros de compilação, ${testFailures.length} falhas de teste`;
                 if (!compileErrors.length && !testFailures.length) {
-                  deployResult = `❌ **Dry-run falhou** — ${json.message || 'Erro desconhecido'}`;
+                  deployResult = `❌ **Dry-run falhou** — ${deployStatusText || json.message || 'Erro desconhecido'}`;
                 }
               }
             } catch (e) {
