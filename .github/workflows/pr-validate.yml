@@ -109,14 +109,6 @@ jobs:
         if: steps.changed.outputs.has_changes == 'true'
         id: deploy
         run: |
-          TEST_LEVEL="RunLocalTests"
-          TEST_ARGS=""
-
-          if [ -n "${{ steps.changed.outputs.test_classes }}" ]; then
-            TEST_LEVEL="RunSpecifiedTests"
-            TEST_ARGS="--tests ${{ steps.changed.outputs.test_classes }}"
-          fi
-
           DESTRUCTIVE_ARG=""
           if grep -q '<types>' ./destructiveChanges/destructiveChanges.xml 2>/dev/null; then
             DESTRUCTIVE_ARG="--post-destructive-changes destructiveChanges/destructiveChanges.xml"
@@ -126,12 +118,12 @@ jobs:
             --manifest package/package.xml \
             --target-org enerzee-PRD \
             --dry-run \
-            --test-level $TEST_LEVEL \
-            $TEST_ARGS \
+            --test-level RunLocalTests \
             $DESTRUCTIVE_ARG \
-            --json > /tmp/deploy_result.json 2>&1 || true
-
+            --json > /tmp/deploy_result.json 2>&1
+          DEPLOY_EXIT=$?
           cat /tmp/deploy_result.json
+          exit $DEPLOY_EXIT
 
       # ─── Parse & Comment on PR ────────────────────────────────────────────────
       - name: Comment validation result on PR
