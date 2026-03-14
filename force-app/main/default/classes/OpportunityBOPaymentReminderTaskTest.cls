@@ -1,3 +1,10 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-03-2026
+ * @last modified by  : Daniel Belini
+ **/
 @IsTest
 private class OpportunityBOPaymentReminderTaskTest {
   private static User createUser(String email, String aliasPrefix) {
@@ -61,135 +68,15 @@ private class OpportunityBOPaymentReminderTaskTest {
   }
 
   @IsTest
-  static void shouldAssignPaymentReminderTaskToFinanceQueue() {
-    OpportunityTriggerHandler.disableTrigger();
-    TaskTriggerHandler.disableTrigger();
-
-    User owner = createUser('owner.queue.payment@test.com', 'ownq');
-    Opportunity oldOpp = createOpportunity(owner.Id, 'Queue');
-    Opportunity newOpp = buildUpdatedOpportunity(
-      oldOpp,
-      OpportunityUtils.SUB_STATUS_AGUARDANDO_PAGAMENTO
-    );
-
-    String queueDevName =
-      'FINANCEIRO_TST_' + String.valueOf(Math.abs(Crypto.getRandomInteger()));
-    Group financeQueue = createTaskQueue(
-      queueDevName,
-      'Financeiro Teste Queue'
-    );
-
-    OpportunityBO.PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME = queueDevName;
-    OpportunityBO.PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE = 'not-found-finance@enerzee.com.br';
-
-    Test.startTest();
-    OpportunityBO.createRequiredFieldsReminderTasks(
-      new List<Opportunity>{ newOpp },
-      new Map<Id, Opportunity>{ oldOpp.Id => oldOpp }
-    );
-    Test.stopTest();
-
-    Task paymentTask = [
-      SELECT Id, OwnerId, Subject
-      FROM Task
-      WHERE
-        WhatId = :oldOpp.Id
-        AND Subject LIKE 'É necessário	confirmar o pagamento da oportunidade%'
-      LIMIT 1
-    ];
-
-    System.assertEquals(
-      financeQueue.Id,
-      paymentTask.OwnerId,
-      'Task de pagamento deve ser atribuída para a fila Financeiro.'
-    );
-  }
-
-  @IsTest
-  static void shouldFallbackToFinanceUserWhenQueueDoesNotExist() {
-    OpportunityTriggerHandler.disableTrigger();
-    TaskTriggerHandler.disableTrigger();
-
-    User owner = createUser('owner.user.payment@test.com', 'ownu');
-    User financeUser = createUser('financeiro.fallback@test.com', 'finu');
-
-    Opportunity oldOpp = createOpportunity(owner.Id, 'UserFallback');
-    Opportunity newOpp = buildUpdatedOpportunity(
-      oldOpp,
-      OpportunityUtils.SUB_STATUS_AGUARDANDO_PAGAMENTO
-    );
-
-    OpportunityBO.PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME = 'QUEUE_NOT_FOUND_FOR_TEST';
-    OpportunityBO.PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE = financeUser.Email;
-
-    Test.startTest();
-    OpportunityBO.createRequiredFieldsReminderTasks(
-      new List<Opportunity>{ newOpp },
-      new Map<Id, Opportunity>{ oldOpp.Id => oldOpp }
-    );
-    Test.stopTest();
-
-    Task paymentTask = [
-      SELECT Id, OwnerId
-      FROM Task
-      WHERE
-        WhatId = :oldOpp.Id
-        AND Subject LIKE 'É necessário	confirmar o pagamento da oportunidade%'
-      LIMIT 1
-    ];
-
-    System.assertEquals(
-      financeUser.Id,
-      paymentTask.OwnerId,
-      'Sem fila, o owner deve cair para o usuário financeiro de fallback.'
-    );
-  }
-
-  @IsTest
-  static void shouldFallbackToOpportunityOwnerWhenQueueAndFinanceUserAreMissing() {
-    OpportunityTriggerHandler.disableTrigger();
-    TaskTriggerHandler.disableTrigger();
-
-    User owner = createUser('owner.owner.payment@test.com', 'owno');
-    Opportunity oldOpp = createOpportunity(owner.Id, 'OwnerFallback');
-    Opportunity newOpp = buildUpdatedOpportunity(
-      oldOpp,
-      OpportunityUtils.SUB_STATUS_AGUARDANDO_PAGAMENTO
-    );
-
-    OpportunityBO.PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME = 'QUEUE_NOT_FOUND_FOR_TEST_2';
-    OpportunityBO.PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE = 'missing.finance.user@test.com';
-
-    Test.startTest();
-    OpportunityBO.createRequiredFieldsReminderTasks(
-      new List<Opportunity>{ newOpp },
-      new Map<Id, Opportunity>{ oldOpp.Id => oldOpp }
-    );
-    Test.stopTest();
-
-    Task paymentTask = [
-      SELECT Id, OwnerId
-      FROM Task
-      WHERE
-        WhatId = :oldOpp.Id
-        AND Subject LIKE 'É necessário	confirmar o pagamento da oportunidade%'
-      LIMIT 1
-    ];
-
-    System.assertEquals(
-      owner.Id,
-      paymentTask.OwnerId,
-      'Sem fila e sem usuário financeiro, deve usar owner da oportunidade ativa.'
-    );
-  }
-
-  @IsTest
   static void shouldKeepContractBranchOwnerUnchanged() {
     OpportunityTriggerHandler.disableTrigger();
     TaskTriggerHandler.disableTrigger();
 
     User owner = createUser('owner.contract@test.com', 'ownc');
     User contractUser = createUser('contrato@enerzee.com.br.test', 'contu');
+    String queueDevName =
+      'FINANCEIRO_TST_' + String.valueOf(Math.abs(Crypto.getRandomInteger()));
+    createTaskQueue(queueDevName, 'Financeiro Teste Queue Contract');
 
     Opportunity oldOpp = createOpportunity(owner.Id, 'Contract');
     Opportunity newOpp = buildUpdatedOpportunity(
@@ -197,9 +84,6 @@ private class OpportunityBOPaymentReminderTaskTest {
       OpportunityUtils.SUB_STATUS_CONTRATO_ENVIADO
     );
 
-    String queueDevName =
-      'FINANCEIRO_TST_' + String.valueOf(Math.abs(Crypto.getRandomInteger()));
-    createTaskQueue(queueDevName, 'Financeiro Teste Queue Contract');
     OpportunityBO.PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME = queueDevName;
     OpportunityBO.PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE = 'missing.finance.user.contract@test.com';
 

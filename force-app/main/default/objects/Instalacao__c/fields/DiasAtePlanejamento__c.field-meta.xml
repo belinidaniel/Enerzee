@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+	<fullName>DiasAtePlanejamento__c</fullName>
+	<description
+  >Tempo em dias corridos entre a criação da Instalação e a Data de Início da Instalação (obra agendada). Usado no indicador Tempo Médio de Planejamento de Instalações (Engenharia).</description>
+	<externalId>false</externalId>
+	<formula
+  >IF(!ISBLANK(InstallDate__c), DATEVALUE(InstallDate__c) - DATEVALUE(CreatedDate), NULL)</formula>
+	<label>Dias Criação → Obra Agendada</label>
+	<precision>18</precision>
+	<required>false</required>
+	<scale>0</scale>
+	<trackTrending>false</trackTrending>
+	<type>Number</type>
+	<unique>false</unique>
+</CustomField>

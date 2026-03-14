@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+	<columns>
+		<field>Opportunity.Estudos_de_Viabilidades__r$Name</field>
+	</columns>
+	<columns>
+		<field>Opportunity.Estudos_de_Viabilidades__r$StatusFeasibility__c</field>
+	</columns>
+	<columns>
+		<aggregateTypes>Average</aggregateTypes>
+		<field>Opportunity.Estudos_de_Viabilidades__r$DiasAteConclusao__c</field>
+	</columns>
+	<description
+  >Tempo médio em dias entre criação e conclusão (Viabilidade Finalizada) das Viabilidades, segmentado por Tipo de Oportunidade. DEPENDÊNCIA: confirmar marco de conclusão (ApproveDate__c vs outro campo).</description>
+	<filter>
+		<criteriaItems>
+			<column>Opportunity.Estudos_de_Viabilidades__r$StatusFeasibility__c</column>
+			<columnToColumn>false</columnToColumn>
+			<isUnlocked>true</isUnlocked>
+			<operator>equals</operator>
+			<value>Viabilidade Finalizada</value>
+		</criteriaItems>
+		<criteriaItems>
+			<column>Opportunity.Estudos_de_Viabilidades__r$DiasAteConclusao__c</column>
+			<columnToColumn>false</columnToColumn>
+			<isUnlocked>true</isUnlocked>
+			<operator>greaterThan</operator>
+			<value>0</value>
+		</criteriaItems>
+		<language>en_US</language>
+	</filter>
+	<format>Summary</format>
+	<groupingsDown>
+		<dateGranularity>Day</dateGranularity>
+		<field>Opportunity.Estudos_de_Viabilidades__r$OpportunityType__c</field>
+		<sortOrder>Asc</sortOrder>
+	</groupingsDown>
+	<name>VIA — Tempo Médio da Operação por Tipo</name>
+	<params>
+		<name>co</name>
+		<value>1</value>
+	</params>
+	<reportType>Oportunidades_com_Viabilidade_Projeto_Instalacao__c</reportType>
+	<scope>organization</scope>
+	<showDetails>false</showDetails>
+	<showGrandTotal>true</showGrandTotal>
+	<showSubTotals>true</showSubTotals>
+	<timeFrameFilter>
+		<dateColumn>Opportunity$CloseDate</dateColumn>
+		<interval>INTERVAL_CUSTOM</interval>
+	</timeFrameFilter>
+</Report>

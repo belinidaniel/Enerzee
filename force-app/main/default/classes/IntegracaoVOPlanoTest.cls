@@ -151,6 +151,11 @@ private class IntegracaoVOPlanoTest {
   }
 
   @isTest
+  static void testSendPlanoSkipsWhenOpportunityAlreadyHasExternalId() {
+    testSendPlanoShouldNotSkipClosedWonWhenOpportunityAlreadyHasExternalId();
+  }
+
+  @isTest
   static void testSendPlanoLogsPreconditionWhenAccountSyncFails() {
     Test.setMock(HttpCalloutMock.class, new AccountFailureMock());
     TokenAPIVOWs.access_token = 'test-token';

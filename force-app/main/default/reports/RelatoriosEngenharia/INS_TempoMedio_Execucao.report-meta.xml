@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+	<columns>
+		<field>Instalacao__c$Name</field>
+	</columns>
+	<columns>
+		<field>Instalacao__c$Status__c</field>
+	</columns>
+	<columns>
+		<field>Instalacao__c$DataObraEmExecucao__c</field>
+	</columns>
+	<columns>
+		<field>Instalacao__c$DataConclusao__c</field>
+	</columns>
+	<columns>
+		<aggregateTypes>Average</aggregateTypes>
+		<field>Instalacao__c$DiasDeExecucao__c</field>
+	</columns>
+	<description
+  >Tempo médio de execução das Instalações (Obra em Execução → Obra Concluída - Aguardando Troca de Medidor), agrupado por Gestor de Obra. DataObraEmExecucao__c é populada automaticamente pelo Flow "Instalacao — Captura Data Obra Em Execução".</description>
+	<filter>
+		<criteriaItems>
+			<column>Instalacao__c$DiasDeExecucao__c</column>
+			<columnToColumn>false</columnToColumn>
+			<isUnlocked>true</isUnlocked>
+			<operator>greaterThan</operator>
+			<value>0</value>
+		</criteriaItems>
+		<language>en_US</language>
+	</filter>
+	<format>Summary</format>
+	<groupingsDown>
+		<dateGranularity>Day</dateGranularity>
+		<field>Instalacao__c$GestorObra__c</field>
+		<sortOrder>Asc</sortOrder>
+	</groupingsDown>
+	<name>INS — Tempo Médio de Execução por Gestor</name>
+	<params>
+		<name>co</name>
+		<value>1</value>
+	</params>
+	<reportType>Instalacao__c</reportType>
+	<scope>organization</scope>
+	<showDetails>false</showDetails>
+	<showGrandTotal>true</showGrandTotal>
+	<showSubTotals>true</showSubTotals>
+	<timeFrameFilter>
+		<dateColumn>Instalacao__c$CreatedDate</dateColumn>
+		<interval>INTERVAL_CUSTOM</interval>
+	</timeFrameFilter>
+</Report>

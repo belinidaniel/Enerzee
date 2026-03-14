@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+	<columns>
+		<field>CASE_NUMBER</field>
+	</columns>
+	<columns>
+		<field>SUBJECT</field>
+	</columns>
+	<columns>
+		<field>STATUS</field>
+	</columns>
+	<columns>
+		<field>CREATED_DATE</field>
+	</columns>
+	<description
+  >Quantidade de chamados de Assistência Técnica agrupados por Tipo de Caso e Subtipo. DEPENDÊNCIA: validar se Tipo_de_Caso__c é o campo oficial de "tipo de chamado" para AT.</description>
+	<filter>
+		<criteriaItems>
+			<column>RECORDTYPE</column>
+			<columnToColumn>false</columnToColumn>
+			<isUnlocked>true</isUnlocked>
+			<operator>equals</operator>
+			<value
+      >Case.Assistencia_Tecnica_Manutencao_Garantia,Case.Assistencia_Tecnica_Gestao_de_Faturas_e_Concessionarias,Case.Assistencia_Tecnica,Case.Assist_ncia_T_cnica_Gest_o_de_Faturas_e_Concession_rias_Interno,Case.Assist_ncia_T_cnica_Manuten_es_e_Garantias_Servi_os</value>
+		</criteriaItems>
+		<language>en_US</language>
+	</filter>
+	<format>Summary</format>
+	<groupingsDown>
+		<dateGranularity>Day</dateGranularity>
+		<field>TYPE</field>
+		<sortOrder>Asc</sortOrder>
+	</groupingsDown>
+	<name>AT — Chamados por Tipo e Subtipo</name>
+	<params>
+		<name>co</name>
+		<value>1</value>
+	</params>
+	<reportType>CaseList</reportType>
+	<scope>organization</scope>
+	<showDetails>false</showDetails>
+	<showGrandTotal>true</showGrandTotal>
+	<showSubTotals>true</showSubTotals>
+	<timeFrameFilter>
+		<dateColumn>CREATED_DATEONLY</dateColumn>
+		<interval>INTERVAL_CUSTOM</interval>
+	</timeFrameFilter>
+</Report>

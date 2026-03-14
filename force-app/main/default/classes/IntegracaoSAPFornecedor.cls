@@ -1,4 +1,11 @@
-public with sharing class IntegracaoSAPFornecedor {
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-10-2026
+ * @last modified by  : Daniel Belini
+ **/
+public without sharing class IntegracaoSAPFornecedor {
   @future(callout=true)
   public static void sendFornecedor(Set<Id> triggerIds) {
     List<Consultor__c> consultorList = [

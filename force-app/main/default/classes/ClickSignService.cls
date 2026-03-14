@@ -65,40 +65,48 @@ public with sharing class ClickSignService {
     for (Document doc : envelopeInput.documents) {
       System.debug('doc: ' + doc);
 
-      if (!string.isBlank(clickSign.ClickSignTemplate__c)) {
-        if (String.isBlank(doc.externalId)) {
-          continue;
+      try {
+        if (!string.isBlank(clickSign.ClickSignTemplate__c)) {
+          if (String.isBlank(doc.externalId)) {
+            continue;
+          }
+          documentDTO = ClickSignIntegration.createTemplateDocument(
+            envelopeId,
+            doc.filename,
+            doc.externalId,
+            doc.mergeFields
+          );
+          Blob fileMerged = ClickSignIntegration.getDocument(
+            documentDTO.data.links.files.original
+          );
+          ContentVersion v = uploadDocument(
+            doc.filename,
+            EncodingUtil.base64Encode(fileMerged),
+            '',
+            clickSign.Id,
+            documentDTO.data.id
+          );
+          versions.add(v);
+        } else {
+          documentDTO = ClickSignIntegration.createDocument(
+            envelopeId,
+            doc.filename,
+            doc.file
+          );
+          versions.add(
+            new ContentVersion(
+              Id = doc.id,
+              ExternalId__c = documentDTO?.data?.id != null
+                ? documentDTO?.data?.id
+                : ''
+            )
+          );
         }
-        documentDTO = ClickSignIntegration.createTemplateDocument(
-          envelopeId,
-          doc.filename,
-          doc.externalId,
-          doc.mergeFields
-        );
-        Blob fileMerged = ClickSignIntegration.getDocument(
-          documentDTO.data.links.files.original
-        );
-        ContentVersion v = uploadDocument(
-          doc.filename,
-          EncodingUtil.base64Encode(fileMerged),
-          '',
-          clickSign.Id,
-          documentDTO.data.id
-        );
-        versions.add(v);
-      } else {
-        documentDTO = ClickSignIntegration.createDocument(
-          envelopeId,
-          doc.filename,
-          doc.file
-        );
-        versions.add(
-          new ContentVersion(
-            Id = doc.id,
-            ExternalId__c = documentDTO?.data?.id != null
-              ? documentDTO?.data?.id
-              : ''
-          )
+      } catch (Exception ex) {
+        resetEnvelopeState(clickSign.ClickSignEnvelope__c, clickSign.Id);
+        throw new ClickSignServiceException(
+          'Erro ao processar documento. O estado foi resetado — tente novamente. Detalhe: ' +
+          ex.getMessage()
         );
       }
     }
@@ -502,6 +510,26 @@ public with sharing class ClickSignService {
     public String name;
     public String email;
     public String role;
+  }
+
+  private static void resetEnvelopeState(Id envelopeId, Id clickSignId) {
+    if (String.isNotBlank(envelopeId)) {
+      update new ClickSignEnvelope__c(Id = envelopeId, ExternalId__c = null);
+    }
+
+    List<ContentDocumentLink> links = [
+      SELECT ContentDocumentId
+      FROM ContentDocumentLink
+      WHERE LinkedEntityId = :clickSignId
+    ];
+
+    if (!links.isEmpty()) {
+      Set<Id> docIds = new Set<Id>();
+      for (ContentDocumentLink link : links) {
+        docIds.add(link.ContentDocumentId);
+      }
+      delete [SELECT Id FROM ContentDocument WHERE Id IN :docIds];
+    }
   }
 
   public class ClickSignServiceException extends Exception {

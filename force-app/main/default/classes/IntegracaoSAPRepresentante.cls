@@ -1,4 +1,11 @@
-public with sharing class IntegracaoSAPRepresentante {
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-10-2026
+ * @last modified by  : Daniel Belini
+ **/
+public without sharing class IntegracaoSAPRepresentante {
   @future(callout=true)
   public static void sendRepresentante(Set<Id> triggerIds) {
     List<Consultor__c> consultorList = [

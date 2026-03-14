@@ -260,7 +260,9 @@ public with sharing class InstalacaoTaskBO {
       Description = line.Acoes,
       WhatId = inst.Id,
       PrazoDiasUteis__c = line.PrazoDiasUteis,
-      OwnerId = ownerId
+      OwnerId = ownerId,
+      // SAL-403: tasks de config bloqueiam avanço (false); respeita exceções da tabela CSV
+      IgnorarValidacao__c = line.IgnorarValidacao == true
     );
 
     Integer daysToConsiderActivity = TaskTemplateUtils.parseInteger(

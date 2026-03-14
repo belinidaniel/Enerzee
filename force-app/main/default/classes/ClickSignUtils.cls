@@ -234,8 +234,8 @@ public with sharing class ClickSignUtils {
 
       ClickSignSigner__c signer = new ClickSignSigner__c(
         name = name,
-        Email__c = email, // Extracted email value
-        SFexternalId__c = (String) email + '_' + clickSignId, // Assuming ExternalId is based on email and ClickSign ID
+        Email__c = email,
+        SFexternalId__c = (String) email + '_' + clickSignId,
         Role__c = (String) signerMap.get('roleValueField'),
         ClickSign__c = clickSignId
       );
@@ -312,9 +312,11 @@ public with sharing class ClickSignUtils {
         String fullPath = relationshipField + '.' + relatedField;
         fields.add(fullPath);
         fieldMappings.put(tag, fullPath);
-      } else {
+      } else if (String.isNotBlank(fieldName)) {
         fields.add(fieldName);
         fieldMappings.put(tag, fieldName);
+      } else {
+        continue;
       }
       tagToLabelMap.put(tag, tagLabel);
     }

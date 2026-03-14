@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
     <baseObject>Opportunity</baseObject>
     <category>opportunities</category>
     <deployed>true</deployed>
-    <description>Cadeia ponta a ponta: Oportunidade, Viabilidade, Projeto e Instalação.</description>
+    <description
+  >Cadeia ponta a ponta: Oportunidade, Viabilidade, Projeto e Instalação.</description>
     <join>
         <join>
             <join>
@@ -96,43 +97,70 @@
             <field>Owner__c</field>
             <table>Opportunity.Estudos_de_Viabilidades__r</table>
         </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>ApproveDate__c</field>
+            <table>Opportunity.Estudos_de_Viabilidades__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>OpportunityType__c</field>
+            <table>Opportunity.Estudos_de_Viabilidades__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>DataConclusaoViabilidade__c</field>
+            <table>Opportunity.Estudos_de_Viabilidades__r</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>DiasAteConclusao__c</field>
+            <table>Opportunity.Estudos_de_Viabilidades__r</table>
+        </columns>
         <masterLabel>Viabilidades</masterLabel>
     </sections>
     <sections>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Id</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
             <field>Name</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Oportunidade__c</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Viabilidade__c</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
             <field>Status__c</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>DataInicioContrato__c</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>DataTermino__c</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r</table>
         </columns>
         <masterLabel>Projetos</masterLabel>
     </sections>
@@ -140,37 +168,44 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Id</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
             <field>Name</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Projeto__c</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>Oportunidade__c</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
             <field>Status__c</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>DataPrevisaoConclusao__c</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>DataConclusao__c</field>
-            <table>Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
+            <table
+      >Opportunity.Estudos_de_Viabilidades__r.ProjetosViabilidade__r.Instalacoes__r</table>
         </columns>
         <masterLabel>Instalações</masterLabel>
     </sections>
