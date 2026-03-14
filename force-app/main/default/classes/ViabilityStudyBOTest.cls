@@ -614,7 +614,7 @@ private class ViabilityStudyBOTest {
     ViabilityStudy__c viability = new ViabilityStudy__c(
       Opportunity__c = opportunity.Id,
       StatusFeasibility__c = 'Visita Agendada',
-      OwnTeamThirdParty__c = 'Consultor',
+      OwnTeamThirdParty__c = getNonTaskCreatingOwnTeamValue(),
       Owner__c = UserInfo.getUserId()
     );
     insert viability;
@@ -649,8 +649,28 @@ private class ViabilityStudyBOTest {
     Assert.areEqual(
       0,
       tasks.size(),
-      'Não deve criar tarefa quando OwnTeamThirdParty__c = Consultor'
+      'Não deve criar tarefa quando OwnTeamThirdParty__c tem um valor que não dispara a criação.'
     );
+  }
+
+  private static String getNonTaskCreatingOwnTeamValue() {
+    for (
+      Schema.PicklistEntry entry : ViabilityStudy__c.OwnTeamThirdParty__c.getDescribe()
+        .getPicklistValues()
+    ) {
+      String value = entry.getValue();
+      if (
+        String.isBlank(value) ||
+        value.equalsIgnoreCase('Integrador') ||
+        value.equalsIgnoreCase('Nao_cadastrado') ||
+        value.equalsIgnoreCase('Não cadastrado')
+      ) {
+        continue;
+      }
+      return value;
+    }
+
+    return null;
   }
 
   private static ViabilityStudyBO.TaskViabilityTableLine buildTableLine(

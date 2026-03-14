@@ -124,6 +124,41 @@ private class OpportunityBOHighCoverageTest {
     );
   }
 
+  private static Lead buildLeadForOpportunityCoverage(
+    String lastName,
+    String company
+  ) {
+    Lead leadRecord = new Lead(LastName = lastName, Company = company);
+
+    Map<String, Schema.SObjectField> leadFields = Schema.SObjectType.Lead.fields.getMap();
+    if (leadFields.containsKey('FalarComAgente__c')) {
+      leadRecord.put('FalarComAgente__c', true);
+    }
+
+    String nonTriggerStatus = getLeadStatusExcluding(
+      new Set<String>{ 'Novo', 'Qualified', 'Não Qualificado' }
+    );
+    if (!String.isBlank(nonTriggerStatus)) {
+      leadRecord.Status = nonTriggerStatus;
+    }
+
+    return leadRecord;
+  }
+
+  private static String getLeadStatusExcluding(Set<String> excludedStatuses) {
+    for (
+      Schema.PicklistEntry entry : Lead.Status.getDescribe().getPicklistValues()
+    ) {
+      String value = entry.getValue();
+      if (String.isBlank(value) || excludedStatuses.contains(value)) {
+        continue;
+      }
+      return value;
+    }
+
+    return null;
+  }
+
   @IsTest
   static void shouldMapOpportunityLineItemsAndManageKits() {
     OpportunityTriggerHandler.disableTrigger();
@@ -1065,11 +1100,11 @@ private class OpportunityBOHighCoverageTest {
 
   @IsTest
   static void shouldHandleLeadConversionPositiveBranches() {
-    Lead convertLead = new Lead(
-      LastName = 'Convert',
-      Company = 'Company Convert'
+    Lead convertLead = buildLeadForOpportunityCoverage(
+      'Convert',
+      'Company Convert'
     );
-    Lead lostLead = new Lead(LastName = 'Lost', Company = 'Company Lost');
+    Lead lostLead = buildLeadForOpportunityCoverage('Lost', 'Company Lost');
     insert new List<Lead>{ convertLead, lostLead };
 
     Account accountRecord = new Account(Name = 'Conta Lead HC');
@@ -1801,7 +1836,7 @@ private class OpportunityBOHighCoverageTest {
       StageName = OpportunityUtils.STATUS_NEGOCIACAO
     );
 
-    Lead leadRecord = new Lead(LastName = 'Lead Lost', Company = 'Lost Co');
+    Lead leadRecord = buildLeadForOpportunityCoverage('Lead Lost', 'Lost Co');
     insert leadRecord;
     Opportunity leadOpp = new Opportunity(
       Id = '006000000000031AAA',
