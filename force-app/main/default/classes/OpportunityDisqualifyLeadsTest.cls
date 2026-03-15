@@ -7,6 +7,7 @@
  **/
 @IsTest
 private class OpportunityDisqualifyLeadsTest {
+  private static Integer opportunitySequence = 0;
 
   // ─── Test Data Factory ─────────────────────────────────────────────────────
 
@@ -27,12 +28,18 @@ private class OpportunityDisqualifyLeadsTest {
     return l;
   }
 
-  private static Opportunity createOpportunity(Account acc, String stage, Id leadId) {
+  private static Opportunity createOpportunity(
+    Account acc,
+    String stage,
+    Id leadId
+  ) {
+    opportunitySequence++;
     Opportunity opp = new Opportunity(
       Name = 'Test Opp',
       AccountId = acc.Id,
       StageName = stage,
       CloseDate = Date.today().addDays(30),
+      IdVirtualOffice__c = 'TEST-OPP-' + String.valueOf(opportunitySequence),
       Lead__c = leadId != null ? String.valueOf(leadId) : null
     );
     insert opp;
@@ -46,7 +53,11 @@ private class OpportunityDisqualifyLeadsTest {
     Account acc = createAccount();
     Lead lead = createLead('Open - Not Contacted');
 
-    Opportunity oldOpp = createOpportunity(acc, OpportunityUtils.STATUS_PROPOSTA_ENVIADA, lead.Id);
+    Opportunity oldOpp = createOpportunity(
+      acc,
+      OpportunityUtils.STATUS_PROPOSTA_ENVIADA,
+      lead.Id
+    );
     Opportunity newOpp = oldOpp.clone(false, true, true, true);
     newOpp.StageName = OpportunityUtils.STATUS_FECHADO_PERDIDO;
 
@@ -71,7 +82,11 @@ private class OpportunityDisqualifyLeadsTest {
   static void givenOppWithoutLead_whenMovedToFechadoPerdido_thenNoLeadIsUpdated() {
     Account acc = createAccount();
 
-    Opportunity oldOpp = createOpportunity(acc, OpportunityUtils.STATUS_PROPOSTA_ENVIADA, null);
+    Opportunity oldOpp = createOpportunity(
+      acc,
+      OpportunityUtils.STATUS_PROPOSTA_ENVIADA,
+      null
+    );
     Opportunity newOpp = oldOpp.clone(false, true, true, true);
     newOpp.StageName = OpportunityUtils.STATUS_FECHADO_PERDIDO;
 
@@ -85,7 +100,11 @@ private class OpportunityDisqualifyLeadsTest {
     Test.stopTest();
 
     Integer leadCountAfter = [SELECT COUNT() FROM Lead];
-    Assert.areEqual(leadCountBefore, leadCountAfter, 'Nenhum Lead deve ser alterado');
+    Assert.areEqual(
+      leadCountBefore,
+      leadCountAfter,
+      'Nenhum Lead deve ser alterado'
+    );
   }
 
   // ─── Cenário 3: Bulk (200 registros) ────────────────────────────────────────
@@ -96,24 +115,29 @@ private class OpportunityDisqualifyLeadsTest {
 
     List<Lead> leads = new List<Lead>();
     for (Integer i = 0; i < 200; i++) {
-      leads.add(new Lead(
-        FirstName = 'Test',
-        LastName = 'Lead ' + i,
-        Company = 'Company ' + i,
-        Status = 'Open - Not Contacted'
-      ));
+      leads.add(
+        new Lead(
+          FirstName = 'Test',
+          LastName = 'Lead ' + i,
+          Company = 'Company ' + i,
+          Status = 'Open - Not Contacted'
+        )
+      );
     }
     insert leads;
 
     List<Opportunity> oldOpps = new List<Opportunity>();
     for (Integer i = 0; i < 200; i++) {
-      oldOpps.add(new Opportunity(
-        Name = 'Bulk Opp ' + i,
-        AccountId = acc.Id,
-        StageName = OpportunityUtils.STATUS_PROPOSTA_ENVIADA,
-        CloseDate = Date.today().addDays(30),
-        Lead__c = String.valueOf(leads[i].Id)
-      ));
+      oldOpps.add(
+        new Opportunity(
+          Name = 'Bulk Opp ' + i,
+          AccountId = acc.Id,
+          StageName = OpportunityUtils.STATUS_PROPOSTA_ENVIADA,
+          CloseDate = Date.today().addDays(30),
+          IdVirtualOffice__c = 'BULK-OPP-' + i,
+          Lead__c = String.valueOf(leads[i].Id)
+        )
+      );
     }
     insert oldOpps;
 
@@ -133,10 +157,15 @@ private class OpportunityDisqualifyLeadsTest {
     Integer disqualifiedCount = [
       SELECT COUNT()
       FROM Lead
-      WHERE Status = :OpportunityUtils.LEAD_STATUS_NAO_QUALIFICADO
+      WHERE
+        Status = :OpportunityUtils.LEAD_STATUS_NAO_QUALIFICADO
         AND Id IN :new Map<Id, Lead>(leads).keySet()
     ];
-    Assert.areEqual(200, disqualifiedCount, 'Todos os 200 Leads devem ser desqualificados');
+    Assert.areEqual(
+      200,
+      disqualifiedCount,
+      'Todos os 200 Leads devem ser desqualificados'
+    );
   }
 
   // ─── Cenário 4: Stage já era Fechado Perdido (sem transição) ────────────────
@@ -147,7 +176,11 @@ private class OpportunityDisqualifyLeadsTest {
     Lead lead = createLead('Open - Not Contacted');
 
     // Opp já está em Fechado Perdido desde o insert
-    Opportunity oldOpp = createOpportunity(acc, OpportunityUtils.STATUS_FECHADO_PERDIDO, lead.Id);
+    Opportunity oldOpp = createOpportunity(
+      acc,
+      OpportunityUtils.STATUS_FECHADO_PERDIDO,
+      lead.Id
+    );
     Opportunity newOpp = oldOpp.clone(false, true, true, true);
     newOpp.StageName = OpportunityUtils.STATUS_FECHADO_PERDIDO;
 
@@ -173,7 +206,11 @@ private class OpportunityDisqualifyLeadsTest {
     Account acc = createAccount();
     Lead lead = createLead(OpportunityUtils.LEAD_STATUS_NAO_QUALIFICADO);
 
-    Opportunity oldOpp = createOpportunity(acc, OpportunityUtils.STATUS_PROPOSTA_ENVIADA, lead.Id);
+    Opportunity oldOpp = createOpportunity(
+      acc,
+      OpportunityUtils.STATUS_PROPOSTA_ENVIADA,
+      lead.Id
+    );
     Opportunity newOpp = oldOpp.clone(false, true, true, true);
     newOpp.StageName = OpportunityUtils.STATUS_FECHADO_PERDIDO;
 
@@ -201,12 +238,18 @@ private class OpportunityDisqualifyLeadsTest {
     Boolean exceptionThrown = false;
     try {
       OpportunityBO.disqualifyLinkedLeads(null, null);
-      OpportunityBO.disqualifyLinkedLeads(new List<Opportunity>(), new Map<Id, Opportunity>());
+      OpportunityBO.disqualifyLinkedLeads(
+        new List<Opportunity>(),
+        new Map<Id, Opportunity>()
+      );
     } catch (Exception e) {
       exceptionThrown = true;
     }
     Test.stopTest();
 
-    Assert.isFalse(exceptionThrown, 'Nenhuma exceção deve ser lançada para inputs nulos/vazios');
+    Assert.isFalse(
+      exceptionThrown,
+      'Nenhuma exceção deve ser lançada para inputs nulos/vazios'
+    );
   }
 }
