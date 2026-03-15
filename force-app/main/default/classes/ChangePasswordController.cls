@@ -1,4 +1,12 @@
 /**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ChangePasswordControllerTest
+ **/
+/**
  * An apex page controller that exposes the change password functionality
  */
 public with sharing class ChangePasswordController {

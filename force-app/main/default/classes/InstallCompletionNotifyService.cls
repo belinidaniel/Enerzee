@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : InstalacaoTriggerHandlerTest, InstallCompletionNotifyServiceTest
+ **/
 public with sharing class InstallCompletionNotifyService {
   private static final String CONFIG_DEVELOPER_NAME = 'INSTALLATION_COMPLETION_NOTIFY';
 

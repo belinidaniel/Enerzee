@@ -42,25 +42,11 @@ jobs:
       - name: Get changed files
         id: changed
         run: |
-          CHANGED=$(git diff --name-only HEAD~1..HEAD | grep -E 'force-app/' || true)
-          echo "Changed files in this merge:"
-          echo "$CHANGED"
-
-          APEX=$(echo "$CHANGED" | grep '\.cls$' | grep -v 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
-          TESTS=$(echo "$CHANGED" | grep 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
-
-          for cls in $APEX; do
-            test_file="force-app/main/default/classes/${cls}Test.cls"
-            if [ -f "$test_file" ]; then
-              TESTS="$TESTS ${cls}Test"
-            fi
-          done
-
-          TESTS=$(echo "$TESTS" | tr ' ' '\n' | sort -u | tr '\n' ' ' | xargs)
-          APEX=$(echo "$APEX" | tr '\n' ' ' | xargs)
-          echo "apex_classes=$APEX" >> $GITHUB_OUTPUT
-          echo "test_classes=$TESTS" >> $GITHUB_OUTPUT
-          echo "has_changes=$([ -n "$CHANGED" ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          python3 scripts/apex_test_catalog.py collect-tests \
+            --diff-range HEAD~1..HEAD \
+            --metadata-pattern '^force-app/' \
+            --github-output "$GITHUB_OUTPUT" \
+            --strict-changed-prod
 
       # ─── Skip if no metadata changed ─────────────────────────────────────────
       - name: Skip if no metadata changes
@@ -87,12 +73,15 @@ jobs:
         if: steps.changed.outputs.has_changes == 'true'
         id: deploy
         run: |
-          TEST_LEVEL="RunLocalTests"
-          TEST_ARGS=""
+          set -euo pipefail
 
-          if [ -n "${{ steps.changed.outputs.test_classes }}" ]; then
-            TEST_LEVEL="RunSpecifiedTests"
-            TEST_ARGS="--tests ${{ steps.changed.outputs.test_classes }}"
+          TEST_LEVEL="${{ steps.changed.outputs.test_level }}"
+          TEST_ARGS=()
+
+          if [ "$TEST_LEVEL" = "RunSpecifiedTests" ] && [ -n "${{ steps.changed.outputs.test_classes }}" ]; then
+            for test_class in ${{ steps.changed.outputs.test_classes }}; do
+              TEST_ARGS+=(--tests "$test_class")
+            done
           fi
 
           DESTRUCTIVE_ARG=""
@@ -107,7 +96,7 @@ jobs:
             --manifest package/package.xml \
             --target-org enerzee-UAT \
             --test-level $TEST_LEVEL \
-            $TEST_ARGS \
+            "${TEST_ARGS[@]}" \
             $DESTRUCTIVE_ARG \
             --json > /tmp/deploy_result.json 2>&1
 

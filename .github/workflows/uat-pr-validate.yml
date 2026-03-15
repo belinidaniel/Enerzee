@@ -45,25 +45,11 @@ jobs:
       - name: Get changed files
         id: changed
         run: |
-          CHANGED=$(git diff --name-only origin/UAT...HEAD | grep -E '\.(cls|trigger|lwc|flow-meta\.xml|object-meta\.xml|field-meta\.xml|permissionset-meta\.xml|flexipage-meta\.xml|labels-meta\.xml)' || true)
-          echo "Changed metadata files:"
-          echo "$CHANGED"
-
-          APEX=$(git diff --name-only origin/UAT...HEAD | grep '\.cls$' | grep -v 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
-          TESTS=$(git diff --name-only origin/UAT...HEAD | grep 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
-
-          for cls in $APEX; do
-            test_file="force-app/main/default/classes/${cls}Test.cls"
-            if [ -f "$test_file" ]; then
-              TESTS="$TESTS ${cls}Test"
-            fi
-          done
-
-          TESTS=$(echo "$TESTS" | tr ' ' '\n' | sort -u | tr '\n' ' ' | xargs)
-          APEX=$(echo "$APEX" | tr '\n' ' ' | xargs)
-          echo "apex_classes=$APEX" >> $GITHUB_OUTPUT
-          echo "test_classes=$TESTS" >> $GITHUB_OUTPUT
-          echo "has_changes=$([ -n "$CHANGED" ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          python3 scripts/apex_test_catalog.py collect-tests \
+            --diff-range origin/UAT...HEAD \
+            --metadata-pattern '\.(cls|trigger|lwc|flow-meta\.xml|object-meta\.xml|field-meta\.xml|permissionset-meta\.xml|flexipage-meta\.xml|labels-meta\.xml)' \
+            --github-output "$GITHUB_OUTPUT" \
+            --strict-changed-prod
 
       # ─── Generate delta package (only PR changes) ────────────────────────────
       - name: Generate delta package
@@ -109,10 +95,9 @@ jobs:
         run: |
           set -euo pipefail
 
-          TEST_LEVEL="RunLocalTests"
+          TEST_LEVEL="${{ steps.changed.outputs.test_level }}"
           TEST_ARGS=()
-          if [ -n "${{ steps.changed.outputs.test_classes }}" ]; then
-            TEST_LEVEL="RunSpecifiedTests"
+          if [ "$TEST_LEVEL" = "RunSpecifiedTests" ] && [ -n "${{ steps.changed.outputs.test_classes }}" ]; then
             for test_class in ${{ steps.changed.outputs.test_classes }}; do
               TEST_ARGS+=(--tests "$test_class")
             done

@@ -1,4 +1,12 @@
 /**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : SiteLoginControllerTest
+ **/
+/**
  * An apex page controller that exposes the site login functionality
  */
 global with sharing class SiteLoginController {

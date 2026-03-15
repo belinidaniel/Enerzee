@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : IntegracaoVOPlanoTest, VOIntegrationServiceTest
+ **/
 public with sharing class VOClient {
   private static final Integer DEFAULT_TIMEOUT_MS = 120000;
   private static Map<String, Integrador__mdt> endpointByDeveloperName = new Map<String, Integrador__mdt>();

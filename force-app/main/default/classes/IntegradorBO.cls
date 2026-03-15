@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : IntegradorBOTest
+ **/
 public with sharing class IntegradorBO {
   public static void sendIntegradorToSAP(List<Integradores__c> integradores) {
     Set<Id> integradorIds = new Set<Id>();

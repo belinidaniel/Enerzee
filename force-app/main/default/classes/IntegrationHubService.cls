@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : IntegrationHubServiceTest
+ **/
 public with sharing class IntegrationHubService {
   private static final String NIVELLO_ENDPOINT_HINT = 'geradorproposta';
   public static final String PROVIDER_NIVELLO = 'NIVELLO';

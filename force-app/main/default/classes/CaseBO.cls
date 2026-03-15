@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : CaseBOTest, CaseTriggerTest
+ **/
 public with sharing class CaseBO {
   public static void CreateAttachments(List<Case> newRecords) {
     List<Attachment> attachments = new List<Attachment>();

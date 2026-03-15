@@ -1,9 +1,10 @@
 /**
- * @description Test class for OpportunityBO.disqualifyLinkedLeads
- *              Covers all acceptance criteria scenarios defined in the requirement.
- * @author      Daniel Belini
- * @last modified on  : 03-13-2026
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
  **/
 @IsTest
 private class OpportunityDisqualifyLeadsTest {

@@ -2,8 +2,9 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-10-2026
+ * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
+ * @test              : IntegracaoSAPTest
  **/
 public without sharing class IntegracaoSAPRepresentante {
   @future(callout=true)

@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : OpportunityControllerTest
+ **/
 public without sharing class OpportunityController {
   @AuraEnabled
   public static void updateOpportunity(

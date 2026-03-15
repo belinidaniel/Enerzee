@@ -1,9 +1,10 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 01-05-2026
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : HelpDeskCaseServiceTest, ModuloHelpDeskCaseControllerTest
  **/
 public without sharing class HelpDeskCaseService {
   public class DefaultEntitiesDTO {

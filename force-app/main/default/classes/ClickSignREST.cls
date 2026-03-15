@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ClickSignRESTTest
+ **/
 @RestResource(urlMapping='/clicksign-update/*')
 global without sharing class ClickSignREST {
   private static final String SECRET_KEY = '58a75003d36ccb8acfb9482436084784';

@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : MessagingSessionHandlerTest
+ **/
 global with sharing class MessagingSessionHandler {
   @InvocableMethod(label='Call Conversation Update')
   global static void callConversionUpdate(List<String> messagingId) {

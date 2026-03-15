@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : StatusEnumMapTest, StatusEnumTest
+ **/
 public class StatusEnum {
   public static Map<String, Integer> PipelineEnum = new Map<String, Integer>{
     'ProspectCriado' => 1,
