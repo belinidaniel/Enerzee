@@ -525,6 +525,7 @@ def collect_tests(
     selected_tests: set[str] = set()
     changed_prod_classes: list[str] = []
     missing_headers: list[str] = []
+    explicit_unmapped: list[str] = []
     invalid_test_references: list[str] = []
     runnable_tests = {
         name for name, class_info in infos.items() if class_info.is_runnable_test
@@ -542,7 +543,11 @@ def collect_tests(
             continue
 
         changed_prod_classes.append(class_name)
-        header_tests = split_header_test_value(class_info.header_fields.get("test", ""))
+        raw_test_value = class_info.header_fields.get("test", "").strip()
+        header_tests = split_header_test_value(raw_test_value)
+        if raw_test_value == NO_TESTS_MAPPED:
+            explicit_unmapped.append(class_name)
+            continue
         if not header_tests and class_name in HEADER_SYNC_SKIP:
             header_tests = mapping.get(class_name, [])
         if not header_tests:
@@ -575,6 +580,8 @@ def collect_tests(
     if relevant_changes:
         if strict_errors:
             selection_reason = "invalid_test_header"
+        elif explicit_unmapped:
+            selection_reason = "fallback_local_tests_unmapped"
         elif selected_tests:
             test_level = "RunSpecifiedTests"
             selection_reason = "header_mapping"
@@ -588,6 +595,7 @@ def collect_tests(
         "test_level": test_level,
         "selection_reason": selection_reason,
         "missing_test_mappings": " ".join(sorted(missing_headers)),
+        "explicit_no_test_mappings": " ".join(sorted(explicit_unmapped)),
         "invalid_test_headers": " | ".join(sorted(invalid_test_references)),
         "changed_files_count": str(len(relevant_changes)),
     }
