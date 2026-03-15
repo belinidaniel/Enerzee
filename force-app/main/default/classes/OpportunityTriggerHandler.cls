@@ -7,8 +7,9 @@
  * @test              : AdditionalCoverageNewClassesTest, KitInstalacaoBOTest, OpportunityBOCoverageTest,
  *                       OpportunityBOHighCoverageTest, OpportunityBOPaymentReminderTaskTest,
  *                       OpportunityDiscountRequestControllerTest, OpportunityTriggerHandlerToggleTest,
- *                       OpportunityTriggerTest, ProjetoTriggerTest, ProposalPendingControllerTest,
- *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest, ServiceAppointmentBOTest,
+ *                       OpportunityTriggerTest, OpportunityUtilsTest, ProjetoBOCoverageTest, ProjetoTriggerTest,
+ *                       ProposalPendingControllerTest, ProposalPendingResponseRestTest,
+ *                       ProposalPendingStatusQueueableTest, ServiceAppointmentBOTest,
  *                       WorkDeliveryReportPdfControllerTest
  **/
 public class OpportunityTriggerHandler extends TriggerHandler {

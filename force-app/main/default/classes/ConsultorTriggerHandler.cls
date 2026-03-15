@@ -4,8 +4,8 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : ConsultorTriggerHandlerTest, ConsultorTriggerTest, IntegracaoGeradorPropostasTest,
- *                       LeadIntegrationServiceTest
+ * @test              : ConsultorTriggerHandlerTest, ConsultorTriggerTest, IntegracaoGeradorPropostasTest, LeadBOTest,
+ *                       LeadIntegrationBatchTest, LeadIntegrationServiceTest, ProjetoBOCoverageTest
  **/
 public class ConsultorTriggerHandler extends TriggerHandler {
   public ConsultorTriggerHandler() {

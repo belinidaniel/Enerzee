@@ -9,8 +9,9 @@
  *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
  *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentReminderTaskTest,
  *                       OpportunityDiscountRequestControllerTest, OpportunityDisqualifyLeadsTest,
- *                       OpportunityPDFHelperTest, OpportunityTriggerTest, PDFControllerExtensionExtraTest,
- *                       ProjetoTriggerTest, ProposalConsoleControllerTest, TaskBOTest, UtilsTest
+ *                       OpportunityPDFHelperTest, OpportunityTriggerTest, OpportunityUtilsTest,
+ *                       PDFControllerExtensionExtraTest, ProjetoTriggerTest, ProposalConsoleControllerTest, TaskBOTest,
+ *                       UtilsTest
  **/
 public class OpportunityUtils {
   //	 Status

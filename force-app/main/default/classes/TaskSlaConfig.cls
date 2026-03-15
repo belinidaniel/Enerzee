@@ -4,8 +4,8 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : TaskSlaCoreTest, TaskSlaNotificationServiceEmailLimitTest, TaskSlaNotificationServiceTest,
- *                       TaskTemplateFlowTest
+ * @test              : TaskSlaCoreTest, TaskSlaDailySummaryServiceTest, TaskSlaNotificationServiceEmailLimitTest,
+ *                       TaskSlaNotificationServiceTest, TaskTemplateFlowTest
  **/
 public with sharing class TaskSlaConfig {
   public static final String TYPE_BEFORE_DUE = 'TASK_BEFORE_DUE';

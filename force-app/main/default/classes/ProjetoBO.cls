@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : ProjetoBOTest, ProjetoTriggerTest, TaskBOTest, TaskTemplateFlowTest
+ * @test              : ProjetoBOCoverageTest, ProjetoBOTest, ProjetoTriggerTest, TaskBOTest, TaskTemplateFlowTest
  **/
 public with sharing class ProjetoBO {
   public static Map<String, User> userEmailToUser = new Map<String, User>();

@@ -4,8 +4,8 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : IntegracaoGeradorPropostasTest, IntegracaoVOConsultorPreCadastroTest,
- *                       LeadIntegrationServiceTest, LeadTriggerTest
+ * @test              : IntegracaoGeradorPropostasTest, IntegracaoVOConsultorPreCadastroTest, LeadBOTest,
+ *                       LeadIntegrationBatchTest, LeadIntegrationServiceTest, LeadTriggerTest
  **/
 public class LeadTriggerHandler extends TriggerHandler {
   public LeadTriggerHandler() {

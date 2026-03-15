@@ -16,75 +16,66 @@ private class MessagingSessionSLABatchTest {
       return;
     }
 
-    Id channelId = resolveMessagingChannelId();
-    MessagingEndUser endUser = createEndUser(channelId);
+    MessagingSessionSLABatch.businessHoursOverride = true;
+    MessagingSessionSLABatch.notificationTypeIdOverride = UserInfo.getUserId();
+    MessagingSessionSLABatch.skipUpdateForTest = true;
     Group queue = createQueueWithMember(UserInfo.getUserId());
 
-    MessagingSession insertedSession = createSession(
-      channelId,
-      endUser.Id,
+    MessagingSession scopeRecord = buildSessionStub(
       queue.Id,
-      resolveQueueN1PicklistValue()
+      System.now().addMinutes(-120),
+      1,
+      null,
+      null
     );
-    if (insertedSession == null) {
-      return;
+    String queueN1Value = resolveQueueN1PicklistValue();
+    if (String.isNotBlank(queueN1Value)) {
+      scopeRecord.put('QueueN1__c', queueN1Value);
     }
-
-    MessagingSession scopeRecord = loadSessionForBatch(insertedSession.Id);
 
     Test.startTest();
     new MessagingSessionSLABatch()
       .execute(null, new List<MessagingSession>{ scopeRecord });
     Test.stopTest();
 
-    MessagingSession updatedSession = [
-      SELECT NotifyN1__c
-      FROM MessagingSession
-      WHERE Id = :insertedSession.Id
-    ];
     System.assertEquals(
-      shouldMarkStage1AsNotified(),
-      updatedSession.NotifyN1__c,
+      true,
+      scopeRecord.NotifyN1__c,
       'Queue-owner notification depends on business hours and CustomNotificationType "Padrao".'
     );
   }
 
   @IsTest
   static void shouldFallbackToOwnerWhenQueueFieldIsBlank() {
-    Id channelId = resolveMessagingChannelId();
-    MessagingEndUser endUser = createEndUser(channelId);
+    MessagingSessionSLABatch.businessHoursOverride = true;
+    MessagingSessionSLABatch.notificationTypeIdOverride = UserInfo.getUserId();
+    MessagingSessionSLABatch.skipUpdateForTest = true;
 
-    MessagingSession insertedSession = createSession(
-      channelId,
-      endUser.Id,
+    MessagingSession scopeRecord = buildSessionStub(
       UserInfo.getUserId(),
+      System.now().addMinutes(-120),
+      1,
+      null,
       null
     );
-    if (insertedSession == null) {
-      return;
-    }
-
-    MessagingSession scopeRecord = loadSessionForBatch(insertedSession.Id);
 
     Test.startTest();
     new MessagingSessionSLABatch()
       .execute(null, new List<MessagingSession>{ scopeRecord });
     Test.stopTest();
 
-    MessagingSession updatedSession = [
-      SELECT NotifyN1__c
-      FROM MessagingSession
-      WHERE Id = :insertedSession.Id
-    ];
     System.assertEquals(
-      shouldMarkStage1AsNotified(),
-      updatedSession.NotifyN1__c,
+      true,
+      scopeRecord.NotifyN1__c,
       'Direct owner notification depends on business hours and CustomNotificationType "Padrao".'
     );
   }
 
   @IsTest
   static void shouldCoverNoOpBranchesAndSchedulerHelpers() {
+    MessagingSessionSLABatch.businessHoursOverride = false;
+    MessagingSessionSLABatch.notificationTypeIdOverride = null;
+    MessagingSessionSLABatch.skipUpdateForTest = true;
     MessagingSessionSLABatch batchInstance = new MessagingSessionSLABatch();
 
     Test.startTest();
@@ -106,6 +97,129 @@ private class MessagingSessionSLABatchTest {
       false,
       MessagingSessionSLABatch.isWithinBusinessHours(null),
       'Momento nulo deve retornar false.'
+    );
+  }
+
+  @IsTest
+  static void shouldCoverRoleBasedAndFutureSessionBranches() {
+    MessagingSessionSLABatch.businessHoursOverride = true;
+    MessagingSessionSLABatch.notificationTypeIdOverride = UserInfo.getUserId();
+    MessagingSessionSLABatch.skipUpdateForTest = true;
+
+    MessagingSession stage2Session = buildSessionStub(
+      UserInfo.getUserId(),
+      System.now().addMinutes(-120),
+      null,
+      1,
+      null
+    );
+    stage2Session.QueueSupervisorRole__c = 'Papel Inexistente';
+
+    MessagingSession futureSession = buildSessionStub(
+      UserInfo.getUserId(),
+      System.now().addMinutes(30),
+      1,
+      null,
+      null
+    );
+
+    Test.startTest();
+    new MessagingSessionSLABatch()
+      .execute(
+        null,
+        new List<MessagingSession>{ stage2Session, futureSession }
+      );
+    Test.stopTest();
+
+    System.assertEquals(
+      false,
+      stage2Session.NotifyN2__c,
+      'Sem destinatarios para o papel, o N2 nao deve ser marcado.'
+    );
+    System.assertEquals(
+      false,
+      futureSession.NotifyN1__c,
+      'Sessao no futuro deve ser ignorada.'
+    );
+  }
+
+  @IsTest
+  static void shouldNotifyRoleBasedStagesWhenMatchingUsersExist() {
+    MessagingSessionSLABatch.businessHoursOverride = true;
+    MessagingSessionSLABatch.notificationTypeIdOverride = UserInfo.getUserId();
+    MessagingSessionSLABatch.skipUpdateForTest = true;
+
+    List<User> usersWithRole = [
+      SELECT Id, UserRole.Name
+      FROM User
+      WHERE IsActive = TRUE AND UserRole.Name != NULL
+      LIMIT 1
+    ];
+    if (usersWithRole.isEmpty()) {
+      return;
+    }
+
+    MessagingSession stage2Session = buildSessionStub(
+      UserInfo.getUserId(),
+      System.now().addMinutes(-120),
+      null,
+      1,
+      null
+    );
+    stage2Session.QueueSupervisorRole__c = usersWithRole[0].UserRole.Name;
+
+    MessagingSession stage3Session = buildSessionStub(
+      UserInfo.getUserId(),
+      System.now().addMinutes(-120),
+      null,
+      null,
+      1
+    );
+    stage3Session.QueueCoordinatorRole__c = usersWithRole[0].UserRole.Name;
+
+    Test.startTest();
+    new MessagingSessionSLABatch()
+      .execute(
+        null,
+        new List<MessagingSession>{ stage2Session, stage3Session }
+      );
+    Test.stopTest();
+
+    System.assertEquals(
+      true,
+      stage2Session.NotifyN2__c,
+      'Quando existir usuario ativo para o papel, o N2 deve ser marcado.'
+    );
+    System.assertEquals(
+      true,
+      stage3Session.NotifyN3__c,
+      'Quando existir usuario ativo para o papel, o N3 deve ser marcado.'
+    );
+  }
+
+  private static MessagingSession buildSessionStub(
+    Id ownerId,
+    Datetime ownerAssignmentDate,
+    Decimal minuteSlaN1,
+    Decimal minuteSlaN2,
+    Decimal minuteSlaN3
+  ) {
+    String keyPrefix = MessagingSession.SObjectType.getDescribe()
+      .getKeyPrefix();
+    String uniqueChunk = String.valueOf(Math.abs(Crypto.getRandomInteger()))
+      .leftPad(15, '0')
+      .substring(0, 15);
+    String fakeId = keyPrefix + uniqueChunk;
+    return new MessagingSession(
+      Id = fakeId,
+      OwnerId = ownerId,
+      OwnerAssignmentDate__c = ownerAssignmentDate,
+      MinuteSLAN1__c = minuteSlaN1,
+      MinuteSLAN2__c = minuteSlaN2,
+      MinuteSLAN3__c = minuteSlaN3,
+      NotifyN1__c = false,
+      NotifyN2__c = false,
+      NotifyN3__c = false
     );
   }
 

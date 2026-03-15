@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : UtilsTest
+ * @test              : OpportunityUtilsTest, UtilsTest
  **/
 public without sharing class Utils {
   public class LogDTO {

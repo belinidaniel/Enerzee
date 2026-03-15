@@ -31,6 +31,7 @@ public without sharing class HelpDeskAuthService {
     sendAccessCodeEmail(email, code);
   }
 
+  @TestVisible
   private static String generateAccessCode() {
     Long seed = Long.valueOf(String.valueOf(Crypto.getRandomInteger()));
     if (seed < 0) {
@@ -40,6 +41,7 @@ public without sharing class HelpDeskAuthService {
     return String.valueOf(randomValue).leftPad(6, '0');
   }
 
+  @TestVisible
   private static void sendAccessCodeEmail(String email, String code) {
     Messaging.SingleEmailMessage msg = new Messaging.SingleEmailMessage();
     msg.setToAddresses(new List<String>{ email });
@@ -74,6 +76,7 @@ public without sharing class HelpDeskAuthService {
     }
   }
 
+  @TestVisible
   private static Id resolveOrgWideEmailAddressId() {
     try {
       List<OrgWideEmailAddress> allowAllProfiles = [

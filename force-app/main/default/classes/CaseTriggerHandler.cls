@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : CaseTriggerTest
+ * @test              : CaseBOTest, CaseTriggerTest, ProjetoBOCoverageTest
  **/
 public class CaseTriggerHandler extends TriggerHandler {
   public CaseTriggerHandler() {

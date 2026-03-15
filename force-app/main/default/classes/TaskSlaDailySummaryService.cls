@@ -31,7 +31,7 @@ public with sharing class TaskSlaDailySummaryService {
   public static void runOwnerOpenSummary() {
     Date today = Date.today();
     Date tomorrow = today.addDays(1);
-    sendManagerSummary(today, tomorrow, false);
+    sendOwnerOpenSummary(today, tomorrow);
   }
 
   public static void sendPreviewByRole(

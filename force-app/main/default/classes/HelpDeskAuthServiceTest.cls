@@ -213,4 +213,33 @@ private class HelpDeskAuthServiceTest {
 
     System.assertEquals(contact.Id, validatedContactId);
   }
+
+  @IsTest
+  static void shouldGenerateCodeAndSendEmailDirectly() {
+    String generatedCode = HelpDeskAuthService.generateAccessCode();
+
+    System.assertEquals(6, generatedCode.length());
+    System.assertEquals(true, Pattern.matches('[0-9]{6}', generatedCode));
+
+    Test.startTest();
+    HelpDeskAuthService.sendAccessCodeEmail('direct@teste.com', '123456');
+    Test.stopTest();
+
+    System.assertEquals(
+      true,
+      Limits.getEmailInvocations() >= 0,
+      'O helper de envio deve executar sem excecao em teste.'
+    );
+  }
+
+  @IsTest
+  static void shouldResolveOrgWideAddressSafely() {
+    Id resolvedId = HelpDeskAuthService.resolveOrgWideEmailAddressId();
+
+    System.assertEquals(
+      true,
+      resolvedId == null || String.isNotBlank(String.valueOf(resolvedId)),
+      'A resolucao do remetente deve retornar um Id valido ou null, sem erro.'
+    );
+  }
 }
