@@ -9,7 +9,6 @@
 @IsTest
 private class ClickSignInboundDTOTest {
   @IsTest
-  @IsTest
   static void shouldInstantiateAllNestedTypes() {
     ClickSignInboundDTO dto = new ClickSignInboundDTO();
     dto.event = new ClickSignInboundDTO.Event();
