@@ -20,6 +20,7 @@
         <members>ProjetoStatusIntegrationService</members>
         <members>ProjetoStatusIntegrationServiceTest</members>
         <members>ProjetoTriggerTest</members>
+        <members>RestLeadConvertTest</members>
         <members>TaskBO</members>
         <members>TaskBOTest</members>
         <members>TaskTriggerTest</members>
@@ -27,7 +28,7 @@
         <members>TestFactoryDefaults</members>
         <members>ViabilityStudyBO</members>
         <members>ViabilityStudyBOTest</members>
-        <members>WorkDeliveryReportServiceTest</members>
+        <members>RestLeadConvertTest</members>
         <name>ApexClass</name>
     </types>
     <version>64.0</version>
