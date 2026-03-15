@@ -251,9 +251,10 @@ private class TaskBOTest {
     Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
       new Parceiro__c(
         CapaProposta__c = ((ProposalCover__c) TestFactory.createSObject(
-          new ProposalCover__c(),
-          true
-        )).Id,
+            new ProposalCover__c(),
+            true
+          ))
+          .Id,
         Produto__c = 'Solar'
       ),
       true
@@ -318,9 +319,10 @@ private class TaskBOTest {
     Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
       new Parceiro__c(
         CapaProposta__c = ((ProposalCover__c) TestFactory.createSObject(
-          new ProposalCover__c(),
-          true
-        )).Id,
+            new ProposalCover__c(),
+            true
+          ))
+          .Id,
         Produto__c = 'Solar'
       ),
       true
@@ -378,6 +380,135 @@ private class TaskBOTest {
       false,
       configTask.IgnorarValidacao__c,
       'Task de config (subject mapeado) não deve ter IgnorarValidacao__c alterado para true'
+    );
+  }
+
+  // Bug fix: ProjetoBO.getTaskTableFromStaticResource filtrava todas as linhas do CSV de viabilidade
+  // porque o campo TipoProjetoObra é blank naquele CSV. Agora loadNormalizedViabilitySubjects usa
+  // ViabilityStudyBO.getTaskViabilityTableFromStaticResource e os subjects são carregados corretamente.
+  @IsTest
+  static void markManualTasks_DoesNotOverride_ForViabilityConfiguredSubject() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(
+        CapaProposta__c = ((ProposalCover__c) TestFactory.createSObject(
+            new ProposalCover__c(),
+            true
+          ))
+          .Id,
+        Produto__c = 'Solar'
+      ),
+      true
+    );
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        StageName = OpportunityUtils.STATUS_PARECER_DE_ACESSO,
+        CloseDate = System.today(),
+        Name = 'Opp Viability Config Subject',
+        Parceiro__c = parceiro.Id,
+        RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+          .get('Solar')
+          .getRecordTypeId()
+      ),
+      true
+    );
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+
+    // 'AGENDAMENTO DE VISITA' existe em TabelaTarefasViabilidade.csv → deve permanecer false
+    ViabilityStudyBO.TaskViabilityTable mockTable = new ViabilityStudyBO.TaskViabilityTable();
+    mockTable.tableLines = new List<ViabilityStudyBO.TaskViabilityTableLine>();
+    ViabilityStudyBO.TaskViabilityTableLine line = new ViabilityStudyBO.TaskViabilityTableLine();
+    line.Assunto = 'AGENDAMENTO DE VISITA';
+    line.IgnorarValidacao = false;
+    mockTable.tableLines.add(line);
+    ViabilityStudyBO.taskTableOverride = mockTable;
+
+    Task configTask = new Task(
+      Subject = 'AGENDAMENTO DE VISITA',
+      WhatId = viability.Id,
+      OwnerId = UserInfo.getUserId(),
+      Status = TaskUtils.STATUS_OPEN,
+      ActivityDate = System.today().addDays(1),
+      IgnorarValidacao__c = false
+    );
+
+    Test.startTest();
+    TaskBO.markManualTasksAsIgnoreValidation(new List<Task>{ configTask });
+    Test.stopTest();
+
+    Assert.areEqual(
+      false,
+      configTask.IgnorarValidacao__c,
+      'Task de config de viabilidade (subject mapeado) não deve ter IgnorarValidacao__c alterado para true'
+    );
+  }
+
+  @IsTest
+  static void markManualTasks_SetsIgnorarValidacao_ForViabilityUnknownSubject() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(
+        CapaProposta__c = ((ProposalCover__c) TestFactory.createSObject(
+            new ProposalCover__c(),
+            true
+          ))
+          .Id,
+        Produto__c = 'Solar'
+      ),
+      true
+    );
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        StageName = OpportunityUtils.STATUS_PARECER_DE_ACESSO,
+        CloseDate = System.today(),
+        Name = 'Opp Viability Manual',
+        Parceiro__c = parceiro.Id,
+        RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+          .get('Solar')
+          .getRecordTypeId()
+      ),
+      true
+    );
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+
+    ViabilityStudyBO.TaskViabilityTable mockTable = new ViabilityStudyBO.TaskViabilityTable();
+    mockTable.tableLines = new List<ViabilityStudyBO.TaskViabilityTableLine>();
+    ViabilityStudyBO.TaskViabilityTableLine configLine = new ViabilityStudyBO.TaskViabilityTableLine();
+    configLine.Assunto = 'AGENDAMENTO DE VISITA';
+    configLine.IgnorarValidacao = false;
+    mockTable.tableLines.add(configLine);
+    ViabilityStudyBO.taskTableOverride = mockTable;
+
+    Task manualTask = new Task(
+      Subject = 'Reunião avulsa de viabilidade',
+      WhatId = viability.Id,
+      OwnerId = UserInfo.getUserId(),
+      Status = TaskUtils.STATUS_OPEN,
+      ActivityDate = System.today().addDays(2)
+    );
+
+    Test.startTest();
+    TaskBO.markManualTasksAsIgnoreValidation(new List<Task>{ manualTask });
+    Test.stopTest();
+
+    Assert.areEqual(
+      true,
+      manualTask.IgnorarValidacao__c,
+      'Task avulsa de viabilidade (subject não mapeado) deve ter IgnorarValidacao__c = true'
     );
   }
 

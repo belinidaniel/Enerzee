@@ -186,12 +186,23 @@ global with sharing class OpportunityEntryRest {
 
       // Popular Map de todos os Produtos
       for (Product2 product : [
-        SELECT Id, ProductCode
+        SELECT Id, ProductCode, Id_Externo__c, ExternalId__c
         FROM Product2
-        WHERE ProductCode IN :productExternalIds
+        WHERE
+          ProductCode IN :productExternalIds
+          OR Id_Externo__c IN :productExternalIds
+          OR ExternalId__c IN :productExternalIds
         WITH SECURITY_ENFORCED
       ]) {
-        externalIdToProductId.put(product.ProductCode, product.Id);
+        if (String.isNotBlank(product.ProductCode)) {
+          externalIdToProductId.put(product.ProductCode, product.Id);
+        }
+        if (String.isNotBlank(product.Id_Externo__c)) {
+          externalIdToProductId.put(product.Id_Externo__c, product.Id);
+        }
+        if (String.isNotBlank(product.ExternalId__c)) {
+          externalIdToProductId.put(product.ExternalId__c, product.Id);
+        }
       }
 
       // Oportunidades da Integração, Map linkando com Oportunidades inseridas, e Map de todos os Produtos
@@ -299,12 +310,23 @@ global with sharing class OpportunityEntryRest {
     }
     Map<String, Id> productCodeToId = new Map<String, Id>();
     for (Product2 p : [
-      SELECT Id, Id_Externo__c
+      SELECT Id, ProductCode, Id_Externo__c, ExternalId__c
       FROM Product2
-      WHERE Id_Externo__c IN :productCodes
+      WHERE
+        Id_Externo__c IN :productCodes
+        OR ProductCode IN :productCodes
+        OR ExternalId__c IN :productCodes
       WITH SECURITY_ENFORCED
     ]) {
-      productCodeToId.put(p.Id_Externo__c, p.Id);
+      if (String.isNotBlank(p.Id_Externo__c)) {
+        productCodeToId.put(p.Id_Externo__c, p.Id);
+      }
+      if (String.isNotBlank(p.ProductCode)) {
+        productCodeToId.put(p.ProductCode, p.Id);
+      }
+      if (String.isNotBlank(p.ExternalId__c)) {
+        productCodeToId.put(p.ExternalId__c, p.Id);
+      }
     }
 
     // Deletar OpportunityLineItems existentes da oportunidade

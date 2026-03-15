@@ -2,7 +2,7 @@
  * @description				:
  * @author						: Daniel Belini
  * @group							:
- * @last modified on	: 03-04-2026
+ * @last modified on	: 03-13-2026
  * @last modified by	: Daniel Belini
  **/
 public class OpportunityBO {
@@ -2311,47 +2311,38 @@ public class OpportunityBO {
 
   // Método para atualizar o Owner da Oportunidade
   public static void updateOwnerOnFirstModification(List<Opportunity> oppList) {
-    // Obter o ID do Usuário de Integração
-    Id integrationUserId = [
+    List<User> integrationUsers = [
       SELECT Id
       FROM User
       WHERE UserName LIKE '%integracao@lab065.com%'
       LIMIT 1
-    ]
-    .Id;
+    ];
+    if (integrationUsers.isEmpty()) {
+      return;
+    }
 
-    // Lista para oportunidades a serem atualizadas
-    List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
+    User currentUser = [
+      SELECT Profile.Name
+      FROM User
+      WHERE Id = :UserInfo.getUserId()
+      LIMIT 1
+    ];
+    String currentProfileName = currentUser.Profile.Name;
+    Id integrationUserId = integrationUsers[0].Id;
 
     for (Opportunity opp : oppList) {
-      // Verificar se o Owner ainda é o usuário de integração
       if (
         opp.OwnerId == integrationUserId &&
         integrationUserId != UserInfo.getUserId()
       ) {
-        // Verificar se o último modificador NÃO é administrador ou integração
-        User lastModifier = [
-          SELECT Profile.Name
-          FROM User
-          WHERE Id = :UserInfo.getUserId()
-          LIMIT 1
-        ];
-
         if (
-          lastModifier.Profile.Name != 'System Administrator' ||
-          lastModifier.Profile.Name != 'Administrador do sistema'
+          currentProfileName != 'System Administrator' &&
+          currentProfileName != 'Administrador do sistema'
         ) {
-          // Atualizar o Owner para o último modificador
           opp.OwnerId = UserInfo.getUserId();
-          //opportunitiesToUpdate.add(opp);
         }
       }
     }
-
-    // Atualizar as oportunidades na base de dados
-    //if (!opportunitiesToUpdate.isEmpty()) {
-    //		update opportunitiesToUpdate;
-    //}
   }
 
   public class PriceGenerationTableLine {
@@ -2394,68 +2385,6 @@ public class OpportunityBO {
     normalized = normalized.replaceAll('[Ñ]', 'N');
     return normalized;
   }
-
-  public static void checksAndClosesTaskFollowUpCall(
-    List<Opportunity> newRecords,
-    Map<Id, Opportunity> oldRecordsMap
-  ) {
-    for (Opportunity opp : newRecords) {
-      Opportunity oldOpp = oldRecordsMap.get(opp.id);
-      if (
-        OpportunityUtils.isStatusChanging(opp, oldOpp) &&
-        (OpportunityUtils.isStatusProposalSent(oldOpp) ||
-        OpportunityUtils.isStatusProposalGenerated(oldOpp) ||
-        OpportunityUtils.isStatusAwaitingAcceptance(oldOpp) ||
-        OpportunityUtils.isStatusProposalReadjustment(oldOpp) ||
-        OpportunityUtils.isSubStatusContractSent(oldOpp))
-      ) {
-        Id closerId = [
-          SELECT Id
-          FROM User
-          WHERE Email LIKE 'wagner.sampaio@enerzee.com.br%' AND IsActive = TRUE
-          LIMIT 1
-        ]
-        .Id;
-
-        List<Task> tasksToClose = [
-          SELECT Id, Status
-          FROM Task
-          WHERE
-            WhatId = :opp.Id
-            AND Status = 'Open'
-            AND OwnerId = :closerId
-            AND Subject LIKE '%Ligação de follow-up%'
-        ];
-
-        for (Task task : tasksToClose) {
-          task.Status = 'Completed';
-          task.MetodoDeFollowup__c = 'Automático';
-
-          ContentNote note = new ContentNote();
-          note.Title = 'Tarefa Concluída';
-          note.Content = Blob.valueOf(
-            'Tarefa concluída automaticamente via integração'
-          );
-          insert note;
-
-          ContentDocumentLink cdl = new ContentDocumentLink();
-          cdl.ContentDocumentId = [
-            SELECT Id
-            FROM ContentNote
-            WHERE Id = :note.Id
-          ]
-          .Id;
-          cdl.LinkedEntityId = task.Id;
-          cdl.ShareType = 'I';
-          cdl.Visibility = 'AllUsers';
-          insert cdl;
-        }
-
-        update tasksToClose;
-      }
-    }
-  }
-
   public static void checkAndSendToRevo(
     List<Opportunity> newRecords,
     Map<Id, Opportunity> oldRecordsMap
@@ -3461,7 +3390,10 @@ public class OpportunityBO {
         continue;
       }
       leadsToUpdate.add(
-        new Lead(Id = leadId, Status = OpportunityUtils.LEAD_STATUS_NAO_QUALIFICADO)
+        new Lead(
+          Id = leadId,
+          Status = OpportunityUtils.LEAD_STATUS_NAO_QUALIFICADO
+        )
       );
     }
 

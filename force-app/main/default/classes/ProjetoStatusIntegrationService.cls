@@ -1,5 +1,7 @@
 public with sharing class ProjetoStatusIntegrationService {
   private static final String INTEGRATOR_NAME = 'AlterStatusProject';
+  @TestVisible
+  private static String endpointOverride;
 
   public static void sendStatusUpdates(
     List<Projeto__c> newList,
@@ -36,16 +38,19 @@ public with sharing class ProjetoStatusIntegrationService {
       return;
     }
 
-    List<Integrador__mdt> integracoes = [
-      SELECT URL__c
-      FROM Integrador__mdt
-      WHERE DeveloperName = :INTEGRATOR_NAME
-      LIMIT 1
-    ];
-    if (integracoes.isEmpty()) {
-      return;
+    String endpoint = endpointOverride;
+    if (String.isBlank(endpoint)) {
+      List<Integrador__mdt> integracoes = [
+        SELECT URL__c
+        FROM Integrador__mdt
+        WHERE DeveloperName = :INTEGRATOR_NAME
+        LIMIT 1
+      ];
+      if (integracoes.isEmpty()) {
+        return;
+      }
+      endpoint = integracoes[0].URL__c;
     }
-    Integrador__mdt integracao = integracoes[0];
 
     List<Projeto__c> projects = [
       SELECT
@@ -78,7 +83,7 @@ public with sharing class ProjetoStatusIntegrationService {
       };
 
       HttpRequest req = new HttpRequest();
-      req.setEndpoint(integracao.URL__c);
+      req.setEndpoint(endpoint);
       req.setMethod('POST');
       req.setHeader('Content-Type', 'application/json');
       req.setBody(JSON.serialize(body));

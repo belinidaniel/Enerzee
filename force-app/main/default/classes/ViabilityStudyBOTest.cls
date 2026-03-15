@@ -417,6 +417,262 @@ private class ViabilityStudyBOTest {
     );
   }
 
+  // SAL-408/409 ─────────────────────────────────────────────────────────────
+
+  @isTest
+  static void testSolicitarPagamentoIntegrador_CreatedWhenIntegrador() {
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opportunity = createOpportunity();
+    ViabilityStudy__c viability = new ViabilityStudy__c(
+      Opportunity__c = opportunity.Id,
+      StatusFeasibility__c = 'Visita Agendada',
+      OwnTeamThirdParty__c = 'Integrador',
+      Owner__c = UserInfo.getUserId()
+    );
+    insert viability;
+
+    ViabilityStudyBO.TaskViabilityTable table = new ViabilityStudyBO.TaskViabilityTable();
+    table.tableLines = new List<ViabilityStudyBO.TaskViabilityTableLine>{
+      buildTableLine(
+        'Solar',
+        'VISITA_AGENDADA',
+        'SOLICITAR PAGAMENTO DE INTEGRADOR',
+        'QUEUE',
+        'Assistente Comercial / Viabilidade',
+        '',
+        '2'
+      )
+    };
+    ViabilityStudyBO.taskTableOverride = table;
+
+    ViabilityStudy__c oldState = viability.clone(true, true, true, true);
+    ViabilityStudyBO.createTasks(
+      new List<ViabilityStudy__c>{ viability },
+      new Map<Id, ViabilityStudy__c>{ viability.Id => oldState }
+    );
+
+    List<Task> tasks = [
+      SELECT Subject
+      FROM Task
+      WHERE
+        WhatId = :viability.Id
+        AND Subject = 'SOLICITAR PAGAMENTO DE INTEGRADOR'
+    ];
+    Assert.areEqual(
+      1,
+      tasks.size(),
+      'Deve criar tarefa para OwnTeamThirdParty__c = Integrador'
+    );
+  }
+
+  @isTest
+  static void testSolicitarPagamentoIntegrador_NotCreatedWhenEnerzee() {
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opportunity = createOpportunity();
+    ViabilityStudy__c viability = new ViabilityStudy__c(
+      Opportunity__c = opportunity.Id,
+      StatusFeasibility__c = 'Visita Agendada',
+      OwnTeamThirdParty__c = 'Enerzee',
+      Owner__c = UserInfo.getUserId()
+    );
+    insert viability;
+
+    ViabilityStudyBO.TaskViabilityTable table = new ViabilityStudyBO.TaskViabilityTable();
+    table.tableLines = new List<ViabilityStudyBO.TaskViabilityTableLine>{
+      buildTableLine(
+        'Solar',
+        'VISITA_AGENDADA',
+        'SOLICITAR PAGAMENTO DE INTEGRADOR',
+        'QUEUE',
+        'Assistente Comercial / Viabilidade',
+        '',
+        '2'
+      )
+    };
+    ViabilityStudyBO.taskTableOverride = table;
+
+    ViabilityStudy__c oldState = viability.clone(true, true, true, true);
+    ViabilityStudyBO.createTasks(
+      new List<ViabilityStudy__c>{ viability },
+      new Map<Id, ViabilityStudy__c>{ viability.Id => oldState }
+    );
+
+    List<Task> tasks = [
+      SELECT Subject
+      FROM Task
+      WHERE
+        WhatId = :viability.Id
+        AND Subject = 'SOLICITAR PAGAMENTO DE INTEGRADOR'
+    ];
+    Assert.areEqual(
+      0,
+      tasks.size(),
+      'Não deve criar tarefa quando OwnTeamThirdParty__c = Enerzee'
+    );
+  }
+
+  @isTest
+  static void testSolicitarPagamentoIntegrador_NotCreatedWhenBlank() {
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opportunity = createOpportunity();
+    ViabilityStudy__c viability = new ViabilityStudy__c(
+      Opportunity__c = opportunity.Id,
+      StatusFeasibility__c = 'Visita Agendada',
+      Owner__c = UserInfo.getUserId()
+    );
+    insert viability;
+
+    ViabilityStudyBO.TaskViabilityTable table = new ViabilityStudyBO.TaskViabilityTable();
+    table.tableLines = new List<ViabilityStudyBO.TaskViabilityTableLine>{
+      buildTableLine(
+        'Solar',
+        'VISITA_AGENDADA',
+        'SOLICITAR PAGAMENTO DE INTEGRADOR',
+        'QUEUE',
+        'Assistente Comercial / Viabilidade',
+        '',
+        '2'
+      )
+    };
+    ViabilityStudyBO.taskTableOverride = table;
+
+    ViabilityStudy__c oldState = viability.clone(true, true, true, true);
+    ViabilityStudyBO.createTasks(
+      new List<ViabilityStudy__c>{ viability },
+      new Map<Id, ViabilityStudy__c>{ viability.Id => oldState }
+    );
+
+    List<Task> tasks = [
+      SELECT Subject
+      FROM Task
+      WHERE
+        WhatId = :viability.Id
+        AND Subject = 'SOLICITAR PAGAMENTO DE INTEGRADOR'
+    ];
+    Assert.areEqual(
+      0,
+      tasks.size(),
+      'Não deve criar tarefa quando OwnTeamThirdParty__c é blank'
+    );
+  }
+
+  @isTest
+  static void testConfirmacaoNF_CreatedWhenNaoCadastrado() {
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opportunity = createOpportunity();
+    ViabilityStudy__c viability = new ViabilityStudy__c(
+      Opportunity__c = opportunity.Id,
+      StatusFeasibility__c = 'Visita Agendada',
+      OwnTeamThirdParty__c = 'Nao_cadastrado',
+      Owner__c = UserInfo.getUserId()
+    );
+    insert viability;
+
+    ViabilityStudyBO.TaskViabilityTable table = new ViabilityStudyBO.TaskViabilityTable();
+    table.tableLines = new List<ViabilityStudyBO.TaskViabilityTableLine>{
+      buildTableLine(
+        'Solar',
+        'VISITA_AGENDADA',
+        'CONFIRMAÇÃO DE LANÇAMENTO DE NF',
+        'QUEUE',
+        'Assistente Comercial / Viabilidade',
+        '',
+        '2'
+      )
+    };
+    ViabilityStudyBO.taskTableOverride = table;
+
+    ViabilityStudy__c oldState = viability.clone(true, true, true, true);
+    ViabilityStudyBO.createTasks(
+      new List<ViabilityStudy__c>{ viability },
+      new Map<Id, ViabilityStudy__c>{ viability.Id => oldState }
+    );
+
+    List<Task> tasks = [
+      SELECT Subject
+      FROM Task
+      WHERE
+        WhatId = :viability.Id
+        AND Subject = 'CONFIRMAÇÃO DE LANÇAMENTO DE NF'
+    ];
+    Assert.areEqual(
+      1,
+      tasks.size(),
+      'Deve criar tarefa para OwnTeamThirdParty__c = Nao_cadastrado'
+    );
+  }
+
+  @isTest
+  static void testConfirmacaoNF_NotCreatedWhenConsultor() {
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opportunity = createOpportunity();
+    ViabilityStudy__c viability = new ViabilityStudy__c(
+      Opportunity__c = opportunity.Id,
+      StatusFeasibility__c = 'Visita Agendada',
+      OwnTeamThirdParty__c = getNonTaskCreatingOwnTeamValue(),
+      Owner__c = UserInfo.getUserId()
+    );
+    insert viability;
+
+    ViabilityStudyBO.TaskViabilityTable table = new ViabilityStudyBO.TaskViabilityTable();
+    table.tableLines = new List<ViabilityStudyBO.TaskViabilityTableLine>{
+      buildTableLine(
+        'Solar',
+        'VISITA_AGENDADA',
+        'CONFIRMAÇÃO DE LANÇAMENTO DE NF',
+        'QUEUE',
+        'Assistente Comercial / Viabilidade',
+        '',
+        '2'
+      )
+    };
+    ViabilityStudyBO.taskTableOverride = table;
+
+    ViabilityStudy__c oldState = viability.clone(true, true, true, true);
+    ViabilityStudyBO.createTasks(
+      new List<ViabilityStudy__c>{ viability },
+      new Map<Id, ViabilityStudy__c>{ viability.Id => oldState }
+    );
+
+    List<Task> tasks = [
+      SELECT Subject
+      FROM Task
+      WHERE
+        WhatId = :viability.Id
+        AND Subject = 'CONFIRMAÇÃO DE LANÇAMENTO DE NF'
+    ];
+    Assert.areEqual(
+      0,
+      tasks.size(),
+      'Não deve criar tarefa quando OwnTeamThirdParty__c tem um valor que não dispara a criação.'
+    );
+  }
+
+  private static String getNonTaskCreatingOwnTeamValue() {
+    for (
+      Schema.PicklistEntry entry : ViabilityStudy__c.OwnTeamThirdParty__c.getDescribe()
+        .getPicklistValues()
+    ) {
+      String value = entry.getValue();
+      if (
+        String.isBlank(value) ||
+        value.equalsIgnoreCase('Integrador') ||
+        value.equalsIgnoreCase('Nao_cadastrado') ||
+        value.equalsIgnoreCase('Não cadastrado')
+      ) {
+        continue;
+      }
+      return value;
+    }
+
+    return null;
+  }
+
   private static ViabilityStudyBO.TaskViabilityTableLine buildTableLine(
     String typeValue,
     String statusCode,

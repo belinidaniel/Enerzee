@@ -27,64 +27,119 @@ public with sharing class TaskBO {
   // Valida anexos obrigatórios configurados no CMDT ActivityRequiredDocument__mdt
   @TestVisible
   private static void validateRequiredDocuments(Task taskRecord) {
-    if (
-      taskRecord == null ||
-      String.isBlank(taskRecord.Subject) ||
-      taskRecord.WhatId == null
-    ) {
+    validateRequiredDocuments(new List<Task>{ taskRecord });
+  }
+
+  @TestVisible
+  private static void validateRequiredDocuments(List<Task> taskRecords) {
+    if (taskRecords == null || taskRecords.isEmpty()) {
       return;
     }
 
-    List<ActivityRequiredDocument__mdt> configs = [
+    Set<String> subjects = new Set<String>();
+    Set<String> parentIdStrings = new Set<String>();
+    List<Task> eligibleTasks = new List<Task>();
+
+    for (Task taskRecord : taskRecords) {
+      if (
+        taskRecord == null ||
+        String.isBlank(taskRecord.Subject) ||
+        taskRecord.WhatId == null
+      ) {
+        continue;
+      }
+      eligibleTasks.add(taskRecord);
+      subjects.add(taskRecord.Subject);
+      parentIdStrings.add(String.valueOf(taskRecord.WhatId));
+    }
+
+    if (eligibleTasks.isEmpty()) {
+      return;
+    }
+
+    Map<String, Set<String>> requiredBySubject = new Map<String, Set<String>>();
+    Map<String, Map<String, String>> requiredRawBySubject = new Map<String, Map<String, String>>();
+
+    for (ActivityRequiredDocument__mdt cfg : [
       SELECT ActivitySubject__c, RequiredFiles__c
       FROM ActivityRequiredDocument__mdt
-      WHERE ActivitySubject__c = :taskRecord.Subject
-    ];
-    if (configs.isEmpty()) {
-      return;
-    }
-
-    Set<String> required = new Set<String>();
-    Map<String, String> requiredRawByNorm = new Map<String, String>();
-    for (ActivityRequiredDocument__mdt cfg : configs) {
-      if (String.isBlank(cfg.RequiredFiles__c))
+      WHERE ActivitySubject__c IN :subjects
+    ]) {
+      if (
+        String.isBlank(cfg.ActivitySubject__c) ||
+        String.isBlank(cfg.RequiredFiles__c)
+      ) {
         continue;
+      }
+      if (!requiredBySubject.containsKey(cfg.ActivitySubject__c)) {
+        requiredBySubject.put(cfg.ActivitySubject__c, new Set<String>());
+        requiredRawBySubject.put(
+          cfg.ActivitySubject__c,
+          new Map<String, String>()
+        );
+      }
+
       for (String name : cfg.RequiredFiles__c.split(';')) {
         String norm = normalizeName(name);
-        if (!String.isBlank(norm)) {
-          required.add(norm);
-          if (!requiredRawByNorm.containsKey(norm)) {
-            requiredRawByNorm.put(norm, name.trim());
-          }
+        if (String.isBlank(norm)) {
+          continue;
+        }
+        requiredBySubject.get(cfg.ActivitySubject__c).add(norm);
+        if (
+          !requiredRawBySubject.get(cfg.ActivitySubject__c).containsKey(norm)
+        ) {
+          requiredRawBySubject.get(cfg.ActivitySubject__c)
+            .put(norm, name.trim());
         }
       }
     }
-    if (required.isEmpty()) {
+
+    if (requiredBySubject.isEmpty()) {
       return;
     }
 
-    Set<String> uploaded = new Set<String>();
+    Map<String, Set<String>> uploadedByParentId = new Map<String, Set<String>>();
     for (OpportunityAttachmentLink__c link : [
-      SELECT AttachmentDescription__c, DocRequiredName__c
+      SELECT SObjectId__c, AttachmentDescription__c, DocRequiredName__c
       FROM OpportunityAttachmentLink__c
-      WHERE SObjectId__c = :String.valueOf(taskRecord.WhatId)
+      WHERE SObjectId__c IN :parentIdStrings
     ]) {
+      if (String.isBlank(link.SObjectId__c)) {
+        continue;
+      }
+      if (!uploadedByParentId.containsKey(link.SObjectId__c)) {
+        uploadedByParentId.put(link.SObjectId__c, new Set<String>());
+      }
       String sourceName = String.isNotBlank(link.DocRequiredName__c)
         ? link.DocRequiredName__c
         : link.AttachmentDescription__c;
       String norm = normalizeName(sourceName);
       if (!String.isBlank(norm)) {
-        uploaded.add(norm);
+        uploadedByParentId.get(link.SObjectId__c).add(norm);
       }
     }
 
-    Set<String> missing = required.clone();
-    missing.removeAll(uploaded);
-    if (!missing.isEmpty()) {
+    for (Task taskRecord : eligibleTasks) {
+      if (!requiredBySubject.containsKey(taskRecord.Subject)) {
+        continue;
+      }
+
+      Set<String> missing = requiredBySubject.get(taskRecord.Subject).clone();
+      String parentIdString = String.valueOf(taskRecord.WhatId);
+      if (uploadedByParentId.containsKey(parentIdString)) {
+        missing.removeAll(uploadedByParentId.get(parentIdString));
+      }
+
+      if (missing.isEmpty()) {
+        continue;
+      }
+
       List<String> missingLabels = new List<String>();
       for (String key : missing) {
-        if (requiredRawByNorm.containsKey(key)) {
-          missingLabels.add(requiredRawByNorm.get(key));
+        if (requiredRawBySubject.get(taskRecord.Subject).containsKey(key)) {
+          missingLabels.add(
+            requiredRawBySubject.get(taskRecord.Subject).get(key)
+          );
         } else {
           missingLabels.add(key);
         }
@@ -160,7 +215,7 @@ public with sharing class TaskBO {
       ? loadNormalizedSubjectsFromStaticResource('TabelaTarefasInstalacao')
       : new Set<String>();
     Set<String> viabilitySubjects = hasViabilityTasks
-      ? loadNormalizedSubjectsFromStaticResource('TabelaTarefasViabilidade')
+      ? loadNormalizedViabilitySubjects()
       : new Set<String>();
 
     for (Task t : newTasks) {
@@ -213,6 +268,29 @@ public with sharing class TaskBO {
           staticResourceName +
           ': ' +
           e.getMessage()
+      );
+    }
+    return subjects;
+  }
+
+  // Bug fix: ProjetoBO.getTaskTableFromStaticResource filtra linhas com TipoProjetoObra vazio,
+  // o que descarta TODAS as linhas do CSV de viabilidade (coluna é TipoViabilidade, não TipoProjetoObra).
+  // Este método usa o parser correto da ViabilityStudyBO para carregar os subjects.
+  private static Set<String> loadNormalizedViabilitySubjects() {
+    Set<String> subjects = new Set<String>();
+    try {
+      ViabilityStudyBO.TaskViabilityTable table = ViabilityStudyBO.getTaskViabilityTableFromStaticResource();
+      if (table == null || table.tableLines == null) {
+        return subjects;
+      }
+      for (ViabilityStudyBO.TaskViabilityTableLine line : table.tableLines) {
+        if (line != null && !String.isBlank(line.Assunto)) {
+          subjects.add(line.Assunto.trim().toLowerCase());
+        }
+      }
+    } catch (Exception e) {
+      System.debug(
+        '### TaskBO.loadNormalizedViabilitySubjects - Error: ' + e.getMessage()
       );
     }
     return subjects;
@@ -1113,6 +1191,22 @@ public with sharing class TaskBO {
       return;
     }
 
+    List<Task> tasksBeingConcluded = new List<Task>();
+    for (Task taskRecord : taskList) {
+      Task oldTask = oldMap != null ? oldMap.get(taskRecord.Id) : null;
+      if (
+        TaskUtils.isTaskBeingConcluded(oldTask, taskRecord) &&
+        taskRecord.WhatId != null &&
+        !(Schema.sObjectType.Task.fields.getMap()
+          .containsKey('DispensarAtividade__c') &&
+        (Boolean) taskRecord.get('DispensarAtividade__c') == true)
+      ) {
+        tasksBeingConcluded.add(taskRecord);
+      }
+    }
+
+    validateRequiredDocuments(tasksBeingConcluded);
+
     for (Task taskRecord : taskList) {
       Task oldTask = oldMap != null ? oldMap.get(taskRecord.Id) : null;
       if (
@@ -1129,8 +1223,6 @@ public with sharing class TaskBO {
       ) {
         continue;
       }
-
-      validateRequiredDocuments(taskRecord);
 
       List<FieldRequirement> requiredFields = new List<FieldRequirement>();
 
