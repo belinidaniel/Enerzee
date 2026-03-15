@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : NO_TESTS_MAPPED
+ * @test              : OpportunityPDFHelperTest
  **/
 public with sharing class OpportunityPDFHelper {
   public OpportunityPDFHelper() {
