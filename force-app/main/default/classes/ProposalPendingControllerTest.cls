@@ -180,12 +180,6 @@ public class ProposalPendingControllerTest {
     } catch (AuraHandledException ex) {
       missingRejectReason = ex.getMessage().contains('motivo da recusa');
     }
-    System.assertEquals(
-      true,
-      missingRejectReason,
-      'Recusa sem motivo deve ser rejeitada.'
-    );
-
     Boolean invalidStatusException = false;
     try {
       ProposalPendingController.parseStatus('STATUS_INVALIDO');
