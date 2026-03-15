@@ -512,6 +512,7 @@ def collect_tests(
     metadata_pattern: str,
     strict_changed_prod: bool,
 ) -> tuple[dict[str, str], list[str]]:
+    mapping = compute_test_mapping(infos)
     changed_files = run_git_diff(diff_range)
     metadata_regex = re.compile(metadata_pattern)
     relevant_changes = [path for path in changed_files if metadata_regex.search(path)]
