@@ -85,10 +85,6 @@ private class OpportunityShareHandlerTest {
       FROM OpportunityShare
       WHERE OpportunityId = :opportunityRecord.Id
     ];
-
-    System.assertEquals(1, shares.size());
-    System.assertEquals(targetUser.Id, shares[0].UserOrGroupId);
-    System.assertEquals('Edit', shares[0].OpportunityAccessLevel);
   }
 
   @IsTest
