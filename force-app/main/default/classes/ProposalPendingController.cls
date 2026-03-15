@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : ProposalPendingControllerTest
+ * @test              : ProposalPendingControllerTest, ProposalPendingResponseRestTest
  **/
 public with sharing class ProposalPendingController {
   private static final Map<Id, List<ProposalPendingDTO>> cache = new Map<Id, List<ProposalPendingDTO>>();

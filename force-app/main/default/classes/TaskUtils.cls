@@ -5,9 +5,10 @@
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
  * @test              : ActivityDocumentControllerTest, AdditionalCoverageNewClassesTest, CaseTriggerTest,
- *                       EngineeringDateStampFlowTest, InstalacaoFinalReportServiceTest, LeadTriggerTest,
- *                       OpportunityBOCoverageTest, OpportunityBOHighCoverageTest, OpportunityBOPaymentReminderTaskTest,
- *                       ProjetoTriggerTest, TaskBOTest, TaskCompletionServiceTest, TaskDeadlineNotificationBatchTest,
+ *                       EngineeringDateStampFlowTest, ExternalArchiveServiceTest, InstalacaoFinalReportServiceTest,
+ *                       LeadTriggerTest, OpportunityBOCoverageTest, OpportunityBOHighCoverageTest,
+ *                       OpportunityBOPaymentReminderTaskTest, ProjetoTriggerTest, TaskBOTest,
+ *                       TaskCompletionServiceTest, TaskDeadlineNotificationBatchTest,
  *                       WorkDeliveryReportPdfControllerTest, WorkDeliveryReportPdfServiceTest
  **/
 public with sharing class TaskUtils {

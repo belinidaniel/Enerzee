@@ -21,4 +21,27 @@ private class ClickSignQueueableTest {
       [SELECT COUNT() FROM ClickSignLog__c WHERE Name = 'Queue Test']
     );
   }
+
+  @IsTest
+  static void shouldInsertLogsFromListConstructor() {
+    Test.startTest();
+    System.enqueueJob(
+      new ClickSignQueueable(
+        new List<ClickSignLog__c>{
+          new ClickSignLog__c(Name = 'Queue Test 2'),
+          new ClickSignLog__c(Name = 'Queue Test 3')
+        }
+      )
+    );
+    Test.stopTest();
+
+    System.assertEquals(
+      2,
+      [
+        SELECT COUNT()
+        FROM ClickSignLog__c
+        WHERE Name IN ('Queue Test 2', 'Queue Test 3')
+      ]
+    );
+  }
 }

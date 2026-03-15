@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : IntegracaoVOClientePreCadastroTest, IntegracaoVOConsultorPreCadastroTest
+ * @test              : IntegracaoVOClientePreCadastroTest
  **/
 public with sharing class IntegracaoVOClientePreCadastro {
   @future(callout=true)

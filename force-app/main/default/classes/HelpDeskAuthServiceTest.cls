@@ -8,8 +8,16 @@
  **/
 @IsTest
 private class HelpDeskAuthServiceTest {
+  private static void ensureEnerzeeAccount() {
+    if ([SELECT COUNT() FROM Account WHERE Name LIKE '%Enerzee%'] == 0) {
+      insert new Account(Name = 'Enerzee Portal');
+    }
+  }
+
   @IsTest
   static void shouldRequestAndValidateAccessCode() {
+    ensureEnerzeeAccount();
+
     Boolean requested = false;
     try {
       Test.startTest();
@@ -103,8 +111,8 @@ private class HelpDeskAuthServiceTest {
 
   @IsTest
   static void shouldReuseExistingContactWhenRequestingNewCode() {
-    Account acc = new Account(Name = 'Enerzee Base');
-    insert acc;
+    ensureEnerzeeAccount();
+    Account acc = [SELECT Id FROM Account WHERE Name LIKE '%Enerzee%' LIMIT 1];
 
     Contact existing = new Contact(
       FirstName = 'Contato',
@@ -155,5 +163,54 @@ private class HelpDeskAuthServiceTest {
         'Expiração do código deve ser atualizada.'
       );
     }
+  }
+
+  @IsTest
+  static void shouldCreatePortalContactWithDefaultNames() {
+    ensureEnerzeeAccount();
+
+    Test.startTest();
+    try {
+      HelpDeskAuthService.requestAccessCode(
+        'defaults@teste.com',
+        null,
+        null,
+        '11911112222'
+      );
+    } catch (Exception ex) {
+      System.assert(
+        ex.getMessage() != null,
+        'Mesmo quando o envio falha, a criação do contato precisa ser exercitada.'
+      );
+    }
+    Test.stopTest();
+
+    Contact created = [
+      SELECT FirstName, LastName, Phone, MobilePhone, AccountId
+      FROM Contact
+      WHERE Email = 'defaults@teste.com'
+      LIMIT 1
+    ];
+    System.assertEquals('Visitante', created.FirstName);
+    System.assertEquals('Portal', created.LastName);
+    System.assertEquals('11911112222', created.Phone);
+    System.assertNotEquals(null, created.AccountId);
+  }
+
+  @IsTest
+  static void shouldValidateCorrectCodeWithoutExpiration() {
+    Contact contact = new Contact(
+      LastName = 'Sem Expiracao',
+      Email = 'valid@teste.com',
+      Verification_Code__c = '111222'
+    );
+    insert contact;
+
+    Id validatedContactId = HelpDeskAuthService.validateAccessCode(
+      'valid@teste.com',
+      '111222'
+    );
+
+    System.assertEquals(contact.Id, validatedContactId);
   }
 }

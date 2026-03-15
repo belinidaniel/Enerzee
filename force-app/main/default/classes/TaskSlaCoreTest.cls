@@ -185,18 +185,27 @@ private class TaskSlaCoreTest {
   @IsTest
   static void testSchedulerScheduleDaily() {
     String cron = '0 0 0 1 1 ? 2099';
+    String updatedCron = '0 15 1 1 1 ? 2099';
     Test.startTest();
     TaskSlaDailySummaryScheduler.scheduleDaily(cron);
+    TaskSlaDailySummaryScheduler.scheduleDaily(updatedCron);
     Test.stopTest();
 
     List<CronTrigger> jobs = [
-      SELECT CronExpression, CronJobDetail.Name
+      SELECT CronExpression, CronJobDetail.Name, State
       FROM CronTrigger
-      WHERE
-        CronJobDetail.Name = 'Task SLA Daily Summary'
-        AND CronExpression = :cron
+      WHERE CronJobDetail.Name = 'Task SLA Daily Summary' AND State != 'DELETED'
     ];
-    System.assert(!jobs.isEmpty(), 'Cron deve ser o informado.');
+    System.assertEquals(
+      1,
+      jobs.size(),
+      'Deve existir apenas um agendamento ativo.'
+    );
+    System.assertEquals(
+      updatedCron,
+      jobs[0].CronExpression,
+      'O agendamento mais recente deve substituir o anterior.'
+    );
   }
 
   @IsTest
@@ -283,7 +292,86 @@ private class TaskSlaCoreTest {
     Test.stopTest();
   }
 
+  @IsTest
+  static void testUtilsAndResolverGuardClauses() {
+    TaskSlaRecipientResolver.Context emptyContext = TaskSlaRecipientResolver.buildContext(
+      null,
+      true
+    );
+    System.assertEquals(
+      0,
+      emptyContext.ownersById.size(),
+      'Contexto vazio não deve carregar owners.'
+    );
+
+    Group queue = new Group(
+      Name = 'Queue Guard',
+      DeveloperName = 'Queue_Guard',
+      Type = 'Queue',
+      Email = 'queue.guard@example.com'
+    );
+    insert queue;
+
+    Task queueTask = new Task(
+      OwnerId = queue.Id,
+      Subject = 'Fila SLA Guard',
+      Status = 'Open',
+      Priority = 'High'
+    );
+
+    TaskSlaConfig.NotificationConfig cfg = new TaskSlaConfig.NotificationConfig();
+    cfg.ownerType = TaskSlaConfig.OWNER_TYPE_QUEUE;
+    cfg.priorityIn = new Set<String>{ TaskSlaUtils.normalizeToken('High') };
+    cfg.taskSubtypeIn = new Set<String>();
+    cfg.taskTypeIn = new Set<String>();
+    cfg.subjectContains = new Set<String>{ TaskSlaUtils.normalizeToken('SLA') };
+    cfg.subjectNotContains = new Set<String>{
+      TaskSlaUtils.normalizeToken('bloqueado')
+    };
+    cfg.queueDeveloperNames = new Set<String>{
+      TaskSlaUtils.normalizeToken(queue.DeveloperName)
+    };
+
+    System.assertEquals(
+      true,
+      TaskSlaUtils.matchesConfig(
+        queueTask,
+        cfg,
+        new Map<Id, String>{ queue.Id => queue.DeveloperName }
+      ),
+      'Fila com developer name mapeado deve casar com a configuração.'
+    );
+    System.assertEquals(
+      false,
+      TaskSlaUtils.matchesConfig(queueTask, cfg, null),
+      'Sem mapa de filas o filtro da fila deve falhar.'
+    );
+
+    TaskSlaRecipientResolver.RecipientResult emptyRecipients = TaskSlaRecipientResolver.resolveRecipients(
+      null,
+      cfg,
+      new TaskSlaRecipientResolver.Context()
+    );
+    System.assertEquals(
+      0,
+      emptyRecipients.userIds.size(),
+      'Fluxo nulo não deve adicionar usuários.'
+    );
+    System.assertEquals(
+      0,
+      emptyRecipients.emailAddresses.size(),
+      'Fluxo nulo não deve adicionar emails.'
+    );
+
+    System.assertEquals('', TaskSlaUtils.normalizeToken(null));
+    System.assertEquals('', TaskSlaUtils.escapeHtml(null));
+  }
+
   private static User createUser(String email, Id managerId) {
+    return createUser(email, managerId, null);
+  }
+
+  private static User createUser(String email, Id managerId, Id roleId) {
     Profile p = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
     String unique = String.valueOf(System.currentTimeMillis());
     User u = new User(
@@ -295,7 +383,8 @@ private class TaskSlaCoreTest {
       LocaleSidKey = 'pt_BR',
       EmailEncodingKey = 'UTF-8',
       ProfileId = p.Id,
-      LanguageLocaleKey = 'pt_BR'
+      LanguageLocaleKey = 'pt_BR',
+      UserRoleId = roleId
     );
     insert u;
     if (managerId != null) {
@@ -303,5 +392,45 @@ private class TaskSlaCoreTest {
       update u;
     }
     return u;
+  }
+
+  @IsTest
+  static void testRecipientResolverLoadsNestedGroupAndRoleMembers() {
+    User roleUser = createUser('role.member@example.com', null);
+
+    Group queue = new Group(
+      Name = 'Queue Nested Members',
+      DeveloperName = 'Queue_Nested_Members',
+      Type = 'Queue',
+      Email = 'nested.queue@example.com'
+    );
+    insert queue;
+
+    Group publicGroup = new Group(
+      Name = 'Public Group Nested',
+      DeveloperName = 'Public_Group_Nested',
+      Type = 'Regular'
+    );
+    insert publicGroup;
+
+    insert new GroupMember(GroupId = queue.Id, UserOrGroupId = publicGroup.Id);
+    insert new GroupMember(
+      GroupId = publicGroup.Id,
+      UserOrGroupId = roleUser.Id
+    );
+
+    TaskSlaRecipientResolver.Context context = TaskSlaRecipientResolver.buildContext(
+      new Set<Id>{ queue.Id },
+      true
+    );
+
+    System.assert(
+      context.queueMembersById.containsKey(queue.Id),
+      'A fila deve carregar membros calculados.'
+    );
+    System.assert(
+      context.queueMembersById.get(queue.Id).contains(roleUser.Id),
+      'Usuário vindo de grupo público e papel deve ser expandido para a fila.'
+    );
   }
 }
