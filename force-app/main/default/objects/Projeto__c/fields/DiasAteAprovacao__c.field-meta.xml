@@ -5,8 +5,7 @@
   >Tempo em dias corridos entre a Data de Protocolo e a Data de Aprovação do Projeto. Usado no indicador Tempo Médio de Aprovação segmentado por SCEE/Fast Track (Engenharia).</description>
 	<externalId>false</externalId>
 	<formula
-  >IF(DataAprovacaoProjeto__c != NULL &amp;&amp; DataProtocoloProjeto__c != NULL, DataAprovacaoProjeto__c - DataProtocoloProjeto__c, NULL)</formula>
-	<formulaTreatBlanksAs>BlankAsBlank</formulaTreatBlanksAs>
+  >IF(!ISBLANK(DataAprovacaoProjeto__c) &amp;&amp; !ISBLANK(DataProtocoloProjeto__c), DataAprovacaoProjeto__c - DataProtocoloProjeto__c, NULL)</formula>
 	<label>Dias Protocolo → Aprovação</label>
 	<precision>18</precision>
 	<required>false</required>

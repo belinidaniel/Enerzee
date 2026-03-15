@@ -1,3 +1,10 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ **/
 @IsTest
 public with sharing class IntegracaoSAPConsultorTest {
   private static final String SUCCESS_RESPONSE = '{"codigoHttp": "201", "mensagem": "Inserido com sucesso", "resultado": null}';

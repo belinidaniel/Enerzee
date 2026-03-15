@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 03-03-2026
+ * @last modified on	 : 03-09-2026
  * @last modified by	 : Daniel Belini
  **/
 public without sharing class KitInstalacaoBO {
@@ -370,25 +370,14 @@ public without sharing class KitInstalacaoBO {
           System.debug(
             '[SendKitUpdate] oppId=' +
               opp.Id +
-              ' | response=' +
+              ' | responseresponse=' +
               JSON.serialize(response)
           );
 
-          if (response != null) {
-            Id relatedKitId = oppIdToKitIdMap.get(opp.Id);
-            opportunitiesToUpdate.add(
-              createOpportunityForUpdate(opp, response, relatedKitId)
-            );
-          } else {
-            Utils.createLog(
-              CLASS_NAME,
-              'SendKitUpdate - enviarKit sem resposta ' + opp.Id,
-              new SendKitUpdateException(
-                'IntegracaoNivelloContrato.enviarKit retornou nulo.'
-              ),
-              opp.Id
-            );
-          }
+          Id relatedKitId = oppIdToKitIdMap.get(opp.Id);
+          opportunitiesToUpdate.add(
+            createOpportunityForUpdate(opp, response, relatedKitId)
+          );
         } catch (Exception e) {
           Utils.createLog(
             CLASS_NAME,

@@ -10,6 +10,8 @@ jobs:
   validate:
     name: Validate against UAT
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
 
     steps:
       # ─── Checkout ────────────────────────────────────────────────────────────
@@ -22,7 +24,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install SF CLI
         run: npm install --global @salesforce/cli@latest
@@ -58,6 +60,7 @@ jobs:
           done
 
           TESTS=$(echo "$TESTS" | tr ' ' '\n' | sort -u | tr '\n' ' ' | xargs)
+          APEX=$(echo "$APEX" | tr '\n' ' ' | xargs)
           echo "apex_classes=$APEX" >> $GITHUB_OUTPUT
           echo "test_classes=$TESTS" >> $GITHUB_OUTPUT
           echo "has_changes=$([ -n "$CHANGED" ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
@@ -104,12 +107,15 @@ jobs:
         if: steps.changed.outputs.has_changes == 'true'
         id: deploy
         run: |
-          TEST_LEVEL="RunLocalTests"
-          TEST_ARGS=""
+          set -euo pipefail
 
+          TEST_LEVEL="RunLocalTests"
+          TEST_ARGS=()
           if [ -n "${{ steps.changed.outputs.test_classes }}" ]; then
             TEST_LEVEL="RunSpecifiedTests"
-            TEST_ARGS="--tests ${{ steps.changed.outputs.test_classes }}"
+            for test_class in ${{ steps.changed.outputs.test_classes }}; do
+              TEST_ARGS+=(--tests "$test_class")
+            done
           fi
 
           DESTRUCTIVE_ARG=""
@@ -117,67 +123,173 @@ jobs:
             DESTRUCTIVE_ARG="--post-destructive-changes destructiveChanges/destructiveChanges.xml"
           fi
 
+          echo "Test level: $TEST_LEVEL"
+          echo "Tests: ${{ steps.changed.outputs.test_classes }}"
+
           sf project deploy start \
             --manifest package/package.xml \
             --target-org enerzee-UAT \
             --dry-run \
-            --test-level $TEST_LEVEL \
-            $TEST_ARGS \
+            --test-level "$TEST_LEVEL" \
+            "${TEST_ARGS[@]}" \
             $DESTRUCTIVE_ARG \
-            --json > /tmp/deploy_result.json 2>&1 || true
+            --async \
+            --json > /tmp/deploy_start.json
 
-          cat /tmp/deploy_result.json
+          DEPLOY_ID=$(jq -r '.result.id // empty' /tmp/deploy_start.json)
+          if [ -z "$DEPLOY_ID" ]; then
+            echo "::error::Não foi possível obter o deploy id."
+            cat /tmp/deploy_start.json
+            exit 1
+          fi
 
-      # ─── Parse & Comment on PR ────────────────────────────────────────────────
-      - name: Comment validation result on PR
+          echo "Deploy ID: $DEPLOY_ID"
+
+          while true; do
+            sf project deploy report \
+              --job-id "$DEPLOY_ID" \
+              --target-org enerzee-UAT \
+              --json > /tmp/deploy_result.json
+
+            DEPLOY_STATUS=$(jq -r '.result.status // "Unknown"' /tmp/deploy_result.json)
+            COMPONENTS_DONE=$(jq -r '.result.numberComponentsDeployed // 0' /tmp/deploy_result.json)
+            COMPONENTS_TOTAL=$(jq -r '.result.numberComponentsTotal // 0' /tmp/deploy_result.json)
+            TESTS_DONE=$(jq -r '.result.numberTestsCompleted // 0' /tmp/deploy_result.json)
+            TESTS_TOTAL=$(jq -r '.result.numberTestsTotal // 0' /tmp/deploy_result.json)
+
+            echo "Status atual: $DEPLOY_STATUS | Componentes: ${COMPONENTS_DONE}/${COMPONENTS_TOTAL} | Testes: ${TESTS_DONE}/${TESTS_TOTAL}"
+
+            case "$DEPLOY_STATUS" in
+              Pending|InProgress|Canceling)
+                sleep 15
+                ;;
+              Succeeded)
+                break
+                ;;
+              Failed|Canceled|SucceededPartial)
+                break
+                ;;
+              *)
+                echo "::warning::Status inesperado do deploy: $DEPLOY_STATUS"
+                sleep 15
+                ;;
+            esac
+          done
+
+          # Surface errors as GitHub Actions annotations
+          jq -r '.result.details.componentFailures[]? | "::error file=\(.fileName),line=\(.lineNumber)::\(.problem)"' /tmp/deploy_result.json 2>/dev/null || true
+          jq -r '.result.details.runTestResult.failures[]? | "::error::\(.testName): \(.message)"' /tmp/deploy_result.json 2>/dev/null || true
+          jq -r '.result.details.runTestResult.codeCoverageWarnings[]? | "::warning::\(.message)"' /tmp/deploy_result.json 2>/dev/null || true
+
+          FINAL_STATUS=$(jq -r '.result.status // "Unknown"' /tmp/deploy_result.json)
+          if [ "$FINAL_STATUS" != "Succeeded" ]; then
+            exit 1
+          fi
+
+      # ─── Job Summary + Comment on PR ─────────────────────────────────────────
+      - name: Write job summary and comment on PR
         if: always()
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
 
-            let deployResult = '⚠️ Deploy result not available';
+            // ── Parse deploy result ──────────────────────────────────────────
             let deployStatus = '⚠️';
+            let deployResult = '⚠️ Deploy result not available';
+            let compileErrors = [];
+            let testFailures = [];
+            let coverageWarnings = [];
+
             try {
-              const raw = fs.readFileSync('/tmp/deploy_result.json', 'utf8');
-              const json = JSON.parse(raw);
-              if (json.status === 0) {
+              const json = JSON.parse(fs.readFileSync('/tmp/deploy_result.json', 'utf8'));
+              const cliStatus = json.status;
+              const deployStatusText = json?.result?.status;
+              const deploySucceeded =
+                cliStatus === 0 &&
+                (!deployStatusText || deployStatusText === 'Succeeded');
+
+              if (deploySucceeded) {
                 deployStatus = '✅';
                 deployResult = '✅ **Dry-run passed** — sem erros de compilação ou testes';
               } else {
                 deployStatus = '❌';
-                const errors = json?.result?.details?.componentFailures?.map(e =>
-                  `- \`${e.fileName}\` linha ${e.lineNumber}: ${e.problem}`
-                ).join('\n') || json.message || 'Erro desconhecido';
-                deployResult = `❌ **Dry-run falhou**\n${errors}`;
+                const details = json?.result?.details || {};
+                compileErrors = details.componentFailures || [];
+                testFailures = (details.runTestResult?.failures || []);
+                coverageWarnings = (details.runTestResult?.codeCoverageWarnings || []);
+                deployResult = `❌ **Dry-run falhou** — ${compileErrors.length} erros de compilação, ${testFailures.length} falhas de teste`;
+                if (!compileErrors.length && !testFailures.length) {
+                  deployResult = `❌ **Dry-run falhou** — ${deployStatusText || json.message || 'Erro desconhecido'}`;
+                }
               }
             } catch (e) {
-              deployResult = '⚠️ Não foi possível ler resultado do deploy';
+              deployResult = `⚠️ Não foi possível ler resultado do deploy: ${e.message}`;
             }
 
             let analysisResult = '';
             try {
               const analysis = fs.readFileSync('/tmp/analysis_result.txt', 'utf8');
-              analysisResult = analysis.trim() ? `\n\n### 🔍 Code Analyzer\n\`\`\`\n${analysis.substring(0, 3000)}\n\`\`\`` : '\n\n### 🔍 Code Analyzer\n✅ Sem problemas encontrados';
+              analysisResult = analysis.trim()
+                ? `\n\n### 🔍 Code Analyzer\n\`\`\`\n${analysis.substring(0, 3000)}\n\`\`\``
+                : '\n\n### 🔍 Code Analyzer\n✅ Sem problemas encontrados';
             } catch (e) {}
 
+            // ── Build error sections ─────────────────────────────────────────
+            let compileSection = '';
+            if (compileErrors.length) {
+              const rows = compileErrors.map(e =>
+                `| \`${e.fileName}\` | ${e.lineNumber || '-'} | ${e.problem} |`
+              ).join('\n');
+              compileSection = `\n\n### 🔴 Erros de Compilação (${compileErrors.length})\n| Arquivo | Linha | Erro |\n|---|---|---|\n${rows}`;
+            }
+
+            let testSection = '';
+            if (testFailures.length) {
+              const rows = testFailures.slice(0, 100).map(f =>
+                `| \`${f.testName}\` | ${(f.message || '').replace(/\|/g, '\\|').substring(0, 150)} |`
+              ).join('\n');
+              const truncNote = testFailures.length > 100 ? `\n_... e mais ${testFailures.length - 100} falhas. Ver [Job Summary](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})_` : '';
+              testSection = `\n\n### 🔴 Falhas de Teste (${testFailures.length})\n| Teste | Mensagem |\n|---|---|\n${rows}${truncNote}`;
+            }
+
+            let coverageSection = '';
+            if (coverageWarnings.length) {
+              const rows = coverageWarnings.map(w => `- ${w.message}`).join('\n');
+              coverageSection = `\n\n### ⚠️ Cobertura Insuficiente (${coverageWarnings.length})\n${rows}`;
+            }
+
             const changedApex = `${{ steps.changed.outputs.apex_classes }}`;
-            const testClasses = `${{ steps.changed.outputs.test_classes }}`;
 
-            const body = `## UAT PR Validation Report ${deployStatus}
+            // ── Write to Job Summary (visible no Actions, sem limite) ────────
+            const summary = [
+              `## UAT PR Validation ${deployStatus}`,
+              `**Branch:** \`${{ github.head_ref }}\` → \`UAT\` | **Org:** enerzee-UAT`,
+              `### 🚀 Resultado`,
+              deployResult,
+              compileSection,
+              testSection,
+              coverageSection,
+              analysisResult,
+              `---`,
+              `**Apex alterado:** ${changedApex || '_nenhum_'}`,
+            ].filter(Boolean).join('\n');
 
-            **Branch:** \`${{ github.head_ref }}\` → \`UAT\`
-            **Org:** UAT (enerzee-UAT)
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary + '\n');
 
-            ### 📦 Escopo
-            **Apex alterado:** ${changedApex || '_nenhum_'}
-            **Testes mapeados:** ${testClasses || '_nenhum — RunLocalTests usado_'}
-
-            ### 🚀 Dry-run Deploy
-            ${deployResult}${analysisResult}
-
-            ---
-            _Gerado automaticamente por [UAT PR Validation workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})_`;
+            // ── Comment on PR ────────────────────────────────────────────────
+            const body = [
+              `## UAT PR Validation Report ${deployStatus}`,
+              `**Branch:** \`${{ github.head_ref }}\` → \`UAT\` | **Org:** UAT (enerzee-UAT)`,
+              `### 🚀 Dry-run Deploy`,
+              deployResult,
+              compileSection,
+              testSection,
+              coverageSection,
+              analysisResult,
+              `---`,
+              `_Gerado automaticamente por [workflow run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})_`,
+            ].filter(Boolean).join('\n');
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,

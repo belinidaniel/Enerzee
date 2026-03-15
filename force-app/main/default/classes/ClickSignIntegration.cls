@@ -476,12 +476,9 @@ public with sharing class ClickSignIntegration {
   }
 
   private static String getDate() {
-    String strNow = String.valueOf(System.now().addDays(7));
-
-    strNow = strNow.replace(' ', 'T');
-    strNow += '-03:00';
-
-    return strNow;
+    return System.now()
+        .addDays(7)
+        .format('yyyy-MM-dd\'T\'HH:mm:ss', 'America/Sao_Paulo') + '-03:00';
   }
 
   public class ClickSignIntegrationException extends Exception {

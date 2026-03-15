@@ -74,6 +74,9 @@ private class OpportunityBOPaymentReminderTaskTest {
 
     User owner = createUser('owner.contract@test.com', 'ownc');
     User contractUser = createUser('contrato@enerzee.com.br.test', 'contu');
+    String queueDevName =
+      'FINANCEIRO_TST_' + String.valueOf(Math.abs(Crypto.getRandomInteger()));
+    createTaskQueue(queueDevName, 'Financeiro Teste Queue Contract');
 
     Opportunity oldOpp = createOpportunity(owner.Id, 'Contract');
     Opportunity newOpp = buildUpdatedOpportunity(
@@ -81,9 +84,6 @@ private class OpportunityBOPaymentReminderTaskTest {
       OpportunityUtils.SUB_STATUS_CONTRATO_ENVIADO
     );
 
-    String queueDevName =
-      'FINANCEIRO_TST_' + String.valueOf(Math.abs(Crypto.getRandomInteger()));
-    createTaskQueue(queueDevName, 'Financeiro Teste Queue Contract');
     OpportunityBO.PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME = queueDevName;
     OpportunityBO.PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE = 'missing.finance.user.contract@test.com';
 

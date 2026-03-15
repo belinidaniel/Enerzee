@@ -7,7 +7,7 @@
 		<field>Projeto__c$DataProtocoloProjeto__c</field>
 	</columns>
 	<columns>
-		<field>Projeto__c$DataAprovacaoProjeto__c</field>
+		<field>Projeto__c$ApprovalDate__c</field>
 	</columns>
 	<columns>
 		<aggregateTypes>Average</aggregateTypes>

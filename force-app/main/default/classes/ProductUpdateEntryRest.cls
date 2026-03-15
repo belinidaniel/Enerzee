@@ -74,14 +74,34 @@ global with sharing class ProductUpdateEntryRest {
             ExternalId__c,
             Id_Externo__c
           FROM Product2
-          WHERE ExternalId__c IN :extIds
+          WHERE
+            ProductCode IN :productCodes
+            OR Name IN :names
+            OR ExternalId__c IN :extIds
+            OR Id_Externo__c IN :extIds
         ]) {
           idToProd.put(p.Id, p);
+          if (!String.isBlank(p.ProductCode)) {
+            if (!codeToProds.containsKey(p.ProductCode))
+              codeToProds.put(p.ProductCode, new List<Product2>());
+            codeToProds.get(p.ProductCode).add(p);
+          }
+          if (!String.isBlank(p.Name)) {
+            if (!nameToProds.containsKey(p.Name))
+              nameToProds.put(p.Name, new List<Product2>());
+            nameToProds.get(p.Name).add(p);
+          }
           String extVal = (String) p.get('ExternalId__c');
           if (!String.isBlank(extVal)) {
             if (!extIdToProds.containsKey(extVal))
               extIdToProds.put(extVal, new List<Product2>());
             extIdToProds.get(extVal).add(p);
+          }
+          String legacyExtVal = (String) p.get('Id_Externo__c');
+          if (!String.isBlank(legacyExtVal)) {
+            if (!extIdToProds.containsKey(legacyExtVal))
+              extIdToProds.put(legacyExtVal, new List<Product2>());
+            extIdToProds.get(legacyExtVal).add(p);
           }
         }
       }
@@ -98,27 +118,33 @@ global with sharing class ProductUpdateEntryRest {
           ? null
           : u.productCode.trim();
         String ext = String.isBlank(u.externalId) ? null : u.externalId.trim();
+        String name = String.isBlank(u.name) ? null : u.name.trim();
 
         Boolean existsByCode = (code != null && codeToProds.containsKey(code));
         Boolean existsByExt = (!existsByCode &&
         ext != null &&
         extIdToProds.containsKey(ext));
+        Boolean existsByName = (!existsByCode &&
+        !existsByExt &&
+        name != null &&
+        nameToProds.containsKey(name));
 
-        if (!existsByCode && !existsByExt) {
+        if (!existsByCode && !existsByExt && !existsByName) {
           // define ProductCode: prioriza productCode; fallback para externalId
           String finalCode = (code != null) ? code : ext;
           if (String.isBlank(finalCode)) {
             // sem identificador suficiente, pula (será reportado depois)
             continue;
           }
+          String finalExternalId = String.isBlank(ext) ? finalCode : ext;
 
           Product2 newProd = new Product2(
             ProductCode = finalCode,
-            Name = String.isBlank(u.name) ? finalCode : u.name,
+            Name = String.isBlank(name) ? finalCode : name,
             Family = u.productFamily,
             IsActive = true,
-            ExternalId__c = ext,
-            Id_Externo__c = ext,
+            ExternalId__c = finalExternalId,
+            Id_Externo__c = finalExternalId,
             Description = u.description
           );
           productsToInsert.add(newProd);
@@ -169,9 +195,16 @@ global with sharing class ProductUpdateEntryRest {
           ? null
           : u.productCode.trim();
         String ext = String.isBlank(u.externalId) ? null : u.externalId.trim();
+        String name = String.isBlank(u.name) ? null : u.name.trim();
 
         if (chosen == null && ext != null && extIdToProds.containsKey(ext)) {
           chosen = chooseByFamily(extIdToProds.get(ext), u.productFamily);
+        }
+        if (chosen == null && code != null && codeToProds.containsKey(code)) {
+          chosen = chooseByFamily(codeToProds.get(code), u.productFamily);
+        }
+        if (chosen == null && name != null && nameToProds.containsKey(name)) {
+          chosen = chooseByFamily(nameToProds.get(name), u.productFamily);
         }
         if (chosen == null) {
           if (code != null && newByProductCode.containsKey(code))

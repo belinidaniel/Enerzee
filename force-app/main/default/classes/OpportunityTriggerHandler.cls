@@ -2,7 +2,7 @@
  * @description						 :
  * @author											 : Daniel Belini
  * @group												 :
- * @last modified on	 : 03-03-2026
+ * @last modified on	 : 03-13-2026
  * @last modified by	 : Daniel Belini
  **/
 public class OpportunityTriggerHandler extends TriggerHandler {
@@ -120,6 +120,10 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
+    OpportunityBO.updatePhaseOnValueChange(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
     OpportunityBO.createProjectRecords(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
@@ -156,10 +160,6 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
-    OpportunityBO.checksAndClosesTaskFollowUpCall(
-      (List<Opportunity>) Trigger.new,
-      (Map<Id, Opportunity>) Trigger.oldMap
-    );
     OpportunityBO.checkAndSendToRevo(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
@@ -193,6 +193,10 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (Map<Id, Opportunity>) Trigger.oldMap
     );
     OpportunityBO.handleOpportunityLeadConversion(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
+    OpportunityBO.disqualifyLinkedLeads(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );

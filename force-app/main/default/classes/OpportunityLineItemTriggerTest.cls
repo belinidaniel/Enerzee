@@ -13,11 +13,19 @@ public class OpportunityLineItemTriggerTest {
       new Opportunity(Pricebook2Id = Test.getStandardPricebookId()),
       true
     );
+    ProductTriggerHandler.disableTrigger();
     Product2 product = (Product2) TestFactory.createSObject(
       new Product2(
         ExternalId__c = 'oli-prod-' + String.valueOf(DateTime.now().getTime())
       ),
       true
+    );
+    ProductTriggerHandler.enableTrigger();
+    insert new PricebookEntry(
+      Pricebook2Id = Test.getStandardPricebookId(),
+      Product2Id = product.Id,
+      UnitPrice = 10,
+      IsActive = true
     );
   }
 

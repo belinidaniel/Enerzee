@@ -49,6 +49,9 @@ public class OpportunityUtils {
   public static String STATUS_GANHO_FECHADO = 'Ganho fechado';
   public static String STATUS_FECHADO_PERDIDO = 'Fechado Perdido';
 
+  // Lead Status constants
+  public static String LEAD_STATUS_NAO_QUALIFICADO = 'Não Qualificado';
+
   public static String SUB_STATUS_EM_AGENDAMENTO = 'Em Agendamento';
   public static String SUB_STATUS_AGENDADO = 'Agendado';
   public static String SUB_STATUS_AGUARDANDO_PAGAMENTO = 'Aguardando Pagamento';

@@ -2,7 +2,7 @@
  * @description				:
  * @author						: Daniel Belini
  * @group							:
- * @last modified on	: 03-04-2026
+ * @last modified on	: 03-13-2026
  * @last modified by	: Daniel Belini
  **/
 public class OpportunityBO {
@@ -269,6 +269,7 @@ public class OpportunityBO {
     Map<String, Id> externalIdToProductId
   ) {
     List<OpportunityLineItem> itemsToInsert = new List<OpportunityLineItem>();
+    Map<String, Double> productExternalIdToPrice = new Map<String, Double>();
 
     // IDs das Oportunidades inseridas/atualizadas
     Set<Id> opportunityIds = new Set<Id>();
@@ -281,6 +282,10 @@ public class OpportunityBO {
       OpportunityRecordsTO.SingleOpportunity singleOpportunity : restObjectsToInsertedOpportunity.keySet()
     ) {
       for (OpportunityRecordsTO.Product product : singleOpportunity.Products) {
+        productExternalIdToPrice.put(
+          String.valueOf(product.Id),
+          product.UnitaryValue
+        );
         if (
           !externalIdToProductId.keySet().contains(String.valueOf(product.Id))
         ) {
@@ -298,15 +303,7 @@ public class OpportunityBO {
       // Criar produtos novos
       List<Product2> productsToInsert = new List<Product2>();
 
-      // ID externo do Produto -> Valor unitário
-      Map<String, Double> productExternalIdToPrice = new Map<String, Double>();
-
       for (OpportunityRecordsTO.Product product : newProducts) {
-        productExternalIdToPrice.put(
-          String.valueOf(product.Id),
-          product.UnitaryValue
-        );
-
         productsToInsert.add(
           new Product2(
             Id_Externo__c = product.Id,
@@ -321,6 +318,46 @@ public class OpportunityBO {
 
       for (Product2 product : productsToInsert) {
         externalIdToProductId.put(product.ProductCode, product.Id);
+      }
+    }
+
+    Id standardPricebookId = Test.isRunningTest()
+      ? Test.getStandardPricebookId()
+      : ([
+            SELECT Id
+            FROM Pricebook2
+            WHERE Name = 'Standard Price Book'
+            LIMIT 1
+          ])
+          .Id;
+    Set<Id> productIds = new Set<Id>(externalIdToProductId.values());
+    Map<Id, Id> productIdToPricebookEntryId = new Map<Id, Id>();
+    for (PricebookEntry entry : [
+      SELECT Id, Product2Id
+      FROM PricebookEntry
+      WHERE Pricebook2Id = :standardPricebookId AND Product2Id IN :productIds
+    ]) {
+      productIdToPricebookEntryId.put(entry.Product2Id, entry.Id);
+    }
+
+    List<PricebookEntry> entriesToInsert = new List<PricebookEntry>();
+    for (String productExternalId : externalIdToProductId.keySet()) {
+      Id productId = externalIdToProductId.get(productExternalId);
+      if (!productIdToPricebookEntryId.containsKey(productId)) {
+        entriesToInsert.add(
+          new PricebookEntry(
+            Pricebook2Id = standardPricebookId,
+            Product2Id = productId,
+            UnitPrice = productExternalIdToPrice.get(productExternalId),
+            IsActive = true
+          )
+        );
+      }
+    }
+    if (!entriesToInsert.isEmpty()) {
+      insert entriesToInsert;
+      for (PricebookEntry entry : entriesToInsert) {
+        productIdToPricebookEntryId.put(entry.Product2Id, entry.Id);
       }
     }
 
@@ -361,9 +398,10 @@ public class OpportunityBO {
         String productExternalId = String.valueOf(product.Id);
 
         //Cria item
+        Id productId = externalIdToProductId.get(productExternalId);
         OpportunityLineItem item = new OpportunityLineItem(
           OpportunityId = opportunityId,
-          Product2Id = externalIdToProductId.get(productExternalId),
+          PricebookEntryId = productIdToPricebookEntryId.get(productId),
           UnitPrice = product.UnitaryValue,
           Quantity = product.Quantity,
           Description = product.Description
@@ -903,6 +941,46 @@ public class OpportunityBO {
     }
   }
 
+  // SAL-408: Dispara updatePhase quando ValorTotalProdutos__c muda para > 0
+  // em oportunidades dos tipos Ezee Connect, Ezee Livre, Ezee Solar (A/B) e Produtos.
+  // Detecta mudança no campo editável ValorTotalProdutos__c (não no campo fórmula ValorTotalProposta__c).
+  public static void updatePhaseOnValueChange(
+    List<Opportunity> newRecords,
+    Map<Id, Opportunity> oldRecordsMap
+  ) {
+    Set<Id> opportunityIds = new Set<Id>();
+
+    for (Opportunity opp : newRecords) {
+      Opportunity oldOpp = oldRecordsMap != null
+        ? oldRecordsMap.get(opp.Id)
+        : null;
+      if (oldOpp == null) {
+        continue;
+      }
+
+      if (
+        !OpportunityUtils.isRecordTypeEzeeConnect(opp) &&
+        !OpportunityUtils.isRecordTypeEzeeLivre(opp) &&
+        !OpportunityUtils.isRecordTypeEzeeSolar(opp) &&
+        !OpportunityUtils.isRecordTypeProdutos(opp)
+      ) {
+        continue;
+      }
+
+      if (
+        opp.ValorTotalProdutos__c != oldOpp.ValorTotalProdutos__c &&
+        opp.ValorTotalProdutos__c != null &&
+        opp.ValorTotalProdutos__c > 0
+      ) {
+        opportunityIds.add(opp.Id);
+      }
+    }
+
+    if (!opportunityIds.isEmpty()) {
+      ProposalService.updateOpportunityPhase(opportunityIds);
+    }
+  }
+
   //Envia contratos (PDF) vinculados à Oportunidades se (e somente se) eles foram aprovados
   public static void sendContractToExternalSystem(
     List<Opportunity> triggerlist,
@@ -1074,15 +1152,8 @@ public class OpportunityBO {
     }
     insert projectsToInsert;
     if (!projectsToInsert.isEmpty()) {
-      System.debug('Creating installations for Fast Track projects...');
-      Map<Id, Opportunity> opportunityById = new Map<Id, Opportunity>();
-      for (Opportunity opp : newRecords) {
-        opportunityById.put(opp.Id, opp);
-      }
-      InstalacaoBO.createInstallationsForFastTrackProjects(
-        projectsToInsert,
-        opportunityById
-      );
+      // SAL-401: cria Instalacao__c para todos os projetos, independente da categoria
+      InstalacaoBO.createInstallationsOnProjectCreation(projectsToInsert);
     }
   }
 
@@ -2240,47 +2311,38 @@ public class OpportunityBO {
 
   // Método para atualizar o Owner da Oportunidade
   public static void updateOwnerOnFirstModification(List<Opportunity> oppList) {
-    // Obter o ID do Usuário de Integração
-    Id integrationUserId = [
+    List<User> integrationUsers = [
       SELECT Id
       FROM User
       WHERE UserName LIKE '%integracao@lab065.com%'
       LIMIT 1
-    ]
-    .Id;
+    ];
+    if (integrationUsers.isEmpty()) {
+      return;
+    }
 
-    // Lista para oportunidades a serem atualizadas
-    List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
+    User currentUser = [
+      SELECT Profile.Name
+      FROM User
+      WHERE Id = :UserInfo.getUserId()
+      LIMIT 1
+    ];
+    String currentProfileName = currentUser.Profile.Name;
+    Id integrationUserId = integrationUsers[0].Id;
 
     for (Opportunity opp : oppList) {
-      // Verificar se o Owner ainda é o usuário de integração
       if (
         opp.OwnerId == integrationUserId &&
         integrationUserId != UserInfo.getUserId()
       ) {
-        // Verificar se o último modificador NÃO é administrador ou integração
-        User lastModifier = [
-          SELECT Profile.Name
-          FROM User
-          WHERE Id = :UserInfo.getUserId()
-          LIMIT 1
-        ];
-
         if (
-          lastModifier.Profile.Name != 'System Administrator' ||
-          lastModifier.Profile.Name != 'Administrador do sistema'
+          currentProfileName != 'System Administrator' &&
+          currentProfileName != 'Administrador do sistema'
         ) {
-          // Atualizar o Owner para o último modificador
           opp.OwnerId = UserInfo.getUserId();
-          //opportunitiesToUpdate.add(opp);
         }
       }
     }
-
-    // Atualizar as oportunidades na base de dados
-    //if (!opportunitiesToUpdate.isEmpty()) {
-    //		update opportunitiesToUpdate;
-    //}
   }
 
   public class PriceGenerationTableLine {
@@ -2323,68 +2385,6 @@ public class OpportunityBO {
     normalized = normalized.replaceAll('[Ñ]', 'N');
     return normalized;
   }
-
-  public static void checksAndClosesTaskFollowUpCall(
-    List<Opportunity> newRecords,
-    Map<Id, Opportunity> oldRecordsMap
-  ) {
-    for (Opportunity opp : newRecords) {
-      Opportunity oldOpp = oldRecordsMap.get(opp.id);
-      if (
-        OpportunityUtils.isStatusChanging(opp, oldOpp) &&
-        (OpportunityUtils.isStatusProposalSent(oldOpp) ||
-        OpportunityUtils.isStatusProposalGenerated(oldOpp) ||
-        OpportunityUtils.isStatusAwaitingAcceptance(oldOpp) ||
-        OpportunityUtils.isStatusProposalReadjustment(oldOpp) ||
-        OpportunityUtils.isSubStatusContractSent(oldOpp))
-      ) {
-        Id closerId = [
-          SELECT Id
-          FROM User
-          WHERE Email LIKE 'wagner.sampaio@enerzee.com.br%'
-          LIMIT 1
-        ]
-        .Id;
-
-        List<Task> tasksToClose = [
-          SELECT Id, Status
-          FROM Task
-          WHERE
-            WhatId = :opp.Id
-            AND Status = 'Open'
-            AND OwnerId = :closerId
-            AND Subject LIKE '%Ligação de follow-up%'
-        ];
-
-        for (Task task : tasksToClose) {
-          task.Status = 'Completed';
-          task.MetodoDeFollowup__c = 'Automático';
-
-          ContentNote note = new ContentNote();
-          note.Title = 'Tarefa Concluída';
-          note.Content = Blob.valueOf(
-            'Tarefa concluída automaticamente via integração'
-          );
-          insert note;
-
-          ContentDocumentLink cdl = new ContentDocumentLink();
-          cdl.ContentDocumentId = [
-            SELECT Id
-            FROM ContentNote
-            WHERE Id = :note.Id
-          ]
-          .Id;
-          cdl.LinkedEntityId = task.Id;
-          cdl.ShareType = 'I';
-          cdl.Visibility = 'AllUsers';
-          insert cdl;
-        }
-
-        update tasksToClose;
-      }
-    }
-  }
-
   public static void checkAndSendToRevo(
     List<Opportunity> newRecords,
     Map<Id, Opportunity> oldRecordsMap
@@ -3335,6 +3335,70 @@ public class OpportunityBO {
 
     if (!kitIds.isEmpty()) {
       KitInstalacaoBO.SendKitUpdate(kitIds);
+    }
+  }
+
+  /**
+   * @description Disqualifies Leads linked to Opportunities that are being moved to
+   *              "Fechado Perdido". Updates Lead.Status to 'Não Qualificado' in a
+   *              single bulk DML. Skips Leads already disqualified to avoid redundant DML.
+   *              Uses oldMap to detect stage transition (not just current stage).
+   * @param newList Updated Opportunity records (Trigger.new)
+   * @param oldMap  Previous state of the same records (Trigger.oldMap)
+   */
+  @TestVisible
+  public static void disqualifyLinkedLeads(
+    List<Opportunity> newList,
+    Map<Id, Opportunity> oldMap
+  ) {
+    if (newList == null || newList.isEmpty() || oldMap == null) {
+      return;
+    }
+
+    // Collect Lead IDs only from Opportunities transitioning into Fechado Perdido
+    Set<Id> leadIds = new Set<Id>();
+    for (Opportunity opp : newList) {
+      Opportunity oldOpp = oldMap.get(opp.Id);
+      if (oldOpp == null || String.isBlank(opp.Lead__c)) {
+        continue;
+      }
+      if (
+        OpportunityUtils.isStatusClosedLost(opp) &&
+        !OpportunityUtils.isStatusClosedLost(oldOpp)
+      ) {
+        leadIds.add((Id) opp.Lead__c);
+      }
+    }
+
+    if (leadIds.isEmpty()) {
+      return;
+    }
+
+    // Query current Lead status to avoid redundant DML (Cenário 5)
+    Map<Id, Lead> leadMap = new Map<Id, Lead>(
+      [SELECT Id, Status FROM Lead WHERE Id IN :leadIds WITH SECURITY_ENFORCED]
+    );
+
+    List<Lead> leadsToUpdate = new List<Lead>();
+    for (Id leadId : leadIds) {
+      Lead relatedLead = leadMap.get(leadId);
+      if (relatedLead == null) {
+        continue;
+      }
+      // Skip if already disqualified
+      if (relatedLead.Status == OpportunityUtils.LEAD_STATUS_NAO_QUALIFICADO) {
+        continue;
+      }
+      leadsToUpdate.add(
+        new Lead(
+          Id = leadId,
+          Status = OpportunityUtils.LEAD_STATUS_NAO_QUALIFICADO
+        )
+      );
+    }
+
+    if (!leadsToUpdate.isEmpty()) {
+      update leadsToUpdate;
     }
   }
 }

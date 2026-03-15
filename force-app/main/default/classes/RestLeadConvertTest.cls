@@ -1,16 +1,9 @@
 @isTest
 private class RestLeadConvertTest {
-  @TestSetup
-  static void makeData() {
-    insert new Lead(FirstName = 'Test', LastName = 'Lead', Company = 'Company');
-  }
-
   @isTest
   static void testPostWithBadJson() {
-    Lead lead = [SELECT Id FROM Lead LIMIT 1];
-
     RestContext.request = new RestRequest();
-    RestContext.request.requestURI = '/leadconvert/' + lead.Id;
+    RestContext.request.requestURI = '/leadconvert/00Q4K000001iiKjUAI';
     RestContext.request.httpMethod = 'POST';
     RestContext.request.requestBody = Blob.valueOf(
       '{"accountId":,"convertedStatus":"Opportunity"}'
