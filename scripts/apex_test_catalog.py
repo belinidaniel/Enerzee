@@ -13,7 +13,7 @@ from typing import Iterable
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CLASSES_DIR = REPO_ROOT / "force-app" / "main" / "default" / "classes"
-HEADER_SYNC_SKIP = {"MetadataService"}
+HEADER_SYNC_SKIP = {"MetadataService", "MetadataServiceTest"}
 
 DEFAULT_AUTHOR = "Daniel Belini"
 DEFAULT_MODIFIED_BY = "Daniel Belini"

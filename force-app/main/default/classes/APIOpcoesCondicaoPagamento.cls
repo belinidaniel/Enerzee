@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : APIOpcoesCondicaoPagamentoTest
+ * @test              : APIOpcoesCondicaoPagamentoCoverageTest, APIOpcoesCondicaoPagamentoTest
  **/
 @RestResource(urlMapping='/gerenciarOpcoesCondicaoPagamento')
 global with sharing class APIOpcoesCondicaoPagamento {
@@ -106,6 +106,7 @@ global with sharing class APIOpcoesCondicaoPagamento {
     return resposta;
   }
 
+  @TestVisible
   private static void atualizarCampoComMetadataAPI(
     List<ValueCustomField> valores
   ) {
@@ -160,6 +161,7 @@ global with sharing class APIOpcoesCondicaoPagamento {
     }
   }
 
+  @TestVisible
   private static void atualizarTiposDeRegistro(
     List<String> nomesTipos,
     List<ValueCustomField> valores
@@ -209,6 +211,7 @@ global with sharing class APIOpcoesCondicaoPagamento {
     }
   }
 
+  @TestVisible
   private static List<ValueCustomField> montarListaFinalDeValores(
     List<ValueCustomField> existentes,
     List<RequisicaoWrapper> novas
@@ -234,6 +237,7 @@ global with sharing class APIOpcoesCondicaoPagamento {
   }
 
   //Valida os dados enviados pelo requisitante
+  @TestVisible
   private static RespostaWrapper validarRequisicao(
     RespostaWrapper resposta,
     Integer qtdOpcoesExistentes,
@@ -307,6 +311,7 @@ global with sharing class APIOpcoesCondicaoPagamento {
   }
 
   //Monta os erros a serem retornados por esta API
+  @TestVisible
   private static RespostaWrapper gerarRespostaErro(
     String errorCode,
     String message
@@ -357,6 +362,7 @@ global with sharing class APIOpcoesCondicaoPagamento {
     return id18caracteres;
   }
 
+  @TestVisible
   private static Boolean gerenciarOpcoesTipoRegistro(
     String nomeTipoReg,
     MetadadosReqCustomField mtdCustomField
@@ -400,6 +406,7 @@ global with sharing class APIOpcoesCondicaoPagamento {
     }
   }
 
+  @TestVisible
   private static HTTPResponse atualizarMetadadosTipoReg(
     HTTPResponse respostaLeitura,
     MetadadosReqCustomField mtdCustomField,
@@ -426,6 +433,7 @@ global with sharing class APIOpcoesCondicaoPagamento {
   }
 
   //Monta requisição de atualização de metadado de tipo de registro. Reusável, é usado pelos três
+  @TestVisible
   private static MetadadosReqRecType montarReqTipoReg(
     MetadadosReqCustomField mtdCustomField,
     MetadadosReqRecType mtdTipoReg
