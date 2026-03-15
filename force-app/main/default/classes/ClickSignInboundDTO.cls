@@ -51,12 +51,12 @@ public class ClickSignInboundDTO {
   }
 
   public class Template {
-    public Object data { get; set; }
+    public Map<String, Object> data { get; set; }
   }
 
   public class EventDetail {
     public String name { get; set; }
-    public Object data { get; set; }
+    public Map<String, Object> data { get; set; }
     public Datetime occurred_at { get; set; }
   }
 

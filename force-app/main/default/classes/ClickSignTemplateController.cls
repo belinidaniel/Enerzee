@@ -649,7 +649,7 @@ public with sharing class ClickSignTemplateController {
   }
 
   private static Id resolveUploadSiteId() {
-    if (Test.isRunningTest() && uploadSiteIdOverride != null) {
+    if (Test.isRunningTest()) {
       return uploadSiteIdOverride;
     }
 
