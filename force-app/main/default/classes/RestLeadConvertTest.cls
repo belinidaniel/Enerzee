@@ -8,6 +8,22 @@
  **/
 @isTest
 private class RestLeadConvertTest {
+  private static void setIfExists(
+    SObject record,
+    String fieldName,
+    Object value
+  ) {
+    Map<String, Schema.SObjectField> fields = record.getSObjectType()
+      .getDescribe()
+      .fields.getMap();
+    if (
+      fields.containsKey(fieldName) &&
+      fields.get(fieldName).getDescribe().isCreateable()
+    ) {
+      record.put(fieldName, value);
+    }
+  }
+
   @isTest
   static void testPostWithBadJson() {
     RestContext.request = new RestRequest();
@@ -72,5 +88,72 @@ private class RestLeadConvertTest {
     Exception e = new RestLeadConvert.BadRequestException('test');
     String code = RestLeadConvert.exceptionTypeNameToCode(e);
     System.assertEquals('BadRequestException', code);
+  }
+
+  @isTest
+  static void testPostWithEmptyBodyConvertsLeadSuccessfully() {
+    String document = '12345678901';
+
+    Account existingAccount = new Account(Name = 'Existing Conversion Account');
+    setIfExists(existingAccount, 'Formata_CPF__c', document);
+    setIfExists(existingAccount, 'Formata_CNPJ__c', document);
+    insert existingAccount;
+
+    Lead leadRecord = new Lead(
+      LastName = 'Lead Convert Success',
+      Company = 'Enerzee',
+      CPFCNPJ__c = document
+    );
+    insert leadRecord;
+
+    RestContext.request = new RestRequest();
+    RestContext.request.requestURI =
+      '/services/apexrest/leadconvert/' + leadRecord.Id;
+    RestContext.request.httpMethod = 'POST';
+    RestContext.request.requestBody = Blob.valueOf('');
+    RestContext.response = new RestResponse();
+
+    Test.startTest();
+    RestLeadConvert.doPost();
+    Test.stopTest();
+
+    Lead convertedLead = [
+      SELECT IsConverted, ConvertedAccountId
+      FROM Lead
+      WHERE Id = :leadRecord.Id
+    ];
+
+    System.assertEquals(
+      RestLeadConvert.StatusCodeOK,
+      RestContext.response.statusCode
+    );
+    System.assertEquals(true, convertedLead.IsConverted);
+    System.assert(
+      RestContext.response.responseBody.toString().contains('Success'),
+      'Successful conversions must return a success payload.'
+    );
+  }
+
+  @isTest
+  static void testPostWithInvalidTrailingLeadIdReturnsBadRequest() {
+    RestContext.request = new RestRequest();
+    RestContext.request.requestURI = '/services/apexrest/leadconvert/not-a-lead';
+    RestContext.request.httpMethod = 'POST';
+    RestContext.request.requestBody = Blob.valueOf('');
+    RestContext.response = new RestResponse();
+
+    Test.startTest();
+    RestLeadConvert.doPost();
+    Test.stopTest();
+
+    System.assertEquals(
+      RestLeadConvert.StatusCodeBadRequest,
+      RestContext.response.statusCode
+    );
+    System.assert(
+      RestContext.response.responseBody.toString()
+        .contains('BadRequestException'),
+      'Invalid URIs must surface the bad request code in the response body.'
+    );
   }
 }

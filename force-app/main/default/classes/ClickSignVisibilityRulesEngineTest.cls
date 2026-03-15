@@ -284,4 +284,120 @@ private class ClickSignVisibilityRulesEngineTest {
       ClickSignVisibilityRulesEngine.evaluateRules(emptyLegacyRule, opp.Id)
     );
   }
+
+  @IsTest
+  static void shouldHandleInvalidJsonAndGuardClauses() {
+    Opportunity opp = createOpportunity(
+      'Guard Clause Opportunity',
+      'Prospecting',
+      5
+    );
+
+    List<String> invalidJsonErrors = ClickSignVisibilityRulesEngine.validateRules(
+      '{"invalid"'
+    );
+    List<String> invalidObjectErrors = ClickSignVisibilityRulesEngine.validateRules(
+      '["not-an-object"]'
+    );
+
+    System.assert(
+      !invalidJsonErrors.isEmpty(),
+      'Malformed JSON must return validation errors.'
+    );
+    System.assert(
+      !invalidObjectErrors.isEmpty(),
+      'Non-object JSON payload must return validation errors.'
+    );
+    System.assertEquals(
+      true,
+      ClickSignVisibilityRulesEngine.evaluateRules(null, opp.Id),
+      'Blank rules should default to visible.'
+    );
+    System.assertEquals(
+      false,
+      ClickSignVisibilityRulesEngine.evaluateRules('{"version":2}', null),
+      'Null record id must fail evaluation.'
+    );
+  }
+
+  @IsTest
+  static void shouldRejectBrokenExpressionAndInvalidConditions() {
+    String invalidRuleJson = JSON.serialize(
+      new Map<String, Object>{
+        'version' => 2,
+        'mode' => 'expression',
+        'logicMode' => 'CUSTOM',
+        'logicExpression' => '1 AND 3',
+        'conditions' => new List<Object>{
+          new Map<String, Object>{
+            'id' => '1',
+            'type' => 'picklist',
+            'field' => 'StageName',
+            'op' => 'IN',
+            'values' => new List<Object>()
+          },
+          new Map<String, Object>{
+            'id' => '1',
+            'type' => 'recordType',
+            'op' => 'EQ',
+            'recordTypeId' => null
+          },
+          'unexpected condition'
+        }
+      }
+    );
+
+    List<String> errors = ClickSignVisibilityRulesEngine.validateRules(
+      invalidRuleJson
+    );
+
+    System.assert(
+      errors.size() >= 2,
+      'Broken conditions and duplicated ids must produce validation errors.'
+    );
+  }
+
+  @IsTest
+  static void shouldRejectInvalidLegacyAndUnknownExpressionReferences() {
+    Opportunity opp = createOpportunity(
+      'Invalid Expression Opportunity',
+      'Prospecting',
+      5
+    );
+
+    String invalidLegacyRule = '{"version":1,"logic":"OR","groups":[{"logic":"AND","conditions":[]}]}';
+    String unknownReferenceRule = JSON.serialize(
+      new Map<String, Object>{
+        'version' => 2,
+        'mode' => 'expression',
+        'logicExpression' => '1 OR 2',
+        'conditions' => new List<Object>{
+          new Map<String, Object>{
+            'id' => '1',
+            'type' => 'picklist',
+            'field' => 'StageName',
+            'op' => '=',
+            'value' => 'Prospecting'
+          }
+        }
+      }
+    );
+
+    List<String> legacyErrors = ClickSignVisibilityRulesEngine.validateRules(
+      invalidLegacyRule
+    );
+
+    System.assert(
+      !legacyErrors.isEmpty(),
+      'Legacy rules without valid conditions must fail validation.'
+    );
+    System.assertEquals(
+      false,
+      ClickSignVisibilityRulesEngine.evaluateRules(
+        unknownReferenceRule,
+        opp.Id
+      ),
+      'Unknown condition references must fail evaluation.'
+    );
+  }
 }
