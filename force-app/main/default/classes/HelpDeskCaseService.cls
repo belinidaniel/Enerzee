@@ -375,13 +375,16 @@ public without sharing class HelpDeskCaseService {
   public static UserContext loadUserContext() {
     UserContext ctx = new UserContext();
     ctx.userId = UserInfo.getUserId();
-    User u = [
+    List<User> users = [
       SELECT Id, ContactId, Email
       FROM User
       WHERE Id = :ctx.userId
+      LIMIT 1
     ];
-    ctx.contactId = u.ContactId;
-    ctx.email = u.Email;
+    if (!users.isEmpty()) {
+      ctx.contactId = users[0].ContactId;
+      ctx.email = users[0].Email;
+    }
     return ctx;
   }
 
