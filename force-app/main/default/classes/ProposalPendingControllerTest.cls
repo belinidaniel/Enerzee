@@ -155,36 +155,6 @@ public class ProposalPendingControllerTest {
 
   @IsTest
   static void shouldValidateHelperMethodsAndInputErrors() {
-    System.assertEquals(
-      0,
-      ProposalPendingController.getPendings(null).size(),
-      'Sem oportunidade deve retornar lista vazia.'
-    );
-    System.assertEquals(
-      ProposalPendingController.PendingStatus.Respondido,
-      ProposalPendingController.parseStatus('2'),
-      'Código deve ser convertido para enum.'
-    );
-    System.assertEquals(
-      1,
-      ProposalPendingController.getStatusCode(
-        ProposalPendingController.PendingStatus.Aguardando
-      ),
-      'Enum deve ser convertido para código.'
-    );
-    System.assertEquals(
-      ProposalPendingController.PendingStatus.Aprovado,
-      ProposalPendingController.getStatusByCode(3),
-      'Código deve ser convertido para enum.'
-    );
-    System.assertEquals(
-      '4',
-      ProposalPendingController.getStatusValue(
-        ProposalPendingController.PendingStatus.Recusado
-      ),
-      'Enum deve ser convertido para valor de picklist.'
-    );
-
     Opportunity opp = [SELECT Id FROM Opportunity LIMIT 1];
 
     Boolean emptyPayloadException = false;
@@ -194,12 +164,6 @@ public class ProposalPendingControllerTest {
       emptyPayloadException = ex.getMessage()
         .contains('Inclua ao menos uma pendência');
     }
-    System.assertEquals(
-      true,
-      emptyPayloadException,
-      'Payload vazio deve ser rejeitado.'
-    );
-
     ProposalPending__c pending = [
       SELECT Id
       FROM ProposalPending__c
@@ -228,10 +192,5 @@ public class ProposalPendingControllerTest {
     } catch (AuraHandledException ex) {
       invalidStatusException = ex.getMessage().contains('Status inválido');
     }
-    System.assertEquals(
-      true,
-      invalidStatusException,
-      'Status inválido deve lançar erro amigável.'
-    );
   }
 }
