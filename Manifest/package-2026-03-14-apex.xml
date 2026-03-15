@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>EngineeringDateStampFlowTest</members>
+        <members>IntegracaoSAPTest</members>
+        <members>IntegracaoVOConsultorPreCadastroTest</members>
+        <members>IntegracaoVOPlanoTest</members>
+        <members>KitInstalacaoTriggerTest</members>
+        <members>ModuloHelpDeskCaseControllerTest</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityBOAdditionalTest</members>
+        <members>OpportunityBOHighCoverageTest</members>
+        <members>OpportunityEntryRest</members>
+        <members>OpportunityEntryRestTest</members>
+        <members>OpportunityLineItemTriggerTest</members>
+        <members>OpportunityTriggerHandler</members>
+        <members>ProductBO</members>
+        <members>ProductUpdateEntryRest</members>
+        <members>ProductUpdateEntryRestTest</members>
+        <members>ProjetoStatusIntegrationService</members>
+        <members>ProjetoStatusIntegrationServiceTest</members>
+        <members>ProjetoTriggerTest</members>
+        <members>RestLeadConvertTest</members>
+        <members>TaskBO</members>
+        <members>TaskBOTest</members>
+        <members>TaskTriggerTest</members>
+        <members>TestFactory</members>
+        <members>TestFactoryDefaults</members>
+        <members>ViabilityStudyBO</members>
+        <members>ViabilityStudyBOTest</members>
+        <members>RestLeadConvertTest</members>
+        <name>ApexClass</name>
+    </types>
+    <version>64.0</version>
+</Package>
