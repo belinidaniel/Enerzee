@@ -104,8 +104,8 @@ jobs:
             echo "No Apex files changed." | tee /tmp/analysis_result.txt
           fi
 
-      # ─── Dry-run Deploy (Validation) ─────────────────────────────────────────
-      - name: Dry-run Deploy Validation
+      # ─── Validation for Quick Deploy ─────────────────────────────────────────
+      - name: Validate Deploy for Quick Deploy
         if: steps.changed.outputs.has_changes == 'true'
         id: deploy
         run: |
@@ -116,10 +116,9 @@ jobs:
             DESTRUCTIVE_ARG="--post-destructive-changes destructiveChanges/destructiveChanges.xml"
           fi
 
-          sf project deploy start \
+          sf project deploy validate \
             --manifest package/package.xml \
             --target-org enerzee-PRD \
-            --dry-run \
             --test-level RunLocalTests \
             $DESTRUCTIVE_ARG \
             --async \
@@ -133,6 +132,7 @@ jobs:
           fi
 
           echo "Deploy ID: $DEPLOY_ID"
+          echo "deploy_id=$DEPLOY_ID" >> $GITHUB_OUTPUT
 
           while true; do
             sf project deploy report \
@@ -159,7 +159,7 @@ jobs:
                 break
                 ;;
               *)
-                echo "::warning::Status inesperado do deploy: $DEPLOY_STATUS"
+                echo "::warning::Status inesperado da validação: $DEPLOY_STATUS"
                 sleep 15
                 ;;
             esac
@@ -174,6 +174,44 @@ jobs:
           if [ "$FINAL_STATUS" != "Succeeded" ]; then
             exit 1
           fi
+
+      - name: Create quick deploy metadata
+        if: steps.changed.outputs.has_changes == 'true' && steps.deploy.outcome == 'success'
+        run: |
+          set -euo pipefail
+
+          PACKAGE_HASH=$(sha256sum package/package.xml | awk '{print $1}')
+          DESTRUCTIVE_HASH=""
+          if grep -q '<types>' ./destructiveChanges/destructiveChanges.xml 2>/dev/null; then
+            DESTRUCTIVE_HASH=$(sha256sum destructiveChanges/destructiveChanges.xml | awk '{print $1}')
+          fi
+
+          cat > /tmp/quick-deploy-prd.json <<EOF
+          {
+            "schemaVersion": 1,
+            "validationJobId": "${{ steps.deploy.outputs.deploy_id }}",
+            "targetOrg": "enerzee-PRD",
+            "validatedAtUtc": "$(date -u +%FT%TZ)",
+            "workflowRunId": "${{ github.run_id }}",
+            "workflowName": "${{ github.workflow }}",
+            "headSha": "${{ github.event.pull_request.head.sha }}",
+            "baseRef": "${{ github.base_ref }}",
+            "manifestSha256": "${PACKAGE_HASH}",
+            "destructiveSha256": "${DESTRUCTIVE_HASH}",
+            "testLevel": "RunLocalTests",
+            "tests": []
+          }
+          EOF
+
+          cat /tmp/quick-deploy-prd.json
+
+      - name: Upload quick deploy metadata
+        if: steps.changed.outputs.has_changes == 'true' && steps.deploy.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: quick-deploy-prd-${{ github.event.pull_request.head.sha }}
+          path: /tmp/quick-deploy-prd.json
+          retention-days: 10
 
       # ─── Job Summary + Comment on PR ─────────────────────────────────────────
       - name: Write job summary and comment on PR
@@ -200,20 +238,20 @@ jobs:
 
               if (deploySucceeded) {
                 deployStatus = '✅';
-                deployResult = '✅ **Dry-run passed** — sem erros de compilação ou testes';
+                deployResult = '✅ **Validation passed** — pronta para quick deploy sem erros de compilação ou testes';
               } else {
                 deployStatus = '❌';
                 const details = json?.result?.details || {};
                 compileErrors = details.componentFailures || [];
                 testFailures = (details.runTestResult?.failures || []);
                 coverageWarnings = (details.runTestResult?.codeCoverageWarnings || []);
-                deployResult = `❌ **Dry-run falhou** — ${compileErrors.length} erros de compilação, ${testFailures.length} falhas de teste`;
+                deployResult = `❌ **Validation falhou** — ${compileErrors.length} erros de compilação, ${testFailures.length} falhas de teste`;
                 if (!compileErrors.length && !testFailures.length) {
-                  deployResult = `❌ **Dry-run falhou** — ${deployStatusText || json.message || 'Erro desconhecido'}`;
+                  deployResult = `❌ **Validation falhou** — ${deployStatusText || json.message || 'Erro desconhecido'}`;
                 }
               }
             } catch (e) {
-              deployResult = `⚠️ Não foi possível ler resultado do deploy: ${e.message}`;
+              deployResult = `⚠️ Não foi possível ler resultado da validação: ${e.message}`;
             }
 
             let analysisResult = '';
@@ -270,7 +308,7 @@ jobs:
             const body = [
               `## PR Validation Report ${deployStatus}`,
               `**Branch:** \`${{ github.head_ref }}\` → \`main\` | **Org:** Production (enerzee-PRD)`,
-              `### 🚀 Dry-run Deploy`,
+              `### 🚀 Validation`,
               deployResult,
               compileSection,
               testSection,
