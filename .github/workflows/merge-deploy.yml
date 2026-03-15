@@ -87,27 +87,17 @@ jobs:
         if: steps.changed.outputs.has_changes == 'true'
         id: deploy
         run: |
-          TEST_LEVEL="RunLocalTests"
-          TEST_ARGS=""
-
-          if [ -n "${{ steps.changed.outputs.test_classes }}" ]; then
-            TEST_LEVEL="RunSpecifiedTests"
-            TEST_ARGS="--tests ${{ steps.changed.outputs.test_classes }}"
-          fi
-
           DESTRUCTIVE_ARG=""
           if grep -q '<types>' ./destructiveChanges/destructiveChanges.xml 2>/dev/null; then
             DESTRUCTIVE_ARG="--post-destructive-changes destructiveChanges/destructiveChanges.xml"
           fi
 
-          echo "Test level: $TEST_LEVEL"
-          echo "Tests: ${{ steps.changed.outputs.test_classes }}"
+          echo "Test level: RunLocalTests"
 
           sf project deploy start \
             --manifest package/package.xml \
             --target-org enerzee-PRD \
-            --test-level $TEST_LEVEL \
-            $TEST_ARGS \
+            --test-level RunLocalTests \
             $DESTRUCTIVE_ARG \
             --json > /tmp/deploy_result.json 2>&1
 
