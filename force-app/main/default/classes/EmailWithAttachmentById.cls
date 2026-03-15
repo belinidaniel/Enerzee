@@ -144,9 +144,7 @@ public class EmailWithAttachmentById {
 
     String plain = htmlBody.replaceAll('<[^>]+>', ' ');
     plain = plain.replaceAll('&nbsp;', ' ');
-    while (plain.contains('	 ')) {
-      plain = plain.replace('	 ', ' ');
-    }
+    plain = plain.replaceAll('\\s+', ' ');
     return plain.trim();
   }
 }

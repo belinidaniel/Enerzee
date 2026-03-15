@@ -14,6 +14,8 @@ from typing import Iterable
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CLASSES_DIR = REPO_ROOT / "force-app" / "main" / "default" / "classes"
 HEADER_SYNC_SKIP = {"MetadataService", "MetadataServiceTest"}
+MAX_CHANGED_PROD_CLASSES_FOR_SPECIFIED_TESTS = 25
+MAX_SELECTED_TESTS_FOR_SPECIFIED_TESTS = 40
 
 DEFAULT_AUTHOR = "Daniel Belini"
 DEFAULT_MODIFIED_BY = "Daniel Belini"
@@ -577,27 +579,38 @@ def collect_tests(
 
     selection_reason = "no_metadata_changes"
     test_level = "RunLocalTests"
+    changed_prod_classes_count = len(changed_prod_classes)
+    selected_tests_count = len(selected_tests)
     if relevant_changes:
         if strict_errors:
             selection_reason = "invalid_test_header"
         elif explicit_unmapped:
             selection_reason = "fallback_local_tests_unmapped"
+        elif (
+            changed_prod_classes_count > MAX_CHANGED_PROD_CLASSES_FOR_SPECIFIED_TESTS
+            or selected_tests_count > MAX_SELECTED_TESTS_FOR_SPECIFIED_TESTS
+        ):
+            selection_reason = "fallback_local_tests_large_change"
         elif selected_tests:
             test_level = "RunSpecifiedTests"
             selection_reason = "header_mapping"
         else:
             selection_reason = "fallback_local_tests"
 
+    emitted_tests = " ".join(sorted(selected_tests)) if test_level == "RunSpecifiedTests" else ""
+
     outputs = {
         "has_changes": "true" if relevant_changes else "false",
         "apex_classes": " ".join(sorted(changed_prod_classes)),
-        "test_classes": " ".join(sorted(selected_tests)),
+        "test_classes": emitted_tests,
         "test_level": test_level,
         "selection_reason": selection_reason,
         "missing_test_mappings": " ".join(sorted(missing_headers)),
         "explicit_no_test_mappings": " ".join(sorted(explicit_unmapped)),
         "invalid_test_headers": " | ".join(sorted(invalid_test_references)),
         "changed_files_count": str(len(relevant_changes)),
+        "changed_prod_classes_count": str(changed_prod_classes_count),
+        "selected_tests_count": str(selected_tests_count),
     }
     return outputs, strict_errors
 

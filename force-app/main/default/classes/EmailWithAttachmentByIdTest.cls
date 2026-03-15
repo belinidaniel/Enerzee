@@ -44,6 +44,7 @@ private class EmailWithAttachmentByIdTest {
     String plain = EmailWithAttachmentById.convertToPlainText(
       '<p>Olá&nbsp;<strong>Mundo</strong></p>'
     );
-    System.assertEquals('Olá Mundo', plain);
+
+    Assert.areEqual('Olá Mundo', plain);
   }
 }
