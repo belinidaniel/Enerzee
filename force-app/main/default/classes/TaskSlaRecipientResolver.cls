@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : TaskSlaCoreTest, TaskSlaNotificationServiceEmailLimitTest
+ **/
 public with sharing class TaskSlaRecipientResolver {
   public class Context {
     public Map<Id, User> ownersById = new Map<Id, User>();

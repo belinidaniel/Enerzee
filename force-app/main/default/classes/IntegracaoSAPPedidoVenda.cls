@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : IntegracaoSAPTest
+ **/
 public with sharing class IntegracaoSAPPedidoVenda {
   @future(callout=true)
   public static void sendPedidoVenda(Set<Id> triggerIds) {

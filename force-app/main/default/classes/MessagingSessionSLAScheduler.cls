@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : MessagingSessionSLABatchTest
+ **/
 global with sharing class MessagingSessionSLAScheduler implements Schedulable {
   private static final String JOB_NAME = 'Messaging Session SLA Job';
   private static final String CRON_FORMAT = '{0} {1} {2} {3} {4} {5}';

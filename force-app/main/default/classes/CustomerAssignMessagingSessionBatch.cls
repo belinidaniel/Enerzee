@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : CustomerAssignMessagingSessionBatchTest
+ **/
 global with sharing class CustomerAssignMessagingSessionBatch implements Database.Batchable<SObject>, Database.Stateful, Schedulable {
   global Database.QueryLocator start(Database.BatchableContext BC) {
     return Database.getQueryLocator(

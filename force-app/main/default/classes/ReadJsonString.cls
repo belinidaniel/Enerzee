@@ -1,8 +1,10 @@
 /**
- * @description						 : Parseia um JSON de string e retorna até 5 campos fixos conforme as chaves recebidas.
- * @author											 : Daniel Belini
- * @last modified on	 : 10-12-2025
- * @last modified by	 : Daniel Belini
+ * @description       : Parseia um JSON de string e retorna até 5 campos fixos conforme as chaves recebidas.
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ReadJsonStringTest
  **/
 public with sharing class ReadJsonString {
   public class InputWrapper {

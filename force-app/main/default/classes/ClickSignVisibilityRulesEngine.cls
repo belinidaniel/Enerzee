@@ -1,8 +1,10 @@
 /**
- * @description						 : ClickSign visibility rules engine supporting legacy groups and expression mode.
- * @author											 : Daniel Belini
- * @last modified on	 : 02-17-2026
- * @last modified by	 : Codex
+ * @description       : ClickSign visibility rules engine supporting legacy groups and expression mode.
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ClickSignVisibilityRulesEngineTest
  **/
 public with sharing class ClickSignVisibilityRulesEngine {
   private static final String LOGIC_AND = 'AND';

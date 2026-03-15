@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de apoio a testes
+ **/
 @IsTest
 global class ClickSignMock implements HttpCalloutMock {
   private String body;

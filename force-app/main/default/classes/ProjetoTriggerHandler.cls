@@ -1,9 +1,11 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 12-16-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : OpportunityBOHighCoverageTest, ProjetoTriggerTest, TaskCompletionServiceTest,
+ *                       WorkDeliveryReportPdfControllerTest
  **/
 public class ProjetoTriggerHandler extends TriggerHandler {
   public ProjetoTriggerHandler() {

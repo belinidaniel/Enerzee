@@ -1,9 +1,10 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 10-09-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : OpportunityBOCoverageTest, OpportunityBOHighCoverageTest, OpportunityRecordsTOTest
  **/
 global with sharing class OpportunityRecordsTO {
   public class Opportunities {
