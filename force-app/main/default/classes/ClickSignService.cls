@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : ClickSignServiceTest
+ * @test              : ClickSignServiceTest, ClickSignUtilsCoverageTest
  **/
 public with sharing class ClickSignService {
   public static void process(

@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : OpportunityTriggerTest
+ * @test              : OpportunityShareHandlerTest, OpportunityTriggerTest
  **/
 public without sharing class OpportunityShareHandler {
   public static void gerenciarCompartilhamentoOportunidade(

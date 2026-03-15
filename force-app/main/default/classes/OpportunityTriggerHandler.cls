@@ -4,12 +4,12 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : AdditionalCoverageNewClassesTest, KitInstalacaoBOTest, OpportunityBOCoverageTest,
- *                       OpportunityBOHighCoverageTest, OpportunityBOPaymentReminderTaskTest,
- *                       OpportunityDiscountRequestControllerTest, OpportunityTriggerHandlerToggleTest,
- *                       OpportunityTriggerTest, OpportunityUtilsTest, ProjetoBOCoverageTest, ProjetoTriggerTest,
- *                       ProposalPendingControllerTest, ProposalPendingResponseRestTest,
- *                       ProposalPendingStatusQueueableTest, ServiceAppointmentBOTest,
+ * @test              : AdditionalCoverageNewClassesTest, ClickSignUtilsCoverageTest, KitInstalacaoBOTest,
+ *                       OpportunityBOCoverageTest, OpportunityBOHighCoverageTest, OpportunityBOPaymentReminderTaskTest,
+ *                       OpportunityDiscountRequestControllerTest, OpportunityShareHandlerTest,
+ *                       OpportunityTriggerHandlerToggleTest, OpportunityTriggerTest, OpportunityUtilsTest,
+ *                       ProjetoBOCoverageTest, ProjetoTriggerTest, ProposalPendingControllerTest,
+ *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest, ServiceAppointmentBOTest,
  *                       WorkDeliveryReportPdfControllerTest
  **/
 public class OpportunityTriggerHandler extends TriggerHandler {
