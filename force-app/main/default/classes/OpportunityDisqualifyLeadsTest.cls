@@ -58,7 +58,7 @@ private class OpportunityDisqualifyLeadsTest {
       OpportunityUtils.STATUS_PROPOSTA_ENVIADA,
       lead.Id
     );
-    Opportunity newOpp = oldOpp.clone(false, true, true, true);
+    Opportunity newOpp = oldOpp.clone(true, true, true, true);
     newOpp.StageName = OpportunityUtils.STATUS_FECHADO_PERDIDO;
 
     Test.startTest();
@@ -87,7 +87,7 @@ private class OpportunityDisqualifyLeadsTest {
       OpportunityUtils.STATUS_PROPOSTA_ENVIADA,
       null
     );
-    Opportunity newOpp = oldOpp.clone(false, true, true, true);
+    Opportunity newOpp = oldOpp.clone(true, true, true, true);
     newOpp.StageName = OpportunityUtils.STATUS_FECHADO_PERDIDO;
 
     Integer leadCountBefore = [SELECT COUNT() FROM Lead];
@@ -144,7 +144,7 @@ private class OpportunityDisqualifyLeadsTest {
     List<Opportunity> newOpps = new List<Opportunity>();
     Map<Id, Opportunity> oldMap = new Map<Id, Opportunity>();
     for (Opportunity old : oldOpps) {
-      Opportunity nw = old.clone(false, true, true, true);
+      Opportunity nw = old.clone(true, true, true, true);
       nw.StageName = OpportunityUtils.STATUS_FECHADO_PERDIDO;
       newOpps.add(nw);
       oldMap.put(old.Id, old);
@@ -181,7 +181,7 @@ private class OpportunityDisqualifyLeadsTest {
       OpportunityUtils.STATUS_FECHADO_PERDIDO,
       lead.Id
     );
-    Opportunity newOpp = oldOpp.clone(false, true, true, true);
+    Opportunity newOpp = oldOpp.clone(true, true, true, true);
     newOpp.StageName = OpportunityUtils.STATUS_FECHADO_PERDIDO;
 
     Test.startTest();
@@ -211,22 +211,28 @@ private class OpportunityDisqualifyLeadsTest {
       OpportunityUtils.STATUS_PROPOSTA_ENVIADA,
       lead.Id
     );
-    Opportunity newOpp = oldOpp.clone(false, true, true, true);
+    Opportunity newOpp = oldOpp.clone(true, true, true, true);
     newOpp.StageName = OpportunityUtils.STATUS_FECHADO_PERDIDO;
 
     Test.startTest();
-    // Se executar DML desnecessário, o DML limit seria consumido; o método deve pular
+    Integer dmlStatementsBefore = Limits.getDmlStatements();
     OpportunityBO.disqualifyLinkedLeads(
       new List<Opportunity>{ newOpp },
       new Map<Id, Opportunity>{ oldOpp.Id => oldOpp }
     );
+    Integer dmlStatementsAfter = Limits.getDmlStatements();
     Test.stopTest();
 
-    // Verify DML count = 0 via Limits (no update should fire)
     Assert.areEqual(
-      0,
-      Limits.getDmlStatements(),
+      dmlStatementsBefore,
+      dmlStatementsAfter,
       'Nenhum DML deve ser executado se o Lead já está desqualificado'
+    );
+    Lead unchangedLead = [SELECT Status FROM Lead WHERE Id = :lead.Id];
+    Assert.areEqual(
+      OpportunityUtils.LEAD_STATUS_NAO_QUALIFICADO,
+      unchangedLead.Status,
+      'Lead já desqualificado deve permanecer inalterado'
     );
   }
 
