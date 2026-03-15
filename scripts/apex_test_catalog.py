@@ -13,6 +13,7 @@ from typing import Iterable
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CLASSES_DIR = REPO_ROOT / "force-app" / "main" / "default" / "classes"
+HEADER_SYNC_SKIP = {"MetadataService"}
 
 DEFAULT_AUTHOR = "Daniel Belini"
 DEFAULT_MODIFIED_BY = "Daniel Belini"
@@ -339,6 +340,8 @@ def sync_headers(
     changed_count = 0
     changed_paths: list[Path] = []
     for class_info in infos.values():
+        if class_info.name in HEADER_SYNC_SKIP:
+            continue
         header = build_header(
             class_info=class_info,
             mapping=mapping,
@@ -414,6 +417,8 @@ def sync_test_tags(
     changed_paths: list[Path] = []
     for class_name in target_names:
         class_info = infos[class_name]
+        if class_info.name in HEADER_SYNC_SKIP:
+            continue
         header = build_header(
             class_info=class_info,
             mapping=mapping,
@@ -444,6 +449,8 @@ def validate_headers(
     }
 
     for class_info in infos.values():
+        if class_info.name in HEADER_SYNC_SKIP:
+            continue
         fields = class_info.header_fields
         missing_fields = sorted(MANAGED_HEADER_FIELDS - set(fields))
         if missing_fields:
@@ -535,6 +542,8 @@ def collect_tests(
 
         changed_prod_classes.append(class_name)
         header_tests = split_header_test_value(class_info.header_fields.get("test", ""))
+        if not header_tests and class_name in HEADER_SYNC_SKIP:
+            header_tests = mapping.get(class_name, [])
         if not header_tests:
             missing_headers.append(class_name)
             continue
