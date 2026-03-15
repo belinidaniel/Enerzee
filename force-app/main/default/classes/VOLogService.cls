@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : IntegracaoVOPlanoTest, VOIntegrationServiceTest
+ **/
 public with sharing class VOLogService {
   public static final String TYPE_ACCOUNT_SYNC = 'ACCOUNT_SYNC';
   public static final String TYPE_OPP_SYNC = 'OPP_SYNC';

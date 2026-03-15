@@ -1,10 +1,10 @@
 /**
- * @description						 : Seleciona o consultor correto para um Lead e atualiza o "ultimo lead recebido"
- *																					 com lock de linha para evitar concorrencia.
- * @author											 :
- * @group												 :
- * @last modified on	 : 01-27-2026
- * @last modified by	 :
+ * @description       : Seleciona o consultor correto para um Lead e atualiza o "ultimo lead recebido" com lock de linha para evitar concorrencia.
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : LeadDistributionSelectorTest
  **/
 public with sharing class LeadDistributionSelector {
   private static final Integer LOCK_BATCH_SIZE = 5;

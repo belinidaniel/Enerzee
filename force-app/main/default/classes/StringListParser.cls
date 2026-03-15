@@ -1,5 +1,10 @@
 /**
- * @description	 Utility to split a text payload into a list of strings based on a configurable delimiter.
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : StringListParserTest
  **/
 public with sharing class StringListParser {
   private static final Map<String, String> SUPPORTED_DELIMITERS = new Map<String, String>{

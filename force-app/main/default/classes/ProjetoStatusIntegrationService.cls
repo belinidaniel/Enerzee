@@ -1,4 +1,11 @@
-// Queries Integrador__mdt with list pattern to avoid QueryException when metadata record is missing.
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ProjetoStatusIntegrationServiceTest, ProjetoTriggerTest
+ **/
 public with sharing class ProjetoStatusIntegrationService {
   private static final String INTEGRATOR_NAME = 'AlterStatusProject';
   @TestVisible

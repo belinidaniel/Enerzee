@@ -1,9 +1,16 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 12-10-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : AdditionalCoverageNewClassesTest, EngineeringDateStampFlowTest, InstalacaoBOTest,
+ *                       IntegracaoNivelloTest, IntegracaoSAPTest, OpportunityBOAdditionalTest,
+ *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
+ *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentReminderTaskTest,
+ *                       OpportunityDiscountRequestControllerTest, OpportunityDisqualifyLeadsTest,
+ *                       OpportunityPDFHelperTest, OpportunityTriggerTest, PDFControllerExtensionExtraTest,
+ *                       ProjetoTriggerTest, ProposalConsoleControllerTest, TaskBOTest, UtilsTest
  **/
 public class OpportunityUtils {
   //	 Status
@@ -48,6 +55,9 @@ public class OpportunityUtils {
   public static String STATUS_FINALIZADO = 'Finalizado';
   public static String STATUS_GANHO_FECHADO = 'Ganho fechado';
   public static String STATUS_FECHADO_PERDIDO = 'Fechado Perdido';
+
+  // Lead Status constants
+  public static String LEAD_STATUS_NAO_QUALIFICADO = 'Não Qualificado';
 
   public static String SUB_STATUS_EM_AGENDAMENTO = 'Em Agendamento';
   public static String SUB_STATUS_AGENDADO = 'Agendado';

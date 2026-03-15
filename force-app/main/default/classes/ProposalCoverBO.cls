@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ProposalCoverBOTest, ProposalCoverTriggerHandlerTest, ProposalCoverTriggerTest
+ **/
 public with sharing class ProposalCoverBO {
   public static void updateDefaultStatus(
     List<ProposalCover__c> proposalCovers

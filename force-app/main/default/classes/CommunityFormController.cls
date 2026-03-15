@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : CommunityFormControllerTest
+ **/
 // Apex Class: CommunityFormController (Updated)
 public without sharing class CommunityFormController {
   @AuraEnabled

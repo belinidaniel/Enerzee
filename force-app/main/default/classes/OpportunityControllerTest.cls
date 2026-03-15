@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @isTest
 public class OpportunityControllerTest {
   @isTest
@@ -64,6 +72,33 @@ public class OpportunityControllerTest {
       updatedOpp.TipoTelhadoEstrutura__c,
       'telhado não foi atualizado corretamente'
     );
+    System.assertEquals(
+      false,
+      [
+        SELECT ViabilidadeDisponivel__c
+        FROM Opportunity
+        WHERE Id = :recordId
+      ]
+      .ViabilidadeDisponivel__c,
+      'A viabilidade deve ser resetada ao atualizar geolocalização.'
+    );
     Test.stopTest();
+  }
+
+  @isTest
+  static void updateOpportunityShouldThrowWhenRecordDoesNotExist() {
+    Boolean hasException = false;
+    Id missingOpportunityId = '006000000000000AAA';
+
+    try {
+      OpportunityController.updateOpportunity(
+        missingOpportunityId,
+        -10,
+        -20,
+        'Cerâmico'
+      );
+    } catch (AuraHandledException ex) {
+      hasException = ex.getMessage().contains('Oportunidade não encontrada');
+    }
   }
 }

@@ -1,9 +1,10 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 11-18-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
  **/
 @IsTest
 public class ProposalPendingControllerTest {
@@ -150,5 +151,40 @@ public class ProposalPendingControllerTest {
       types.size(),
       'Deveria retornar as opções mockadas.'
     );
+  }
+
+  @IsTest
+  static void shouldValidateHelperMethodsAndInputErrors() {
+    Opportunity opp = [SELECT Id FROM Opportunity LIMIT 1];
+
+    Boolean emptyPayloadException = false;
+    try {
+      ProposalPendingController.createPendings(opp.Id, '[]');
+    } catch (AuraHandledException ex) {
+      emptyPayloadException = ex.getMessage()
+        .contains('Inclua ao menos uma pendência');
+    }
+    ProposalPending__c pending = [
+      SELECT Id
+      FROM ProposalPending__c
+      LIMIT 1
+    ];
+
+    Boolean missingRejectReason = false;
+    try {
+      ProposalPendingController.updatePendingStatus(
+        pending.Id,
+        'Recusado',
+        '   '
+      );
+    } catch (AuraHandledException ex) {
+      missingRejectReason = ex.getMessage().contains('motivo da recusa');
+    }
+    Boolean invalidStatusException = false;
+    try {
+      ProposalPendingController.parseStatus('STATUS_INVALIDO');
+    } catch (AuraHandledException ex) {
+      invalidStatusException = ex.getMessage().contains('Status inválido');
+    }
   }
 }

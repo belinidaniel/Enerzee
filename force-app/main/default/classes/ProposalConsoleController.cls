@@ -1,6 +1,10 @@
 /**
- * @description						 : Apex controller that powers the LWC responsible for managing proposal generation.
- * @author											 : Daniel Belini
+ * @description       : Apex controller that powers the LWC responsible for managing proposal generation.
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ProposalConsoleControllerTest
  **/
 public with sharing class ProposalConsoleController {
   public class ProposalTemplateDTO {

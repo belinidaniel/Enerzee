@@ -1,8 +1,10 @@
 /**
- * @description						 : Detecta se uma conversa é remarketing usando Named Credential
- * @author											 : Daniel Belini
- * @last modified on	 : 12-03-2025
- * @last modified by	 : Daniel Belini
+ * @description       : Detecta se uma conversa é remarketing usando Named Credential
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : RemarketingRouterTest
  **/
 public without sharing class RemarketingRouter {
   public class Input {

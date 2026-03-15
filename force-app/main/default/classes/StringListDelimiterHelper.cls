@@ -1,5 +1,10 @@
 /**
- * @description Exposes the supported delimiter list to Flow.
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : StringListDelimiterHelperTest
  **/
 public with sharing class StringListDelimiterHelper {
   public class Request {

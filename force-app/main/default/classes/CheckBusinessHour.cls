@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : CheckBusinessHourTest
+ **/
 public class CheckBusinessHour {
   @InvocableMethod(label='Within Business Hours Check')
   public static List<Boolean> makeGetCallout(List<String> Name) {

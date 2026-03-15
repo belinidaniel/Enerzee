@@ -1,4 +1,12 @@
 /**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : MyProfilePageControllerTest
+ **/
+/**
  * An apex class that updates portal user details.
 		 Guest users are never able to access this page.
  */

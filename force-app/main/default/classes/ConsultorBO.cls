@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ConsultorTriggerHandlerTest, ConsultorTriggerTest
+ **/
 public with sharing class ConsultorBO {
   public static Id consultorRT = Schema.SObjectType.Consultor__c.getRecordTypeInfosByDeveloperName()
     .get('Consultor')

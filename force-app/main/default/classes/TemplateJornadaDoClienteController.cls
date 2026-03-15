@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : TemplateJornadaDoClienteControllerTest
+ **/
 global with sharing class TemplateJornadaDoClienteController {
   private ApexPages.standardController controller;
   public String imageURL { get; set; }

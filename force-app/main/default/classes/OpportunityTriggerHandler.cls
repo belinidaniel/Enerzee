@@ -1,9 +1,15 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 03-13-2026
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : AdditionalCoverageNewClassesTest, KitInstalacaoBOTest, OpportunityBOCoverageTest,
+ *                       OpportunityBOHighCoverageTest, OpportunityBOPaymentReminderTaskTest,
+ *                       OpportunityDiscountRequestControllerTest, OpportunityTriggerHandlerToggleTest,
+ *                       OpportunityTriggerTest, ProjetoTriggerTest, ProposalPendingControllerTest,
+ *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest, ServiceAppointmentBOTest,
+ *                       WorkDeliveryReportPdfControllerTest
  **/
 public class OpportunityTriggerHandler extends TriggerHandler {
   public OpportunityTriggerHandler() {
@@ -193,6 +199,10 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (Map<Id, Opportunity>) Trigger.oldMap
     );
     OpportunityBO.handleOpportunityLeadConversion(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
+    OpportunityBO.disqualifyLinkedLeads(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );

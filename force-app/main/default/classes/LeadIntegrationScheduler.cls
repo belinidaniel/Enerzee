@@ -1,9 +1,10 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 10-16-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : LeadIntegrationSchedulerTest
  **/
 global with sharing class LeadIntegrationScheduler implements Schedulable {
   private static final String JOB_NAME = 'Lead Integration Batch';

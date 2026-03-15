@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : IntegracaoVOConsultorPreCadastroTest
+ **/
 public with sharing class IntegracaoVOConsultorPreCadastro {
   @future(callout=true)
   public static void sendConsultor(Set<Id> triggerIds) {
