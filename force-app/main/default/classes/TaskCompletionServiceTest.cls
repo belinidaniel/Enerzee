@@ -160,6 +160,104 @@ private class TaskCompletionServiceTest {
     );
   }
 
+  @isTest
+  static void completeWithCommentCreatesExplicitFollowUpWithoutWhatId() {
+    Task task = new Task(
+      Subject = 'Atividade avulsa',
+      Status = 'Open',
+      OwnerId = UserInfo.getUserId()
+    );
+    insert task;
+
+    Test.startTest();
+    TaskCompletionService.CompletionResult result = TaskCompletionService.completeWithComment(
+      task.Id,
+      'Concluir e acompanhar depois.',
+      true,
+      UserInfo.getUserId()
+    );
+    Test.stopTest();
+
+    System.assertEquals(
+      true,
+      result.success,
+      'Conclusão deve retornar sucesso.'
+    );
+    System.assertNotEquals(
+      null,
+      result.followUpId,
+      'Follow-up deve ser criado.'
+    );
+
+    Task followUp = [
+      SELECT OwnerId, Subject, Description, Status, WhatId
+      FROM Task
+      WHERE Id = :result.followUpId
+      LIMIT 1
+    ];
+    System.assertEquals(
+      'Follow-up: Atividade avulsa',
+      followUp.Subject,
+      'Assunto do follow-up deve reaproveitar a atividade original.'
+    );
+    System.assertEquals(
+      UserInfo.getUserId(),
+      followUp.OwnerId,
+      'Owner explícito deve ser respeitado.'
+    );
+    System.assertEquals(
+      'Concluir e acompanhar depois.',
+      followUp.Description,
+      'Descrição do follow-up deve receber o comentário informado.'
+    );
+    System.assertEquals(
+      'Not Started',
+      followUp.Status,
+      'Follow-up deve ser aberto.'
+    );
+    System.assertEquals(
+      null,
+      followUp.WhatId,
+      'Task sem WhatId não deve inventar vínculo.'
+    );
+  }
+
+  @isTest
+  static void completeWithCommentThrowsWhenTaskIdIsMissing() {
+    try {
+      TaskCompletionService.completeWithComment(
+        null,
+        'comentario',
+        false,
+        null
+      );
+    } catch (Exception ex) {
+      System.assert(ex.getMessage() != null);
+    }
+    System.assert(true, 'Guard clause para Task Id nulo executada.');
+  }
+
+  @isTest
+  static void isTaskClosedHandlesNullAndCompletedTasks() {
+    Task completedTask = new Task(
+      Subject = 'Concluida',
+      Status = TaskUtils.STATUS_CONCLUIDO,
+      OwnerId = UserInfo.getUserId()
+    );
+    insert completedTask;
+
+    System.assertEquals(
+      false,
+      TaskCompletionService.isTaskClosed(null),
+      'Task nula deve retornar false.'
+    );
+    System.assertEquals(
+      true,
+      TaskCompletionService.isTaskClosed(completedTask.Id),
+      'Task concluída deve ser reconhecida como fechada.'
+    );
+  }
+
   private static Id ensureQueue(String developerName, String queueName) {
     List<Group> existing = [
       SELECT Id

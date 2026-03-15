@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : ProposalPendingControllerTest
+ * @test              : ProposalPendingStatusQueueableTest
  **/
 public class ProposalPendingStatusQueueable implements Queueable, Database.AllowsCallouts {
   private Id pendingId;

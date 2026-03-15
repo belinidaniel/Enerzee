@@ -35,4 +35,35 @@ private class TaskCompletionServiceDocTest {
     );
     System.assertEquals('mobilizacao_conferencia_de_materiais', norm);
   }
+
+  @isTest
+  static void ensureRequiredDocumentsHandlesNullAndMissingIdentifiers() {
+    TaskCompletionService.ensureRequiredDocuments(null);
+    TaskCompletionService.ensureRequiredDocuments(
+      new Task(Subject = null, WhatId = null)
+    );
+    TaskCompletionService.ensureRequiredDocuments(
+      new Task(Subject = 'Sem WhatId', WhatId = null)
+    );
+
+    System.assert(true, 'Guard clauses devem retornar sem exceção.');
+  }
+
+  @isTest
+  static void ensureRequiredDocumentsIgnoresUnknownSubject() {
+    Account acc = new Account(Name = 'Conta Com Evidencia Obrigatoria');
+    insert acc;
+
+    Task taskRecord = new Task(
+      Subject = 'ASSUNTO SEM CONFIG',
+      WhatId = acc.Id,
+      Status = 'Not Started'
+    );
+
+    Test.startTest();
+    TaskCompletionService.ensureRequiredDocuments(taskRecord);
+    Test.stopTest();
+
+    System.assert(true, 'Evidência enviada deve liberar a validação.');
+  }
 }

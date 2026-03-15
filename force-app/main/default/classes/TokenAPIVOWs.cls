@@ -5,7 +5,8 @@
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
  * @test              : EzeeConnectProposalPendingServiceTest, IntegracaoVOClientePreCadastroTest,
- *                       IntegracaoVOPlanoTest, IntegrationHubServiceTest, TokenAPIVOWsTest, VOIntegrationServiceTest
+ *                       IntegracaoVOPlanoTest, IntegrationHubServiceTest, ProposalPendingStatusQueueableTest,
+ *                       TokenAPIVOWsTest, VOIntegrationServiceTest
  **/
 public class TokenAPIVOWs {
   public String erro { get; set; }

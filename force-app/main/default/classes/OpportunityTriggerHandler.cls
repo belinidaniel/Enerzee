@@ -8,7 +8,8 @@
  *                       OpportunityBOHighCoverageTest, OpportunityBOPaymentReminderTaskTest,
  *                       OpportunityDiscountRequestControllerTest, OpportunityTriggerHandlerToggleTest,
  *                       OpportunityTriggerTest, ProjetoTriggerTest, ProposalPendingControllerTest,
- *                       ProposalPendingResponseRestTest, ServiceAppointmentBOTest, WorkDeliveryReportPdfControllerTest
+ *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest, ServiceAppointmentBOTest,
+ *                       WorkDeliveryReportPdfControllerTest
  **/
 public class OpportunityTriggerHandler extends TriggerHandler {
   public OpportunityTriggerHandler() {

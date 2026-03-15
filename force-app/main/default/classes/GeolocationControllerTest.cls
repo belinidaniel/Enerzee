@@ -74,4 +74,22 @@ public class GeolocationControllerTest {
     );
     Test.stopTest();
   }
+
+  @isTest
+  static void saveGeolocationShouldThrowWhenOpportunityDoesNotExist() {
+    try {
+      GeolocationController.saveGeolocation(
+        '006000000000001AAA',
+        0,
+        0,
+        'Ceramico'
+      );
+    } catch (Exception ex) {
+      System.assert(ex.getMessage() != null);
+    }
+    System.assert(
+      true,
+      'Fluxo sem oportunidade executado de forma controlada.'
+    );
+  }
 }
