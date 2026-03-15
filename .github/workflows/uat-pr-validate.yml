@@ -45,11 +45,15 @@ jobs:
       - name: Get changed files
         id: changed
         run: |
+          set +e
           python3 scripts/apex_test_catalog.py collect-tests \
             --diff-range origin/UAT...HEAD \
             --metadata-pattern '^force-app/' \
             --github-output "$GITHUB_OUTPUT" \
-            --strict-changed-prod
+            --strict-changed-prod 2>&1 | tee /tmp/collect_tests.log
+          STATUS=${PIPESTATUS[0]}
+          set -e
+          exit "$STATUS"
 
       # ─── Generate delta package (only PR changes) ────────────────────────────
       - name: Generate delta package
@@ -248,6 +252,12 @@ jobs:
               }
             } catch (e) {
               deployResult = `⚠️ Não foi possível ler resultado da validação: ${e.message}`;
+              try {
+                const collectLog = fs.readFileSync('/tmp/collect_tests.log', 'utf8').trim();
+                if (collectLog) {
+                  deployResult += `\n\n### 🧩 Seleção de testes\n\`\`\`\n${collectLog.substring(0, 3000)}\n\`\`\``;
+                }
+              } catch (ignored) {}
             }
 
             let analysisResult = '';
