@@ -101,6 +101,60 @@ private class TaskSlaDailySummaryServiceTest {
     System.assertEquals(true, true, 'Fluxo sem manager executado sem excecao.');
   }
 
+  @IsTest
+  static void previewByRoleShouldValidateInputsAndRenderForExistingRole() {
+    Boolean blankParamException = false;
+    try {
+      TaskSlaDailySummaryService.sendPreviewByRole(null, 'preview@example.com');
+    } catch (TaskSlaDailySummaryService.TaskSlaPreviewException ex) {
+      blankParamException = ex.getMessage().contains('Informe os parametros');
+    }
+    System.assertEquals(
+      true,
+      blankParamException,
+      'Parâmetros vazios devem ser rejeitados.'
+    );
+
+    List<UserRole> roles = [
+      SELECT Id, Name
+      FROM UserRole
+      LIMIT 1
+    ];
+    if (roles.isEmpty()) {
+      return;
+    }
+
+    User owner = createUser('owner+preview@example.com', null, roles[0].Id);
+    insert new Task(
+      Subject = 'Task Preview',
+      Status = 'Open',
+      ActivityDate = Date.today(),
+      OwnerId = owner.Id
+    );
+
+    Test.startTest();
+    TaskSlaDailySummaryService.sendPreviewByRole(
+      roles[0].Name,
+      'preview@example.com'
+    );
+    Test.stopTest();
+
+    Boolean invalidRoleException = false;
+    try {
+      TaskSlaDailySummaryService.sendPreviewByRole(
+        'ROLE_INEXISTENTE_' + System.now().getTime(),
+        'preview@example.com'
+      );
+    } catch (TaskSlaDailySummaryService.TaskSlaPreviewException ex) {
+      invalidRoleException = ex.getMessage().contains('Papel nao encontrado');
+    }
+    System.assertEquals(
+      true,
+      invalidRoleException,
+      'Papel inexistente deve lançar exceção amigável.'
+    );
+  }
+
   private static User createUser(String email, Id managerId) {
     return createUser(email, managerId, null);
   }

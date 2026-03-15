@@ -378,4 +378,47 @@ public with sharing class PDFControllerExtensionTest {
       );
     }
   }
+
+  @isTest
+  static void shouldResolvePartnerLogoUrl() {
+    ProposalCover__c proposalCover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(Template__c = 'ModeloPropostaA'),
+      true
+    );
+    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(CapaProposta__c = proposalCover.Id, Produto__c = 'Solar'),
+      true
+    );
+
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(Parceiro__c = parceiro.Id),
+      true
+    );
+
+    ContentVersion logo = new ContentVersion(
+      Title = 'Minha Logo Oficial',
+      PathOnClient = 'logo.png',
+      VersionData = Blob.valueOf('logo'),
+      FirstPublishLocationId = parceiro.Id
+    );
+    insert logo;
+
+    PageReference pageRef = Page.PropostaContainer;
+    pageRef.getParameters().put('id', String.valueOf(opp.Id));
+    Test.setCurrentPage(pageRef);
+
+    Test.startTest();
+    ApexPages.StandardController sc = new ApexPages.StandardController(
+      new Opportunity(Id = opp.Id)
+    );
+    PDFControllerExtension controller = new PDFControllerExtension(sc);
+    String logoUrl = controller.getLogoUrl();
+    Test.stopTest();
+
+    System.assert(
+      logoUrl != null &&
+      logoUrl.contains('/sfc/servlet.shepherd/version/download/'),
+      'Logo vinculada ao parceiro deve gerar URL de download.'
+    );
+  }
 }

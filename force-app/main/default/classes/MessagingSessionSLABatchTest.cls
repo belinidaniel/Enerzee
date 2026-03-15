@@ -83,6 +83,32 @@ private class MessagingSessionSLABatchTest {
     );
   }
 
+  @IsTest
+  static void shouldCoverNoOpBranchesAndSchedulerHelpers() {
+    MessagingSessionSLABatch batchInstance = new MessagingSessionSLABatch();
+
+    Test.startTest();
+    Database.QueryLocator locator = batchInstance.start(null);
+    batchInstance.execute(null, new List<MessagingSession>());
+    batchInstance.finish(null);
+    new MessagingSessionSLAScheduler().scheduleNowExecution();
+    new MessagingSessionSLAScheduler().execute(null);
+    Test.stopTest();
+
+    System.assertNotEquals(
+      null,
+      locator,
+      'O batch deve sempre retornar um query locator.'
+    );
+
+    MessagingSessionSLABatch.setBusinessHoursId(null);
+    System.assertEquals(
+      false,
+      MessagingSessionSLABatch.isWithinBusinessHours(null),
+      'Momento nulo deve retornar false.'
+    );
+  }
+
   private static Id resolveMessagingChannelId() {
     List<MessagingChannel> channels = [SELECT Id FROM MessagingChannel LIMIT 1];
     System.assert(

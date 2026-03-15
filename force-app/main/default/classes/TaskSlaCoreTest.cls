@@ -199,6 +199,90 @@ private class TaskSlaCoreTest {
     System.assert(!jobs.isEmpty(), 'Cron deve ser o informado.');
   }
 
+  @IsTest
+  static void testAdditionalUtilityAndConfigBranches() {
+    TaskSlaConfig.NotificationConfig afterCfg = TaskSlaConfig.getNotificationConfig(
+      TaskSlaConfig.TYPE_AFTER_DUE
+    );
+    System.assertEquals(true, afterCfg.enabled, 'After due deve estar ativo.');
+    System.assertEquals(
+      false,
+      afterCfg.notifyManager,
+      'After due não deve notificar gestor por padrão.'
+    );
+
+    TaskSlaConfig.NotificationConfig ownerTypeCfg = new TaskSlaConfig.NotificationConfig();
+    ownerTypeCfg.ownerType = TaskSlaConfig.OWNER_TYPE_USER;
+    System.assertEquals(
+      true,
+      ownerTypeCfg.isOwnerTypeUser(),
+      'Owner type USER deve ser reconhecido.'
+    );
+    ownerTypeCfg.ownerType = TaskSlaConfig.OWNER_TYPE_QUEUE;
+    System.assertEquals(
+      true,
+      ownerTypeCfg.isOwnerTypeQueue(),
+      'Owner type QUEUE deve ser reconhecido.'
+    );
+
+    System.assertEquals(
+      true,
+      TaskSlaUtils.isClosedOrCanceled('Canceled'),
+      'Canceled deve ser tratado como encerrado/cancelado.'
+    );
+    System.assertEquals(
+      false,
+      TaskSlaUtils.isClosedOrCanceled(null),
+      'Valor nulo não pode ser tratado como encerrado.'
+    );
+    System.assertEquals(
+      '&lt;teste&gt; &amp; &quot;ok&quot;',
+      TaskSlaUtils.escapeHtml('<teste> & "ok"'),
+      'escapeHtml deve proteger caracteres especiais.'
+    );
+
+    User owner = createUser('owner.filter@example.com', null);
+    Task queueTask = new Task(
+      OwnerId = owner.Id,
+      Subject = 'Sem match',
+      Status = 'Open',
+      Priority = 'Low'
+    );
+    TaskSlaConfig.NotificationConfig filterCfg = new TaskSlaConfig.NotificationConfig();
+    filterCfg.ownerType = TaskSlaConfig.OWNER_TYPE_QUEUE;
+    filterCfg.priorityIn = new Set<String>{
+      TaskSlaUtils.normalizeToken('High')
+    };
+    filterCfg.subjectContains = new Set<String>{
+      TaskSlaUtils.normalizeToken('SLA')
+    };
+    filterCfg.subjectNotContains = new Set<String>{
+      TaskSlaUtils.normalizeToken('bloqueado')
+    };
+    filterCfg.taskSubtypeIn = new Set<String>();
+    filterCfg.taskTypeIn = new Set<String>();
+    filterCfg.queueDeveloperNames = new Set<String>{ 'queue_x' };
+
+    System.assertEquals(
+      false,
+      TaskSlaUtils.matchesConfig(queueTask, filterCfg, new Map<Id, String>()),
+      'Task fora dos filtros não deve casar com a configuração.'
+    );
+
+    TaskSlaConfig.QueueRoutingConfig unknownRouting = TaskSlaConfig.getQueueRoutingConfig(
+      'UNKNOWN_QUEUE'
+    );
+    System.assertEquals(
+      TaskSlaConfig.ROUTE_MEMBERS,
+      unknownRouting.routingMode,
+      'Fila sem configuração deve herdar o roteamento default.'
+    );
+
+    Test.startTest();
+    TaskSlaDailySummaryScheduler.scheduleDaily(null);
+    Test.stopTest();
+  }
+
   private static User createUser(String email, Id managerId) {
     Profile p = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
     String unique = String.valueOf(System.currentTimeMillis());

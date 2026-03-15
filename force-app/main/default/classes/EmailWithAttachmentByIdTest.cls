@@ -47,4 +47,46 @@ private class EmailWithAttachmentByIdTest {
 
     Assert.areEqual('Olá Mundo', plain);
   }
+
+  @isTest
+  static void shouldHandleVersionIdAndValidationErrors() {
+    ContentVersion cv = new ContentVersion(
+      Title = 'Arquivo Direto',
+      PathOnClient = 'arquivo.txt',
+      VersionData = Blob.valueOf('conteudo')
+    );
+    insert cv;
+
+    EmailWithAttachmentById.Request versionRequest = new EmailWithAttachmentById.Request();
+    versionRequest.recipientEmail = 'destinatario2@teste.com';
+    versionRequest.subject = 'Assunto Version';
+    versionRequest.body = '<div>Teste</div>';
+    versionRequest.contentDocumentId = cv.Id;
+
+    Test.startTest();
+    EmailWithAttachmentById.sendEmailWithAttachment(
+      new List<EmailWithAttachmentById.Request>{ versionRequest }
+    );
+    EmailWithAttachmentById.sendEmailWithAttachment(
+      new List<EmailWithAttachmentById.Request>()
+    );
+    Test.stopTest();
+
+    Boolean hasValidationError = false;
+    try {
+      EmailWithAttachmentById.Request invalidRequest = new EmailWithAttachmentById.Request();
+      invalidRequest.recipientEmail = 'destinatario3@teste.com';
+      invalidRequest.body = '<p>Sem assunto</p>';
+      invalidRequest.contentDocumentId = cv.Id;
+      EmailWithAttachmentById.sendEmailWithAttachment(
+        new List<EmailWithAttachmentById.Request>{ invalidRequest }
+      );
+    } catch (IllegalArgumentException ex) {
+      hasValidationError = ex.getMessage()
+        .contains('Parâmetros obrigatórios não preenchidos');
+    }
+
+    Assert.areEqual(true, hasValidationError);
+    Assert.areEqual(null, EmailWithAttachmentById.convertToPlainText(null));
+  }
 }

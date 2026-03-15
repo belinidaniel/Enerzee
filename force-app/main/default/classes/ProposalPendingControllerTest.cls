@@ -152,4 +152,86 @@ public class ProposalPendingControllerTest {
       'Deveria retornar as opções mockadas.'
     );
   }
+
+  @IsTest
+  static void shouldValidateHelperMethodsAndInputErrors() {
+    System.assertEquals(
+      0,
+      ProposalPendingController.getPendings(null).size(),
+      'Sem oportunidade deve retornar lista vazia.'
+    );
+    System.assertEquals(
+      ProposalPendingController.PendingStatus.Respondido,
+      ProposalPendingController.parseStatus('2'),
+      'Código deve ser convertido para enum.'
+    );
+    System.assertEquals(
+      1,
+      ProposalPendingController.getStatusCode(
+        ProposalPendingController.PendingStatus.Aguardando
+      ),
+      'Enum deve ser convertido para código.'
+    );
+    System.assertEquals(
+      ProposalPendingController.PendingStatus.Aprovado,
+      ProposalPendingController.getStatusByCode(3),
+      'Código deve ser convertido para enum.'
+    );
+    System.assertEquals(
+      '4',
+      ProposalPendingController.getStatusValue(
+        ProposalPendingController.PendingStatus.Recusado
+      ),
+      'Enum deve ser convertido para valor de picklist.'
+    );
+
+    Opportunity opp = [SELECT Id FROM Opportunity LIMIT 1];
+
+    Boolean emptyPayloadException = false;
+    try {
+      ProposalPendingController.createPendings(opp.Id, '[]');
+    } catch (AuraHandledException ex) {
+      emptyPayloadException = ex.getMessage()
+        .contains('Inclua ao menos uma pendência');
+    }
+    System.assertEquals(
+      true,
+      emptyPayloadException,
+      'Payload vazio deve ser rejeitado.'
+    );
+
+    ProposalPending__c pending = [
+      SELECT Id
+      FROM ProposalPending__c
+      LIMIT 1
+    ];
+
+    Boolean missingRejectReason = false;
+    try {
+      ProposalPendingController.updatePendingStatus(
+        pending.Id,
+        'Recusado',
+        '   '
+      );
+    } catch (AuraHandledException ex) {
+      missingRejectReason = ex.getMessage().contains('motivo da recusa');
+    }
+    System.assertEquals(
+      true,
+      missingRejectReason,
+      'Recusa sem motivo deve ser rejeitada.'
+    );
+
+    Boolean invalidStatusException = false;
+    try {
+      ProposalPendingController.parseStatus('STATUS_INVALIDO');
+    } catch (AuraHandledException ex) {
+      invalidStatusException = ex.getMessage().contains('Status inválido');
+    }
+    System.assertEquals(
+      true,
+      invalidStatusException,
+      'Status inválido deve lançar erro amigável.'
+    );
+  }
 }

@@ -49,4 +49,58 @@ private class DataSourceControllerTest {
     );
     System.assert(!rel.isEmpty());
   }
+
+  @IsTest
+  static void shouldCoverCaseQueriesAndFieldFilters() {
+    Account acc = new Account(Name = 'Conta DSC');
+    insert acc;
+
+    Contact contact = new Contact(
+      LastName = 'Contato DSC',
+      AccountId = acc.Id,
+      Email = 'contato.dsc@example.com'
+    );
+    insert contact;
+
+    Case caseRecord = new Case(
+      Subject = 'Caso DSC',
+      Status = 'New',
+      Origin = 'Phone',
+      AccountId = acc.Id,
+      ContactId = contact.Id
+    );
+    insert caseRecord;
+
+    List<SObject> cases = DataSourceController.getRecords(
+      'Case',
+      caseRecord.CaseNumber
+    );
+    System.assert(!cases.isEmpty(), 'Deve localizar cases por CaseNumber.');
+
+    List<Map<String, String>> invalidRelationship = DataSourceController.getRelationshipFields(
+      'Case',
+      'CampoInexistente__c'
+    );
+    System.assertEquals(
+      0,
+      invalidRelationship.size(),
+      'Campo inválido deve retornar lista vazia.'
+    );
+
+    List<Map<String, String>> relatedFields = DataSourceController.getContactAndAccountFields(
+      'Case'
+    );
+    System.assert(
+      !relatedFields.isEmpty(),
+      'Case deve expor referências para Contact/Account/User.'
+    );
+
+    List<Map<String, String>> emailFields = DataSourceController.getEmailField(
+      'Contact'
+    );
+    System.assert(
+      !emailFields.isEmpty(),
+      'Contact deve retornar ao menos o campo Email.'
+    );
+  }
 }
