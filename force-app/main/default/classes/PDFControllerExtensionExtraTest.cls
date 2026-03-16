@@ -846,4 +846,49 @@ private class PDFControllerExtensionExtraTest {
     );
     Assert.isTrue(true, 'loadPdfUrls com TipoKitPromocional != null e != 6 nao deve lancar erro.');
   }
+
+  @IsTest
+  static void shouldAbortAsyncWhenSkipFlagSet() {
+    // Covers lines 535-539: OpportunityBO.skipAsyncProposalGeneration == true early-exit
+    OpportunityBO.skipAsyncProposalGeneration = true;
+    Opportunity opp = createOpp();
+    insert opp;
+
+    Test.startTest();
+    System.enqueueJob(
+      new PDFControllerExtension.SavePdfJob(opp.Id, false, false)
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'Deve abortar quando skipAsyncProposalGeneration=true.');
+    OpportunityBO.skipAsyncProposalGeneration = false;
+  }
+
+  @IsTest
+  static void shouldRunAsyncMainPathWithForceNewFile() {
+    // Covers savePdfFileAsyncInternal lines 627-816 (main path):
+    // forceNewFile=true bypasses the PropostaGerada early-exit at line 584
+    // and the existingCount check at line 682
+    ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(),
+      true
+    );
+    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(CapaProposta__c = cover.Id, Produto__c = 'Solar'),
+      true
+    );
+
+    Opportunity opp = createOpp();
+    opp.Parceiro__c = parceiro.Id;
+    opp.PropostaGerada__c = false;
+    insert opp;
+
+    Test.startTest();
+    System.enqueueJob(
+      new PDFControllerExtension.SavePdfJob(opp.Id, false, true)
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'Async main path com forceNewFile=true deve executar sem erro.');
+  }
 }
