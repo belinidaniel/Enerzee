@@ -565,6 +565,7 @@ private class TaskBOTest {
 
   @IsTest
   static void shouldUpdateViabilityStatusOnAgendamentoDeVisita() {
+    Test.disableProcessesAndFlows();
     Account acc = (Account) TestFactory.createSObject(new Account(), true);
     Opportunity opp = (Opportunity) TestFactory.createSObject(
       new Opportunity(AccountId = acc.Id),
@@ -654,6 +655,7 @@ private class TaskBOTest {
 
   @IsTest
   static void shouldSkipViabilityUpdateWhenOldTaskNotFound() {
+    Test.disableProcessesAndFlows();
     Account acc = (Account) TestFactory.createSObject(new Account(), true);
     Opportunity opp = (Opportunity) TestFactory.createSObject(
       new Opportunity(AccountId = acc.Id),
@@ -817,6 +819,7 @@ private class TaskBOTest {
 
   @IsTest
   static void shouldValidateRequiredFieldSetsOnCompletionWithConcludingTask() {
+    Test.disableProcessesAndFlows();
     Account acc = (Account) TestFactory.createSObject(new Account(), true);
     Opportunity opp = (Opportunity) TestFactory.createSObject(
       new Opportunity(AccountId = acc.Id),

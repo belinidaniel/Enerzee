@@ -125,6 +125,7 @@ private class LeadIntegrationServiceTest {
       leadRecord.put('ConsultorRegional__c', createConsultant().Id);
     }
 
+    Test.disableProcessesAndFlows();
     LeadTriggerHandler.disableTrigger();
     try {
       insert leadRecord;

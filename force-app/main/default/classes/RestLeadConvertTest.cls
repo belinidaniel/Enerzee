@@ -104,6 +104,7 @@ private class RestLeadConvertTest {
       Company = 'Enerzee',
       CPFCNPJ__c = document
     );
+    Test.disableProcessesAndFlows();
     insert leadRecord;
 
     RestContext.request = new RestRequest();
