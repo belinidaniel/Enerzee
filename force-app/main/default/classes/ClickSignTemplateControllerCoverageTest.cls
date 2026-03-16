@@ -101,6 +101,225 @@ private class ClickSignTemplateControllerCoverageTest {
     System.assertEquals(1, loadedToSend.ClickSignSigners__r.size());
   }
 
+  @IsTest
+  static void shouldCoverPicklistAndRecordTypeHelpers() {
+    List<Map<String, String>> picklistFields = ClickSignTemplateController.getPicklistFields(
+      'Opportunity'
+    );
+    Assert.isTrue(picklistFields.size() > 0, 'Opportunity deve ter campos picklist.');
+
+    List<String> values = ClickSignTemplateController.getPicklistValues(
+      'Opportunity',
+      'StageName'
+    );
+    Assert.isTrue(values.size() > 0, 'StageName deve ter valores.');
+
+    List<Map<String, String>> recordTypes = ClickSignTemplateController.getRecordTypes(
+      'Opportunity'
+    );
+    Assert.isNotNull(recordTypes, 'getRecordTypes nao deve ser nulo.');
+  }
+
+  @IsTest
+  static void shouldValidateAndSaveVisibilityRules() {
+    ClickSignTemplate__c template = [
+      SELECT Id
+      FROM ClickSignTemplate__c
+      WHERE ExternalId__c = 'tmpl-coverage'
+      LIMIT 1
+    ];
+
+    List<String> errors = ClickSignTemplateController.validateVisibilityRules('[]');
+    Assert.isNotNull(errors, 'validateVisibilityRules nao deve ser nulo.');
+
+    ClickSignTemplateController.saveVisibilityRules(template.Id, '[]');
+
+    ClickSignTemplate__c updated = [
+      SELECT VisibilityRules__c
+      FROM ClickSignTemplate__c
+      WHERE Id = :template.Id
+    ];
+    Assert.areEqual('[]', updated.VisibilityRules__c, 'Regra salva corretamente.');
+  }
+
+  @IsTest
+  static void shouldUploadAndDeleteDocument() {
+    ClickSignTemplate__c template = [
+      SELECT Id
+      FROM ClickSignTemplate__c
+      WHERE ExternalId__c = 'tmpl-coverage'
+      LIMIT 1
+    ];
+
+    String base64Content = EncodingUtil.base64Encode(
+      Blob.valueOf('conteudo do arquivo de teste')
+    );
+
+    ClickSignTemplateController.uploadDocument(
+      'arquivo-teste.docx',
+      base64Content,
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      template.Id
+    );
+
+    List<ContentDocument> docs = ClickSignTemplateController.getDocuments(template.Id);
+    Assert.isTrue(docs.size() >= 1, 'Deve haver ao menos 1 documento apos upload.');
+
+    ClickSignTemplateController.deleteDocument(template.Id);
+
+    List<ContentDocument> afterDelete = ClickSignTemplateController.getDocuments(template.Id);
+    Assert.areEqual(0, afterDelete.size(), 'Documentos devem ser removidos apos delete.');
+  }
+
+  @IsTest
+  static void shouldGetVersionDataWithOverride() {
+    ClickSignTemplate__c template = [
+      SELECT Id
+      FROM ClickSignTemplate__c
+      WHERE ExternalId__c = 'tmpl-coverage'
+      LIMIT 1
+    ];
+
+    ContentVersion cv = new ContentVersion(
+      Title = 'VersionDataTest',
+      PathOnClient = 'VersionDataTest.docx',
+      VersionData = Blob.valueOf('version-content'),
+      FirstPublishLocationId = template.Id,
+      Istemplate__c = true
+    );
+    insert cv;
+
+    ContentDocument cd = [
+      SELECT Id
+      FROM ContentDocument
+      WHERE
+        Id IN (
+          SELECT ContentDocumentId
+          FROM ContentVersion
+          WHERE Id = :cv.Id
+        )
+      LIMIT 1
+    ];
+
+    ClickSignTemplateController.versionDataDocumentIdOverride = cd.Id;
+    ContentVersion result = ClickSignTemplateController.getVersionData();
+    Assert.isNotNull(result, 'getVersionData deve retornar ContentVersion.');
+    Assert.isNotNull(result.VersionData, 'VersionData nao deve ser nulo.');
+  }
+
+  @IsTest
+  static void shouldGetTemplateClickSignDocuments() {
+    ClickSignTemplate__c template = [
+      SELECT Id
+      FROM ClickSignTemplate__c
+      WHERE ExternalId__c = 'tmpl-coverage'
+      LIMIT 1
+    ];
+
+    List<ContentDocument> docs = ClickSignTemplateController.getTemplateClickSign(
+      template.Id
+    );
+    Assert.isNotNull(docs, 'getTemplateClickSign nao deve ser nulo.');
+  }
+
+  @IsTest
+  static void shouldGetContentDocumentDownloadUrlEmptyAndPopulated() {
+    Account acc = [SELECT Id FROM Account LIMIT 1];
+
+    String emptyResult = ClickSignTemplateController.getContentDocumentDownloadUrl(
+      acc.Id
+    );
+    Assert.isNull(emptyResult, 'Deve retornar null quando nao ha documentos.');
+
+    ContentVersion cv = new ContentVersion(
+      Title = 'Download URL Test',
+      PathOnClient = 'download-test.docx',
+      VersionData = Blob.valueOf('download-content'),
+      FirstPublishLocationId = acc.Id,
+      Istemplate__c = false
+    );
+    insert cv;
+
+    String populatedResult = ClickSignTemplateController.getContentDocumentDownloadUrl(
+      acc.Id
+    );
+    Assert.isNotNull(populatedResult, 'Deve retornar versionId quando ha documento.');
+  }
+
+  @IsTest
+  static void shouldHandleGenerateTemplateFromMappingsPaths() {
+    ClickSignTemplate__c noMappingTemplate = [
+      SELECT Id, ObjectMappings__c
+      FROM ClickSignTemplate__c
+      WHERE ExternalId__c = 'tmpl-coverage'
+      LIMIT 1
+    ];
+
+    ClickSignTemplate__c templateNoMap = new ClickSignTemplate__c(
+      Name = 'No Mapping',
+      SourceObject__c = 'Account',
+      Stage__c = 'Select Source'
+    );
+    insert templateNoMap;
+
+    String noMappingResult = ClickSignTemplateController.generateTemplateFromMappings(
+      templateNoMap.Id
+    );
+    Assert.areEqual('no-mappings', noMappingResult, 'Sem mapeamentos deve retornar no-mappings.');
+
+    String noDocResult = ClickSignTemplateController.generateTemplateFromMappings(
+      noMappingTemplate.Id
+    );
+    Assert.isTrue(
+      noDocResult == 'no-document' || noDocResult == 'queued',
+      'Deve retornar no-document ou queued.'
+    );
+  }
+
+  @IsTest
+  static void shouldHandleRedirectWithoutTemplateId() {
+    ClickSignTemplate__c template = [
+      SELECT Id, Name, Description__c
+      FROM ClickSignTemplate__c
+      WHERE ExternalId__c = 'tmpl-coverage'
+      LIMIT 1
+    ];
+
+    ApexPages.StandardController sc = new ApexPages.StandardController(template);
+    ClickSignTemplateController controller = new ClickSignTemplateController(sc);
+
+    PageReference emptyPage = new PageReference('/apex/template');
+    Test.setCurrentPage(emptyPage);
+
+    PageReference editResult = controller.redirectOnEdit();
+    Assert.isNull(editResult, 'Sem parametro id deve retornar null.');
+
+    PageReference newResult = controller.redirectOnNewTemplate();
+    Assert.isNull(newResult, 'Sem parametro templateId deve retornar null.');
+
+    PageReference finishResult = controller.redirectOnFinish();
+    Assert.isNull(finishResult, 'Sem templateId deve retornar null no redirectOnFinish.');
+  }
+
+  @IsTest
+  static void shouldHandlePicklistFieldsInvalidObject() {
+    List<Map<String, String>> result = ClickSignTemplateController.getPicklistFields(
+      'ObjetoQueNaoExiste__xyz'
+    );
+    Assert.isNotNull(result, 'Deve retornar lista vazia para objeto invalido.');
+    Assert.areEqual(0, result.size());
+  }
+
+  @IsTest
+  static void shouldHandlePicklistValuesFieldNotPicklist() {
+    List<String> result = ClickSignTemplateController.getPicklistValues(
+      'Account',
+      'Name'
+    );
+    Assert.isNotNull(result, 'Name nao e picklist, deve retornar lista vazia.');
+    Assert.areEqual(0, result.size());
+  }
+
   private static String getPayload(String node) {
     StaticResource payload = [
       SELECT Body

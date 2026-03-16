@@ -353,6 +353,112 @@ private class LeadDistributionSelectorTest {
     System.assertEquals(priorityConsultor.Id, response[2].consultantId);
   }
 
+  @isTest
+  static void testSelectReturnsNullWhenNoConsultorMatchesRating() {
+    String statusValue = getNonNovoStatus();
+    if (String.isBlank(statusValue)) {
+      return;
+    }
+
+    // Lead with Cold rating and no state — selectNoState returns null for 'Cold'
+    Lead coldLead = createLead('Lead Cold', statusValue, 'Cold', null);
+    insert coldLead;
+
+    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
+    req.leadId = coldLead.Id;
+    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ req }
+    );
+
+    Assert.areEqual(1, res.size());
+    Assert.isNull(res[0].consultantId, 'Cold rating sem consultor deve retornar null.');
+  }
+
+  @isTest
+  static void testSelectByEmailWithEmptyCsvReturnsNull() {
+    Map<String, Schema.SObjectField> leadFields = Schema.SObjectType.Lead.fields.getMap();
+    if (
+      !leadFields.containsKey('Distributiontype__c') ||
+      !leadFields.containsKey('DistributionValue__c')
+    ) {
+      return;
+    }
+
+    String statusValue = getNonNovoStatus();
+    if (String.isBlank(statusValue)) {
+      return;
+    }
+
+    // No matching consultors by email → selectByEmail returns null → fallback to selectNoState (null for Warm without consultors)
+    Lead lead = createLead('Lead Email Empty', statusValue, 'Warm', null);
+    lead.put('Distributiontype__c', 'Email');
+    lead.put('DistributionValue__c', '  ,  '); // blank CSV
+    insert lead;
+
+    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
+    req.leadId = lead.Id;
+    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ req }
+    );
+
+    Assert.areEqual(1, res.size());
+  }
+
+  @isTest
+  static void testSelectByGraduationWithEmptyCsv() {
+    Map<String, Schema.SObjectField> leadFields = Schema.SObjectType.Lead.fields.getMap();
+    if (
+      !leadFields.containsKey('Distributiontype__c') ||
+      !leadFields.containsKey('DistributionValue__c')
+    ) {
+      return;
+    }
+
+    String statusValue = getNonNovoStatus();
+    if (String.isBlank(statusValue)) {
+      return;
+    }
+
+    Lead lead = createLead('Lead Grad Empty', statusValue, 'Warm', null);
+    lead.put('Distributiontype__c', 'Graduação');
+    lead.put('DistributionValue__c', ''); // blank CSV
+    insert lead;
+
+    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
+    req.leadId = lead.Id;
+    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ req }
+    );
+
+    Assert.areEqual(1, res.size());
+  }
+
+  @isTest
+  static void testSelectWithNullRatingFallsToNoState() {
+    String statusValue = getNonNovoStatus();
+    if (String.isBlank(statusValue)) {
+      return;
+    }
+
+    // Lead with null Rating and no state → goes to selectNoState(null) → returns null
+    Lead nullRatingLead = new Lead(
+      LastName = 'Lead Null Rating',
+      Company = 'Empresa',
+      Status = statusValue,
+      Phone = '11999999990'
+    );
+    setIfExists(nullRatingLead, 'Lb065_LeadVencido__c', false);
+    insert nullRatingLead;
+
+    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
+    req.leadId = nullRatingLead.Id;
+    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ req }
+    );
+
+    Assert.areEqual(1, res.size());
+  }
+
   private static String getNonNovoStatus() {
     Schema.DescribeFieldResult statusDescribe = Lead.Status.getDescribe();
     if (statusDescribe == null) {

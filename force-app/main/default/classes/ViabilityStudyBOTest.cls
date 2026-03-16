@@ -654,6 +654,81 @@ private class ViabilityStudyBOTest {
     );
   }
 
+  @isTest
+  static void shouldReturnTaskTableFromOverrideDirectly() {
+    ViabilityStudyBO.TaskViabilityTable mockTable = new ViabilityStudyBO.TaskViabilityTable();
+    ViabilityStudyBO.TaskViabilityTableLine mockLine = new ViabilityStudyBO.TaskViabilityTableLine();
+    mockLine.TipoViabilidade = 'Solar';
+    mockLine.Status = 'STATUS_TEST';
+    mockLine.Assunto = 'Assunto Direto';
+    mockLine.Acoes = 'Acao';
+    mockLine.Observacoes = 'Obs';
+    mockLine.Responsavel = 'Responsavel';
+    mockLine.Interessados = null;
+    mockLine.PrazoDiasUteis = '5';
+    mockLine.DataVencimentoDMais = '5';
+    mockLine.TipoProprietario = 'ROLE';
+    mockLine.IgnorarValidacao = false;
+    mockTable.tableLines = new List<ViabilityStudyBO.TaskViabilityTableLine>{ mockLine };
+    ViabilityStudyBO.taskTableOverride = mockTable;
+
+    ViabilityStudyBO.TaskViabilityTable result = ViabilityStudyBO.getTaskViabilityTableFromStaticResource();
+
+    Assert.isNotNull(result, 'getTaskViabilityTableFromStaticResource deve retornar a tabela do override.');
+    Assert.areEqual(1, result.tableLines.size());
+    Assert.areEqual('Assunto Direto', result.tableLines[0].Assunto);
+    Assert.areEqual('Obs', result.tableLines[0].Observacoes);
+  }
+
+  @isTest
+  static void shouldHandleCheckTasksConclusionWithNullOldMap() {
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opp = createOpportunity();
+    ViabilityStudy__c vs = new ViabilityStudy__c(
+      Opportunity__c = opp.Id,
+      StatusFeasibility__c = 'Agendamento de Visita Técnica'
+    );
+    insert vs;
+
+    // null oldMap should not throw
+    ViabilityStudyBO.checkTasksConclusionBeforeStatusChange(
+      new List<ViabilityStudy__c>{ vs },
+      null
+    );
+    Assert.isTrue(true, 'Null oldMap nao deve lancar erro.');
+  }
+
+  @isTest
+  static void shouldHandleSyncWithNoChangesInPower() {
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opp = createOpportunity();
+    ViabilityStudy__c vs = new ViabilityStudy__c(
+      Opportunity__c = opp.Id,
+      StatusFeasibility__c = 'Agendamento de Visita Técnica',
+      InstalledPowerKwp__c = 5
+    );
+    insert vs;
+
+    ViabilityStudy__c oldVs = vs.clone(true, true, true, true);
+    ViabilityStudy__c newVs = vs.clone(true, true, true, true);
+    // same power - no change
+    ViabilityStudyBO.syncOpportunityInstalledPower(
+      new List<ViabilityStudy__c>{ newVs },
+      new Map<Id, ViabilityStudy__c>{ vs.Id => oldVs }
+    );
+
+    Assert.isTrue(true, 'syncOpportunityInstalledPower sem mudança nao deve lancar erro.');
+  }
+
+  @isTest
+  static void shouldHandleCreateTasksWithNullList() {
+    ViabilityStudyBO.resetTestState();
+    ViabilityStudyBO.createTasks(null, null);
+    Assert.isTrue(true, 'createTasks com null nao deve lancar erro.');
+  }
+
   private static String getNonTaskCreatingOwnTeamValue() {
     for (
       Schema.PicklistEntry entry : ViabilityStudy__c.OwnTeamThirdParty__c.getDescribe()

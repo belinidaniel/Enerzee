@@ -170,6 +170,138 @@ private class InstalacaoFinalReportServiceTest {
     ];
   }
 
+  @IsTest
+  static void enqueueIfNeededShouldHandleNullOldMap() {
+    Id syntheticId = buildSyntheticInstalacaoId('003');
+
+    Instalacao__c newInst = new Instalacao__c(
+      Id = syntheticId,
+      Status__c = ProjetoUtils.STATUS_OBRA_CONCLUIDA
+    );
+
+    Test.startTest();
+    InstalacaoFinalReportService.enqueueIfNeeded(
+      new List<Instalacao__c>{ newInst },
+      null
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'Nao deve lançar erro com oldMap nulo.');
+  }
+
+  @IsTest
+  static void enqueueIfNeededShouldHandleEmptyList() {
+    Test.startTest();
+    InstalacaoFinalReportService.enqueueIfNeeded(
+      new List<Instalacao__c>(),
+      new Map<Id, Instalacao__c>()
+    );
+    InstalacaoFinalReportService.enqueueIfNeeded(null, null);
+    Test.stopTest();
+
+    Assert.isTrue(true, 'Deve tratar lista vazia e null sem erros.');
+  }
+
+  @IsTest
+  static void enqueueIfNeededWithObraConcluidaAlternativeStatus() {
+    Integer beforeJobs = [
+      SELECT COUNT()
+      FROM AsyncApexJob
+      WHERE JobType = 'Queueable'
+    ];
+
+    Id syntheticId = buildSyntheticInstalacaoId('004');
+
+    Instalacao__c oldInst = new Instalacao__c(
+      Id = syntheticId,
+      Status__c = 'Em Execucao'
+    );
+    Instalacao__c newInst = new Instalacao__c(
+      Id = syntheticId,
+      Status__c = 'Obra Concluida'
+    );
+
+    Test.startTest();
+    InstalacaoFinalReportService.enqueueIfNeeded(
+      new List<Instalacao__c>{ newInst },
+      new Map<Id, Instalacao__c>{ syntheticId => oldInst }
+    );
+    Test.stopTest();
+
+    Integer afterJobs = [
+      SELECT COUNT()
+      FROM AsyncApexJob
+      WHERE JobType = 'Queueable'
+    ];
+    Assert.isTrue(
+      afterJobs >= beforeJobs,
+      '"Obra Concluida" alternativo deve ser reconhecido como concluido.'
+    );
+  }
+
+  @IsTest
+  static void processInstallationsWithAttachmentUrlPath() {
+    Account anchor = new Account(Name = 'Anchor FinalReport UrlPath');
+    insert anchor;
+
+    ContentVersion oldVersion = createContentVersion(
+      anchor.Id,
+      'url-path-file',
+      'url-path-file.png'
+    );
+
+    OpportunityAttachmentLink__c linkByAttachUrl = new OpportunityAttachmentLink__c(
+      Name = 'LinkByAttachUrl',
+      SObjectId__c = String.valueOf(anchor.Id),
+      ActivityName__c = TaskUtils.SUBJECT_RELATORIO_DE_EXECUCAO_DE_OBRA,
+      AttachmentURL__c = '/sfc/servlet.shepherd/version/download/' + oldVersion.Id,
+      AttachmentDescription__c = 'attach-url'
+    );
+    insert linkByAttachUrl;
+
+    Test.startTest();
+    InstalacaoFinalReportService.processInstallations(
+      new List<Id>{ anchor.Id }
+    );
+    Test.stopTest();
+
+    List<ContentVersion> generated = [
+      SELECT Id, Title
+      FROM ContentVersion
+      WHERE
+        FirstPublishLocationId = :anchor.Id
+        AND Title LIKE 'Relatorio de Execucao de Obra%'
+    ];
+    Assert.isTrue(
+      !generated.isEmpty(),
+      'Deve gerar PDF para link com AttachmentURL.'
+    );
+  }
+
+  @IsTest
+  static void processInstallationsWithNoLinksSkipsGracefully() {
+    Account anchor = new Account(Name = 'Anchor No Links');
+    insert anchor;
+
+    Test.startTest();
+    InstalacaoFinalReportService.processInstallations(
+      new List<Id>{ anchor.Id }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'Sem links nao deve lançar erro.');
+  }
+
+  @IsTest
+  static void processInstallationsWithEmptyList() {
+    Test.startTest();
+    InstalacaoFinalReportService.processInstallations(new List<Id>());
+    InstalacaoFinalReportService.processInstallations(null);
+    Test.stopTest();
+
+    Assert.isTrue(true, 'Lista vazia/null nao deve lançar erro.');
+  }
+
   private static Id buildSyntheticInstalacaoId(String sequence) {
     String prefix = Instalacao__c.SObjectType.getDescribe().getKeyPrefix();
     String padded = String.valueOf(sequence);

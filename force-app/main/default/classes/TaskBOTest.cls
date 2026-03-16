@@ -514,6 +514,424 @@ private class TaskBOTest {
   }
 
   @IsTest
+  static void shouldNotifyAfterTaskConclusionWithSpecialSubject() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Task oldTask = new Task(
+      Subject = 'Defina quem executará a visita técnica do negócio',
+      WhatId = acc.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert oldTask;
+
+    Task newTask = oldTask.clone(true, true, false, false);
+    newTask.Status = TaskUtils.STATUS_CONCLUIDO;
+
+    Test.startTest();
+    TaskBO.notifyAfterTaskConclusion(
+      new List<Task>{ newTask },
+      new Map<Id, Task>{ oldTask.Id => oldTask }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'notifyAfterTaskConclusion nao deve lancar erro.');
+  }
+
+  @IsTest
+  static void shouldNotifyAfterTaskConclusionAcusarRecebimento() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Task oldTask = new Task(
+      Subject = 'Acusar recebimento dos dados da visita',
+      WhatId = acc.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert oldTask;
+
+    Task newTask = oldTask.clone(true, true, false, false);
+    newTask.Status = TaskUtils.STATUS_CONCLUIDO;
+
+    Test.startTest();
+    TaskBO.notifyAfterTaskConclusion(
+      new List<Task>{ newTask },
+      new Map<Id, Task>{ oldTask.Id => oldTask }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'notifyAfterTaskConclusion Acusar nao deve lancar erro.');
+  }
+
+  @IsTest
+  static void shouldUpdateViabilityStatusOnAgendamentoDeVisita() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c vs = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(Opportunity__c = opp.Id),
+      true
+    );
+
+    Task oldTask = new Task(
+      Subject = 'AGENDAMENTO DE VISITA',
+      WhatId = vs.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert oldTask;
+
+    Task newTask = oldTask.clone(true, true, false, false);
+    newTask.Status = TaskUtils.STATUS_CONCLUIDO;
+
+    Test.startTest();
+    TaskBO.updateViabilityStatusOnTaskCompletion(
+      new List<Task>{ newTask },
+      new Map<Id, Task>{ oldTask.Id => oldTask }
+    );
+    Test.stopTest();
+
+    ViabilityStudy__c updated = [
+      SELECT StatusFeasibility__c
+      FROM ViabilityStudy__c
+      WHERE Id = :vs.Id
+    ];
+    Assert.areEqual(
+      'Visita Agendada',
+      updated.StatusFeasibility__c,
+      'Status deve ser Visita Agendada.'
+    );
+  }
+
+  @IsTest
+  static void shouldUpdateViabilityStatusOnAnexarArquivos() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c vs = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(Opportunity__c = opp.Id),
+      true
+    );
+
+    Task oldTask = new Task(
+      Subject = 'ANEXAR ARQUIVOS DE VIABILIDADE',
+      WhatId = vs.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert oldTask;
+
+    Task newTask = oldTask.clone(true, true, false, false);
+    newTask.Status = TaskUtils.STATUS_CONCLUIDO;
+
+    Test.startTest();
+    TaskBO.updateViabilityStatusOnTaskCompletion(
+      new List<Task>{ newTask },
+      new Map<Id, Task>{ oldTask.Id => oldTask }
+    );
+    Test.stopTest();
+
+    ViabilityStudy__c updated = [
+      SELECT StatusFeasibility__c
+      FROM ViabilityStudy__c
+      WHERE Id = :vs.Id
+    ];
+    Assert.areEqual(
+      'Viabilidade Finalizada',
+      updated.StatusFeasibility__c,
+      'Status deve ser Viabilidade Finalizada.'
+    );
+  }
+
+  @IsTest
+  static void shouldSkipViabilityUpdateWhenOldTaskNotFound() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c vs = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(Opportunity__c = opp.Id),
+      true
+    );
+
+    Task task = new Task(
+      Subject = 'AGENDAMENTO DE VISITA',
+      WhatId = vs.Id,
+      Status = TaskUtils.STATUS_CONCLUIDO,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert task;
+
+    // oldMap is null → isTaskBeingConcluded returns false → skip
+    Test.startTest();
+    TaskBO.updateViabilityStatusOnTaskCompletion(
+      new List<Task>{ task },
+      null
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'updateViabilityStatusOnTaskCompletion com null oldMap nao deve lancar erro.');
+  }
+
+  @IsTest
+  static void shouldCreateNFConfirmationTaskEarlyReturnNoEligibleViabilities() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    // ViabilityStudy without OwnTeamThirdParty__c = Integrador/Nao_cadastrado → eligibleIds empty
+    ViabilityStudy__c vs = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(Opportunity__c = opp.Id),
+      true
+    );
+
+    Task oldTask = new Task(
+      Subject = TaskUtils.SUBJECT_SOLICITAR_PAGAMENTO_DE_INTEGRADOR,
+      WhatId = vs.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert oldTask;
+
+    Task newTask = oldTask.clone(true, true, false, false);
+    newTask.Status = TaskUtils.STATUS_CONCLUIDO;
+
+    Test.startTest();
+    TaskBO.createNFConfirmationTask(
+      new List<Task>{ newTask },
+      new Map<Id, Task>{ oldTask.Id => oldTask }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'createNFConfirmationTask sem viabilities elegiveis nao deve lancar erro.');
+  }
+
+  @IsTest
+  static void shouldHandleAprovacaoProjetoUfvWithNoSubStatusMatch() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = viability.Id,
+        Conta__c = acc.Id,
+        TipoObra__c = 'UFVMicro',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO
+      ),
+      true
+    );
+
+    Task oldTask = new Task(
+      Subject = TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV,
+      WhatId = project.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert oldTask;
+
+    Task newTask = oldTask.clone(true, true, false, false);
+    newTask.Status = TaskUtils.STATUS_CONCLUIDO;
+
+    Test.startTest();
+    TaskBO.handleAprovacaoProjetoUfv(
+      new List<Task>{ newTask },
+      new Map<Id, Task>{ oldTask.Id => oldTask }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'handleAprovacaoProjetoUfv nao deve lancar erro.');
+  }
+
+  @IsTest
+  static void shouldUpdateProjectPhaseWithRealProject() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = viability.Id,
+        Conta__c = acc.Id,
+        TipoObra__c = 'UFVMicro',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO
+      ),
+      true
+    );
+
+    Task task = new Task(
+      Subject = 'Tarefa updateProjectPhase',
+      WhatId = project.Id,
+      Status = TaskUtils.STATUS_CONCLUIDO,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+
+    Test.startTest();
+    TaskBO.updateProjectPhase(
+      new List<Task>{ task },
+      new Map<Id, Task>()
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'updateProjectPhase com projeto real nao deve lancar erro.');
+  }
+
+  @IsTest
+  static void shouldValidateRequiredFieldSetsOnCompletionWithConcludingTask() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c vs = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(Opportunity__c = opp.Id),
+      true
+    );
+
+    Task oldTask = new Task(
+      Subject = 'AGENDAMENTO DE VISITA',
+      WhatId = vs.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert oldTask;
+
+    Task newTask = oldTask.clone(true, true, false, false);
+    newTask.Status = TaskUtils.STATUS_CONCLUIDO;
+
+    Test.startTest();
+    TaskBO.validateRequiredFieldSetsOnCompletion(
+      new List<Task>{ newTask },
+      new Map<Id, Task>{ oldTask.Id => oldTask }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'validateRequiredFieldSetsOnCompletion nao deve lancar erro em contexto de teste.');
+  }
+
+  @IsTest
+  static void shouldCoverNotifyViabilityInvoiceAttachmentNonMatchingSubject() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Task t = new Task(
+      Subject = 'Outro assunto qualquer',
+      WhatId = acc.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+
+    ContentDocumentLink link = new ContentDocumentLink();
+
+    Test.startTest();
+    TaskBO.notifyViabilityInvoiceAttachment(t, link);
+    Test.stopTest();
+
+    Assert.isTrue(true, 'notifyViabilityInvoiceAttachment com subject diferente nao deve lancar erro.');
+  }
+
+  @IsTest
+  static void shouldCoverNotifyViabilityInvoiceAttachmentNonViabilityWhatId() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Task t = new Task(
+      Subject = TaskUtils.SUBJECT_SOLICITAR_PAGAMENTO_DE_INTEGRADOR,
+      WhatId = acc.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+
+    ContentDocumentLink link = new ContentDocumentLink();
+
+    Test.startTest();
+    TaskBO.notifyViabilityInvoiceAttachment(t, link);
+    Test.stopTest();
+
+    Assert.isTrue(true, 'notifyViabilityInvoiceAttachment com WhatId nao-viabilidade nao deve lancar erro.');
+  }
+
+  @IsTest
+  static void shouldCoverNotifyViabilityInvoiceAttachmentWithViabilityNoFile() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c vs = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(Opportunity__c = opp.Id),
+      true
+    );
+
+    Task t = new Task(
+      Subject = TaskUtils.SUBJECT_SOLICITAR_PAGAMENTO_DE_INTEGRADOR,
+      WhatId = vs.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert t;
+
+    // Insert a ContentDocument linked to vs to have a valid ContentDocumentId
+    ContentVersion cv = new ContentVersion(
+      Title = 'NF Integrador',
+      PathOnClient = 'NF.pdf',
+      FirstPublishLocationId = vs.Id,
+      IsMajorVersion = true,
+      VersionData = Blob.valueOf('nf-content')
+    );
+    insert cv;
+
+    ContentDocument doc = [
+      SELECT Id
+      FROM ContentDocument
+      WHERE Title = 'NF Integrador'
+      LIMIT 1
+    ];
+
+    ContentDocumentLink link = new ContentDocumentLink(
+      LinkedEntityId = vs.Id,
+      ContentDocumentId = doc.Id,
+      ShareType = 'V'
+    );
+
+    Test.startTest();
+    TaskBO.notifyViabilityInvoiceAttachment(t, link);
+    Test.stopTest();
+
+    Assert.isTrue(true, 'notifyViabilityInvoiceAttachment com viabilidade e arquivo nao deve lancar erro.');
+  }
+
+  @IsTest
   static void markManualTasks_HandlesEmptyList() {
     Test.startTest();
     TaskBO.markManualTasksAsIgnoreValidation(new List<Task>());

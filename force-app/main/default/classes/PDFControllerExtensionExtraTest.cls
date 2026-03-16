@@ -253,6 +253,144 @@ private class PDFControllerExtensionExtraTest {
   }
 
   @IsTest
+  static void shouldReturnFalseFromSalvarPdfWhenSkipAutoSaveTrue() {
+    Opportunity opp = createOpp();
+    insert opp;
+
+    PageReference pref = new PageReference('/apex/dummy');
+    pref.getParameters().put('id', opp.Id);
+    pref.getParameters().put('skipAutoSave', 'true');
+    Test.setCurrentPage(pref);
+
+    PDFControllerExtension ext = new PDFControllerExtension(
+      new ApexPages.StandardController(opp)
+    );
+
+    Test.startTest();
+    PageReference result = ext.salvarPDF();
+    Test.stopTest();
+
+    Assert.isNull(result, 'salvarPDF deve retornar null quando skipAutoSave=true.');
+  }
+
+  @IsTest
+  static void shouldReturnNullFromSalvarPdfWhenSalvarIsNao() {
+    Opportunity opp = createOpp();
+    insert opp;
+
+    PageReference pref = new PageReference('/apex/dummy');
+    pref.getParameters().put('id', opp.Id);
+    pref.getParameters().put('salvar', 'Não');
+    Test.setCurrentPage(pref);
+
+    PDFControllerExtension ext = new PDFControllerExtension(
+      new ApexPages.StandardController(opp)
+    );
+
+    Test.startTest();
+    PageReference result = ext.salvarPDF();
+    Test.stopTest();
+
+    Assert.isNull(result, 'salvarPDF deve retornar null quando salvar=Não.');
+  }
+
+  @IsTest
+  static void shouldCoverGetShouldRenderAndGetHasMainViabilityLayout() {
+    Opportunity opp = createOpp();
+    insert opp;
+
+    PageReference pref = new PageReference('/apex/dummy');
+    pref.getParameters().put('id', opp.Id);
+    Test.setCurrentPage(pref);
+
+    PDFControllerExtension extEmpty = new PDFControllerExtension(
+      new ApexPages.StandardController(opp)
+    );
+    Assert.isFalse(
+      extEmpty.getShouldRenderMainViabilityStudy(),
+      'Sem viability chunks deve retornar false.'
+    );
+    Assert.isFalse(
+      extEmpty.getHasMainViabilityLayout(),
+      'Sem layout URL deve retornar false.'
+    );
+    Assert.areEqual(0, extEmpty.getMainViabilityChunkCount());
+
+    // Com viability e texto longo (>2200 chars para acionar chunking)
+    String longText = 'A'.repeat(2500);
+    ViabilityStudy__c vs = new ViabilityStudy__c(
+      TextStudy__c = longText,
+      Opportunity__c = opp.Id
+    );
+    insert vs;
+    opp.MainViability__c = vs.Id;
+    update opp;
+
+    pref = new PageReference('/apex/dummy');
+    pref.getParameters().put('id', opp.Id);
+    Test.setCurrentPage(pref);
+
+    PDFControllerExtension extWithChunks = new PDFControllerExtension(
+      new ApexPages.StandardController(opp)
+    );
+    Assert.isTrue(
+      extWithChunks.getShouldRenderMainViabilityStudy(),
+      'Com texto longo deve ter chunks.'
+    );
+    Assert.isTrue(extWithChunks.getMainViabilityChunkCount() > 0);
+  }
+
+  @IsTest
+  static void shouldCallSavePdfFileStaticAndGeneratePdfContent() {
+    Opportunity opp = createOpp();
+    insert opp;
+
+    Blob content = PDFControllerExtension.generatePdfContent(
+      opp.Id,
+      null,
+      'dummy',
+      false
+    );
+    Assert.isNotNull(content, 'generatePdfContent deve retornar blob em test context.');
+
+    Id fileId = PDFControllerExtension.savePdfFile(
+      opp.Id,
+      'Test File',
+      'dummy',
+      Blob.valueOf('test content'),
+      false
+    );
+    Assert.isNotNull(fileId, 'savePdfFile deve retornar um Id.');
+  }
+
+  @IsTest
+  static void shouldEnqueueSavePdfJob() {
+    Opportunity opp = createOpp();
+    opp.PropostaGerada__c = true;
+    opp.ReadequacaoSolicitada__c = false;
+    opp.StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA;
+    insert opp;
+
+    ContentVersion cv = new ContentVersion(
+      Title = 'PROPOSTA_JOB',
+      PathOnClient = 'PROPOSTA_JOB.pdf',
+      FirstPublishLocationId = opp.Id,
+      IsMajorVersion = true,
+      VersionData = Blob.valueOf('pdf'),
+      IsProposal__c = true
+    );
+    insert cv;
+
+    Test.startTest();
+    System.enqueueJob(
+      new PDFControllerExtension.SavePdfJob(opp.Id, false, false)
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'SavePdfJob nao deve lancar erro.');
+  }
+
+  @IsTest
   static void shouldLoadPdfUrlsWithSelectedCoverAndPaymentNote() {
     ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(
       new ProposalCover__c(),
