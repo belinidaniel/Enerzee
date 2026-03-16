@@ -130,4 +130,187 @@ private class IntegracaoNivelloPropostaTest {
 
     System.assert(true, 'Integracao executada');
   }
+
+  @IsTest
+  static void shouldCallFinalizacaoPropostaWithRealOpportunity() {
+    if (
+      !TestMetadataUtils.hasMetadataRecord(
+        'Integrador__mdt',
+        'Finalizacao_Proposta'
+      )
+    ) {
+      return;
+    }
+
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        IdVirtualOffice__c = 'VO-FIN-REAL'
+      ),
+      true
+    );
+
+    ContentVersion cv = new ContentVersion(
+      Title = 'Proposta Finalizacao',
+      PathOnClient = 'proposta_fin.pdf',
+      VersionData = Blob.valueOf('PDF-CONTENT'),
+      FirstPublishLocationId = opp.Id
+    );
+    insert cv;
+
+    TokenAPINivelloWs.access_token = 'mock-token';
+    Test.setMock(
+      HttpCalloutMock.class,
+      new TestMetadataUtils.MockHttpSuccess()
+    );
+
+    Test.startTest();
+    IntegracaoNivelloProposta.finalizacaoProposta(new Set<Id>{ opp.Id });
+    Test.stopTest();
+
+    Assert.isTrue(true, 'finalizacaoProposta com oportunidade real nao deve lancar erro.');
+  }
+
+  @IsTest
+  static void shouldCallSendUrlSimulationWithEmptySet() {
+    if (
+      !TestMetadataUtils.hasMetadataRecord(
+        'Integrador__mdt',
+        'Envia_URLSimulacao'
+      )
+    ) {
+      return;
+    }
+
+    TokenAPINivelloWs.access_token = 'mock-token';
+    Test.setMock(
+      HttpCalloutMock.class,
+      new TestMetadataUtils.MockHttpSuccess()
+    );
+
+    Test.startTest();
+    IntegracaoNivelloProposta.sendUrlSimulation(new Set<Id>());
+    Test.stopTest();
+
+    Assert.isTrue(true, 'sendUrlSimulation com Set vazio nao deve lancar erro.');
+  }
+
+  @IsTest
+  static void shouldCallGerandoPropostaWithPdfAttachment() {
+    if (
+      !TestMetadataUtils.hasMetadataRecord(
+        'Integrador__mdt',
+        'Gerando_Proposta'
+      )
+    ) {
+      return;
+    }
+
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        IdVirtualOffice__c = 'VO-GERANDO-PDF'
+      ),
+      true
+    );
+
+    // Insert a PDF ContentVersion linked to the opportunity so the SOQL inside gerandoProposta finds it
+    ContentVersion cv = new ContentVersion(
+      Title = 'Proposta PDF Test',
+      PathOnClient = 'proposta_test.pdf',
+      VersionData = Blob.valueOf('%PDF-1.4 fake content'),
+      FirstPublishLocationId = UserInfo.getUserId()
+    );
+    insert cv;
+    cv = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id];
+
+    ContentDocumentLink cdl = new ContentDocumentLink(
+      ContentDocumentId = cv.ContentDocumentId,
+      LinkedEntityId = opp.Id,
+      ShareType = 'V'
+    );
+    insert cdl;
+
+    TokenAPINivelloWs.access_token = 'mock-token';
+    Test.setMock(
+      HttpCalloutMock.class,
+      new TestMetadataUtils.MockHttpSuccess()
+    );
+
+    Test.startTest();
+    IntegracaoNivelloProposta.gerandoProposta(opp.Id);
+    Test.stopTest();
+
+    Assert.isTrue(true, 'gerandoProposta com PDF anexado nao deve lancar erro.');
+  }
+
+  @IsTest
+  static void shouldHandleGerandoPropostaWhenNoPdfFound() {
+    if (
+      !TestMetadataUtils.hasMetadataRecord(
+        'Integrador__mdt',
+        'Gerando_Proposta'
+      )
+    ) {
+      return;
+    }
+
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        IdVirtualOffice__c = 'VO-NO-PDF'
+      ),
+      true
+    );
+
+    // No ContentDocumentLink attached → propostaPDFList is empty → method exits early
+    TokenAPINivelloWs.access_token = 'mock-token';
+    Test.setMock(
+      HttpCalloutMock.class,
+      new TestMetadataUtils.MockHttpSuccess()
+    );
+
+    Test.startTest();
+    IntegracaoNivelloProposta.gerandoProposta(opp.Id);
+    Test.stopTest();
+
+    Assert.isTrue(true, 'gerandoProposta sem PDF nao deve lancar erro.');
+  }
+
+  @IsTest
+  static void shouldCallGerandoPropostaSincronaAndReturnSuccess() {
+    if (
+      !TestMetadataUtils.hasMetadataRecord(
+        'Integrador__mdt',
+        'Gerando_Proposta'
+      )
+    ) {
+      return;
+    }
+
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        IdVirtualOffice__c = 'VO-SINCRONA-2'
+      ),
+      true
+    );
+
+    TokenAPINivelloWs.access_token = 'mock-token';
+    Test.setMock(
+      HttpCalloutMock.class,
+      new TestMetadataUtils.MockHttpSuccess()
+    );
+
+    Test.startTest();
+    IntegracaoNivelloProposta.ProposalIntegrationResult res = IntegracaoNivelloProposta.gerandoPropostaSincrona(opp.Id);
+    Test.stopTest();
+
+    Assert.isTrue(res.success, 'gerandoPropostaSincrona deve retornar success=true.');
+    Assert.areEqual('Proposta gerada com sucesso', res.message);
+  }
 }

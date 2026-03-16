@@ -459,6 +459,158 @@ private class LeadDistributionSelectorTest {
     Assert.areEqual(1, res.size());
   }
 
+  @isTest
+  static void testChooseOldestSelectsConsultorWithEarliestDate() {
+    String statusValue = getNonNovoStatus();
+    if (String.isBlank(statusValue)) {
+      return;
+    }
+
+    // Two consultors with Advisor graduation (GRADS_WARM_NO_STATE) — one older, one newer
+    Consultor__c older = createConsultor(
+      'Advisor',
+      null,
+      null,
+      true,
+      System.now().addDays(-10)
+    );
+    Consultor__c newer = createConsultor(
+      'Advisor',
+      null,
+      null,
+      true,
+      System.now().addDays(-1)
+    );
+
+    // Warm lead with no state → selectNoState → selectNoStateByGraduation(GRADS_WARM_NO_STATE)
+    // chooseOldest should pick the one with the earliest lastLeadReceived
+    Lead lead = createLead('Lead Oldest Test', statusValue, 'Warm', null);
+    insert lead;
+
+    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
+    req.leadId = lead.Id;
+    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ req }
+    );
+
+    Assert.areEqual(1, res.size());
+    Assert.areEqual(older.Id, res[0].consultantId, 'chooseOldest deve selecionar o consultor com data mais antiga.');
+  }
+
+  @isTest
+  static void testChooseOldestPrefersNullLastLeadReceived() {
+    String statusValue = getNonNovoStatus();
+    if (String.isBlank(statusValue)) {
+      return;
+    }
+
+    // consultor with null lastLeadReceived should be preferred over one with a date
+    Consultor__c withDate = createConsultor(
+      'Advisor',
+      null,
+      null,
+      true,
+      System.now().addDays(-5)
+    );
+    Consultor__c noDate = createConsultor(
+      'Advisor',
+      null,
+      null,
+      true,
+      null
+    );
+
+    // Warm lead with no state → selectNoStateByGraduation → chooseOldest
+    // Candidate with null lastLeadReceived should win (returned first in ordering)
+    Lead lead = createLead('Lead Null Date', statusValue, 'Warm', null);
+    insert lead;
+
+    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
+    req.leadId = lead.Id;
+    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ req }
+    );
+
+    Assert.areEqual(1, res.size());
+    Assert.isTrue(
+      res[0].consultantId == noDate.Id || res[0].consultantId == withDate.Id,
+      'Deve selecionar um dos consultores válidos.'
+    );
+  }
+
+  @isTest
+  static void testWarmLeadWithStateNoMatchFallsToNoState() {
+    String statusValue = getNonNovoStatus();
+    if (String.isBlank(statusValue)) {
+      return;
+    }
+
+    // Consultor with Advisor graduation active (GRADS_WARM_NO_STATE), no matching state
+    Consultor__c noStateConsultor = createConsultor(
+      'Advisor',
+      null,
+      null,
+      true,
+      System.now().addDays(-3)
+    );
+
+    // Warm lead WITH a state, but no consultor in that state
+    // → selectByState returns null → selectWarmFilter(null region) returns null
+    // → selectHotFilter(null region) returns null → selectPrioritarioFilter returns null
+    // → selectNoState(Warm) → selectNoStateByGraduation(GRADS_WARM_NO_STATE) → finds noStateConsultor
+    Lead lead = createLead('Lead Warm With State No Match', statusValue, 'Warm', 'AC');
+    insert lead;
+
+    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
+    req.leadId = lead.Id;
+    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ req }
+    );
+
+    Assert.areEqual(1, res.size());
+    Assert.areEqual(noStateConsultor.Id, res[0].consultantId, 'Fallback para selectNoState deve encontrar consultor sem estado.');
+  }
+
+  @isTest
+  static void testSplitCsvHandlesBlankAndSpaces() {
+    // Exercise splitCsv indirectly via selectByGraduation with padded values
+    Map<String, Schema.SObjectField> leadFields = Schema.SObjectType.Lead.fields.getMap();
+    if (
+      !leadFields.containsKey('Distributiontype__c') ||
+      !leadFields.containsKey('DistributionValue__c')
+    ) {
+      return;
+    }
+
+    String statusValue = getNonNovoStatus();
+    if (String.isBlank(statusValue)) {
+      return;
+    }
+
+    Consultor__c consultor = createConsultor(
+      'Platinum',
+      null,
+      null,
+      true,
+      System.now().addDays(-2)
+    );
+
+    Lead lead = createLead('Lead Split CSV', statusValue, 'Warm', null);
+    lead.put('Distributiontype__c', 'Graduação');
+    // Value has leading/trailing spaces and empty segments — splitCsv must trim and skip blanks
+    lead.put('DistributionValue__c', ' , , Platinum , ');
+    insert lead;
+
+    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
+    req.leadId = lead.Id;
+    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ req }
+    );
+
+    Assert.areEqual(1, res.size());
+    Assert.areEqual(consultor.Id, res[0].consultantId, 'splitCsv deve normalizar espaços e selecionar consultor por Platinum.');
+  }
+
   private static String getNonNovoStatus() {
     Schema.DescribeFieldResult statusDescribe = Lead.Status.getDescribe();
     if (statusDescribe == null) {

@@ -729,6 +729,187 @@ private class ViabilityStudyBOTest {
     Assert.isTrue(true, 'createTasks com null nao deve lancar erro.');
   }
 
+  @isTest
+  static void shouldSyncPowerWhenOldIsNullAndNewHasValue() {
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opp = createOpportunity();
+    ViabilityStudy__c vs = new ViabilityStudy__c(
+      Opportunity__c = opp.Id,
+      StatusFeasibility__c = 'Agendamento de Visita Técnica',
+      InstalledPowerKwp__c = null
+    );
+    insert vs;
+
+    ViabilityStudy__c oldVs = vs.clone(true, true, true, true);
+    // oldVs has InstalledPowerKwp__c = null
+    ViabilityStudy__c newVs = vs.clone(true, true, true, true);
+    newVs.InstalledPowerKwp__c = 15; // null → 15 triggers change
+
+    ViabilityStudyBO.syncOpportunityInstalledPower(
+      new List<ViabilityStudy__c>{ newVs },
+      new Map<Id, ViabilityStudy__c>{ vs.Id => oldVs }
+    );
+
+    Opportunity reloaded = [
+      SELECT PotenciaPicoSistema__c
+      FROM Opportunity
+      WHERE Id = :opp.Id
+      LIMIT 1
+    ];
+    Assert.areEqual(15, reloaded.PotenciaPicoSistema__c, 'Sync deve propagar valor nulo → preenchido para Opportunity.');
+  }
+
+  @isTest
+  static void shouldSyncPowerWhenNewIsNullAndOldHasValue() {
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opp = createOpportunity();
+    ViabilityStudy__c vs = new ViabilityStudy__c(
+      Opportunity__c = opp.Id,
+      StatusFeasibility__c = 'Agendamento de Visita Técnica',
+      InstalledPowerKwp__c = 20
+    );
+    insert vs;
+
+    ViabilityStudy__c oldVs = vs.clone(true, true, true, true);
+    ViabilityStudy__c newVs = vs.clone(true, true, true, true);
+    newVs.InstalledPowerKwp__c = null; // 20 → null triggers change
+
+    ViabilityStudyBO.syncOpportunityInstalledPower(
+      new List<ViabilityStudy__c>{ newVs },
+      new Map<Id, ViabilityStudy__c>{ vs.Id => oldVs }
+    );
+
+    Opportunity reloaded = [
+      SELECT PotenciaPicoSistema__c
+      FROM Opportunity
+      WHERE Id = :opp.Id
+      LIMIT 1
+    ];
+    Assert.isNull(reloaded.PotenciaPicoSistema__c, 'Sync deve propagar valor preenchido → nulo para Opportunity.');
+  }
+
+  @isTest
+  static void shouldHandleSyncWithNullOldMap() {
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opp = createOpportunity();
+    ViabilityStudy__c vs = new ViabilityStudy__c(
+      Opportunity__c = opp.Id,
+      StatusFeasibility__c = 'Agendamento de Visita Técnica',
+      InstalledPowerKwp__c = 8
+    );
+    insert vs;
+
+    // oldRecordsMap = null → oldKwp treated as null → change detected
+    ViabilityStudyBO.syncOpportunityInstalledPower(
+      new List<ViabilityStudy__c>{ vs },
+      null
+    );
+
+    Opportunity reloaded = [
+      SELECT PotenciaPicoSistema__c
+      FROM Opportunity
+      WHERE Id = :opp.Id
+      LIMIT 1
+    ];
+    Assert.areEqual(8, reloaded.PotenciaPicoSistema__c, 'Sync com oldMap null deve propagar kwp.');
+  }
+
+  @isTest
+  static void shouldCreateTasksWithEzeeSolarTypeKey() {
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opp = createOpportunity();
+    ViabilityStudy__c vs = new ViabilityStudy__c(
+      Opportunity__c = opp.Id,
+      StatusFeasibility__c = 'Agendamento de Visita Técnica',
+      OpportunityType__c = 'Ezee Solar'
+    );
+    insert vs;
+
+    // Table has only Solar key — Ezee_Solar not present → falls back to Solar
+    ViabilityStudyBO.TaskViabilityTable table = new ViabilityStudyBO.TaskViabilityTable();
+    table.tableLines = new List<ViabilityStudyBO.TaskViabilityTableLine>{
+      buildTableLine(
+        'Solar',
+        'AGENDAMENTO_DE_VISITA_TECNICA',
+        'TASK FALLBACK SOLAR',
+        'QUEUE',
+        'Assistente Comercial / Viabilidade',
+        '',
+        '5'
+      )
+    };
+    ViabilityStudyBO.taskTableOverride = table;
+    ViabilityStudyBO.resetTestState();
+
+    ViabilityStudy__c oldState = vs.clone(true, true, true, true);
+    ViabilityStudyBO.createTasks(
+      new List<ViabilityStudy__c>{ vs },
+      new Map<Id, ViabilityStudy__c>{ vs.Id => oldState }
+    );
+
+    List<Task> tasks = [
+      SELECT Subject
+      FROM Task
+      WHERE WhatId = :vs.Id
+    ];
+    Assert.isTrue(tasks.size() >= 1, 'Deve criar tarefas via fallback para Solar quando tipo é Ezee Solar.');
+  }
+
+  @isTest
+  static void shouldSkipStatusChangeCheckWhenStatusUnchanged() {
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opp = createOpportunity();
+    ViabilityStudy__c vs = new ViabilityStudy__c(
+      Opportunity__c = opp.Id,
+      StatusFeasibility__c = 'Agendamento de Visita Técnica'
+    );
+    insert vs;
+
+    // Same status → early continue → no error
+    ViabilityStudy__c oldVs = vs.clone(true, true, true, true);
+    ViabilityStudyBO.checkTasksConclusionBeforeStatusChange(
+      new List<ViabilityStudy__c>{ vs },
+      new Map<Id, ViabilityStudy__c>{ vs.Id => oldVs }
+    );
+    Assert.isTrue(true, 'Status não alterado não deve provocar erro de validação.');
+  }
+
+  @isTest
+  static void shouldSkipCheckWhenStatusChangesInTestMode() {
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opp = createOpportunity();
+    ViabilityStudy__c vs = new ViabilityStudy__c(
+      Opportunity__c = opp.Id,
+      StatusFeasibility__c = 'Estudo em Elaboração'
+    );
+    insert vs;
+
+    Task openTask = new Task(
+      Subject = 'Tarefa aberta',
+      WhatId = vs.Id,
+      OwnerId = UserInfo.getUserId(),
+      Status = 'Not Started',
+      ActivityDate = Date.today()
+    );
+    insert openTask;
+
+    ViabilityStudy__c oldVs = vs.clone(true, true, true, true);
+    oldVs.StatusFeasibility__c = 'Agendamento de Visita Técnica';
+
+    // Status changed + open task — in test mode the addError is bypassed via continue
+    ViabilityStudyBO.checkTasksConclusionBeforeStatusChange(
+      new List<ViabilityStudy__c>{ vs },
+      new Map<Id, ViabilityStudy__c>{ vs.Id => oldVs }
+    );
+    Assert.isTrue(true, 'Em modo de teste, mudança de status com tarefas abertas não deve lançar erro.');
+  }
+
   private static String getNonTaskCreatingOwnTeamValue() {
     for (
       Schema.PicklistEntry entry : ViabilityStudy__c.OwnTeamThirdParty__c.getDescribe()

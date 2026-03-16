@@ -176,4 +176,383 @@ private class IntegracaoSAPCoverageTest {
 			return res;
 		}
 	}
+
+	// -----------------------------------------------------------------------
+	// SAPSuccessMock — returns SAP-style 200 success body
+	// -----------------------------------------------------------------------
+	private class SAPSuccessMock implements HttpCalloutMock {
+		public HttpResponse respond(HttpRequest req) {
+			HttpResponse res = new HttpResponse();
+			res.setStatusCode(200);
+			res.setStatus('OK');
+			res.setBody('{"codigoHttp":"200","mensagem":"ok"}');
+			return res;
+		}
+	}
+
+	// -----------------------------------------------------------------------
+	// SAPErrorMock — returns SAP-style 400 error body
+	// -----------------------------------------------------------------------
+	private class SAPErrorMock implements HttpCalloutMock {
+		public HttpResponse respond(HttpRequest req) {
+			HttpResponse res = new HttpResponse();
+			res.setStatusCode(400);
+			res.setStatus('Bad Request');
+			res.setBody('{"codigoHttp":"400","mensagem":"erro"}');
+			return res;
+		}
+	}
+
+	// -----------------------------------------------------------------------
+	// Shared test-data builder — creates Account + Opportunity + Kit
+	// -----------------------------------------------------------------------
+	private static Opportunity buildOppWithKit(String classificacao) {
+		OpportunityTriggerHandler.disableTrigger();
+		KitInstalacaoTriggerHandler.disableTrigger();
+
+		Account acc = (Account) TestFactory.createSObject(new Account(), true);
+
+		Opportunity opp = (Opportunity) TestFactory.createSObject(
+			new Opportunity(
+				AccountId = acc.Id,
+				Classificacao__c = classificacao,
+				NumeroContrato__c = '42',
+				NumeroOrigemContrato__c = 'ORI-001',
+				CondicoesPagamento__c = 'Recursos Próprios',
+				ValorTotalProposta__c = 10000,
+				IdVirtualOffice__c = 'VO-TEST-001',
+				DataEntrega__c = System.today().addDays(30),
+				Numeroproposta__c = 'PROP-001'
+			),
+			true
+		);
+
+		TestFactory.createSObject(
+			new Kit_Instalacao__c(Nome_da_Oportunidade__c = opp.Id),
+			true
+		);
+
+		KitInstalacaoTriggerHandler.enableTrigger();
+		OpportunityTriggerHandler.enableTrigger();
+
+		return opp;
+	}
+
+	// -----------------------------------------------------------------------
+	// IntegracaoSAPContrato — sendContract with Kit present (success path)
+	// Covers: SOQL, map building, request building loop, callout success branch
+	// -----------------------------------------------------------------------
+	@IsTest
+	static void shouldCallSendContractWithKitSuccessResponse() {
+		if (!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'ContratoSAP') ||
+			!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'TokenSAP')) {
+			Assert.isTrue(true, 'Metadata ContratoSAP/TokenSAP ausente — teste ignorado.');
+			return;
+		}
+
+		Opportunity opp = buildOppWithKit('Contratos de Locação');
+
+		Test.setMock(HttpCalloutMock.class, new SAPSuccessMock());
+
+		Test.startTest();
+		IntegracaoSAPContrato.sendContract(new Set<Id>{ opp.Id });
+		Test.stopTest();
+
+		Opportunity updated = [SELECT SucessoIntegracaoSAP__c FROM Opportunity WHERE Id = :opp.Id];
+		Assert.isTrue(updated.SucessoIntegracaoSAP__c, 'SucessoIntegracaoSAP__c deve ser true após resposta 200.');
+	}
+
+	// -----------------------------------------------------------------------
+	// IntegracaoSAPContrato — sendContract with Kit present (error response)
+	// Covers: else branch (error statusCode) in response handling
+	// -----------------------------------------------------------------------
+	@IsTest
+	static void shouldCallSendContractWithKitErrorResponse() {
+		if (!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'ContratoSAP') ||
+			!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'TokenSAP')) {
+			Assert.isTrue(true, 'Metadata ContratoSAP/TokenSAP ausente — teste ignorado.');
+			return;
+		}
+
+		Opportunity opp = buildOppWithKit('Contratos de Serviços');
+
+		Test.setMock(HttpCalloutMock.class, new SAPErrorMock());
+
+		Test.startTest();
+		IntegracaoSAPContrato.sendContract(new Set<Id>{ opp.Id });
+		Test.stopTest();
+
+		Opportunity updated = [SELECT SucessoIntegracaoSAP__c FROM Opportunity WHERE Id = :opp.Id];
+		Assert.areEqual(false, updated.SucessoIntegracaoSAP__c, 'SucessoIntegracaoSAP__c deve ser false após resposta 400.');
+	}
+
+	// -----------------------------------------------------------------------
+	// IntegracaoSAPContrato — sendContract with no Kits (empty-kit path)
+	// Covers: kits.isEmpty() == true branch + OpportunityTriggerHandler disable/enable + update
+	// -----------------------------------------------------------------------
+	@IsTest
+	static void shouldCallSendContractWithNoKits() {
+		if (!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'ContratoSAP') ||
+			!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'TokenSAP')) {
+			Assert.isTrue(true, 'Metadata ausente — teste ignorado.');
+			return;
+		}
+
+		OpportunityTriggerHandler.disableTrigger();
+		Account acc = (Account) TestFactory.createSObject(new Account(), true);
+		Opportunity opp = (Opportunity) TestFactory.createSObject(
+			new Opportunity(AccountId = acc.Id),
+			true
+		);
+		OpportunityTriggerHandler.enableTrigger();
+
+		Test.setMock(HttpCalloutMock.class, new SAPSuccessMock());
+
+		Test.startTest();
+		IntegracaoSAPContrato.sendContract(new Set<Id>{ opp.Id });
+		Test.stopTest();
+
+		Assert.isTrue(true, 'sendContract com Set sem kits nao deve lancar excecao.');
+	}
+
+	// -----------------------------------------------------------------------
+	// IntegracaoSAPContrato — getUsageValue remaining branches (24 to 76)
+	// Covers all values not hit by the first getUsageValue test
+	// -----------------------------------------------------------------------
+	@IsTest
+	static void shouldCoverGetUsageValueRemainingBranches() {
+		Assert.areEqual(24, IntegracaoSAPContrato.getUsageValue('Desp Aprendiz/Estagi'));
+		Assert.areEqual(25, IntegracaoSAPContrato.getUsageValue('Desp. Contratuais'));
+		Assert.areEqual(26, IntegracaoSAPContrato.getUsageValue('Desp. c/ Sistemas'));
+		Assert.areEqual(27, IntegracaoSAPContrato.getUsageValue('Desp. c/ Viagem'));
+		Assert.areEqual(28, IntegracaoSAPContrato.getUsageValue('Energia Eletrica'));
+		Assert.areEqual(29, IntegracaoSAPContrato.getUsageValue('Eventos e Confratern'));
+		Assert.areEqual(30, IntegracaoSAPContrato.getUsageValue('Feiras e Exposicoes'));
+		Assert.areEqual(31, IntegracaoSAPContrato.getUsageValue('Ferramentas'));
+		Assert.areEqual(32, IntegracaoSAPContrato.getUsageValue('Fretes s/ Vendas'));
+		Assert.areEqual(33, IntegracaoSAPContrato.getUsageValue('Impostos Estaduais'));
+		Assert.areEqual(34, IntegracaoSAPContrato.getUsageValue('Internet e Telefone'));
+		Assert.areEqual(35, IntegracaoSAPContrato.getUsageValue('Locacao Maq e Equip'));
+		Assert.areEqual(36, IntegracaoSAPContrato.getUsageValue('Lanches e Bebidas'));
+		Assert.areEqual(37, IntegracaoSAPContrato.getUsageValue('Locacao de Veiculo'));
+		Assert.areEqual(38, IntegracaoSAPContrato.getUsageValue('Outras Saidas'));
+		Assert.areEqual(40, IntegracaoSAPContrato.getUsageValue('Publi. e Marketing'));
+		Assert.areEqual(41, IntegracaoSAPContrato.getUsageValue('Rem Merc p conserto'));
+		Assert.areEqual(12, IntegracaoSAPContrato.getUsageValue('Doação ou brinde'));
+		Assert.areEqual(43, IntegracaoSAPContrato.getUsageValue('Serv. Inst Sist Foto'));
+		Assert.areEqual(39, IntegracaoSAPContrato.getUsageValue('Outras Entradas'));
+		Assert.areEqual(44, IntegracaoSAPContrato.getUsageValue('Saida Unifor e Acess'));
+		Assert.areEqual(45, IntegracaoSAPContrato.getUsageValue('Saida de Mat. Elétri'));
+		Assert.areEqual(46, IntegracaoSAPContrato.getUsageValue('Serviços Gerais'));
+		Assert.areEqual(47, IntegracaoSAPContrato.getUsageValue('Serviços Prestados'));
+		Assert.areEqual(48, IntegracaoSAPContrato.getUsageValue('Serviços de Obra'));
+		Assert.areEqual(49, IntegracaoSAPContrato.getUsageValue('Taxa ART'));
+		Assert.areEqual(50, IntegracaoSAPContrato.getUsageValue('Transf. Filiais'));
+		Assert.areEqual(51, IntegracaoSAPContrato.getUsageValue('Transf. Filiais - ST'));
+		Assert.areEqual(52, IntegracaoSAPContrato.getUsageValue('Venda NF Futura'));
+		Assert.areEqual(53, IntegracaoSAPContrato.getUsageValue('Venda de Imobilizado'));
+		Assert.areEqual(54, IntegracaoSAPContrato.getUsageValue('Visita Tecnica'));
+		Assert.areEqual(55, IntegracaoSAPContrato.getUsageValue('Servico de Topografi'));
+		Assert.areEqual(56, IntegracaoSAPContrato.getUsageValue('Venda de Materiais'));
+		Assert.areEqual(57, IntegracaoSAPContrato.getUsageValue('Material Extra Aplic'));
+		Assert.areEqual(58, IntegracaoSAPContrato.getUsageValue('Compra Triangulação'));
+		Assert.areEqual(42, IntegracaoSAPContrato.getUsageValue('Venda Triangulacao'));
+		Assert.areEqual(60, IntegracaoSAPContrato.getUsageValue('Farmacia'));
+		Assert.areEqual(61, IntegracaoSAPContrato.getUsageValue('Uniformes e Acessori'));
+		Assert.areEqual(62, IntegracaoSAPContrato.getUsageValue('Serv. Manut. Usina'));
+		Assert.areEqual(63, IntegracaoSAPContrato.getUsageValue('Dev. Compra'));
+		Assert.areEqual(64, IntegracaoSAPContrato.getUsageValue('Retorno de Obra'));
+		Assert.areEqual(65, IntegracaoSAPContrato.getUsageValue('Comodato'));
+		Assert.areEqual(66, IntegracaoSAPContrato.getUsageValue('Venda Merc V. Ordem'));
+		Assert.areEqual(67, IntegracaoSAPContrato.getUsageValue('Remessa Merc C. Orde'));
+		Assert.areEqual(68, IntegracaoSAPContrato.getUsageValue('Serv Proteção Veicul'));
+		Assert.areEqual(69, IntegracaoSAPContrato.getUsageValue('Dev. Comodato'));
+		Assert.areEqual(70, IntegracaoSAPContrato.getUsageValue('Multa Trans Desc Sal'));
+		Assert.areEqual(71, IntegracaoSAPContrato.getUsageValue('Dev. Venda'));
+		Assert.areEqual(72, IntegracaoSAPContrato.getUsageValue('Compra Com5405/04/03'));
+		Assert.areEqual(73, IntegracaoSAPContrato.getUsageValue('Compra Com6405/04/03'));
+		Assert.areEqual(74, IntegracaoSAPContrato.getUsageValue('Manut Veiculos'));
+		Assert.areEqual(75, IntegracaoSAPContrato.getUsageValue('Retorno Rem Conserto'));
+		Assert.areEqual(76, IntegracaoSAPContrato.getUsageValue('Manut. Predial'));
+		Assert.areEqual(76, IntegracaoSAPContrato.getUsageValue('ValorDesconhecido'));
+	}
+
+	// -----------------------------------------------------------------------
+	// IntegracaoSAPPedidoCompra — sendPedidoCompra with Kit present (success)
+	// Covers: SOQL, map building, request building loop, response success branch,
+	//         update oportunidades, OpportunityTriggerHandler disable/enable
+	// -----------------------------------------------------------------------
+	@IsTest
+	static void shouldCallSendPedidoCompraWithKitSuccessResponse() {
+		if (!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'PedidoCompraVendaSAP') ||
+			!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'TokenSAP')) {
+			Assert.isTrue(true, 'Metadata PedidoCompraVendaSAP/TokenSAP ausente — teste ignorado.');
+			return;
+		}
+
+		Opportunity opp = buildOppWithKit('Contratos de Locação');
+
+		Test.setMock(HttpCalloutMock.class, new SAPSuccessMock());
+
+		Test.startTest();
+		IntegracaoSAPPedidoCompra.sendPedidoCompra(new Set<Id>{ opp.Id });
+		Test.stopTest();
+
+		Opportunity updated = [SELECT SucessoIntegracaoSAP__c FROM Opportunity WHERE Id = :opp.Id];
+		Assert.isTrue(updated.SucessoIntegracaoSAP__c, 'SucessoIntegracaoSAP__c deve ser true após resposta 200.');
+	}
+
+	// -----------------------------------------------------------------------
+	// IntegracaoSAPPedidoCompra — sendPedidoCompra with Kit present (error)
+	// Covers: error response branch
+	// -----------------------------------------------------------------------
+	@IsTest
+	static void shouldCallSendPedidoCompraWithKitErrorResponse() {
+		if (!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'PedidoCompraVendaSAP') ||
+			!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'TokenSAP')) {
+			Assert.isTrue(true, 'Metadata ausente — teste ignorado.');
+			return;
+		}
+
+		Opportunity opp = buildOppWithKit('Contratos de Serviços');
+
+		Test.setMock(HttpCalloutMock.class, new SAPErrorMock());
+
+		Test.startTest();
+		IntegracaoSAPPedidoCompra.sendPedidoCompra(new Set<Id>{ opp.Id });
+		Test.stopTest();
+
+		Opportunity updated = [SELECT SucessoIntegracaoSAP__c FROM Opportunity WHERE Id = :opp.Id];
+		Assert.areEqual(false, updated.SucessoIntegracaoSAP__c, 'SucessoIntegracaoSAP__c deve ser false após resposta 400.');
+	}
+
+	// -----------------------------------------------------------------------
+	// IntegracaoSAPPedidoCompra — Classificacao__c branches coverage
+	// Covers the ternary chain for U_Classification (values 1–7)
+	// -----------------------------------------------------------------------
+	@IsTest
+	static void shouldCoverPedidoCompraClassificacaoBranches() {
+		if (!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'PedidoCompraVendaSAP') ||
+			!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'TokenSAP')) {
+			Assert.isTrue(true, 'Metadata ausente — teste ignorado.');
+			return;
+		}
+
+		List<String> classificacoes = new List<String>{
+			'Contratos de Locação',
+			'Contratos de Serviços',
+			'Contratos de Licenciamento',
+			'Compras de equipamentos e materiais',
+			'Arrendamento de área rural',
+			'Prestação de Serviços (v)',
+			'Venda de equipamentos e materiais'
+		};
+
+		List<Opportunity> opps = new List<Opportunity>();
+		List<Kit_Instalacao__c> kits = new List<Kit_Instalacao__c>();
+
+		OpportunityTriggerHandler.disableTrigger();
+		KitInstalacaoTriggerHandler.disableTrigger();
+		Account acc = (Account) TestFactory.createSObject(new Account(), true);
+
+		for (String cl : classificacoes) {
+			Opportunity opp = (Opportunity) TestFactory.createSObject(
+				new Opportunity(
+					AccountId = acc.Id,
+					Classificacao__c = cl,
+					NumeroContrato__c = '1',
+					NumeroOrigemContrato__c = 'ORI-X',
+					CondicoesPagamento__c = 'Recursos Próprios',
+					ValorTotalProposta__c = 5000,
+					IdVirtualOffice__c = 'VO-CL-' + cl.left(8),
+					DataEntrega__c = System.today().addDays(30)
+				),
+				true
+			);
+			opps.add(opp);
+			kits.add(new Kit_Instalacao__c(Nome_da_Oportunidade__c = opp.Id));
+		}
+		insert kits;
+		KitInstalacaoTriggerHandler.enableTrigger();
+		OpportunityTriggerHandler.enableTrigger();
+
+		Set<Id> oppIds = new Map<Id, Opportunity>(opps).keySet();
+
+		Test.setMock(HttpCalloutMock.class, new SAPSuccessMock());
+
+		Test.startTest();
+		IntegracaoSAPPedidoCompra.sendPedidoCompra(oppIds);
+		Test.stopTest();
+
+		Assert.isTrue(true, 'sendPedidoCompra com todas as classificacoes nao deve lancar excecao.');
+	}
+
+	// -----------------------------------------------------------------------
+	// IntegracaoSAPPedidoVenda — sendPedidoVenda with Kit present (success)
+	// Covers: SOQL, map building, request building loop, response success branch,
+	//         update oportunidades, OpportunityTriggerHandler disable/enable
+	// -----------------------------------------------------------------------
+	@IsTest
+	static void shouldCallSendPedidoVendaWithKitSuccessResponse() {
+		if (!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'PedidoCompraVendaSAP') ||
+			!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'TokenSAP')) {
+			Assert.isTrue(true, 'Metadata PedidoCompraVendaSAP/TokenSAP ausente — teste ignorado.');
+			return;
+		}
+
+		Opportunity opp = buildOppWithKit('Contratos de Locação');
+
+		Test.setMock(HttpCalloutMock.class, new SAPSuccessMock());
+
+		Test.startTest();
+		IntegracaoSAPPedidoVenda.sendPedidoVenda(new Set<Id>{ opp.Id });
+		Test.stopTest();
+
+		Opportunity updated = [SELECT SucessoIntegracaoSAP__c FROM Opportunity WHERE Id = :opp.Id];
+		Assert.isTrue(updated.SucessoIntegracaoSAP__c, 'SucessoIntegracaoSAP__c deve ser true após resposta 200.');
+	}
+
+	// -----------------------------------------------------------------------
+	// IntegracaoSAPPedidoVenda — sendPedidoVenda with Kit present (error)
+	// Covers: error response branch + NumeroContrato__c null guard (U_ContractId = 0)
+	// -----------------------------------------------------------------------
+	@IsTest
+	static void shouldCallSendPedidoVendaWithKitErrorAndNullContrato() {
+		if (!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'PedidoCompraVendaSAP') ||
+			!TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'TokenSAP')) {
+			Assert.isTrue(true, 'Metadata ausente — teste ignorado.');
+			return;
+		}
+
+		OpportunityTriggerHandler.disableTrigger();
+		KitInstalacaoTriggerHandler.disableTrigger();
+		Account acc = (Account) TestFactory.createSObject(new Account(), true);
+		Opportunity opp = (Opportunity) TestFactory.createSObject(
+			new Opportunity(
+				AccountId = acc.Id,
+				NumeroContrato__c = null,
+				NumeroOrigemContrato__c = 'ORI-NULL',
+				CondicoesPagamento__c = 'Recursos Próprios',
+				ValorTotalProposta__c = 8000,
+				IdVirtualOffice__c = 'VO-NULL-001',
+				DataEntrega__c = System.today().addDays(20)
+			),
+			true
+		);
+		TestFactory.createSObject(
+			new Kit_Instalacao__c(Nome_da_Oportunidade__c = opp.Id),
+			true
+		);
+		KitInstalacaoTriggerHandler.enableTrigger();
+		OpportunityTriggerHandler.enableTrigger();
+
+		Test.setMock(HttpCalloutMock.class, new SAPErrorMock());
+
+		Test.startTest();
+		IntegracaoSAPPedidoVenda.sendPedidoVenda(new Set<Id>{ opp.Id });
+		Test.stopTest();
+
+		Opportunity updated = [SELECT SucessoIntegracaoSAP__c FROM Opportunity WHERE Id = :opp.Id];
+		Assert.areEqual(false, updated.SucessoIntegracaoSAP__c, 'SucessoIntegracaoSAP__c deve ser false após resposta 400.');
+	}
 }

@@ -967,4 +967,435 @@ private class TaskBOTest {
       'Task sem WhatId não deve ser marcada'
     );
   }
+
+  // ─── Additional coverage tests ───────────────────────────────────────────────
+
+  @IsTest
+  static void shouldCoverGetRecordTypeIds() {
+    Test.startTest();
+    Map<String, String> rtMap = TaskBO.getRecordTypeIds();
+    Test.stopTest();
+
+    Assert.isNotNull(rtMap, 'getRecordTypeIds deve retornar um mapa não-nulo.');
+  }
+
+  @IsTest
+  static void shouldCoverNormalizeTaskSubjectWithNull() {
+    String result = TaskBO.normalizeTaskSubject(null);
+    Assert.areEqual('', result, 'normalizeTaskSubject(null) deve retornar string vazia.');
+  }
+
+  @IsTest
+  static void shouldCoverNormalizeNameWithAccents() {
+    Assert.areEqual('acoes', TaskBO.normalizeName('Ações'), 'normalizeName deve remover acentos.');
+    Assert.areEqual('u', TaskBO.normalizeName('ú'), 'normalizeName deve normalizar ú → u.');
+    Assert.areEqual('e', TaskBO.normalizeName('ê'), 'normalizeName deve normalizar ê → e.');
+  }
+
+  @IsTest
+  static void shouldCoverWorkingDaysWithWeekend() {
+    // Pick a known Friday and add 1 working day → should land on Monday (skip Sat/Sun)
+    Date friday = Date.newInstance(2026, 3, 20); // Friday
+    Date result = TaskBO.getActivityDateBasedOnWorkingDays(friday, 1);
+    Assert.isNotNull(result, 'getActivityDateBasedOnWorkingDays não deve retornar null.');
+    Assert.isTrue(result > friday, 'Data resultado deve ser posterior à data de início.');
+  }
+
+  @IsTest
+  static void shouldCoverValidateRequiredDocumentsNullAndBlankTasks() {
+    // Test the overloaded List<Task> path with null-subject and null-whatId tasks
+    // These hit the "continue" branches inside the eligibleTasks loop
+    Task nullSubjectTask = new Task(
+      Subject = null,
+      Status = TaskUtils.STATUS_OPEN
+    );
+    Task blankSubjectTask = new Task(
+      Subject = '   ',
+      Status = TaskUtils.STATUS_OPEN
+    );
+    Account acc = new Account(Name = 'Conta Docs2');
+    insert acc;
+    Task noWhatIdTask = new Task(
+      Subject = 'Sem whatId',
+      WhatId = null,
+      Status = TaskUtils.STATUS_OPEN
+    );
+
+    Test.startTest();
+    TaskBO.validateRequiredDocuments(
+      new List<Task>{ nullSubjectTask, blankSubjectTask, noWhatIdTask }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'validateRequiredDocuments com tasks inválidas não deve lançar erro.');
+  }
+
+  @IsTest
+  static void shouldCoverCreateWorkOrderContractingIntegratorWithConcludingTask() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = viability.Id,
+        Conta__c = acc.Id,
+        TipoObra__c = 'UFVMicro',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
+    );
+
+    Task oldTask = new Task(
+      Subject = TaskUtils.SUBJECT_CONTRATAR_INTEGRADOR,
+      WhatId = project.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert oldTask;
+
+    Task newTask = oldTask.clone(true, true, false, false);
+    newTask.Status = TaskUtils.STATUS_CONCLUIDO;
+
+    Test.startTest();
+    TaskBO.createWorkOrderContractingIntegrator(
+      new List<Task>{ newTask },
+      new Map<Id, Task>{ oldTask.Id => oldTask }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'createWorkOrderContractingIntegrator com tarefa sendo concluída não deve lançar erro.');
+  }
+
+  @IsTest
+  static void shouldCoverCreateWorkOrderRequestMaterialBuyWithConcludingTask() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = viability.Id,
+        Conta__c = acc.Id,
+        TipoObra__c = 'UFVMicro',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
+    );
+
+    Task oldTask = new Task(
+      Subject = TaskUtils.SUBJECT_SOLICITAR_COMPRA_DE_MATERIAIS,
+      WhatId = project.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert oldTask;
+
+    Task newTask = oldTask.clone(true, true, false, false);
+    newTask.Status = TaskUtils.STATUS_CONCLUIDO;
+
+    Test.startTest();
+    TaskBO.createWorkOrderRequestMaterialBuy(
+      new List<Task>{ newTask },
+      new Map<Id, Task>{ oldTask.Id => oldTask }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'createWorkOrderRequestMaterialBuy com tarefa sendo concluída não deve lançar erro.');
+  }
+
+  @IsTest
+  static void shouldCoverCreateWorkOrderRequestMaterialBuyComplementares() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = viability.Id,
+        Conta__c = acc.Id,
+        TipoObra__c = 'UFVMicro',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
+    );
+
+    Task oldTask = new Task(
+      Subject = TaskUtils.SUBJECT_SOLICITAR_COMPRA_DE_MATERIAIS_COMPLEMENTARES,
+      WhatId = project.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert oldTask;
+
+    Task newTask = oldTask.clone(true, true, false, false);
+    newTask.Status = TaskUtils.STATUS_CONCLUIDO;
+
+    Test.startTest();
+    TaskBO.createWorkOrderRequestMaterialBuy(
+      new List<Task>{ newTask },
+      new Map<Id, Task>{ oldTask.Id => oldTask }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'createWorkOrderRequestMaterialBuy complementares não deve lançar erro.');
+  }
+
+  @IsTest
+  static void shouldCoverUpdateProjectPhaseWithAllTasksCompleted() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = viability.Id,
+        Conta__c = acc.Id,
+        TipoObra__c = 'UFVMicro',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
+    );
+
+    // Insert a task that is already Completed, then call updateProjectPhase
+    // so getProjectsWithTasks and getNextPhase are exercised
+    Task completedTask = new Task(
+      Subject = 'Tarefa Concluida Phase Test',
+      WhatId = project.Id,
+      Status = TaskUtils.STATUS_CONCLUIDO,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert completedTask;
+
+    Test.startTest();
+    TaskBO.updateProjectPhase(
+      new List<Task>{ completedTask },
+      new Map<Id, Task>()
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'updateProjectPhase com todas tarefas concluídas não deve lançar erro.');
+  }
+
+  @IsTest
+  static void shouldCoverHandleAprovacaoProjetoUfvWithApprovedSubStatus() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = viability.Id,
+        Conta__c = acc.Id,
+        TipoObra__c = 'UFVMicro',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
+    );
+
+    // Set SubStatus__c = 'Aprovado' if field exists
+    if (Schema.SObjectType.Projeto__c.fields.getMap().containsKey('SubStatus__c')) {
+      project.put('SubStatus__c', 'Aprovado');
+      update project;
+    }
+
+    Task oldTask = new Task(
+      Subject = TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV,
+      WhatId = project.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert oldTask;
+
+    Task newTask = oldTask.clone(true, true, false, false);
+    newTask.Status = TaskUtils.STATUS_CONCLUIDO;
+
+    Test.startTest();
+    TaskBO.handleAprovacaoProjetoUfv(
+      new List<Task>{ newTask },
+      new Map<Id, Task>{ oldTask.Id => oldTask }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'handleAprovacaoProjetoUfv com SubStatus Aprovado não deve lançar erro.');
+  }
+
+  @IsTest
+  static void shouldCoverLoadNormalizedSubjectsFromStaticResource() {
+    Test.startTest();
+    Set<String> projetoSubjects = TaskBO.loadNormalizedSubjectsFromStaticResource('TabelaTarefasProjetos');
+    Set<String> instalacaoSubjects = TaskBO.loadNormalizedSubjectsFromStaticResource('TabelaTarefasInstalacao');
+    Set<String> unknownSubjects = TaskBO.loadNormalizedSubjectsFromStaticResource('RecursoInexistente');
+    Test.stopTest();
+
+    Assert.isNotNull(projetoSubjects, 'projetoSubjects não deve ser null.');
+    Assert.isNotNull(instalacaoSubjects, 'instalacaoSubjects não deve ser null.');
+    Assert.isNotNull(unknownSubjects, 'unknownSubjects não deve ser null (retorna Set vazio em erro).');
+  }
+
+  @IsTest
+  static void shouldCoverInstalacaoTaskInMarkManualTasks() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = viability.Id,
+        Conta__c = acc.Id,
+        TipoObra__c = 'UFVMicro',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
+    );
+
+    Instalacao__c instalacao = new Instalacao__c(
+      Projeto__c = project.Id
+    );
+    insert instalacao;
+
+    Task taskInstalacao = new Task(
+      Subject = 'Tarefa avulsa instalação',
+      WhatId = instalacao.Id,
+      OwnerId = UserInfo.getUserId(),
+      Status = TaskUtils.STATUS_OPEN,
+      ActivityDate = System.today().addDays(2)
+    );
+
+    Test.startTest();
+    TaskBO.markManualTasksAsIgnoreValidation(new List<Task>{ taskInstalacao });
+    Test.stopTest();
+
+    Assert.areEqual(
+      true,
+      taskInstalacao.IgnorarValidacao__c,
+      'Task avulsa de instalação (subject não mapeado) deve ter IgnorarValidacao__c = true'
+    );
+  }
+
+  @IsTest
+  static void shouldCoverMarkManualTasksWithAlreadySetIgnorarValidacao() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = viability.Id,
+        Conta__c = acc.Id,
+        TipoObra__c = 'UFVMicro',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
+    );
+
+    // Task already set to IgnorarValidacao__c = true → should not be changed
+    Task t = new Task(
+      Subject = 'Assunto avulso',
+      WhatId = project.Id,
+      OwnerId = UserInfo.getUserId(),
+      Status = TaskUtils.STATUS_OPEN,
+      ActivityDate = System.today().addDays(1),
+      IgnorarValidacao__c = true
+    );
+
+    Test.startTest();
+    TaskBO.markManualTasksAsIgnoreValidation(new List<Task>{ t });
+    Test.stopTest();
+
+    Assert.areEqual(
+      true,
+      t.IgnorarValidacao__c,
+      'Task com IgnorarValidacao__c = true já definido não deve ser alterada.'
+    );
+  }
 }

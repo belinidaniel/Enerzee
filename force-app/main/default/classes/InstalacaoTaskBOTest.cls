@@ -114,4 +114,81 @@ private class InstalacaoTaskBOTest {
 
     Assert.isTrue(true, 'createTasks com mudanca de status nao deve lancar erro.');
   }
+
+  @IsTest
+  static void shouldSkipWhenStatusNotChanging() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    Projeto__c project = buildProject(acc, opp);
+    Instalacao__c inst = insertInstalacao(project.Id, ProjetoUtils.STATUS_OBRA_EM_EXECUCAO);
+
+    // Same status in old and new → isStatusChanging returns false → no tasks
+    Instalacao__c instOld = inst.clone(true, true, true, true);
+    Instalacao__c instNew = inst.clone(true, true, true, true);
+
+    Integer tasksBefore = [SELECT COUNT() FROM Task WHERE WhatId = :inst.Id];
+
+    Test.startTest();
+    InstalacaoTaskBO.createTasks(
+      new List<Instalacao__c>{ instNew },
+      new Map<Id, Instalacao__c>{ instOld.Id => instOld }
+    );
+    Test.stopTest();
+
+    Integer tasksAfter = [SELECT COUNT() FROM Task WHERE WhatId = :inst.Id];
+    Assert.areEqual(tasksBefore, tasksAfter, 'Status não alterado não deve gerar novas tarefas.');
+  }
+
+  @IsTest
+  static void shouldSkipInstalacaoWithUnknownStatus() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    Projeto__c project = buildProject(acc, opp);
+
+    // Status que não existe na tabela de mapeamento → resolveStatusKey retorna null → continue
+    Instalacao__c inst = new Instalacao__c(
+      Projeto__c = project.Id,
+      Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO
+    );
+    insert inst;
+
+    Integer tasksBefore = [SELECT COUNT() FROM Task WHERE WhatId = :inst.Id];
+
+    Test.startTest();
+    InstalacaoTaskBO.createTasks(
+      new List<Instalacao__c>{ inst },
+      new Map<Id, Instalacao__c>()
+    );
+    Test.stopTest();
+
+    Integer tasksAfter = [SELECT COUNT() FROM Task WHERE WhatId = :inst.Id];
+    Assert.areEqual(tasksBefore, tasksAfter, 'Status sem templates não deve gerar tarefas.');
+  }
+
+  @IsTest
+  static void shouldHandleCreatePlanningWhenNotPlanejamentoStatus() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    Projeto__c project = buildProject(acc, opp);
+    // Status diferente de PLANEJAMENTO_DE_OBRA → método retorna cedo sem criar tarefas
+    Instalacao__c inst = insertInstalacao(project.Id, ProjetoUtils.STATUS_OBRA_EM_EXECUCAO);
+
+    Integer tasksBefore = [SELECT COUNT() FROM Task WHERE WhatId = :inst.Id];
+
+    Test.startTest();
+    InstalacaoTaskBO.createPlanningTasksAfterDelegar(inst.Id);
+    Test.stopTest();
+
+    Integer tasksAfter = [SELECT COUNT() FROM Task WHERE WhatId = :inst.Id];
+    Assert.areEqual(tasksBefore, tasksAfter, 'Status diferente de Planejamento de Obra não deve criar tarefas de planejamento.');
+  }
 }
