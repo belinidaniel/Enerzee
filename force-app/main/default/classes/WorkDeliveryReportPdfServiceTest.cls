@@ -416,7 +416,45 @@ private class WorkDeliveryReportPdfServiceTest {
   }
 
   // ---------------------------------------------------------------------------
-  // inferContentType — gif branch (FileType = 'GIF' → 'image/gif')
+  // buildHtml — null caption covers cleanText(null) and escapeHtmlText(null) null paths
+  // ---------------------------------------------------------------------------
+  @IsTest
+  static void generatePdfBase64_withNullCaption() {
+    Account acc = new Account(Name = 'Conta Null Caption');
+    insert acc;
+
+    ContentVersion cv = new ContentVersion();
+    cv.ContentLocation = 'S';
+    cv.FirstPublishLocationId = acc.Id;
+    cv.Title = 'null-caption';
+    cv.PathOnClient = 'null-caption.png';
+    cv.VersionData = Blob.valueOf('DATA');
+    insert cv;
+    cv = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1];
+
+    // Both DocRequiredName__c and AttachmentDescription__c are null → caption = null
+    OpportunityAttachmentLink__c link = new OpportunityAttachmentLink__c(
+      Name = 'Null Caption Link',
+      SObjectId__c = acc.Id,
+      ActivityName__c = TaskUtils.SUBJECT_RELATORIO_FINAL_DE_OBRA,
+      DocRequiredName__c = null,
+      AttachmentDescription__c = null,
+      ContentDocumentId__c = String.valueOf(cv.ContentDocumentId)
+    );
+    insert link;
+
+    Test.startTest();
+    String result = WorkDeliveryReportPdfService.generatePdfBase64(
+      acc.Id,
+      TaskUtils.SUBJECT_RELATORIO_FINAL_DE_OBRA
+    );
+    Test.stopTest();
+
+    Assert.isNotNull(result, 'Deve gerar PDF mesmo com caption nula.');
+  }
+
+  // ---------------------------------------------------------------------------
+  // inferContentType — gif branch (PathOnClient ends in .gif → 'image/gif')
   // ---------------------------------------------------------------------------
   @IsTest
   static void generatePdfBase64_withGifAttachment() {
