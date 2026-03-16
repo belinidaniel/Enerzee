@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 03-16-2026
  * @last modified by  : Daniel Belini
  * @test              : IntegracaoSAPTest
  **/
@@ -38,7 +38,7 @@ public without sharing class IntegracaoSAPRepresentante {
       corpoRequisicao.Mobile = consultor.Celular__c;
       corpoRequisicao.Fax = consultor.Fax__c;
       corpoRequisicao.Email = consultor.Email__c;
-
+      System.debug('corpoRequisicao: ' + JSON.serialize(corpoRequisicao));
       try {
         HttpResponse response = chamadaIntegracao(
           JSON.serialize(corpoRequisicao),
