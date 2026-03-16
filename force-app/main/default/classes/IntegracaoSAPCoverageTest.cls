@@ -469,7 +469,12 @@ private class IntegracaoSAPCoverageTest {
 			);
 			voIdx++;
 			opps.add(opp);
-			kits.add(new Kit_Instalacao__c(Nome_da_Oportunidade__c = opp.Id));
+			kits.add(
+				(Kit_Instalacao__c) TestFactory.createSObject(
+					new Kit_Instalacao__c(Nome_da_Oportunidade__c = opp.Id),
+					false
+				)
+			);
 		}
 		insert kits;
 		KitInstalacaoTriggerHandler.enableTrigger();

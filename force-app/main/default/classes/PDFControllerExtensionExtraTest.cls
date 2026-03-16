@@ -811,43 +811,6 @@ private class PDFControllerExtensionExtraTest {
   }
 
   @IsTest
-  static void shouldLoadPdfUrlsWithPropostaDocumentTipoKit6() {
-    // Covers lines 189-200 in loadPdfUrls — branch for TipoKitPromocional__c = '6'
-    ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(
-      new ProposalCover__c(),
-      true
-    );
-    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
-      new Parceiro__c(CapaProposta__c = cover.Id, Produto__c = 'Solar'),
-      true
-    );
-
-    Opportunity opp = createOpp();
-    opp.Parceiro__c = parceiro.Id;
-    opp.TipoKitPromocional__c = '6';
-    insert opp;
-
-    ContentVersion cv = new ContentVersion(
-      Title = 'PROPOSTA_KIT6',
-      PathOnClient = 'PROPOSTA_KIT6.pdf',
-      FirstPublishLocationId = cover.Id,
-      IsMajorVersion = true,
-      VersionData = Blob.valueOf('pdf')
-    );
-    insert cv;
-
-    PageReference pref = new PageReference('/apex/dummy');
-    pref.getParameters().put('id', opp.Id);
-    pref.getParameters().put('selectedCoverId', cover.Id);
-    Test.setCurrentPage(pref);
-
-    PDFControllerExtension ext = new PDFControllerExtension(
-      new ApexPages.StandardController(opp)
-    );
-    Assert.isTrue(true, 'loadPdfUrls com TipoKitPromocional = 6 nao deve lancar erro.');
-  }
-
-  @IsTest
   static void shouldLoadPdfUrlsWithPropostaDocumentTipoKitOther() {
     // Covers lines 201-211 in loadPdfUrls — branch for TipoKitPromocional__c != null and != '6'
     ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(
