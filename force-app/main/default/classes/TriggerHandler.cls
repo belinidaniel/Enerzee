@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : TriggerHandlerTest
+ **/
 public abstract without sharing class TriggerHandler {
   public System.TriggerOperation operation { get; set; }
   public List<SObject> newRecordList { get; set; }

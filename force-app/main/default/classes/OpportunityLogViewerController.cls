@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : OpportunityLogViewerControllerTest
+ **/
 public with sharing class OpportunityLogViewerController {
   private static final Integer DEFAULT_LIMIT = 100;
   private static final Integer MAX_LIMIT = 500;

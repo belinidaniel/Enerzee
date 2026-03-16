@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : IntegracaoGeradorPropostasTest
+ **/
 public with sharing class IntegracaoGeradorPropostas {
   @future(callout=true)
   public static void sendCliente(Set<Id> triggerIds) {

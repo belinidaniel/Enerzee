@@ -1,8 +1,11 @@
 /**
- * @description	 : Flow-invocable class to enable or disable OpportunityTriggerHandler
- * @author						 : Daniel Belini
- * @last modified: 2025-09-15
- */
+ * @description       : Flow-invocable class to enable or disable OpportunityTriggerHandler
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : OpportunityTriggerHandlerToggleTest
+ **/
 public with sharing class OpportunityTriggerHandlerToggle {
   public class ToggleRequest {
     @InvocableVariable(required=true label='Enable Trigger?')

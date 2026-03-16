@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : RevoOpportunityErrorBatchTest
+ **/
 global class RevoOpportunityErrorBatch implements Database.Batchable<SObject>, Database.AllowsCallouts, Schedulable {
   global Database.QueryLocator start(Database.BatchableContext BC) {
     String query = 'SELECT Id, ReferenceIdRevo__c FROM Opportunity WHERE ErroIntegracaoRevo__c = true';

@@ -1,12 +1,11 @@
 /**
- * @description			  :
- * @author				  :daniel
- * @group				  :
- * @last modified by		  :daniel
- * @ last modified time	   : 2024-12-26
- * @coverate FeedbackController
+ * @description       :
+ * @author            : daniel
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
  **/
-
 @isTest
 public with sharing class FeedbackControllerTest {
   @TestSetup

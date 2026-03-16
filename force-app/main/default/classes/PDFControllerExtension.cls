@@ -1,9 +1,10 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 03-03-2026
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : PDFControllerExtensionExtraTest, PDFControllerExtensionTest
  **/
 public with sharing class PDFControllerExtension {
   //Objetivo: providencia métodos para salvar páginas PDF como arquivos vinculados ao registro pai

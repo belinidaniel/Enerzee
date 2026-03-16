@@ -1,6 +1,10 @@
 /**
- * @description						 : Envia atualização de recusa da aprovação de forma de pagamento (Negociação)
- * @author											 : Codex
+ * @description       : Envia atualização de recusa da aprovação de forma de pagamento (Negociação)
+ * @author            : Codex
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : AdditionalCoverageNewClassesTest, IntegracaoFormaPagamentoNegociacaoTest
  **/
 public with sharing class IntegracaoFormaPagamentoNegociacao {
   @future(callout=true)

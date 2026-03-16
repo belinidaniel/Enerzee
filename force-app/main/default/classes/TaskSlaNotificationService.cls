@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : TaskSlaNotificationServiceEmailLimitTest, TaskSlaNotificationServiceTest
+ **/
 public with sharing class TaskSlaNotificationService {
   private static Map<String, Id> notificationTypeCache = new Map<String, Id>();
   private static final String SYSTEM_SENDER_DISPLAY_NAME = 'Enerzee Sistema';

@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : OpportunityCommentNotifServiceTest, OpportunityTriggerTest
+ **/
 public with sharing class OpportunityCommentNotificationService {
   @TestVisible
   private static final String NOTIFICATION_TYPE_DEVELOPER_NAME = 'Padrao';
@@ -11,6 +19,8 @@ public with sharing class OpportunityCommentNotificationService {
   private static final Integer EMAIL_SUBJECT_MAX_LENGTH = 250;
   @TestVisible
   private static Id notificationTypeIdOverride;
+  @TestVisible
+  private static Boolean forceMissingNotificationTypeForTest = false;
   private static Boolean orgWideSenderResolved = false;
   private static Id cachedOrgWideSenderId;
 
@@ -207,7 +217,12 @@ public with sharing class OpportunityCommentNotificationService {
       .trim();
   }
 
+  @TestVisible
   private static Id resolveNotificationTypeId() {
+    if (Test.isRunningTest() && forceMissingNotificationTypeForTest) {
+      return null;
+    }
+
     if (Test.isRunningTest() && notificationTypeIdOverride != null) {
       return notificationTypeIdOverride;
     }
@@ -231,6 +246,7 @@ public with sharing class OpportunityCommentNotificationService {
     return fallbackTypes.isEmpty() ? null : fallbackTypes[0].Id;
   }
 
+  @TestVisible
   private static String buildTitle(Opportunity opportunityRecord) {
     String proposalIdentifier = !String.isBlank(
         opportunityRecord.Numeroproposta__c
@@ -242,6 +258,7 @@ public with sharing class OpportunityCommentNotificationService {
     return 'Novo comentario do consultor - ' + proposalIdentifier;
   }
 
+  @TestVisible
   private static String buildInAppBody(Opportunity opportunityRecord) {
     String normalizedComment = normalizeComment(
       opportunityRecord.ComentarioSolicitante__c
@@ -266,6 +283,7 @@ public with sharing class OpportunityCommentNotificationService {
     return body;
   }
 
+  @TestVisible
   private static Messaging.SingleEmailMessage buildEmailMessage(
     Opportunity opportunityRecord,
     String recipientEmail
@@ -289,6 +307,7 @@ public with sharing class OpportunityCommentNotificationService {
     return emailMessage;
   }
 
+  @TestVisible
   private static String buildEmailPlainTextBody(
     Opportunity opportunityRecord,
     String opportunityLink
@@ -312,6 +331,7 @@ public with sharing class OpportunityCommentNotificationService {
       opportunityLink;
   }
 
+  @TestVisible
   private static String buildEmailHtmlBody(
     Opportunity opportunityRecord,
     String opportunityLink
@@ -340,6 +360,7 @@ public with sharing class OpportunityCommentNotificationService {
     return html;
   }
 
+  @TestVisible
   private static String buildOpportunityLink(Opportunity opportunityRecord) {
     if (opportunityRecord == null || opportunityRecord.Id == null) {
       return URL.getOrgDomainUrl().toExternalForm();
@@ -350,6 +371,7 @@ public with sharing class OpportunityCommentNotificationService {
       '/view';
   }
 
+  @TestVisible
   private static String escapeHtml(String value) {
     if (value == null) {
       return '';
@@ -362,6 +384,7 @@ public with sharing class OpportunityCommentNotificationService {
       .replace('\'', '&#39;');
   }
 
+  @TestVisible
   private static void applySystemSender(
     Messaging.SingleEmailMessage emailMessage
   ) {
@@ -378,6 +401,7 @@ public with sharing class OpportunityCommentNotificationService {
     emailMessage.setSenderDisplayName(SYSTEM_SENDER_DISPLAY_NAME);
   }
 
+  @TestVisible
   private static Id resolveSystemOrgWideEmailAddressId() {
     if (orgWideSenderResolved) {
       return cachedOrgWideSenderId;
@@ -429,6 +453,7 @@ public with sharing class OpportunityCommentNotificationService {
     }
   }
 
+  @TestVisible
   private static String buildEmailErrorMessage(
     List<Messaging.SendEmailResult> results
   ) {
@@ -451,6 +476,7 @@ public with sharing class OpportunityCommentNotificationService {
       : String.join(errorMessages, ' | ');
   }
 
+  @TestVisible
   private static Log__c buildLog(
     Opportunity opportunityRecord,
     String status,

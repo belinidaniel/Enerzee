@@ -1,3 +1,13 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ClickSignUtilsCoverageTest, ConsultorTriggerHandlerTest, ConsultorTriggerTest,
+ *                       IntegracaoGeradorPropostasTest, LeadBOTest, LeadIntegrationBatchTest,
+ *                       LeadIntegrationServiceTest, OpportunityShareHandlerTest, ProjetoBOCoverageTest
+ **/
 public class ConsultorTriggerHandler extends TriggerHandler {
   public ConsultorTriggerHandler() {
     super(

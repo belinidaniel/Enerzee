@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ProductTriggerTest
+ **/
 public with sharing class ProductBO {
   public static void activateProducts(List<Product2> newProductsList) {
     for (Product2 product : newProductsList) {

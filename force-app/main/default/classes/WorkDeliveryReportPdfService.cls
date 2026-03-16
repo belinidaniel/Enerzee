@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : WorkDeliveryReportPdfServiceTest
+ **/
 public with sharing class WorkDeliveryReportPdfService {
   @AuraEnabled
   public static String generatePdfBase64(Id sobjectId, String activitySubject) {
@@ -201,57 +209,6 @@ public with sharing class WorkDeliveryReportPdfService {
     parts.add('</body>');
     parts.add('</html>');
     return String.join(parts, '');
-  }
-
-  private static String buildDataUri(ContentVersion cv) {
-    String contentType = inferContentType(cv);
-    if (String.isBlank(contentType)) {
-      return null;
-    }
-    String base64 = EncodingUtil.base64Encode(cv.VersionData);
-    return 'data:' + contentType + ';base64,' + base64;
-  }
-
-  private static String inferContentType(ContentVersion cv) {
-    String fileType = cv.FileType != null ? cv.FileType.toLowerCase() : null;
-    if (fileType == 'png') {
-      return 'image/png';
-    }
-    if (fileType == 'jpg' || fileType == 'jpeg') {
-      return 'image/jpeg';
-    }
-    if (fileType == 'gif') {
-      return 'image/gif';
-    }
-
-    String ext = cv.FileExtension != null
-      ? cv.FileExtension.toLowerCase()
-      : null;
-    if (ext == 'png') {
-      return 'image/png';
-    }
-    if (ext == 'jpg' || ext == 'jpeg') {
-      return 'image/jpeg';
-    }
-    if (ext == 'gif') {
-      return 'image/gif';
-    }
-
-    String path = cv.PathOnClient != null
-      ? cv.PathOnClient.toLowerCase()
-      : null;
-    if (path != null) {
-      if (path.endsWith('.png')) {
-        return 'image/png';
-      }
-      if (path.endsWith('.jpg') || path.endsWith('.jpeg')) {
-        return 'image/jpeg';
-      }
-      if (path.endsWith('.gif')) {
-        return 'image/gif';
-      }
-    }
-    return null;
   }
 
   private static String normalizeUrl(String input) {

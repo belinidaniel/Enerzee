@@ -1,9 +1,13 @@
 /**
- * @description				:
- * @author						: Daniel Belini
- * @group							:
- * @last modified on	: 03-13-2026
- * @last modified by	: Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
+ *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
+ *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentReminderTaskTest,
+ *                       OpportunityDisqualifyLeadsTest, OpportunityTriggerTest
  **/
 public class OpportunityBO {
   // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas
@@ -3335,6 +3339,70 @@ public class OpportunityBO {
 
     if (!kitIds.isEmpty()) {
       KitInstalacaoBO.SendKitUpdate(kitIds);
+    }
+  }
+
+  /**
+   * @description Disqualifies Leads linked to Opportunities that are being moved to
+   *              "Fechado Perdido". Updates Lead.Status to 'Não Qualificado' in a
+   *              single bulk DML. Skips Leads already disqualified to avoid redundant DML.
+   *              Uses oldMap to detect stage transition (not just current stage).
+   * @param newList Updated Opportunity records (Trigger.new)
+   * @param oldMap  Previous state of the same records (Trigger.oldMap)
+   */
+  @TestVisible
+  public static void disqualifyLinkedLeads(
+    List<Opportunity> newList,
+    Map<Id, Opportunity> oldMap
+  ) {
+    if (newList == null || newList.isEmpty() || oldMap == null) {
+      return;
+    }
+
+    // Collect Lead IDs only from Opportunities transitioning into Fechado Perdido
+    Set<Id> leadIds = new Set<Id>();
+    for (Opportunity opp : newList) {
+      Opportunity oldOpp = oldMap.get(opp.Id);
+      if (oldOpp == null || String.isBlank(opp.Lead__c)) {
+        continue;
+      }
+      if (
+        OpportunityUtils.isStatusClosedLost(opp) &&
+        !OpportunityUtils.isStatusClosedLost(oldOpp)
+      ) {
+        leadIds.add((Id) opp.Lead__c);
+      }
+    }
+
+    if (leadIds.isEmpty()) {
+      return;
+    }
+
+    // Query current Lead status to avoid redundant DML (Cenário 5)
+    Map<Id, Lead> leadMap = new Map<Id, Lead>(
+      [SELECT Id, Status FROM Lead WHERE Id IN :leadIds WITH SECURITY_ENFORCED]
+    );
+
+    List<Lead> leadsToUpdate = new List<Lead>();
+    for (Id leadId : leadIds) {
+      Lead relatedLead = leadMap.get(leadId);
+      if (relatedLead == null) {
+        continue;
+      }
+      // Skip if already disqualified
+      if (relatedLead.Status == OpportunityUtils.LEAD_STATUS_NAO_QUALIFICADO) {
+        continue;
+      }
+      leadsToUpdate.add(
+        new Lead(
+          Id = leadId,
+          Status = OpportunityUtils.LEAD_STATUS_NAO_QUALIFICADO
+        )
+      );
+    }
+
+    if (!leadsToUpdate.isEmpty()) {
+      update leadsToUpdate;
     }
   }
 }

@@ -1,1 +1,9 @@
+UPDATED_APEX_HEADERS=$(python3 scripts/apex_test_catalog.py sync-test-tags --staged --paths-only)
+
+if [ -n "$UPDATED_APEX_HEADERS" ]; then
+  echo "$UPDATED_APEX_HEADERS" | while IFS= read -r file_path; do
+    [ -n "$file_path" ] && git add "$file_path"
+  done
+fi
+
 npm run precommit

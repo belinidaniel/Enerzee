@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : IntegracaoNivelloAdditionalTest, IntegracaoNivelloAnaliseVTTest
+ **/
 public class IntegracaoNivelloAnaliseVisitaTecnica {
   @future(callout=true)
   public static void sendTechnicalVisitAnalysis(Set<Id> triggerIds) {

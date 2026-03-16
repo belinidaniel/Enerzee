@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de apoio a testes
+ **/
 @isTest
 global class MockVirtualOfficeWS implements HttpCalloutMock {
   // Implement this interface method

@@ -45,25 +45,15 @@ jobs:
       - name: Get changed files
         id: changed
         run: |
-          CHANGED=$(git diff --name-only origin/UAT...HEAD | grep -E '\.(cls|trigger|lwc|flow-meta\.xml|object-meta\.xml|field-meta\.xml|permissionset-meta\.xml|flexipage-meta\.xml|labels-meta\.xml)' || true)
-          echo "Changed metadata files:"
-          echo "$CHANGED"
-
-          APEX=$(git diff --name-only origin/UAT...HEAD | grep '\.cls$' | grep -v 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
-          TESTS=$(git diff --name-only origin/UAT...HEAD | grep 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
-
-          for cls in $APEX; do
-            test_file="force-app/main/default/classes/${cls}Test.cls"
-            if [ -f "$test_file" ]; then
-              TESTS="$TESTS ${cls}Test"
-            fi
-          done
-
-          TESTS=$(echo "$TESTS" | tr ' ' '\n' | sort -u | tr '\n' ' ' | xargs)
-          APEX=$(echo "$APEX" | tr '\n' ' ' | xargs)
-          echo "apex_classes=$APEX" >> $GITHUB_OUTPUT
-          echo "test_classes=$TESTS" >> $GITHUB_OUTPUT
-          echo "has_changes=$([ -n "$CHANGED" ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          set +e
+          python3 scripts/apex_test_catalog.py collect-tests \
+            --diff-range origin/UAT...HEAD \
+            --metadata-pattern '^force-app/' \
+            --github-output "$GITHUB_OUTPUT" \
+            --strict-changed-prod 2>&1 | tee /tmp/collect_tests.log
+          STATUS=${PIPESTATUS[0]}
+          set -e
+          exit "$STATUS"
 
       # ─── Generate delta package (only PR changes) ────────────────────────────
       - name: Generate delta package
@@ -102,37 +92,35 @@ jobs:
             echo "No Apex files changed." | tee /tmp/analysis_result.txt
           fi
 
-      # ─── Dry-run Deploy (Validation) ─────────────────────────────────────────
-      - name: Dry-run Deploy Validation
+      # ─── Validation for Quick Deploy ─────────────────────────────────────────
+      - name: Validate Deploy for Quick Deploy
         if: steps.changed.outputs.has_changes == 'true'
         id: deploy
         run: |
           set -euo pipefail
 
-          TEST_LEVEL="RunLocalTests"
+          TEST_LEVEL="${{ steps.changed.outputs.test_level }}"
           TEST_ARGS=()
-          if [ -n "${{ steps.changed.outputs.test_classes }}" ]; then
-            TEST_LEVEL="RunSpecifiedTests"
+          if [ "$TEST_LEVEL" = "RunSpecifiedTests" ] && [ -n "${{ steps.changed.outputs.test_classes }}" ]; then
             for test_class in ${{ steps.changed.outputs.test_classes }}; do
               TEST_ARGS+=(--tests "$test_class")
             done
           fi
 
-          DESTRUCTIVE_ARG=""
+          DESTRUCTIVE_ARGS=()
           if grep -q '<types>' ./destructiveChanges/destructiveChanges.xml 2>/dev/null; then
-            DESTRUCTIVE_ARG="--post-destructive-changes destructiveChanges/destructiveChanges.xml"
+            DESTRUCTIVE_ARGS+=(--post-destructive-changes destructiveChanges/destructiveChanges.xml)
           fi
 
           echo "Test level: $TEST_LEVEL"
           echo "Tests: ${{ steps.changed.outputs.test_classes }}"
 
-          sf project deploy start \
+          sf project deploy validate \
             --manifest package/package.xml \
             --target-org enerzee-UAT \
-            --dry-run \
             --test-level "$TEST_LEVEL" \
             "${TEST_ARGS[@]}" \
-            $DESTRUCTIVE_ARG \
+            "${DESTRUCTIVE_ARGS[@]}" \
             --async \
             --json > /tmp/deploy_start.json
 
@@ -144,6 +132,7 @@ jobs:
           fi
 
           echo "Deploy ID: $DEPLOY_ID"
+          echo "deploy_id=$DEPLOY_ID" >> $GITHUB_OUTPUT
 
           while true; do
             sf project deploy report \
@@ -170,13 +159,12 @@ jobs:
                 break
                 ;;
               *)
-                echo "::warning::Status inesperado do deploy: $DEPLOY_STATUS"
+                echo "::warning::Status inesperado da validação: $DEPLOY_STATUS"
                 sleep 15
                 ;;
             esac
           done
 
-          # Surface errors as GitHub Actions annotations
           jq -r '.result.details.componentFailures[]? | "::error file=\(.fileName),line=\(.lineNumber)::\(.problem)"' /tmp/deploy_result.json 2>/dev/null || true
           jq -r '.result.details.runTestResult.failures[]? | "::error::\(.testName): \(.message)"' /tmp/deploy_result.json 2>/dev/null || true
           jq -r '.result.details.runTestResult.codeCoverageWarnings[]? | "::warning::\(.message)"' /tmp/deploy_result.json 2>/dev/null || true
@@ -186,6 +174,46 @@ jobs:
             exit 1
           fi
 
+      - name: Create quick deploy metadata
+        if: steps.changed.outputs.has_changes == 'true' && steps.deploy.outcome == 'success'
+        run: |
+          set -euo pipefail
+
+          PACKAGE_HASH=$(sha256sum package/package.xml | awk '{print $1}')
+          DESTRUCTIVE_HASH=""
+          if grep -q '<types>' ./destructiveChanges/destructiveChanges.xml 2>/dev/null; then
+            DESTRUCTIVE_HASH=$(sha256sum destructiveChanges/destructiveChanges.xml | awk '{print $1}')
+          fi
+
+          TESTS_JSON=$(printf '%s\n' "${{ steps.changed.outputs.test_classes }}" | tr ' ' '\n' | sed '/^$/d' | jq -R . | jq -s .)
+
+          cat > /tmp/quick-deploy-uat.json <<EOF
+          {
+            "schemaVersion": 1,
+            "validationJobId": "${{ steps.deploy.outputs.deploy_id }}",
+            "targetOrg": "enerzee-UAT",
+            "validatedAtUtc": "$(date -u +%FT%TZ)",
+            "workflowRunId": "${{ github.run_id }}",
+            "workflowName": "${{ github.workflow }}",
+            "headSha": "${{ github.event.pull_request.head.sha }}",
+            "baseRef": "${{ github.base_ref }}",
+            "manifestSha256": "${PACKAGE_HASH}",
+            "destructiveSha256": "${DESTRUCTIVE_HASH}",
+            "testLevel": "${{ steps.changed.outputs.test_level }}",
+            "tests": ${TESTS_JSON}
+          }
+          EOF
+
+          cat /tmp/quick-deploy-uat.json
+
+      - name: Upload quick deploy metadata
+        if: steps.changed.outputs.has_changes == 'true' && steps.deploy.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: quick-deploy-uat-${{ github.event.pull_request.head.sha }}
+          path: /tmp/quick-deploy-uat.json
+          retention-days: 10
+
       # ─── Job Summary + Comment on PR ─────────────────────────────────────────
       - name: Write job summary and comment on PR
         if: always()
@@ -194,7 +222,6 @@ jobs:
           script: |
             const fs = require('fs');
 
-            // ── Parse deploy result ──────────────────────────────────────────
             let deployStatus = '⚠️';
             let deployResult = '⚠️ Deploy result not available';
             let compileErrors = [];
@@ -211,20 +238,26 @@ jobs:
 
               if (deploySucceeded) {
                 deployStatus = '✅';
-                deployResult = '✅ **Dry-run passed** — sem erros de compilação ou testes';
+                deployResult = '✅ **Validation passed** — pronta para quick deploy sem erros de compilação ou testes';
               } else {
                 deployStatus = '❌';
                 const details = json?.result?.details || {};
                 compileErrors = details.componentFailures || [];
                 testFailures = (details.runTestResult?.failures || []);
                 coverageWarnings = (details.runTestResult?.codeCoverageWarnings || []);
-                deployResult = `❌ **Dry-run falhou** — ${compileErrors.length} erros de compilação, ${testFailures.length} falhas de teste`;
+                deployResult = `❌ **Validation falhou** — ${compileErrors.length} erros de compilação, ${testFailures.length} falhas de teste`;
                 if (!compileErrors.length && !testFailures.length) {
-                  deployResult = `❌ **Dry-run falhou** — ${deployStatusText || json.message || 'Erro desconhecido'}`;
+                  deployResult = `❌ **Validation falhou** — ${deployStatusText || json.message || 'Erro desconhecido'}`;
                 }
               }
             } catch (e) {
-              deployResult = `⚠️ Não foi possível ler resultado do deploy: ${e.message}`;
+              deployResult = `⚠️ Não foi possível ler resultado da validação: ${e.message}`;
+              try {
+                const collectLog = fs.readFileSync('/tmp/collect_tests.log', 'utf8').trim();
+                if (collectLog) {
+                  deployResult += `\n\n### 🧩 Seleção de testes\n\`\`\`\n${collectLog.substring(0, 3000)}\n\`\`\``;
+                }
+              } catch (ignored) {}
             }
 
             let analysisResult = '';
@@ -235,7 +268,6 @@ jobs:
                 : '\n\n### 🔍 Code Analyzer\n✅ Sem problemas encontrados';
             } catch (e) {}
 
-            // ── Build error sections ─────────────────────────────────────────
             let compileSection = '';
             if (compileErrors.length) {
               const rows = compileErrors.map(e =>
@@ -261,7 +293,6 @@ jobs:
 
             const changedApex = `${{ steps.changed.outputs.apex_classes }}`;
 
-            // ── Write to Job Summary (visible no Actions, sem limite) ────────
             const summary = [
               `## UAT PR Validation ${deployStatus}`,
               `**Branch:** \`${{ github.head_ref }}\` → \`UAT\` | **Org:** enerzee-UAT`,
@@ -273,21 +304,24 @@ jobs:
               analysisResult,
               `---`,
               `**Apex alterado:** ${changedApex || '_nenhum_'}`,
+              `**Test level:** ${{ steps.changed.outputs.test_level || 'RunLocalTests' }}`,
+              `**Tests:** ${{ steps.changed.outputs.test_classes || '_nenhum_' }}`,
             ].filter(Boolean).join('\n');
 
             fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary + '\n');
 
-            // ── Comment on PR ────────────────────────────────────────────────
             const body = [
               `## UAT PR Validation Report ${deployStatus}`,
               `**Branch:** \`${{ github.head_ref }}\` → \`UAT\` | **Org:** UAT (enerzee-UAT)`,
-              `### 🚀 Dry-run Deploy`,
+              `### 🚀 Validation for Quick Deploy`,
               deployResult,
               compileSection,
               testSection,
               coverageSection,
               analysisResult,
               `---`,
+              `**Test level:** ${{ steps.changed.outputs.test_level || 'RunLocalTests' }}`,
+              `**Tests:** ${{ steps.changed.outputs.test_classes || '_nenhum_' }}`,
               `_Gerado automaticamente por [workflow run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})_`,
             ].filter(Boolean).join('\n');
 

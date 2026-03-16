@@ -1,28 +1,33 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @IsTest
 public class TaskWhoNameTest {
-    
-    @TestSetup
-    private static void testSetup(){
-        
-        Account account = (Account) TestFactory.createSObject(new Account(), true);
-        Contact contact = (Contact) TestFactory.createSObject(new Contact(AccountId = account.Id, LastName = 'Data Test'), true);
-        
-        Task task = (Task) TestFactory.createSObject(new Task(
-            WhatId = account.Id,
-            WhoId = contact.Id
-        ), true);
-        
-        
-    }
+  @TestSetup
+  private static void testSetup() {
+    Account account = (Account) TestFactory.createSObject(new Account(), true);
+    Contact contact = (Contact) TestFactory.createSObject(
+      new Contact(AccountId = account.Id, LastName = 'Data Test'),
+      true
+    );
 
-	@IsTest
-    private static void shouldGetWhoName(){
-        
-        List<Task> tasks = [SELECT id, WhatId, Whoid, Subject, Status FROM Task];
-        
-        Test.startTest();
-        TaskWhoName.getWhoName(tasks);
-        Test.stopTest();
-        
-    }    
+    Task task = (Task) TestFactory.createSObject(
+      new Task(WhatId = account.Id, WhoId = contact.Id),
+      true
+    );
+  }
+
+  @IsTest
+  private static void shouldGetWhoName() {
+    List<Task> tasks = [SELECT id, WhatId, Whoid, Subject, Status FROM Task];
+
+    Test.startTest();
+    TaskWhoName.getWhoName(tasks);
+    Test.stopTest();
+  }
 }

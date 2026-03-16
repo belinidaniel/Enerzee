@@ -1,9 +1,11 @@
 /**
- * @description : Testes de integração para os flows de stamp de datas de engenharia:
- *                - ViabilityStudy_StampDatasEngenharia (Before-Save, ViabilityStudy__c)
- *                - Projeto_StampDatasEngenharia (Before-Save, Projeto__c)
- *                - Instalacao_StampDataConclusao (Before-Save, Instalacao__c)
- * @author      : Daniel Belini
+ * @description       : Testes de integração para os flows de stamp de datas de engenharia: - ViabilityStudy_StampDatasEngenharia (Before-Save ViabilityStudy__c) - Projeto_StampDatasEngenharia (Before-Save Projeto__c) - Instalacao_StampDataConclusao (Before-Save,
+ *                       Instalacao__c)
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
  **/
 @IsTest
 private class EngineeringDateStampFlowTest {
