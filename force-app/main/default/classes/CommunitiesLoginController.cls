@@ -1,12 +1,4 @@
 /**
- * @description       :
- * @author            : Daniel Belini
- * @group             :
- * @last modified on  : 03-15-2026
- * @last modified by  : Daniel Belini
- * @test              : CommunitiesLoginControllerTest
- **/
-/**
  * An apex page controller that exposes the site login functionality
  */
 global with sharing class CommunitiesLoginController {
