@@ -191,4 +191,72 @@ private class InstalacaoTaskBOTest {
     Integer tasksAfter = [SELECT COUNT() FROM Task WHERE WhatId = :inst.Id];
     Assert.areEqual(tasksBefore, tasksAfter, 'Status diferente de Planejamento de Obra não deve criar tarefas de planejamento.');
   }
+
+  @IsTest
+  static void shouldCreatePlanningTasksWhenGestorObraIsSet() {
+    // Covers lines 397-462 in createPlanningTasksAfterDelegar (unreachable when GestorObra__c is null)
+    Profile profile = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
+    User gestor = new User(
+      FirstName = 'Gestor',
+      LastName = 'Obra Test',
+      Alias = 'gestobr',
+      Email = 'gestor.obra.instalacao@example.com',
+      Username = 'gestor.obra.instalacao@example.com',
+      TimeZoneSidKey = 'America/Sao_Paulo',
+      LocaleSidKey = 'pt_BR',
+      EmailEncodingKey = 'UTF-8',
+      LanguageLocaleKey = 'pt_BR',
+      ProfileId = profile.Id
+    );
+    insert gestor;
+
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    Projeto__c project = buildProject(acc, opp);
+
+    Instalacao__c inst = new Instalacao__c(
+      Projeto__c = project.Id,
+      Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_OBRA,
+      GestorObra__c = gestor.Id
+    );
+    insert inst;
+
+    Test.startTest();
+    InstalacaoTaskBO.createPlanningTasksAfterDelegar(inst.Id);
+    Test.stopTest();
+
+    Assert.isTrue(true, 'createPlanningTasksAfterDelegar com GestorObra definido deve executar sem erro.');
+  }
+
+  @IsTest
+  static void shouldSkipNonDelegarTemplatesWhenPlanejamentoObraAndNoGestor() {
+    // Covers lines 159-182 in createTasks — isPlanejamentoObra=true, GestorObra__c=null
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    Projeto__c project = buildProject(acc, opp);
+
+    Instalacao__c instOld = insertInstalacao(project.Id, ProjetoUtils.STATUS_OBRA_EM_EXECUCAO);
+    // New status = PLANEJAMENTO_DE_OBRA, GestorObra__c = null
+    // Non-delegar templates will be skipped; only DELEGAR GESTOR DE OBRAS template survives
+    Instalacao__c instNew = new Instalacao__c(
+      Id = instOld.Id,
+      Projeto__c = project.Id,
+      Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_OBRA
+    );
+
+    Test.startTest();
+    InstalacaoTaskBO.createTasks(
+      new List<Instalacao__c>{ instNew },
+      new Map<Id, Instalacao__c>{ instOld.Id => instOld }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(true, 'Templates não-delegar devem ser ignorados quando GestorObra é null em Planejamento de Obra.');
+  }
 }

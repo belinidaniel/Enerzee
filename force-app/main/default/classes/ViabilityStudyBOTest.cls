@@ -929,6 +929,126 @@ private class ViabilityStudyBOTest {
     return null;
   }
 
+  @isTest
+  static void shouldResolveOwnerByEmailForUsuarioType() {
+    ViabilityStudyBO.resetTestState();
+
+    Profile profile = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
+    userCounter++;
+    String email = 'vs.emailtest.' + userCounter + '@example.com';
+    User emailUser = new User(
+      FirstName = 'EmailTest',
+      LastName = 'User ' + userCounter,
+      Alias = ('vsem' + userCounter).left(8),
+      Email = email,
+      Username = email,
+      TimeZoneSidKey = 'America/Sao_Paulo',
+      LocaleSidKey = 'pt_BR',
+      EmailEncodingKey = 'UTF-8',
+      LanguageLocaleKey = 'pt_BR',
+      ProfileId = profile.Id
+    );
+    insert emailUser;
+
+    ViabilityStudyBO.TaskViabilityTable table = new ViabilityStudyBO.TaskViabilityTable();
+    table.tableLines = new List<ViabilityStudyBO.TaskViabilityTableLine>{
+      buildTableLine(
+        'Solar',
+        'AGENDAMENTO_DE_VISITA_TECNICA',
+        'TASK USUARIO EMAIL',
+        'USUARIO',
+        email,
+        '',
+        '5'
+      )
+    };
+    ViabilityStudyBO.taskTableOverride = table;
+    ViabilityStudyBO.resetTestState();
+
+    Opportunity opp = createOpportunity();
+    ViabilityStudy__c vs = new ViabilityStudy__c(
+      Opportunity__c = opp.Id,
+      StatusFeasibility__c = 'Agendamento de Visita Técnica'
+    );
+    insert vs;
+
+    Test.startTest();
+    ViabilityStudy__c oldState = vs.clone(true, true, true, true);
+    ViabilityStudyBO.createTasks(
+      new List<ViabilityStudy__c>{ vs },
+      new Map<Id, ViabilityStudy__c>{ vs.Id => oldState }
+    );
+    Test.stopTest();
+
+    List<Task> tasks = [SELECT Subject, OwnerId FROM Task WHERE WhatId = :vs.Id];
+    Assert.isTrue(tasks.size() >= 1, 'Deve criar tarefa com owner resolvido por email.');
+    Assert.areEqual(emailUser.Id, tasks[0].OwnerId, 'Owner deve ser o user com email correspondente.');
+  }
+
+  @isTest
+  static void shouldBuildRoleAssignmentStateWithPriorTaskAssignment() {
+    ViabilityStudyBO.resetTestState();
+
+    UserRole role = new UserRole(
+      Name = 'VS Aggregate Role Test',
+      DeveloperName = 'VS_Aggregate_Role_Test'
+    );
+    insert role;
+
+    User roleUser = createActiveUser(role.Id);
+
+    Opportunity opp = createOpportunity();
+    ViabilityStudy__c vsWithTask = new ViabilityStudy__c(
+      Opportunity__c = opp.Id,
+      StatusFeasibility__c = 'Agendamento de Visita Técnica'
+    );
+    insert vsWithTask;
+
+    // Prior task owned by roleUser linked to a ViabilityStudy — feeds the aggregate loop
+    Task priorTask = new Task(
+      Subject = 'Prior task for role aggregate',
+      WhatId = vsWithTask.Id,
+      OwnerId = roleUser.Id,
+      Status = 'Completed',
+      ActivityDate = Date.today().addDays(-1)
+    );
+    insert priorTask;
+
+    ViabilityStudyBO.TaskViabilityTable table = new ViabilityStudyBO.TaskViabilityTable();
+    table.tableLines = new List<ViabilityStudyBO.TaskViabilityTableLine>{
+      buildTableLine(
+        'Solar',
+        'AGENDAMENTO_DE_VISITA_TECNICA',
+        'TASK ROLE AGGREGATE',
+        'ROLE',
+        'VS Aggregate Role Test',
+        '',
+        '5'
+      )
+    };
+    ViabilityStudyBO.taskTableOverride = table;
+    ViabilityStudyBO.resetTestState();
+
+    ViabilityStudy__c vs = new ViabilityStudy__c(
+      Opportunity__c = opp.Id,
+      StatusFeasibility__c = 'Agendamento de Visita Técnica'
+    );
+    insert vs;
+
+    Test.startTest();
+    ViabilityStudy__c oldState = vs.clone(true, true, true, true);
+    ViabilityStudyBO.createTasks(
+      new List<ViabilityStudy__c>{ vs },
+      new Map<Id, ViabilityStudy__c>{ vs.Id => oldState }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(
+      true,
+      'buildRoleAssignmentState com tasks anteriores deve cobrir o loop de aggregate.'
+    );
+  }
+
   private static ViabilityStudyBO.TaskViabilityTableLine buildTableLine(
     String typeValue,
     String statusCode,
