@@ -414,4 +414,41 @@ private class WorkDeliveryReportPdfServiceTest {
 
     Assert.isNotNull(result, 'Deve gerar PDF com caracteres especiais no nome da atividade.');
   }
+
+  // ---------------------------------------------------------------------------
+  // inferContentType — gif branch (FileType = 'GIF' → 'image/gif')
+  // ---------------------------------------------------------------------------
+  @IsTest
+  static void generatePdfBase64_withGifAttachment() {
+    Account acc = new Account(Name = 'Conta Gif Test');
+    insert acc;
+
+    ContentVersion cv = new ContentVersion();
+    cv.ContentLocation = 'S';
+    cv.FirstPublishLocationId = acc.Id;
+    cv.Title = 'gif-attachment';
+    cv.PathOnClient = 'gif-attachment.gif';
+    cv.VersionData = Blob.valueOf('GIF89a');
+    insert cv;
+    cv = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1];
+
+    OpportunityAttachmentLink__c link = new OpportunityAttachmentLink__c(
+      Name = 'Gif Link',
+      SObjectId__c = acc.Id,
+      ActivityName__c = TaskUtils.SUBJECT_RELATORIO_FINAL_DE_OBRA,
+      AttachmentDescription__c = 'gif-test',
+      DocRequiredName__c = 'GIF Test',
+      ContentDocumentId__c = String.valueOf(cv.ContentDocumentId)
+    );
+    insert link;
+
+    Test.startTest();
+    String result = WorkDeliveryReportPdfService.generatePdfBase64(
+      acc.Id,
+      TaskUtils.SUBJECT_RELATORIO_FINAL_DE_OBRA
+    );
+    Test.stopTest();
+
+    Assert.isNotNull(result, 'Deve gerar PDF com arquivo GIF.');
+  }
 }

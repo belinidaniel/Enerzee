@@ -611,6 +611,46 @@ private class LeadDistributionSelectorTest {
     Assert.areEqual(consultor.Id, res[0].consultantId, 'splitCsv deve normalizar espaços e selecionar consultor por Platinum.');
   }
 
+  @isTest
+  static void testHotLeadWithStateNoMatchFallsToNoState() {
+    String statusValue = getNonNovoStatus();
+    if (String.isBlank(statusValue)) {
+      return;
+    }
+
+    // Hot lead WITH a state but no consultor in that state → lines 195-208 (Hot+state block)
+    Lead lead = createLead('Lead Hot With State', statusValue, 'Hot', 'AM');
+    insert lead;
+
+    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
+    req.leadId = lead.Id;
+    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ req }
+    );
+
+    Assert.areEqual(1, res.size());
+  }
+
+  @isTest
+  static void testPrioritarioLeadWithStateNoMatchFallsToNoState() {
+    String statusValue = getNonNovoStatus();
+    if (String.isBlank(statusValue)) {
+      return;
+    }
+
+    // Prioritário lead WITH a state but no consultor → lines 211-217 (Prioritário+state block)
+    Lead lead = createLead('Lead Prioritario With State', statusValue, 'Prioritário', 'RR');
+    insert lead;
+
+    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
+    req.leadId = lead.Id;
+    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ req }
+    );
+
+    Assert.areEqual(1, res.size());
+  }
+
   private static String getNonNovoStatus() {
     Schema.DescribeFieldResult statusDescribe = Lead.Status.getDescribe();
     if (statusDescribe == null) {

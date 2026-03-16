@@ -705,6 +705,36 @@ private class PDFControllerExtensionExtraTest {
   }
 
   @IsTest
+  static void shouldCoverFindBestSplitPositionForwardScanNoSpaces() {
+    // 2600 chars with NO spaces forces the forward scan branch in findBestSplitPosition
+    // (backward scan finds no space → falls through to forward scan at line 1182)
+    Opportunity opp = createOpp();
+    insert opp;
+
+    String noSpaceText = 'A'.repeat(2600);
+    ViabilityStudy__c vs = new ViabilityStudy__c(
+      TextStudy__c = noSpaceText,
+      Opportunity__c = opp.Id
+    );
+    insert vs;
+    opp.MainViability__c = vs.Id;
+    update opp;
+
+    PageReference pref = new PageReference('/apex/dummy');
+    pref.getParameters().put('id', opp.Id);
+    Test.setCurrentPage(pref);
+
+    PDFControllerExtension ext = new PDFControllerExtension(
+      new ApexPages.StandardController(opp)
+    );
+
+    Assert.isTrue(
+      ext.getMainViabilityStudyChunks().size() > 0,
+      'Texto sem espaços deve gerar ao menos um chunk.'
+    );
+  }
+
+  @IsTest
   static void shouldLoadPdfUrlsWithSelectedCoverAndPaymentNote() {
     ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(
       new ProposalCover__c(),

@@ -453,6 +453,7 @@ private class IntegracaoSAPCoverageTest {
 		KitInstalacaoTriggerHandler.disableTrigger();
 		Account acc = (Account) TestFactory.createSObject(new Account(), true);
 
+		Integer voIdx = 0;
 		for (String cl : classificacoes) {
 			Opportunity opp = (Opportunity) TestFactory.createSObject(
 				new Opportunity(
@@ -461,11 +462,12 @@ private class IntegracaoSAPCoverageTest {
 					NumeroContrato__c = '1',
 					NumeroOrigemContrato__c = 'ORI-X',
 					CondicoesPagamento__c = 'Recursos Próprios',
-					IdVirtualOffice__c = 'VO-CL-' + cl.left(8),
+					IdVirtualOffice__c = 'VO-CL-' + voIdx,
 					DataEntrega__c = System.today().addDays(30)
 				),
 				true
 			);
+			voIdx++;
 			opps.add(opp);
 			kits.add(new Kit_Instalacao__c(Nome_da_Oportunidade__c = opp.Id));
 		}
