@@ -219,10 +219,8 @@ private class IntegracaoSAPCoverageTest {
 				NumeroContrato__c = '42',
 				NumeroOrigemContrato__c = 'ORI-001',
 				CondicoesPagamento__c = 'Recursos Próprios',
-				ValorTotalProposta__c = 10000,
 				IdVirtualOffice__c = 'VO-TEST-001',
-				DataEntrega__c = System.today().addDays(30),
-				Numeroproposta__c = 'PROP-001'
+				DataEntrega__c = System.today().addDays(30)
 			),
 			true
 		);
@@ -463,7 +461,6 @@ private class IntegracaoSAPCoverageTest {
 					NumeroContrato__c = '1',
 					NumeroOrigemContrato__c = 'ORI-X',
 					CondicoesPagamento__c = 'Recursos Próprios',
-					ValorTotalProposta__c = 5000,
 					IdVirtualOffice__c = 'VO-CL-' + cl.left(8),
 					DataEntrega__c = System.today().addDays(30)
 				),
@@ -533,7 +530,6 @@ private class IntegracaoSAPCoverageTest {
 				NumeroContrato__c = null,
 				NumeroOrigemContrato__c = 'ORI-NULL',
 				CondicoesPagamento__c = 'Recursos Próprios',
-				ValorTotalProposta__c = 8000,
 				IdVirtualOffice__c = 'VO-NULL-001',
 				DataEntrega__c = System.today().addDays(20)
 			),

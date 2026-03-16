@@ -971,15 +971,6 @@ private class TaskBOTest {
   // ─── Additional coverage tests ───────────────────────────────────────────────
 
   @IsTest
-  static void shouldCoverGetRecordTypeIds() {
-    Test.startTest();
-    Map<String, String> rtMap = TaskBO.getRecordTypeIds();
-    Test.stopTest();
-
-    Assert.isNotNull(rtMap, 'getRecordTypeIds deve retornar um mapa não-nulo.');
-  }
-
-  @IsTest
   static void shouldCoverNormalizeTaskSubjectWithNull() {
     String result = TaskBO.normalizeTaskSubject(null);
     Assert.areEqual('', result, 'normalizeTaskSubject(null) deve retornar string vazia.');

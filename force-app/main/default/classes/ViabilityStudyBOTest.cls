@@ -824,8 +824,7 @@ private class ViabilityStudyBOTest {
     Opportunity opp = createOpportunity();
     ViabilityStudy__c vs = new ViabilityStudy__c(
       Opportunity__c = opp.Id,
-      StatusFeasibility__c = 'Agendamento de Visita Técnica',
-      OpportunityType__c = 'Ezee Solar'
+      StatusFeasibility__c = 'Agendamento de Visita Técnica'
     );
     insert vs;
 
