@@ -1,9 +1,10 @@
 /**
- * @description						 : Centraliza regras de Approval Process da Opportunity
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 02-17-2026
- * @last modified by	 : Daniel Belini
+ * @description       : Centraliza regras de Approval Process da Opportunity
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ApprovalProcessServiceTest, OpportunityTriggerTest
  **/
 public without sharing class ApprovalProcessService {
   @TestVisible

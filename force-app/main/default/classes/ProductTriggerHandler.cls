@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : OpportunityBOHighCoverageTest, OpportunityLineItemTriggerTest, ProductTriggerTest
+ **/
 public class ProductTriggerHandler extends TriggerHandler {
   public ProductTriggerHandler() {
     super(

@@ -1,9 +1,11 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 12-21-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : AdditionalCoverageNewClassesTest, InstalacaoTaskBOTest, InstalacaoTriggerHandlerTest,
+ *                       TaskTemplateFlowTest
  **/
 public with sharing class InstalacaoTaskBO {
   public static void createTasks(

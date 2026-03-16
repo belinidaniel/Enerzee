@@ -1,9 +1,10 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 03-11-2026
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-16-2026
+ * @last modified by  : Daniel Belini
+ * @test              : KitInstalacaoBOTest, KitInstalacaoTriggerTest
  **/
 public without sharing class KitInstalacaoBO {
   private static final String CLASS_NAME = 'KitInstalacaoBO';

@@ -1,9 +1,10 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 10-09-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : OpportunityBOCoverageTest, OpportunityBOHighCoverageTest, OpportunityRecordsTOTest
  **/
 global with sharing class OpportunityRecordsTO {
   public class Opportunities {
@@ -69,15 +70,15 @@ global with sharing class OpportunityRecordsTO {
   }
 
   public class Composition {
-    public String ExternalId;       // → Composition__c.ExternalId__c (chave de upsert)
-    public String Name;             // → Composition__c.Name
-    public Double Bdi;              // → Composition__c.Bdi__c
-    public Double Direct;           // → Composition__c.Direct__c
-    public Double Rede;             // → Composition__c.Network3750__c
-    public Double Pontos;           // → Composition__c.Points__c
-    public Double Installation;     // → Composition__c.Installation__c
+    public String ExternalId; // → Composition__c.ExternalId__c (chave de upsert)
+    public String Name; // → Composition__c.Name
+    public Double Bdi; // → Composition__c.Bdi__c
+    public Double Direct; // → Composition__c.Direct__c
+    public Double Rede; // → Composition__c.Network3750__c
+    public Double Pontos; // → Composition__c.Points__c
+    public Double Installation; // → Composition__c.Installation__c
     public Double AdditionalFixedCost; // → Composition__c.AdditionalFixedCost__c
-    public Double Coupling;         // → Composition__c.Coupling__c
+    public Double Coupling; // → Composition__c.Coupling__c
     public Double FinancialCostWeg; // → Composition__c.FinancialCostWeg__c
     public Double TotalProductValue; // → Composition__c.TotalProductValue__c
   }

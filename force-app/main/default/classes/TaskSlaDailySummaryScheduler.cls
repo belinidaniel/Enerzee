@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : TaskSlaCoreTest
+ **/
 global without sharing class TaskSlaDailySummaryScheduler implements Schedulable {
   private static final String JOB_NAME = 'Task SLA Daily Summary';
 

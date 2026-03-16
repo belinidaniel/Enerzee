@@ -1,9 +1,10 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 11-12-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : EmailWithAttachmentByIdTest
  **/
 public class EmailWithAttachmentById {
   public class Request {
@@ -143,9 +144,7 @@ public class EmailWithAttachmentById {
 
     String plain = htmlBody.replaceAll('<[^>]+>', ' ');
     plain = plain.replaceAll('&nbsp;', ' ');
-    while (plain.contains('	 ')) {
-      plain = plain.replace('	 ', ' ');
-    }
+    plain = plain.replaceAll('\\s+', ' ');
     return plain.trim();
   }
 }

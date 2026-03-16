@@ -1,3 +1,13 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : EzeeConnectProposalPendingServiceTest, IntegracaoVOClientePreCadastroTest,
+ *                       IntegracaoVOPlanoTest, IntegrationHubServiceTest, ProposalPendingSendQueueableTest,
+ *                       ProposalPendingStatusQueueableTest, TokenAPIVOWsTest, VOIntegrationServiceTest
+ **/
 public class TokenAPIVOWs {
   public String erro { get; set; }
   public VOTokenResponse tokenResponse { get; set; }

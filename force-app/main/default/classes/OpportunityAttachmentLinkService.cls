@@ -1,6 +1,10 @@
 /**
- * @description						 : Helper service to persist external attachments linked to Opportunities.
- * @author											 : Daniel Belini
+ * @description       : Helper service to persist external attachments linked to Opportunities.
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : OpportunityAttachmentLinkServiceTest
  **/
 public with sharing class OpportunityAttachmentLinkService {
   private static final Integer MAX_NAME_LENGTH = 80;

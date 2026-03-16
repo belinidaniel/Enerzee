@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @IsTest
 private class ClickSignDAOTest {
   @IsTest
@@ -54,5 +62,38 @@ private class ClickSignDAOTest {
     insert draft;
     ClickSign__c recreated = ClickSignDAO.cancelAndCreateClickSign(acc.Id);
     System.assertNotEquals(null, recreated.Id);
+  }
+
+  @IsTest
+  static void shouldUpdateDeleteAndListRecords() {
+    Account acc = new Account(Name = 'Conta DAO');
+    insert acc;
+
+    ClickSign__c clickSign = ClickSignDAO.getOrCreateClickSign(acc.Id);
+    clickSign.CurrentStep__c = 'Recipients';
+
+    ClickSignDAO.updateClickSign(clickSign);
+
+    ClickSign__c stored = [
+      SELECT CurrentStep__c, Status__c
+      FROM ClickSign__c
+      WHERE Id = :clickSign.Id
+    ];
+    System.assertEquals('Recipients', stored.CurrentStep__c);
+    System.assertEquals('Draft', stored.Status__c);
+
+    List<ClickSign__c> records = ClickSignDAO.getClickSignRecords(acc.Id);
+    System.assertEquals(1, records.size());
+    System.assertEquals(clickSign.Id, records[0].Id);
+
+    ClickSignDAO.deleteClickSign(clickSign);
+
+    ClickSign__c deletedRecord = [
+      SELECT IsDeleted
+      FROM ClickSign__c
+      WHERE Id = :clickSign.Id
+      ALL ROWS
+    ];
+    System.assertEquals(true, deletedRecord.IsDeleted);
   }
 }

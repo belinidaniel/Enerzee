@@ -1,8 +1,10 @@
 /**
- * @description						 : Tests for ProductUpdateEntryRest using productCode/externalId
- * @author											 : Daniel Belini
- * @last modified on	 : 10-23-2025
- * @last modified by	 : Daniel Belini
+ * @description       : Tests for ProductUpdateEntryRest using productCode/externalId
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
  **/
 @IsTest
 public with sharing class ProductUpdateEntryRestTest {
@@ -18,45 +20,47 @@ public with sharing class ProductUpdateEntryRestTest {
     return pbes.isEmpty() ? null : pbes[0];
   }
 
+  private static Product2 createProduct(
+    String name,
+    String productCode,
+    String externalId,
+    Decimal price
+  ) {
+    Product2 productRecord = new Product2(
+      Name = name,
+      ProductCode = productCode,
+      IsActive = true,
+      ExternalId__c = externalId,
+      Id_Externo__c = externalId,
+      Preco_Unitario__c = price
+    );
+    insert productRecord;
+    return productRecord;
+  }
+
   @IsTest
   static void testUpdatePrice_ByProductCode() {
-    // Arrange
-    Id stdPbId = Test.getStandardPricebookId();
-
-    Product2 p = new Product2(
-      Name = 'KIT 5,0 kWp',
-      ProductCode = 'PC-001',
-      IsActive = true,
-      ExternalId__c = 'EXT-001',
-      Id_Externo__c = 'EXT-001' // << obrigatório na tua org
-    );
-    insert p;
+    Product2 p = createProduct('KIT 5,0 kWp', 'PC-001', 'EXT-001', 100);
 
     String payload = '[{"productCode":"PC-001","price":1234.56,"name":"KIT 5,0 kWp"}]';
 
-    // Act
     Test.startTest();
     ProductUpdateEntryRest.testUpdateProductPrices(payload);
     Test.stopTest();
 
-    // Assert
     PricebookEntry pbe = getStdPbe(p.Id);
+    System.assertNotEquals(null, pbe);
+    System.assertEquals(1234.56, pbe.UnitPrice);
   }
 
   @IsTest
   static void testCreateProduct_AndPbe_ByProductCode() {
-    // Arrange
-    Id stdPbId = Test.getStandardPricebookId();
-
-    // IMPORTANTE: incluir externalId para cumprir o campo obrigatório Id_Externo__c na criação
     String payload = '[{"productCode":"NEW-100","externalId":"EXT-NEW-100","name":"KIT NEW 10,0 kWp","price":9876.54,"productFamily":"Metálico - NORTE"}]';
 
-    // Act
     Test.startTest();
     ProductUpdateEntryRest.testUpdateProductPrices(payload);
     Test.stopTest();
 
-    // Assert: produto criado
     Product2 created = [
       SELECT Id, Name, ProductCode, Family, ExternalId__c, Id_Externo__c
       FROM Product2
@@ -64,24 +68,20 @@ public with sharing class ProductUpdateEntryRestTest {
       LIMIT 1
     ];
 
-    // PBE criado
     PricebookEntry pbe = getStdPbe(created.Id);
+    System.assertEquals('EXT-NEW-100', created.Id_Externo__c);
+    System.assertNotEquals(null, pbe);
+    System.assertEquals(9876.54, pbe.UnitPrice);
   }
 
   @IsTest
   static void testCreateProduct_ByExternalId_FallbackWhenNoProductCode() {
-    // Arrange
-    Id stdPbId = Test.getStandardPricebookId();
-
-    // Sem productCode: rota faz fallback ProductCode = externalId
     String payload = '[{"externalId":"EXT-777","name":"KIT Fallback","price":2222.00,"productFamily":"Fibrocimento - NORTE"}]';
 
-    // Act
     Test.startTest();
     ProductUpdateEntryRest.testUpdateProductPrices(payload);
     Test.stopTest();
 
-    // Assert: produto criado com ProductCode = externalId
     Product2 created = [
       SELECT Id, Name, ProductCode, Family, ExternalId__c, Id_Externo__c
       FROM Product2
@@ -89,30 +89,52 @@ public with sharing class ProductUpdateEntryRestTest {
       LIMIT 1
     ];
     PricebookEntry pbe = getStdPbe(created.Id);
+    System.assertEquals('EXT-777', created.Id_Externo__c);
+    System.assertNotEquals(null, pbe);
+    System.assertEquals(2222.00, pbe.UnitPrice);
   }
 
   @IsTest
   static void testUpdatePrice_ByName_WhenNoProductCode() {
-    // Arrange
-    Id stdPbId = Test.getStandardPricebookId();
-
-    Product2 p = new Product2(
-      Name = 'KIT POR NOME 7,2 kWp',
-      IsActive = true,
-      ExternalId__c = 'EXT-90210',
-      Id_Externo__c = 'EXT-90210' // << obrigatório
-      // sem ProductCode de propósito
-    );
-    insert p;
+    Product2 p = createProduct('KIT POR NOME 7,2 kWp', null, 'EXT-90210', 200);
 
     String payload = '[{"name":"KIT POR NOME 7,2 kWp","price":3333.33}]';
 
-    // Act
     Test.startTest();
     ProductUpdateEntryRest.testUpdateProductPrices(payload);
     Test.stopTest();
 
-    // Assert
     PricebookEntry pbe = getStdPbe(p.Id);
+    System.assertNotEquals(null, pbe);
+    System.assertEquals(3333.33, pbe.UnitPrice);
+  }
+
+  @IsTest
+  static void testEmptyPayloadReturnsError() {
+    Test.startTest();
+    ProductUpdateEntryRest.testUpdateProductPrices('[]');
+    Test.stopTest();
+
+    String responseBody = RestContext.response.responseBody.toString();
+    System.assert(responseBody.contains('"status"'));
+    System.assert(responseBody.contains('Error'));
+  }
+
+  @IsTest
+  static void testSingleObjectPayloadCreatesProduct() {
+    Test.startTest();
+    ProductUpdateEntryRest.testUpdateProductPrices(
+      '{"productCode":"ONE-1","externalId":"ONE-EXT-1","name":"Produto Unitario","price":99.9,"productFamily":"Solar"}'
+    );
+    Test.stopTest();
+
+    Product2 created = [
+      SELECT Id, ProductCode, Id_Externo__c
+      FROM Product2
+      WHERE ProductCode = 'ONE-1'
+      LIMIT 1
+    ];
+    System.assertEquals('ONE-EXT-1', created.Id_Externo__c);
+    System.assertNotEquals(null, getStdPbe(created.Id));
   }
 }

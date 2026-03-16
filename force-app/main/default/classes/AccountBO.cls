@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : AccountBOTest, AccountTriggerHandlerTest, AccountTriggerTest
+ **/
 public with sharing class AccountBO {
   // Atribuir consultor ao campo correspondente na Conta (Cliente), ao receber ID externo do consultor via integração
   public static void assignSellerToIntegratedClient(List<Account> newRecords) {

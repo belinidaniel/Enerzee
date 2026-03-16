@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @isTest
 public class IntegracaoSAPTest {
   private static Boolean positiveResult = true;
@@ -25,9 +33,14 @@ public class IntegracaoSAPTest {
       ),
       true
     );
+    String productExternalId =
+      'prod-ext-' + String.valueOf(DateTime.now().getTime());
     Product2 product = (Product2) TestFactory.createSObject(
       new Product2(
-        ExternalId__c = 'prod-ext-' + String.valueOf(DateTime.now().getTime())
+        ExternalId__c = productExternalId,
+        Id_Externo__c = productExternalId,
+        ProductCode = productExternalId,
+        Name = 'Produto SAP Teste'
       ),
       true
     );

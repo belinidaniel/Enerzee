@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @IsTest
 private class OpportunityDiscountRequestControllerTest {
   private static final String TARGET_STAGE = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA;

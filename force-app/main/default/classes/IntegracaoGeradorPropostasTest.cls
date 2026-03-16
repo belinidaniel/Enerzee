@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @IsTest(seeAllData=true)
 private class IntegracaoGeradorPropostasTest {
   private class MockSuccess implements HttpCalloutMock {
@@ -32,27 +40,35 @@ private class IntegracaoGeradorPropostasTest {
       return;
     }
 
-    Lead lead = new Lead(
-      FirstName = 'Teste',
-      LastName = 'Cliente',
-      Company = 'Empresa',
-      Email = 'cliente@teste.com',
-      Phone = '11999999999',
-      PostalCode = '01001-000',
-      State = 'SP',
-      City = 'Sao Paulo',
-      Street = 'Rua Teste',
-      Status = 'Novo'
-    );
-    setIfExists(lead, 'CPFCNPJ__c', '12345678901');
-    setIfExists(lead, 'Bairro__c', 'Centro');
-    setIfExists(lead, 'Complemento__c', 'Apto 1');
-    insert lead;
-    Test.setMock(HttpCalloutMock.class, new MockSuccess());
+    ConsultorTriggerHandler.disableTrigger();
+    LeadTriggerHandler.disableTrigger();
+    Lead lead;
+    try {
+      lead = new Lead(
+        FirstName = 'Teste',
+        LastName = 'Cliente',
+        Company = 'Empresa',
+        Email = 'cliente@teste.com',
+        Phone = '11999999999',
+        PostalCode = '01001-000',
+        State = 'SP',
+        City = 'Sao Paulo',
+        Street = 'Rua Teste',
+        Status = 'Novo'
+      );
+      setIfExists(lead, 'CPFCNPJ__c', '12345678901');
+      setIfExists(lead, 'Bairro__c', 'Centro');
+      setIfExists(lead, 'Complemento__c', 'Apto 1');
+      insert lead;
+      Test.setMock(HttpCalloutMock.class, new MockSuccess());
 
-    Test.startTest();
-    IntegracaoGeradorPropostas.sendCliente(new Set<Id>{ lead.Id });
-    Test.stopTest();
+      Test.startTest();
+      IntegracaoGeradorPropostas.sendCliente(new Set<Id>{ lead.Id });
+      Test.stopTest();
+    } finally {
+      LeadTriggerHandler.enableTrigger();
+      ConsultorTriggerHandler.enableTrigger();
+    }
 
     Lead updated = fetchLead(
       lead.Id,
@@ -87,28 +103,36 @@ private class IntegracaoGeradorPropostasTest {
       return;
     }
 
-    Lead lead = new Lead(
-      FirstName = 'Teste',
-      LastName = 'Cliente Falha',
-      Company = 'Empresa',
-      Email = 'cliente2@teste.com',
-      Phone = '11999999999',
-      PostalCode = '01001-000',
-      State = 'SP',
-      City = 'Sao Paulo',
-      Street = 'Rua Teste',
-      Status = 'Novo'
-    );
-    setIfExists(lead, 'CPFCNPJ__c', '12345678901234');
-    setIfExists(lead, 'Bairro__c', 'Centro');
-    setIfExists(lead, 'Complemento__c', 'Apto 2');
-    insert lead;
+    ConsultorTriggerHandler.disableTrigger();
+    LeadTriggerHandler.disableTrigger();
+    Lead lead;
+    try {
+      lead = new Lead(
+        FirstName = 'Teste',
+        LastName = 'Cliente Falha',
+        Company = 'Empresa',
+        Email = 'cliente2@teste.com',
+        Phone = '11999999999',
+        PostalCode = '01001-000',
+        State = 'SP',
+        City = 'Sao Paulo',
+        Street = 'Rua Teste',
+        Status = 'Novo'
+      );
+      setIfExists(lead, 'CPFCNPJ__c', '12345678901234');
+      setIfExists(lead, 'Bairro__c', 'Centro');
+      setIfExists(lead, 'Complemento__c', 'Apto 2');
+      insert lead;
 
-    Test.setMock(HttpCalloutMock.class, new MockFailure());
+      Test.setMock(HttpCalloutMock.class, new MockFailure());
 
-    Test.startTest();
-    IntegracaoGeradorPropostas.sendCliente(new Set<Id>{ lead.Id });
-    Test.stopTest();
+      Test.startTest();
+      IntegracaoGeradorPropostas.sendCliente(new Set<Id>{ lead.Id });
+      Test.stopTest();
+    } finally {
+      LeadTriggerHandler.enableTrigger();
+      ConsultorTriggerHandler.enableTrigger();
+    }
 
     Lead updated = fetchLead(
       lead.Id,

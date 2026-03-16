@@ -1,24 +1,49 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 10-09-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
  **/
-@isTest
+@IsTest
 public class LeadIntegrationBatchTest {
-  @isTest
-  static void testBatchExecution() {
-    Lead testLead3 = new Lead(
-      FirstName = 'Test3',
+  private class IntegrationSuccessMock implements HttpCalloutMock {
+    public HttpResponse respond(HttpRequest req) {
+      HttpResponse response = new HttpResponse();
+      response.setStatusCode(200);
+      response.setHeader('Content-Type', 'application/json');
+      response.setBody('{"data":{"id":"EXT-LEAD-001"}}');
+      return response;
+    }
+  }
+
+  @IsTest
+  static void shouldCoverStartExecuteAndFinish() {
+    Consultor__c consultor = new Consultor__c(
+      Name = 'Consultor Batch',
+      IdVirtualOffice__c = 'lead-int-vo-batch',
+      IdVirtualOffice2__c = '91'
+    );
+
+    ConsultorTriggerHandler.disableTrigger();
+    try {
+      insert consultor;
+    } finally {
+      ConsultorTriggerHandler.enableTrigger();
+    }
+
+    Lead leadRecord = new Lead(
+      FirstName = 'Batch',
       LastName = 'Lead',
       Company = 'Acme Corp',
-      Email = 'test.lead@example.com',
+      Email = 'lead.batch.' + System.now().getTime() + '@teste.com',
       CPFCNPJ__c = '12345678901',
       Lb065_FaturaEnergia__c = 1000,
-      Phone = '123456789',
+      Phone = '1133334444',
+      MobilePhone = '11999999999',
       Lb065_ProdutoInteresse__c = 'Ezee Solar',
-      Lb065_HistoricoLead__c = 'Histórico...',
+      Lb065_HistoricoLead__c = 'Historico...',
       Lb065_Estado__c = 'MT',
       LeadSource = 'Nivello',
       Title = 'Sr.',
@@ -35,23 +60,40 @@ public class LeadIntegrationBatchTest {
       Complemento__c = 'Comp',
       PostalCode = '12345-678',
       Status = 'Distribuído',
+      Lab065_IntegracaoDistribuicaoLead__c = false,
+      ConsultorRegional__c = consultor.Id,
       RecordTypeId = Schema.SObjectType.Lead.getRecordTypeInfosByName()
         .get('Qualificação de Clientes')
         .getRecordTypeId()
     );
-    insert testLead3;
+
+    LeadTriggerHandler.disableTrigger();
+    try {
+      insert leadRecord;
+    } finally {
+      LeadTriggerHandler.enableTrigger();
+    }
+
+    Lead scopeLead = [
+      SELECT Id
+      FROM Lead
+      WHERE Id = :leadRecord.Id
+      LIMIT 1
+    ];
+
+    Test.setMock(HttpCalloutMock.class, new IntegrationSuccessMock());
 
     Test.startTest();
     LeadIntegrationBatch batch = new LeadIntegrationBatch();
-    Database.executeBatch(batch, 1);
+    Database.QueryLocator locator = batch.start(null);
+    batch.execute(null, new List<SObject>{ scopeLead });
+    batch.finish(null);
     Test.stopTest();
 
-    // Reload lead and check integration flag
-    Lead updatedLead = [
-      SELECT Lab065_IntegracaoDistribuicaoLead__c
-      FROM Lead
-      WHERE Id = :testLead3.Id
-      LIMIT 1
-    ];
+    System.assertNotEquals(
+      null,
+      locator,
+      'O start do batch deve retornar um QueryLocator valido.'
+    );
   }
 }

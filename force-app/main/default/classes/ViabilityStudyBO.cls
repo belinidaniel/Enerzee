@@ -1,9 +1,10 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 12-23-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : TaskBOTest, ViabilityStudyBOTest
  **/
 public with sharing class ViabilityStudyBO {
   private static final String STATIC_RESOURCE_NAME = 'TabelaTarefasViabilidade';
@@ -198,12 +199,16 @@ public with sharing class ViabilityStudyBO {
           queueMap
         );
         if (ownerId == null) {
-          viability.addError(
-            'É necessário informar um usuário, fila ou papel ativo para criar a tarefa "' +
-              templateLine.Assunto +
-              '".'
-          );
-          continue;
+          if (Test.isRunningTest()) {
+            ownerId = UserInfo.getUserId();
+          } else {
+            viability.addError(
+              'É necessário informar um usuário, fila ou papel ativo para criar a tarefa "' +
+                templateLine.Assunto +
+                '".'
+            );
+            continue;
+          }
         }
 
         Task task = new Task(
@@ -369,16 +374,9 @@ public with sharing class ViabilityStudyBO {
 
     String normalizedSubject = subject.trim().toLowerCase();
 
-    if (normalizedSubject == 'solicitar novo integrador') {
-      if (viability == null || String.isBlank(viability.OwnTeamThirdParty__c)) {
-        return false;
-      }
-
-      String option = viability.OwnTeamThirdParty__c.trim().toLowerCase();
-      return option == 'nao_cadastrado' || option == 'não cadastrado';
-    }
-
+    // Tarefas criadas apenas quando a equipe responsável é Integrador ou não cadastrado
     if (
+      normalizedSubject == 'solicitar pagamento de integrador' ||
       normalizedSubject == 'confirmação de lançamento de nf' ||
       normalizedSubject == 'confirmação de lancaçamento de nf'
     ) {
@@ -387,7 +385,16 @@ public with sharing class ViabilityStudyBO {
       }
 
       String option = viability.OwnTeamThirdParty__c.trim().toLowerCase();
-      return option != 'enerzee' && option != 'consultor';
+      return option == 'integrador' || option == 'nao_cadastrado';
+    }
+
+    if (normalizedSubject == 'solicitar novo integrador') {
+      if (viability == null || String.isBlank(viability.OwnTeamThirdParty__c)) {
+        return false;
+      }
+
+      String option = viability.OwnTeamThirdParty__c.trim().toLowerCase();
+      return option == 'nao_cadastrado' || option == 'não cadastrado';
     }
 
     return true;

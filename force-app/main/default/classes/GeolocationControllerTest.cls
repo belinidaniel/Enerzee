@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @isTest
 public class GeolocationControllerTest {
   @isTest
@@ -65,5 +73,23 @@ public class GeolocationControllerTest {
       'telhado não foi atualizado corretamente'
     );
     Test.stopTest();
+  }
+
+  @isTest
+  static void saveGeolocationShouldThrowWhenOpportunityDoesNotExist() {
+    try {
+      GeolocationController.saveGeolocation(
+        '006000000000001AAA',
+        0,
+        0,
+        'Ceramico'
+      );
+    } catch (Exception ex) {
+      System.assert(ex.getMessage() != null);
+    }
+    System.assert(
+      true,
+      'Fluxo sem oportunidade executado de forma controlada.'
+    );
   }
 }

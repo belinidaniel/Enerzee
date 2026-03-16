@@ -1,9 +1,10 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 12-16-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : InstalacaoBOTest, InstalacaoTriggerHandlerTest, ProjetoTriggerTest
  **/
 public with sharing class InstalacaoBO {
   private static final Integer INSTALLATION_NAME_MAX_LENGTH = Schema.SObjectType.Instalacao__c.fields.Name.getLength();
@@ -71,7 +72,9 @@ public with sharing class InstalacaoBO {
       if (oldInst == null || inst.Status__c == oldInst.Status__c) {
         continue;
       }
-      if (isObraConcluida(inst.Status__c) && !isObraConcluida(oldInst.Status__c)) {
+      if (
+        isObraConcluida(inst.Status__c) && !isObraConcluida(oldInst.Status__c)
+      ) {
         toValidate.add(inst);
       }
     }
@@ -84,7 +87,7 @@ public with sharing class InstalacaoBO {
     List<FieldSetMapping__mdt> requiredMappings = [
       SELECT FieldSetName__c, SectionLabel__c
       FROM FieldSetMapping__mdt
-      WHERE ObjectApiName__c = 'Instalacao__c' AND IsSectionRequired__c = true
+      WHERE ObjectApiName__c = 'Instalacao__c' AND IsSectionRequired__c = TRUE
     ];
 
     if (requiredMappings.isEmpty()) {
@@ -101,7 +104,10 @@ public with sharing class InstalacaoBO {
         continue;
       }
 
-      Schema.FieldSet fs = resolveFieldSet(fieldSetMap, mapping.FieldSetName__c);
+      Schema.FieldSet fs = resolveFieldSet(
+        fieldSetMap,
+        mapping.FieldSetName__c
+      );
       if (fs == null) {
         continue;
       }
@@ -133,7 +139,9 @@ public with sharing class InstalacaoBO {
           String label = sField != null
             ? sField.getDescribe().getLabel()
             : fieldApiName;
-          missingLabels.add(label + ' (' + requiredFieldToSection.get(fieldApiName) + ')');
+          missingLabels.add(
+            label + ' (' + requiredFieldToSection.get(fieldApiName) + ')'
+          );
         }
       }
       if (!missingLabels.isEmpty()) {

@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ReassignMessagingSessionBatchTest
+ **/
 global with sharing class ReassignMessagingSessionBatch implements Database.Batchable<SObject>, Database.Stateful, Schedulable {
   global Database.QueryLocator start(Database.BatchableContext BC) {
     String status = 'Waiting';

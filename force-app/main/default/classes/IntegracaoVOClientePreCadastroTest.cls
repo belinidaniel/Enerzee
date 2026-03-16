@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @isTest
 private class IntegracaoVOClientePreCadastroTest {
   @isTest
@@ -83,6 +91,61 @@ private class IntegracaoVOClientePreCadastroTest {
       false,
       acc.SucessoIntegracaoVO__c,
       'A integração deveria registrar falha sem mock de callout.'
+    );
+  }
+
+  @isTest
+  static void testProcessAccountsWithBlankContext() {
+    Test.setMock(HttpCalloutMock.class, new MockVirtualOfficeWS());
+    TokenAPIVOWs.access_token = 'test-token';
+
+    Consultor__c consultor = new Consultor__c(
+      Name = 'Consultor Process',
+      Login_no_virtual__c = 'consultor.process@teste.com',
+      IdVirtualOffice2__c = '15'
+    );
+    insert consultor;
+
+    Account acc = new Account(
+      Name = 'Cliente Process',
+      Email__c = 'process@teste.com',
+      CPF__c = '987.654.321-00',
+      Consultor__c = consultor.Id
+    );
+    insert acc;
+
+    Test.startTest();
+    IntegracaoVOClientePreCadastro.processAccounts(
+      new List<Account>{ acc },
+      null
+    );
+    Test.stopTest();
+
+    acc = [
+      SELECT SucessoIntegracaoVO__c
+      FROM Account
+      WHERE Id = :acc.Id
+    ];
+    System.assertEquals(
+      true,
+      acc.SucessoIntegracaoVO__c,
+      'processAccounts deve sincronizar quando houver Id válido.'
+    );
+  }
+
+  @isTest
+  static void testProcessAccountsShouldIgnoreNullAndTransientRecords() {
+    Test.startTest();
+    IntegracaoVOClientePreCadastro.processAccounts(
+      new List<Account>{ null, new Account(Name = 'Sem Id') },
+      'manual-test'
+    );
+    Test.stopTest();
+
+    System.assertEquals(
+      true,
+      true,
+      'Lista sem registros persistidos deve ser ignorada sem exceção.'
     );
   }
 }

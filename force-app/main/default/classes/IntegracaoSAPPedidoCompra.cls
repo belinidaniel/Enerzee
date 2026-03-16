@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : IntegracaoSAPCoverageTest
+ **/
 public with sharing class IntegracaoSAPPedidoCompra {
   @future(callout=true)
   public static void sendPedidoCompra(Set<Id> triggerIds) {
@@ -39,7 +47,7 @@ public with sharing class IntegracaoSAPPedidoCompra {
     if (!kits.isEmpty()) {
       //Montar mapa de referência para os produtos das Oportunidades
       for (Kit_Instalacao__c kit : kits) {
-        if (!mapaProdutos.keySet().contains(kits[0].Nome_da_Oportunidade__c)) {
+        if (!mapaProdutos.keySet().contains(kit.Nome_da_Oportunidade__c)) {
           mapaProdutos.put(
             kit.Nome_da_Oportunidade__c,
             new List<Kit_Instalacao__c>{ kit }

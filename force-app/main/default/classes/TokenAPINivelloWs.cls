@@ -2,8 +2,16 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-02-2026
+ * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
+ * @test              : EzeeConnectProposalPendingServiceTest, IntegracaoFormaPagamentoNegociacaoTest,
+ *                       IntegracaoNivelloAnaliseVTTest, IntegracaoNivelloContratoCoverageTest,
+ *                       IntegracaoNivelloDataVisitaTecnicaTest, IntegracaoNivelloPropostaTest,
+ *                       IntegracaoNivelloSimFinTest, IntegracaoNivelloValorTotalPropostaTest,
+ *                       IntegracaoNivelloViabilidadeCoverageTest, IntegracaoNivelloViabilidadeTest,
+ *                       IntegrationHubServiceTest, NivelloTokenTest, OpportunityDiscountRequestControllerTest,
+ *                       ProposalPendingControllerTest, ProposalPendingSendQueueableTest,
+ *                       ProposalPendingStatusQueueableTest, UtilsTest
  **/
 public class TokenAPINivelloWs {
   public String erro { get; set; }

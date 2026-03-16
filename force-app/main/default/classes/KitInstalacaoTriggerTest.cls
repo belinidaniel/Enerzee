@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @isTest
 public class KitInstalacaoTriggerTest {
   @TestSetup
@@ -6,9 +14,14 @@ public class KitInstalacaoTriggerTest {
       new Opportunity(Pricebook2Id = Test.getStandardPricebookId()),
       true
     );
+    String productExternalId =
+      'kit-prod-' + String.valueOf(DateTime.now().getTime());
     Product2 product = (Product2) TestFactory.createSObject(
       new Product2(
-        ExternalId__c = 'kit-prod-' + String.valueOf(DateTime.now().getTime())
+        ExternalId__c = productExternalId,
+        Id_Externo__c = productExternalId,
+        ProductCode = productExternalId,
+        Name = 'Produto Kit Teste'
       ),
       true
     );

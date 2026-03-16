@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : OpportunityShareHandlerTest, OpportunityTriggerTest
+ **/
 public without sharing class OpportunityShareHandler {
   public static void gerenciarCompartilhamentoOportunidade(
     List<Opportunity> newRecordList,

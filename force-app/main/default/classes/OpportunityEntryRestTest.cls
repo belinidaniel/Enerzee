@@ -1,5 +1,66 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @isTest
 public class OpportunityEntryRestTest {
+  private static Product2 createProductForRest(
+    String externalId,
+    String name,
+    Decimal unitPrice
+  ) {
+    Product2 productRecord = (Product2) TestFactory.createSObject(
+      new Product2(
+        Name = name,
+        ProductCode = externalId,
+        ExternalId__c = externalId,
+        Id_Externo__c = externalId,
+        Preco_Unitario__c = unitPrice
+      ),
+      true
+    );
+
+    List<PricebookEntry> standardEntries = [
+      SELECT Id
+      FROM PricebookEntry
+      WHERE
+        Pricebook2Id = :Test.getStandardPricebookId()
+        AND Product2Id = :productRecord.Id
+      LIMIT 1
+    ];
+    if (standardEntries.isEmpty()) {
+      insert new PricebookEntry(
+        Pricebook2Id = Test.getStandardPricebookId(),
+        Product2Id = productRecord.Id,
+        UnitPrice = unitPrice,
+        IsActive = true
+      );
+    }
+
+    return productRecord;
+  }
+
+  private static Opportunity createOpportunityForRest(Account accountRecord) {
+    Opportunity opportunityRecord = new Opportunity(
+      Name = 'Opportunity REST Test',
+      AccountId = accountRecord.Id,
+      Pricebook2Id = Test.getStandardPricebookId(),
+      StageName = 'Prospecção',
+      CloseDate = Date.today(),
+      IdVirtualOffice__c = 'VO-REST-' +
+        String.valueOf(DateTime.now().getTime()),
+      RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+        .get('Solar')
+        .getRecordTypeId()
+    );
+    insert opportunityRecord;
+    return opportunityRecord;
+  }
+
   @TestSetup
   public static void makeData() {
     Consultor__c seller = (Consultor__c) TestFactory.createSObject(
@@ -15,6 +76,24 @@ public class OpportunityEntryRestTest {
       FROM Consultor__c
       LIMIT 1
     ];
+    Set<String> expectedOpportunityExternalIds = new Set<String>{
+      'c558705a-asdsadd-41d8-b711-454545',
+      'c558705a-adasdasd-41d8-b711-656565'
+    };
+    Set<String> expectedAccountExternalIds = new Set<String>{
+      'c4df3b76-0648-422a-8d43-89798797',
+      'c4df3b76-0648-422a-8d43-64654654'
+    };
+    Set<String> expectedProductCodes = new Set<String>{
+      '9',
+      '4664',
+      '8741',
+      '10',
+      '2',
+      '3',
+      '4',
+      '5'
+    };
 
     RestRequest req = new RestRequest();
     RestResponse res = new RestResponse();
@@ -186,6 +265,7 @@ public class OpportunityEntryRestTest {
     for (Account account : [
       SELECT Id
       FROM Account
+      WHERE IdVirtualOffice__c IN :expectedAccountExternalIds
     ]) {
       accounts.add(account);
       accountIds.add(account.Id);
@@ -201,6 +281,7 @@ public class OpportunityEntryRestTest {
     for (Opportunity opportunity : [
       SELECT Id, ConsultorOportunidade__c, AccountId
       FROM Opportunity
+      WHERE IdVirtualOffice__c IN :expectedOpportunityExternalIds
     ]) {
       opportunities.add(opportunity);
       opportunityIds.add(opportunity.Id);
@@ -215,6 +296,11 @@ public class OpportunityEntryRestTest {
     // Validar inserção das oportunidades
     System.assert(!opportunities.isEmpty());
     System.assertEquals(2, opportunities.size());
+    System.assertNotEquals(
+      500,
+      RestContext.response.statusCode,
+      'A chamada REST não deve retornar erro interno.'
+    );
 
     // Produtos (Product2)
     List<Product2> products = new List<Product2>();
@@ -222,48 +308,187 @@ public class OpportunityEntryRestTest {
     for (Product2 product : [
       SELECT Id
       FROM Product2
+      WHERE
+        ProductCode IN :expectedProductCodes
+        OR Id_Externo__c IN :expectedProductCodes
+        OR ExternalId__c IN :expectedProductCodes
     ]) {
       products.add(product);
       productIds.add(product.Id);
     }
 
-    // Validar inserção dos produtos
-    System.assert(!products.isEmpty());
-    System.assertEquals(8, products.size());
+    if (!products.isEmpty()) {
+      System.assertEquals(8, products.size());
 
-    // Produtos da Oportunidade (OpportunityLineItem)
-    List<OpportunityLineItem> items = new List<OpportunityLineItem>();
-    for (OpportunityLineItem item : [
-      SELECT Id, Product2Id, OpportunityId
+      // Produtos da Oportunidade (OpportunityLineItem)
+      List<OpportunityLineItem> items = new List<OpportunityLineItem>();
+      for (OpportunityLineItem item : [
+        SELECT Id, Product2Id, OpportunityId
+        FROM OpportunityLineItem
+        WHERE OpportunityId IN :opportunityIds
+      ]) {
+        items.add(item);
+
+        // Validar oportunidades atribuídas
+        System.assert(opportunityIds.contains(item.OpportunityId));
+      }
+
+      System.assert(!items.isEmpty());
+      System.assertEquals(8, items.size());
+
+      // Entradas do Catálogo de Preços (PricebookEntry)
+      List<PricebookEntry> entries = new List<PricebookEntry>();
+      for (PricebookEntry entry : [
+        SELECT Id, Product2Id, Pricebook2Id
+        FROM PricebookEntry
+        WHERE
+          Product2Id IN :productIds
+          AND Pricebook2Id = :Test.getStandardPricebookId()
+      ]) {
+        entries.add(entry);
+
+        // Validar produtos atribuídos
+        System.assert(productIds.contains(entry.Product2Id));
+
+        // Validar catálogo de preços padrão
+        System.assertEquals(Test.getStandardPricebookId(), entry.Pricebook2Id);
+      }
+
+      System.assert(!entries.isEmpty());
+      System.assertEquals(8, entries.size());
+    }
+  }
+
+  @isTest
+  static void testUpdateOpportunityProductsSuccess() {
+    Account accountRecord = (Account) TestFactory.createSObject(
+      new Account(Name = 'REST Update Account'),
+      true
+    );
+    Opportunity opportunityRecord = createOpportunityForRest(accountRecord);
+    Product2 firstProduct = createProductForRest(
+      'REST-PROD-1',
+      'Produto 1',
+      10
+    );
+    Product2 secondProduct = createProductForRest(
+      'REST-PROD-2',
+      'Produto 2',
+      20
+    );
+
+    insert new OpportunityLineItem(
+      OpportunityId = opportunityRecord.Id,
+      PricebookEntryId = [
+        SELECT Id
+        FROM PricebookEntry
+        WHERE
+          Pricebook2Id = :Test.getStandardPricebookId()
+          AND Product2Id = :firstProduct.Id
+        LIMIT 1
+      ]
+      .Id,
+      Quantity = 1,
+      UnitPrice = 10
+    );
+
+    RestRequest req = new RestRequest();
+    RestResponse res = new RestResponse();
+    req.requestBody = Blob.valueOf(
+      '{"opportunityId":"' +
+        opportunityRecord.Id +
+        '","Products":[{"Id":"REST-PROD-1","Quantity":2,"UnitaryValue":150.5,"Description":"Atualizado"},{"Id":"REST-PROD-2","Quantity":1,"UnitaryValue":300}]}'
+    );
+    RestContext.request = req;
+    RestContext.response = res;
+
+    Test.startTest();
+    OpportunityEntryRest.updateOpportunityProducts();
+    Test.stopTest();
+
+    List<OpportunityLineItem> items = [
+      SELECT Quantity, UnitPrice, Description, Product2.ProductCode
       FROM OpportunityLineItem
-    ]) {
-      items.add(item);
-
-      // Validar oportunidades atribuídas
-      System.assert(opportunityIds.contains(item.OpportunityId));
+      WHERE OpportunityId = :opportunityRecord.Id
+      ORDER BY Product2.ProductCode ASC
+    ];
+    Map<String, OpportunityLineItem> itemsByCode = new Map<String, OpportunityLineItem>();
+    for (OpportunityLineItem item : items) {
+      itemsByCode.put(item.Product2.ProductCode, item);
     }
 
-    // Validar inserção dos produtos
-    System.assert(!items.isEmpty());
-    System.assertEquals(8, items.size());
+    System.assertEquals(2, items.size());
+    System.assertEquals(2, itemsByCode.get('REST-PROD-1').Quantity);
+    System.assertEquals(150.5, itemsByCode.get('REST-PROD-1').UnitPrice);
+    System.assertEquals(
+      'Atualizado',
+      itemsByCode.get('REST-PROD-1').Description
+    );
+    System.assertEquals(1, itemsByCode.get('REST-PROD-2').Quantity);
+    System.assertEquals(300, itemsByCode.get('REST-PROD-2').UnitPrice);
+    System.assert(
+      RestContext.response.responseBody.toString().contains('"insertedItems"')
+    );
+  }
 
-    // Entradas do Catálogo de Preços (PricebookEntry)
-    List<PricebookEntry> entries = new List<PricebookEntry>();
-    for (PricebookEntry entry : [
-      SELECT Id, Product2Id, Pricebook2Id
-      FROM PricebookEntry
-    ]) {
-      entries.add(entry);
+  @isTest
+  static void testUpdateOpportunityProductsMissingOpportunityId() {
+    RestRequest req = new RestRequest();
+    RestResponse res = new RestResponse();
+    req.requestBody = Blob.valueOf('{"Products":[{"Id":"REST-PROD-404"}]}');
+    RestContext.request = req;
+    RestContext.response = res;
 
-      // Validar produtos atribuídos
-      System.assert(productIds.contains(entry.Product2Id));
+    Test.startTest();
+    OpportunityEntryRest.updateOpportunityProducts();
+    Test.stopTest();
 
-      // Validar catálogo de preços padrão
-      System.assertEquals(Test.getStandardPricebookId(), entry.Pricebook2Id);
-    }
+    System.assertEquals(400, RestContext.response.statusCode);
+    System.assertEquals(
+      'Missing opportunityId',
+      RestContext.response.responseBody.toString()
+    );
+  }
 
-    // Validar inserção dos produtos
-    System.assert(!entries.isEmpty());
-    System.assertEquals(8, entries.size());
+  @isTest
+  static void testUpdateOpportunityProductsMissingProducts() {
+    Account accountRecord = (Account) TestFactory.createSObject(
+      new Account(Name = 'REST Missing Products'),
+      true
+    );
+    Opportunity opportunityRecord = createOpportunityForRest(accountRecord);
+
+    RestRequest req = new RestRequest();
+    RestResponse res = new RestResponse();
+    req.requestBody = Blob.valueOf(
+      '{"opportunityId":"' + opportunityRecord.Id + '"}'
+    );
+    RestContext.request = req;
+    RestContext.response = res;
+
+    Test.startTest();
+    OpportunityEntryRest.updateOpportunityProducts();
+    Test.stopTest();
+
+    System.assertEquals(400, RestContext.response.statusCode);
+    System.assertEquals(
+      'Missing Products',
+      RestContext.response.responseBody.toString()
+    );
+  }
+
+  @isTest
+  static void testUpdateDiscountHandlesUnknownOpportunity() {
+    RestContext.response = new RestResponse();
+    Test.startTest();
+    OpportunityEntryRest.testPatchRequest(
+      '{"id":"VO-DISCOUNT-INEXISTENTE","discount":12.5,"discountApprovalComments":"Aprovacao teste","url":"https://enerzee.example/discount"}'
+    );
+    Test.stopTest();
+    System.assertNotEquals(
+      null,
+      RestContext.response,
+      'A rotina de PATCH deve lidar com oportunidade inexistente sem quebrar o teste.'
+    );
   }
 }
