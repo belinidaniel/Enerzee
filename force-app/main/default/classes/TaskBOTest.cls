@@ -565,7 +565,6 @@ private class TaskBOTest {
 
   @IsTest
   static void shouldUpdateViabilityStatusOnAgendamentoDeVisita() {
-    Test.disableProcessesAndFlows();
     Account acc = (Account) TestFactory.createSObject(new Account(), true);
     Opportunity opp = (Opportunity) TestFactory.createSObject(
       new Opportunity(AccountId = acc.Id),
@@ -575,6 +574,12 @@ private class TaskBOTest {
       new ViabilityStudy__c(Opportunity__c = opp.Id),
       true
     );
+
+    delete [
+      SELECT Id
+      FROM Task
+      WHERE WhatId = :vs.Id AND Subject = 'AGENDAMENTO DE VISITA'
+    ];
 
     Task oldTask = new Task(
       Subject = 'AGENDAMENTO DE VISITA',
@@ -655,7 +660,6 @@ private class TaskBOTest {
 
   @IsTest
   static void shouldSkipViabilityUpdateWhenOldTaskNotFound() {
-    Test.disableProcessesAndFlows();
     Account acc = (Account) TestFactory.createSObject(new Account(), true);
     Opportunity opp = (Opportunity) TestFactory.createSObject(
       new Opportunity(AccountId = acc.Id),
@@ -665,6 +669,12 @@ private class TaskBOTest {
       new ViabilityStudy__c(Opportunity__c = opp.Id),
       true
     );
+
+    delete [
+      SELECT Id
+      FROM Task
+      WHERE WhatId = :vs.Id AND Subject = 'AGENDAMENTO DE VISITA'
+    ];
 
     Task task = new Task(
       Subject = 'AGENDAMENTO DE VISITA',
@@ -819,7 +829,6 @@ private class TaskBOTest {
 
   @IsTest
   static void shouldValidateRequiredFieldSetsOnCompletionWithConcludingTask() {
-    Test.disableProcessesAndFlows();
     Account acc = (Account) TestFactory.createSObject(new Account(), true);
     Opportunity opp = (Opportunity) TestFactory.createSObject(
       new Opportunity(AccountId = acc.Id),
@@ -829,6 +838,12 @@ private class TaskBOTest {
       new ViabilityStudy__c(Opportunity__c = opp.Id),
       true
     );
+
+    delete [
+      SELECT Id
+      FROM Task
+      WHERE WhatId = :vs.Id AND Subject = 'AGENDAMENTO DE VISITA'
+    ];
 
     Task oldTask = new Task(
       Subject = 'AGENDAMENTO DE VISITA',

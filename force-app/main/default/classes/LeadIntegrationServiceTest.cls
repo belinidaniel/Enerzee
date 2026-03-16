@@ -109,9 +109,6 @@ private class LeadIntegrationServiceTest {
     if (leadFields.containsKey('ValorContaEnergia__c')) {
       leadRecord.put('ValorContaEnergia__c', 'Até R$ 200');
     }
-    if (leadFields.containsKey('Rating')) {
-      leadRecord.put('Rating', 'Hot');
-    }
     if (leadFields.containsKey('Lb065_ProdutoInteresse__c')) {
       leadRecord.put('Lb065_ProdutoInteresse__c', 'Solar');
     }
@@ -125,7 +122,6 @@ private class LeadIntegrationServiceTest {
       leadRecord.put('ConsultorRegional__c', createConsultant().Id);
     }
 
-    Test.disableProcessesAndFlows();
     LeadTriggerHandler.disableTrigger();
     try {
       insert leadRecord;

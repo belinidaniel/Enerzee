@@ -102,9 +102,9 @@ private class RestLeadConvertTest {
     Lead leadRecord = new Lead(
       LastName = 'Lead Convert Success',
       Company = 'Enerzee',
-      CPFCNPJ__c = document
+      CPFCNPJ__c = document,
+      FalarComAgente__c = true
     );
-    Test.disableProcessesAndFlows();
     insert leadRecord;
 
     RestContext.request = new RestRequest();
