@@ -8,6 +8,35 @@
  **/
 @IsTest
 private class InstalacaoTaskBOTest {
+  private static Projeto__c buildProject(Account acc, Opportunity opp) {
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(Opportunity__c = opp.Id),
+      true
+    );
+    return (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = viability.Id,
+        Conta__c = acc.Id,
+        TipoObra__c = 'UFVMicro',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
+    );
+  }
+
+  private static Instalacao__c insertInstalacao(Id projectId, String status) {
+    Instalacao__c inst = new Instalacao__c(
+      Projeto__c = projectId,
+      Status__c = status
+    );
+    insert inst;
+    return inst;
+  }
+
   @IsTest
   static void shouldHandleEmptyInputs() {
     InstalacaoTaskBO.createTasks(
@@ -31,31 +60,8 @@ private class InstalacaoTaskBOTest {
       new Opportunity(AccountId = acc.Id),
       true
     );
-    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
-      new ViabilityStudy__c(Opportunity__c = opp.Id),
-      true
-    );
-    Projeto__c project = (Projeto__c) TestFactory.createSObject(
-      new Projeto__c(
-        Oportunidade__c = opp.Id,
-        Viabilidade__c = viability.Id,
-        Conta__c = acc.Id,
-        TipoObra__c = 'UFVMicro',
-        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
-        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
-          .get('UFVMicro')
-          .getRecordTypeId()
-      ),
-      true
-    );
-
-    Instalacao__c inst = (Instalacao__c) TestFactory.createSObject(
-      new Instalacao__c(
-        Projeto__c = project.Id,
-        Status__c = ProjetoUtils.STATUS_OBRA_EM_EXECUCAO
-      ),
-      true
-    );
+    Projeto__c project = buildProject(acc, opp);
+    Instalacao__c inst = insertInstalacao(project.Id, ProjetoUtils.STATUS_OBRA_EM_EXECUCAO);
 
     Test.startTest();
     InstalacaoTaskBO.createTasks(
@@ -74,31 +80,8 @@ private class InstalacaoTaskBOTest {
       new Opportunity(AccountId = acc.Id),
       true
     );
-    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
-      new ViabilityStudy__c(Opportunity__c = opp.Id),
-      true
-    );
-    Projeto__c project = (Projeto__c) TestFactory.createSObject(
-      new Projeto__c(
-        Oportunidade__c = opp.Id,
-        Viabilidade__c = viability.Id,
-        Conta__c = acc.Id,
-        TipoObra__c = 'UFVMicro',
-        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
-        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
-          .get('UFVMicro')
-          .getRecordTypeId()
-      ),
-      true
-    );
-
-    Instalacao__c inst = (Instalacao__c) TestFactory.createSObject(
-      new Instalacao__c(
-        Projeto__c = project.Id,
-        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_OBRA
-      ),
-      true
-    );
+    Projeto__c project = buildProject(acc, opp);
+    Instalacao__c inst = insertInstalacao(project.Id, ProjetoUtils.STATUS_PLANEJAMENTO_DE_OBRA);
 
     Test.startTest();
     InstalacaoTaskBO.createPlanningTasksAfterDelegar(inst.Id);
@@ -114,31 +97,8 @@ private class InstalacaoTaskBOTest {
       new Opportunity(AccountId = acc.Id),
       true
     );
-    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
-      new ViabilityStudy__c(Opportunity__c = opp.Id),
-      true
-    );
-    Projeto__c project = (Projeto__c) TestFactory.createSObject(
-      new Projeto__c(
-        Oportunidade__c = opp.Id,
-        Viabilidade__c = viability.Id,
-        Conta__c = acc.Id,
-        TipoObra__c = 'UFVMicro',
-        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
-        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
-          .get('UFVMicro')
-          .getRecordTypeId()
-      ),
-      true
-    );
-
-    Instalacao__c instOld = (Instalacao__c) TestFactory.createSObject(
-      new Instalacao__c(
-        Projeto__c = project.Id,
-        Status__c = ProjetoUtils.STATUS_OBRA_EM_EXECUCAO
-      ),
-      true
-    );
+    Projeto__c project = buildProject(acc, opp);
+    Instalacao__c instOld = insertInstalacao(project.Id, ProjetoUtils.STATUS_OBRA_EM_EXECUCAO);
     Instalacao__c instNew = new Instalacao__c(
       Id = instOld.Id,
       Projeto__c = project.Id,

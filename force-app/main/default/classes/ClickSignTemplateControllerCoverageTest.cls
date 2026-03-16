@@ -259,32 +259,18 @@ private class ClickSignTemplateControllerCoverageTest {
     );
     Assert.areEqual('no-mappings', noMappingResult, 'Sem mapeamentos deve retornar no-mappings.');
 
-    // For the mapped template path, a callout mock is required
-    Test.setMock(
-      HttpCalloutMock.class,
-      new TestMetadataUtils.MockHttpSuccess()
+    // Template with document but no ObjectMappings__c → no-document path
+    ClickSignTemplate__c templateWithDoc = new ClickSignTemplate__c(
+      Name = 'Template With Doc No Mappings',
+      SourceObject__c = 'Account',
+      Stage__c = 'Select Source'
     );
+    insert templateWithDoc;
 
-    ClickSignTemplate__c mappedTemplate = [
-      SELECT Id, ObjectMappings__c
-      FROM ClickSignTemplate__c
-      WHERE ExternalId__c = 'tmpl-coverage'
-      LIMIT 1
-    ];
-
-    Test.startTest();
-    try {
-      String mappedResult = ClickSignTemplateController.generateTemplateFromMappings(
-        mappedTemplate.Id
-      );
-      Assert.isTrue(
-        mappedResult == 'no-document' || mappedResult == 'queued',
-        'Deve retornar no-document ou queued.'
-      );
-    } catch (AuraHandledException e) {
-      // acceptable when ClickSign metadata not configured
-    }
-    Test.stopTest();
+    String noDocResult = ClickSignTemplateController.generateTemplateFromMappings(
+      templateWithDoc.Id
+    );
+    Assert.areEqual('no-mappings', noDocResult, 'Template sem mapeamentos deve retornar no-mappings.');
   }
 
   @IsTest
