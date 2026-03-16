@@ -32,10 +32,7 @@ private class InstalacaoTaskBOTest {
       true
     );
     ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
-      new ViabilityStudy__c(
-        Opportunity__c = opp.Id,
-        TypeWorkProjectFeasibility__c = 'UFV Micro'
-      ),
+      new ViabilityStudy__c(Opportunity__c = opp.Id),
       true
     );
     Projeto__c project = (Projeto__c) TestFactory.createSObject(
@@ -44,7 +41,10 @@ private class InstalacaoTaskBOTest {
         Viabilidade__c = viability.Id,
         Conta__c = acc.Id,
         TipoObra__c = 'UFVMicro',
-        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
       ),
       true
     );
@@ -75,10 +75,7 @@ private class InstalacaoTaskBOTest {
       true
     );
     ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
-      new ViabilityStudy__c(
-        Opportunity__c = opp.Id,
-        TypeWorkProjectFeasibility__c = 'UFV Micro'
-      ),
+      new ViabilityStudy__c(Opportunity__c = opp.Id),
       true
     );
     Projeto__c project = (Projeto__c) TestFactory.createSObject(
@@ -87,7 +84,10 @@ private class InstalacaoTaskBOTest {
         Viabilidade__c = viability.Id,
         Conta__c = acc.Id,
         TipoObra__c = 'UFVMicro',
-        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
       ),
       true
     );
@@ -115,10 +115,7 @@ private class InstalacaoTaskBOTest {
       true
     );
     ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
-      new ViabilityStudy__c(
-        Opportunity__c = opp.Id,
-        TypeWorkProjectFeasibility__c = 'UFV Micro'
-      ),
+      new ViabilityStudy__c(Opportunity__c = opp.Id),
       true
     );
     Projeto__c project = (Projeto__c) TestFactory.createSObject(
@@ -127,7 +124,10 @@ private class InstalacaoTaskBOTest {
         Viabilidade__c = viability.Id,
         Conta__c = acc.Id,
         TipoObra__c = 'UFVMicro',
-        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
       ),
       true
     );

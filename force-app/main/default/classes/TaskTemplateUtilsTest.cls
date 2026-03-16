@@ -129,6 +129,7 @@ private class TaskTemplateUtilsTest {
   static void shouldResolveOwnerWithUsuarioOwner() {
     Account acc = new Account(Name = 'TTUtils Acc Owner');
     insert acc;
+    acc = [SELECT Id, OwnerId FROM Account WHERE Id = :acc.Id];
 
     ProjetoBO.TaskProjectTableLine line = new ProjetoBO.TaskProjectTableLine();
     line.TipoDeProprietario = 'USUARIO';

@@ -614,7 +614,10 @@ private class TaskBOTest {
       true
     );
     ViabilityStudy__c vs = (ViabilityStudy__c) TestFactory.createSObject(
-      new ViabilityStudy__c(Opportunity__c = opp.Id),
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
       true
     );
 
@@ -736,7 +739,10 @@ private class TaskBOTest {
         Viabilidade__c = viability.Id,
         Conta__c = acc.Id,
         TipoObra__c = 'UFVMicro',
-        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
       ),
       true
     );
@@ -783,7 +789,10 @@ private class TaskBOTest {
         Viabilidade__c = viability.Id,
         Conta__c = acc.Id,
         TipoObra__c = 'UFVMicro',
-        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
       ),
       true
     );

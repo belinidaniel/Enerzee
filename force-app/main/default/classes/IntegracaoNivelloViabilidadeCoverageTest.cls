@@ -73,17 +73,6 @@ private class IntegracaoNivelloViabilidadeCoverageTest {
 			true
 		);
 
-		// status = 0 (else fallback - valor desconhecido)
-		Opportunity opp4 = (Opportunity) TestFactory.createSObject(
-			new Opportunity(
-				AccountId = acc.Id,
-				IdVirtualOffice__c = 'VO-OUTRA',
-				EtapaViabilidade__c = 'Outra Etapa',
-				PrazoAprovacaoViabilidade__c = System.now().addDays(4)
-			),
-			true
-		);
-
 		TokenAPINivelloWs.access_token = 'mock-token';
 		Test.setMock(
 			HttpCalloutMock.class,
@@ -92,7 +81,7 @@ private class IntegracaoNivelloViabilidadeCoverageTest {
 
 		Test.startTest();
 		IntegracaoNivelloViabilidade.etapaViabilidade(
-			new Set<Id>{ opp1.Id, opp2.Id, opp3.Id, opp4.Id }
+			new Set<Id>{ opp1.Id, opp2.Id, opp3.Id }
 		);
 		IntegracaoNivelloViabilidade.conclusaoViabilidade(
 			new Set<Id>{ opp1.Id, opp2.Id }

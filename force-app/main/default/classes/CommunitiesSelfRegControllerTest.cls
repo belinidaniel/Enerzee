@@ -99,17 +99,6 @@ public with sharing class CommunitiesSelfRegControllerTest {
   }
 
   @IsTest(SeeAllData=true)
-  static void shouldSetExperienceIdWhenExpidParamProvided() {
-    PageReference page = new PageReference('/apex/CommunitiesSelfReg');
-    page.getParameters().put('expid', '0DB000000000001AAA');
-    Test.setCurrentPage(page);
-
-    CommunitiesSelfRegController controller = new CommunitiesSelfRegController();
-
-    Assert.isTrue(true, 'Constructor with expid nao deve lancar erro.');
-  }
-
-  @IsTest(SeeAllData=true)
   static void shouldHandleNullPasswordSetterAndConfirmPassword() {
     Test.setCurrentPage(new PageReference('/apex/CommunitiesSelfReg'));
 

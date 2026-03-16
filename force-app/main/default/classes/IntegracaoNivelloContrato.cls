@@ -16,7 +16,8 @@ public without sharing class IntegracaoNivelloContrato {
         LinkContrato__c,
         recordType.Name,
         Status__c,
-        StageName
+        StageName,
+        ValorTotalProposta__c
       FROM Opportunity
       WHERE Id IN :triggerIds
     ];

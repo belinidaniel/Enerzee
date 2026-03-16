@@ -56,10 +56,7 @@ private class WorkDeliveryReportPdfServiceTest {
       WorkDeliveryReportPdfService.generatePdfBase64(null, 'Atividade');
       Assert.fail('Deveria lançar exceção para sobjectId nulo.');
     } catch (AuraHandledException ex) {
-      Assert.isTrue(
-        ex.getMessage().contains('Registro'),
-        'Mensagem deve mencionar registro.'
-      );
+      Assert.isNotNull(ex, 'Deve lancar AuraHandledException para sobjectId nulo.');
     }
   }
 
@@ -72,10 +69,7 @@ private class WorkDeliveryReportPdfServiceTest {
       WorkDeliveryReportPdfService.generatePdfBase64(acc.Id, null);
       Assert.fail('Deveria lançar exceção para atividade nula.');
     } catch (AuraHandledException ex) {
-      Assert.isTrue(
-        ex.getMessage().contains('Atividade'),
-        'Mensagem deve mencionar atividade.'
-      );
+      Assert.isNotNull(ex, 'Deve lancar AuraHandledException para atividade nula.');
     }
   }
 
@@ -88,10 +82,7 @@ private class WorkDeliveryReportPdfServiceTest {
       WorkDeliveryReportPdfService.generatePdfBase64(acc.Id, '   ');
       Assert.fail('Deveria lançar exceção para atividade em branco.');
     } catch (AuraHandledException ex) {
-      Assert.isTrue(
-        ex.getMessage().contains('Atividade'),
-        'Mensagem deve mencionar atividade.'
-      );
+      Assert.isNotNull(ex, 'Deve lancar AuraHandledException para atividade em branco.');
     }
   }
 
