@@ -337,6 +337,22 @@ global with sharing class OpportunityEntryRest {
       }
     }
 
+    // Processar Composições — só executa se a chave 'Compositions' estiver presente no payload
+    // (null = chave ausente = não mexer; [] = remover todas)
+    Map<String, Id> compositionExternalIdToId = new Map<String, Id>();
+    List<Object> compositionsRaw = (List<Object>) payload.get('Compositions');
+    Set<String> incomingCompositionExtIds = new Set<String>();
+
+    if (compositionsRaw != null) {
+      for (Object compObj : compositionsRaw) {
+        Map<String, Object> compMap = (Map<String, Object>) compObj;
+        String extId = (String) compMap.get('ExternalId');
+        if (!String.isBlank(extId)) {
+          incomingCompositionExtIds.add(extId);
+        }
+      }
+    }
+
     // Deletar OpportunityLineItems existentes da oportunidade
     List<OpportunityLineItem> itemsToDelete = [
       SELECT Id
@@ -346,6 +362,101 @@ global with sharing class OpportunityEntryRest {
     ];
     if (!itemsToDelete.isEmpty()) {
       delete itemsToDelete;
+    }
+
+    // Remover Composições que não vieram no payload (cenário: remoção de composição)
+    // Só executa se 'Compositions' estiver presente no payload (null = não mexer)
+    if (compositionsRaw != null) {
+      List<Composition__c> orphanCompositions = [
+        SELECT Id
+        FROM Composition__c
+        WHERE
+          Opportunity__c = :opp.Id
+          AND ExternalId__c NOT IN :incomingCompositionExtIds
+        WITH SECURITY_ENFORCED
+      ];
+      if (!orphanCompositions.isEmpty()) {
+        delete orphanCompositions;
+      }
+    }
+
+    // Upsert das Composições recebidas no payload
+    if (compositionsRaw != null && !compositionsRaw.isEmpty()) {
+      List<Composition__c> compositionsToUpsert = new List<Composition__c>();
+      for (Object compObj : compositionsRaw) {
+        Map<String, Object> compMap = (Map<String, Object>) compObj;
+        String extId = (String) compMap.get('ExternalId');
+        if (String.isBlank(extId)) {
+          continue;
+        }
+        Composition__c comp = new Composition__c(
+          ExternalId__c = extId,
+          Name = compMap.containsKey('Name') && compMap.get('Name') != null
+            ? (String) compMap.get('Name')
+            : extId,
+          Opportunity__c = opp.Id,
+          ByIntegration__c = true
+        );
+        if (compMap.get('Bdi') != null) {
+          comp.Bdi__c = Decimal.valueOf(String.valueOf(compMap.get('Bdi')));
+        }
+        if (compMap.get('Direct') != null) {
+          comp.Direct__c = Decimal.valueOf(
+            String.valueOf(compMap.get('Direct'))
+          );
+        }
+        if (compMap.get('Rede') != null) {
+          comp.Network3750__c = Decimal.valueOf(
+            String.valueOf(compMap.get('Rede'))
+          );
+        }
+        if (compMap.get('Pontos') != null) {
+          comp.Points__c = Decimal.valueOf(
+            String.valueOf(compMap.get('Pontos'))
+          );
+        }
+        if (compMap.get('Installation') != null) {
+          comp.Installation__c = Decimal.valueOf(
+            String.valueOf(compMap.get('Installation'))
+          );
+        }
+        if (compMap.get('AdditionalFixedCost') != null) {
+          comp.AdditionalFixedCost__c = Decimal.valueOf(
+            String.valueOf(compMap.get('AdditionalFixedCost'))
+          );
+        }
+        if (compMap.get('Coupling') != null) {
+          comp.Coupling__c = Decimal.valueOf(
+            String.valueOf(compMap.get('Coupling'))
+          );
+        }
+        if (compMap.get('FinancialCostWeg') != null) {
+          comp.FinancialCostWeg__c = Decimal.valueOf(
+            String.valueOf(compMap.get('FinancialCostWeg'))
+          );
+        }
+        if (compMap.get('TotalProductValue') != null) {
+          comp.TotalProductValue__c = Decimal.valueOf(
+            String.valueOf(compMap.get('TotalProductValue'))
+          );
+        }
+        compositionsToUpsert.add(comp);
+      }
+      if (!compositionsToUpsert.isEmpty()) {
+        List<Database.UpsertResult> upsertResults = Database.upsert(
+          compositionsToUpsert,
+          Composition__c.ExternalId__c,
+          false
+        );
+        for (Integer i = 0; i < upsertResults.size(); i++) {
+          if (upsertResults.get(i).isSuccess()) {
+            compositionExternalIdToId.put(
+              compositionsToUpsert.get(i).ExternalId__c,
+              upsertResults.get(i).getId()
+            );
+          }
+        }
+      }
     }
 
     // Criar novos OpportunityLineItems
@@ -363,8 +474,6 @@ global with sharing class OpportunityEntryRest {
         return;
       }
 
-      if (product2Id == null)
-        continue;
       OpportunityLineItem oli = new OpportunityLineItem();
       oli.OpportunityId = opp.Id;
       oli.Product2Id = product2Id;
@@ -381,6 +490,13 @@ global with sharing class OpportunityEntryRest {
       ) {
         oli.Description = String.valueOf(prodMap.get('Description'));
       }
+      String compExtId = (String) prodMap.get('CompositionExternalId');
+      if (
+        !String.isBlank(compExtId) &&
+        compositionExternalIdToId.containsKey(compExtId)
+      ) {
+        oli.Composition__c = compositionExternalIdToId.get(compExtId);
+      }
       itemsToInsert.add(oli);
     }
     if (!itemsToInsert.isEmpty()) {
@@ -391,6 +507,7 @@ global with sharing class OpportunityEntryRest {
     Map<String, Object> resp = new Map<String, Object>();
     resp.put('opportunityId', opp.Id);
     resp.put('insertedItems', itemsToInsert.size());
+    resp.put('upsertedCompositions', compositionExternalIdToId.size());
     RestContext.response.responseBody = Blob.valueOf(
       JSON.serializePretty(resp)
     );
