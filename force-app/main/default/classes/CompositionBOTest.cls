@@ -21,7 +21,10 @@ private class CompositionBOTest {
 
   private static Opportunity createOpportunity() {
     return (Opportunity) TestFactory.createSObject(
-      new Opportunity(AccountId = getAccount().Id),
+      new Opportunity(
+        AccountId = getAccount().Id,
+        IdVirtualOffice__c = TestFactory.nextUniqueValue('VO')
+      ),
       true
     );
   }
