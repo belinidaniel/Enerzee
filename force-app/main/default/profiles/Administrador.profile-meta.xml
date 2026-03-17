@@ -3139,7 +3139,11 @@
         <field>Case.Type</field>
         <readable>true</readable>
     </fieldPermissions>
-
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Case.rsplus__Phone_Number__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
         <field>ClickSignEnvelope__c.Account__c</field>
@@ -9438,6 +9442,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Product2.Caracteristica3__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Product2.Category__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
