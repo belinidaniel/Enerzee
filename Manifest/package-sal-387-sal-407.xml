@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <!-- ─── Custom Object: Composition__c (SAL-407) ─────────────────────── -->
+        <members>Composition__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <!-- ─── Fields ────────────────────────────────────────────────────────
+             Composition__c (13 novos campos) + OLI.Composition__c (SAL-407)
+             Product2.ExternalId__c + Product2.Id_Externo__c (SAL-387 / migração)
+        -->
+        <members>Composition__c.AdditionalFixedCost__c</members>
+        <members>Composition__c.Bdi__c</members>
+        <members>Composition__c.ByIntegration__c</members>
+        <members>Composition__c.Coupling__c</members>
+        <members>Composition__c.Direct__c</members>
+        <members>Composition__c.ExternalId__c</members>
+        <members>Composition__c.FinancialCostWeg__c</members>
+        <members>Composition__c.Installation__c</members>
+        <members>Composition__c.Nemi__c</members>
+        <members>Composition__c.Network3750__c</members>
+        <members>Composition__c.Opportunity__c</members>
+        <members>Composition__c.Points__c</members>
+        <members>Composition__c.TotalProductValue__c</members>
+        <members>OpportunityLineItem.Composition__c</members>
+        <members>Product2.ExternalId__c</members>
+        <members>Product2.Id_Externo__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <!-- ─── Apex Classes ──────────────────────────────────────────────────
+             SAL-407: CompositionBO, OpportunityRecordsTO, OpportunityBO, OpportunityEntryRest
+             SAL-387: ProductBO, ProductUpdateEntryRest
+             Migração Id_Externo__c: TestFactory, TestFactoryDefaults
+        -->
+        <members>CompositionBO</members>
+        <members>CompositionBOTest</members>
+        <members>IntegracaoSAPTest</members>
+        <members>KitInstalacaoTriggerTest</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityBOHighCoverageTest</members>
+        <members>OpportunityEntryRest</members>
+        <members>OpportunityEntryRestTest</members>
+        <members>OpportunityRecordsTO</members>
+        <members>PDFControllerExtensionExtraTest</members>
+        <members>ProductBO</members>
+        <members>ProductUpdateEntryRest</members>
+        <members>ProductUpdateEntryRestTest</members>
+        <members>TestFactory</members>
+        <members>TestFactoryDefaults</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <!-- ─── Layouts ───────────────────────────────────────────────────────
+             SAL-407: 11 layouts de Opportunity (related list Composition__c)
+                      Composition__c layout (novo)
+                      OpportunityLineItem (campo Composition__c)
+             Migração: Product2 layout (ExternalId__c como Required)
+        -->
+        <members>Composition__c-Composition Layout</members>
+        <members>OpportunityLineItem-Opportunity Product Layout</members>
+        <members>Opportunity-Opportunity Layout</members>
+        <members>Opportunity-Opportunity Layout Ezee Livre</members>
+        <members>Opportunity-Opportunity Layout Ezee Solar</members>
+        <members>Opportunity-Opportunity Layout Micro</members>
+        <members>Opportunity-Opportunity Layout Mini</members>
+        <members
+    >Opportunity-Informe os dados da proposta - Grupo A -  Mini - Elaboração de proposta</members>
+        <members
+    >Opportunity-Informe os dados da proposta - Grupo A - Micro - Elaboração de proposta</members>
+        <members
+    >Opportunity-Informe os dados da proposta - Grupo B - Micro - Elaboração de proposta</members>
+        <members
+    >Opportunity-Informe os dados da proposta - Grupo B - Mini - Elaboração de proposta</members>
+        <members
+    >Opportunity-Inserir dados da viabilidade - Micro - Análise viabilidade</members>
+        <members
+    >Opportunity-Inserir dados da viabilidade - Mini - Análise viabilidade</members>
+        <!-- Product2-Product Layout excluído: referencia Category__c que não existe no org -->
+        <name>Layout</name>
+    </types>
+    <types>
+        <!-- ─── FlexiPages ────────────────────────────────────────────────────
+             SAL-407: página de registro do Composition__c (novo)
+             Produto_P_gina_de_registro excluída: bug pré-existente no tabset (null label)
+        -->
+        <members>Composition_Record_Page</members>
+        <name>FlexiPage</name>
+    </types>
+    <types>
+        <!-- ─── Permission Sets ───────────────────────────────────────────────
+             SAL-407: acesso aos campos de Composition__c
+        -->
+        <members>Acesso_a_sessao_custos_da_composicao_da_proposta</members>
+        <name>PermissionSet</name>
+    </types>
+    <version>62.0</version>
+</Package>

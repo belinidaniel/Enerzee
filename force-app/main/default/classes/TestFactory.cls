@@ -164,31 +164,15 @@ public class TestFactory {
       Product2 product = (Product2) sObj;
 
       String externalId = (String) product.get('ExternalId__c');
-      String legacyExternalId = (String) product.get('Id_Externo__c');
       String productCode = product.ProductCode;
 
-      if (String.isBlank(externalId) && !String.isBlank(legacyExternalId)) {
-        externalId = legacyExternalId;
+      if (String.isBlank(externalId)) {
+        externalId = nextUniqueValue('PROD');
         product.put('ExternalId__c', externalId);
       }
 
-      if (String.isBlank(legacyExternalId) && !String.isBlank(externalId)) {
-        legacyExternalId = externalId;
-        product.put('Id_Externo__c', legacyExternalId);
-      }
-
-      if (String.isBlank(externalId) && String.isBlank(legacyExternalId)) {
-        String generatedExternalId = nextUniqueValue('PROD');
-        product.put('ExternalId__c', generatedExternalId);
-        product.put('Id_Externo__c', generatedExternalId);
-        externalId = generatedExternalId;
-        legacyExternalId = generatedExternalId;
-      }
-
       if (String.isBlank(productCode)) {
-        product.ProductCode = !String.isBlank(legacyExternalId)
-          ? legacyExternalId
-          : externalId;
+        product.ProductCode = externalId;
       }
 
       if (String.isBlank(product.Name)) {

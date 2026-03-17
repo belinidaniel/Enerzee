@@ -311,15 +311,14 @@ public class OpportunityBO {
       for (OpportunityRecordsTO.Product product : newProducts) {
         productsToInsert.add(
           new Product2(
-            Id_Externo__c = product.Id,
+            ExternalId__c = product.Id,
             ProductCode = product.Id,
             Preco_Unitario__c = product.UnitaryValue,
-            Name = product.Name,
-            ExternalId__c = product.Id
+            Name = product.Name
           )
         );
       }
-      upsert productsToInsert Id_Externo__c;
+      upsert productsToInsert ExternalId__c;
 
       for (Product2 product : productsToInsert) {
         externalIdToProductId.put(product.ProductCode, product.Id);

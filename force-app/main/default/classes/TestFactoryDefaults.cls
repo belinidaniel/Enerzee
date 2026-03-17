@@ -528,7 +528,6 @@ public class TestFactoryDefaults {
       return new Map<Schema.SObjectField, Object>{
         Product2.Name => 'Test Faturamento - Default',
         Product2.ProductCode => productIdentifier,
-        Product2.Id_Externo__c => productIdentifier,
         Product2.ExternalId__c => productIdentifier,
         Product2.Description => 'Medidor bidirecional modelo XYZ, fabricante Azurth. Modelo AJK-09856',
         Product2.Family => 'SistFotovoltaicos',

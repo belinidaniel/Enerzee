@@ -19,7 +19,6 @@ public class KitInstalacaoTriggerTest {
     Product2 product = (Product2) TestFactory.createSObject(
       new Product2(
         ExternalId__c = productExternalId,
-        Id_Externo__c = productExternalId,
         ProductCode = productExternalId,
         Name = 'Produto Kit Teste'
       ),

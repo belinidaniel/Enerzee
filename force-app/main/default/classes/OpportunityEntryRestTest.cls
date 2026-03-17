@@ -18,7 +18,6 @@ public class OpportunityEntryRestTest {
         Name = name,
         ProductCode = externalId,
         ExternalId__c = externalId,
-        Id_Externo__c = externalId,
         Preco_Unitario__c = unitPrice
       ),
       true
@@ -310,7 +309,6 @@ public class OpportunityEntryRestTest {
       FROM Product2
       WHERE
         ProductCode IN :expectedProductCodes
-        OR Id_Externo__c IN :expectedProductCodes
         OR ExternalId__c IN :expectedProductCodes
     ]) {
       products.add(product);
