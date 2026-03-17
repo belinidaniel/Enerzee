@@ -1054,7 +1054,6 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
-        <fields>NAME</fields>
         <fields>Network3750__c</fields>
         <fields>TotalProductValue__c</fields>
         <fields>Installation__c</fields>
