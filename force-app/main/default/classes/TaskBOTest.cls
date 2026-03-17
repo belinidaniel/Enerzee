@@ -575,6 +575,12 @@ private class TaskBOTest {
       true
     );
 
+    delete [
+      SELECT Id
+      FROM Task
+      WHERE WhatId = :vs.Id AND Subject = 'AGENDAMENTO DE VISITA'
+    ];
+
     Task oldTask = new Task(
       Subject = 'AGENDAMENTO DE VISITA',
       WhatId = vs.Id,
@@ -663,6 +669,12 @@ private class TaskBOTest {
       new ViabilityStudy__c(Opportunity__c = opp.Id),
       true
     );
+
+    delete [
+      SELECT Id
+      FROM Task
+      WHERE WhatId = :vs.Id AND Subject = 'AGENDAMENTO DE VISITA'
+    ];
 
     Task task = new Task(
       Subject = 'AGENDAMENTO DE VISITA',
@@ -826,6 +838,12 @@ private class TaskBOTest {
       new ViabilityStudy__c(Opportunity__c = opp.Id),
       true
     );
+
+    delete [
+      SELECT Id
+      FROM Task
+      WHERE WhatId = :vs.Id AND Subject = 'AGENDAMENTO DE VISITA'
+    ];
 
     Task oldTask = new Task(
       Subject = 'AGENDAMENTO DE VISITA',
