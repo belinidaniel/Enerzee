@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
     <layoutSections>
         <customLabel>false</customLabel>
@@ -381,7 +381,8 @@
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
-        <label>Características do Gerador Fotovoltáico - Dados técnicos dos módulos</label>
+        <label
+    >Características do Gerador Fotovoltáico - Dados técnicos dos módulos</label>
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -416,7 +417,8 @@
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
-        <label>Características do Gerador Fotovoltáico - Dados Técnicos dos Inversores</label>
+        <label
+    >Características do Gerador Fotovoltáico - Dados Técnicos dos Inversores</label>
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -697,7 +699,7 @@
                 <field>PrazoObraDias__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
+        <layoutColumns />
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -773,7 +775,7 @@
                 <field>PrecoCustosAdicionais__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
+        <layoutColumns />
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -841,7 +843,7 @@
                 <field>Description</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
+        <layoutColumns />
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -868,9 +870,9 @@
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
         <label>Custom Links</label>
-        <layoutColumns/>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
@@ -953,7 +955,15 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
-        <relatedList>Composition__c.Opportunity__c</relatedList>
+        <fields>NAME</fields>
+        <fields>Network3750__c</fields>
+        <fields>TotalProductValue__c</fields>
+        <fields>Installation__c</fields>
+        <fields>Points__c</fields>
+        <fields>Nemi__c</fields>
+        <fields>Bdi__c</fields>
+        <fields>Coupling__c</fields>
+        <relatedList>Composition__c.Opportunity__c</relatedList>    
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
