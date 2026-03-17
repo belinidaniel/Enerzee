@@ -236,7 +236,8 @@ private class OpportunityBOHighCoverageTest {
     Test.startTest();
     OpportunityBO.mapOpportunityLineItemFieldsRest(
       restObjectsToInsertedOpportunity,
-      externalIdToProductId
+      externalIdToProductId,
+      null
     );
     Test.stopTest();
     ProductTriggerHandler.enableTrigger();

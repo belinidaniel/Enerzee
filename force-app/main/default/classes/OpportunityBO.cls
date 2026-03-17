@@ -7,7 +7,7 @@
  * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
  *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
  *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentReminderTaskTest,
- *                       OpportunityDisqualifyLeadsTest, OpportunityTriggerTest
+ *                       OpportunityDisqualifyLeadsTest, OpportunityTriggerTest, PDFControllerExtensionExtraTest
  **/
 public class OpportunityBO {
   // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas
@@ -402,7 +402,8 @@ public class OpportunityBO {
       for (OpportunityRecordsTO.Product product : singleOpportunity.Products) {
         String productExternalId = String.valueOf(product.Id);
 
-        Id compositionId = (compositionExternalIdToId != null && !String.isBlank(product.CompositionExternalId))
+        Id compositionId = (compositionExternalIdToId != null &&
+          !String.isBlank(product.CompositionExternalId))
           ? compositionExternalIdToId.get(product.CompositionExternalId)
           : null;
 
