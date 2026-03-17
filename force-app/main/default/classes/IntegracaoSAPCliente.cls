@@ -230,17 +230,19 @@ public with sharing class IntegracaoSAPCliente {
     String body,
     String endpointName
   ) {
+    String resolvedEndpoint = Utils.getSAPMetadataName(endpointName);
     Integrador__mdt parametrosIntegracao = [
       SELECT Id, URL__c
       FROM Integrador__mdt
-      WHERE DeveloperName = :endpointName
+      WHERE DeveloperName = :resolvedEndpoint
       WITH SECURITY_ENFORCED
     ];
 
+    String tokenMetaName = Utils.getSAPMetadataName('TokenSAP');
     String tokenSAP = [
       SELECT Id, LastToken__c
       FROM Integrador__mdt
-      WHERE DeveloperName = 'TokenSAP'
+      WHERE DeveloperName = :tokenMetaName
       WITH SECURITY_ENFORCED
     ]
     .LastToken__c;
