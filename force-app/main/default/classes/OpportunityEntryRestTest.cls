@@ -477,6 +477,237 @@ public class OpportunityEntryRestTest {
     );
   }
 
+  // ─── PUT /OpportunityEntry — Cenários de Composição ────────────────────────
+
+  private static String buildPutBody(
+    String opportunityId,
+    String compositionsJson,
+    String productsJson
+  ) {
+    String body = '{"opportunityId":"' + opportunityId + '"';
+    if (compositionsJson != null) {
+      body += ',"Compositions":' + compositionsJson;
+    }
+    body += ',"Products":' + productsJson + '}';
+    return body;
+  }
+
+  /**
+   * Cenário 1: PUT com nova composição — deve criar Composition__c e vincular OLIs
+   */
+  @isTest
+  static void testPut_addNewComposition_createsAndLinksOlis() {
+    Account acc = (Account) TestFactory.createSObject(
+      new Account(Name = 'PUT Comp Add'),
+      true
+    );
+    Opportunity opp = createOpportunityForRest(acc);
+    Product2 prod = createProductForRest('PUT-PROD-C1', 'Produto Comp 1', 100);
+
+    RestRequest req = new RestRequest();
+    RestResponse res = new RestResponse();
+    req.requestBody = Blob.valueOf(
+      buildPutBody(
+        opp.Id,
+        '[{"ExternalId":"COMP-PUT-NEW","Name":"Nova Composição","Bdi":1000.0,"Direct":500.0,"TotalProductValue":5000.0}]',
+        '[{"Id":"PUT-PROD-C1","UnitaryValue":100,"Quantity":1,"CompositionExternalId":"COMP-PUT-NEW"}]'
+      )
+    );
+    RestContext.request = req;
+    RestContext.response = res;
+
+    Test.startTest();
+    OpportunityEntryRest.updateOpportunityProducts();
+    Test.stopTest();
+
+    Composition__c comp = [
+      SELECT Id, Bdi__c, Direct__c, TotalProductValue__c, ByIntegration__c
+      FROM Composition__c
+      WHERE ExternalId__c = 'COMP-PUT-NEW' AND Opportunity__c = :opp.Id
+      LIMIT 1
+    ];
+    Assert.areEqual(1000.0, comp.Bdi__c, 'Bdi__c incorreto');
+    Assert.areEqual(500.0, comp.Direct__c, 'Direct__c incorreto');
+    Assert.areEqual(
+      true,
+      comp.ByIntegration__c,
+      'ByIntegration__c deve ser true'
+    );
+
+    List<OpportunityLineItem> items = [
+      SELECT Composition__c
+      FROM OpportunityLineItem
+      WHERE OpportunityId = :opp.Id
+    ];
+    Assert.areEqual(1, items.size(), 'Deve existir 1 OLI');
+    Assert.areEqual(
+      comp.Id,
+      items[0].Composition__c,
+      'OLI deve estar vinculado à Composition__c'
+    );
+  }
+
+  /**
+   * Cenário 2: PUT com composição existente — deve atualizar os campos sem duplicar
+   */
+  @isTest
+  static void testPut_editExistingComposition_updatesWithoutDuplicate() {
+    Account acc = (Account) TestFactory.createSObject(
+      new Account(Name = 'PUT Comp Edit'),
+      true
+    );
+    Opportunity opp = createOpportunityForRest(acc);
+    Product2 prod = createProductForRest('PUT-PROD-C2', 'Produto Comp 2', 200);
+
+    insert new Composition__c(
+      ExternalId__c = 'COMP-PUT-EDIT',
+      Name = 'Composição Antiga',
+      Opportunity__c = opp.Id,
+      Bdi__c = 100.0,
+      ByIntegration__c = true
+    );
+
+    RestRequest req = new RestRequest();
+    RestResponse res = new RestResponse();
+    req.requestBody = Blob.valueOf(
+      buildPutBody(
+        opp.Id,
+        '[{"ExternalId":"COMP-PUT-EDIT","Name":"Composição Atualizada","Bdi":9999.0,"TotalProductValue":15000.0}]',
+        '[{"Id":"PUT-PROD-C2","UnitaryValue":200,"Quantity":1,"CompositionExternalId":"COMP-PUT-EDIT"}]'
+      )
+    );
+    RestContext.request = req;
+    RestContext.response = res;
+
+    Test.startTest();
+    OpportunityEntryRest.updateOpportunityProducts();
+    Test.stopTest();
+
+    List<Composition__c> compositions = [
+      SELECT Id, Bdi__c, TotalProductValue__c
+      FROM Composition__c
+      WHERE ExternalId__c = 'COMP-PUT-EDIT' AND Opportunity__c = :opp.Id
+    ];
+    Assert.areEqual(
+      1,
+      compositions.size(),
+      'Não deve duplicar a Composition__c'
+    );
+    Assert.areEqual(
+      9999.0,
+      compositions[0].Bdi__c,
+      'Bdi__c deve ter sido atualizado'
+    );
+    Assert.areEqual(
+      15000.0,
+      compositions[0].TotalProductValue__c,
+      'TotalProductValue__c deve ter sido atualizado'
+    );
+  }
+
+  /**
+   * Cenário 3: PUT sem composição anterior no payload — deve deletar a composição órfã
+   */
+  @isTest
+  static void testPut_removeComposition_deletesOrphan() {
+    Account acc = (Account) TestFactory.createSObject(
+      new Account(Name = 'PUT Comp Remove'),
+      true
+    );
+    Opportunity opp = createOpportunityForRest(acc);
+    Product2 prod = createProductForRest('PUT-PROD-C3', 'Produto Comp 3', 300);
+
+    insert new Composition__c(
+      ExternalId__c = 'COMP-PUT-ORPHAN',
+      Name = 'Composição Órfã',
+      Opportunity__c = opp.Id,
+      ByIntegration__c = true
+    );
+
+    // Envia payload com Compositions vazio — deve deletar COMP-PUT-ORPHAN
+    RestRequest req = new RestRequest();
+    RestResponse res = new RestResponse();
+    req.requestBody = Blob.valueOf(
+      buildPutBody(
+        opp.Id,
+        '[]',
+        '[{"Id":"PUT-PROD-C3","UnitaryValue":300,"Quantity":1}]'
+      )
+    );
+    RestContext.request = req;
+    RestContext.response = res;
+
+    Test.startTest();
+    OpportunityEntryRest.updateOpportunityProducts();
+    Test.stopTest();
+
+    Integer count = [
+      SELECT COUNT()
+      FROM Composition__c
+      WHERE Opportunity__c = :opp.Id
+    ];
+    Assert.areEqual(0, count, 'Composição órfã deve ter sido deletada');
+
+    List<OpportunityLineItem> items = [
+      SELECT Composition__c
+      FROM OpportunityLineItem
+      WHERE OpportunityId = :opp.Id
+    ];
+    Assert.areEqual(1, items.size(), 'OLI deve ter sido criado normalmente');
+    Assert.isNull(
+      items[0].Composition__c,
+      'OLI não deve ter Composition__c quando não há composição no payload'
+    );
+  }
+
+  /**
+   * Backward compat: PUT sem chave Compositions no JSON — composições existentes não são tocadas
+   */
+  @isTest
+  static void testPut_noCompositionsKey_leavesExistingUntouched() {
+    Account acc = (Account) TestFactory.createSObject(
+      new Account(Name = 'PUT Comp Compat'),
+      true
+    );
+    Opportunity opp = createOpportunityForRest(acc);
+    Product2 prod = createProductForRest('PUT-PROD-C4', 'Produto Comp 4', 400);
+
+    insert new Composition__c(
+      ExternalId__c = 'COMP-PUT-KEEP',
+      Name = 'Composição Preservada',
+      Opportunity__c = opp.Id,
+      ByIntegration__c = true
+    );
+
+    // Payload sem a chave Compositions
+    RestRequest req = new RestRequest();
+    RestResponse res = new RestResponse();
+    req.requestBody = Blob.valueOf(
+      buildPutBody(
+        opp.Id,
+        null,
+        '[{"Id":"PUT-PROD-C4","UnitaryValue":400,"Quantity":2}]'
+      )
+    );
+    RestContext.request = req;
+    RestContext.response = res;
+
+    Test.startTest();
+    OpportunityEntryRest.updateOpportunityProducts();
+    Test.stopTest();
+
+    Integer count = [
+      SELECT COUNT()
+      FROM Composition__c
+      WHERE ExternalId__c = 'COMP-PUT-KEEP' AND Opportunity__c = :opp.Id
+    ];
+    Assert.areEqual(
+      1,
+      count,
+      'Composição deve ser preservada quando chave Compositions ausente do payload'
+    );
+  }
+
   @isTest
   static void testUpdateDiscountHandlesUnknownOpportunity() {
     RestContext.response = new RestResponse();
