@@ -2,12 +2,25 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 03-17-2026
  * @last modified by  : Daniel Belini
  * @test              : OpportunityEntryRestTest
  **/
 @RestResource(urlMapping='/OpportunityEntry/*')
 global with sharing class OpportunityEntryRest {
+  // Mapa de chave JSON → campo da Composition__c (campos Currency do payload)
+  private static final Map<String, Schema.SObjectField> COMPOSITION_CURRENCY_FIELDS = new Map<String, Schema.SObjectField>{
+    'Bdi' => Composition__c.Bdi__c,
+    'Direct' => Composition__c.Direct__c,
+    'Rede' => Composition__c.Network3750__c,
+    'Pontos' => Composition__c.Points__c,
+    'Installation' => Composition__c.Installation__c,
+    'AdditionalFixedCost' => Composition__c.AdditionalFixedCost__c,
+    'Coupling' => Composition__c.Coupling__c,
+    'FinancialCostWeg' => Composition__c.FinancialCostWeg__c,
+    'TotalProductValue' => Composition__c.TotalProductValue__c
+  };
+
   @HttpPost
   global static void makePost() {
     try {
@@ -397,48 +410,13 @@ global with sharing class OpportunityEntryRest {
           Opportunity__c = opp.Id,
           ByIntegration__c = true
         );
-        if (compMap.get('Bdi') != null) {
-          comp.Bdi__c = Decimal.valueOf(String.valueOf(compMap.get('Bdi')));
-        }
-        if (compMap.get('Direct') != null) {
-          comp.Direct__c = Decimal.valueOf(
-            String.valueOf(compMap.get('Direct'))
-          );
-        }
-        if (compMap.get('Rede') != null) {
-          comp.Network3750__c = Decimal.valueOf(
-            String.valueOf(compMap.get('Rede'))
-          );
-        }
-        if (compMap.get('Pontos') != null) {
-          comp.Points__c = Decimal.valueOf(
-            String.valueOf(compMap.get('Pontos'))
-          );
-        }
-        if (compMap.get('Installation') != null) {
-          comp.Installation__c = Decimal.valueOf(
-            String.valueOf(compMap.get('Installation'))
-          );
-        }
-        if (compMap.get('AdditionalFixedCost') != null) {
-          comp.AdditionalFixedCost__c = Decimal.valueOf(
-            String.valueOf(compMap.get('AdditionalFixedCost'))
-          );
-        }
-        if (compMap.get('Coupling') != null) {
-          comp.Coupling__c = Decimal.valueOf(
-            String.valueOf(compMap.get('Coupling'))
-          );
-        }
-        if (compMap.get('FinancialCostWeg') != null) {
-          comp.FinancialCostWeg__c = Decimal.valueOf(
-            String.valueOf(compMap.get('FinancialCostWeg'))
-          );
-        }
-        if (compMap.get('TotalProductValue') != null) {
-          comp.TotalProductValue__c = Decimal.valueOf(
-            String.valueOf(compMap.get('TotalProductValue'))
-          );
+        for (String jsonKey : COMPOSITION_CURRENCY_FIELDS.keySet()) {
+          if (compMap.get(jsonKey) != null) {
+            comp.put(
+              COMPOSITION_CURRENCY_FIELDS.get(jsonKey),
+              Decimal.valueOf(String.valueOf(compMap.get(jsonKey)))
+            );
+          }
         }
         compositionsToUpsert.add(comp);
       }
