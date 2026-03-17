@@ -3139,11 +3139,7 @@
         <field>Case.Type</field>
         <readable>true</readable>
     </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Case.rsplus__Phone_Number__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
+
     <fieldPermissions>
         <editable>false</editable>
         <field>ClickSignEnvelope__c.Account__c</field>
