@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : IntegracaoSAPTest
+ * @test              : IntegracaoSAPCoverageTest, IntegracaoSAPTest
  **/
 public with sharing class IntegracaoSAPContrato {
   @future(callout=true)

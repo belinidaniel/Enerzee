@@ -182,7 +182,6 @@ private class OpportunityBOHighCoverageTest {
     Product2 existingProduct = (Product2) TestFactory.createSObject(
       new Product2(
         ProductCode = 'EXIST-PROD-' + String.valueOf(DateTime.now().getTime()),
-        Id_Externo__c = 'EXIST-PROD',
         ExternalId__c = 'EXIST-PROD'
       ),
       true
@@ -528,7 +527,6 @@ private class OpportunityBOHighCoverageTest {
     Product2 productRecord = (Product2) TestFactory.createSObject(
       new Product2(
         ProductCode = 'POT-PROD-' + String.valueOf(DateTime.now().getTime()),
-        Id_Externo__c = 'POT-PROD-' + String.valueOf(DateTime.now().getTime()),
         ExternalId__c = 'POT-PROD-' + String.valueOf(DateTime.now().getTime())
       ),
       true
