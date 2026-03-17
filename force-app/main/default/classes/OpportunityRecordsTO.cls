@@ -4,7 +4,8 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : OpportunityBOCoverageTest, OpportunityBOHighCoverageTest, OpportunityRecordsTOTest
+ * @test              : CompositionBOTest, OpportunityBOCoverageTest, OpportunityBOHighCoverageTest,
+ *                       OpportunityRecordsTOTest
  **/
 global with sharing class OpportunityRecordsTO {
   public class Opportunities {
@@ -66,6 +67,21 @@ global with sharing class OpportunityRecordsTO {
     public String SubTipo;
     public Boolean ProdutoSolar;
     public Datetime AppointmentDateTime;
+    public List<Composition> Compositions;
+  }
+
+  public class Composition {
+    public String ExternalId; // → Composition__c.ExternalId__c (chave de upsert)
+    public String Name; // → Composition__c.Name
+    public Double Bdi; // → Composition__c.Bdi__c
+    public Double Direct; // → Composition__c.Direct__c
+    public Double Rede; // → Composition__c.Network3750__c
+    public Double Pontos; // → Composition__c.Points__c
+    public Double Installation; // → Composition__c.Installation__c
+    public Double AdditionalFixedCost; // → Composition__c.AdditionalFixedCost__c
+    public Double Coupling; // → Composition__c.Coupling__c
+    public Double FinancialCostWeg; // → Composition__c.FinancialCostWeg__c
+    public Double TotalProductValue; // → Composition__c.TotalProductValue__c
   }
 
   public class Product {
@@ -83,6 +99,7 @@ global with sharing class OpportunityRecordsTO {
     public Double AdditionalFixedCost;
     public Double Coupling;
     public Double Bdi;
+    public String CompositionExternalId; // → Composition__c.ExternalId__c (qual composição este produto pertence)
   }
 
   public class Client {
