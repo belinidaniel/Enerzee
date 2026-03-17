@@ -1,9 +1,10 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 08-26-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : IntegracaoNivelloContratoTest
  **/
 public without sharing class IntegracaoNivelloContrato {
   @future(callout=true)
@@ -15,7 +16,8 @@ public without sharing class IntegracaoNivelloContrato {
         LinkContrato__c,
         recordType.Name,
         Status__c,
-        StageName
+        StageName,
+        ValorTotalProposta__c
       FROM Opportunity
       WHERE Id IN :triggerIds
     ];

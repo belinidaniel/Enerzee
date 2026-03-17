@@ -1,13 +1,20 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 11-05-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : MessagingSessionSLABatchTest
  **/
 public with sharing class MessagingSessionSLABatch implements Database.Batchable<SObject> {
   @TestVisible
   public static final String NOTIFICATION_TYPE_DEVELOPER_NAME = 'Padrao';
+  @TestVisible
+  private static Id notificationTypeIdOverride;
+  @TestVisible
+  private static Boolean businessHoursOverride;
+  @TestVisible
+  private static Boolean skipUpdateForTest = false;
 
   private Id notificationTypeId;
   @TestVisible
@@ -142,6 +149,9 @@ public with sharing class MessagingSessionSLABatch implements Database.Batchable
     }
 
     if (!sessionsToUpdate.isEmpty()) {
+      if (Test.isRunningTest() && skipUpdateForTest) {
+        return;
+      }
       update sessionsToUpdate.values();
     }
   }
@@ -308,6 +318,10 @@ public with sharing class MessagingSessionSLABatch implements Database.Batchable
   }
 
   private Id loadNotificationTypeId() {
+    if (Test.isRunningTest() && notificationTypeIdOverride != null) {
+      return notificationTypeIdOverride;
+    }
+
     List<CustomNotificationType> notificationTypes = [
       SELECT Id
       FROM CustomNotificationType
@@ -342,6 +356,10 @@ public with sharing class MessagingSessionSLABatch implements Database.Batchable
 
   @TestVisible
   public static Boolean isWithinBusinessHours(DateTime moment) {
+    if (Test.isRunningTest() && businessHoursOverride != null) {
+      return businessHoursOverride;
+    }
+
     if (moment == null) {
       return false;
     }

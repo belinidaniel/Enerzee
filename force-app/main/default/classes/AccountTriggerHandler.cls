@@ -1,3 +1,12 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : AccountTriggerHandlerTest, AccountTriggerTest, LeadBOTest, OpportunityBOCoverageTest,
+ *                       OpportunityBOHighCoverageTest, OpportunityUtilsTest
+ **/
 public class AccountTriggerHandler extends TriggerHandler {
   public AccountTriggerHandler() {
     super(

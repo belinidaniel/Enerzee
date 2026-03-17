@@ -1,9 +1,13 @@
 /**
- * @description				:
- * @author						: Daniel Belini
- * @group							:
- * @last modified on	: 03-13-2026
- * @last modified by	: Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
+ *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
+ *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentReminderTaskTest,
+ *                       OpportunityDisqualifyLeadsTest, OpportunityTriggerTest
  **/
 public class OpportunityBO {
   // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas
@@ -1526,8 +1530,8 @@ public class OpportunityBO {
           taskstoInsert.add(
             TaskBO.createTask(
               opportunity.Id,
-              'É necessário	 confirmar o pagamento da oportunidade ' +
-              Opportunity.Name,
+              'É necessário	confirmar o pagamento da oportunidade ' +
+              opportunity.Name,
               'PREENCHER OS CAMPOS:\n\n Fase com Valor Pagamento Confirmado \n\n',
               paymentTaskOwnerId,
               TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 3),

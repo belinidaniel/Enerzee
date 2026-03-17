@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : FaturamentoTriggerTest
+ **/
 public with sharing class FaturamentoBO {
   // Atribuir cliente ao campo correspondente no Faturamento, ao receber ID externo da Conta via integração
   public static void assignClientToIntegratedBilling(

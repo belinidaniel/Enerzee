@@ -1,9 +1,16 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 03-13-2026
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : AdditionalCoverageNewClassesTest, ClickSignUtilsCoverageTest, KitInstalacaoBOTest,
+ *                       OpportunityBOCoverageTest, OpportunityBOHighCoverageTest, OpportunityBOPaymentReminderTaskTest,
+ *                       OpportunityDiscountRequestControllerTest, OpportunityShareHandlerTest,
+ *                       OpportunityTriggerHandlerToggleTest, OpportunityTriggerTest, OpportunityUtilsTest,
+ *                       ProjetoBOCoverageTest, ProjetoTriggerTest, ProposalPendingControllerTest,
+ *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest, ServiceAppointmentBOTest,
+ *                       WorkDeliveryReportPdfControllerTest
  **/
 public class OpportunityTriggerHandler extends TriggerHandler {
   public OpportunityTriggerHandler() {

@@ -1,9 +1,10 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 11-24-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : IntegracaoNivelloPropostaTest, IntegracaoNivelloTest
  **/
 public with sharing class IntegracaoNivelloProposta {
   //Por razões de tamanho de pilha, esta classe processa apenas uma Oportunidade por vez

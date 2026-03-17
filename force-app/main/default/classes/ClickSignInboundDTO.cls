@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ClickSignInboundDTOTest
+ **/
 public class ClickSignInboundDTO {
   public Event event { get; set; }
   public Document document { get; set; }
@@ -43,12 +51,12 @@ public class ClickSignInboundDTO {
   }
 
   public class Template {
-    public Object data { get; set; }
+    public Map<String, Object> data { get; set; }
   }
 
   public class EventDetail {
     public String name { get; set; }
-    public Object data { get; set; }
+    public Map<String, Object> data { get; set; }
     public Datetime occurred_at { get; set; }
   }
 

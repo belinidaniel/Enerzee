@@ -1,4 +1,12 @@
 /**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : EzeeConnectProposalPendingServiceTest, ProposalPendingControllerTest
+ **/
+/**
  * Service responsável por orquestrar os callouts com o aplicativo do EzeeConnect para as pendências de proposta.
  */
 public with sharing class EzeeConnectProposalPendingService {

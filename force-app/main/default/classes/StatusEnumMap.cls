@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : StatusEnumMapTest
+ **/
 public class StatusEnumMap {
   public static Map<String, Integer> SolarEnum = new Map<String, Integer>{
     'Elaboração de proposta' => 1,

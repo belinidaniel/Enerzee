@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @IsTest
 private class TaskSlaCoreTest {
   @IsTest
@@ -177,21 +185,193 @@ private class TaskSlaCoreTest {
   @IsTest
   static void testSchedulerScheduleDaily() {
     String cron = '0 0 0 1 1 ? 2099';
+    String updatedCron = '0 15 1 1 1 ? 2099';
     Test.startTest();
     TaskSlaDailySummaryScheduler.scheduleDaily(cron);
+    TaskSlaDailySummaryScheduler.scheduleDaily(updatedCron);
     Test.stopTest();
 
     List<CronTrigger> jobs = [
-      SELECT CronExpression, CronJobDetail.Name
+      SELECT CronExpression, CronJobDetail.Name, State
       FROM CronTrigger
-      WHERE
-        CronJobDetail.Name = 'Task SLA Daily Summary'
-        AND CronExpression = :cron
+      WHERE CronJobDetail.Name = 'Task SLA Daily Summary' AND State != 'DELETED'
     ];
-    System.assert(!jobs.isEmpty(), 'Cron deve ser o informado.');
+    System.assertEquals(
+      1,
+      jobs.size(),
+      'Deve existir apenas um agendamento ativo.'
+    );
+    System.assertEquals(
+      updatedCron,
+      jobs[0].CronExpression,
+      'O agendamento mais recente deve substituir o anterior.'
+    );
+  }
+
+  @IsTest
+  static void testAdditionalUtilityAndConfigBranches() {
+    TaskSlaConfig.NotificationConfig afterCfg = TaskSlaConfig.getNotificationConfig(
+      TaskSlaConfig.TYPE_AFTER_DUE
+    );
+    System.assertEquals(true, afterCfg.enabled, 'After due deve estar ativo.');
+    System.assertEquals(
+      false,
+      afterCfg.notifyManager,
+      'After due não deve notificar gestor por padrão.'
+    );
+
+    TaskSlaConfig.NotificationConfig ownerTypeCfg = new TaskSlaConfig.NotificationConfig();
+    ownerTypeCfg.ownerType = TaskSlaConfig.OWNER_TYPE_USER;
+    System.assertEquals(
+      true,
+      ownerTypeCfg.isOwnerTypeUser(),
+      'Owner type USER deve ser reconhecido.'
+    );
+    ownerTypeCfg.ownerType = TaskSlaConfig.OWNER_TYPE_QUEUE;
+    System.assertEquals(
+      true,
+      ownerTypeCfg.isOwnerTypeQueue(),
+      'Owner type QUEUE deve ser reconhecido.'
+    );
+
+    System.assertEquals(
+      true,
+      TaskSlaUtils.isClosedOrCanceled('Canceled'),
+      'Canceled deve ser tratado como encerrado/cancelado.'
+    );
+    System.assertEquals(
+      false,
+      TaskSlaUtils.isClosedOrCanceled(null),
+      'Valor nulo não pode ser tratado como encerrado.'
+    );
+    System.assertEquals(
+      '&lt;teste&gt; &amp; &quot;ok&quot;',
+      TaskSlaUtils.escapeHtml('<teste> & "ok"'),
+      'escapeHtml deve proteger caracteres especiais.'
+    );
+
+    User owner = createUser('owner.filter@example.com', null);
+    Task queueTask = new Task(
+      OwnerId = owner.Id,
+      Subject = 'Sem match',
+      Status = 'Open',
+      Priority = 'Low'
+    );
+    TaskSlaConfig.NotificationConfig filterCfg = new TaskSlaConfig.NotificationConfig();
+    filterCfg.ownerType = TaskSlaConfig.OWNER_TYPE_QUEUE;
+    filterCfg.priorityIn = new Set<String>{
+      TaskSlaUtils.normalizeToken('High')
+    };
+    filterCfg.subjectContains = new Set<String>{
+      TaskSlaUtils.normalizeToken('SLA')
+    };
+    filterCfg.subjectNotContains = new Set<String>{
+      TaskSlaUtils.normalizeToken('bloqueado')
+    };
+    filterCfg.taskSubtypeIn = new Set<String>();
+    filterCfg.taskTypeIn = new Set<String>();
+    filterCfg.queueDeveloperNames = new Set<String>{ 'queue_x' };
+
+    System.assertEquals(
+      false,
+      TaskSlaUtils.matchesConfig(queueTask, filterCfg, new Map<Id, String>()),
+      'Task fora dos filtros não deve casar com a configuração.'
+    );
+
+    TaskSlaConfig.QueueRoutingConfig unknownRouting = TaskSlaConfig.getQueueRoutingConfig(
+      'UNKNOWN_QUEUE'
+    );
+    System.assertEquals(
+      TaskSlaConfig.ROUTE_MEMBERS,
+      unknownRouting.routingMode,
+      'Fila sem configuração deve herdar o roteamento default.'
+    );
+
+    Test.startTest();
+    TaskSlaDailySummaryScheduler.scheduleDaily(null);
+    Test.stopTest();
+  }
+
+  @IsTest
+  static void testUtilsAndResolverGuardClauses() {
+    TaskSlaRecipientResolver.Context emptyContext = TaskSlaRecipientResolver.buildContext(
+      null,
+      true
+    );
+    System.assertEquals(
+      0,
+      emptyContext.ownersById.size(),
+      'Contexto vazio não deve carregar owners.'
+    );
+
+    Group queue = new Group(
+      Name = 'Queue Guard',
+      DeveloperName = 'Queue_Guard',
+      Type = 'Queue',
+      Email = 'queue.guard@example.com'
+    );
+    insert queue;
+
+    Task queueTask = new Task(
+      OwnerId = queue.Id,
+      Subject = 'Fila SLA Guard',
+      Status = 'Open',
+      Priority = 'High'
+    );
+
+    TaskSlaConfig.NotificationConfig cfg = new TaskSlaConfig.NotificationConfig();
+    cfg.ownerType = TaskSlaConfig.OWNER_TYPE_QUEUE;
+    cfg.priorityIn = new Set<String>{ TaskSlaUtils.normalizeToken('High') };
+    cfg.taskSubtypeIn = new Set<String>();
+    cfg.taskTypeIn = new Set<String>();
+    cfg.subjectContains = new Set<String>{ TaskSlaUtils.normalizeToken('SLA') };
+    cfg.subjectNotContains = new Set<String>{
+      TaskSlaUtils.normalizeToken('bloqueado')
+    };
+    cfg.queueDeveloperNames = new Set<String>{
+      TaskSlaUtils.normalizeToken(queue.DeveloperName)
+    };
+
+    System.assertEquals(
+      true,
+      TaskSlaUtils.matchesConfig(
+        queueTask,
+        cfg,
+        new Map<Id, String>{ queue.Id => queue.DeveloperName }
+      ),
+      'Fila com developer name mapeado deve casar com a configuração.'
+    );
+    System.assertEquals(
+      false,
+      TaskSlaUtils.matchesConfig(queueTask, cfg, null),
+      'Sem mapa de filas o filtro da fila deve falhar.'
+    );
+
+    TaskSlaRecipientResolver.RecipientResult emptyRecipients = TaskSlaRecipientResolver.resolveRecipients(
+      null,
+      cfg,
+      new TaskSlaRecipientResolver.Context()
+    );
+    System.assertEquals(
+      0,
+      emptyRecipients.userIds.size(),
+      'Fluxo nulo não deve adicionar usuários.'
+    );
+    System.assertEquals(
+      0,
+      emptyRecipients.emailAddresses.size(),
+      'Fluxo nulo não deve adicionar emails.'
+    );
+
+    System.assertEquals('', TaskSlaUtils.normalizeToken(null));
+    System.assertEquals('', TaskSlaUtils.escapeHtml(null));
   }
 
   private static User createUser(String email, Id managerId) {
+    return createUser(email, managerId, null);
+  }
+
+  private static User createUser(String email, Id managerId, Id roleId) {
     Profile p = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
     String unique = String.valueOf(System.currentTimeMillis());
     User u = new User(
@@ -203,7 +383,8 @@ private class TaskSlaCoreTest {
       LocaleSidKey = 'pt_BR',
       EmailEncodingKey = 'UTF-8',
       ProfileId = p.Id,
-      LanguageLocaleKey = 'pt_BR'
+      LanguageLocaleKey = 'pt_BR',
+      UserRoleId = roleId
     );
     insert u;
     if (managerId != null) {
@@ -211,5 +392,45 @@ private class TaskSlaCoreTest {
       update u;
     }
     return u;
+  }
+
+  @IsTest
+  static void testRecipientResolverLoadsNestedGroupAndRoleMembers() {
+    User roleUser = createUser('role.member@example.com', null);
+
+    Group queue = new Group(
+      Name = 'Queue Nested Members',
+      DeveloperName = 'Queue_Nested_Members',
+      Type = 'Queue',
+      Email = 'nested.queue@example.com'
+    );
+    insert queue;
+
+    Group publicGroup = new Group(
+      Name = 'Public Group Nested',
+      DeveloperName = 'Public_Group_Nested',
+      Type = 'Regular'
+    );
+    insert publicGroup;
+
+    insert new GroupMember(GroupId = queue.Id, UserOrGroupId = publicGroup.Id);
+    insert new GroupMember(
+      GroupId = publicGroup.Id,
+      UserOrGroupId = roleUser.Id
+    );
+
+    TaskSlaRecipientResolver.Context context = TaskSlaRecipientResolver.buildContext(
+      new Set<Id>{ queue.Id },
+      true
+    );
+
+    System.assert(
+      context.queueMembersById.containsKey(queue.Id),
+      'A fila deve carregar membros calculados.'
+    );
+    System.assert(
+      context.queueMembersById.get(queue.Id).contains(roleUser.Id),
+      'Usuário vindo de grupo público e papel deve ser expandido para a fila.'
+    );
   }
 }

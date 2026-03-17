@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ClickSignDTOTest
+ **/
 public with sharing class ClickSignDTO {
   public class RequestCreateEnvelop {
     public String name;

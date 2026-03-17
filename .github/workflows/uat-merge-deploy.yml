@@ -9,6 +9,11 @@ jobs:
   deploy:
     name: Deploy to UAT
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+      statuses: write
 
     steps:
       # ─── Checkout ────────────────────────────────────────────────────────────
@@ -42,25 +47,11 @@ jobs:
       - name: Get changed files
         id: changed
         run: |
-          CHANGED=$(git diff --name-only HEAD~1..HEAD | grep -E 'force-app/' || true)
-          echo "Changed files in this merge:"
-          echo "$CHANGED"
-
-          APEX=$(echo "$CHANGED" | grep '\.cls$' | grep -v 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
-          TESTS=$(echo "$CHANGED" | grep 'Test\.cls$' | sed 's|force-app/main/default/classes/||' | sed 's|\.cls||' || true)
-
-          for cls in $APEX; do
-            test_file="force-app/main/default/classes/${cls}Test.cls"
-            if [ -f "$test_file" ]; then
-              TESTS="$TESTS ${cls}Test"
-            fi
-          done
-
-          TESTS=$(echo "$TESTS" | tr ' ' '\n' | sort -u | tr '\n' ' ' | xargs)
-          APEX=$(echo "$APEX" | tr '\n' ' ' | xargs)
-          echo "apex_classes=$APEX" >> $GITHUB_OUTPUT
-          echo "test_classes=$TESTS" >> $GITHUB_OUTPUT
-          echo "has_changes=$([ -n "$CHANGED" ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          python3 scripts/apex_test_catalog.py collect-tests \
+            --diff-range HEAD~1..HEAD \
+            --metadata-pattern '^force-app/' \
+            --github-output "$GITHUB_OUTPUT" \
+            --strict-changed-prod
 
       # ─── Skip if no metadata changed ─────────────────────────────────────────
       - name: Skip if no metadata changes
@@ -82,39 +73,212 @@ jobs:
           echo "--- destructiveChanges.xml ---"
           cat destructiveChanges/destructiveChanges.xml
 
+      - name: Find merged pull request
+        if: steps.changed.outputs.has_changes == 'true'
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const branch = context.ref.replace('refs/heads/', '');
+            const response = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner,
+              repo,
+              commit_sha: context.sha,
+            });
+
+            const pr = response.data.find(item => item.base?.ref === branch) || response.data[0];
+            core.setOutput('number', pr ? String(pr.number) : '');
+            core.setOutput('head_sha', pr?.head?.sha || '');
+
+      - name: Find successful validation run
+        if: steps.changed.outputs.has_changes == 'true' && steps.pr.outputs.head_sha != ''
+        id: validation_run
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const workflowId = 'uat-pr-validate.yml';
+            const headSha = '${{ steps.pr.outputs.head_sha }}';
+            const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {
+              owner,
+              repo,
+              workflow_id: workflowId,
+              event: 'pull_request',
+              per_page: 100,
+            });
+
+            const run = runs.find(item => item.head_sha === headSha && item.conclusion === 'success');
+            core.setOutput('run_id', run ? String(run.id) : '');
+
+      - name: Download quick deploy metadata
+        if: steps.changed.outputs.has_changes == 'true' && steps.validation_run.outputs.run_id != ''
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: quick-deploy-uat-${{ steps.pr.outputs.head_sha }}
+          path: /tmp/quick-deploy
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.validation_run.outputs.run_id }}
+          github-token: ${{ github.token }}
+
+      - name: Evaluate quick deploy metadata
+        if: steps.changed.outputs.has_changes == 'true'
+        id: quick
+        run: |
+          set -euo pipefail
+
+          PACKAGE_HASH=$(sha256sum package/package.xml | awk '{print $1}')
+          DESTRUCTIVE_HASH=""
+          if grep -q '<types>' ./destructiveChanges/destructiveChanges.xml 2>/dev/null; then
+            DESTRUCTIVE_HASH=$(sha256sum destructiveChanges/destructiveChanges.xml | awk '{print $1}')
+          fi
+
+          QUICK_METADATA_FILE=/tmp/quick-deploy/quick-deploy-uat.json
+          if [ ! -f "$QUICK_METADATA_FILE" ]; then
+            echo "use_quick_deploy=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          EXPECTED_TESTS=$(printf '%s\n' "${{ steps.changed.outputs.test_classes }}" | tr ' ' '\n' | sed '/^$/d' | sort -u | jq -R . | jq -c -s .)
+          QUICK_DEPLOY_ID=$(jq -r '.validationJobId // empty' "$QUICK_METADATA_FILE")
+          QUICK_TARGET_ORG=$(jq -r '.targetOrg // empty' "$QUICK_METADATA_FILE")
+          QUICK_HEAD_SHA=$(jq -r '.headSha // empty' "$QUICK_METADATA_FILE")
+          QUICK_PACKAGE_HASH=$(jq -r '.manifestSha256 // empty' "$QUICK_METADATA_FILE")
+          QUICK_DESTRUCTIVE_HASH=$(jq -r '.destructiveSha256 // empty' "$QUICK_METADATA_FILE")
+          QUICK_TEST_LEVEL=$(jq -r '.testLevel // empty' "$QUICK_METADATA_FILE")
+          QUICK_TESTS=$(jq -c '(.tests // []) | sort' "$QUICK_METADATA_FILE")
+
+          if [ -n "$QUICK_DEPLOY_ID" ] &&
+             [ "$QUICK_TARGET_ORG" = "enerzee-UAT" ] &&
+             [ "$QUICK_HEAD_SHA" = "${{ steps.pr.outputs.head_sha }}" ] &&
+             [ "$QUICK_PACKAGE_HASH" = "$PACKAGE_HASH" ] &&
+             [ "$QUICK_DESTRUCTIVE_HASH" = "$DESTRUCTIVE_HASH" ] &&
+             [ "$QUICK_TEST_LEVEL" = "${{ steps.changed.outputs.test_level }}" ] &&
+             [ "$QUICK_TESTS" = "$EXPECTED_TESTS" ]; then
+            echo "use_quick_deploy=true" >> $GITHUB_OUTPUT
+            echo "quick_deploy_id=$QUICK_DEPLOY_ID" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "use_quick_deploy=false" >> $GITHUB_OUTPUT
+
       # ─── Deploy to UAT ────────────────────────────────────────────────────────
       - name: Deploy to UAT
         if: steps.changed.outputs.has_changes == 'true'
         id: deploy
         run: |
-          TEST_LEVEL="RunLocalTests"
-          TEST_ARGS=""
+          set -euo pipefail
 
-          if [ -n "${{ steps.changed.outputs.test_classes }}" ]; then
-            TEST_LEVEL="RunSpecifiedTests"
-            TEST_ARGS="--tests ${{ steps.changed.outputs.test_classes }}"
+          TEST_LEVEL="${{ steps.changed.outputs.test_level }}"
+          TEST_ARGS=()
+          if [ "$TEST_LEVEL" = "RunSpecifiedTests" ] && [ -n "${{ steps.changed.outputs.test_classes }}" ]; then
+            for test_class in ${{ steps.changed.outputs.test_classes }}; do
+              TEST_ARGS+=(--tests "$test_class")
+            done
           fi
 
-          DESTRUCTIVE_ARG=""
+          DESTRUCTIVE_ARGS=()
           if grep -q '<types>' ./destructiveChanges/destructiveChanges.xml 2>/dev/null; then
-            DESTRUCTIVE_ARG="--post-destructive-changes destructiveChanges/destructiveChanges.xml"
+            DESTRUCTIVE_ARGS+=(--post-destructive-changes destructiveChanges/destructiveChanges.xml)
           fi
 
-          echo "Test level: $TEST_LEVEL"
-          echo "Tests: ${{ steps.changed.outputs.test_classes }}"
+          VALIDATION_ID=""
 
-          sf project deploy start \
-            --manifest package/package.xml \
-            --target-org enerzee-UAT \
-            --test-level $TEST_LEVEL \
-            $TEST_ARGS \
-            $DESTRUCTIVE_ARG \
-            --json > /tmp/deploy_result.json 2>&1
+          run_validation_for_quick_deploy() {
+            sf project deploy validate \
+              --manifest package/package.xml \
+              --target-org enerzee-UAT \
+              --test-level "$TEST_LEVEL" \
+              "${TEST_ARGS[@]}" \
+              "${DESTRUCTIVE_ARGS[@]}" \
+              --async \
+              --json > /tmp/validation_start.json
+
+            VALIDATION_ID=$(jq -r '.result.id // empty' /tmp/validation_start.json)
+            if [ -z "$VALIDATION_ID" ]; then
+              echo "::error::Não foi possível obter o validation id."
+              cat /tmp/validation_start.json
+              exit 1
+            fi
+
+            echo "Validation ID: $VALIDATION_ID"
+
+            while true; do
+              sf project deploy report \
+                --job-id "$VALIDATION_ID" \
+                --target-org enerzee-UAT \
+                --json > /tmp/validation_result.json
+
+              VALIDATION_STATUS=$(jq -r '.result.status // "Unknown"' /tmp/validation_result.json)
+              COMPONENTS_DONE=$(jq -r '.result.numberComponentsDeployed // 0' /tmp/validation_result.json)
+              COMPONENTS_TOTAL=$(jq -r '.result.numberComponentsTotal // 0' /tmp/validation_result.json)
+              TESTS_DONE=$(jq -r '.result.numberTestsCompleted // 0' /tmp/validation_result.json)
+              TESTS_TOTAL=$(jq -r '.result.numberTestsTotal // 0' /tmp/validation_result.json)
+
+              echo "Validation status: $VALIDATION_STATUS | Componentes: ${COMPONENTS_DONE}/${COMPONENTS_TOTAL} | Testes: ${TESTS_DONE}/${TESTS_TOTAL}"
+
+              case "$VALIDATION_STATUS" in
+                Pending|InProgress|Canceling)
+                  sleep 15
+                  ;;
+                Succeeded)
+                  break
+                  ;;
+                Failed|Canceled|SucceededPartial)
+                  break
+                  ;;
+                *)
+                  echo "::warning::Status inesperado da validação: $VALIDATION_STATUS"
+                  sleep 15
+                  ;;
+              esac
+            done
+
+            jq -r '.result.details.componentFailures[]? | "::error file=\(.fileName),line=\(.lineNumber)::\(.problem)"' /tmp/validation_result.json 2>/dev/null || true
+            jq -r '.result.details.runTestResult.failures[]? | "::error::\(.testName): \(.message)"' /tmp/validation_result.json 2>/dev/null || true
+            jq -r '.result.details.runTestResult.codeCoverageWarnings[]? | "::warning::\(.message)"' /tmp/validation_result.json 2>/dev/null || true
+
+            FINAL_VALIDATION_STATUS=$(jq -r '.result.status // "Unknown"' /tmp/validation_result.json)
+            if [ "$FINAL_VALIDATION_STATUS" != "Succeeded" ]; then
+              cp /tmp/validation_result.json /tmp/deploy_result.json
+              exit 1
+            fi
+          }
+
+          run_quick_deploy() {
+            local validation_job_id="$1"
+            sf project deploy quick \
+              --job-id "$validation_job_id" \
+              --target-org enerzee-UAT \
+              --json > /tmp/deploy_result.json 2>&1
+          }
+
+          QUICK_DEPLOY_ID="${{ steps.quick.outputs.quick_deploy_id }}"
+          if [ -n "$QUICK_DEPLOY_ID" ]; then
+            echo "Trying quick deploy with saved validation id: $QUICK_DEPLOY_ID"
+            if run_quick_deploy "$QUICK_DEPLOY_ID"; then
+              cat /tmp/deploy_result.json
+              STATUS=$(python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('status', 1))" < /tmp/deploy_result.json)
+              exit "$STATUS"
+            fi
+
+            echo "::warning::Quick deploy com ID salvo falhou; será feita nova validação."
+            cat /tmp/deploy_result.json
+          else
+            echo "No reusable quick deploy ID found. Running validation first."
+          fi
+
+          run_validation_for_quick_deploy
+          if ! run_quick_deploy "$VALIDATION_ID"; then
+            cat /tmp/deploy_result.json
+            exit 1
+          fi
 
           cat /tmp/deploy_result.json
 
-          STATUS=$(cat /tmp/deploy_result.json | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('status', 1))")
-          exit $STATUS
+          STATUS=$(python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('status', 1))" < /tmp/deploy_result.json)
+          exit "$STATUS"
 
       # ─── Report result ────────────────────────────────────────────────────────
       - name: Report deploy result
@@ -170,7 +334,7 @@ jobs:
               context: 'UAT Deploy'
             });
 
-            console.log(`## UAT Deploy Report ${status}\n**Org:** UAT (enerzee-UAT)\n**Apex:** ${{ steps.changed.outputs.apex_classes || 'none' }}\n${summary}${details}${testSummary}`);
+            console.log(`## UAT Deploy Report ${status}\n**Org:** UAT (enerzee-UAT)\n**Apex:** ${{ steps.changed.outputs.apex_classes || 'none' }}\n**Test level:** ${{ steps.changed.outputs.test_level || 'RunLocalTests' }}\n**Tests:** ${{ steps.changed.outputs.test_classes || 'none' }}\n${summary}${details}${testSummary}`);
 
       - name: Fail job if deploy failed
         if: steps.deploy.outcome == 'failure'

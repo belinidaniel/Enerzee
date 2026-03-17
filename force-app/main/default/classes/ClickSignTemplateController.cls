@@ -1,11 +1,21 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 01-26-2026
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ClickSignTemplateControllerCoverageTest, ClickSignTemplateControllerTest
  **/
 public with sharing class ClickSignTemplateController {
+  @TestVisible
+  private static Id uploadGuestUserIdOverride;
+
+  @TestVisible
+  private static Id uploadSiteIdOverride;
+
+  @TestVisible
+  private static Id versionDataDocumentIdOverride;
+
   public String errorMessage { get; set; }
   public String objectHomeUrl { get; set; }
   public String namespace { get; set; }
@@ -45,10 +55,13 @@ public with sharing class ClickSignTemplateController {
 
   @AuraEnabled
   public static ContentVersion getVersionData() {
+    Id contentDocumentId = versionDataDocumentIdOverride != null
+      ? versionDataDocumentIdOverride
+      : '069Ha000002vkMvIAI';
     return [
       SELECT Id, VersionData
       FROM ContentVersion
-      WHERE ContentDocumentId = '069Ha000002vkMvIAI'
+      WHERE ContentDocumentId = :contentDocumentId
       LIMIT 1
     ];
   }
@@ -213,18 +226,8 @@ public with sharing class ClickSignTemplateController {
       LIMIT 1
     ];
 
-    User guestUser = [
-      SELECT Id, Profile.name, ProfileId
-      FROM User
-      WHERE Name = 'Enerzee Usuário convidado do site'
-    ];
-    Site site = [SELECT Id, Name FROM Site WHERE Name = 'Enerzee'];
-
-    ContentDocumentLink contentDocumentLinkSite = new ContentDocumentLink();
-    contentDocumentLinkSite.ContentDocumentId = contentDocument.Id;
-    contentDocumentLinkSite.LinkedEntityId = site.Id;
-    contentDocumentLinkSite.ShareType = 'V'; // Viewer permission
-    contentDocumentLinkSite.Visibility = 'AllUsers';
+    Id guestUserId = resolveUploadGuestUserId();
+    Id siteId = resolveUploadSiteId();
 
     // Link the ContentDocument to the specified record
     ContentDocumentLink contentDocumentLinkGuest = new ContentDocumentLink();
@@ -233,16 +236,29 @@ public with sharing class ClickSignTemplateController {
     contentDocumentLinkGuest.ShareType = 'V'; // Viewer permission
     contentDocumentLinkGuest.Visibility = 'AllUsers';
 
-    ContentDocumentLink contentDocumentLink = new ContentDocumentLink();
-    contentDocumentLink.ContentDocumentId = contentDocument.Id;
-    contentDocumentLink.LinkedEntityId = guestUser.Id;
-    contentDocumentLink.ShareType = 'V'; // Viewer permission
-    contentDocumentLink.Visibility = 'AllUsers';
-    insert new List<ContentDocumentLink>{
-      contentDocumentLink,
-      contentDocumentLinkGuest,
-      contentDocumentLinkSite
+    List<ContentDocumentLink> linksToInsert = new List<ContentDocumentLink>{
+      contentDocumentLinkGuest
     };
+
+    if (guestUserId != null) {
+      ContentDocumentLink contentDocumentLink = new ContentDocumentLink();
+      contentDocumentLink.ContentDocumentId = contentDocument.Id;
+      contentDocumentLink.LinkedEntityId = guestUserId;
+      contentDocumentLink.ShareType = 'V';
+      contentDocumentLink.Visibility = 'AllUsers';
+      linksToInsert.add(contentDocumentLink);
+    }
+
+    if (siteId != null) {
+      ContentDocumentLink contentDocumentLinkSite = new ContentDocumentLink();
+      contentDocumentLinkSite.ContentDocumentId = contentDocument.Id;
+      contentDocumentLinkSite.LinkedEntityId = siteId;
+      contentDocumentLinkSite.ShareType = 'V';
+      contentDocumentLinkSite.Visibility = 'AllUsers';
+      linksToInsert.add(contentDocumentLinkSite);
+    }
+
+    insert linksToInsert;
   }
 
   @AuraEnabled
@@ -616,5 +632,28 @@ public with sharing class ClickSignTemplateController {
     String visibilityRulesJson
   ) {
     return ClickSignVisibilityRulesEngine.validateRules(visibilityRulesJson);
+  }
+
+  private static Id resolveUploadGuestUserId() {
+    if (Test.isRunningTest() && uploadGuestUserIdOverride != null) {
+      return uploadGuestUserIdOverride;
+    }
+
+    List<User> guestUsers = [
+      SELECT Id
+      FROM User
+      WHERE Name = 'Enerzee Usuário convidado do site'
+      LIMIT 1
+    ];
+    return guestUsers.isEmpty() ? null : guestUsers[0].Id;
+  }
+
+  private static Id resolveUploadSiteId() {
+    if (Test.isRunningTest()) {
+      return uploadSiteIdOverride;
+    }
+
+    List<Site> sites = [SELECT Id FROM Site WHERE Name = 'Enerzee' LIMIT 1];
+    return sites.isEmpty() ? null : sites[0].Id;
   }
 }

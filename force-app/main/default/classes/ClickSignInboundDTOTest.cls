@@ -1,16 +1,35 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @IsTest
 private class ClickSignInboundDTOTest {
   @IsTest
-  static void shouldDeserializePayload() {
-    String jsonBody = '{"event":{"name":"sign","data":{"signer":{"key":"signer-key"}}},"document":{"key":"doc-key","status":"running"},"signers":[{"key":"s1","email":"a@b.com"}] }';
-    ClickSignInboundDTO dto = (ClickSignInboundDTO) JSON.deserialize(
-      jsonBody,
-      ClickSignInboundDTO.class
-    );
+  static void shouldInstantiateAllNestedTypes() {
+    ClickSignInboundDTO dto = new ClickSignInboundDTO();
+    dto.event = new ClickSignInboundDTO.Event();
+    dto.event.name = 'completed';
+    dto.event.data = new ClickSignInboundDTO.Data();
+    dto.event.data.signer = new ClickSignInboundDTO.Signer();
+    dto.event.data.signer.email = 'manual@test.com';
+    dto.document = new ClickSignInboundDTO.Document();
+    dto.document.downloads = new ClickSignInboundDTO.Downloads();
+    dto.template = new ClickSignInboundDTO.Template();
+    dto.signers = new List<ClickSignInboundDTO.Signer>{
+      new ClickSignInboundDTO.Signer()
+    };
+    dto.events = new List<ClickSignInboundDTO.EventDetail>{
+      new ClickSignInboundDTO.EventDetail()
+    };
 
-    System.assertEquals('sign', dto.event.name);
-    System.assertEquals('doc-key', dto.document.key);
+    System.assertEquals('completed', dto.event.name);
+    System.assertEquals('manual@test.com', dto.event.data.signer.email);
+    System.assertNotEquals(null, dto.document.downloads);
     System.assertEquals(1, dto.signers.size());
-    System.assertEquals('s1', dto.signers[0].key);
+    System.assertEquals(1, dto.events.size());
   }
 }

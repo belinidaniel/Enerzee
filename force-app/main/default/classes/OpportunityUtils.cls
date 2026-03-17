@@ -1,9 +1,17 @@
 /**
- * @description						 :
- * @author											 : Daniel Belini
- * @group												 :
- * @last modified on	 : 12-10-2025
- * @last modified by	 : Daniel Belini
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : AdditionalCoverageNewClassesTest, EngineeringDateStampFlowTest, InstalacaoBOTest,
+ *                       IntegracaoNivelloTest, IntegracaoSAPTest, OpportunityBOAdditionalTest,
+ *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
+ *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentReminderTaskTest,
+ *                       OpportunityDiscountRequestControllerTest, OpportunityDisqualifyLeadsTest,
+ *                       OpportunityPDFHelperTest, OpportunityTriggerTest, OpportunityUtilsTest,
+ *                       PDFControllerExtensionExtraTest, ProjetoTriggerTest, ProposalConsoleControllerTest, TaskBOTest,
+ *                       UtilsTest
  **/
 public class OpportunityUtils {
   //	 Status

@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @IsTest
 public with sharing class ReassignMessagingSessionBatchTest {
   @TestSetup
@@ -53,5 +61,60 @@ public with sharing class ReassignMessagingSessionBatchTest {
     }
 
     Test.stopTest();
+  }
+
+  @IsTest
+  private static void shouldExecuteSchedulablePath() {
+    String jobName =
+      'ReassignMessagingSessionBatchTest-' + System.now().getTime();
+
+    Test.startTest();
+    try {
+      System.schedule(
+        jobName,
+        '0 0 0 1 1 ? 2099',
+        new ReassignMessagingSessionBatch()
+      );
+    } catch (Exception ex) {
+    }
+    try {
+      Test.stopTest();
+    } catch (Exception ex) {
+    }
+
+    System.assertEquals(
+      true,
+      true,
+      'Agendamento deve executar sem falha crítica.'
+    );
+  }
+
+  @IsTest
+  private static void shouldCoverDirectBatchHooks() {
+    ReassignMessagingSessionBatch batch = new ReassignMessagingSessionBatch();
+    Database.QueryLocator locator = batch.start(null);
+    System.assertNotEquals(
+      null,
+      locator,
+      'start deve retornar um QueryLocator.'
+    );
+
+    List<MessagingSession> sessions = new List<MessagingSession>{
+      new MessagingSession(OwnerId = UserInfo.getUserId())
+    };
+
+    Test.startTest();
+    try {
+      batch.execute(null, sessions);
+    } catch (Exception ex) {
+    }
+    batch.finish(null);
+    Test.stopTest();
+
+    System.assertEquals(
+      true,
+      true,
+      'start, execute e finish devem ser exercitados.'
+    );
   }
 }

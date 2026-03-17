@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de apoio a testes
+ **/
 @IsTest
 public class TestFactoryDefaults {
   // Para cadastrar um novo padrao para um objeto, use o modelo [ObjectName]Defaults para o nome da classe.

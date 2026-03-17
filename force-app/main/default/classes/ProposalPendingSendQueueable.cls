@@ -1,3 +1,11 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : ProposalPendingSendQueueableTest
+ **/
 public class ProposalPendingSendQueueable implements Queueable, Database.AllowsCallouts {
   private Set<Id> pendingIds;
 
