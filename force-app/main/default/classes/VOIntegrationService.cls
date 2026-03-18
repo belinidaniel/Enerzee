@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 03-18-2026
  * @last modified by  : Daniel Belini
  * @test              : IntegracaoVOPlanoTest, VOIntegrationServiceTest
  **/
@@ -229,6 +229,10 @@ public with sharing class VOIntegrationService {
         paymentMethod__c,
         ValorTotalProposta__c,
         Rede__c,
+        Direct__c,
+        DescontoUFV__c,
+        ValorAnteriorBDI__c,
+        ValorAnteriorDirect__c,
         RecordType.DeveloperName,
         RecordType.Name,
         ConsultorOportunidade__r.IdVirtualOffice2__c,
@@ -836,6 +840,24 @@ public with sharing class VOIntegrationService {
         )
       );
     }
+
+    payload.put('Direct', opportunityRecord.Direct__c);
+
+    Boolean hasDiscount =
+      opportunityRecord.DescontoUFV__c != null &&
+      opportunityRecord.DescontoUFV__c > 0;
+    payload.put(
+      'ValorDesconto',
+      hasDiscount ? opportunityRecord.DescontoUFV__c : null
+    );
+    payload.put(
+      'ValorPropostaAnterior',
+      hasDiscount ? opportunityRecord.ValorAnteriorBDI__c : null
+    );
+    payload.put(
+      'ValorDirectAnterior',
+      hasDiscount ? opportunityRecord.ValorAnteriorDirect__c : null
+    );
 
     return JSON.serialize(payload);
   }
