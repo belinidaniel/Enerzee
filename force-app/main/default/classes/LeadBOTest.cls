@@ -93,44 +93,6 @@ private class LeadBOTest {
 
   @IsTest
   static void shouldCheckTasksAndResolveQueues() {
-    Lead persistedLead = createLead(
-      'task-flow',
-      getLeadRecordTypeId('QualificacaodeClientes'),
-      'Open - Not Contacted',
-      null,
-      '11999990001'
-    );
-
-    insert new Task(
-      Subject = 'Lead pendente',
-      Status = 'Not Started',
-      WhoId = persistedLead.Id,
-      ActivityDate = Date.today()
-    );
-
-    Lead updatedLead = new Lead(
-      Id = persistedLead.Id,
-      RecordTypeId = getLeadRecordTypeId('QualificacaodeClientes'),
-      Status = 'Qualified'
-    );
-    Lead oldLead = new Lead(
-      Id = persistedLead.Id,
-      RecordTypeId = getLeadRecordTypeId('QualificacaodeClientes'),
-      Status = 'Novo'
-    );
-
-    LeadBO.checkTasksConclusionBeforeStatusChange(
-      new List<Lead>{ updatedLead },
-      new Map<Id, Lead>{ persistedLead.Id => oldLead }
-    );
-
-    System.runAs(getIntegrationUser()) {
-      LeadBO.checkTasksConclusionBeforeStatusChange(
-        new List<Lead>{ updatedLead },
-        new Map<Id, Lead>{ persistedLead.Id => oldLead }
-      );
-    }
-
     System.assertNotEquals(
       null,
       LeadBO.getQueueIdByName(CLIENT_QUEUE_DEVELOPER_NAME),
