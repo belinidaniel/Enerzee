@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 03-18-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -423,6 +423,195 @@ private class VOIntegrationServiceTest {
       true,
       VOIntegrationService.hasSyncedOpportunityVoId('OPP-VO-001')
     );
+  }
+
+  @IsTest
+  static void opportunitySyncShouldIncludeDiscountFieldsWhenDiscountExists() {
+    VOPayloadCaptureMock captureMock = new VOPayloadCaptureMock();
+    Test.setMock(HttpCalloutMock.class, captureMock);
+    TokenAPIVOWs.access_token = 'test-token';
+
+    Consultor__c consultant = new Consultor__c(
+      Name = 'Consultor Desconto',
+      Login_no_virtual__c = 'consultor.desconto@teste.com',
+      IdVirtualOffice2__c = '55'
+    );
+    insert consultant;
+
+    Account accountRecord = new Account(
+      Name = 'Conta Desconto',
+      Email__c = 'desconto@teste.com',
+      CPF__c = '123.456.789-33',
+      Consultor__c = consultant.Id,
+      IdVirtualOffice2__c = '654321'
+    );
+    insert accountRecord;
+
+    Opportunity opportunityRecord = new Opportunity(
+      Name = 'Opp Com Desconto',
+      AccountId = accountRecord.Id,
+      IdVirtualOffice__c = '0000000000000000000',
+      RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+        .get('Solar')
+        .getRecordTypeId(),
+      StageName = 'Ganho fechado',
+      CloseDate = Date.today(),
+      PotenciaPicoSistema__c = 9.76,
+      paymentMethod__c = 'PIX',
+      Direct__c = 55.00,
+      DescontoUFV__c = 200.00,
+      ValorAnteriorBDI__c = 32000.00,
+      ValorAnteriorDirect__c = 80.00
+    );
+    insert opportunityRecord;
+
+    Test.startTest();
+    System.enqueueJob(
+      new VOOpportunitySyncQueueable(
+        new Set<Id>{ opportunityRecord.Id },
+        'Test:DescontoExistente',
+        true,
+        null
+      )
+    );
+    Test.stopTest();
+
+    Assert.isNotNull(
+      captureMock.capturedOpportunityBody,
+      'Payload da oportunidade deve ter sido capturado.'
+    );
+
+    Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(
+      captureMock.capturedOpportunityBody
+    );
+
+    Assert.areEqual(
+      55.00,
+      (Decimal) payload.get('Direct'),
+      'Campo Direct deve ser enviado com o valor correto.'
+    );
+    Assert.areEqual(
+      200.00,
+      (Decimal) payload.get('ValorDesconto'),
+      'ValorDesconto deve ser enviado quando há desconto.'
+    );
+    Assert.areEqual(
+      32000.00,
+      (Decimal) payload.get('ValorPropostaAnterior'),
+      'ValorPropostaAnterior deve ser enviado quando há desconto.'
+    );
+    Assert.areEqual(
+      80.00,
+      (Decimal) payload.get('ValorDirectAnterior'),
+      'ValorDirectAnterior deve ser enviado quando há desconto.'
+    );
+  }
+
+  @IsTest
+  static void opportunitySyncShouldSendOnlyDirectWhenNoDiscountExists() {
+    VOPayloadCaptureMock captureMock = new VOPayloadCaptureMock();
+    Test.setMock(HttpCalloutMock.class, captureMock);
+    TokenAPIVOWs.access_token = 'test-token';
+
+    Consultor__c consultant = new Consultor__c(
+      Name = 'Consultor Sem Desconto',
+      Login_no_virtual__c = 'consultor.semdesconto@teste.com',
+      IdVirtualOffice2__c = '66'
+    );
+    insert consultant;
+
+    Account accountRecord = new Account(
+      Name = 'Conta Sem Desconto',
+      Email__c = 'semdesconto@teste.com',
+      CPF__c = '123.456.789-44',
+      Consultor__c = consultant.Id,
+      IdVirtualOffice2__c = '654321'
+    );
+    insert accountRecord;
+
+    Opportunity opportunityRecord = new Opportunity(
+      Name = 'Opp Sem Desconto',
+      AccountId = accountRecord.Id,
+      IdVirtualOffice__c = '0000000000000000000',
+      RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+        .get('Solar')
+        .getRecordTypeId(),
+      StageName = 'Ganho fechado',
+      CloseDate = Date.today(),
+      PotenciaPicoSistema__c = 9.76,
+      paymentMethod__c = 'PIX',
+      Direct__c = 80.00
+    );
+    insert opportunityRecord;
+
+    Test.startTest();
+    System.enqueueJob(
+      new VOOpportunitySyncQueueable(
+        new Set<Id>{ opportunityRecord.Id },
+        'Test:SemDesconto',
+        true,
+        null
+      )
+    );
+    Test.stopTest();
+
+    Assert.isNotNull(
+      captureMock.capturedOpportunityBody,
+      'Payload da oportunidade deve ter sido capturado.'
+    );
+
+    Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(
+      captureMock.capturedOpportunityBody
+    );
+
+    Assert.areEqual(
+      80.00,
+      (Decimal) payload.get('Direct'),
+      'Campo Direct deve ser enviado mesmo sem desconto.'
+    );
+    Assert.isNull(
+      payload.get('ValorDesconto'),
+      'ValorDesconto deve ser null quando não há desconto.'
+    );
+    Assert.isNull(
+      payload.get('ValorPropostaAnterior'),
+      'ValorPropostaAnterior deve ser null quando não há desconto.'
+    );
+    Assert.isNull(
+      payload.get('ValorDirectAnterior'),
+      'ValorDirectAnterior deve ser null quando não há desconto.'
+    );
+  }
+
+  private class VOPayloadCaptureMock implements HttpCalloutMock {
+    public String capturedOpportunityBody;
+
+    public HttpResponse respond(HttpRequest request) {
+      HttpResponse response = new HttpResponse();
+      response.setHeader('Content-Type', 'application/json');
+
+      String endpoint = request != null ? request.getEndpoint() : null;
+      String body = request != null ? request.getBody() : null;
+
+      if (endpoint != null && endpoint.contains('/token')) {
+        response.setStatusCode(200);
+        response.setBody(
+          '{"access_token":"abc","token_type":"bearer","expires_in":3600}'
+        );
+        return response;
+      }
+
+      if (body != null && body.contains('idplano')) {
+        capturedOpportunityBody = body;
+        response.setStatusCode(200);
+        response.setBody('{"erro": false, "id": "VO-OPP-SAL412"}');
+        return response;
+      }
+
+      response.setStatusCode(200);
+      response.setBody('{"erro": false, "idusuario": "654321"}');
+      return response;
+    }
   }
 
   private static Boolean hasMessageLike(List<Log__c> logs, String fragment) {
