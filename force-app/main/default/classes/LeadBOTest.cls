@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-18-2026
+ * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -27,6 +27,7 @@ private class LeadBOTest {
   static void setupData() {
     ensureQueue(CLIENT_QUEUE_DEVELOPER_NAME);
     ensureQueue(CONSULTANT_QUEUE_DEVELOPER_NAME);
+    createIntegrationUser();
   }
 
   @IsTest
@@ -91,7 +92,7 @@ private class LeadBOTest {
   }
 
   @IsTest
-  static void shouldResolveQueues() {
+  static void shouldCheckTasksAndResolveQueues() {
     System.assertNotEquals(
       null,
       LeadBO.getQueueIdByName(CLIENT_QUEUE_DEVELOPER_NAME),
@@ -310,6 +311,49 @@ private class LeadBOTest {
       DeveloperName = developerName,
       Type = 'Queue'
     );
+  }
+
+  private static void createIntegrationUser() {
+    if (
+      [
+        SELECT COUNT()
+        FROM User
+        WHERE Username LIKE '%integracao@lab065.com%'
+      ] > 0
+    ) {
+      return;
+    }
+
+    Profile adminProfile = [
+      SELECT Id
+      FROM Profile
+      WHERE Name = 'System Administrator'
+      LIMIT 1
+    ];
+
+    String unique = String.valueOf(System.now().getTime());
+
+    insert new User(
+      FirstName = 'Integracao',
+      LastName = 'VO',
+      Alias = 'intvo',
+      Email = 'integracao.' + unique + '@teste.com',
+      EmailEncodingKey = 'UTF-8',
+      LanguageLocaleKey = 'pt_BR',
+      LocaleSidKey = 'pt_BR',
+      TimeZoneSidKey = 'America/Sao_Paulo',
+      Username = 'qa.integracao@lab065.com.' + unique + '@teste.com',
+      ProfileId = adminProfile.Id
+    );
+  }
+
+  private static User getIntegrationUser() {
+    return [
+      SELECT Id
+      FROM User
+      WHERE Username LIKE '%integracao@lab065.com%'
+      LIMIT 1
+    ];
   }
 
   private static Id getLeadRecordTypeId(String developerName) {
