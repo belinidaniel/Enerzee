@@ -47,6 +47,9 @@ public without sharing class IntegracaoSAPRepresentante implements Queueable, Da
       corpoRequisicao.Fax = consultor.Fax__c;
       corpoRequisicao.Email = consultor.Email__c;
 
+      System.debug(
+        '  JSON.serialize(corpoRequisicao) ' + JSON.serialize(corpoRequisicao)
+      );
       try {
         HttpResponse response = SAPIntegrationService.post(
           JSON.serialize(corpoRequisicao),

@@ -20,7 +20,9 @@
     </values>
     <values>
         <field>LastToken__c</field>
-        <value xsi:nil="true" />
+        <value
+      xsi:type="xsd:string"
+    >eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSkZveC1TYWxlc0ZvcmNlIiwibmJmIjoxNjY5ODk5NjcyLCJleHAiOjE2Njk5MDMyNzIsImlhdCI6MTY2OTg5OTY3Mn0.tEopNmFcrVD3INPH9DgKwnOUyadT6xcaKP_4H0o_a9w</value>
     </values>
     <values>
         <field>Method__c</field>
