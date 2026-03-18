@@ -58,7 +58,7 @@ public with sharing class AccountBO {
         accountIds.add(account.Id);
       }
 
-      IntegracaoSAPCliente.sendCliente(accountIds);
+      System.enqueueJob(new IntegracaoSAPCliente(accountIds));
     }
   }
 

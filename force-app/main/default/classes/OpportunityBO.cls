@@ -7,7 +7,7 @@
  * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
  *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
  *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentReminderTaskTest,
- *                       OpportunityDisqualifyLeadsTest, OpportunityTriggerTest
+ *                       OpportunityDisqualifyLeadsTest, OpportunityTriggerTest, PDFControllerExtensionExtraTest
  **/
 public class OpportunityBO {
   // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas
@@ -36,11 +36,11 @@ public class OpportunityBO {
     }
 
     if (!newWonOpportunitiesIds.isEmpty()) {
-      IntegracaoSAPPedidoVenda.sendPedidoVenda(newWonOpportunitiesIds);
+      System.enqueueJob(new IntegracaoSAPPedidoVenda(newWonOpportunitiesIds));
     }
 
     if (!newWonOpportunitiesIds.isEmpty()) {
-      IntegracaoSAPPedidoCompra.sendPedidoCompra(newWonOpportunitiesIds);
+      System.enqueueJob(new IntegracaoSAPPedidoCompra(newWonOpportunitiesIds));
     }
   }
 
@@ -119,7 +119,7 @@ public class OpportunityBO {
     }
 
     if (!contextIds.isEmpty()) {
-      IntegracaoSAPContrato.sendContract(contextIds);
+      System.enqueueJob(new IntegracaoSAPContrato(contextIds));
     }
   }
 
@@ -2454,7 +2454,7 @@ public class OpportunityBO {
           }
         }
 
-        IntegracaoSAPCliente.sendCliente(accountIds);
+        System.enqueueJob(new IntegracaoSAPCliente(accountIds));
       }
     } catch (Exception ex) {
       System.debug('##Erro ao integrar Conta com SAP: ' + ex.getMessage());

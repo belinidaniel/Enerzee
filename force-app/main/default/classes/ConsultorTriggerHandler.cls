@@ -5,8 +5,9 @@
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
  * @test              : ClickSignUtilsCoverageTest, ConsultorTriggerHandlerTest, ConsultorTriggerTest,
- *                       IntegracaoGeradorPropostasTest, LeadBOTest, LeadIntegrationBatchTest,
- *                       LeadIntegrationServiceTest, OpportunityShareHandlerTest, ProjetoBOCoverageTest
+ *                       IntegracaoGeradorPropostasTest, IntegracaoSAPCoverageTest, LeadBOTest,
+ *                       LeadIntegrationBatchTest, LeadIntegrationServiceTest, OpportunityShareHandlerTest,
+ *                       ProjetoBOCoverageTest
  **/
 public class ConsultorTriggerHandler extends TriggerHandler {
   public ConsultorTriggerHandler() {
@@ -39,7 +40,7 @@ public class ConsultorTriggerHandler extends TriggerHandler {
   }
 
   public override void afterInsert() {
-    ConsultorBO.sendFornecedorRepresentanteRecordToSAP(
+    ConsultorBO.sendFornecedorClienteRecordToSAP(
       (List<Consultor__c>) newRecordList
     );
     ConsultorBO.createMessagingUser(
@@ -52,7 +53,7 @@ public class ConsultorTriggerHandler extends TriggerHandler {
   }
 
   public override void afterUpdate() {
-    ConsultorBO.sendFornecedorRepresentanteRecordToSAP(
+    ConsultorBO.sendFornecedorClienteRecordToSAP(
       (List<Consultor__c>) newRecordList
     );
     ConsultorBO.createMessagingUser(
