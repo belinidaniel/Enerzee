@@ -39,10 +39,6 @@ public class LeadTriggerHandler extends TriggerHandler {
   }
 
   public override void beforeUpdate() {
-    LeadBO.checkTasksConclusionBeforeStatusChange(
-      (List<Lead>) newRecordList,
-      (Map<Id, Lead>) oldMap
-    );
     LeadBO.LeadValidationHandler((List<Lead>) newRecordList);
     LeadBO.setRecordTypeAccount((List<Lead>) newRecordList);
     LeadBO.sendConsultorRecordToVirtualOffice(
