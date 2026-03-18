@@ -40,7 +40,7 @@ public class IntegracaoSAPIntegradorTest {
     // Mock para simular a integração
     Test.setMock(HttpCalloutMock.class, new IntegracaoSAPIntegradorMock(true));
 
-    IntegracaoSAPIntegrador.sendIntegrador(integradorIds);
+    System.enqueueJob(new IntegracaoSAPIntegrador(integradorIds));
 
     Test.stopTest();
 
@@ -62,7 +62,7 @@ public class IntegracaoSAPIntegradorTest {
 
     Test.setMock(HttpCalloutMock.class, new IntegracaoSAPIntegradorMock(false));
 
-    IntegracaoSAPIntegrador.sendIntegrador(integradorIds);
+    System.enqueueJob(new IntegracaoSAPIntegrador(integradorIds));
 
     Test.stopTest();
 
@@ -77,7 +77,7 @@ public class IntegracaoSAPIntegradorTest {
 
     // Chamando o método futuro com lista vazia
     Set<Id> emptyIntegradorIds = new Set<Id>();
-    IntegracaoSAPIntegrador.sendIntegrador(emptyIntegradorIds);
+    System.enqueueJob(new IntegracaoSAPIntegrador(emptyIntegradorIds));
 
     Test.stopTest();
 

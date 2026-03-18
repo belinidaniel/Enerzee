@@ -2,13 +2,18 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-16-2026
+ * @last modified on  : 03-18-2026
  * @last modified by  : Daniel Belini
  * @test              : IntegracaoSAPTest
  **/
-public without sharing class IntegracaoSAPRepresentante {
-  @future(callout=true)
-  public static void sendRepresentante(Set<Id> triggerIds) {
+public without sharing class IntegracaoSAPRepresentante implements Queueable, Database.AllowsCallouts {
+  private final Set<Id> recordIds;
+
+  public IntegracaoSAPRepresentante(Set<Id> recordIds) {
+    this.recordIds = recordIds;
+  }
+
+  public void execute(QueueableContext ctx) {
     List<Consultor__c> consultorList = [
       SELECT
         Id,
@@ -22,12 +27,15 @@ public without sharing class IntegracaoSAPRepresentante {
         Email__c,
         SeCPFOuCNPJ__c
       FROM Consultor__c
-      WHERE Id IN :triggerIds
+      WHERE Id IN :recordIds
     ];
+
+    SAPIntegrationService.EndpointConfig sapConfig = SAPIntegrationService.resolveConfig(
+      'RepresentanteSAP'
+    );
 
     for (Consultor__c consultor : consultorList) {
       RepresentanteRequest corpoRequisicao = new RepresentanteRequest();
-      // corpoRequisicao.SalesEmployeeCode		  = Integer.valueOf(consultor.IDSAP__c);
       corpoRequisicao.U_Alfa_IdIntegracao = consultor.SeCPFOuCNPJ__c;
       corpoRequisicao.SalesEmployeeName = consultor.Name;
       corpoRequisicao.Remarks = consultor.Observacoes__c;
@@ -38,11 +46,12 @@ public without sharing class IntegracaoSAPRepresentante {
       corpoRequisicao.Mobile = consultor.Celular__c;
       corpoRequisicao.Fax = consultor.Fax__c;
       corpoRequisicao.Email = consultor.Email__c;
-      System.debug('corpoRequisicao: ' + JSON.serialize(corpoRequisicao));
+
       try {
-        HttpResponse response = chamadaIntegracao(
+        HttpResponse response = SAPIntegrationService.post(
           JSON.serialize(corpoRequisicao),
-          'RepresentanteSAP'
+          sapConfig,
+          null
         );
         Utils.createLog(
           'IntegracaoSAPRepresentante',
@@ -51,27 +60,13 @@ public without sharing class IntegracaoSAPRepresentante {
         );
 
         if (response.getBody() != null && response.getBody() != '') {
-          Integer[] successSAPResponseCodes = new List<Integer>{
-            200,
-            201,
-            204
-          };
-
           Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(
             response.getBody()
           );
           Integer statusCode = Integer.valueOf(responseBody.get('codigoHttp'));
-
-          //Sucesso
-          if (successSAPResponseCodes.contains(statusCode)) {
-            System.debug('SUCCESS');
-            consultor.SucessoIntegracaoSAP__c = true;
-          }
-          //Erro
-          else {
-            System.debug('ERROR');
-            consultor.SucessoIntegracaoSAP__c = false;
-          }
+          consultor.SucessoIntegracaoSAP__c = SAPIntegrationService.isSuccess(
+            statusCode
+          );
           consultor.StatusBodyIntegracaoSAP__c =
             statusCode +
             ' ' +
@@ -85,7 +80,6 @@ public without sharing class IntegracaoSAPRepresentante {
           'sendRepresentante ' + consultor.Id,
           e
         );
-
         consultor.SucessoIntegracaoSAP__c = false;
         consultor.StatusBodyIntegracaoSAP__c =
           e.getMessage() +
@@ -95,52 +89,23 @@ public without sharing class IntegracaoSAPRepresentante {
     }
 
     ConsultorTriggerHandler.disableTrigger();
-    update consultorList;
-    ConsultorTriggerHandler.enableTrigger();
-  }
-
-  private static HttpResponse chamadaIntegracao(
-    String body,
-    String endpointName
-  ) {
-    String resolvedEndpoint = Utils.getSAPMetadataName(endpointName);
-    Integrador__mdt parametrosIntegracao = [
-      SELECT Id, URL__c
-      FROM Integrador__mdt
-      WHERE DeveloperName = :resolvedEndpoint
-    ];
-
-    String tokenMetaName = Utils.getSAPMetadataName('TokenSAP');
-    String tokenSAP = [
-      SELECT Id, LastToken__c
-      FROM Integrador__mdt
-      WHERE DeveloperName = :tokenMetaName
-    ]
-    .LastToken__c;
-
-    Http httpObj = new Http();
-    HttpRequest request = new HttpRequest();
-
-    request.setEndpoint(parametrosIntegracao.URL__c);
-    request.setMethod('POST');
-    request.setHeader('Content-Type', 'application/json');
-    request.setHeader('Authorization', 'Bearer ' + tokenSAP);
-    request.setBody(body);
-
-    return Utils.callIntegrationSAP(request);
+    try {
+      update consultorList;
+    } finally {
+      ConsultorTriggerHandler.enableTrigger();
+    }
   }
 
   public class RepresentanteRequest {
-    // public Integer SalesEmployeeCode;			// ID do representante - 12,
-    public String U_Alfa_IdIntegracao; // ID que será convertido pro SalesEmployeeCode
-    public String SalesEmployeeName; // Nome - "teste service layer",
-    public String Remarks; // Observações - "observacao",
-    public Double CommissionForSalesEmployee; // Percentual de comissão - 1.0,
-    public Integer CommissionGroup; // ID do grupo de Comissão do representante - 0,
-    public String Active; // Status - "tYES",
-    public String Telephone; // Telefone - "telefone",
-    public String Mobile; // Celular - "celular",
-    public String Fax; // Fax - "fax",
-    public String Email; // Email - "email"
+    public String U_Alfa_IdIntegracao;
+    public String SalesEmployeeName;
+    public String Remarks;
+    public Double CommissionForSalesEmployee;
+    public Integer CommissionGroup;
+    public String Active;
+    public String Telephone;
+    public String Mobile;
+    public String Fax;
+    public String Email;
   }
 }
