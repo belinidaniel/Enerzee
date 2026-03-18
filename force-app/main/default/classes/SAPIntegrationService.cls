@@ -60,6 +60,9 @@ public with sharing class SAPIntegrationService {
   ) {
     String fullUrl =
       config.url + (String.isBlank(pathSuffix) ? '' : pathSuffix);
+    System.debug('### SAP Integration - Endpoint: ' + fullUrl);
+    System.debug('### SAP Integration - Token: ' + config.token);
+    System.debug('### SAP Integration - Payload: ' + body);
     HttpRequest request = new HttpRequest();
     request.setEndpoint(fullUrl);
     request.setMethod(HTTP_POST);
@@ -99,6 +102,18 @@ public with sharing class SAPIntegrationService {
         config.token = mdt.LastToken__c;
       }
     }
+    System.debug(
+      '### SAP resolveConfig - Endpoint MDT: ' +
+        resolvedEndpoint +
+        ' → ' +
+        config.url
+    );
+    System.debug(
+      '### SAP resolveConfig - Token MDT: ' +
+        resolvedToken +
+        ' → ' +
+        config.token
+    );
     return config;
   }
 

@@ -21,12 +21,9 @@ public with sharing class ConsultorBO {
     }
   }
 
-  public static void sendFornecedorRepresentanteRecordToSAP(
+  public static void sendFornecedorClienteRecordToSAP(
     List<Consultor__c> newRecordList
   ) {
-    // Representante (SAP) = Consultor = Vendedor
-    // Fornecedor (SAP) = Franqueado =	Integrador (DESCONTINUADA)
-
     User runningUser = [
       SELECT Id, Name, Profile.Name
       FROM User
@@ -34,21 +31,16 @@ public with sharing class ConsultorBO {
     ];
 
     if (!runningUser.Name.equalsIgnoreCase('Integrador SAP')) {
-      Set<Id> representanteIds = new Set<Id>();
-      Set<Id> fornecedorIds = new Set<Id>();
+      Set<Id> consultorIds = new Set<Id>();
       for (Consultor__c consultor : newRecordList) {
         if (consultor.RecordTypeID == consultorRT) {
-          representanteIds.add(consultor.Id);
-          fornecedorIds.add(consultor.Id);
+          consultorIds.add(consultor.Id);
         }
       }
 
-      if (!representanteIds.isEmpty()) {
-        System.enqueueJob(new IntegracaoSAPRepresentante(representanteIds));
-      }
-
-      if (!fornecedorIds.isEmpty()) {
-        System.enqueueJob(new IntegracaoSAPFornecedor(fornecedorIds));
+      if (!consultorIds.isEmpty()) {
+        System.enqueueJob(new IntegracaoSAPFornecedor(consultorIds));
+        System.enqueueJob(new IntegracaoSAPConsultor(consultorIds));
       }
     }
   }
