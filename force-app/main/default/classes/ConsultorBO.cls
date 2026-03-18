@@ -44,11 +44,11 @@ public with sharing class ConsultorBO {
       }
 
       if (!representanteIds.isEmpty()) {
-        IntegracaoSAPRepresentante.sendRepresentante(representanteIds);
+        System.enqueueJob(new IntegracaoSAPRepresentante(representanteIds));
       }
 
       if (!fornecedorIds.isEmpty()) {
-        IntegracaoSAPFornecedor.sendFornecedor(fornecedorIds);
+        System.enqueueJob(new IntegracaoSAPFornecedor(fornecedorIds));
       }
     }
   }

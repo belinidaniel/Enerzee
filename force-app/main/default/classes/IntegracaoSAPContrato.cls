@@ -6,9 +6,15 @@
  * @last modified by  : Daniel Belini
  * @test              : IntegracaoSAPCoverageTest, IntegracaoSAPTest
  **/
-public with sharing class IntegracaoSAPContrato {
-  @future(callout=true)
-  public static void sendContract(Set<Id> triggerIds) {
+public with sharing class IntegracaoSAPContrato implements Queueable, Database.AllowsCallouts {
+  private final Set<Id> recordIds;
+
+  public IntegracaoSAPContrato(Set<Id> recordIds) {
+    this.recordIds = recordIds;
+  }
+
+  public void execute(QueueableContext ctx) {
+    Set<Id> triggerIds = this.recordIds;
     Map<Id, List<Kit_Instalacao__c>> mapaProdutos = new Map<Id, List<Kit_Instalacao__c>>();
 
     List<Opportunity> oportunidades = [
@@ -53,6 +59,10 @@ public with sharing class IntegracaoSAPContrato {
         }
       }
 
+      SAPIntegrationService.EndpointConfig sapConfig = SAPIntegrationService.resolveConfig(
+        'ContratoSAP'
+      );
+
       for (Opportunity opp : oportunidades) {
         //Somente fazer callout se houver Kits na Oportunidade
         List<Kit_Instalacao__c> oppKits = mapaProdutos.get(opp.Id);
@@ -89,9 +99,10 @@ public with sharing class IntegracaoSAPContrato {
         }
 
         try {
-          HttpResponse response = chamadaIntegracao(
+          HttpResponse response = SAPIntegrationService.post(
             JSON.serialize(body),
-            'ContratoSAP'
+            sapConfig,
+            null
           );
           Utils.createLog(
             'IntegracaoSAPContrato',
@@ -101,29 +112,15 @@ public with sharing class IntegracaoSAPContrato {
           );
 
           if (response.getBody() != null && response.getBody() != '') {
-            Integer[] successSAPResponseCodes = new List<Integer>{
-              200,
-              201,
-              204
-            };
-
             Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(
               response.getBody()
             );
             Integer statusCode = Integer.valueOf(
               responseBody.get('codigoHttp')
             );
-
-            //Sucesso
-            if (successSAPResponseCodes.contains(statusCode)) {
-              System.debug('SUCCESS');
-              opp.SucessoIntegracaoSAP__c = true;
-            }
-            //Erro
-            else {
-              System.debug('ERROR');
-              opp.SucessoIntegracaoSAP__c = false;
-            }
+            opp.SucessoIntegracaoSAP__c = SAPIntegrationService.isSuccess(
+              statusCode
+            );
             opp.StatusBodyIntegracaoSAP__c =
               statusCode +
               ' ' +
@@ -134,11 +131,10 @@ public with sharing class IntegracaoSAPContrato {
         } catch (Exception e) {
           Utils.createLog(
             'IntegracaoSAPContrato',
-            'sendPedidoVenda ' + opp.Id,
+            'sendContract ' + opp.Id,
             e,
             opp.Id
           );
-
           opp.SucessoIntegracaoSAP__c = false;
           opp.StatusBodyIntegracaoSAP__c =
             e.getMessage() +
@@ -149,37 +145,11 @@ public with sharing class IntegracaoSAPContrato {
     }
 
     OpportunityTriggerHandler.disableTrigger();
-    update oportunidades;
-    OpportunityTriggerHandler.enableTrigger();
-  }
-
-  private static HttpResponse chamadaIntegracao(
-    String body,
-    String endpointName
-  ) {
-    Integrador__mdt parametrosIntegracao = [
-      SELECT Id, URL__c
-      FROM Integrador__mdt
-      WHERE DeveloperName = :endpointName
-    ];
-
-    String tokenSAP = [
-      SELECT Id, LastToken__c
-      FROM Integrador__mdt
-      WHERE DeveloperName = 'TokenSAP'
-    ]
-    .LastToken__c;
-
-    Http httpObj = new Http();
-    HttpRequest request = new HttpRequest();
-
-    request.setEndpoint(parametrosIntegracao.URL__c);
-    request.setMethod('POST');
-    request.setHeader('Content-Type', 'application/json');
-    request.setHeader('Authorization', 'Bearer ' + tokenSAP);
-    request.setBody(body);
-
-    return Utils.callIntegrationSAP(request);
+    try {
+      update oportunidades;
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
   }
 
   public class ContratoRequest {
@@ -205,45 +175,15 @@ public with sharing class IntegracaoSAPContrato {
   }
 
   public static String getMeasureUnitIdValue(String fieldValue) {
-    return fieldValue.equalsIgnoreCase('Metro')
-      ? 'm'
-      : fieldValue.equalsIgnoreCase('Metro Quadrados')
-          ? 'm2'
-          : fieldValue.equalsIgnoreCase('Kilograma')
-              ? 'kg'
-              : fieldValue.equalsIgnoreCase('Segundos')
-                  ? 's'
-                  : fieldValue.equalsIgnoreCase('Horas')
-                      ? 'h'
-                      : fieldValue.equalsIgnoreCase('Dia')
-                          ? 'd'
-                          : fieldValue.equalsIgnoreCase('Unidade')
-                              ? 'UN'
-                              : fieldValue.equalsIgnoreCase('Serviço')
-                                  ? 'SV'
-                                  : 'SV';
+    return SAPDocumentLineMapper.getMeasureUnitId(fieldValue);
   }
 
   public static Integer getMeasurementByIdValue(String fieldValue) {
-    return fieldValue.equalsIgnoreCase('Valor')
-      ? 1
-      : fieldValue.equalsIgnoreCase('Percentual')
-          ? 2
-          : fieldValue.equalsIgnoreCase('Quantidade') ? 3 : 3;
+    return SAPDocumentLineMapper.getMeasurementById(fieldValue);
   }
 
   public static Integer getBillingTypeValue(String fieldValue) {
-    return fieldValue.equalsIgnoreCase('Nenhum')
-      ? 0
-      : fieldValue.equalsIgnoreCase('Medição')
-          ? 1
-          : fieldValue.equalsIgnoreCase('Parcelado')
-              ? 2
-              : fieldValue.equalsIgnoreCase('Recorrente')
-                  ? 3
-                  : fieldValue.equalsIgnoreCase('Calculado')
-                      ? 4
-                      : fieldValue.equalsIgnoreCase('Parcelado Medido') ? 5 : 5;
+    return SAPDocumentLineMapper.getBillingType(fieldValue);
   }
 
   public static Integer getUsageValue(String fieldValue) {

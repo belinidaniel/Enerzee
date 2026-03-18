@@ -34,7 +34,7 @@ public without sharing class KitInstalacaoBO {
         kitWithItemIds.add(item.Kit_Instalacao__c);
       }
 
-      IntegracaoSAPKit.sendKit(kitWithItemIds);
+      System.enqueueJob(new IntegracaoSAPKit(kitWithItemIds));
     } catch (Exception e) {
       Utils.createLog(CLASS_NAME, 'sendKitRecordsToSAP', e);
       throw e;

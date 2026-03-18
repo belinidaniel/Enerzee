@@ -43,7 +43,9 @@ public without sharing class IntegracaoSAPConsultorTest {
 
     Test.startTest();
     // Act
-    IntegracaoSAPConsultor.sendConsultor(new Set<Id>{ consultors[0].Id });
+    System.enqueueJob(
+      new IntegracaoSAPConsultor(new Set<Id>{ consultors[0].Id })
+    );
     Test.stopTest();
 
     // Assert

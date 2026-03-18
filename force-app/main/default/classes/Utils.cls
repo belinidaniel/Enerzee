@@ -291,6 +291,15 @@ public without sharing class Utils {
     return response;
   }
 
+  private static Boolean isSandboxCached;
+
+  public static String getSAPMetadataName(String baseName) {
+    if (isSandboxCached == null) {
+      isSandboxCached = [SELECT IsSandbox FROM Organization LIMIT 1].IsSandbox;
+    }
+    return isSandboxCached ? baseName + '_QA' : baseName;
+  }
+
   public static HttpResponse callIntegrationSAP(HttpRequest request) {
     Http http = new Http();
     HttpResponse response = new HttpResponse();

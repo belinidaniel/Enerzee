@@ -15,7 +15,7 @@ public with sharing class IntegradorBO {
     }
 
     if (!integradorIds.isEmpty()) {
-      IntegracaoSAPIntegrador.sendIntegrador(integradorIds);
+      System.enqueueJob(new IntegracaoSAPIntegrador(integradorIds));
     }
   }
 

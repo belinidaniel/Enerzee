@@ -2,13 +2,18 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 03-18-2026
  * @last modified by  : Daniel Belini
- * @test              : IntegracaoSAPTest
+ * @test              : IntegracaoSAPCoverageTest
  **/
-public with sharing class IntegracaoSAPPedidoCompra {
-  @future(callout=true)
-  public static void sendPedidoCompra(Set<Id> triggerIds) {
+public with sharing class IntegracaoSAPPedidoCompra implements Queueable, Database.AllowsCallouts {
+  private final Set<Id> recordIds;
+
+  public IntegracaoSAPPedidoCompra(Set<Id> recordIds) {
+    this.recordIds = recordIds;
+  }
+
+  public void execute(QueueableContext ctx) {
     Map<Id, List<Kit_Instalacao__c>> mapaProdutos = new Map<Id, List<Kit_Instalacao__c>>();
 
     List<Opportunity> oportunidades = [
@@ -23,7 +28,7 @@ public with sharing class IntegracaoSAPPedidoCompra {
         ValorTotalProposta__c,
         NumeroContrato__c
       FROM Opportunity
-      WHERE Id IN :triggerIds
+      WHERE Id IN :recordIds
     ];
 
     List<Kit_Instalacao__c> kits = [
@@ -41,13 +46,12 @@ public with sharing class IntegracaoSAPPedidoCompra {
         VencimentoBase__c,
         Nome_da_Oportunidade__r.ValorTotalProposta__c
       FROM Kit_Instalacao__c
-      WHERE Nome_da_Oportunidade__c IN :triggerIds
+      WHERE Nome_da_Oportunidade__c IN :recordIds
     ];
 
     if (!kits.isEmpty()) {
-      //Montar mapa de referência para os produtos das Oportunidades
       for (Kit_Instalacao__c kit : kits) {
-        if (!mapaProdutos.keySet().contains(kit.Nome_da_Oportunidade__c)) {
+        if (!mapaProdutos.containsKey(kit.Nome_da_Oportunidade__c)) {
           mapaProdutos.put(
             kit.Nome_da_Oportunidade__c,
             new List<Kit_Instalacao__c>{ kit }
@@ -57,8 +61,11 @@ public with sharing class IntegracaoSAPPedidoCompra {
         }
       }
 
+      SAPIntegrationService.EndpointConfig sapConfig = SAPIntegrationService.resolveConfig(
+        'PedidoCompraVendaSAP'
+      );
+
       for (Opportunity opp : oportunidades) {
-        //Somente fazer callout se houver Kits na Oportunidade
         List<Kit_Instalacao__c> oppKits = mapaProdutos.get(opp.Id);
         PedidoCompraRequest corpoRequisicao = new PedidoCompraRequest();
 
@@ -68,132 +75,32 @@ public with sharing class IntegracaoSAPPedidoCompra {
           corpoRequisicao.docDueDate = String.valueOf(opp.DataEntrega__c);
           corpoRequisicao.numAtCard = opp.IdVirtualOffice__c;
           corpoRequisicao.bpL_IDAssignedToInvoice = 1;
-          corpoRequisicao.paymentGroupCode = opp.CondicoesPagamento__c;
+          try {
+            corpoRequisicao.paymentGroupCode = String.isNotBlank(
+                opp.CondicoesPagamento__c
+              )
+              ? Integer.valueOf(opp.CondicoesPagamento__c)
+              : null;
+          } catch (TypeException e) {
+            corpoRequisicao.paymentGroupCode = null;
+          }
           corpoRequisicao.U_ContractOriginId = opp.NumeroOrigemContrato__c;
           corpoRequisicao.U_ContractId = Integer.valueOf(opp.NumeroContrato__c);
+          corpoRequisicao.U_Classification = SAPDocumentLineMapper.getClassification(
+            opp.Classificacao__c
+          );
 
-          corpoRequisicao.U_Classification = opp.Classificacao__c.equalsIgnoreCase(
-              'Contratos de Locação'
-            )
-            ? 1
-            : opp.Classificacao__c.equalsIgnoreCase('Contratos de Serviços')
-                ? 2
-                : opp.Classificacao__c.equalsIgnoreCase(
-                      'Contratos de Licenciamento'
-                    )
-                    ? 3
-                    : opp.Classificacao__c.equalsIgnoreCase(
-                          'Compras de equipamentos e materiais'
-                        )
-                        ? 4
-                        : opp.Classificacao__c.equalsIgnoreCase(
-                              'Arrendamento de área rural'
-                            )
-                            ? 5
-                            : opp.Classificacao__c.equalsIgnoreCase(
-                                  'Prestação de Serviços (v)'
-                                )
-                                ? 6
-                                : opp.Classificacao__c.equalsIgnoreCase(
-                                      'Venda de equipamentos e materiais'
-                                    )
-                                    ? 7
-                                    : 7;
-
-          //Dados do produto
           corpoRequisicao.documentLines = new List<DocumentLines>();
-
           for (Kit_Instalacao__c kit : oppKits) {
-            DocumentLines doc = new DocumentLines();
-            doc.itemCode = kit.Name;
-            doc.quantity = 1;
-            //doc.price				 = kit.ValorKit__c;
-            doc.price = kit.Nome_da_Oportunidade__r.ValorTotalProposta__c;
-            doc.U_UnitMeasureHired = kit.UnidadeMedidaLocacao__c.equalsIgnoreCase(
-                'Metro'
-              )
-              ? 'm'
-              : kit.UnidadeMedidaLocacao__c.equalsIgnoreCase('Metro Quadrados')
-                  ? 'm2'
-                  : kit.UnidadeMedidaLocacao__c.equalsIgnoreCase('Kilograma')
-                      ? 'kg'
-                      : kit.UnidadeMedidaLocacao__c.equalsIgnoreCase('Segundos')
-                          ? 's'
-                          : kit.UnidadeMedidaLocacao__c.equalsIgnoreCase(
-                                'Horas'
-                              )
-                              ? 'h'
-                              : kit.UnidadeMedidaLocacao__c.equalsIgnoreCase(
-                                    'Dia'
-                                  )
-                                  ? 'd'
-                                  : kit.UnidadeMedidaLocacao__c.equalsIgnoreCase(
-                                        'Unidade'
-                                      )
-                                      ? 'UN'
-                                      : kit.UnidadeMedidaLocacao__c.equalsIgnoreCase(
-                                            'Serviço'
-                                          )
-                                          ? 'SV'
-                                          : 'SV';
-
-            doc.U_MeasurementById = kit.TipoMedicao__c.equalsIgnoreCase('Valor')
-              ? 1
-              : kit.TipoMedicao__c.equalsIgnoreCase('Percentual')
-                  ? 2
-                  : kit.TipoMedicao__c.equalsIgnoreCase('Quantidade') ? 3 : 3;
-
-            doc.U_BillingType = kit.TipoFaturamento__c.equalsIgnoreCase(
-                'Nenhum'
-              )
-              ? 0
-              : kit.TipoFaturamento__c.equalsIgnoreCase('Medição')
-                  ? 1
-                  : kit.TipoFaturamento__c.equalsIgnoreCase('Parcelado')
-                      ? 2
-                      : kit.TipoFaturamento__c.equalsIgnoreCase('Recorrente')
-                          ? 3
-                          : kit.TipoFaturamento__c.equalsIgnoreCase('Calculado')
-                              ? 4
-                              : kit.TipoFaturamento__c.equalsIgnoreCase(
-                                    'Parcelado Medido'
-                                  )
-                                  ? 5
-                                  : 5;
-
-            doc.U_RecurrenceType = kit.Recorrencia__c.equalsIgnoreCase(
-                'Indefinida'
-              )
-              ? 0
-              : kit.Recorrencia__c.equalsIgnoreCase('Não se aplica')
-                  ? 1
-                  : kit.Recorrencia__c.equalsIgnoreCase('Mensal')
-                      ? 2
-                      : kit.Recorrencia__c.equalsIgnoreCase('Anual')
-                          ? 3
-                          : kit.Recorrencia__c.equalsIgnoreCase('Bimestral')
-                              ? 4
-                              : kit.Recorrencia__c.equalsIgnoreCase(
-                                    'Trimestral'
-                                  )
-                                  ? 5
-                                  : kit.Recorrencia__c.equalsIgnoreCase(
-                                        'Semestral'
-                                      )
-                                      ? 6
-                                      : 6;
-
-            doc.U_DueDateBase = String.valueOf(kit.VencimentoBase__c);
-            doc.U_BirthdayDate = String.valueOf(kit.AniversarioLinha__c);
-
-            corpoRequisicao.documentLines.add(doc);
+            corpoRequisicao.documentLines.add(buildDocumentLine(kit));
           }
         }
 
         try {
-          HttpResponse response = chamadaIntegracao(
+          HttpResponse response = SAPIntegrationService.post(
             JSON.serialize(corpoRequisicao),
-            'PedidoCompraVendaSAP'
+            sapConfig,
+            'pedidocompra'
           );
           Utils.createLog(
             'IntegracaoSAPPedidoCompra',
@@ -203,12 +110,6 @@ public with sharing class IntegracaoSAPPedidoCompra {
           );
 
           if (response.getBody() != null && response.getBody() != '') {
-            Integer[] successSAPResponseCodes = new List<Integer>{
-              200,
-              201,
-              204
-            };
-
             Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(
               response.getBody()
             );
@@ -216,16 +117,9 @@ public with sharing class IntegracaoSAPPedidoCompra {
               responseBody.get('codigoHttp')
             );
 
-            //Sucesso
-            if (successSAPResponseCodes.contains(statusCode)) {
-              System.debug('SUCCESS');
-              opp.SucessoIntegracaoSAP__c = true;
-            }
-            //Erro
-            else {
-              System.debug('ERROR');
-              opp.SucessoIntegracaoSAP__c = false;
-            }
+            opp.SucessoIntegracaoSAP__c = SAPIntegrationService.isSuccess(
+              statusCode
+            );
             opp.StatusBodyIntegracaoSAP__c =
               statusCode +
               ' ' +
@@ -240,7 +134,6 @@ public with sharing class IntegracaoSAPPedidoCompra {
             e,
             opp.Id
           );
-          system.debug('e: ' + e);
           opp.SucessoIntegracaoSAP__c = false;
           opp.StatusBodyIntegracaoSAP__c =
             e.getMessage() +
@@ -251,37 +144,33 @@ public with sharing class IntegracaoSAPPedidoCompra {
     }
 
     OpportunityTriggerHandler.disableTrigger();
-    update oportunidades;
-    OpportunityTriggerHandler.enableTrigger();
+    try {
+      update oportunidades;
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
   }
 
-  private static HttpResponse chamadaIntegracao(
-    String body,
-    String endpointName
-  ) {
-    Integrador__mdt parametrosIntegracao = [
-      SELECT Id, URL__c
-      FROM Integrador__mdt
-      WHERE DeveloperName = :endpointName
-    ];
-
-    String tokenSAP = [
-      SELECT Id, LastToken__c
-      FROM Integrador__mdt
-      WHERE DeveloperName = 'TokenSAP'
-    ]
-    .LastToken__c;
-
-    Http httpObj = new Http();
-    HttpRequest request = new HttpRequest();
-
-    request.setEndpoint(parametrosIntegracao.URL__c + 'pedidocompra');
-    request.setMethod('POST');
-    request.setHeader('Content-Type', 'application/json');
-    request.setHeader('Authorization', 'Bearer ' + tokenSAP);
-    request.setBody(body);
-
-    return Utils.callIntegrationSAP(request);
+  private static DocumentLines buildDocumentLine(Kit_Instalacao__c kit) {
+    DocumentLines doc = new DocumentLines();
+    doc.itemCode = kit.Name;
+    doc.quantity = 1;
+    doc.price = kit.Nome_da_Oportunidade__r.ValorTotalProposta__c;
+    doc.U_UnitMeasureHired = SAPDocumentLineMapper.getMeasureUnitId(
+      kit.UnidadeMedidaLocacao__c
+    );
+    doc.U_MeasurementById = SAPDocumentLineMapper.getMeasurementById(
+      kit.TipoMedicao__c
+    );
+    doc.U_BillingType = SAPDocumentLineMapper.getBillingType(
+      kit.TipoFaturamento__c
+    );
+    doc.U_RecurrenceType = SAPDocumentLineMapper.getRecurrenceType(
+      kit.Recorrencia__c
+    );
+    doc.U_DueDateBase = String.valueOf(kit.VencimentoBase__c);
+    doc.U_BirthdayDate = String.valueOf(kit.AniversarioLinha__c);
+    return doc;
   }
 
   public class PedidoCompraRequest {
@@ -290,7 +179,7 @@ public with sharing class IntegracaoSAPPedidoCompra {
     public String docDueDate;
     public String numAtCard;
     public Integer bpL_IDAssignedToInvoice;
-    public String paymentGroupCode;
+    public Integer paymentGroupCode;
     public Integer U_Classification;
     public String U_ContractOriginId;
     public Integer U_ContractId;

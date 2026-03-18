@@ -2,13 +2,18 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 03-18-2026
  * @last modified by  : Daniel Belini
  * @test              : IntegracaoSAPConsultorTest
  **/
-public without sharing class IntegracaoSAPConsultor {
-  @future(callout=true)
-  public static void sendConsultor(Set<Id> triggerIds) {
+public without sharing class IntegracaoSAPConsultor implements Queueable, Database.AllowsCallouts {
+  private final Set<Id> recordIds;
+
+  public IntegracaoSAPConsultor(Set<Id> recordIds) {
+    this.recordIds = recordIds;
+  }
+
+  public void execute(QueueableContext ctx) {
     List<Consultor__c> consultorList = [
       SELECT
         Id,
@@ -38,67 +43,14 @@ public without sharing class IntegracaoSAPConsultor {
         SucessoIntegracaoSAP__c,
         StatusBodyIntegracaoSAP__c
       FROM Consultor__c
-      WHERE Id IN :triggerIds
+      WHERE Id IN :recordIds
     ];
 
-    Map<String, String> stateNameToAbbreviation = new Map<String, String>{
-      'Acre' => 'AC',
-      'Alagoas' => 'AL',
-      'Amapá' => 'AP',
-      'Amazonas' => 'AM',
-      'Bahia' => 'BA',
-      'Ceará' => 'CE',
-      'Distrito Federal' => 'DF',
-      'Espírito Santo' => 'ES',
-      'Goiás' => 'GO',
-      'Maranhão' => 'MA',
-      'Mato Grosso' => 'MT',
-      'Mato Grosso do Sul' => 'MS',
-      'Minas Gerais' => 'MG',
-      'Pará' => 'PA',
-      'Paraíba' => 'PB',
-      'Paraná' => 'PR',
-      'Pernambuco' => 'PE',
-      'Piauí' => 'PI',
-      'Rio de Janeiro' => 'RJ',
-      'Rio Grande do Norte' => 'RN',
-      'Rio Grande do Sul' => 'RS',
-      'Rondônia' => 'RO',
-      'Roraima' => 'RR',
-      'Santa Catarina' => 'SC',
-      'São Paulo' => 'SP',
-      'Sergipe' => 'SE',
-      'Tocantins' => 'TO'
-    };
+    SAPIntegrationService.EndpointConfig sapConfig = SAPIntegrationService.resolveConfig(
+      'ClienteSAP'
+    );
 
     for (Consultor__c acc : consultorList) {
-      String formattedEstadoCobranca = acc.EstadoCobranca__c;
-      if (
-        acc.EstadoCobranca__c != null &&
-        acc.EstadoCobranca__c?.length() != 2
-      ) {
-        formattedEstadoCobranca = stateNameToAbbreviation.get(
-          acc.EstadoCobranca__c
-        );
-      }
-
-      String formattedEstadoEntrega = acc.EstadoEntrega__c;
-      if (acc.EstadoEntrega__c != null && acc.EstadoEntrega__c?.length() != 2) {
-        formattedEstadoEntrega = stateNameToAbbreviation.get(
-          acc.EstadoEntrega__c
-        );
-      }
-
-      String formattedBillingCountry;
-      //if(acc.BillingCountry != null && acc.BillingCountry.equalsIgnoreCase('Brasil')){
-      formattedBillingCountry = 'BR';
-      //}
-
-      String formattedShippingCountry;
-      //if(acc.ShippingCountry != null && acc.ShippingCountry.equalsIgnoreCase('Brasil')){
-      formattedShippingCountry = 'BR';
-      //}
-
       ConsultorRequest corpoRequisicao = new ConsultorRequest();
       corpoRequisicao.CardCode = acc.SeCPFouCNPJ__c;
       corpoRequisicao.CardName = acc.Name;
@@ -108,63 +60,56 @@ public without sharing class IntegracaoSAPConsultor {
         acc.Telefone__c
       );
       corpoRequisicao.FederalTaxID = acc.SeCPFouCNPJ__c;
-      corpoRequisicao.BPAddresses = new List<BPAddress>{};
-      corpoRequisicao.BPFiscalTaxIDCollection = new List<BPFiscalTaxID>{};
+      corpoRequisicao.BPAddresses = new List<SAPBusinessPartnerMapper.BPAddress>{};
+      corpoRequisicao.BPFiscalTaxIDCollection = new List<SAPBusinessPartnerMapper.BPFiscalTaxID>{};
 
       if (acc.RuaCobranca__c != null) {
-        BPAddress bpAddress = new BPAddress();
-        bpAddress.AddressName = 'Endereço cobrança';
-        bpAddress.Street = acc.RuaCobranca__c;
-        bpAddress.Block = acc.BairroCobranca__c;
-        bpAddress.ZipCode = acc.CodigoPostalCobranca__c;
-        bpAddress.City = acc.CidadeCobranca__c;
-        bpAddress.County = acc.MunicipioCobranca__c;
-        bpAddress.Country = formattedBillingCountry;
-        bpAddress.State = formattedEstadoCobranca;
-        bpAddress.BuildingFloorRoom = acc.ComplementoCobranca__c != null
-          ? acc.ComplementoCobranca__c
-          : '';
-        bpAddress.AddressType = 'bo_BillTo';
-        bpAddress.StreetNo = acc.NumeroRuaCobranca__c;
-        bpAddress.BPCode = acc.SeCPFouCNPJ__c;
-        bpAddress.RowNum = 0;
-
-        corpoRequisicao.BPAddresses.add(bpAddress);
+        corpoRequisicao.BPAddresses.add(
+          SAPBusinessPartnerMapper.buildBillingAddress(
+            acc.SeCPFouCNPJ__c,
+            acc.RuaCobranca__c,
+            acc.NumeroRuaCobranca__c,
+            acc.BairroCobranca__c,
+            acc.CodigoPostalCobranca__c,
+            acc.CidadeCobranca__c,
+            acc.MunicipioCobranca__c,
+            'BR',
+            SAPBusinessPartnerMapper.normalizeState(acc.EstadoCobranca__c),
+            acc.ComplementoCobranca__c
+          )
+        );
       }
 
       if (acc.RuaEntrega__c != null) {
-        BPAddress shippingAddress = new BPAddress();
-        shippingAddress.AddressName = 'Endereço entrega';
-        shippingAddress.Street = acc.RuaEntrega__c;
-        shippingAddress.Block = acc.BairroEntrega__c;
-        shippingAddress.ZipCode = acc.CodigoPostalEntrega__c;
-        shippingAddress.City = acc.CidadeEntrega__c;
-        shippingAddress.County = acc.MunicipioEntrega__c;
-        shippingAddress.Country = formattedShippingCountry;
-        shippingAddress.State = formattedEstadoEntrega;
-        shippingAddress.BuildingFloorRoom = acc.ComplementoEntrega__c != null
-          ? acc.ComplementoEntrega__c
-          : '';
-        shippingAddress.AddressType = 'bo_ShipTo';
-        shippingAddress.StreetNo = acc.NumeroRuaEntrega__c;
-        shippingAddress.BPCode = acc.SeCPFouCNPJ__c;
-        shippingAddress.RowNum = 1;
-
-        corpoRequisicao.BPAddresses.add(shippingAddress);
+        corpoRequisicao.BPAddresses.add(
+          SAPBusinessPartnerMapper.buildShippingAddress(
+            acc.SeCPFouCNPJ__c,
+            acc.RuaEntrega__c,
+            acc.NumeroRuaEntrega__c,
+            acc.BairroEntrega__c,
+            acc.CodigoPostalEntrega__c,
+            acc.CidadeEntrega__c,
+            acc.MunicipioEntrega__c,
+            'BR',
+            SAPBusinessPartnerMapper.normalizeState(acc.EstadoEntrega__c),
+            acc.ComplementoEntrega__c
+          )
+        );
       }
 
-      BPFiscalTaxID BPTaxID = new BPFiscalTaxID();
-      if (acc.CPF__c != null) {
-        BPTaxID.TaxID0 = acc.SeCPFouCNPJ__c;
-      } else if (acc.CNPJ__c != null) {
-        BPTaxID.TaxID4 = acc.SeCPFouCNPJ__c;
-      }
-      corpoRequisicao.BPFiscalTaxIDCollection.add(BPTaxID);
+      corpoRequisicao.BPFiscalTaxIDCollection.add(
+        SAPBusinessPartnerMapper.buildFiscalTaxId(
+          acc.CPF__c,
+          acc.CNPJ__c,
+          acc.SeCPFouCNPJ__c
+        )
+      );
 
       try {
-        HttpResponse response = chamadaIntegracao(
+        HttpResponse response = SAPIntegrationService.post(
           JSON.serialize(corpoRequisicao),
-          'ClienteSAP'
+          sapConfig,
+          null
         );
         Utils.createLog(
           'IntegracaoSAPConsultor',
@@ -173,27 +118,13 @@ public without sharing class IntegracaoSAPConsultor {
         );
 
         if (response.getBody() != null && response.getBody() != '') {
-          Integer[] successSAPResponseCodes = new List<Integer>{
-            200,
-            201,
-            204
-          };
-
           Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(
             response.getBody()
           );
           Integer statusCode = Integer.valueOf(responseBody.get('codigoHttp'));
-
-          //Sucesso
-          if (successSAPResponseCodes.contains(statusCode)) {
-            System.debug('SUCCESS');
-            acc.SucessoIntegracaoSAP__c = true;
-          }
-          //Erro
-          else {
-            System.debug('ERROR');
-            acc.SucessoIntegracaoSAP__c = false;
-          }
+          acc.SucessoIntegracaoSAP__c = SAPIntegrationService.isSuccess(
+            statusCode
+          );
           acc.StatusBodyIntegracaoSAP__c =
             statusCode +
             ' ' +
@@ -203,7 +134,6 @@ public without sharing class IntegracaoSAPConsultor {
         }
       } catch (Exception e) {
         Utils.createLog('IntegracaoSAPConsultor', 'sendConsultor ' + acc.Id, e);
-
         acc.SucessoIntegracaoSAP__c = false;
         acc.StatusBodyIntegracaoSAP__c =
           e.getMessage() +
@@ -213,68 +143,21 @@ public without sharing class IntegracaoSAPConsultor {
     }
 
     ConsultorTriggerHandler.disableTrigger();
-    update consultorList;
-    ConsultorTriggerHandler.enableTrigger();
-  }
-
-  private static HttpResponse chamadaIntegracao(
-    String body,
-    String endpointName
-  ) {
-    Integrador__mdt parametrosIntegracao = [
-      SELECT Id, URL__c
-      FROM Integrador__mdt
-      WHERE DeveloperName = :endpointName
-    ];
-
-    String tokenSAP = [
-      SELECT Id, LastToken__c
-      FROM Integrador__mdt
-      WHERE DeveloperName = 'TokenSAP'
-    ]
-    .LastToken__c;
-
-    Http httpObj = new Http();
-    HttpRequest request = new HttpRequest();
-
-    request.setEndpoint(parametrosIntegracao.URL__c);
-    request.setMethod('POST');
-    request.setHeader('Content-Type', 'application/json');
-    request.setHeader('Authorization', 'Bearer ' + tokenSAP);
-    request.setBody(body);
-
-    return Utils.callIntegrationSAP(request);
+    try {
+      update consultorList;
+    } finally {
+      ConsultorTriggerHandler.enableTrigger();
+    }
   }
 
   public class ConsultorRequest {
-    public String CardCode; // ID externo (CPF) - "1234"
-    public String CardName; // Nome - "Consultor atualizado pela API"
-    public String CardType; // Tipo de pessoa, deve ser cCustomer para Consultors - "cCustomer"
-    public String EmailAddress; // Email - "email@teste.com"
-    public String Phone1; // Telefone do Consultor - "11111111"
-    public String FederalTaxID; // Documento do Consultor - "453125241"
-    public BPAddress[] BPAddresses;
-    public BPFiscalTaxID[] BPFiscalTaxIDCollection;
-  }
-
-  public class BPAddress {
-    public String AddressName; // Apelido do endereço - "Endereco entrega",
-    public String Street; // Rua - "AV. Teste N° 628",
-    public String Block; // Bairro - "bairro teste",
-    public String ZipCode; // CEP - "05651-901",
-    public String City; // Cidade - "SÃO PAULO",
-    public String County; // Município - null,
-    public String Country; // Sigla do País - "BR",
-    public String State; // Sigla do Estado - "SP",
-    public String BuildingFloorRoom; // Complemento - "123",
-    public String AddressType; // Tipo do endereço, bo_BillTo para cobrança e bo_ShipTo para entrega - "bo_BillTo",
-    public String StreetNo; // Número da casa - "628",
-    public String BPCode; // Chave externa do Consultor - "1234",
-    public Integer RowNum; // Sequencial gerado automaticamente, começa em zero - 0
-  }
-
-  public class BPFiscalTaxID {
-    public String TaxID0; // CNPJ do Consultor, se houver
-    public String TaxID4; // CPF do Consultor, se houver
+    public String CardCode;
+    public String CardName;
+    public String CardType;
+    public String EmailAddress;
+    public String Phone1;
+    public String FederalTaxID;
+    public SAPBusinessPartnerMapper.BPAddress[] BPAddresses;
+    public SAPBusinessPartnerMapper.BPFiscalTaxID[] BPFiscalTaxIDCollection;
   }
 }

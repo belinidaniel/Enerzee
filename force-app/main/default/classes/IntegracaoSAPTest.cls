@@ -359,7 +359,7 @@ public class IntegracaoSAPTest {
     opportunity.Parceiro__c = parceiro.id;
     update opportunity;
 
-    IntegracaoSAPContrato.sendContract(new Set<Id>{ opportunity.Id });
+    System.enqueueJob(new IntegracaoSAPContrato(new Set<Id>{ opportunity.Id }));
 
     Test.stopTest();
   }
@@ -406,7 +406,7 @@ public class IntegracaoSAPTest {
     opportunity.Parceiro__c = parceiro.id;
     update opportunity;
 
-    IntegracaoSAPContrato.sendContract(new Set<Id>{ opportunity.Id });
+    System.enqueueJob(new IntegracaoSAPContrato(new Set<Id>{ opportunity.Id }));
 
     Test.stopTest();
   }
