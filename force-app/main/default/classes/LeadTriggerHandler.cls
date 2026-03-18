@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 03-18-2026
  * @last modified by  : Daniel Belini
  * @test              : IntegracaoGeradorPropostasTest, IntegracaoVOConsultorPreCadastroTest, LeadBOTest,
  *                       LeadIntegrationBatchTest, LeadIntegrationServiceTest, LeadTriggerTest
@@ -39,10 +39,6 @@ public class LeadTriggerHandler extends TriggerHandler {
   }
 
   public override void beforeUpdate() {
-    LeadBO.checkTasksConclusionBeforeStatusChange(
-      (List<Lead>) newRecordList,
-      (Map<Id, Lead>) oldMap
-    );
     LeadBO.LeadValidationHandler((List<Lead>) newRecordList);
     LeadBO.setRecordTypeAccount((List<Lead>) newRecordList);
     LeadBO.sendConsultorRecordToVirtualOffice(

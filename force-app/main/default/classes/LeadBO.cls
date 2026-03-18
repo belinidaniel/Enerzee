@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 03-18-2026
  * @last modified by  : Daniel Belini
  * @test              : LeadBOTest, LeadTriggerTest
  **/
@@ -18,63 +18,6 @@ public with sharing class LeadBO {
     .get('QualificacaodeConsultores')
     .getRecordTypeId();
   public static Id QualificarConsultorQUEUE = getQueueIdByName('Consultor');
-
-  public static void checkTasksConclusionBeforeStatusChange(
-    List<Lead> newRecordList,
-    Map<Id, Lead> oldMap
-  ) {
-    Map<Id, List<Task>> LeadIdToTaskList = new Map<Id, List<Task>>();
-
-    Id voUserId = [
-      SELECT Id
-      FROM User
-      WHERE Username LIKE '%integracao@lab065.com%'
-      LIMIT 1
-    ]
-    .Id;
-
-    for (Task task : [
-      SELECT Id, Status, WhoId
-      FROM Task
-      WHERE WhoId IN :newRecordList
-    ]) {
-      if (!LeadIdToTaskList.containsKey(task.WhoId)) {
-        LeadIdToTaskList.put(task.WhoId, new List<Task>());
-      }
-      LeadIdToTaskList.get(task.WhoId).add(task);
-    }
-
-    for (Lead lead : newRecordList) {
-      if (
-        lead.RecordTypeId != QualificarConsultorRT &&
-        lead.RecordTypeId != QualificarClienteRT
-      ) {
-        continue;
-      }
-
-      //if(
-      //lead.Status != 'Novo' &&
-      //(lead.OwnerId == QualificarClienteQUEUE || lead.OwnerId == QualificarConsultorQUEUE)
-      //){
-      //lead.addError('Um proprietário deve aceitar o lead antes de avançar de fase!');
-      //break;
-      //}
-
-      Lead oldLead = oldMap.get(lead.Id);
-      if (
-        lead.status != oldLead.status &&
-        !LeadIdToTaskList.isEmpty() &&
-        UserInfo.getUserId() != voUserId
-      ) {
-        for (Task task : LeadIdToTaskList.get(lead.Id)) {
-          if (!task.Status.equalsIgnoreCase(TaskUtils.STATUS_CONCLUIDO)) {
-            // lead.addError('Todas as tarefas existentes para esse lead precisam estar concluídas antes de avançar de fase!');
-            // break;
-          }
-        }
-      }
-    }
-  }
 
   public static void LeadValidationHandler(List<Lead> newRecordList) {
     for (Lead lead : newRecordList) {
