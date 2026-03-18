@@ -40,7 +40,7 @@ public class ConsultorTriggerHandler extends TriggerHandler {
   }
 
   public override void afterInsert() {
-    ConsultorBO.sendFornecedorRepresentanteRecordToSAP(
+    ConsultorBO.sendFornecedorClienteRecordToSAP(
       (List<Consultor__c>) newRecordList
     );
     ConsultorBO.createMessagingUser(
@@ -53,7 +53,7 @@ public class ConsultorTriggerHandler extends TriggerHandler {
   }
 
   public override void afterUpdate() {
-    ConsultorBO.sendFornecedorRepresentanteRecordToSAP(
+    ConsultorBO.sendFornecedorClienteRecordToSAP(
       (List<Consultor__c>) newRecordList
     );
     ConsultorBO.createMessagingUser(
