@@ -460,7 +460,7 @@ private class VOIntegrationServiceTest {
       paymentMethod__c = 'PIX',
       Direct__c = 55.00,
       DescontoUFV__c = 200.00,
-      ValorAnteriorBDI__c = 32000.00,
+      ValorTotalPropostaOriginal__c = 32000.00,
       ValorAnteriorDirect__c = 80.00
     );
     insert opportunityRecord;

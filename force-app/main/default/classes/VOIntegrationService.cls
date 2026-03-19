@@ -231,7 +231,7 @@ public with sharing class VOIntegrationService {
         Rede__c,
         Direct__c,
         DescontoUFV__c,
-        ValorAnteriorBDI__c,
+        ValorTotalPropostaOriginal__c,
         ValorAnteriorDirect__c,
         RecordType.DeveloperName,
         RecordType.Name,
@@ -852,7 +852,7 @@ public with sharing class VOIntegrationService {
     );
     payload.put(
       'ValorPropostaAnterior',
-      hasDiscount ? opportunityRecord.ValorAnteriorBDI__c : null
+      hasDiscount ? opportunityRecord.ValorTotalPropostaOriginal__c : null
     );
     payload.put(
       'ValorDirectAnterior',
