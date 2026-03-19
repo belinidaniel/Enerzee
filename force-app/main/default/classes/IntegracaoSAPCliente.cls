@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-18-2026
  * @last modified by  : Daniel Belini
- * @test              : IntegracaoSAPTest
+ * @test              : IntegracaoSAPClienteTest
  **/
 public with sharing class IntegracaoSAPCliente implements Queueable, Database.AllowsCallouts {
   private final Set<Id> recordIds;
