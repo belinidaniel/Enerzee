@@ -51,22 +51,23 @@ public without sharing class IntegracaoSAPConsultor implements Queueable, Databa
     );
 
     for (Consultor__c acc : consultorList) {
+      String docValue = acc.CNPJ__c != null ? acc.CNPJ__c : acc.CPF__c;
       ConsultorRequest corpoRequisicao = new ConsultorRequest();
-      corpoRequisicao.CardCode = acc.SeCPFouCNPJ__c;
+      corpoRequisicao.CardCode = docValue;
       corpoRequisicao.CardName = acc.Name;
       corpoRequisicao.CardType = 'cCustomer';
       corpoRequisicao.EmailAddress = acc.Email__c;
       corpoRequisicao.Phone1 = Utils.removeNonNumericCharacters(
         acc.Telefone__c
       );
-      corpoRequisicao.FederalTaxID = acc.SeCPFouCNPJ__c;
+      corpoRequisicao.FederalTaxID = docValue;
       corpoRequisicao.BPAddresses = new List<SAPBusinessPartnerMapper.BPAddress>{};
       corpoRequisicao.BPFiscalTaxIDCollection = new List<SAPBusinessPartnerMapper.BPFiscalTaxID>{};
 
       if (acc.RuaCobranca__c != null) {
         corpoRequisicao.BPAddresses.add(
           SAPBusinessPartnerMapper.buildBillingAddress(
-            acc.SeCPFouCNPJ__c,
+            docValue,
             acc.RuaCobranca__c,
             acc.NumeroRuaCobranca__c,
             acc.BairroCobranca__c,
@@ -83,7 +84,7 @@ public without sharing class IntegracaoSAPConsultor implements Queueable, Databa
       if (acc.RuaEntrega__c != null) {
         corpoRequisicao.BPAddresses.add(
           SAPBusinessPartnerMapper.buildShippingAddress(
-            acc.SeCPFouCNPJ__c,
+            docValue,
             acc.RuaEntrega__c,
             acc.NumeroRuaEntrega__c,
             acc.BairroEntrega__c,
@@ -101,7 +102,7 @@ public without sharing class IntegracaoSAPConsultor implements Queueable, Databa
         SAPBusinessPartnerMapper.buildFiscalTaxId(
           acc.CPF__c,
           acc.CNPJ__c,
-          acc.SeCPFouCNPJ__c
+          docValue
         )
       );
 

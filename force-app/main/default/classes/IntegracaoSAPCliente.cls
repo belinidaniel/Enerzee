@@ -58,20 +58,21 @@ public with sharing class IntegracaoSAPCliente implements Queueable, Database.Al
     );
 
     for (Account acc : accountList) {
+      String docValue = acc.CNPJ__c != null ? acc.CNPJ__c : acc.CPF__c;
       ClienteRequest corpoRequisicao = new ClienteRequest();
-      corpoRequisicao.CardCode = acc.SeCPFouCNPJ__c;
+      corpoRequisicao.CardCode = docValue;
       corpoRequisicao.CardName = acc.Name;
       corpoRequisicao.CardType = 'cCustomer';
       corpoRequisicao.EmailAddress = acc.Email__c;
       corpoRequisicao.Phone1 = acc.Phone;
-      corpoRequisicao.FederalTaxID = acc.SeCPFouCNPJ__c;
+      corpoRequisicao.FederalTaxID = docValue;
       corpoRequisicao.BPAddresses = new List<SAPBusinessPartnerMapper.BPAddress>{};
       corpoRequisicao.BPFiscalTaxIDCollection = new List<SAPBusinessPartnerMapper.BPFiscalTaxID>{};
 
       if (acc.BillingAddress != null) {
         corpoRequisicao.BPAddresses.add(
           SAPBusinessPartnerMapper.buildBillingAddress(
-            acc.SeCPFouCNPJ__c,
+            docValue,
             acc.BillingStreet,
             acc.NumeroRuaCobranca__c,
             acc.BairroCobranca__c,
@@ -88,7 +89,7 @@ public with sharing class IntegracaoSAPCliente implements Queueable, Database.Al
       if (acc.ShippingAddress != null) {
         corpoRequisicao.BPAddresses.add(
           SAPBusinessPartnerMapper.buildShippingAddress(
-            acc.SeCPFouCNPJ__c,
+            docValue,
             acc.ShippingStreet,
             acc.NumeroRuaEntrega__c,
             acc.BairroEntrega__c,
@@ -106,7 +107,7 @@ public with sharing class IntegracaoSAPCliente implements Queueable, Database.Al
         SAPBusinessPartnerMapper.buildFiscalTaxId(
           acc.CPF__c,
           acc.CNPJ__c,
-          acc.SeCPFouCNPJ__c
+          docValue
         )
       );
 
