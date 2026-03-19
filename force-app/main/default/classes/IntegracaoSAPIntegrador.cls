@@ -42,19 +42,22 @@ public with sharing class IntegracaoSAPIntegrador implements Queueable, Database
     );
 
     for (Integradores__c integrador : IntegradorList) {
+      String docValue = integrador.CNPJ__c != null
+        ? integrador.CNPJ__c
+        : integrador.CPF__c;
       String formattedEstado = SAPBusinessPartnerMapper.normalizeState(
         integrador.Estado__c
       );
 
       IntegradorRequest corpoRequisicao = new IntegradorRequest();
-      corpoRequisicao.CardCode = integrador.SeCPFouCNPJ__c;
+      corpoRequisicao.CardCode = docValue;
       corpoRequisicao.CardName = integrador.RazaoSocial__c;
       corpoRequisicao.CardType = 'cSupplier';
       corpoRequisicao.EmailAddress = integrador.Email__c;
       corpoRequisicao.Phone1 = Utils.removeNonNumericCharacters(
         integrador.Telefone__c
       );
-      corpoRequisicao.FederalTaxID = integrador.SeCPFouCNPJ__c;
+      corpoRequisicao.FederalTaxID = docValue;
       corpoRequisicao.BPAddresses = new List<SAPBusinessPartnerMapper.BPAddress>{};
       corpoRequisicao.BPFiscalTaxIDCollection = new List<SAPBusinessPartnerMapper.BPFiscalTaxID>{};
 
@@ -72,7 +75,7 @@ public with sharing class IntegracaoSAPIntegrador implements Queueable, Database
       if (integrador.Logradouro__c != null) {
         corpoRequisicao.BPAddresses.add(
           SAPBusinessPartnerMapper.buildBillingAddress(
-            integrador.SeCPFouCNPJ__c,
+            docValue,
             integrador.Logradouro__c,
             'S/N',
             integrador.Bairro__c,
@@ -87,7 +90,7 @@ public with sharing class IntegracaoSAPIntegrador implements Queueable, Database
 
         corpoRequisicao.BPAddresses.add(
           SAPBusinessPartnerMapper.buildShippingAddress(
-            integrador.SeCPFouCNPJ__c,
+            docValue,
             integrador.Logradouro__c,
             'S/N',
             integrador.Bairro__c,
@@ -105,7 +108,7 @@ public with sharing class IntegracaoSAPIntegrador implements Queueable, Database
         SAPBusinessPartnerMapper.buildFiscalTaxId(
           integrador.CPF__c,
           integrador.CNPJ__c,
-          integrador.SeCPFouCNPJ__c
+          docValue
         )
       );
 

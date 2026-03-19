@@ -55,13 +55,16 @@ public without sharing class IntegracaoSAPFornecedor implements Queueable, Datab
     );
 
     for (Consultor__c consultor : consultorList) {
+      String docValue = consultor.CNPJ__c != null
+        ? consultor.CNPJ__c
+        : consultor.CPF__c;
       FornecedorRequest corpoRequisicao = new FornecedorRequest();
-      corpoRequisicao.CardCode = consultor.SeCPFouCNPJ__c;
+      corpoRequisicao.CardCode = docValue;
       corpoRequisicao.CardName = consultor.Name;
       corpoRequisicao.CardType = 'cSupplier';
       corpoRequisicao.EmailAddress = consultor.Email__c;
       corpoRequisicao.Phone1 = consultor.Telefone__c;
-      corpoRequisicao.FederalTaxID = consultor.SeCPFouCNPJ__c;
+      corpoRequisicao.FederalTaxID = docValue;
 
       // Banking fields — sent independently (SAL-314 fix)
       if (consultor.Conta__c != null) {
@@ -79,7 +82,7 @@ public without sharing class IntegracaoSAPFornecedor implements Queueable, Datab
 
       corpoRequisicao.BPAddresses.add(
         SAPBusinessPartnerMapper.buildBillingAddress(
-          consultor.SeCPFouCNPJ__c,
+          docValue,
           consultor.RuaCobranca__c,
           consultor.NumeroRuaCobranca__c,
           consultor.BairroCobranca__c,
@@ -94,7 +97,7 @@ public without sharing class IntegracaoSAPFornecedor implements Queueable, Datab
 
       corpoRequisicao.BPAddresses.add(
         SAPBusinessPartnerMapper.buildShippingAddress(
-          consultor.SeCPFouCNPJ__c,
+          docValue,
           consultor.RuaEntrega__c,
           consultor.NumeroRuaEntrega__c,
           consultor.BairroEntrega__c,
@@ -111,7 +114,7 @@ public without sharing class IntegracaoSAPFornecedor implements Queueable, Datab
         SAPBusinessPartnerMapper.buildFiscalTaxId(
           consultor.CPF__c,
           consultor.CNPJ__c,
-          consultor.SeCPFouCNPJ__c
+          docValue
         )
       );
 
