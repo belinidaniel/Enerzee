@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-18-2026
+ * @last modified on  : 03-20-2026
  * @last modified by  : Daniel Belini
  * @test              : IntegracaoVOPlanoTest, VOIntegrationServiceTest
  **/
@@ -233,6 +233,8 @@ public with sharing class VOIntegrationService {
         DescontoUFV__c,
         ValorTotalPropostaOriginal__c,
         ValorAnteriorDirect__c,
+        ValorPropostoDirect__c,
+        StatusAprovacaoDesconto__c,
         RecordType.DeveloperName,
         RecordType.Name,
         ConsultorOportunidade__r.IdVirtualOffice2__c,
@@ -812,10 +814,20 @@ public with sharing class VOIntegrationService {
       )
     );
 
+    Boolean hasDiscount =
+      opportunityRecord.DescontoUFV__c != null &&
+      opportunityRecord.DescontoUFV__c > 0;
+    Boolean discountPending =
+      hasDiscount && opportunityRecord.StatusAprovacaoDesconto__c != 'Aprovado';
+
     if (planoName == 'Ezee Livre') {
       payload.put('valor', opportunityRecord.Rede__c);
     } else {
-      payload.put('valor', opportunityRecord.ValorTotalProposta__c);
+      Decimal valor = opportunityRecord.ValorTotalProposta__c;
+      if (discountPending) {
+        valor = (valor != null ? valor : 0) - opportunityRecord.DescontoUFV__c;
+      }
+      payload.put('valor', valor);
     }
 
     if (planoName == 'Direct') {
@@ -841,11 +853,12 @@ public with sharing class VOIntegrationService {
       );
     }
 
-    payload.put('Direct', opportunityRecord.Direct__c);
+    Decimal directValue = discountPending &&
+      opportunityRecord.ValorPropostoDirect__c != null
+      ? opportunityRecord.ValorPropostoDirect__c
+      : opportunityRecord.Direct__c;
+    payload.put('Direct', directValue);
 
-    Boolean hasDiscount =
-      opportunityRecord.DescontoUFV__c != null &&
-      opportunityRecord.DescontoUFV__c > 0;
     payload.put(
       'ValorDesconto',
       hasDiscount ? opportunityRecord.DescontoUFV__c : null
