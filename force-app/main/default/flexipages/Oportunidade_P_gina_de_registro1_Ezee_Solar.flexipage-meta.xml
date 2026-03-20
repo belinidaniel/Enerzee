@@ -24,10 +24,6 @@
                             </visibilityRule>
                         </valueListItems>
                         <valueListItems>
-                            <value
-              >Opportunity.Selecionar_Produtos_por_Regiao</value>
-                        </valueListItems>
-                        <valueListItems>
                             <value>Opportunity.Enviar_para_VO</value>
                             <visibilityRule>
                                 <booleanFilter>1 OR 2 OR 3 OR 4</booleanFilter>
