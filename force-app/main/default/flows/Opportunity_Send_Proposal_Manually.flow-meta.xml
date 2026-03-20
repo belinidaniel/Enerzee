@@ -1,52 +1,29 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>64.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <customProperties>
         <name>ScreenProgressIndicator</name>
         <value>
-            <stringValue>{&quot;location&quot;:&quot;top&quot;,&quot;type&quot;:&quot;simple&quot;}</stringValue>
+            <stringValue
+      >{&quot;location&quot;:&quot;top&quot;,&quot;type&quot;:&quot;simple&quot;}</stringValue>
         </value>
     </customProperties>
-    <decisions>
-        <name>is_Product_RecordType</name>
-        <label>is Product RecordType</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <defaultConnector>
-            <targetReference>Change_Stage</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
-        <rules>
-            <name>Yes</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Get_Opportunity.RecordType.DeveloperName</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Produtos</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Change_Stage_Products</targetReference>
-            </connector>
-            <label>Yes</label>
-        </rules>
-    </decisions>
     <decisions>
         <name>is_Readequacao</name>
         <label>is Readequacao</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
         <defaultConnector>
-            <targetReference>is_Product_RecordType</targetReference>
+            <targetReference>Typo_record_type</targetReference>
         </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>true</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>Get_Opportunity.StageName</leftValueReference>
+                <leftValueReference
+        >Get_Opportunity.StageName</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <stringValue>Readequação de Proposta</stringValue>
@@ -55,13 +32,54 @@
             <label>true</label>
         </rules>
     </decisions>
+    <decisions>
+        <name>Typo_record_type</name>
+        <label>Typo record type</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Change_Stage</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>is_Product_RecordType</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference
+        >Get_Opportunity.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Produtos</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Change_Stage_Products</targetReference>
+            </connector>
+            <label>Is product Record Type</label>
+        </rules>
+        <rules>
+            <name>Is_Ezee_Conect</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference
+        >Get_Opportunity.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>EzeeConnect</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Change_Stage_Ezee_Connect</targetReference>
+            </connector>
+            <label>Is Ezee Conect</label>
+        </rules>
+    </decisions>
     <environments>Default</environments>
     <formulas>
         <description>te</description>
         <name>PropostaNameFML</name>
         <dataType>String</dataType>
-        <expression>&quot;Proposta &quot; &amp;
-IF(
+        <expression>IF(
     OR(
         TEXT({!Get_Opportunity.GrupoTarifario__c}) = &quot;Grupo A&quot;,
         {!Get_Opportunity.Account.Name} = &quot;Enerzee - Grupo A&quot;
@@ -73,7 +91,7 @@ IF(
             {!Get_Opportunity.Account.Name} = &quot;Enerzee - Grupo B&quot;
         ),
         &quot;Proposta B &quot;,
-        &quot;&quot;
+        &quot;Proposta &quot;
     )
 ) &amp;
 {!Get_Opportunity.Numeroproposta__c} &amp; &quot; &quot; &amp;
@@ -82,7 +100,8 @@ TEXT(DAY(TODAY())) &amp; &quot;-&quot; &amp; TEXT(MONTH(TODAY())) &amp; &quot;-&
 RIGHT(&quot;0&quot; &amp; TEXT(HOUR(TIMEVALUE(NOW()))), 2) &amp; &quot;:&quot; &amp;
 RIGHT(&quot;0&quot; &amp; TEXT(MINUTE(TIMEVALUE(NOW()))), 2)</expression>
     </formulas>
-    <interviewLabel>[Opportunity] - Send Proposal Manually {!$Flow.CurrentDateTime}</interviewLabel>
+    <interviewLabel
+  >[Opportunity] - Send Proposal Manually {!$Flow.CurrentDateTime}</interviewLabel>
     <label>[Opportunity] - Send Proposal Manually</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -108,7 +127,8 @@ RIGHT(&quot;0&quot; &amp; TEXT(MINUTE(TIMEVALUE(NOW()))), 2)</expression>
         <label>Get Opportunity</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>EnviarPropostaManualmente</targetReference>
         </connector>
@@ -141,6 +161,27 @@ RIGHT(&quot;0&quot; &amp; TEXT(MINUTE(TIMEVALUE(NOW()))), 2)</expression>
             <field>StageName</field>
             <value>
                 <stringValue>Proposta Gerada</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Opportunity</object>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Change_Stage_Ezee_Connect</name>
+        <label>Change Stage Ezee Connect</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>StageName</field>
+            <value>
+                <stringValue>Proposta enviada</stringValue>
             </value>
         </inputAssignments>
         <object>Opportunity</object>
@@ -193,7 +234,8 @@ RIGHT(&quot;0&quot; &amp; TEXT(MINUTE(TIMEVALUE(NOW()))), 2)</expression>
                     <elementReference>recordId</elementReference>
                 </value>
             </inputParameters>
-            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <inputsOnNextNavToAssocScrn
+      >UseStoredValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <storeOutputAutomatically>true</storeOutputAutomatically>
             <styleProperties>
@@ -205,7 +247,8 @@ RIGHT(&quot;0&quot; &amp; TEXT(MINUTE(TIMEVALUE(NOW()))), 2)</expression>
                 </width>
             </styleProperties>
         </fields>
-        <nextOrFinishButtonLabel>Enviar Proposta Manual</nextOrFinishButtonLabel>
+        <nextOrFinishButtonLabel
+    >Enviar Proposta Manual</nextOrFinishButtonLabel>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
     </screens>
