@@ -817,14 +817,12 @@ public with sharing class VOIntegrationService {
     Boolean hasDiscount =
       opportunityRecord.DescontoUFV__c != null &&
       opportunityRecord.DescontoUFV__c > 0;
-    Boolean discountPending =
-      hasDiscount && opportunityRecord.StatusAprovacaoDesconto__c != 'Aprovado';
 
     if (planoName == 'Ezee Livre') {
       payload.put('valor', opportunityRecord.Rede__c);
     } else {
       Decimal valor = opportunityRecord.ValorTotalProposta__c;
-      if (discountPending) {
+      if (hasDiscount) {
         valor = (valor != null ? valor : 0) - opportunityRecord.DescontoUFV__c;
       }
       payload.put('valor', valor);
@@ -853,7 +851,7 @@ public with sharing class VOIntegrationService {
       );
     }
 
-    Decimal directValue = discountPending &&
+    Decimal directValue = hasDiscount &&
       opportunityRecord.ValorPropostoDirect__c != null
       ? opportunityRecord.ValorPropostoDirect__c
       : opportunityRecord.Direct__c;

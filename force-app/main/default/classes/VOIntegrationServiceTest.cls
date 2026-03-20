@@ -462,6 +462,7 @@ private class VOIntegrationServiceTest {
       DescontoUFV__c = 200.00,
       ValorTotalPropostaOriginal__c = 32000.00,
       ValorAnteriorDirect__c = 80.00,
+      ValorPropostoDirect__c = 45.00,
       StatusAprovacaoDesconto__c = 'Aprovado'
     );
     insert opportunityRecord;
@@ -487,9 +488,9 @@ private class VOIntegrationServiceTest {
     );
 
     Assert.areEqual(
-      55.00,
+      45.00,
       (Decimal) payload.get('Direct'),
-      'Campo Direct deve ser enviado com o valor correto.'
+      'Direct deve usar ValorPropostoDirect__c (valor com desconto) quando desconto está aprovado.'
     );
     Assert.areEqual(
       200.00,
@@ -499,7 +500,7 @@ private class VOIntegrationServiceTest {
     Assert.areEqual(
       32000.00,
       (Decimal) payload.get('ValorPropostaAnterior'),
-      'ValorPropostaAnterior deve ser enviado quando há desconto.'
+      'ValorPropostaAnterior deve ser o total original quando há desconto.'
     );
     Assert.areEqual(
       80.00,
