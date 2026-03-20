@@ -541,7 +541,6 @@ private class VOIntegrationServiceTest {
       CloseDate = Date.today(),
       PotenciaPicoSistema__c = 3.66,
       paymentMethod__c = 'PIX',
-      ValorTotalProposta__c = 15000.00,
       Direct__c = 916.71,
       DescontoUFV__c = 354.38,
       ValorTotalPropostaOriginal__c = 15354.38,
@@ -550,6 +549,16 @@ private class VOIntegrationServiceTest {
       StatusAprovacaoDesconto__c = 'Pendente'
     );
     insert opportunityRecord;
+
+    Opportunity queried = [
+      SELECT ValorTotalProposta__c
+      FROM Opportunity
+      WHERE Id = :opportunityRecord.Id
+    ];
+    Decimal expectedValor =
+      (queried.ValorTotalProposta__c != null
+        ? queried.ValorTotalProposta__c
+        : 0) - 354.38;
 
     Test.startTest();
     System.enqueueJob(
@@ -577,9 +586,9 @@ private class VOIntegrationServiceTest {
       'Direct deve usar ValorPropostoDirect__c quando desconto está pendente.'
     );
     Assert.areEqual(
-      14645.62,
+      expectedValor.setScale(2),
       ((Decimal) payload.get('valor')).setScale(2),
-      'valor deve descontar DescontoUFV__c quando desconto está pendente.'
+      'valor deve descontar DescontoUFV__c de ValorTotalProposta__c quando desconto está pendente.'
     );
     Assert.areEqual(
       354.38,
