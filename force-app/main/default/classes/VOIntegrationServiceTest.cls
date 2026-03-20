@@ -461,7 +461,8 @@ private class VOIntegrationServiceTest {
       Direct__c = 55.00,
       DescontoUFV__c = 200.00,
       ValorTotalPropostaOriginal__c = 32000.00,
-      ValorAnteriorDirect__c = 80.00
+      ValorAnteriorDirect__c = 80.00,
+      StatusAprovacaoDesconto__c = 'Aprovado'
     );
     insert opportunityRecord;
 
@@ -504,6 +505,96 @@ private class VOIntegrationServiceTest {
       80.00,
       (Decimal) payload.get('ValorDirectAnterior'),
       'ValorDirectAnterior deve ser enviado quando há desconto.'
+    );
+  }
+
+  @IsTest
+  static void opportunitySyncShouldSendProposedValuesWhenDiscountIsPending() {
+    VOPayloadCaptureMock captureMock = new VOPayloadCaptureMock();
+    Test.setMock(HttpCalloutMock.class, captureMock);
+    TokenAPIVOWs.access_token = 'test-token';
+
+    Consultor__c consultant = new Consultor__c(
+      Name = 'Consultor Pendente',
+      Login_no_virtual__c = 'consultor.pendente@teste.com',
+      IdVirtualOffice2__c = '77'
+    );
+    insert consultant;
+
+    Account accountRecord = new Account(
+      Name = 'Conta Pendente',
+      Email__c = 'pendente@teste.com',
+      CPF__c = '123.456.789-55',
+      Consultor__c = consultant.Id,
+      IdVirtualOffice2__c = '777777'
+    );
+    insert accountRecord;
+
+    Opportunity opportunityRecord = new Opportunity(
+      Name = 'Opp Desconto Pendente',
+      AccountId = accountRecord.Id,
+      IdVirtualOffice__c = '1111111111111111111',
+      RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+        .get('Solar')
+        .getRecordTypeId(),
+      StageName = 'Parecer de acesso',
+      CloseDate = Date.today(),
+      PotenciaPicoSistema__c = 3.66,
+      paymentMethod__c = 'PIX',
+      ValorTotalProposta__c = 15000.00,
+      Direct__c = 916.71,
+      DescontoUFV__c = 354.38,
+      ValorTotalPropostaOriginal__c = 15354.38,
+      ValorAnteriorDirect__c = 916.71,
+      ValorPropostoDirect__c = 816.45,
+      StatusAprovacaoDesconto__c = 'Pendente'
+    );
+    insert opportunityRecord;
+
+    Test.startTest();
+    System.enqueueJob(
+      new VOOpportunitySyncQueueable(
+        new Set<Id>{ opportunityRecord.Id },
+        'Test:DescontoPendente',
+        true,
+        null
+      )
+    );
+    Test.stopTest();
+
+    Assert.isNotNull(
+      captureMock.capturedOpportunityBody,
+      'Payload da oportunidade deve ter sido capturado.'
+    );
+
+    Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(
+      captureMock.capturedOpportunityBody
+    );
+
+    Assert.areEqual(
+      816.45,
+      (Decimal) payload.get('Direct'),
+      'Direct deve usar ValorPropostoDirect__c quando desconto está pendente.'
+    );
+    Assert.areEqual(
+      14645.62,
+      ((Decimal) payload.get('valor')).setScale(2),
+      'valor deve descontar DescontoUFV__c quando desconto está pendente.'
+    );
+    Assert.areEqual(
+      354.38,
+      (Decimal) payload.get('ValorDesconto'),
+      'ValorDesconto deve ser enviado quando há desconto.'
+    );
+    Assert.areEqual(
+      15354.38,
+      (Decimal) payload.get('ValorPropostaAnterior'),
+      'ValorPropostaAnterior deve ser o total original.'
+    );
+    Assert.areEqual(
+      916.71,
+      (Decimal) payload.get('ValorDirectAnterior'),
+      'ValorDirectAnterior deve ser o Direct anterior.'
     );
   }
 
