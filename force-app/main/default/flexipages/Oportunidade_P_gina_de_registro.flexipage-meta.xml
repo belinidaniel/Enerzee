@@ -3810,6 +3810,16 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>sapIntegrationStatus</componentName>
+                <identifier>c_sapIntegrationStatus_opportunity</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-sap-status-opportunity</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
                 <componentName>opportunityIntegrationLogs</componentName>
                 <identifier>c_opportunityIntegrationLogs</identifier>
             </componentInstance>
