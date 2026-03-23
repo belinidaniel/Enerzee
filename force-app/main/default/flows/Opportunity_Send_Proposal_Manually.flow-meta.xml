@@ -42,8 +42,16 @@
         </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
-            <name>is_Product_RecordType</name>
+            <name>Is_Ezee_Conect</name>
             <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference
+        >Get_Opportunity.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>EzeeLivre</stringValue>
+                </rightValue>
+            </conditions>
             <conditions>
                 <leftValueReference
         >Get_Opportunity.RecordType.DeveloperName</leftValueReference>
@@ -52,14 +60,6 @@
                     <stringValue>Produtos</stringValue>
                 </rightValue>
             </conditions>
-            <connector>
-                <targetReference>Change_Stage_Products</targetReference>
-            </connector>
-            <label>Is product Record Type</label>
-        </rules>
-        <rules>
-            <name>Is_Ezee_Conect</name>
-            <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference
         >Get_Opportunity.RecordType.DeveloperName</leftValueReference>
@@ -71,7 +71,7 @@
             <connector>
                 <targetReference>Change_Stage_Ezee_Connect</targetReference>
             </connector>
-            <label>Is Ezee Conect</label>
+            <label>Is EzeeConnect, Livre or produtct</label>
         </rules>
     </decisions>
     <environments>Default</environments>
@@ -168,27 +168,6 @@ RIGHT(&quot;0&quot; &amp; TEXT(MINUTE(TIMEVALUE(NOW()))), 2)</expression>
     <recordUpdates>
         <name>Change_Stage_Ezee_Connect</name>
         <label>Change Stage Ezee Connect</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Id</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>recordId</elementReference>
-            </value>
-        </filters>
-        <inputAssignments>
-            <field>StageName</field>
-            <value>
-                <stringValue>Proposta enviada</stringValue>
-            </value>
-        </inputAssignments>
-        <object>Opportunity</object>
-    </recordUpdates>
-    <recordUpdates>
-        <name>Change_Stage_Products</name>
-        <label>Change Stage Products</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
         <filterLogic>and</filterLogic>
