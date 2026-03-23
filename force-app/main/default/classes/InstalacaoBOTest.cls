@@ -732,6 +732,189 @@ public class InstalacaoBOTest {
   // REQ-001: syncConsultorFromOpportunity
   // ─────────────────────────────────────────────────────────────────────────
 
+  @isTest
+  static void createInstallationsForFastTrackProjects_populatesConsultorAndLinksProject() {
+    Account account = (Account) TestFactory.createSObject(new Account(), true);
+    Parceiro__c parceiro = createPartner();
+    Consultor__c consultor = (Consultor__c) TestFactory.createSObject(
+      new Consultor__c(),
+      true
+    );
+
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = account.Id,
+        StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
+        CloseDate = System.today(),
+        Name = 'Opp Fast Track Consultor',
+        Categoria__c = 'Fast Track',
+        ConsultorOportunidade__c = consultor.Id,
+        Parceiro__c = parceiro.Id,
+        RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+          .get('Solar')
+          .getRecordTypeId()
+      ),
+      true
+    );
+
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Name = 'Projeto Fast Track Consultor',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = viability.Id,
+        TipoObra__c = 'UFVMicro',
+        Conta__c = account.Id,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
+    );
+
+    Test.startTest();
+    InstalacaoBO.createInstallationsForFastTrackProjects(
+      new List<Projeto__c>{ project },
+      new Map<Id, Opportunity>{ opp.Id => opp }
+    );
+    Test.stopTest();
+
+    List<Instalacao__c> instalacoes = [
+      SELECT ConsultorInstalacao__c, Oportunidade__c
+      FROM Instalacao__c
+      WHERE Projeto__c = :project.Id
+    ];
+    Projeto__c updatedProject = [
+      SELECT Instalacao__c
+      FROM Projeto__c
+      WHERE Id = :project.Id
+    ];
+
+    Assert.areEqual(
+      1,
+      instalacoes.size(),
+      'Instalação deve ser criada para projeto Fast Track'
+    );
+    Assert.areEqual(
+      consultor.Id,
+      instalacoes[0].ConsultorInstalacao__c,
+      'Consultor deve ser copiado da oportunidade'
+    );
+    Assert.areEqual(
+      opp.Id,
+      instalacoes[0].Oportunidade__c,
+      'Instalação deve manter vínculo com a oportunidade'
+    );
+    Assert.areEqual(
+      true,
+      updatedProject.Instalacao__c != null,
+      'Projeto deve ser relacionado à instalação criada'
+    );
+  }
+
+  @isTest
+  static void syncConsultorFromOpportunity_updatesLinkedInstallation() {
+    Account account = (Account) TestFactory.createSObject(new Account(), true);
+    Parceiro__c parceiro = createPartner();
+    Consultor__c consultorOld = (Consultor__c) TestFactory.createSObject(
+      new Consultor__c(),
+      true
+    );
+    Consultor__c consultorNew = (Consultor__c) TestFactory.createSObject(
+      new Consultor__c(
+        Name = 'Consultor Sync Novo',
+        CPF__c = '123.456.789-02',
+        CNPJ__c = '12.345.678/9012-35',
+        Email__c = 'consultor.sync.novo@teste.com',
+        IdVirtualOffice__c = 'las-kdr-84uit-hkdgk-sdnfq-3041',
+        NumeroIdentificacao__c = '1234567892'
+      ),
+      true
+    );
+
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = account.Id,
+        StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
+        CloseDate = System.today(),
+        Name = 'Opp Sync Consultor',
+        ConsultorOportunidade__c = consultorOld.Id,
+        Parceiro__c = parceiro.Id,
+        RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+          .get('Solar')
+          .getRecordTypeId()
+      ),
+      true
+    );
+
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Name = 'Projeto Sync Consultor',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = viability.Id,
+        TipoObra__c = 'UFVMicro',
+        Conta__c = account.Id,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
+    );
+
+    Instalacao__c installation = (Instalacao__c) TestFactory.createSObject(
+      new Instalacao__c(
+        Name = 'Inst Sync Consultor',
+        Projeto__c = project.Id,
+        Oportunidade__c = opp.Id,
+        OportunidadeConcluida__c = opp.Id,
+        ConsultorInstalacao__c = consultorOld.Id
+      ),
+      true
+    );
+
+    Opportunity oldOpp = opp.clone(true, true, false, false);
+    oldOpp.ConsultorOportunidade__c = consultorOld.Id;
+
+    Opportunity newOpp = opp.clone(true, true, false, false);
+    newOpp.ConsultorOportunidade__c = consultorNew.Id;
+
+    Test.startTest();
+    InstalacaπoBO.syncConsultorFromOpportunity(
+      new List<Opportunity>{ newOpp },
+      new Map<Id, Opportunity>{ oldOpp.Id => oldOpp }
+    );
+    Test.stopTest();
+
+    Instalacao__c updatedInstallation = [
+      SELECT ConsultorInstalacao__c
+      FROM Instalacao__c
+      WHERE Id = :installation.Id
+    ];
+
+    Assert.areEqual(
+      consultorNew.Id,
+      updatedInstallation.ConsultorInstalacao__c,
+      'ConsultorInstalacao__c deve refletir a troca na oportunidade'
+    );
+  }
+
   /**
    * REQ-001: buildInstallation via createInstallationsOnProjectCreation
    * deve popular ConsultorInstalacao__c a partir da Oportunidade.
@@ -795,7 +978,15 @@ public class InstalacaoBOTest {
       WHERE Projeto__c = :project.Id
     ];
 
-    //Assert.isFalse(instalacoes.isEmpty(), 'Instalação deve ser criada para o projeto');
-    //Assert.areEqual(consultor.Id, instalacoes[0].ConsultorInstalacao__c, 'ConsultorInstalacao__c deve ser populado a partir de ConsultorOportunidade__c na criação');
+    Assert.areEqual(
+      1,
+      instalacoes.size(),
+      'Instalação deve ser criada para o projeto'
+    );
+    Assert.areEqual(
+      consultor.Id,
+      instalacoes[0].ConsultorInstalacao__c,
+      'ConsultorInstalacao__c deve ser populado a partir de ConsultorOportunidade__c na criação'
+    );
   }
 }
