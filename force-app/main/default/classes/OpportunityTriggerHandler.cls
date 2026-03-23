@@ -207,6 +207,11 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
+    // REQ-001: sincroniza ConsultorInstalacao__c nas Instalações quando o Consultor da Opp muda
+    InstalacaoBO.syncConsultorFromOpportunity(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
     OpportunityBO.closeActivitiesAndFlowsForClosedLost(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
