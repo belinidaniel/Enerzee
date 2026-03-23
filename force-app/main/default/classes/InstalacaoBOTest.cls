@@ -854,9 +854,13 @@ public class InstalacaoBOTest {
       true
     );
     Account newAccount = (Account) TestFactory.createSObject(
-      new Account(Name = 'Cliente Sync Novo'),
-      true
+      new Account(Name = 'Cliente Sync Novo')
     );
+    newAccount.IdVirtualOffice__c = 'inst-sync-new-account';
+    newAccount.CNPJ__c = '98.765.432/1000-01';
+    newAccount.CPF__c = '987.654.321-00';
+    newAccount.LoginVirtualOffice__c = 'cliente.sync.novo@teste.com.br';
+    insert newAccount;
 
     Opportunity opp = (Opportunity) TestFactory.createSObject(
       new Opportunity(
