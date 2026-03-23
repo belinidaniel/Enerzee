@@ -341,7 +341,21 @@ private class OpportunityBOCoverageTest {
       new Set<Id>{ UserInfo.getUserId() },
       'Nota teste'
     );
+  }
 
+  @isTest
+  static void shouldCloseOpportunityTasksWhenChangingToClosedWon() {
+    Account acc = (Account) TestFactory.createSObject(
+      new Account(Name = 'Account Closed Won'),
+      true
+    );
+    Opportunity baseOpp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        StageName = OpportunityUtils.STATUS_NEGOCIACAO
+      ),
+      true
+    );
     Task wonTask = (Task) TestFactory.createSObject(
       new Task(
         Subject = 'Task Won',
