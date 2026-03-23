@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- REQ-003: FieldSet usado por validateRequiredFieldsOnObraConluida (SAL-402) para bloquear
-     a transição para "Obra Concluída" enquanto os custos realizados não estiverem preenchidos.
-     Thiago: "somente os itens realizados" devem ser validados — os campos Planejado são excluídos. -->
 <FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>CUSTO_OBRA_REALIZADO</fullName>
     <description

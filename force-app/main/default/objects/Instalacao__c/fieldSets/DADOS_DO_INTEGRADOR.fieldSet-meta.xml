@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- REQ-003: FieldSet usado por validateRequiredFieldsOnObraConluida (SAL-402) para bloquear
-     a transição para "Obra Concluída" enquanto os campos do prestador não estiverem preenchidos.
-     Apenas campos editáveis (isUpdateable) são avaliados pelo motor de validação. -->
 <FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>DADOS_DO_INTEGRADOR</fullName>
     <description
