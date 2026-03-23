@@ -824,10 +824,21 @@ public class InstalacaoBOTest {
       true
     );
 
-    // Cria Projeto vinculado à Opp — o trigger (SAL-401) cria a Instalacao automaticamente
+    // Viabilidade obrigatória pelo VR do Projeto
+    ViabilityStudy__c viability1 = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+    // Cria Projeto com Viabilidade — trigger (SAL-401) cria Instalacao automaticamente
     Projeto__c project = (Projeto__c) TestFactory.createSObject(
       new Projeto__c(
+        Name = 'Projeto Sync Consultor',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO,
         Oportunidade__c = opp.Id,
+        Viabilidade__c = viability1.Id,
         Conta__c = account.Id,
         TipoObra__c = 'UFVMicro',
         RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
@@ -902,10 +913,21 @@ public class InstalacaoBOTest {
       true
     );
 
-    // Cria Projeto vinculado à Opp — o trigger (SAL-401) cria a Instalacao automaticamente
+    // Viabilidade obrigatória pelo VR do Projeto
+    ViabilityStudy__c viability2 = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+    // Cria Projeto com Viabilidade — trigger (SAL-401) cria Instalacao automaticamente
     Projeto__c project = (Projeto__c) TestFactory.createSObject(
       new Projeto__c(
+        Name = 'Projeto Sync NoOp',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO,
         Oportunidade__c = opp.Id,
+        Viabilidade__c = viability2.Id,
         Conta__c = account.Id,
         TipoObra__c = 'UFVMicro',
         RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
