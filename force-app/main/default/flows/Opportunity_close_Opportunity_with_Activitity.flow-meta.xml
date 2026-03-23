@@ -1,5 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>close_Closed_Lost_Activities</name>
+        <label>close Closed Lost Activities</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>OpportunityClosedLostInactivityFlowAction</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>run</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <nameSegment>OpportunityClosedLostInactivityFlowAction</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
     <actionCalls>
         <name>disable_Trigger</name>
         <label>disable Trigger</label>
@@ -34,7 +52,8 @@
         <dataType>Date</dataType>
         <expression>TODAY() - 30</expression>
     </formulas>
-    <interviewLabel>[Opportunity] - close Opportunity with Activitity {!$Flow.CurrentDateTime}</interviewLabel>
+    <interviewLabel
+  >[Opportunity] - close Opportunity with Activitity {!$Flow.CurrentDateTime}</interviewLabel>
     <label>[Opportunity] - close Opportunity with Activitity</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -60,6 +79,9 @@
         <label>Update opportunity</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
+        <connector>
+            <targetReference>close_Closed_Lost_Activities</targetReference>
+        </connector>
         <filterLogic>1 AND 2 AND (3 OR 4) AND 5</filterLogic>
         <filters>
             <field>IsClosed</field>

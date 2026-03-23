@@ -7,8 +7,8 @@
  * @test              : ActivityDocumentControllerTest, AdditionalCoverageNewClassesTest, CaseBOTest, CaseTriggerTest,
  *                       EngineeringDateStampFlowTest, ExternalArchiveServiceTest, InstalacaoFinalReportServiceTest,
  *                       LeadTriggerTest, OpportunityBOCoverageTest, OpportunityBOHighCoverageTest,
- *                       OpportunityBOPaymentReminderTaskTest, ProjetoTriggerTest, TaskBOTest,
- *                       TaskCompletionServiceTest, TaskDeadlineNotificationBatchTest,
+ *                       OpportunityBOPaymentReminderTaskTest, OpportunityClosedLostInactivityFlowActionTest,
+ *                       ProjetoTriggerTest, TaskBOTest, TaskCompletionServiceTest, TaskDeadlineNotificationBatchTest,
  *                       WorkDeliveryReportPdfControllerTest, WorkDeliveryReportPdfServiceTest
  **/
 public with sharing class TaskUtils {
