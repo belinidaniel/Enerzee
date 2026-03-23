@@ -824,14 +824,29 @@ public class InstalacaoBOTest {
       true
     );
 
-    // Instalação vinculada com consultor1
-    Instalacao__c inst = new Instalacao__c(
-      Name = 'Inst Sync Test',
-      Oportunidade__c = opp.Id,
-      OportunidadeConcluida__c = opp.Id,
-      ConsultorInstalacao__c = consultor1.Id
+    // Cria Projeto vinculado à Opp — o trigger (SAL-401) cria a Instalacao automaticamente
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Conta__c = account.Id,
+        TipoObra__c = 'UFVMicro',
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
     );
-    insert inst;
+    // Usa a Instalacao criada pelo trigger; garante Consultor1 para o assert
+    Instalacao__c inst = [
+      SELECT Id, ConsultorInstalacao__c
+      FROM Instalacao__c
+      WHERE Projeto__c = :project.Id
+      LIMIT 1
+    ];
+    if (inst.ConsultorInstalacao__c != consultor1.Id) {
+      inst.ConsultorInstalacao__c = consultor1.Id;
+      update inst;
+    }
 
     // Simula a mudança: opp agora tem consultor2
     Opportunity oppOld = opp.clone(true, true, false, false);
@@ -887,12 +902,29 @@ public class InstalacaoBOTest {
       true
     );
 
-    Instalacao__c inst = new Instalacao__c(
-      Name = 'Inst NoOp',
-      Oportunidade__c = opp.Id,
-      ConsultorInstalacao__c = consultor.Id
+    // Cria Projeto vinculado à Opp — o trigger (SAL-401) cria a Instalacao automaticamente
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Conta__c = account.Id,
+        TipoObra__c = 'UFVMicro',
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
     );
-    insert inst;
+    // Usa a Instalacao criada pelo trigger; garante Consultor para o assert de no-op
+    Instalacao__c inst = [
+      SELECT Id, ConsultorInstalacao__c
+      FROM Instalacao__c
+      WHERE Projeto__c = :project.Id
+      LIMIT 1
+    ];
+    if (inst.ConsultorInstalacao__c != consultor.Id) {
+      inst.ConsultorInstalacao__c = consultor.Id;
+      update inst;
+    }
 
     // Mesmo consultor em new e old — não deve alterar
     Opportunity oppSame = opp.clone(true, true, false, false);
