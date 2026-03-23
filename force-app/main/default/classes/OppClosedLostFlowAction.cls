@@ -4,9 +4,9 @@
  * @group             :
  * @last modified on  : 03-23-2026
  * @last modified by  : Codex
- * @test              : OpportunityClosedLostInactivityFlowActionTest
+ * @test              : OppClosedLostFlowActionTest
  **/
-public with sharing class OpportunityClosedLostInactivityFlowAction {
+public with sharing class OppClosedLostFlowAction {
   private static final String LOSS_DESCRIPTION = 'Fechado por inatividade';
   private static final String LOSS_REASON = 'Parado por 30 dias';
 
