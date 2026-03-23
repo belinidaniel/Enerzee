@@ -788,7 +788,11 @@ public class InstalacaoBOTest {
     Test.stopTest();
 
     List<Instalacao__c> instalacoes = [
-      SELECT ConsultorInstalacao__c, Oportunidade__c
+      SELECT
+        ClienteConta__c,
+        ConsultorInstalacao__c,
+        Oportunidade__c,
+        OportunidadeConcluida__c
       FROM Instalacao__c
       WHERE Projeto__c = :project.Id
     ];
@@ -814,6 +818,16 @@ public class InstalacaoBOTest {
       'Instalação deve manter vínculo com a oportunidade'
     );
     Assert.areEqual(
+      opp.Id,
+      instalacoes[0].OportunidadeConcluida__c,
+      'Campo legado deve continuar preenchido por compatibilidade'
+    );
+    Assert.areEqual(
+      account.Id,
+      instalacoes[0].ClienteConta__c,
+      'Cliente deve ser populado a partir da conta do projeto/oportunidade'
+    );
+    Assert.areEqual(
       true,
       updatedProject.Instalacao__c != null,
       'Projeto deve ser relacionado à instalação criada'
@@ -837,6 +851,10 @@ public class InstalacaoBOTest {
         IdVirtualOffice__c = 'las-kdr-84uit-hkdgk-sdnfq-3041',
         NumeroIdentificacao__c = '1234567892'
       ),
+      true
+    );
+    Account newAccount = (Account) TestFactory.createSObject(
+      new Account(Name = 'Cliente Sync Novo'),
       true
     );
 
@@ -894,6 +912,7 @@ public class InstalacaoBOTest {
 
     Opportunity newOpp = opp.clone(true, true, false, false);
     newOpp.ConsultorOportunidade__c = consultorNew.Id;
+    newOpp.AccountId = newAccount.Id;
 
     Test.startTest();
     InstalacaoBO.syncConsultorFromOpportunity(
@@ -903,7 +922,7 @@ public class InstalacaoBOTest {
     Test.stopTest();
 
     Instalacao__c updatedInstallation = [
-      SELECT ConsultorInstalacao__c
+      SELECT ClienteConta__c, ConsultorInstalacao__c
       FROM Instalacao__c
       WHERE Id = :installation.Id
     ];
@@ -912,6 +931,11 @@ public class InstalacaoBOTest {
       consultorNew.Id,
       updatedInstallation.ConsultorInstalacao__c,
       'ConsultorInstalacao__c deve refletir a troca na oportunidade'
+    );
+    Assert.areEqual(
+      newAccount.Id,
+      updatedInstallation.ClienteConta__c,
+      'ClienteConta__c deve refletir a troca da conta da oportunidade'
     );
   }
 
@@ -973,7 +997,7 @@ public class InstalacaoBOTest {
     Test.stopTest();
 
     List<Instalacao__c> instalacoes = [
-      SELECT ConsultorInstalacao__c
+      SELECT ClienteConta__c, ConsultorInstalacao__c, OportunidadeConcluida__c
       FROM Instalacao__c
       WHERE Projeto__c = :project.Id
     ];
@@ -987,6 +1011,16 @@ public class InstalacaoBOTest {
       consultor.Id,
       instalacoes[0].ConsultorInstalacao__c,
       'ConsultorInstalacao__c deve ser populado a partir de ConsultorOportunidade__c na criação'
+    );
+    Assert.areEqual(
+      account.Id,
+      instalacoes[0].ClienteConta__c,
+      'ClienteConta__c deve ser populado a partir da conta do projeto/oportunidade na criação'
+    );
+    Assert.areEqual(
+      opp.Id,
+      instalacoes[0].OportunidadeConcluida__c,
+      'Campo legado deve permanecer sincronizado na criação'
     );
   }
 }
