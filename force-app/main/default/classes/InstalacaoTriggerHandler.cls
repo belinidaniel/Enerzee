@@ -6,7 +6,7 @@
  * @last modified by  : Daniel Belini
  * @test              : ActivityDocumentControllerTest, AdditionalCoverageNewClassesTest, InstalacaoTriggerHandlerTest,
  *                       InstallCompletionNotifyServiceTest, OpportunityBOHighCoverageTest,
- *                       WorkDeliveryReportPdfControllerTest
+ *                       OpportunityClosedLostInactivityFlowActionTest, WorkDeliveryReportPdfControllerTest
  **/
 public class InstalacaoTriggerHandler extends TriggerHandler {
   public InstalacaoTriggerHandler() {

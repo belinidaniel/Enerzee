@@ -4,8 +4,9 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : OpportunityBOHighCoverageTest, ProjetoBOCoverageTest, ProjetoTriggerTest,
- *                       TaskCompletionServiceTest, WorkDeliveryReportPdfControllerTest
+ * @test              : OpportunityBOHighCoverageTest, OpportunityClosedLostInactivityFlowActionTest,
+ *                       ProjetoBOCoverageTest, ProjetoTriggerTest, TaskCompletionServiceTest,
+ *                       WorkDeliveryReportPdfControllerTest
  **/
 public class ProjetoTriggerHandler extends TriggerHandler {
   public ProjetoTriggerHandler() {

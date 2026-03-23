@@ -6,9 +6,10 @@
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, ClickSignUtilsCoverageTest, IntegracaoSAPCoverageTest,
  *                       KitInstalacaoBOTest, OpportunityBOCoverageTest, OpportunityBOHighCoverageTest,
- *                       OpportunityBOPaymentReminderTaskTest, OpportunityDiscountRequestControllerTest,
- *                       OpportunityShareHandlerTest, OpportunityTriggerHandlerToggleTest, OpportunityTriggerTest,
- *                       OpportunityUtilsTest, ProjetoBOCoverageTest, ProjetoTriggerTest, ProposalPendingControllerTest,
+ *                       OpportunityBOPaymentReminderTaskTest, OpportunityClosedLostInactivityFlowActionTest,
+ *                       OpportunityDiscountRequestControllerTest, OpportunityShareHandlerTest,
+ *                       OpportunityTriggerHandlerToggleTest, OpportunityTriggerTest, OpportunityUtilsTest,
+ *                       ProjetoBOCoverageTest, ProjetoTriggerTest, ProposalPendingControllerTest,
  *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest, ServiceAppointmentBOTest,
  *                       WorkDeliveryReportPdfControllerTest
  **/
@@ -208,6 +209,10 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (Map<Id, Opportunity>) Trigger.oldMap
     );
     OpportunityBO.closeActivitiesAndFlowsForClosedLost(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
+    OpportunityBO.closeActivitiesForClosedWon(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );

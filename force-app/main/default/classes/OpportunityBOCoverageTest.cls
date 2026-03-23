@@ -341,6 +341,39 @@ private class OpportunityBOCoverageTest {
       new Set<Id>{ UserInfo.getUserId() },
       'Nota teste'
     );
+
+    Task wonTask = (Task) TestFactory.createSObject(
+      new Task(
+        Subject = 'Task Won',
+        Status = TaskUtils.STATUS_OPEN,
+        WhatId = baseOpp.Id,
+        ActivityDate = Date.today()
+      ),
+      true
+    );
+    Opportunity wonOldSnapshot = baseOpp.clone(false, true, true, true);
+    wonOldSnapshot.StageName = OpportunityUtils.STATUS_NEGOCIACAO;
+    Opportunity wonNewSnapshot = baseOpp.clone(false, true, true, true);
+    wonNewSnapshot.StageName = OpportunityUtils.STATUS_GANHO_FECHADO;
+
+    Test.startTest();
+    OpportunityBO.closeActivitiesForClosedWon(
+      new List<Opportunity>{ wonNewSnapshot },
+      new Map<Id, Opportunity>{ baseOpp.Id => wonOldSnapshot }
+    );
+    Test.stopTest();
+
+    Task refreshedWonTask = [
+      SELECT Id, Status, Description
+      FROM Task
+      WHERE Id = :wonTask.Id
+    ];
+    System.assertEquals(TaskUtils.STATUS_CONCLUIDO, refreshedWonTask.Status);
+    System.assert(
+      refreshedWonTask.Description != null &&
+      refreshedWonTask.Description.contains('Ganho fechado'),
+      'Descricao da tarefa deve indicar fechamento automatico por ganho fechado.'
+    );
   }
 
   @isTest

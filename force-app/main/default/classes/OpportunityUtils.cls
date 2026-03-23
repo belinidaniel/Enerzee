@@ -8,10 +8,11 @@
  *                       IntegracaoNivelloContratoCoverageTest, IntegracaoNivelloTest, IntegracaoSAPTest,
  *                       OpportunityBOAdditionalTest, OpportunityBOCoverageTest, OpportunityBOEmailTest,
  *                       OpportunityBOHighCoverageTest, OpportunityBOIntegrationVOFixesTest,
- *                       OpportunityBOPaymentReminderTaskTest, OpportunityDiscountRequestControllerTest,
- *                       OpportunityDisqualifyLeadsTest, OpportunityPDFHelperTest, OpportunityTriggerTest,
- *                       OpportunityUtilsTest, PDFControllerExtensionExtraTest, ProjetoTriggerTest,
- *                       ProposalConsoleControllerTest, TaskBOTest, UtilsTest
+ *                       OpportunityBOPaymentReminderTaskTest, OpportunityClosedLostInactivityFlowActionTest,
+ *                       OpportunityDiscountRequestControllerTest, OpportunityDisqualifyLeadsTest,
+ *                       OpportunityPDFHelperTest, OpportunityTriggerTest, OpportunityUtilsTest,
+ *                       PDFControllerExtensionExtraTest, ProjetoTriggerTest, ProposalConsoleControllerTest, TaskBOTest,
+ *                       UtilsTest
  **/
 public class OpportunityUtils {
   //	 Status
