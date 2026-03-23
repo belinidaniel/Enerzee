@@ -64,16 +64,6 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.OportunidadeConcluida__c</fieldItem>
-                <identifier>RecordOportunidadeConcluida_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.Oportunidade__c</fieldItem>
                 <identifier>RecordOportunidade_cField</identifier>
             </fieldInstance>
@@ -82,7 +72,7 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>none</value>
+                    <value>readonly</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.ClienteConta__c</fieldItem>
                 <identifier>RecordClienteConta_cField</identifier>
@@ -164,21 +154,20 @@
     <flexiPageRegions>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.OportunidadeConcluida__r.AccountId</fieldItem>
+                <fieldItem>Record.Oportunidade__r.AccountId</fieldItem>
                 <identifier>RecordOportunidade_rAccountIdField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem
-        >Record.OportunidadeConcluida__r.Categoria__c</fieldItem>
+                <fieldItem>Record.Oportunidade__r.Categoria__c</fieldItem>
                 <identifier>RecordOportunidade_rCategoria_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldItem
-        >Record.OportunidadeConcluida__r.TipoTelhadoEstrutura__c</fieldItem>
+        >Record.Oportunidade__r.TipoTelhadoEstrutura__c</fieldItem>
                 <identifier
         >RecordOportunidade_rTipoTelhadoEstrutura_cField</identifier>
             </fieldInstance>
@@ -186,7 +175,7 @@
         <itemInstances>
             <fieldInstance>
                 <fieldItem
-        >Record.OportunidadeConcluida__r.PotenciaPicoSistema__c</fieldItem>
+        >Record.Oportunidade__r.PotenciaPicoSistema__c</fieldItem>
                 <identifier
         >RecordOportunidade_rPotenciaPicoSistema_cField</identifier>
             </fieldInstance>
@@ -195,7 +184,7 @@
         <itemInstances>
             <fieldInstance>
                 <fieldItem
-        >Record.OportunidadeConcluida__r.PotenciaNominalSistema__c</fieldItem>
+        >Record.Oportunidade__r.PotenciaNominalSistema__c</fieldItem>
                 <identifier
         >RecordOportunidade_rPotenciaNominalSistema_cField</identifier>
             </fieldInstance>
@@ -203,7 +192,7 @@
         <itemInstances>
             <fieldInstance>
                 <fieldItem
-        >Record.OportunidadeConcluida__r.MainViability__r.StandardAdequacyCost__c</fieldItem>
+        >Record.Oportunidade__r.MainViability__r.StandardAdequacyCost__c</fieldItem>
                 <identifier
         >RecordOportunidade_rMainViability_rStandardAdequacyCost_cField</identifier>
             </fieldInstance>
@@ -214,8 +203,7 @@
     <flexiPageRegions>
         <itemInstances>
             <fieldInstance>
-                <fieldItem
-        >Record.OportunidadeConcluida__r.NumeroModulos__c</fieldItem>
+                <fieldItem>Record.Oportunidade__r.NumeroModulos__c</fieldItem>
                 <identifier
         >RecordOportunidade_rNumeroModulos_cField</identifier>
             </fieldInstance>
@@ -223,8 +211,7 @@
         <!-- REQ-002d: PotenciaModulos agrupado abaixo do NumeroModulos -->
         <itemInstances>
             <fieldInstance>
-                <fieldItem
-        >Record.OportunidadeConcluida__r.PotenciaModulos__c</fieldItem>
+                <fieldItem>Record.Oportunidade__r.PotenciaModulos__c</fieldItem>
                 <identifier
         >RecordOportunidade_rPotenciaModulos_cField</identifier>
             </fieldInstance>
@@ -232,7 +219,7 @@
         <itemInstances>
             <fieldInstance>
                 <fieldItem
-        >Record.OportunidadeConcluida__r.NumeroInversores__c</fieldItem>
+        >Record.Oportunidade__r.NumeroInversores__c</fieldItem>
                 <identifier
         >RecordOportunidade_rNumeroInversores_cField</identifier>
             </fieldInstance>
@@ -240,15 +227,14 @@
         <itemInstances>
             <fieldInstance>
                 <fieldItem
-        >Record.OportunidadeConcluida__r.Inversor_1_Potencia_Nominal__c</fieldItem>
+        >Record.Oportunidade__r.Inversor_1_Potencia_Nominal__c</fieldItem>
                 <identifier
         >RecordOportunidade_rInversor_1_Potencia_Nominal_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem
-        >Record.OportunidadeConcluida__r.Acoplamento__c</fieldItem>
+                <fieldItem>Record.Oportunidade__r.Acoplamento__c</fieldItem>
                 <identifier>RecordOportunidade_rAcoplamento_cField</identifier>
             </fieldInstance>
         </itemInstances>

@@ -34,7 +34,7 @@ public with sharing class InstalacaoBO {
       existingByProject.put(inst.Projeto__c, inst);
     }
 
-    // REQ-001: busca ConsultorOportunidade__c para popular ConsultorInstalacao__c na criação
+    // REQ-001: busca dados da Oportunidade para popular relacionamentos da Instalação na criação
     Set<Id> oppIds = new Set<Id>();
     for (Projeto__c p : projects) {
       if (p.Oportunidade__c != null) {
@@ -44,7 +44,7 @@ public with sharing class InstalacaoBO {
     Map<Id, Opportunity> oppById = new Map<Id, Opportunity>();
     if (!oppIds.isEmpty()) {
       for (Opportunity opp : [
-        SELECT Id, ConsultorOportunidade__c
+        SELECT Id, AccountId, ConsultorOportunidade__c
         FROM Opportunity
         WHERE Id IN :oppIds
         WITH SECURITY_ENFORCED
@@ -264,9 +264,10 @@ public with sharing class InstalacaoBO {
   }
 
   /**
-   * REQ-001: Sincroniza ConsultorInstalacao__c nas Instalações vinculadas quando
-   * ConsultorOportunidade__c muda na Oportunidade. Chamado em afterUpdate do trigger
-   * de Opportunity. Bulk-safe: uma SOQL + um DML para qualquer volume.
+   * REQ-001: Sincroniza ConsultorInstalacao__c e ClienteConta__c nas Instalações
+   * vinculadas quando ConsultorOportunidade__c ou AccountId mudam na Oportunidade.
+   * Chamado em afterUpdate do trigger de Opportunity. Bulk-safe: uma SOQL + um DML
+   * para qualquer volume.
    */
   public static void syncConsultorFromOpportunity(
     List<Opportunity> newList,
@@ -276,28 +277,31 @@ public with sharing class InstalacaoBO {
       return;
     }
 
-    // Filtra apenas Oportunidades em que o campo Consultor realmente mudou
-    Map<Id, Id> oppToNewConsultor = new Map<Id, Id>();
+    Map<Id, Opportunity> changedOppById = new Map<Id, Opportunity>();
     for (Opportunity opp : newList) {
       Opportunity oldOpp = oldMap != null ? oldMap.get(opp.Id) : null;
       Boolean consultorChanged =
         oldOpp == null ||
         opp.ConsultorOportunidade__c != oldOpp.ConsultorOportunidade__c;
-      if (consultorChanged) {
-        oppToNewConsultor.put(opp.Id, opp.ConsultorOportunidade__c);
+      Boolean accountChanged =
+        oldOpp == null ||
+        opp.AccountId != oldOpp.AccountId;
+      if (consultorChanged || accountChanged) {
+        changedOppById.put(opp.Id, opp);
       }
     }
 
-    if (oppToNewConsultor.isEmpty()) {
+    if (changedOppById.isEmpty()) {
       return;
     }
 
-    Set<Id> changedOppIds = oppToNewConsultor.keySet();
+    Set<Id> changedOppIds = changedOppById.keySet();
 
     // Busca Instalações vinculadas pelos dois campos de lookup possíveis
     List<Instalacao__c> linkedInstalacoes = [
       SELECT
         Id,
+        ClienteConta__c,
         ConsultorInstalacao__c,
         Oportunidade__c,
         OportunidadeConcluida__c
@@ -319,18 +323,28 @@ public with sharing class InstalacaoBO {
         ? inst.Oportunidade__c
         : inst.OportunidadeConcluida__c;
 
-      if (!oppToNewConsultor.containsKey(refOppId)) {
+      if (!changedOppById.containsKey(refOppId)) {
         continue;
       }
 
-      Id newConsultorId = oppToNewConsultor.get(refOppId);
+      Opportunity changedOpp = changedOppById.get(refOppId);
+      Id newConsultorId = changedOpp.ConsultorOportunidade__c;
+      Id newClientId = changedOpp.AccountId;
+
+      Instalacao__c updateInst = new Instalacao__c(Id = inst.Id);
+      Boolean hasChanges = false;
+
       if (inst.ConsultorInstalacao__c != newConsultorId) {
-        toUpdate.add(
-          new Instalacao__c(
-            Id = inst.Id,
-            ConsultorInstalacao__c = newConsultorId
-          )
-        );
+        updateInst.ConsultorInstalacao__c = newConsultorId;
+        hasChanges = true;
+      }
+      if (inst.ClienteConta__c != newClientId) {
+        updateInst.ClienteConta__c = newClientId;
+        hasChanges = true;
+      }
+
+      if (hasChanges) {
+        toUpdate.add(updateInst);
       }
     }
 
@@ -435,7 +449,7 @@ public with sharing class InstalacaoBO {
       existingByProject.put(inst.Projeto__c, inst);
     }
 
-    // REQ-001: busca ConsultorOportunidade__c para popular ConsultorInstalacao__c na aprovação
+    // REQ-001: busca dados da Oportunidade para popular relacionamentos da Instalação na aprovação
     Set<Id> approvalOppIds = new Set<Id>();
     for (Projeto__c p : toProcess) {
       if (p.Oportunidade__c != null) {
@@ -445,7 +459,7 @@ public with sharing class InstalacaoBO {
     Map<Id, Opportunity> approvalOppById = new Map<Id, Opportunity>();
     if (!approvalOppIds.isEmpty()) {
       for (Opportunity opp : [
-        SELECT Id, ConsultorOportunidade__c
+        SELECT Id, AccountId, ConsultorOportunidade__c
         FROM Opportunity
         WHERE Id IN :approvalOppIds
         WITH SECURITY_ENFORCED
@@ -510,6 +524,7 @@ public with sharing class InstalacaoBO {
 
     return new Instalacao__c(
       Name = installationName,
+      ClienteConta__c = project.Conta__c,
       Oportunidade__c = project.Oportunidade__c,
       OportunidadeConcluida__c = project.Oportunidade__c,
       Projeto__c = project.Id,
@@ -532,6 +547,9 @@ public with sharing class InstalacaoBO {
     if (oppById != null && project.Oportunidade__c != null) {
       Opportunity opp = oppById.get(project.Oportunidade__c);
       if (opp != null) {
+        if (inst.ClienteConta__c == null) {
+          inst.ClienteConta__c = opp.AccountId;
+        }
         inst.ConsultorInstalacao__c = opp.ConsultorOportunidade__c;
       }
     }
