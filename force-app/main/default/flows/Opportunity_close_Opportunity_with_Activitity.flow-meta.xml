@@ -5,7 +5,7 @@
         <label>close Closed Lost Activities</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
-        <actionName>OpportunityClosedLostInactivityFlowAction</actionName>
+        <actionName>OppClosedLostFlowAction</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
@@ -14,7 +14,7 @@
                 <booleanValue>true</booleanValue>
             </value>
         </inputParameters>
-        <nameSegment>OpportunityClosedLostInactivityFlowAction</nameSegment>
+        <nameSegment>OppClosedLostFlowAction</nameSegment>
         <offset>0</offset>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>

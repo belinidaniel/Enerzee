@@ -7,7 +7,7 @@
  * @test              : N/A - classe de teste executavel
  **/
 @IsTest
-private class OpportunityClosedLostInactivityFlowActionTest {
+private class OppClosedLostFlowActionTest {
   @IsTest
   static void run_shouldCloseOpenTasksForAutoClosedLostOpportunity() {
     TaskTriggerHandler.disableTrigger();
@@ -43,12 +43,12 @@ private class OpportunityClosedLostInactivityFlowActionTest {
         true
       );
 
-      OpportunityClosedLostInactivityFlowAction.Request request = new OpportunityClosedLostInactivityFlowAction.Request();
+      OppClosedLostFlowAction.Request request = new OppClosedLostFlowAction.Request();
       request.run = true;
 
       Test.startTest();
-      List<OpportunityClosedLostInactivityFlowAction.Response> responses = OpportunityClosedLostInactivityFlowAction.run(
-        new List<OpportunityClosedLostInactivityFlowAction.Request>{ request }
+      List<OppClosedLostFlowAction.Response> responses = OppClosedLostFlowAction.run(
+        new List<OppClosedLostFlowAction.Request>{ request }
       );
       Test.stopTest();
 

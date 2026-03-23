@@ -6,13 +6,12 @@
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, EngineeringDateStampFlowTest, InstalacaoBOTest,
  *                       IntegracaoNivelloContratoCoverageTest, IntegracaoNivelloTest, IntegracaoSAPTest,
- *                       OpportunityBOAdditionalTest, OpportunityBOCoverageTest, OpportunityBOEmailTest,
- *                       OpportunityBOHighCoverageTest, OpportunityBOIntegrationVOFixesTest,
- *                       OpportunityBOPaymentReminderTaskTest, OpportunityClosedLostInactivityFlowActionTest,
- *                       OpportunityDiscountRequestControllerTest, OpportunityDisqualifyLeadsTest,
- *                       OpportunityPDFHelperTest, OpportunityTriggerTest, OpportunityUtilsTest,
- *                       PDFControllerExtensionExtraTest, ProjetoTriggerTest, ProposalConsoleControllerTest, TaskBOTest,
- *                       UtilsTest
+ *                       OppClosedLostFlowActionTest, OpportunityBOAdditionalTest, OpportunityBOCoverageTest,
+ *                       OpportunityBOEmailTest, OpportunityBOHighCoverageTest, OpportunityBOIntegrationVOFixesTest,
+ *                       OpportunityBOPaymentReminderTaskTest, OpportunityDiscountRequestControllerTest,
+ *                       OpportunityDisqualifyLeadsTest, OpportunityPDFHelperTest, OpportunityTriggerTest,
+ *                       OpportunityUtilsTest, PDFControllerExtensionExtraTest, ProjetoTriggerTest,
+ *                       ProposalConsoleControllerTest, TaskBOTest, UtilsTest
  **/
 public class OpportunityUtils {
   //	 Status
