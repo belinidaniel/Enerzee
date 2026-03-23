@@ -1,7 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ValorInstalacaoPlanejado__c</fullName>
-    <formula>0.8 * BLANKVALUE(OportunidadeConcluida__r.ValorInstalacao__c, 0)</formula>
+    <formula>0.8 * BLANKVALUE(
+    IF(
+        NOT(ISBLANK(Oportunidade__c)),
+        Oportunidade__r.ValorInstalacao__c,
+        OportunidadeConcluida__r.ValorInstalacao__c
+    ),
+    0
+)</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Valor Instalação Planejado</label>
     <precision>18</precision>
