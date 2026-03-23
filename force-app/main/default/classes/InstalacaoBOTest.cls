@@ -896,7 +896,7 @@ public class InstalacaoBOTest {
     newOpp.ConsultorOportunidade__c = consultorNew.Id;
 
     Test.startTest();
-    InstalacaπoBO.syncConsultorFromOpportunity(
+    InstalacaoBO.syncConsultorFromOpportunity(
       new List<Opportunity>{ newOpp },
       new Map<Id, Opportunity>{ oldOpp.Id => oldOpp }
     );
