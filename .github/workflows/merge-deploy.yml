@@ -81,7 +81,6 @@ jobs:
             --from HEAD~1 \
             --to HEAD \
             --source force-app \
-            --ignore .sgdignore \
             --output .
           echo "--- package.xml ---"
           cat package/package.xml
