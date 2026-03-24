@@ -375,6 +375,7 @@ private class OpportunityBOCoverageTest {
       new List<Opportunity>{ wonNewSnapshot },
       new Map<Id, Opportunity>{ baseOpp.Id => wonOldSnapshot }
     );
+
     Test.stopTest();
 
     Task refreshedWonTask = [
