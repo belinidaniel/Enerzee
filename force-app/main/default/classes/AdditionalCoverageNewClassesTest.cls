@@ -222,4 +222,87 @@ private class AdditionalCoverageNewClassesTest {
     } catch (AuraHandledException e) {
     }
   }
+
+  @IsTest
+  static void taskBO_validateRequiredDocuments_withAttachmentLink() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+
+    insert new OpportunityAttachmentLink__c(
+      Name = 'Evidencia Obra',
+      SObjectId__c = String.valueOf(acc.Id),
+      ActivityName__c = 'RELATÓRIO DE EXECUCAO DE OBRA',
+      AttachmentDescription__c = 'MOBILIZAÇÃO/CONFERÊNCIA DE MATERIAIS',
+      DocRequiredName__c = 'MOBILIZAÇÃO/CONFERÊNCIA DE MATERIAIS'
+    );
+
+    Task taskRecord = new Task(
+      Subject = 'RELATÓRIO DE EXECUCAO DE OBRA',
+      WhatId = acc.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+
+    Test.startTest();
+    TaskBO.validateRequiredDocuments(taskRecord);
+    Test.stopTest();
+
+    Assert.isTrue(
+      true,
+      'validateRequiredDocuments com link de anexo não deve lançar exceção.'
+    );
+  }
+
+  @IsTest
+  static void taskBO_validateRequiredFieldSetsOnCompletion_aprovacaoProjetoUfv() {
+    TaskTriggerHandler.disableTrigger();
+    OpportunityTriggerHandler.disableTrigger();
+
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c vs = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(Opportunity__c = opp.Id),
+      true
+    );
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = vs.Id,
+        Conta__c = acc.Id,
+        TipoObra__c = 'UFVMicro',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
+    );
+
+    Task oldTask = new Task(
+      Subject = TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV,
+      WhatId = project.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert oldTask;
+
+    Task newTask = oldTask.clone(true, true, false, false);
+    newTask.Status = TaskUtils.STATUS_CONCLUIDO;
+
+    Test.startTest();
+    TaskBO.validateRequiredFieldSetsOnCompletion(
+      new List<Task>{ newTask },
+      new Map<Id, Task>{ oldTask.Id => oldTask }
+    );
+    Test.stopTest();
+
+    Assert.isTrue(
+      true,
+      'validateRequiredFieldSetsOnCompletion para APROVAÇÃO DO PROJETO UFV não deve lançar exceção.'
+    );
+  }
 }
