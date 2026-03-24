@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Report xmlns="http://soap.sforce.com/2006/04/metadata">
     <aggregates>
         <calculatedFormula>CLOSE_DATE:UNIQUE*1</calculatedFormula>
@@ -94,9 +94,6 @@
         <titleSize>18</titleSize>
     </chart>
     <columns>
-        <field>RECORDTYPE</field>
-    </columns>
-    <columns>
         <field>CLOSE_DATE</field>
     </columns>
     <columns>
@@ -122,18 +119,12 @@
     </columns>
     <filter>
         <criteriaItems>
-            <column>RECORDTYPE</column>
-            <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
-            <operator>equals</operator>
-            <value>,Opportunity.OutrasOportunidades,Opportunity.EzeeConnect,Opportunity.EzeeLivre,Opportunity.Produtos,Opportunity.Servicos,Opportunity.EzeeSolarA,Opportunity.EzeeSolarB,Opportunity.ServicosEPC,Opportunity.Solar</value>
-        </criteriaItems>
-        <criteriaItems>
             <column>STAGE_NAME</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>,Prospecção,Solicitação de Proposta,Aguardando Parceiro,Análise de Target,Elaboração de proposta,Simulação de Proposta,Aguardando Aprovação,Proposta Gerada,Proposta enviada,Proposta enviada / Aguardando Aceite,Confirmação de pagamento sinal,Método de pagamento,Validação do método de pagamento,Elaboração de Minuta,Apresentação Comercial,Aguardando Assinatura,Lead,Análise de Crédito,Informações adicionais,Agendamento da Visita Técnica,Análise de viabilidade,Viabilidade Técnica,Readequação de Proposta,Aguardando aceite,Negociação,Contrato,Validação,Viabilidade Tecnica,Aguardando dados da visita,Geração de contrato,Contrato enviado,Contrato firmado / Assinado,Envio das Alterações Comerciais ao Parceiro,Aguardando Reanálise do Parceiro,Renegociação Comercial,Elaboração de Aditivo,Aguardando Assinatura de Aditivo,Revisão Contratual,Assinatura de Contrato com o Parceiro,Aguardando Informação,Elaboração de Estudo,Agendamento Pendente,Reunião Agendada,Minuta Gerada,Finalizado (Aguard. NF),Aguardando Pagamento,Pagamento Confirmado,Parecer de acesso,Equipamento,Instalação,Fase de obra,Confirmação de pagamento,Confirmação de pagamento contrato,Contrato Finalizado,Finalizado,Ganho fechado,Fechado Perdido</value>
+            <value
+      >,Prospecção,Solicitação de Proposta,Aguardando Parceiro,Análise de Target,Elaboração de proposta,Simulação de Proposta,Aguardando Aprovação,Proposta Gerada,Proposta enviada,Proposta enviada / Aguardando Aceite,Confirmação de pagamento sinal,Método de pagamento,Validação do método de pagamento,Elaboração de Minuta,Apresentação Comercial,Aguardando Assinatura,Lead,Análise de Crédito,Informações adicionais,Agendamento da Visita Técnica,Análise de viabilidade,Viabilidade Técnica,Readequação de Proposta,Aguardando aceite,Negociação,Contrato,Validação,Aguardando dados da visita,Geração de contrato,Contrato enviado,Contrato firmado / Assinado,Envio das Alterações Comerciais ao Parceiro,Aguardando Reanálise do Parceiro,Renegociação Comercial,Elaboração de Aditivo,Aguardando Assinatura de Aditivo,Revisão Contratual,Assinatura de Contrato com o Parceiro,Aguardando Informação,Elaboração de Estudo,Agendamento Pendente,Reunião Agendada,Minuta Gerada,Finalizado (Aguard. NF),Aguardando Pagamento,Pagamento Confirmado,Parecer de acesso,Equipamento,Instalação,Fase de obra,Confirmação de pagamento,Confirmação de pagamento contrato,Contrato Finalizado,Finalizado,Ganho fechado,Fechado Perdido</value>
         </criteriaItems>
         <criteriaItems>
             <column>Opportunity.Origem__c</column>
@@ -147,7 +138,8 @@
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>contains</operator>
-            <value>wellington,fernanda,beatriz,mariana,maria,arion,dayane</value>
+            <value
+      >wellington,fernanda,beatriz,mariana,maria,arion,dayane</value>
         </criteriaItems>
         <language>pt_BR</language>
     </filter>
