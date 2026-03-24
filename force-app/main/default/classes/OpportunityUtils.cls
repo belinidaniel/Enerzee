@@ -43,6 +43,8 @@ public class OpportunityUtils {
   public static String STATUS_ANALISE_CREDITO = 'Análise de Crédito';
   public static String STATUS_INFORMACOES_ADICIONAIS = 'Informações adicionais';
   public static String STATUS_ANALISE_DE_VIABILIDADE = 'Viabilidade Técnica';
+  // @deprecated — alias de STATUS_ANALISE_DE_VIABILIDADE; remover após migração de dados e atualização de todas as classes dependentes
+  public static String STATUS_VIABILIDADE_TECNICA = STATUS_ANALISE_DE_VIABILIDADE;
   public static String STATUS_READEQUACAO_DE_PROPOSTA = 'Readequação de Proposta';
   public static String STATUS_AGUARDANDO_ACEITE = 'Aguardando aceite';
   public static String STATUS_CONTRATO = 'Contrato';
