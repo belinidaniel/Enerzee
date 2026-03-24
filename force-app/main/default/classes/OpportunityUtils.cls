@@ -6,8 +6,8 @@
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, EngineeringDateStampFlowTest, InstalacaoBOTest,
  *                       IntegracaoNivelloContratoCoverageTest, IntegracaoNivelloTest, IntegracaoSAPTest,
- *                       OpportunityBOAdditionalTest, OpportunityBOCoverageTest, OpportunityBOEmailTest,
- *                       OpportunityBOHighCoverageTest, OpportunityBOIntegrationVOFixesTest,
+ *                       OppClosedLostFlowActionTest, OpportunityBOAdditionalTest, OpportunityBOCoverageTest,
+ *                       OpportunityBOEmailTest, OpportunityBOHighCoverageTest, OpportunityBOIntegrationVOFixesTest,
  *                       OpportunityBOPaymentReminderTaskTest, OpportunityDiscountRequestControllerTest,
  *                       OpportunityDisqualifyLeadsTest, OpportunityPDFHelperTest, OpportunityTriggerTest,
  *                       OpportunityUtilsTest, PDFControllerExtensionExtraTest, ProjetoTriggerTest,

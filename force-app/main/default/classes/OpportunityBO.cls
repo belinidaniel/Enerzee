@@ -3010,6 +3010,56 @@ public class OpportunityBO {
       return;
     }
 
+    closeActivitiesAndRelatedRecordsForClosedLost(
+      closedLostOpportunityIds,
+      closedLostOpportunities
+    );
+  }
+
+  public static void closeActivitiesForClosedWon(
+    List<Opportunity> newRecords,
+    Map<Id, Opportunity> oldRecordsMap
+  ) {
+    if (
+      newRecords == null ||
+      newRecords.isEmpty() ||
+      oldRecordsMap == null ||
+      oldRecordsMap.isEmpty()
+    ) {
+      return;
+    }
+
+    Set<Id> closedWonOpportunityIds = new Set<Id>();
+    for (Opportunity opportunity : newRecords) {
+      Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
+      if (oldOpportunity == null) {
+        continue;
+      }
+
+      if (
+        OpportunityUtils.isStatusClosedWon(opportunity) &&
+        !OpportunityUtils.isStatusClosedWon(oldOpportunity)
+      ) {
+        closedWonOpportunityIds.add(opportunity.Id);
+      }
+    }
+
+    closeTasksForOpportunityIds(
+      closedWonOpportunityIds,
+      'Encerrado automaticamente - Oportunidade marcada como Ganho fechado.'
+    );
+  }
+
+  public static void closeActivitiesAndRelatedRecordsForClosedLost(
+    Set<Id> closedLostOpportunityIds,
+    Map<Id, Opportunity> closedLostOpportunities
+  ) {
+    if (
+      closedLostOpportunityIds == null || closedLostOpportunityIds.isEmpty()
+    ) {
+      return;
+    }
+
     final String AUTOMATION_NOTE = 'Encerrado automaticamente - Oportunidade marcada como Fechado Perdido.';
 
     List<Task> tasksToUpdate = new List<Task>();
@@ -3025,7 +3075,21 @@ public class OpportunityBO {
       ? projectFields.get('Description__c')
       : null;
 
-    for (Opportunity opportunity : closedLostOpportunities.values()) {
+    Map<Id, Opportunity> opportunitiesById = closedLostOpportunities != null
+      ? new Map<Id, Opportunity>(closedLostOpportunities)
+      : new Map<Id, Opportunity>();
+
+    if (opportunitiesById.isEmpty()) {
+      opportunitiesById = new Map<Id, Opportunity>(
+        [
+          SELECT Id, Name, OwnerId
+          FROM Opportunity
+          WHERE Id IN :closedLostOpportunityIds
+        ]
+      );
+    }
+
+    for (Opportunity opportunity : opportunitiesById.values()) {
       if (opportunity.OwnerId != null) {
         usersToNotify.add(opportunity.OwnerId);
       }
@@ -3046,23 +3110,33 @@ public class OpportunityBO {
       ')';
 
     for (Projeto__c project : Database.query(projectQuery)) {
+      recordIdsToCloseTasks.add(project.Id);
+
+      Boolean projectChanged = false;
       if (
         project.Status__c == null ||
         project.Status__c != 'Projeto cancelado'
       ) {
         project.Status__c = 'Projeto cancelado';
+        projectChanged = true;
       }
       if (projectDescriptionField != null) {
         String currentDescription = (String) project.get(
           projectDescriptionField
         );
-        project.put(
-          projectDescriptionField,
-          appendAutomationNote(currentDescription, AUTOMATION_NOTE, 255)
+        String updatedDescription = appendAutomationNote(
+          currentDescription,
+          AUTOMATION_NOTE,
+          255
         );
+        if (updatedDescription != currentDescription) {
+          projectChanged = true;
+        }
+        project.put(projectDescriptionField, updatedDescription);
       }
-      projectsToUpdate.add(project);
-      recordIdsToCloseTasks.add(project.Id);
+      if (projectChanged) {
+        projectsToUpdate.add(project);
+      }
 
       if (project.GestorObra__c != null) {
         usersToNotify.add(project.GestorObra__c);
@@ -3074,19 +3148,28 @@ public class OpportunityBO {
       FROM ViabilityStudy__c
       WHERE Opportunity__c IN :closedLostOpportunityIds
     ]) {
+      recordIdsToCloseTasks.add(viability.Id);
+
+      Boolean viabilityChanged = false;
       if (
         viability.StatusFeasibility__c == null ||
         viability.StatusFeasibility__c != 'Viabilidade Finalizada'
       ) {
         viability.StatusFeasibility__c = 'Viabilidade Finalizada';
+        viabilityChanged = true;
       }
-      viability.ObservationsPostVisit__c = appendAutomationNote(
+      String updatedObservations = appendAutomationNote(
         viability.ObservationsPostVisit__c,
         AUTOMATION_NOTE,
         131072
       );
-      viabilityToUpdate.add(viability);
-      recordIdsToCloseTasks.add(viability.Id);
+      if (updatedObservations != viability.ObservationsPostVisit__c) {
+        viabilityChanged = true;
+      }
+      viability.ObservationsPostVisit__c = updatedObservations;
+      if (viabilityChanged) {
+        viabilityToUpdate.add(viability);
+      }
 
       if (viability.OwnerId != null) {
         usersToNotify.add(viability.OwnerId);
@@ -3123,13 +3206,45 @@ public class OpportunityBO {
       update viabilityToUpdate;
     }
     Boolean orgType = [SELECT IsSandbox FROM Organization LIMIT 1].IsSandbox;
+    Boolean hasRelevantChanges =
+      !tasksToUpdate.isEmpty() ||
+      !projectsToUpdate.isEmpty() ||
+      !viabilityToUpdate.isEmpty();
 
-    if (!orgType) {
+    if (!orgType && hasRelevantChanges) {
       sendClosedLostAutomationEmail(
-        closedLostOpportunities.values(),
+        opportunitiesById.values(),
         usersToNotify,
         AUTOMATION_NOTE
       );
+    }
+  }
+
+  private static void closeTasksForOpportunityIds(
+    Set<Id> opportunityIds,
+    String automationNote
+  ) {
+    if (opportunityIds == null || opportunityIds.isEmpty()) {
+      return;
+    }
+
+    List<Task> tasksToUpdate = new List<Task>();
+    for (Task task : [
+      SELECT Id, Status, Description
+      FROM Task
+      WHERE WhatId IN :opportunityIds AND Status != :TaskUtils.STATUS_CONCLUIDO
+    ]) {
+      task.Status = TaskUtils.STATUS_CONCLUIDO;
+      task.Description = appendAutomationNote(
+        task.Description,
+        automationNote,
+        32000
+      );
+      tasksToUpdate.add(task);
+    }
+
+    if (!tasksToUpdate.isEmpty()) {
+      update tasksToUpdate;
     }
   }
 
