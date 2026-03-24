@@ -46,7 +46,6 @@ public class OpportunityUtils {
   public static String STATUS_READEQUACAO_DE_PROPOSTA = 'Readequação de Proposta';
   public static String STATUS_AGUARDANDO_ACEITE = 'Aguardando aceite';
   public static String STATUS_CONTRATO = 'Contrato';
-  public static String STATUS_VIABILIDADE_TECNICA = 'Viabilidade Tecnica';
   public static String STATUS_VALIDACAO = 'Validação';
   public static String STATUS_PARECER_DE_ACESSO = 'Parecer de acesso';
   public static String STATUS_EQUIPAMENTO = 'Equipamento';
@@ -288,8 +287,8 @@ public class OpportunityUtils {
 
   public static boolean isStatusViabilityAnalysis(Opportunity opportunity) {
     return opportunity.StageName.equalsIgnoreCase(
-        STATUS_ANALISE_DE_VIABILIDADE
-      ) || opportunity.StageName.equalsIgnoreCase(STATUS_VIABILIDADE_TECNICA);
+      STATUS_ANALISE_DE_VIABILIDADE
+    );
   }
 
   public static boolean isStatusProposalReadjustment(Opportunity opportunity) {
