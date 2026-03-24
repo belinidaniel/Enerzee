@@ -365,9 +365,9 @@ private class OpportunityBOCoverageTest {
       ),
       true
     );
-    Opportunity wonOldSnapshot = baseOpp.clone(false, true, true, true);
+    Opportunity wonOldSnapshot = baseOpp.clone(true, true, true, true);
     wonOldSnapshot.StageName = OpportunityUtils.STATUS_NEGOCIACAO;
-    Opportunity wonNewSnapshot = baseOpp.clone(false, true, true, true);
+    Opportunity wonNewSnapshot = baseOpp.clone(true, true, true, true);
     wonNewSnapshot.StageName = OpportunityUtils.STATUS_GANHO_FECHADO;
 
     Test.startTest();
