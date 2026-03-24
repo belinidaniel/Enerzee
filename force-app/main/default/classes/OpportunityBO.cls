@@ -3009,40 +3009,6 @@ public class OpportunityBO {
     );
   }
 
-  public static void closeActivitiesForClosedWon(
-    List<Opportunity> newRecords,
-    Map<Id, Opportunity> oldRecordsMap
-  ) {
-    if (
-      newRecords == null ||
-      newRecords.isEmpty() ||
-      oldRecordsMap == null ||
-      oldRecordsMap.isEmpty()
-    ) {
-      return;
-    }
-
-    Set<Id> closedWonOpportunityIds = new Set<Id>();
-    for (Opportunity opportunity : newRecords) {
-      Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
-      if (oldOpportunity == null) {
-        continue;
-      }
-
-      if (
-        OpportunityUtils.isStatusClosedWon(opportunity) &&
-        !OpportunityUtils.isStatusClosedWon(oldOpportunity)
-      ) {
-        closedWonOpportunityIds.add(opportunity.Id);
-      }
-    }
-
-    closeTasksForOpportunityIds(
-      closedWonOpportunityIds,
-      'Encerrado automaticamente - Oportunidade marcada como Ganho fechado.'
-    );
-  }
-
   public static void closeActivitiesAndRelatedRecordsForClosedLost(
     Set<Id> closedLostOpportunityIds,
     Map<Id, Opportunity> closedLostOpportunities
