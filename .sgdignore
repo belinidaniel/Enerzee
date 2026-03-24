@@ -1,0 +1,4 @@
+# sfdx-git-delta ignore file
+# Exclude reports from delta deploys — report folder metadata is fragile
+# and these components should be managed directly in the org
+force-app/main/default/reports/
