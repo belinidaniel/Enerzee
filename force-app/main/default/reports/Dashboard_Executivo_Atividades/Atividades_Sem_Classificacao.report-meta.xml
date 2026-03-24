@@ -3,7 +3,14 @@
     <columns>
         <field>SUBJECT</field>
     </columns>
-    <description>Atividades vencendo hoje e amanha</description>
+    <columns>
+        <field>DUE_DATE</field>
+    </columns>
+    <columns>
+        <field>STATUS</field>
+    </columns>
+    <description
+  >Atividades em aberto sem classificacao valida de Area ou Departamento. Usado para saneamento operacional (BR-003, BR-004, BR-005). Nao deve aparecer no dashboard principal apos saneamento.</description>
     <filter>
         <booleanFilter>1 AND (2 OR 3)</booleanFilter>
         <criteriaItems>
@@ -14,28 +21,38 @@
             <value>Completed</value>
         </criteriaItems>
         <criteriaItems>
-            <column>DUE_DATE</column>
+            <column>Activity.Area_Classificacao__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>TODAY</value>
+            <value>Não Classificada</value>
         </criteriaItems>
         <criteriaItems>
-            <column>DUE_DATE</column>
+            <column>Activity.Departamento_Classificacao__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>TOMORROW</value>
+            <value>Departamento não informado</value>
         </criteriaItems>
         <language>en_US</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
-        <field>OWNER_ROLE</field>
+        <field>Activity.Area_Classificacao__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>Atividades Vencendo Hoje e Amanha</name>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Activity.Departamento_Classificacao__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Activity.NomeDoProprietario__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Atividades Sem Classificação</name>
     <params>
         <name>closed</name>
         <value>all</value>
@@ -49,7 +66,7 @@
         <value>1</value>
     </params>
     <reportType>Activity</reportType>
-    <scope>team</scope>
+    <scope>organization</scope>
     <showDetails>true</showDetails>
     <showGrandTotal>true</showGrandTotal>
     <showSubTotals>true</showSubTotals>
