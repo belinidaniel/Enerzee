@@ -77,6 +77,7 @@ jobs:
             --from "$MERGE_BASE" \
             --to HEAD \
             --source force-app \
+            --ignore .sgdignore \
             --output .
           echo "--- package.xml ---"
           cat package/package.xml
