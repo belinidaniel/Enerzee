@@ -365,9 +365,9 @@ private class OpportunityBOCoverageTest {
       ),
       true
     );
-    Opportunity wonOldSnapshot = baseOpp.clone(false, true, true, true);
+    Opportunity wonOldSnapshot = baseOpp.clone(true, true, true, true);
     wonOldSnapshot.StageName = OpportunityUtils.STATUS_NEGOCIACAO;
-    Opportunity wonNewSnapshot = baseOpp.clone(false, true, true, true);
+    Opportunity wonNewSnapshot = baseOpp.clone(true, true, true, true);
     wonNewSnapshot.StageName = OpportunityUtils.STATUS_GANHO_FECHADO;
 
     Test.startTest();
@@ -375,7 +375,6 @@ private class OpportunityBOCoverageTest {
       new List<Opportunity>{ wonNewSnapshot },
       new Map<Id, Opportunity>{ baseOpp.Id => wonOldSnapshot }
     );
-
     Test.stopTest();
 
     Task refreshedWonTask = [
@@ -383,6 +382,16 @@ private class OpportunityBOCoverageTest {
       FROM Task
       WHERE Id = :wonTask.Id
     ];
+    Assert.areEqual(
+      TaskUtils.STATUS_CONCLUIDO,
+      refreshedWonTask.Status,
+      'Task da oportunidade deve ser fechada ao ir para Ganho Fechado.'
+    );
+    Assert.isTrue(
+      refreshedWonTask.Description != null &&
+      refreshedWonTask.Description.contains('Encerrado automaticamente'),
+      'Descricao da tarefa deve receber nota de automacao.'
+    );
   }
 
   @isTest
