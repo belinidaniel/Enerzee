@@ -2,9 +2,9 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 03-23-2026
  * @last modified by  : Daniel Belini
- * @test              : InstalacaoBOTest, InstalacaoTriggerHandlerTest, ProjetoTriggerTest
+ * @test              : InstalacaoBOTest, InstalacaoTriggerHandlerTest, OpportunityTriggerTest, ProjetoTriggerTest
  **/
 public with sharing class InstalacaoBO {
   private static final Integer INSTALLATION_NAME_MAX_LENGTH = Schema.SObjectType.Instalacao__c.fields.Name.getLength();
@@ -34,6 +34,25 @@ public with sharing class InstalacaoBO {
       existingByProject.put(inst.Projeto__c, inst);
     }
 
+    // REQ-001: busca dados da Oportunidade para popular relacionamentos da Instalação na criação
+    Set<Id> oppIds = new Set<Id>();
+    for (Projeto__c p : projects) {
+      if (p.Oportunidade__c != null) {
+        oppIds.add(p.Oportunidade__c);
+      }
+    }
+    Map<Id, Opportunity> oppById = new Map<Id, Opportunity>();
+    if (!oppIds.isEmpty()) {
+      for (Opportunity opp : [
+        SELECT Id, AccountId, ConsultorOportunidade__c
+        FROM Opportunity
+        WHERE Id IN :oppIds
+        WITH SECURITY_ENFORCED
+      ]) {
+        oppById.put(opp.Id, opp);
+      }
+    }
+
     List<Instalacao__c> toInsert = new List<Instalacao__c>();
     for (Projeto__c project : projects) {
       if (
@@ -42,7 +61,7 @@ public with sharing class InstalacaoBO {
       ) {
         continue;
       }
-      toInsert.add(buildInstallation(project));
+      toInsert.add(buildInstallation(project, oppById));
     }
 
     if (toInsert.isEmpty()) {
@@ -229,7 +248,8 @@ public with sharing class InstalacaoBO {
       ) {
         continue;
       }
-      toInsert.add(buildInstallation(project));
+      // REQ-001: passa opportunityById para popular ConsultorInstalacao__c
+      toInsert.add(buildInstallation(project, opportunityById));
     }
     System.debug(
       '### InstalacaoBO.createInstallationsForFastTrackProjects - toInsert: ' +
@@ -241,6 +261,104 @@ public with sharing class InstalacaoBO {
 
     insert toInsert;
     relateProjectsToInstallations(fastTrackProjects, toInsert);
+  }
+
+  /**
+   * REQ-001: Sincroniza ConsultorInstalacao__c e ClienteConta__c nas Instalações
+   * vinculadas quando ConsultorOportunidade__c ou AccountId mudam na Oportunidade.
+   * Chamado em afterUpdate do trigger de Opportunity. Bulk-safe: uma SOQL + um DML
+   * para qualquer volume.
+   */
+  public static void syncConsultorFromOpportunity(
+    List<Opportunity> newList,
+    Map<Id, Opportunity> oldMap
+  ) {
+    if (newList == null || newList.isEmpty()) {
+      return;
+    }
+
+    Map<Id, Opportunity> changedOppById = new Map<Id, Opportunity>();
+    for (Opportunity opp : newList) {
+      Opportunity oldOpp = oldMap != null ? oldMap.get(opp.Id) : null;
+      Boolean consultorChanged =
+        oldOpp == null ||
+        opp.ConsultorOportunidade__c != oldOpp.ConsultorOportunidade__c;
+      Boolean accountChanged =
+        oldOpp == null ||
+        opp.AccountId != oldOpp.AccountId;
+      if (consultorChanged || accountChanged) {
+        changedOppById.put(opp.Id, opp);
+      }
+    }
+
+    if (changedOppById.isEmpty()) {
+      return;
+    }
+
+    Set<Id> changedOppIds = changedOppById.keySet();
+
+    // Busca Instalações vinculadas pelos dois campos de lookup possíveis
+    List<Instalacao__c> linkedInstalacoes = [
+      SELECT
+        Id,
+        ClienteConta__c,
+        ConsultorInstalacao__c,
+        Oportunidade__c,
+        OportunidadeConcluida__c
+      FROM Instalacao__c
+      WHERE
+        Oportunidade__c IN :changedOppIds
+        OR OportunidadeConcluida__c IN :changedOppIds
+      WITH SECURITY_ENFORCED
+    ];
+
+    if (linkedInstalacoes.isEmpty()) {
+      return;
+    }
+
+    List<Instalacao__c> toUpdate = new List<Instalacao__c>();
+    for (Instalacao__c inst : linkedInstalacoes) {
+      // Prioriza Oportunidade__c; fallback para OportunidadeConcluida__c
+      Id refOppId = inst.Oportunidade__c != null
+        ? inst.Oportunidade__c
+        : inst.OportunidadeConcluida__c;
+
+      if (!changedOppById.containsKey(refOppId)) {
+        continue;
+      }
+
+      Opportunity changedOpp = changedOppById.get(refOppId);
+      Id newConsultorId = changedOpp.ConsultorOportunidade__c;
+      Id newClientId = changedOpp.AccountId;
+
+      Instalacao__c updateInst = new Instalacao__c(Id = inst.Id);
+      Boolean hasChanges = false;
+
+      if (inst.ConsultorInstalacao__c != newConsultorId) {
+        updateInst.ConsultorInstalacao__c = newConsultorId;
+        hasChanges = true;
+      }
+      if (inst.ClienteConta__c != newClientId) {
+        updateInst.ClienteConta__c = newClientId;
+        hasChanges = true;
+      }
+
+      if (hasChanges) {
+        toUpdate.add(updateInst);
+      }
+    }
+
+    if (toUpdate.isEmpty()) {
+      return;
+    }
+
+    // Desabilita o trigger de Instalação para evitar recursão desnecessária
+    InstalacaoTriggerHandler.disableTrigger();
+    try {
+      update toUpdate;
+    } finally {
+      InstalacaoTriggerHandler.enableTrigger();
+    }
   }
 
   public static void checkTasksConclusionBeforeStatusChange(
@@ -331,12 +449,31 @@ public with sharing class InstalacaoBO {
       existingByProject.put(inst.Projeto__c, inst);
     }
 
+    // REQ-001: busca dados da Oportunidade para popular relacionamentos da Instalação na aprovação
+    Set<Id> approvalOppIds = new Set<Id>();
+    for (Projeto__c p : toProcess) {
+      if (p.Oportunidade__c != null) {
+        approvalOppIds.add(p.Oportunidade__c);
+      }
+    }
+    Map<Id, Opportunity> approvalOppById = new Map<Id, Opportunity>();
+    if (!approvalOppIds.isEmpty()) {
+      for (Opportunity opp : [
+        SELECT Id, AccountId, ConsultorOportunidade__c
+        FROM Opportunity
+        WHERE Id IN :approvalOppIds
+        WITH SECURITY_ENFORCED
+      ]) {
+        approvalOppById.put(opp.Id, opp);
+      }
+    }
+
     List<Instalacao__c> toInsert = new List<Instalacao__c>();
     for (Projeto__c project : toProcess) {
       if (existingByProject.containsKey(project.Id)) {
         continue;
       }
-      toInsert.add(buildInstallation(project));
+      toInsert.add(buildInstallation(project, approvalOppById));
     }
 
     if (toInsert.isEmpty()) {
@@ -356,9 +493,9 @@ public with sharing class InstalacaoBO {
 
     List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
     for (Opportunity opp : [
-      SELECT Id, StageName, RecordTypeId
+      SELECT Id, StageName, RecordTypeId, IsClosed
       FROM Opportunity
-      WHERE Id IN :opportunityIds
+      WHERE Id IN :opportunityIds AND IsClosed = FALSE // BUG FIX: não regredir Oportunidades já fechadas (ex: "Ganho fechado")
     ]) {
       if (
         opp.StageName != null &&
@@ -387,6 +524,7 @@ public with sharing class InstalacaoBO {
 
     return new Instalacao__c(
       Name = installationName,
+      ClienteConta__c = project.Conta__c,
       Oportunidade__c = project.Oportunidade__c,
       OportunidadeConcluida__c = project.Oportunidade__c,
       Projeto__c = project.Id,
@@ -394,6 +532,28 @@ public with sharing class InstalacaoBO {
       InstallDate__c = project.InstallDate__c,
       DateInspection__c = project.DateInspection__c
     );
+  }
+
+  /**
+   * REQ-001: Overload que também popula ConsultorInstalacao__c a partir do mapa
+   * de Oportunidades. Usado em createInstallationsOnProjectCreation,
+   * createInstallationsForFastTrackProjects e ensureInstallationOnProjectApproved.
+   */
+  private static Instalacao__c buildInstallation(
+    Projeto__c project,
+    Map<Id, Opportunity> oppById
+  ) {
+    Instalacao__c inst = buildInstallation(project);
+    if (oppById != null && project.Oportunidade__c != null) {
+      Opportunity opp = oppById.get(project.Oportunidade__c);
+      if (opp != null) {
+        if (inst.ClienteConta__c == null) {
+          inst.ClienteConta__c = opp.AccountId;
+        }
+        inst.ConsultorInstalacao__c = opp.ConsultorOportunidade__c;
+      }
+    }
+    return inst;
   }
 
   private static void relateProjectsToInstallations(

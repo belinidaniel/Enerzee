@@ -1,18 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ContagemPrazoContrato__c</fullName>
     <externalId>false</externalId>
     <formula>IF(
-    ISBLANK(OportunidadeConcluida__r.CloseDate),
+    ISBLANK(BLANKVALUE(Oportunidade__r.CloseDate, OportunidadeConcluida__r.CloseDate)),
     NULL,
-    CASE(TEXT(OportunidadeConcluida__r.Categoria__c),
+    CASE(
+        IF(
+            NOT(ISBLANK(Oportunidade__c)),
+            TEXT(Oportunidade__r.Categoria__c),
+            TEXT(OportunidadeConcluida__r.Categoria__c)
+        ),
         &quot;Fast Track&quot;, 45,
         &quot;SCEE&quot;, 60,
         0
     ) - IF(
         ISBLANK(DataConclusao__c),
-        TODAY() - OportunidadeConcluida__r.CloseDate,
-        DataConclusao__c - OportunidadeConcluida__r.CloseDate
+        TODAY() - BLANKVALUE(Oportunidade__r.CloseDate, OportunidadeConcluida__r.CloseDate),
+        DataConclusao__c - BLANKVALUE(Oportunidade__r.CloseDate, OportunidadeConcluida__r.CloseDate)
     )
 )</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>

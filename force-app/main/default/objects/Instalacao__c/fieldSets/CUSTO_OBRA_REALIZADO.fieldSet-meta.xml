@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CUSTO_OBRA_REALIZADO</fullName>
+    <description
+  >Campos obrigatórios de Custo de Obra (Realizado) para avançar para Obra Concluída.</description>
+    <displayedFields>
+        <field>ValorInstalacaoRealizado__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>false</isRequired>
+    </displayedFields>
+    <displayedFields>
+        <field>ValorMaterialComplementarRealizado__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>false</isRequired>
+    </displayedFields>
+    <displayedFields>
+        <field>CustosAdicionaisRealizado__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>false</isRequired>
+    </displayedFields>
+    <label>CUSTO OBRA REALIZADO</label>
+</FieldSet>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPageRegions>
         <itemInstances>
@@ -13,7 +13,8 @@
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Elaboração de proposta</rightValue>
+                                    <rightValue
+                  >Elaboração de proposta</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
@@ -29,17 +30,20 @@
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>System Administrator</rightValue>
+                                    <rightValue
+                  >System Administrator</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Administrador de sistema</rightValue>
+                                    <rightValue
+                  >Administrador de sistema</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Administrador do sistema</rightValue>
+                                    <rightValue
+                  >Administrador do sistema</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
@@ -104,8 +108,10 @@
                     <name>variant</name>
                     <value>linear</value>
                 </componentInstanceProperties>
-                <componentName>runtime_sales_pathassistant:pathAssistant</componentName>
-                <identifier>runtime_sales_pathassistant_pathAssistant1</identifier>
+                <componentName
+        >runtime_sales_pathassistant:pathAssistant</componentName>
+                <identifier
+        >runtime_sales_pathassistant_pathAssistant1</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
@@ -446,7 +452,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.EmpresaDistribuicaoEnergia__c</fieldItem>
-                <identifier>RecordEmpresaDistribuicaoEnergia_cField2</identifier>
+                <identifier
+        >RecordEmpresaDistribuicaoEnergia_cField2</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -787,8 +794,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ValoresAdicionaisInclusosProposta__c</fieldItem>
-                <identifier>RecordValoresAdicionaisInclusosProposta_cField</identifier>
+                <fieldItem
+        >Record.ValoresAdicionaisInclusosProposta__c</fieldItem>
+                <identifier
+        >RecordValoresAdicionaisInclusosProposta_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -909,8 +918,10 @@
                     <name>uiBehavior</name>
                     <value>readonly</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Duracao_estimada_da_visita_em_minutos__c</fieldItem>
-                <identifier>RecordDuracao_estimada_da_visita_em_minutos_cField</identifier>
+                <fieldItem
+        >Record.Duracao_estimada_da_visita_em_minutos__c</fieldItem>
+                <identifier
+        >RecordDuracao_estimada_da_visita_em_minutos_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1011,8 +1022,10 @@
                     <name>uiBehavior</name>
                     <value>readonly</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Corrente_nominal_do_disjuntor_de_entrada__c</fieldItem>
-                <identifier>RecordCorrente_nominal_do_disjuntor_de_entrada_cField</identifier>
+                <fieldItem
+        >Record.Corrente_nominal_do_disjuntor_de_entrada__c</fieldItem>
+                <identifier
+        >RecordCorrente_nominal_do_disjuntor_de_entrada_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1022,7 +1035,8 @@
                     <value>readonly</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Secao_Nominal_Bitola_do_cabo__c</fieldItem>
-                <identifier>RecordSecao_Nominal_Bitola_do_cabo_cField</identifier>
+                <identifier
+        >RecordSecao_Nominal_Bitola_do_cabo_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1051,8 +1065,10 @@
                     <name>uiBehavior</name>
                     <value>readonly</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Estrutura_de_fixacao_verificado_in_loco__c</fieldItem>
-                <identifier>RecordEstrutura_de_fixacao_verificado_in_loco_cField</identifier>
+                <fieldItem
+        >Record.Estrutura_de_fixacao_verificado_in_loco__c</fieldItem>
+                <identifier
+        >RecordEstrutura_de_fixacao_verificado_in_loco_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1062,7 +1078,8 @@
                     <value>readonly</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Refor_o_na_estrutura_necess_rio__c</fieldItem>
-                <identifier>RecordRefor_o_na_estrutura_necess_rio_cField</identifier>
+                <identifier
+        >RecordRefor_o_na_estrutura_necess_rio_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1071,8 +1088,10 @@
                     <name>uiBehavior</name>
                     <value>readonly</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Posto_de_transforma_o_ou_disponibilidad__c</fieldItem>
-                <identifier>RecordPosto_de_transforma_o_ou_disponibilidad_cField</identifier>
+                <fieldItem
+        >Record.Posto_de_transforma_o_ou_disponibilidad__c</fieldItem>
+                <identifier
+        >RecordPosto_de_transforma_o_ou_disponibilidad_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1092,7 +1111,8 @@
                     <value>readonly</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Observacoes_pos_sombreamento__c</fieldItem>
-                <identifier>RecordObservacoes_pos_sombreamento_cField</identifier>
+                <identifier
+        >RecordObservacoes_pos_sombreamento_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1112,7 +1132,8 @@
                     <value>readonly</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Custos_adicionais_levantados__c</fieldItem>
-                <identifier>RecordCustos_adicionais_levantados_cField</identifier>
+                <identifier
+        >RecordCustos_adicionais_levantados_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1121,8 +1142,10 @@
                     <name>uiBehavior</name>
                     <value>readonly</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Aumento_da_potencia_nominal_do_sistema__c</fieldItem>
-                <identifier>RecordAumento_da_potencia_nominal_do_sistema_cField</identifier>
+                <fieldItem
+        >Record.Aumento_da_potencia_nominal_do_sistema__c</fieldItem>
+                <identifier
+        >RecordAumento_da_potencia_nominal_do_sistema_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-cf607eb6-d4a8-4454-bc63-2a95616794a5</name>
@@ -1227,8 +1250,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.DataPagamentoComissaoConsultor_PosVT__c</fieldItem>
-                <identifier>RecordDataPagamentoComissaoConsultor_PosVT_cField</identifier>
+                <fieldItem
+        >Record.DataPagamentoComissaoConsultor_PosVT__c</fieldItem>
+                <identifier
+        >RecordDataPagamentoComissaoConsultor_PosVT_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1238,7 +1263,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.DataRecebimentoDaREVO_PosVT__c</fieldItem>
-                <identifier>RecordDataRecebimentoDaREVO_PosVT_cField</identifier>
+                <identifier
+        >RecordDataRecebimentoDaREVO_PosVT_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-clnkt8268h5</name>
@@ -1276,7 +1302,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.LiberacaoComissao_PosStartup__c</fieldItem>
-                <identifier>RecordLiberacaoComissao_PosStartup_cField</identifier>
+                <identifier
+        >RecordLiberacaoComissao_PosStartup_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1286,7 +1313,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.ValorPagoaoConsultor_PosStartup__c</fieldItem>
-                <identifier>RecordValorPagoaoConsultor_PosStartup_cField</identifier>
+                <identifier
+        >RecordValorPagoaoConsultor_PosStartup_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1296,7 +1324,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.ValorRecebidoDaREVO_PosStartup__c</fieldItem>
-                <identifier>RecordValorRecebidoDaREVO_PosStartup_cField</identifier>
+                <identifier
+        >RecordValorRecebidoDaREVO_PosStartup_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-0373ab0a-62ab-40ab-8f55-209d670870a2</name>
@@ -1319,8 +1348,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.DataPagamentoComissaoConsultor_PosStartu__c</fieldItem>
-                <identifier>RecordDataPagamentoComissaoConsultor_PosStartu_cField</identifier>
+                <fieldItem
+        >Record.DataPagamentoComissaoConsultor_PosStartu__c</fieldItem>
+                <identifier
+        >RecordDataPagamentoComissaoConsultor_PosStartu_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1329,8 +1360,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.DataRecebimentoDaREVO_PosStartup__c</fieldItem>
-                <identifier>RecordDataRecebimentoDaREVO_PosStartup_cField</identifier>
+                <fieldItem
+        >Record.DataRecebimentoDaREVO_PosStartup__c</fieldItem>
+                <identifier
+        >RecordDataRecebimentoDaREVO_PosStartup_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-b38d2135-0909-40a9-a6cf-8946addbeb60</name>
@@ -1368,7 +1401,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.ObservacaoPagamentoEsquerdo__c</fieldItem>
-                <identifier>RecordObservacaoPagamentoEsquerdo_cField</identifier>
+                <identifier
+        >RecordObservacaoPagamentoEsquerdo_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-fbb7b673-682c-47ae-8aaf-5dcc1d9c0a9e</name>
@@ -1419,8 +1453,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.LiberacaoRecebimento_ProjetoAprovado__c</fieldItem>
-                <identifier>RecordLiberacaoRecebimento_ProjetoAprovado_cField</identifier>
+                <fieldItem
+        >Record.LiberacaoRecebimento_ProjetoAprovado__c</fieldItem>
+                <identifier
+        >RecordLiberacaoRecebimento_ProjetoAprovado_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1430,7 +1466,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.ValorRecebido_ProjetoAprovado__c</fieldItem>
-                <identifier>RecordValorRecebido_ProjetoAprovado_cField</identifier>
+                <identifier
+        >RecordValorRecebido_ProjetoAprovado_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1454,7 +1491,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.DataLiberacao_ProjetoAprovado__c</fieldItem>
-                <identifier>RecordDataLiberacao_ProjetoAprovado_cField</identifier>
+                <identifier
+        >RecordDataLiberacao_ProjetoAprovado_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1464,7 +1502,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.DataRecebimento_ProjetoAprovado__c</fieldItem>
-                <identifier>RecordDataRecebimento_ProjetoAprovado_cField</identifier>
+                <identifier
+        >RecordDataRecebimento_ProjetoAprovado_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-12c456d1-a2ee-45bc-b1ed-2388e199ba5d</name>
@@ -1501,8 +1540,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.LiberacaoRecebimento_ConclusaoObra__c</fieldItem>
-                <identifier>RecordLiberacaoRecebimento_ConclusaoObra_cField</identifier>
+                <fieldItem
+        >Record.LiberacaoRecebimento_ConclusaoObra__c</fieldItem>
+                <identifier
+        >RecordLiberacaoRecebimento_ConclusaoObra_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1512,7 +1553,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.ValorRecebido_ConclusaoObra__c</fieldItem>
-                <identifier>RecordValorRecebido_ConclusaoObra_cField</identifier>
+                <identifier
+        >RecordValorRecebido_ConclusaoObra_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1536,7 +1578,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.DataLiberacao_ConclusaoObra__c</fieldItem>
-                <identifier>RecordDataLiberacao_ConclusaoObra_cField</identifier>
+                <identifier
+        >RecordDataLiberacao_ConclusaoObra_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1546,7 +1589,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.DataRecebimento_ConclusaoObra__c</fieldItem>
-                <identifier>RecordDataRecebimento_ConclusaoObra_cField</identifier>
+                <identifier
+        >RecordDataRecebimento_ConclusaoObra_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-v0fxwd8tkf</name>
@@ -1583,8 +1627,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.LiberacaoRecebimento_AceiteProvisorio__c</fieldItem>
-                <identifier>RecordLiberacaoRecebimento_AceiteProvisorio_cField</identifier>
+                <fieldItem
+        >Record.LiberacaoRecebimento_AceiteProvisorio__c</fieldItem>
+                <identifier
+        >RecordLiberacaoRecebimento_AceiteProvisorio_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1604,7 +1650,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.ValorRecebido_AceiteProvisorio__c</fieldItem>
-                <identifier>RecordValorRecebido_AceiteProvisorio_cField</identifier>
+                <identifier
+        >RecordValorRecebido_AceiteProvisorio_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-0581e53a-226a-4c61-b7c3-d3dc525bd636</name>
@@ -1618,7 +1665,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.DataLiberacao_AceiteProvisorio__c</fieldItem>
-                <identifier>RecordDataLiberacao_AceiteProvisorio_cField</identifier>
+                <identifier
+        >RecordDataLiberacao_AceiteProvisorio_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1627,8 +1675,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.DataRecebimento_AceiteProvisorio__c</fieldItem>
-                <identifier>RecordDataRecebimento_AceiteProvisorio_cField</identifier>
+                <fieldItem
+        >Record.DataRecebimento_AceiteProvisorio__c</fieldItem>
+                <identifier
+        >RecordDataRecebimento_AceiteProvisorio_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-72dd15fe-f487-41e6-b2d6-4b0fe1a0cbec</name>
@@ -2011,7 +2061,8 @@
                 <identifier>flexipage_fieldSection7</identifier>
                 <visibilityRule>
                     <criteria>
-                        <leftValue>{!Record.RecordType.DeveloperName}</leftValue>
+                        <leftValue
+            >{!Record.RecordType.DeveloperName}</leftValue>
                         <operator>NE</operator>
                         <rightValue>EzeeSolarB</rightValue>
                     </criteria>
@@ -2030,7 +2081,8 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Dados financeiros - Contas a receber (Etapa: Projeto Aprovado)</value>
+                    <value
+          >Dados financeiros - Contas a receber (Etapa: Projeto Aprovado)</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection9</identifier>
@@ -2048,7 +2100,8 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Dados financeiros - Contas a receber (Etapa: Conclusão da Obra)</value>
+                    <value
+          >Dados financeiros - Contas a receber (Etapa: Conclusão da Obra)</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection10</identifier>
@@ -2066,7 +2119,8 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Dados financeiros - Contas a receber (Etapa: Aceite Provisório)</value>
+                    <value
+          >Dados financeiros - Contas a receber (Etapa: Aceite Provisório)</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection11</identifier>
@@ -2237,7 +2291,8 @@
                     <name>showLegacyActivityComposer</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentName>runtime_sales_activities:activityPanel</componentName>
+                <componentName
+        >runtime_sales_activities:activityPanel</componentName>
                 <identifier>runtime_sales_activities_activityPanel</identifier>
             </componentInstance>
         </itemInstances>
@@ -2333,19 +2388,6 @@
             <componentInstance>
                 <componentName>clickSignTemplateButton</componentName>
                 <identifier>c_clickSignTemplateButton</identifier>
-                <visibilityRule>
-                    <booleanFilter>1 AND 2</booleanFilter>
-                    <criteria>
-                        <leftValue>{!$Permission.CustomPermission.Clicksign_to_assign}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>true</rightValue>
-                    </criteria>
-                    <criteria>
-                        <leftValue>{!Record.Send_ClickSign__c}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>true</rightValue>
-                    </criteria>
-                </visibilityRule>
             </componentInstance>
         </itemInstances>
         <itemInstances>
