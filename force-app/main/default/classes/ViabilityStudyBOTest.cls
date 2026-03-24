@@ -669,12 +669,17 @@ private class ViabilityStudyBOTest {
     mockLine.DataVencimentoDMais = '5';
     mockLine.TipoProprietario = 'ROLE';
     mockLine.IgnorarValidacao = false;
-    mockTable.tableLines = new List<ViabilityStudyBO.TaskViabilityTableLine>{ mockLine };
+    mockTable.tableLines = new List<ViabilityStudyBO.TaskViabilityTableLine>{
+      mockLine
+    };
     ViabilityStudyBO.taskTableOverride = mockTable;
 
     ViabilityStudyBO.TaskViabilityTable result = ViabilityStudyBO.getTaskViabilityTableFromStaticResource();
 
-    Assert.isNotNull(result, 'getTaskViabilityTableFromStaticResource deve retornar a tabela do override.');
+    Assert.isNotNull(
+      result,
+      'getTaskViabilityTableFromStaticResource deve retornar a tabela do override.'
+    );
     Assert.areEqual(1, result.tableLines.size());
     Assert.areEqual('Assunto Direto', result.tableLines[0].Assunto);
     Assert.areEqual('Obs', result.tableLines[0].Observacoes);
@@ -719,7 +724,10 @@ private class ViabilityStudyBOTest {
       new Map<Id, ViabilityStudy__c>{ vs.Id => oldVs }
     );
 
-    Assert.isTrue(true, 'syncOpportunityInstalledPower sem mudança nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'syncOpportunityInstalledPower sem mudança nao deve lancar erro.'
+    );
   }
 
   @isTest
@@ -757,7 +765,11 @@ private class ViabilityStudyBOTest {
       WHERE Id = :opp.Id
       LIMIT 1
     ];
-    Assert.areEqual(15, reloaded.PotenciaPicoSistema__c, 'Sync deve propagar valor nulo → preenchido para Opportunity.');
+    Assert.areEqual(
+      15,
+      reloaded.PotenciaPicoSistema__c,
+      'Sync deve propagar valor nulo → preenchido para Opportunity.'
+    );
   }
 
   @isTest
@@ -787,7 +799,10 @@ private class ViabilityStudyBOTest {
       WHERE Id = :opp.Id
       LIMIT 1
     ];
-    Assert.isNull(reloaded.PotenciaPicoSistema__c, 'Sync deve propagar valor preenchido → nulo para Opportunity.');
+    Assert.isNull(
+      reloaded.PotenciaPicoSistema__c,
+      'Sync deve propagar valor preenchido → nulo para Opportunity.'
+    );
   }
 
   @isTest
@@ -814,7 +829,11 @@ private class ViabilityStudyBOTest {
       WHERE Id = :opp.Id
       LIMIT 1
     ];
-    Assert.areEqual(8, reloaded.PotenciaPicoSistema__c, 'Sync com oldMap null deve propagar kwp.');
+    Assert.areEqual(
+      8,
+      reloaded.PotenciaPicoSistema__c,
+      'Sync com oldMap null deve propagar kwp.'
+    );
   }
 
   @isTest
@@ -855,7 +874,10 @@ private class ViabilityStudyBOTest {
       FROM Task
       WHERE WhatId = :vs.Id
     ];
-    Assert.isTrue(tasks.size() >= 1, 'Deve criar tarefas via fallback para Solar quando tipo é Ezee Solar.');
+    Assert.isTrue(
+      tasks.size() >= 1,
+      'Deve criar tarefas via fallback para Solar quando tipo é Ezee Solar.'
+    );
   }
 
   @isTest
@@ -875,7 +897,10 @@ private class ViabilityStudyBOTest {
       new List<ViabilityStudy__c>{ vs },
       new Map<Id, ViabilityStudy__c>{ vs.Id => oldVs }
     );
-    Assert.isTrue(true, 'Status não alterado não deve provocar erro de validação.');
+    Assert.isTrue(
+      true,
+      'Status não alterado não deve provocar erro de validação.'
+    );
   }
 
   @isTest
@@ -906,7 +931,10 @@ private class ViabilityStudyBOTest {
       new List<ViabilityStudy__c>{ vs },
       new Map<Id, ViabilityStudy__c>{ vs.Id => oldVs }
     );
-    Assert.isTrue(true, 'Em modo de teste, mudança de status com tarefas abertas não deve lançar erro.');
+    Assert.isTrue(
+      true,
+      'Em modo de teste, mudança de status com tarefas abertas não deve lançar erro.'
+    );
   }
 
   private static String getNonTaskCreatingOwnTeamValue() {
@@ -933,7 +961,12 @@ private class ViabilityStudyBOTest {
   static void shouldResolveOwnerByEmailForUsuarioType() {
     ViabilityStudyBO.resetTestState();
 
-    Profile profile = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
+    Profile profile = [
+      SELECT Id
+      FROM Profile
+      WHERE Name = 'Standard User'
+      LIMIT 1
+    ];
     userCounter++;
     String email = 'vs.emailtest.' + userCounter + '@example.com';
     User emailUser = new User(
@@ -980,22 +1013,36 @@ private class ViabilityStudyBOTest {
     );
     Test.stopTest();
 
-    List<Task> tasks = [SELECT Subject, OwnerId FROM Task WHERE WhatId = :vs.Id];
-    Assert.isTrue(tasks.size() >= 1, 'Deve criar tarefa com owner resolvido por email.');
-    Assert.areEqual(emailUser.Id, tasks[0].OwnerId, 'Owner deve ser o user com email correspondente.');
+    List<Task> tasks = [
+      SELECT Subject, OwnerId
+      FROM Task
+      WHERE WhatId = :vs.Id
+    ];
+    Assert.isTrue(
+      tasks.size() >= 1,
+      'Deve criar tarefa com owner resolvido por email.'
+    );
+    Assert.areEqual(
+      emailUser.Id,
+      tasks[0].OwnerId,
+      'Owner deve ser o user com email correspondente.'
+    );
   }
 
   @isTest
   static void shouldBuildRoleAssignmentStateWithPriorTaskAssignment() {
     ViabilityStudyBO.resetTestState();
 
-    UserRole role = new UserRole(
-      Name = 'VS Aggregate Role Test',
-      DeveloperName = 'VS_Aggregate_Role_Test'
-    );
-    insert role;
-
-    User roleUser = createActiveUser(role.Id);
+    UserRole role;
+    User roleUser;
+    System.runAs(new User(Id = UserInfo.getUserId())) {
+      role = new UserRole(
+        Name = 'VS Aggregate Role Test',
+        DeveloperName = 'VS_Aggregate_Role_Test'
+      );
+      insert role;
+      roleUser = createActiveUser(role.Id);
+    }
 
     Opportunity opp = createOpportunity();
     ViabilityStudy__c vsWithTask = new ViabilityStudy__c(
