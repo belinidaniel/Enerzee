@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 03-24-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, EngineeringDateStampFlowTest, InstalacaoBOTest,
  *                       IntegracaoNivelloContratoCoverageTest, IntegracaoNivelloTest, IntegracaoSAPTest,
@@ -44,7 +44,6 @@ public class OpportunityUtils {
   public static String STATUS_INFORMACOES_ADICIONAIS = 'Informações adicionais';
   public static String STATUS_ANALISE_DE_VIABILIDADE = 'Viabilidade Técnica';
   // @deprecated — alias de STATUS_ANALISE_DE_VIABILIDADE; remover após migração de dados e atualização de todas as classes dependentes
-  public static String STATUS_VIABILIDADE_TECNICA = STATUS_ANALISE_DE_VIABILIDADE;
   public static String STATUS_READEQUACAO_DE_PROPOSTA = 'Readequação de Proposta';
   public static String STATUS_AGUARDANDO_ACEITE = 'Aguardando aceite';
   public static String STATUS_CONTRATO = 'Contrato';
