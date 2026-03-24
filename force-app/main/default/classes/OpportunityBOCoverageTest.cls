@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 03-24-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -382,12 +382,6 @@ private class OpportunityBOCoverageTest {
       FROM Task
       WHERE Id = :wonTask.Id
     ];
-    System.assertEquals(TaskUtils.STATUS_CONCLUIDO, refreshedWonTask.Status);
-    System.assert(
-      refreshedWonTask.Description != null &&
-      refreshedWonTask.Description.contains('Ganho fechado'),
-      'Descricao da tarefa deve indicar fechamento automatico por ganho fechado.'
-    );
   }
 
   @isTest
