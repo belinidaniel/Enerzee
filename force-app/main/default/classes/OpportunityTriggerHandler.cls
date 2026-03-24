@@ -217,6 +217,10 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
+    OpportunityBO.closeActivitiesForClosedWon(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
     // OpportunityShareHandler.gerenciarCompartilhamentoOportunidade((List<Opportunity>) Trigger.new, (Map<Id, Opportunity>) Trigger.oldMap);
     OpportunityBO.generateProposalAsync(
       (Map<Id, Opportunity>) Trigger.newMap,
