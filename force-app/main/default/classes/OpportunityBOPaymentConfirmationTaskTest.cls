@@ -207,7 +207,8 @@ private class OpportunityBOPaymentConfirmationTaskTest {
           AccountId = acc.Id,
           OwnerId = owner.Id,
           StageName = OpportunityUtils.STATUS_PROPOSTA_GERADA,
-          CloseDate = Date.today().addDays(30)
+          CloseDate = Date.today().addDays(30),
+          IdVirtualOffice__c = 'test-vo-bulk-' + i
         )
       );
     }
