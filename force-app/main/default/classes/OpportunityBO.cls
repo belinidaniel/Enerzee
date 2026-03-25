@@ -3361,6 +3361,13 @@ public class OpportunityBO {
       TaskUtils.SUBJECT_CONFIRMACAO_PAGAMENTO
     );
 
+    Id financeQueueId = resolveQueueIdByDeveloperName(
+      PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME
+    );
+    Id financeUserFallbackId = financeQueueId == null
+      ? resolveActiveUserIdByEmailLike(PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE)
+      : null;
+
     List<Task> tasksToInsert = new List<Task>();
     for (Opportunity opp : candidates) {
       if (oppsWithOpenTask.contains(opp.Id)) {
@@ -3369,12 +3376,18 @@ public class OpportunityBO {
       Boolean isOwnerActive = ownerActiveById.containsKey(opp.OwnerId)
         ? ownerActiveById.get(opp.OwnerId)
         : false;
+      Id taskOwner = resolvePaymentReminderTaskOwner(
+        financeQueueId,
+        financeUserFallbackId,
+        opp.OwnerId,
+        isOwnerActive
+      );
       tasksToInsert.add(
         TaskBO.createTask(
           opp.Id,
           TaskUtils.SUBJECT_CONFIRMACAO_PAGAMENTO,
           null,
-          resolveFinanceTaskOwnerId(opp.OwnerId, isOwnerActive),
+          taskOwner,
           System.today(),
           null
         )
