@@ -72,60 +72,72 @@ private class ProjetoStatusIntegrationServiceTest implements HttpCalloutMock {
     ensureTaskQueue();
     User runAsUser = createRunAsUser();
 
-    Test.startTest();
+    // Setup heavy DML before Test.startTest() to preserve fresh limit budget
+    // for the trigger-driven update below (31 Opportunity flows + Projeto flows)
     ProjetoStatusIntegrationService.endpointOverride = 'https://example.com/project-status';
     Test.setMock(
       HttpCalloutMock.class,
       new ProjetoStatusIntegrationServiceTest()
     );
 
+    Id accId;
+    Id oppId;
+    Id viabilityId;
+    Id projId;
     System.runAs(runAsUser) {
       Account acc = new Account(Name = 'Teste');
       insert acc;
+      accId = acc.Id;
 
       Opportunity opp = new Opportunity(
         Name = 'Opp Teste',
         StageName = 'Prospecting',
         CloseDate = Date.today().addDays(10),
-        AccountId = acc.Id,
+        AccountId = accId,
         IdVirtualOffice__c = 'd7f85a48-0e1e-46c8-8143-f4c15db60000'
       );
       insert opp;
+      oppId = opp.Id;
 
       ViabilityStudy__c viability = new ViabilityStudy__c(
-        Opportunity__c = opp.Id,
+        Opportunity__c = oppId,
         TypeWorkProjectFeasibility__c = 'UFV Micro'
       );
       insert viability;
+      viabilityId = viability.Id;
 
       Projeto__c projOld = new Projeto__c(
         Name = 'Projeto Teste',
-        Oportunidade__c = opp.Id,
-        Viabilidade__c = viability.Id,
+        Oportunidade__c = oppId,
+        Viabilidade__c = viabilityId,
         Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
-        Conta__c = acc.Id
+        Conta__c = accId
       );
       insert projOld;
+      projId = projOld.Id;
+    }
 
-      Projeto__c projNew = [
-        SELECT Id, Status__c, SubStatus__c, MotivoSubStatus__c
-        FROM Projeto__c
-        WHERE Id = :projOld.Id
-      ];
-      Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>{
-        projNew.Id => projNew.clone(false, true, false, false)
-      };
-      projNew.Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO;
-      projNew.SubStatus__c = 'Aprovado Parcialmente';
-      projNew.MotivoSubStatus__c = 'motivo teste';
+    Projeto__c projNew = [
+      SELECT Id, Status__c, SubStatus__c, MotivoSubStatus__c
+      FROM Projeto__c
+      WHERE Id = :projId
+    ];
+    Map<Id, Projeto__c> oldMap = new Map<Id, Projeto__c>{
+      projNew.Id => projNew.clone(false, true, false, false)
+    };
+    projNew.Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO;
+    projNew.SubStatus__c = 'Aprovado Parcialmente';
+    projNew.MotivoSubStatus__c = 'motivo teste';
+
+    // Fresh limit budget: only the trigger-driven update + explicit service call
+    Test.startTest();
+    System.runAs(runAsUser) {
       update projNew;
-
       ProjetoStatusIntegrationService.sendStatusUpdates(
         new List<Projeto__c>{ projNew },
         oldMap
       );
     }
-
     Test.stopTest();
     ProjetoStatusIntegrationService.endpointOverride = null;
   }
