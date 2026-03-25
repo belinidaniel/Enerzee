@@ -271,7 +271,8 @@ public class OpportunityBO {
 
   public static void mapOpportunityLineItemFieldsRest(
     Map<OpportunityRecordsTO.SingleOpportunity, Opportunity> restObjectsToInsertedOpportunity,
-    Map<String, Id> externalIdToProductId
+    Map<String, Id> externalIdToProductId,
+    Map<String, Id> compositionExternalIdToId
   ) {
     List<OpportunityLineItem> itemsToInsert = new List<OpportunityLineItem>();
     Map<String, Double> productExternalIdToPrice = new Map<String, Double>();
@@ -311,15 +312,14 @@ public class OpportunityBO {
       for (OpportunityRecordsTO.Product product : newProducts) {
         productsToInsert.add(
           new Product2(
-            Id_Externo__c = product.Id,
+            ExternalId__c = product.Id,
             ProductCode = product.Id,
             Preco_Unitario__c = product.UnitaryValue,
-            Name = product.Name,
-            ExternalId__c = product.Id
+            Name = product.Name
           )
         );
       }
-      upsert productsToInsert Id_Externo__c;
+      upsert productsToInsert ExternalId__c;
 
       for (Product2 product : productsToInsert) {
         externalIdToProductId.put(product.ProductCode, product.Id);
@@ -402,6 +402,11 @@ public class OpportunityBO {
       for (OpportunityRecordsTO.Product product : singleOpportunity.Products) {
         String productExternalId = String.valueOf(product.Id);
 
+        Id compositionId = (compositionExternalIdToId != null &&
+          !String.isBlank(product.CompositionExternalId))
+          ? compositionExternalIdToId.get(product.CompositionExternalId)
+          : null;
+
         //Cria item
         Id productId = externalIdToProductId.get(productExternalId);
         OpportunityLineItem item = new OpportunityLineItem(
@@ -409,7 +414,9 @@ public class OpportunityBO {
           PricebookEntryId = productIdToPricebookEntryId.get(productId),
           UnitPrice = product.UnitaryValue,
           Quantity = product.Quantity,
-          Description = product.Description
+          Description = product.Description,
+          byIntegration__c = true,
+          Composition__c = compositionId
         );
 
         itemsToInsert.add(item);

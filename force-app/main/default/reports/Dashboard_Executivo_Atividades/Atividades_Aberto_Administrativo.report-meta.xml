@@ -20,7 +20,7 @@
             <value>Completed</value>
         </criteriaItems>
         <criteriaItems>
-            <column>Activity.Area_Classificacao__c</column>
+            <column>Activity.AreaFml__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>false</isUnlocked>
             <operator>equals</operator>
@@ -31,7 +31,7 @@
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
-        <field>Activity.Departamento_Classificacao__c</field>
+        <field>Activity.DepartamentoFml__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <groupingsDown>
