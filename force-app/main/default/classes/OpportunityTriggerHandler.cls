@@ -6,10 +6,10 @@
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, ClickSignUtilsCoverageTest, IntegracaoSAPCoverageTest,
  *                       KitInstalacaoBOTest, OppClosedLostFlowActionTest, OpportunityBOCoverageTest,
- *                       OpportunityBOHighCoverageTest, OpportunityBOPaymentReminderTaskTest,
- *                       OpportunityDiscountRequestControllerTest, OpportunityShareHandlerTest,
- *                       OpportunityTriggerHandlerToggleTest, OpportunityTriggerTest, OpportunityUtilsTest,
- *                       ProjetoBOCoverageTest, ProjetoTriggerTest, ProposalPendingControllerTest,
+ *                       OpportunityBOHighCoverageTest, OpportunityBOPaymentConfirmationTaskTest,
+ *                       OpportunityBOPaymentReminderTaskTest, OpportunityDiscountRequestControllerTest,
+ *                       OpportunityShareHandlerTest, OpportunityTriggerHandlerToggleTest, OpportunityTriggerTest,
+ *                       OpportunityUtilsTest, ProjetoBOCoverageTest, ProjetoTriggerTest, ProposalPendingControllerTest,
  *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest, ServiceAppointmentBOTest,
  *                       WorkDeliveryReportPdfControllerTest
  **/
@@ -231,6 +231,11 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (Map<Id, Opportunity>) Trigger.oldMap
     );
     OpportunityBO.sendKitUpdateOnGeracaoDesejadaChange(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
+    // SAL-374: cria Task ao entrar na fase "Confirmação de Pagamento"
+    OpportunityBO.createPaymentConfirmationTask(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
