@@ -70,8 +70,16 @@ private class ProjetoStatusIntegrationServiceTest implements HttpCalloutMock {
   @IsTest(SeeAllData=true)
   static void shouldSendWhenStatusChanges() {
     ensureTaskQueue();
+    User runAsUser = createRunAsUser();
 
-    System.runAs(createRunAsUser()) {
+    Test.startTest();
+    ProjetoStatusIntegrationService.endpointOverride = 'https://example.com/project-status';
+    Test.setMock(
+      HttpCalloutMock.class,
+      new ProjetoStatusIntegrationServiceTest()
+    );
+
+    System.runAs(runAsUser) {
       Account acc = new Account(Name = 'Teste');
       insert acc;
 
@@ -112,19 +120,14 @@ private class ProjetoStatusIntegrationServiceTest implements HttpCalloutMock {
       projNew.MotivoSubStatus__c = 'motivo teste';
       update projNew;
 
-      Test.startTest();
-      ProjetoStatusIntegrationService.endpointOverride = 'https://example.com/project-status';
-      Test.setMock(
-        HttpCalloutMock.class,
-        new ProjetoStatusIntegrationServiceTest()
-      );
       ProjetoStatusIntegrationService.sendStatusUpdates(
         new List<Projeto__c>{ projNew },
         oldMap
       );
-      Test.stopTest();
-      ProjetoStatusIntegrationService.endpointOverride = null;
     }
+
+    Test.stopTest();
+    ProjetoStatusIntegrationService.endpointOverride = null;
   }
 
   @IsTest
