@@ -10,7 +10,7 @@
         <field>STATUS</field>
     </columns>
     <description
-  >Atividades em aberto sem classificacao valida de Area ou Departamento. Usado para saneamento operacional (BR-003, BR-004, BR-005). Nao deve aparecer no dashboard principal apos saneamento.</description>
+  >Atividades em aberto sem classificacao valida de Area ou Departamento. Usado para saneamento operacional. Nao deve aparecer no dashboard principal apos saneamento.</description>
     <filter>
         <booleanFilter>1 AND (2 OR 3)</booleanFilter>
         <criteriaItems>
@@ -21,30 +21,30 @@
             <value>Completed</value>
         </criteriaItems>
         <criteriaItems>
-            <column>Activity.Area_Classificacao__c</column>
+            <column>Activity.AreaFml__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Não Classificada</value>
+            <value />
         </criteriaItems>
         <criteriaItems>
-            <column>Activity.Departamento_Classificacao__c</column>
+            <column>Activity.DepartamentoFml__c</column>
             <columnToColumn>false</columnToColumn>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
-            <value>Departamento não informado</value>
+            <value />
         </criteriaItems>
         <language>en_US</language>
     </filter>
     <format>Summary</format>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
-        <field>Activity.Area_Classificacao__c</field>
+        <field>Activity.AreaFml__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <groupingsDown>
         <dateGranularity>Day</dateGranularity>
-        <field>Activity.Departamento_Classificacao__c</field>
+        <field>Activity.DepartamentoFml__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <groupingsDown>
