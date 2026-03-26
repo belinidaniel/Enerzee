@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-24-2026
+ * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, EngineeringDateStampFlowTest, InstalacaoBOTest,
  *                       IntegracaoNivelloContratoCoverageTest, IntegracaoNivelloTest, IntegracaoSAPTest,
@@ -44,10 +44,10 @@ public class OpportunityUtils {
   public static String STATUS_ANALISE_CREDITO = 'Análise de Crédito';
   public static String STATUS_INFORMACOES_ADICIONAIS = 'Informações adicionais';
   public static String STATUS_ANALISE_DE_VIABILIDADE = 'Viabilidade Técnica';
-  // @deprecated — alias de STATUS_ANALISE_DE_VIABILIDADE; remover após migração de dados e atualização de todas as classes dependentes
   public static String STATUS_READEQUACAO_DE_PROPOSTA = 'Readequação de Proposta';
   public static String STATUS_AGUARDANDO_ACEITE = 'Aguardando aceite';
   public static String STATUS_CONTRATO = 'Contrato';
+  public static String STATUS_VIABILIDADE_TECNICA = 'Viabilidade Tecnica';
   public static String STATUS_VALIDACAO = 'Validação';
   public static String STATUS_PARECER_DE_ACESSO = 'Parecer de acesso';
   public static String STATUS_EQUIPAMENTO = 'Equipamento';
@@ -289,8 +289,8 @@ public class OpportunityUtils {
 
   public static boolean isStatusViabilityAnalysis(Opportunity opportunity) {
     return opportunity.StageName.equalsIgnoreCase(
-      STATUS_ANALISE_DE_VIABILIDADE
-    );
+        STATUS_ANALISE_DE_VIABILIDADE
+      ) || opportunity.StageName.equalsIgnoreCase(STATUS_VIABILIDADE_TECNICA);
   }
 
   public static boolean isStatusProposalReadjustment(Opportunity opportunity) {

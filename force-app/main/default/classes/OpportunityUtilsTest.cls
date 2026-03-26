@@ -188,9 +188,7 @@ private class OpportunityUtilsTest {
     );
     System.assert(
       OpportunityUtils.isStatusViabilityAnalysis(
-        new Opportunity(
-          StageName = OpportunityUtils.STATUS_ANALISE_DE_VIABILIDADE
-        )
+        new Opportunity(StageName = OpportunityUtils.STATUS_VIABILIDADE_TECNICA)
       )
     );
     System.assert(

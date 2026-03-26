@@ -4,7 +4,10 @@
     <active>true</active>
     <errorConditionFormula>AND(
    ISCHANGED(StageName),
-   ISPICKVAL(PRIORVALUE(StageName), &apos;Viabilidade Técnica&apos;),
+   OR(
+      ISPICKVAL(PRIORVALUE(StageName), &apos;Viabilidade Técnica&apos;),
+      ISPICKVAL(PRIORVALUE(StageName), &apos;Viabilidade Tecnica&apos;)
+   ),
    ISBLANK(TEXT(Categoria__c)),
    OR(
       RecordType.DeveloperName == &apos;Solar&apos;,

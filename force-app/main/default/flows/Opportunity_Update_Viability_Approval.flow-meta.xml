@@ -87,7 +87,7 @@
         >$Record__Prior.StageName</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
-                    <stringValue>Viabilidade Técnica</stringValue>
+                    <stringValue>Viabilidade Tecnica</stringValue>
                 </rightValue>
             </conditions>
             <connector>

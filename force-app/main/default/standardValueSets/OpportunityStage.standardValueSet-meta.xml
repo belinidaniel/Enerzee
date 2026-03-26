@@ -243,7 +243,15 @@
         <probability>30</probability>
         <won>false</won>
     </standardValue>
-
+    <standardValue>
+        <fullName>Viabilidade Tecnica</fullName>
+        <default>false</default>
+        <label>Viabilidade Tecnica</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>75</probability>
+        <won>false</won>
+    </standardValue>
     <standardValue>
         <fullName>Aguardando dados da visita</fullName>
         <default>false</default>

@@ -3,7 +3,10 @@
     <fullName>ViabilityShouldFinished</fullName>
     <active>true</active>
     <errorConditionFormula>AND( ViabilityStudyFinished__c == false,
-    TEXT(PRIORVALUE(StageName)) == &apos;Viabilidade Técnica&apos;,
+    OR(
+        TEXT(PRIORVALUE(StageName)) == &apos;Viabilidade Técnica&apos;,
+        TEXT(PRIORVALUE(StageName)) == &apos;Viabilidade Tecnica&apos;
+    ),
     ISCHANGED(StageName),
     $UserRole.DeveloperName != &apos;Gerente_Administrativo&apos;,
     $UserRole.DeveloperName != &apos;GerenteEngenharia&apos;				
