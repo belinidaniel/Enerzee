@@ -185,6 +185,7 @@
       >Confirmação de pagamento sinal</controllingFieldValue>
             <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
             <controllingFieldValue>Análise de Crédito</controllingFieldValue>
             <valueName>Não definido</valueName>
         </valueSettings>
@@ -205,6 +206,7 @@
       >Confirmação de pagamento sinal</controllingFieldValue>
             <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
             <controllingFieldValue>Análise de Crédito</controllingFieldValue>
             <valueName>Planejamento de projeto</valueName>
         </valueSettings>
@@ -225,6 +227,7 @@
       >Confirmação de pagamento sinal</controllingFieldValue>
             <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
             <controllingFieldValue>Análise de Crédito</controllingFieldValue>
             <valueName>Projetos em elaboração</valueName>
         </valueSettings>
@@ -245,6 +248,7 @@
       >Confirmação de pagamento sinal</controllingFieldValue>
             <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
             <controllingFieldValue>Análise de Crédito</controllingFieldValue>
             <valueName>Projeto em análise</valueName>
         </valueSettings>
@@ -265,6 +269,7 @@
       >Confirmação de pagamento sinal</controllingFieldValue>
             <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
             <controllingFieldValue>Análise de Crédito</controllingFieldValue>
             <valueName>Projeto aprovado</valueName>
         </valueSettings>
@@ -285,6 +290,7 @@
       >Confirmação de pagamento sinal</controllingFieldValue>
             <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Aguardando aceite</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
             <controllingFieldValue>Análise de Crédito</controllingFieldValue>
             <valueName>Projeto cancelado</valueName>
         </valueSettings>
@@ -302,18 +308,21 @@
       >Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue
       >Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
             <valueName>Aguardando Pagamento</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
             <controllingFieldValue
       >Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
             <valueName>Agendamento de Visita</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
             <controllingFieldValue
       >Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
             <valueName>Estudo de Viabilidade</valueName>
         </valueSettings>
         <valueSettings>

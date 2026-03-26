@@ -172,7 +172,7 @@
             <field>StageName</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>Viabilidade Técnica</stringValue>
+                <stringValue>Viabilidade Tecnica</stringValue>
             </value>
         </filters>
         <filters>
