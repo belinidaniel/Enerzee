@@ -51,7 +51,7 @@ export default class SapIntegrationStatus extends LightningElement {
   }
 
   get isFailure() {
-    return this._sucesso === false && this._statusBody != null;
+    return this._sucesso === false;
   }
 
   get isPending() {
