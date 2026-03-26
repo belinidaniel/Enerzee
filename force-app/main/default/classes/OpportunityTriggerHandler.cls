@@ -4,11 +4,12 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : AdditionalCoverageNewClassesTest, ClickSignUtilsCoverageTest, IntegracaoSAPCoverageTest,
- *                       KitInstalacaoBOTest, OpportunityBOCoverageTest, OpportunityBOHighCoverageTest,
- *                       OpportunityBOPaymentReminderTaskTest, OpportunityDiscountRequestControllerTest,
- *                       OpportunityShareHandlerTest, OpportunityTriggerHandlerToggleTest, OpportunityTriggerTest,
- *                       OpportunityUtilsTest, ProjetoBOCoverageTest, ProjetoTriggerTest, ProposalPendingControllerTest,
+ * @test              : AdditionalCoverageNewClassesTest, ClickSignUtilsCoverageTest, IntegracaoNivelloPropostaTest,
+ *                       IntegracaoSAPCoverageTest, KitInstalacaoBOTest, OpportunityBOCoverageTest,
+ *                       OpportunityBOHighCoverageTest, OpportunityBOPaymentReminderTaskTest,
+ *                       OpportunityDiscountRequestControllerTest, OpportunityShareHandlerTest,
+ *                       OpportunityTriggerHandlerToggleTest, OpportunityTriggerTest, OpportunityUtilsTest,
+ *                       ProjetoBOCoverageTest, ProjetoTriggerTest, ProposalPendingControllerTest,
  *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest, ServiceAppointmentBOTest,
  *                       WorkDeliveryReportPdfControllerTest
  **/

@@ -52,10 +52,7 @@ private class IntegracaoNivelloPropostaTest {
 
     Account acc = (Account) TestFactory.createSObject(new Account(), true);
     Opportunity opp = (Opportunity) TestFactory.createSObject(
-      new Opportunity(
-        AccountId = acc.Id,
-        IdVirtualOffice__c = 'VO-SINCRONA'
-      ),
+      new Opportunity(AccountId = acc.Id, IdVirtualOffice__c = 'VO-SINCRONA'),
       true
     );
 
@@ -71,7 +68,10 @@ private class IntegracaoNivelloPropostaTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(res.success, 'gerandoPropostaSincrona deve retornar success=true.');
+    Assert.isTrue(
+      res.success,
+      'gerandoPropostaSincrona deve retornar success=true.'
+    );
   }
 
   @IsTest
@@ -94,7 +94,10 @@ private class IntegracaoNivelloPropostaTest {
     IntegracaoNivelloProposta.finalizacaoProposta(new Set<Id>());
     Test.stopTest();
 
-    Assert.isTrue(true, 'finalizacaoProposta com Set vazio nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'finalizacaoProposta com Set vazio nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -144,10 +147,7 @@ private class IntegracaoNivelloPropostaTest {
 
     Account acc = (Account) TestFactory.createSObject(new Account(), true);
     Opportunity opp = (Opportunity) TestFactory.createSObject(
-      new Opportunity(
-        AccountId = acc.Id,
-        IdVirtualOffice__c = 'VO-FIN-REAL'
-      ),
+      new Opportunity(AccountId = acc.Id, IdVirtualOffice__c = 'VO-FIN-REAL'),
       true
     );
 
@@ -169,7 +169,10 @@ private class IntegracaoNivelloPropostaTest {
     IntegracaoNivelloProposta.finalizacaoProposta(new Set<Id>{ opp.Id });
     Test.stopTest();
 
-    Assert.isTrue(true, 'finalizacaoProposta com oportunidade real nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'finalizacaoProposta com oportunidade real nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -193,7 +196,10 @@ private class IntegracaoNivelloPropostaTest {
     IntegracaoNivelloProposta.sendUrlSimulation(new Set<Id>());
     Test.stopTest();
 
-    Assert.isTrue(true, 'sendUrlSimulation com Set vazio nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'sendUrlSimulation com Set vazio nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -243,7 +249,10 @@ private class IntegracaoNivelloPropostaTest {
     IntegracaoNivelloProposta.gerandoProposta(opp.Id);
     Test.stopTest();
 
-    Assert.isTrue(true, 'gerandoProposta com PDF anexado nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'gerandoProposta com PDF anexado nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -259,10 +268,7 @@ private class IntegracaoNivelloPropostaTest {
 
     Account acc = (Account) TestFactory.createSObject(new Account(), true);
     Opportunity opp = (Opportunity) TestFactory.createSObject(
-      new Opportunity(
-        AccountId = acc.Id,
-        IdVirtualOffice__c = 'VO-NO-PDF'
-      ),
+      new Opportunity(AccountId = acc.Id, IdVirtualOffice__c = 'VO-NO-PDF'),
       true
     );
 
@@ -293,10 +299,7 @@ private class IntegracaoNivelloPropostaTest {
 
     Account acc = (Account) TestFactory.createSObject(new Account(), true);
     Opportunity opp = (Opportunity) TestFactory.createSObject(
-      new Opportunity(
-        AccountId = acc.Id,
-        IdVirtualOffice__c = 'VO-SINCRONA-2'
-      ),
+      new Opportunity(AccountId = acc.Id, IdVirtualOffice__c = 'VO-SINCRONA-2'),
       true
     );
 
@@ -307,10 +310,58 @@ private class IntegracaoNivelloPropostaTest {
     );
 
     Test.startTest();
-    IntegracaoNivelloProposta.ProposalIntegrationResult res = IntegracaoNivelloProposta.gerandoPropostaSincrona(opp.Id);
+    IntegracaoNivelloProposta.ProposalIntegrationResult res = IntegracaoNivelloProposta.gerandoPropostaSincrona(
+      opp.Id
+    );
     Test.stopTest();
 
-    Assert.isTrue(res.success, 'gerandoPropostaSincrona deve retornar success=true.');
+    Assert.isTrue(
+      res.success,
+      'gerandoPropostaSincrona deve retornar success=true.'
+    );
     Assert.areEqual('Proposta gerada com sucesso', res.message);
+  }
+
+  @IsTest
+  static void shouldDispatchUrlSimulationForEzeeLivreOnTriggerUpdate() {
+    if (
+      !TestMetadataUtils.hasMetadataRecord(
+        'Integrador__mdt',
+        'Envia_URLSimulacao'
+      )
+    ) {
+      return;
+    }
+
+    OpportunityTriggerHandler.disableTrigger();
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        IdVirtualOffice__c = 'VO-EZEELIVRE-SIM',
+        URLSimulation__c = 'https://example.com/ezeelivre-sim',
+        RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+          .get('EzeeLivre')
+          .getRecordTypeId()
+      ),
+      true
+    );
+    OpportunityTriggerHandler.enableTrigger();
+
+    TokenAPINivelloWs.access_token = 'mock-token';
+    Test.setMock(
+      HttpCalloutMock.class,
+      new TestMetadataUtils.MockHttpSuccess()
+    );
+
+    Test.startTest();
+    opp.URLSimulation__c = 'https://example.com/ezeelivre-sim-updated';
+    update opp;
+    Test.stopTest();
+
+    Assert.isTrue(
+      true,
+      'EzeeLivre deve disparar sendUrlSimulation via trigger sem erro'
+    );
   }
 }

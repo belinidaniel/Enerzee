@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>KitInstalacaoBOTest</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityTriggerHandler</members>
+        <members>StatusEnumMap</members>
+        <members>StatusEnumMapTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Opportunity.Processo de Vendas Ezee Livre</members>
+        <name>BusinessProcess</name>
+    </types>
+    <types>
+        <members>Opportunity.EzeeLivre</members>
+        <name>RecordType</name>
+    </types>
+    <version>62.0</version>
+</Package>

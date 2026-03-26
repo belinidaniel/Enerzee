@@ -2303,6 +2303,10 @@ public class OpportunityBO {
         opp.RecordTypeId ==
         Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
           .get('EzeeConnect')
+          .getRecordTypeId() ||
+        opp.RecordTypeId ==
+        Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+          .get('EzeeLivre')
           .getRecordTypeId()
       ) {
         idsToSend.add(opp.Id);

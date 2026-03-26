@@ -5,9 +5,10 @@
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
  * @test              : EzeeConnectProposalPendingServiceTest, IntegracaoFormaPagamentoNegociacaoTest,
- *                       IntegracaoNivelloAnaliseVTTest, IntegracaoNivelloDataVisitaTecnicaTest,
- *                       IntegracaoNivelloPropostaTest, IntegracaoNivelloSimFinTest,
- *                       IntegracaoNivelloValorTotalPropostaTest, IntegracaoNivelloViabilidadeTest,
+ *                       IntegracaoNivelloAnaliseVTTest, IntegracaoNivelloContratoCoverageTest,
+ *                       IntegracaoNivelloDataVisitaTecnicaTest, IntegracaoNivelloPropostaTest,
+ *                       IntegracaoNivelloSimFinTest, IntegracaoNivelloValorTotalPropostaTest,
+ *                       IntegracaoNivelloViabilidadeCoverageTest, IntegracaoNivelloViabilidadeTest,
  *                       IntegrationHubServiceTest, NivelloTokenTest, OpportunityDiscountRequestControllerTest,
  *                       ProposalPendingControllerTest, ProposalPendingSendQueueableTest,
  *                       ProposalPendingStatusQueueableTest, UtilsTest
