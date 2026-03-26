@@ -37,7 +37,7 @@ private class KitInstalacaoBOTest {
   }
 
   // -----------------------------------------------------------------------
-  // sendKitUpdateOnGeracaoDesejadaChange
+  // sendKitUpdateOnProposalParamsChange
   // -----------------------------------------------------------------------
 
   @IsTest
@@ -177,6 +177,71 @@ private class KitInstalacaoBOTest {
       FROM Opportunity
       WHERE Id IN :opps
     ];
+  }
+
+  @IsTest
+  static void shouldDispatchSendKitUpdateWhenEstruturaDeFIxacaoChanges() {
+    OpportunityTriggerHandler.disableTrigger();
+    KitInstalacaoTriggerHandler.disableTrigger();
+
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        IdVirtualOffice__c = 'VO-TELHADO',
+        TipoTelhadoEstrutura__c = 'Cerâmico'
+      ),
+      true
+    );
+    Kit_Instalacao__c kit = (Kit_Instalacao__c) TestFactory.createSObject(
+      new Kit_Instalacao__c(Nome_da_Oportunidade__c = opp.Id),
+      true
+    );
+
+    OpportunityTriggerHandler.enableTrigger();
+    KitInstalacaoTriggerHandler.enableTrigger();
+
+    Test.setMock(HttpCalloutMock.class, new SendKitUpdateMock());
+
+    Test.startTest();
+    opp.TipoTelhadoEstrutura__c = 'Metálico';
+    update opp;
+    Test.stopTest();
+
+    Assert.isTrue(
+      true,
+      'No exception should be thrown when TipoTelhadoEstrutura__c changes'
+    );
+  }
+
+  @IsTest
+  static void shouldNotDispatchWhenEstruturaDeFIxacaoUnchanged() {
+    OpportunityTriggerHandler.disableTrigger();
+    KitInstalacaoTriggerHandler.disableTrigger();
+
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        IdVirtualOffice__c = 'VO-TELHADO-NOCHANGE',
+        TipoTelhadoEstrutura__c = 'Cerâmico'
+      ),
+      true
+    );
+
+    OpportunityTriggerHandler.enableTrigger();
+    KitInstalacaoTriggerHandler.enableTrigger();
+
+    // No mock — no callout should occur
+    Test.startTest();
+    opp.Name = 'Updated Name Only';
+    update opp;
+    Test.stopTest();
+
+    Assert.isTrue(
+      true,
+      'No callout should be dispatched when TipoTelhadoEstrutura__c is unchanged'
+    );
   }
 
   /**

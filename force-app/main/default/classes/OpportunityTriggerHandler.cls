@@ -220,7 +220,7 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
-    OpportunityBO.sendKitUpdateOnGeracaoDesejadaChange(
+    OpportunityBO.sendKitUpdateOnProposalParamsChange(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
