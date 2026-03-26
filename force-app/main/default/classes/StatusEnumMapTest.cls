@@ -30,6 +30,11 @@ private class StatusEnumMapTest {
       0,
       StatusEnumMap.getStatusEnum('Ezee Livre', 'Inexistente')
     );
+    Assert.areEqual(
+      54,
+      StatusEnumMap.getStatusEnum('Ezee Livre', 'Validação'),
+      'Ezee Livre Validação deve ter Id APP 54'
+    );
   }
 
   @IsTest
@@ -40,5 +45,15 @@ private class StatusEnumMapTest {
       StatusEnumMap.getSubstatusEnum(18, 'Entrega de materiais')
     );
     System.assertEquals(0, StatusEnumMap.getSubstatusEnum(999, 'Desconhecido'));
+    Assert.areEqual(
+      78,
+      StatusEnumMap.getSubstatusEnum(54, 'Em Andamento'),
+      'Ezee Livre Validação SubStatus Em Andamento deve ter Id APP 78'
+    );
+    Assert.areEqual(
+      79,
+      StatusEnumMap.getSubstatusEnum(54, 'Pendência'),
+      'Ezee Livre Validação SubStatus Pendência deve ter Id APP 79'
+    );
   }
 }

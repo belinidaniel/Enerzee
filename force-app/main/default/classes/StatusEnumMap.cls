@@ -65,6 +65,7 @@ public class StatusEnumMap {
     'Apresentação Comercial' => 35,
     'Negociação' => 36,
     'Contrato' => 37,
+    'Validação' => 54,
     'Ganho fechado' => 38,
     'Fechado Perdido' => 38
   };
@@ -166,6 +167,7 @@ public class StatusEnumMap {
       'Geração do Contrato' => 47,
       'Contrato Enviado' => 48
     },
+    54 => new Map<String, Integer>{ 'Em Andamento' => 78, 'Pendência' => 79 },
     38 => new Map<String, Integer>{ 'Ganho' => 49, 'Perdido' => 50 },
     41 => new Map<String, Integer>{
       'Aguardando Pagamento' => 51,
