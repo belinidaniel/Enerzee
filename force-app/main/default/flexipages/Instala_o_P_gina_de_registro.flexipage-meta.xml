@@ -68,16 +68,6 @@
                 <identifier>RecordOportunidade_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>readonly</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.ClienteConta__c</fieldItem>
-                <identifier>RecordClienteConta_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
         <!-- REQ-002c: Status da Instalação movido de "Prazos da Instalação" para "Dados Gerais" -->
         <itemInstances>
             <fieldInstance>
