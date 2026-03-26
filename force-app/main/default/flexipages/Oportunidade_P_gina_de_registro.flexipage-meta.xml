@@ -14,7 +14,7 @@
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
                                     <rightValue
-                  >Elaboração de proposta</rightValue>
+                  >Simulação de Proposta</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
