@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>GrupoTarifario__c</fullName>
     <description>Campo para definir o sub-grupo tarifário.</description>
@@ -21,6 +21,11 @@
                 <fullName>Grupo B</fullName>
                 <default>false</default>
                 <label>Grupo B</label>
+            </value>
+            <value>
+                <fullName>Grupo B Optante</fullName>
+                <default>false</default>
+                <label>Grupo B Optante</label>
             </value>
         </valueSetDefinition>
     </valueSet>
