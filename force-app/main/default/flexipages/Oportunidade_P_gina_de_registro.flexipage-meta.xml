@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPageRegions>
         <itemInstances>
@@ -7,14 +7,12 @@
                     <name>actionNames</name>
                     <valueList>
                         <valueListItems>
-                            <value
-              >Opportunity.Enviar_Proposta_manualmente</value>
+                            <value>Opportunity.Enviar_Proposta_manualmente</value>
                             <visibilityRule>
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue
-                  >Elaboração de proposta</rightValue>
+                                    <rightValue>Simulação de Proposta</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -25,8 +23,7 @@
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue
-                  >Elaboração de proposta</rightValue>
+                                    <rightValue>Elaboração de proposta</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
@@ -42,20 +39,17 @@
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue
-                  >System Administrator</rightValue>
+                                    <rightValue>System Administrator</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue
-                  >Administrador de sistema</rightValue>
+                                    <rightValue>Administrador de sistema</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue
-                  >Administrador do sistema</rightValue>
+                                    <rightValue>Administrador do sistema</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
@@ -141,10 +135,8 @@
                     <name>variant</name>
                     <value>linear</value>
                 </componentInstanceProperties>
-                <componentName
-        >runtime_sales_pathassistant:pathAssistant</componentName>
-                <identifier
-        >runtime_sales_pathassistant_pathAssistant1</identifier>
+                <componentName>runtime_sales_pathassistant:pathAssistant</componentName>
+                <identifier>runtime_sales_pathassistant_pathAssistant1</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
@@ -326,8 +318,7 @@
                 <identifier>RecordSubTipo_cField</identifier>
                 <visibilityRule>
                     <criteria>
-                        <leftValue
-            >{!Record.RecordType.DeveloperName}</leftValue>
+                        <leftValue>{!Record.RecordType.DeveloperName}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Solar</rightValue>
                     </criteria>
@@ -375,20 +366,17 @@
                 <visibilityRule>
                     <booleanFilter>1 OR 2 OR 5 OR ( 3 AND 4)</booleanFilter>
                     <criteria>
-                        <leftValue
-            >{!Record.RecordType.DeveloperName}</leftValue>
+                        <leftValue>{!Record.RecordType.DeveloperName}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Solar</rightValue>
                     </criteria>
                     <criteria>
-                        <leftValue
-            >{!Record.RecordType.DeveloperName}</leftValue>
+                        <leftValue>{!Record.RecordType.DeveloperName}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>EzeeSolarB</rightValue>
                     </criteria>
                     <criteria>
-                        <leftValue
-            >{!Record.RecordType.DeveloperName}</leftValue>
+                        <leftValue>{!Record.RecordType.DeveloperName}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Produtos</rightValue>
                     </criteria>
@@ -398,8 +386,7 @@
                         <rightValue>true</rightValue>
                     </criteria>
                     <criteria>
-                        <leftValue
-            >{!Record.RecordType.DeveloperName}</leftValue>
+                        <leftValue>{!Record.RecordType.DeveloperName}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>EzeeSolarA</rightValue>
                     </criteria>
@@ -737,8 +724,7 @@
                 <fieldItem>Record.CustoMedioEnergia__c</fieldItem>
                 <identifier>RecordCustoMedioEnergia_cField</identifier>
                 <visibilityRule>
-                    <booleanFilter
-          >1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+                    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
@@ -752,8 +738,7 @@
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
-                        <rightValue
-            >Proposta enviada / Aguardando Aceite</rightValue>
+                        <rightValue>Proposta enviada / Aguardando Aceite</rightValue>
                     </criteria>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
@@ -789,10 +774,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem
-        >Record.ValoresAdicionaisInclusosProposta__c</fieldItem>
-                <identifier
-        >RecordValoresAdicionaisInclusosProposta_cField</identifier>
+                <fieldItem>Record.ValoresAdicionaisInclusosProposta__c</fieldItem>
+                <identifier>RecordValoresAdicionaisInclusosProposta_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -848,8 +831,7 @@
                 <fieldItem>Record.ConsumoAnual__c</fieldItem>
                 <identifier>RecordConsumoAnual_cField</identifier>
                 <visibilityRule>
-                    <booleanFilter
-          >1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
+                    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
@@ -868,8 +850,7 @@
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
-                        <rightValue
-            >Proposta enviada / Aguardando Aceite</rightValue>
+                        <rightValue>Proposta enviada / Aguardando Aceite</rightValue>
                     </criteria>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
@@ -993,10 +974,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem
-        >Record.Duracao_estimada_da_visita_em_minutos__c</fieldItem>
-                <identifier
-        >RecordDuracao_estimada_da_visita_em_minutos_cField</identifier>
+                <fieldItem>Record.Duracao_estimada_da_visita_em_minutos__c</fieldItem>
+                <identifier>RecordDuracao_estimada_da_visita_em_minutos_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1015,10 +994,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem
-        >Record.Corrente_nominal_do_disjuntor_de_entrada__c</fieldItem>
-                <identifier
-        >RecordCorrente_nominal_do_disjuntor_de_entrada_cField</identifier>
+                <fieldItem>Record.Corrente_nominal_do_disjuntor_de_entrada__c</fieldItem>
+                <identifier>RecordCorrente_nominal_do_disjuntor_de_entrada_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1028,8 +1005,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Secao_Nominal_Bitola_do_cabo__c</fieldItem>
-                <identifier
-        >RecordSecao_Nominal_Bitola_do_cabo_cField</identifier>
+                <identifier>RecordSecao_Nominal_Bitola_do_cabo_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1058,10 +1034,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem
-        >Record.Estrutura_de_fixacao_verificado_in_loco__c</fieldItem>
-                <identifier
-        >RecordEstrutura_de_fixacao_verificado_in_loco_cField</identifier>
+                <fieldItem>Record.Estrutura_de_fixacao_verificado_in_loco__c</fieldItem>
+                <identifier>RecordEstrutura_de_fixacao_verificado_in_loco_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1070,10 +1044,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem
-        >Record.Tipo_de_Obra_Projeto_Viabilidade__c</fieldItem>
-                <identifier
-        >RecordTipo_de_Obra_Projeto_Viabilidade_cField</identifier>
+                <fieldItem>Record.Tipo_de_Obra_Projeto_Viabilidade__c</fieldItem>
+                <identifier>RecordTipo_de_Obra_Projeto_Viabilidade_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1117,8 +1089,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Refor_o_na_estrutura_necess_rio__c</fieldItem>
-                <identifier
-        >RecordRefor_o_na_estrutura_necess_rio_cField</identifier>
+                <identifier>RecordRefor_o_na_estrutura_necess_rio_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1127,10 +1098,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem
-        >Record.Posto_de_transforma_o_ou_disponibilidad__c</fieldItem>
-                <identifier
-        >RecordPosto_de_transforma_o_ou_disponibilidad_cField</identifier>
+                <fieldItem>Record.Posto_de_transforma_o_ou_disponibilidad__c</fieldItem>
+                <identifier>RecordPosto_de_transforma_o_ou_disponibilidad_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1150,8 +1119,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Observacoes_pos_sombreamento__c</fieldItem>
-                <identifier
-        >RecordObservacoes_pos_sombreamento_cField</identifier>
+                <identifier>RecordObservacoes_pos_sombreamento_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1617,8 +1585,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Inversor_1_Potencia_Nominal__c</fieldItem>
-                <identifier
-        >RecordInversor_1_Potencia_Nominal_cField</identifier>
+                <identifier>RecordInversor_1_Potencia_Nominal_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-22ac4f81-3395-420e-9829-737a73e65cac</name>
@@ -1652,8 +1619,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Inversor_2_Potencia_Nominal__c</fieldItem>
-                <identifier
-        >RecordInversor_2_Potencia_Nominal_cField</identifier>
+                <identifier>RecordInversor_2_Potencia_Nominal_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1683,8 +1649,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Inversor_3_Potencia_Nominal__c</fieldItem>
-                <identifier
-        >RecordInversor_3_Potencia_Nominal_cField</identifier>
+                <identifier>RecordInversor_3_Potencia_Nominal_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1858,8 +1823,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.AumentarDemandaContratadaFP__c</fieldItem>
-                <identifier
-        >RecordAumentarDemandaContratadaFP_cField</identifier>
+                <identifier>RecordAumentarDemandaContratadaFP_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-fd180900-205e-48c6-90df-ebbfc4a0a8a6</name>
@@ -1978,8 +1942,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.NecessarioProtocolarProjetoCCSS__c</fieldItem>
-                <identifier
-        >RecordNecessarioProtocolarProjetoCCSS_cField</identifier>
+                <identifier>RecordNecessarioProtocolarProjetoCCSS_cField</identifier>
                 <visibilityRule>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
@@ -2126,8 +2089,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.ObservacaoPagamentoEsquerdo__c</fieldItem>
-                <identifier
-        >RecordObservacaoPagamentoEsquerdo_cField</identifier>
+                <identifier>RecordObservacaoPagamentoEsquerdo_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-a26a7f1c-d91c-4f24-b361-e2762d4eabbd</name>
@@ -2526,10 +2488,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem
-        >Record.ObservacaoSolicitacaoAprovacaoDesconto__c</fieldItem>
-                <identifier
-        >RecordObservacaoSolicitacaoAprovacaoDesconto_cField</identifier>
+                <fieldItem>Record.ObservacaoSolicitacaoAprovacaoDesconto__c</fieldItem>
+                <identifier>RecordObservacaoSolicitacaoAprovacaoDesconto_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-38d3b78b-f165-45fa-9eba-612c1374314b</name>
@@ -2738,24 +2698,20 @@
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem
-        >Record.MainViability__r.AdequacyCostEnerzee__c</fieldItem>
-                <identifier
-        >RecordMainViability_rAdequacyCostEnerzee_cField</identifier>
+                <fieldItem>Record.MainViability__r.AdequacyCostEnerzee__c</fieldItem>
+                <identifier>RecordMainViability_rAdequacyCostEnerzee_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldItem>Record.MainViability__r.CoberturaCost__c</fieldItem>
-                <identifier
-        >RecordMainViability_rCoberturaCost_cField</identifier>
+                <identifier>RecordMainViability_rCoberturaCost_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldItem>Record.MainViability__r.AdditionalCost__c</fieldItem>
-                <identifier
-        >RecordMainViability_rAdditionalCost_cField</identifier>
+                <identifier>RecordMainViability_rAdditionalCost_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-339b5cc6-2903-4f02-8e4b-a61ac1369f47</name>
@@ -2764,32 +2720,26 @@
     <flexiPageRegions>
         <itemInstances>
             <fieldInstance>
-                <fieldItem
-        >Record.MainViability__r.AdequacyCostClient__c</fieldItem>
-                <identifier
-        >RecordMainViability_rAdequacyCostClient_cField</identifier>
+                <fieldItem>Record.MainViability__r.AdequacyCostClient__c</fieldItem>
+                <identifier>RecordMainViability_rAdequacyCostClient_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldItem>Record.MainViability__r.AcBranchCost__c</fieldItem>
-                <identifier
-        >RecordMainViability_rAcBranchCost_cField</identifier>
+                <identifier>RecordMainViability_rAcBranchCost_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldItem>Record.MainViability__r.DcBranchCost__c</fieldItem>
-                <identifier
-        >RecordMainViability_rDcBranchCost_cField</identifier>
+                <identifier>RecordMainViability_rDcBranchCost_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem
-        >Record.MainViability__r.TechnicalVisitCost__c</fieldItem>
-                <identifier
-        >RecordMainViability_rTechnicalVisitCost_cField</identifier>
+                <fieldItem>Record.MainViability__r.TechnicalVisitCost__c</fieldItem>
+                <identifier>RecordMainViability_rTechnicalVisitCost_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -2925,8 +2875,7 @@
                     <value>readonly</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.StatusEnvioPedidoCompraVenda__c</fieldItem>
-                <identifier
-        >RecordStatusEnvioPedidoCompraVenda_cField</identifier>
+                <identifier>RecordStatusEnvioPedidoCompraVenda_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-95962bb0-4398-470a-8b8e-63de92257292</name>
@@ -2940,8 +2889,7 @@
                     <value>readonly</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.DataHoraEnvioPedidoCompraVenda__c</fieldItem>
-                <identifier
-        >RecordDataHoraEnvioPedidoCompraVenda_cField</identifier>
+                <identifier>RecordDataHoraEnvioPedidoCompraVenda_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-ede4f632-60b7-4543-be34-2d9d5c79ab6f</name>
@@ -3240,8 +3188,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value
-          >Características do Gerador Fotovoltáico - Dados técnicos dos módulos</value>
+                    <value>Características do Gerador Fotovoltáico - Dados técnicos dos módulos</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection8</identifier>
@@ -3259,8 +3206,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value
-          >Características do Gerador Fotovoltáico - Dados Técnicos dos Inversores</value>
+                    <value>Características do Gerador Fotovoltáico - Dados Técnicos dos Inversores</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection9</identifier>
@@ -3328,8 +3274,7 @@
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
-                        <rightValue
-            >Proposta enviada / Aguardando Aceite</rightValue>
+                        <rightValue>Proposta enviada / Aguardando Aceite</rightValue>
                     </criteria>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
@@ -3379,8 +3324,7 @@
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection14</identifier>
                 <visibilityRule>
-                    <booleanFilter
-          >1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+                    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
@@ -3389,8 +3333,7 @@
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
-                        <rightValue
-            >Proposta enviada / Aguardando Aceite</rightValue>
+                        <rightValue>Proposta enviada / Aguardando Aceite</rightValue>
                     </criteria>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
@@ -3432,8 +3375,7 @@
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection15</identifier>
                 <visibilityRule>
-                    <booleanFilter
-          >1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
+                    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
@@ -3442,8 +3384,7 @@
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
-                        <rightValue
-            >Proposta enviada / Aguardando Aceite</rightValue>
+                        <rightValue>Proposta enviada / Aguardando Aceite</rightValue>
                     </criteria>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
@@ -3468,8 +3409,7 @@
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
-                        <rightValue
-            >Validação do método de pagamento</rightValue>
+                        <rightValue>Validação do método de pagamento</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -3491,8 +3431,7 @@
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection16</identifier>
                 <visibilityRule>
-                    <booleanFilter
-          >1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
+                    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
@@ -3501,8 +3440,7 @@
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
-                        <rightValue
-            >Proposta enviada / Aguardando Aceite</rightValue>
+                        <rightValue>Proposta enviada / Aguardando Aceite</rightValue>
                     </criteria>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
@@ -3527,8 +3465,7 @@
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
-                        <rightValue
-            >Validação do método de pagamento</rightValue>
+                        <rightValue>Validação do método de pagamento</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -3569,8 +3506,7 @@
                 <identifier>flexipage_fieldSection24</identifier>
                 <visibilityRule>
                     <criteria>
-                        <leftValue
-            >{!Record.StatusAprovacaoDesconto__c}</leftValue>
+                        <leftValue>{!Record.StatusAprovacaoDesconto__c}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>Pendente</rightValue>
                     </criteria>
@@ -3594,8 +3530,7 @@
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection17</identifier>
                 <visibilityRule>
-                    <booleanFilter
-          >1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
+                    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
@@ -3604,8 +3539,7 @@
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
-                        <rightValue
-            >Proposta enviada / Aguardando Aceite</rightValue>
+                        <rightValue>Proposta enviada / Aguardando Aceite</rightValue>
                     </criteria>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
@@ -3630,8 +3564,7 @@
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
-                        <rightValue
-            >Validação do método de pagamento</rightValue>
+                        <rightValue>Validação do método de pagamento</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -3671,8 +3604,7 @@
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection18</identifier>
                 <visibilityRule>
-                    <booleanFilter
-          >1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
+                    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6 AND 7</booleanFilter>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
@@ -3681,8 +3613,7 @@
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
-                        <rightValue
-            >Proposta enviada / Aguardando Aceite</rightValue>
+                        <rightValue>Proposta enviada / Aguardando Aceite</rightValue>
                     </criteria>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
@@ -3707,8 +3638,7 @@
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
-                        <rightValue
-            >Validação do método de pagamento</rightValue>
+                        <rightValue>Validação do método de pagamento</rightValue>
                     </criteria>
                 </visibilityRule>
             </componentInstance>
@@ -3725,14 +3655,12 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value
-          >Informações sobre envio dos pedidos de compra e de venda</value>
+                    <value>Informações sobre envio dos pedidos de compra e de venda</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection19</identifier>
                 <visibilityRule>
-                    <booleanFilter
-          >1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
+                    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5 AND 6</booleanFilter>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
@@ -3741,8 +3669,7 @@
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
                         <operator>NE</operator>
-                        <rightValue
-            >Proposta enviada / Aguardando Aceite</rightValue>
+                        <rightValue>Proposta enviada / Aguardando Aceite</rightValue>
                     </criteria>
                     <criteria>
                         <leftValue>{!Record.StageName}</leftValue>
@@ -3927,8 +3854,7 @@
                     <name>showLegacyActivityComposer</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentName
-        >runtime_sales_activities:activityPanel</componentName>
+                <componentName>runtime_sales_activities:activityPanel</componentName>
                 <identifier>runtime_sales_activities_activityPanel</identifier>
             </componentInstance>
         </itemInstances>
@@ -4020,6 +3946,12 @@
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>sapIntegrationStatus</componentName>
+                <identifier>c_sapIntegrationStatus_opportunity</identifier>
+            </componentInstance>
+        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentName>clickSignTemplateButton</componentName>

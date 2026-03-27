@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : IntegracaoNivelloContratoTest
+ * @test              : IntegracaoNivelloContratoCoverageTest, IntegracaoNivelloContratoTest
  **/
 public without sharing class IntegracaoNivelloContrato {
   @future(callout=true)
@@ -36,6 +36,9 @@ public without sharing class IntegracaoNivelloContrato {
       request.IdSalesForce = opp.Id;
       request.Status = statusEnum;
       request.SubStatus = substatusId;
+      request.ProposalType = StatusEnumMap.getProposalTypeEnum(
+        opp.recordType.Name
+      );
       request.url = opp.LinkContrato__c;
       request.Value = opp.ValorTotalProposta__c;
 

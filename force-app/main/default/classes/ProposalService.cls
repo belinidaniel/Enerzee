@@ -50,6 +50,9 @@ public class ProposalService {
       request.IdSalesForce = opportunity.Id;
       request.Status = statusEnum;
       request.SubStatus = substatusId;
+      request.ProposalType = StatusEnumMap.getProposalTypeEnum(
+        opportunity.recordType.Name
+      );
       request.Category = opportunity.Categoria__c;
       request.AppointmentDateTime = opportunity.DataHoraAgendamento__c;
       request.Value = opportunity.ValorTotalProposta__c;

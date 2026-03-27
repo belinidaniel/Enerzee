@@ -22,6 +22,11 @@
                 <default>false</default>
                 <label>Grupo B</label>
             </value>
+            <value>
+                <fullName>Grupo B Optante</fullName>
+                <default>false</default>
+                <label>Grupo B Optante</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

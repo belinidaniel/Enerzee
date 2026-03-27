@@ -30,4 +30,8 @@
         <fullName>Simulação de Proposta</fullName>
         <default>false</default>
     </values>
+    <values>
+        <fullName>Validação</fullName>
+        <default>false</default>
+    </values>
 </BusinessProcess>

@@ -108,6 +108,12 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>sapIntegrationStatus</componentName>
+                <identifier>c_sapIntegrationStatus_kit</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>relatedListComponentOverride</name>
                     <value>NONE</value>

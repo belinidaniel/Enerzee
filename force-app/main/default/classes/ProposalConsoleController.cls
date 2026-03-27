@@ -266,6 +266,7 @@ public with sharing class ProposalConsoleController {
       return baseLabel + ' A ' + nomeRegistro;
     } else if (
       opp.GrupoTarifario__c == 'Grupo B' ||
+      opp.GrupoTarifario__c == 'Grupo B Optante' ||
       parceiro == 'Enerzee - Grupo B'
     ) {
       return baseLabel + ' B ' + nomeRegistro;

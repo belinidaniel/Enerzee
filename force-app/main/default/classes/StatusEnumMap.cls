@@ -65,6 +65,7 @@ public class StatusEnumMap {
     'Apresentação Comercial' => 35,
     'Negociação' => 36,
     'Contrato' => 37,
+    'Validação' => 54,
     'Ganho fechado' => 38,
     'Fechado Perdido' => 38
   };
@@ -166,6 +167,7 @@ public class StatusEnumMap {
       'Geração do Contrato' => 47,
       'Contrato Enviado' => 48
     },
+    54 => new Map<String, Integer>{ 'Em Andamento' => 78, 'Pendência' => 79 },
     38 => new Map<String, Integer>{ 'Ganho' => 49, 'Perdido' => 50 },
     41 => new Map<String, Integer>{
       'Aguardando Pagamento' => 51,
@@ -235,6 +237,24 @@ public class StatusEnumMap {
 
     if (selectedEnum != null && selectedEnum.containsKey(statusValue)) {
       return selectedEnum.get(statusValue);
+    }
+    return 0;
+  }
+
+  public static final Map<String, Integer> proposalTypeMap = new Map<String, Integer>{
+    'Solar' => 1,
+    'Ezee Solar - Grupo A' => 2,
+    'Ezee Solar - Grupo B' => 3,
+    'Ezee Connect' => 4,
+    'Ezee Livre' => 5,
+    'Produtos' => 6,
+    'Serviços' => 7,
+    'Serviços EPC' => 8
+  };
+
+  public static Integer getProposalTypeEnum(String recordTypeName) {
+    if (proposalTypeMap.containsKey(recordTypeName)) {
+      return proposalTypeMap.get(recordTypeName);
     }
     return 0;
   }

@@ -11,6 +11,7 @@ public class GORecordsTO {
   public String IdSalesForce;
   public Integer Status;
   public Integer SubStatus;
+  public Integer ProposalType;
   public String Obs;
   public Integer LossReason;
   public String DescriptionReasonLoss;
