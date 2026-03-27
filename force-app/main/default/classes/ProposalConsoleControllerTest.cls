@@ -152,4 +152,79 @@ private class ProposalConsoleControllerTest {
       'A fase deve avançar para Proposta Gerada.'
     );
   }
+
+  @isTest
+  static void loadProposalDataThrowsWhenOpportunityIdIsNull() {
+    Boolean exceptionThrown = false;
+    Test.startTest();
+    try {
+      ProposalConsoleController.loadProposalData(null);
+    } catch (AuraHandledException e) {
+      exceptionThrown = true;
+    }
+    Test.stopTest();
+
+    Assert.isTrue(
+      exceptionThrown,
+      'Deve lançar AuraHandledException para Id nulo'
+    );
+  }
+
+  @isTest
+  static void sendProposalThrowsWhenCoverIdIsNull() {
+    Opportunity opp = [SELECT Id FROM Opportunity LIMIT 1];
+
+    Boolean exceptionThrown = false;
+    Test.startTest();
+    try {
+      ProposalConsoleController.sendProposal(opp.Id, null);
+    } catch (AuraHandledException e) {
+      exceptionThrown = true;
+    }
+    Test.stopTest();
+
+    Assert.isTrue(
+      exceptionThrown,
+      'Deve lançar AuraHandledException para coverId nulo'
+    );
+  }
+
+  @isTest
+  static void sendProposalGrupoACoversFilePrefixBranch() {
+    ProposalCover__c cover = [SELECT Id FROM ProposalCover__c LIMIT 1];
+    Opportunity opp = [SELECT Id FROM Opportunity LIMIT 1];
+
+    Parceiro__c parceiroA = new Parceiro__c(
+      Name = 'Parceiro Grupo A',
+      Produto__c = 'Solar',
+      GrupoTarifario__c = 'Grupo A',
+      CapaProposta__c = cover.Id
+    );
+    insert parceiroA;
+
+    update new Opportunity(
+      Id = opp.Id,
+      GrupoTarifario__c = 'Grupo A',
+      Parceiro__c = parceiroA.Id,
+      StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA
+    );
+
+    Test.setMock(
+      HttpCalloutMock.class,
+      new IntegracaoNivelloTest.IntegracaoNivelloMock()
+    );
+
+    Test.startTest();
+    ProposalConsoleController.ProposalActionResult result = ProposalConsoleController.sendProposal(
+      opp.Id,
+      cover.Id
+    );
+    Test.stopTest();
+
+    Assert.isTrue(result.success, 'sendProposal Grupo A deve retornar sucesso');
+    Assert.isNotNull(
+      result.contentVersionId,
+      'ContentVersion deve ser criado para Grupo A'
+    );
+  }
 }

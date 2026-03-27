@@ -339,6 +339,74 @@ private class CompositionBOTest {
   }
 
   /**
+   * Guard: lista de Compositions vazia (não nula) — retorna mapa vazio sem erro
+   */
+  @isTest
+  static void testUpsertFromRest_emptyCompositionsList_returnsEmptyMap() {
+    Opportunity opp = createOpportunity();
+
+    String voExternalId = 'VO-006';
+    OpportunityRecordsTO.SingleOpportunity so = buildSingleOpportunity(
+      voExternalId,
+      new List<OpportunityRecordsTO.Composition>()
+    );
+
+    Map<String, Opportunity> externalIdToOpp = new Map<String, Opportunity>{
+      voExternalId => opp
+    };
+
+    Test.startTest();
+    Map<String, Id> result = CompositionBO.upsertFromRest(
+      new List<OpportunityRecordsTO.SingleOpportunity>{ so },
+      externalIdToOpp
+    );
+    Test.stopTest();
+
+    Assert.areEqual(
+      0,
+      result.size(),
+      'Mapa deve estar vazio quando Compositions é lista vazia'
+    );
+  }
+
+  /**
+   * Guard: Opportunity encontrada no mapa mas Id nulo (não persistida) — composição ignorada
+   */
+  @isTest
+  static void testUpsertFromRest_opportunityIdNull_skipsComposition() {
+    String voExternalId = 'VO-007';
+    String compExternalId = 'COMP-007';
+
+    OpportunityRecordsTO.Composition comp = buildComposition(
+      compExternalId,
+      'Composição Sem Id'
+    );
+    OpportunityRecordsTO.SingleOpportunity so = buildSingleOpportunity(
+      voExternalId,
+      new List<OpportunityRecordsTO.Composition>{ comp }
+    );
+
+    // Opportunity não persistida — Id é nulo
+    Opportunity oppWithNullId = new Opportunity();
+    Map<String, Opportunity> externalIdToOpp = new Map<String, Opportunity>{
+      voExternalId => oppWithNullId
+    };
+
+    Test.startTest();
+    Map<String, Id> result = CompositionBO.upsertFromRest(
+      new List<OpportunityRecordsTO.SingleOpportunity>{ so },
+      externalIdToOpp
+    );
+    Test.stopTest();
+
+    Assert.areEqual(
+      0,
+      result.size(),
+      'Mapa deve estar vazio quando Opportunity.Id é nulo'
+    );
+  }
+
+  /**
    * Bulk: múltiplas Opportunities e composições no mesmo payload
    */
   @isTest
