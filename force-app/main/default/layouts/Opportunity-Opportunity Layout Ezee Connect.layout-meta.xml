@@ -56,11 +56,11 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>LastInvoiceAmount__c</field>
+                <field>ConsumptionAverage__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>MediaConsumo__c</field>
+                <field>LastInvoiceAmount__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
