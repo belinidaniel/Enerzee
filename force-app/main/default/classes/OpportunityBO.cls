@@ -271,8 +271,7 @@ public class OpportunityBO {
 
   public static void mapOpportunityLineItemFieldsRest(
     Map<OpportunityRecordsTO.SingleOpportunity, Opportunity> restObjectsToInsertedOpportunity,
-    Map<String, Id> externalIdToProductId,
-    Map<String, Id> compositionExternalIdToId
+    Map<String, Id> externalIdToProductId
   ) {
     List<OpportunityLineItem> itemsToInsert = new List<OpportunityLineItem>();
     Map<String, Double> productExternalIdToPrice = new Map<String, Double>();
@@ -312,14 +311,15 @@ public class OpportunityBO {
       for (OpportunityRecordsTO.Product product : newProducts) {
         productsToInsert.add(
           new Product2(
-            ExternalId__c = product.Id,
+            Id_Externo__c = product.Id,
             ProductCode = product.Id,
             Preco_Unitario__c = product.UnitaryValue,
-            Name = product.Name
+            Name = product.Name,
+            ExternalId__c = product.Id
           )
         );
       }
-      upsert productsToInsert ExternalId__c;
+      upsert productsToInsert Id_Externo__c;
 
       for (Product2 product : productsToInsert) {
         externalIdToProductId.put(product.ProductCode, product.Id);
@@ -402,11 +402,6 @@ public class OpportunityBO {
       for (OpportunityRecordsTO.Product product : singleOpportunity.Products) {
         String productExternalId = String.valueOf(product.Id);
 
-        Id compositionId = (compositionExternalIdToId != null &&
-          !String.isBlank(product.CompositionExternalId))
-          ? compositionExternalIdToId.get(product.CompositionExternalId)
-          : null;
-
         //Cria item
         Id productId = externalIdToProductId.get(productExternalId);
         OpportunityLineItem item = new OpportunityLineItem(
@@ -414,9 +409,7 @@ public class OpportunityBO {
           PricebookEntryId = productIdToPricebookEntryId.get(productId),
           UnitPrice = product.UnitaryValue,
           Quantity = product.Quantity,
-          Description = product.Description,
-          byIntegration__c = true,
-          Composition__c = compositionId
+          Description = product.Description
         );
 
         itemsToInsert.add(item);
@@ -2132,10 +2125,6 @@ public class OpportunityBO {
         opp.RecordTypeId ==
         Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
           .get('EzeeConnect')
-          .getRecordTypeId() ||
-        opp.RecordTypeId ==
-        Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-          .get('EzeeLivre')
           .getRecordTypeId()
       ) {
         idsToSend.add(opp.Id);
@@ -3240,14 +3229,13 @@ public class OpportunityBO {
   }
 
   /**
-   * @description Triggers SendKitUpdate to Nivello when any proposal parameter changes.
-   *              Currently watches: ConsumoInformadoB__c, TipoTelhadoEstrutura__c.
+   * @description Triggers SendKitUpdate to Nivello when ConsumoInformadoB__c changes.
    *              Collects all affected Opportunity IDs, queries their related Kit_Instalacao__c
    *              records and dispatches a single async callout to /api/Proposal/updateInfosKit.
    * @param newList Updated Opportunity records
    * @param oldMap  Previous state of the same records
    */
-  public static void sendKitUpdateOnProposalParamsChange(
+  public static void sendKitUpdateOnGeracaoDesejadaChange(
     List<Opportunity> newList,
     Map<Id, Opportunity> oldMap
   ) {
@@ -3255,10 +3243,7 @@ public class OpportunityBO {
 
     for (Opportunity newOpp : newList) {
       Opportunity oldOpp = oldMap.get(newOpp.Id);
-      if (
-        newOpp.ConsumoInformadoB__c != oldOpp.ConsumoInformadoB__c ||
-        newOpp.TipoTelhadoEstrutura__c != oldOpp.TipoTelhadoEstrutura__c
-      ) {
+      if (newOpp.ConsumoInformadoB__c != oldOpp.ConsumoInformadoB__c) {
         opportunityIds.add(newOpp.Id);
       }
     }
