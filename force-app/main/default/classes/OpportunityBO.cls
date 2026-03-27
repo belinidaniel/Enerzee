@@ -2570,7 +2570,7 @@ public class OpportunityBO {
           accountIds.add(opportunity.AccountId);
         }
       } else if (OpportunityUtils.isRecordTypeEzeeConnect(opportunity)) {
-        if (OpportunityUtils.isStatusValidation(opportunity)) {
+        if (OpportunityUtils.isStatusContract(opportunity)) {
           accountIds.add(opportunity.AccountId);
         }
       }

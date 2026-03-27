@@ -1,76 +1,153 @@
 <template>
-  <lightning-card>
-    <div slot="title" class="card-title">
-      <lightning-icon
-        icon-name="utility:connected_apps"
-        size="small"
-        class="title-icon"
-      ></lightning-icon>
-      <span>Integração SAP</span>
-    </div>
+  <template if:true={hasIntegrationAttempt}>
+    <lightning-card>
+      <div slot="title" class="card-title">
+        <lightning-icon
+          icon-name="utility:connected_apps"
+          size="small"
+          class="title-icon"
+        ></lightning-icon>
+        <span>Integração SAP</span>
+      </div>
 
-    <div class="slds-p-horizontal_medium slds-p-bottom_medium">
-      <template if:true={isLoading}>
-        <div class="slds-align_absolute-center slds-p-vertical_medium">
-          <lightning-spinner
-            size="small"
-            alternative-text="Carregando status SAP"
-          ></lightning-spinner>
-        </div>
-      </template>
-
-      <template if:false={isLoading}>
-        <template if:true={hasError}>
-          <div
-            class="slds-text-color_error slds-m-bottom_small slds-text-body_small"
-          >
-            {errorMessage}
+      <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+        <template if:true={isLoading}>
+          <div class="slds-align_absolute-center slds-p-vertical_medium">
+            <lightning-spinner
+              size="small"
+              alternative-text="Carregando status SAP"
+            ></lightning-spinner>
           </div>
         </template>
 
-        <template if:false={hasError}>
-          <!-- Status Banner -->
-          <div class={bannerClass} role="status" aria-label={statusLabel}>
-            <div class="banner-inner">
-              <div class="banner-icon-wrap">
-                <lightning-icon
-                  icon-name={statusIconName}
-                  size="medium"
-                  alternative-text={statusLabel}
-                  class="banner-icon"
-                >
-                </lightning-icon>
-                <template if:true={isPending}>
-                  <div class="pulse-ring"></div>
-                </template>
-              </div>
-              <div class="banner-body">
-                <p class="banner-label">{statusLabel}</p>
-                <p class="banner-subtitle">{statusSubtitle}</p>
-              </div>
-              <div class="banner-badge-wrap">
-                <span class={badgeClass}>{badgeText}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Error details -->
-          <template if:true={hasErrorDetails}>
-            <div class="slds-m-top_small">
-              <lightning-accordion allow-multiple-sections-open>
-                <lightning-accordion-section
-                  name="details"
-                  label="Ver detalhes do erro"
-                >
-                  <div class="error-block">
-                    <pre class="error-pre">{statusBody}</pre>
-                  </div>
-                </lightning-accordion-section>
-              </lightning-accordion>
+        <template if:false={isLoading}>
+          <template if:true={hasError}>
+            <div
+              class="slds-text-color_error slds-m-bottom_small slds-text-body_small"
+            >
+              {errorMessage}
             </div>
           </template>
+
+          <template if:false={hasError}>
+            <!-- Status Banner -->
+            <div class={bannerClass} role="status" aria-label={statusLabel}>
+              <div class="banner-inner">
+                <div class="banner-icon-wrap">
+                  <lightning-icon
+                    icon-name={statusIconName}
+                    size="medium"
+                    alternative-text={statusLabel}
+                    class="banner-icon"
+                  ></lightning-icon>
+                  <template if:true={isPending}>
+                    <div class="pulse-ring"></div>
+                  </template>
+                </div>
+                <div class="banner-body">
+                  <p class="banner-label">{statusLabel}</p>
+                  <p class="banner-subtitle">{statusSubtitle}</p>
+                </div>
+                <div class="banner-badge-wrap">
+                  <span class={badgeClass}>{badgeText}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Error details + retry -->
+            <template if:true={hasErrorDetails}>
+              <div class="slds-m-top_small">
+                <!-- Visual error card -->
+                <div class="error-card">
+                  <div class="error-card__header">
+                    <template if:true={parsedError.codigoHttp}>
+                      <span class="error-http-badge"
+                        >{parsedError.codigoHttp}</span
+                      >
+                    </template>
+                    <span class="error-card__title">Detalhes do erro</span>
+                  </div>
+                  <p class="error-mensagem">{parsedError.mensagem}</p>
+                  <template if:true={parsedError.resultado}>
+                    <p class="error-resultado">{parsedError.resultado}</p>
+                  </template>
+                </div>
+
+                <!-- Retry button -->
+                <div class="retry-wrap slds-m-top_small">
+                  <lightning-button
+                    label="Retentar Integração"
+                    icon-name="utility:refresh"
+                    variant="destructive-text"
+                    onclick={handleRetry}
+                    disabled={isRetrying}
+                  ></lightning-button>
+                  <template if:true={isRetrying}>
+                    <lightning-spinner
+                      size="x-small"
+                      alternative-text="Enviando..."
+                    ></lightning-spinner>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </template>
         </template>
-      </template>
-    </div>
-  </lightning-card>
+      </div>
+    </lightning-card>
+  </template>
+
+  <!-- Modal de resultado da retentativa -->
+  <template if:true={isModalOpen}>
+    <section
+      role="dialog"
+      tabindex="-1"
+      aria-modal="true"
+      class="slds-modal slds-fade-in-open"
+    >
+      <div class="slds-modal__container">
+        <header class={modalHeaderClass}>
+          <lightning-icon
+            icon-name={modalIconName}
+            size="small"
+            class="slds-m-right_x-small modal-header__icon"
+          ></lightning-icon>
+          <h2 class="slds-modal__title slds-hyphenate">{modalTitle}</h2>
+        </header>
+
+        <div class="slds-modal__content slds-p-around_medium">
+          <template if:true={modalIsSuccess}>
+            <p class="modal-success-msg">
+              Registro sincronizado com sucesso no SAP.
+            </p>
+          </template>
+          <template if:false={modalIsSuccess}>
+            <div class="error-card">
+              <div class="error-card__header">
+                <template if:true={modalParsedError.codigoHttp}>
+                  <span class="error-http-badge"
+                    >{modalParsedError.codigoHttp}</span
+                  >
+                </template>
+                <span class="error-card__title">Detalhes do erro</span>
+              </div>
+              <p class="error-mensagem">{modalParsedError.mensagem}</p>
+              <template if:true={modalParsedError.resultado}>
+                <p class="error-resultado">{modalParsedError.resultado}</p>
+              </template>
+            </div>
+          </template>
+        </div>
+
+        <footer class="slds-modal__footer">
+          <lightning-button
+            label="Fechar"
+            variant="neutral"
+            onclick={closeModal}
+          ></lightning-button>
+        </footer>
+      </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </template>
 </template>

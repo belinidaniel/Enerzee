@@ -1,5 +1,6 @@
 import { LightningElement, api, wire, track } from "lwc";
-import { getRecord } from "lightning/uiRecordApi";
+import { getRecord, refreshApex } from "lightning/uiRecordApi";
+import retryIntegration from "@salesforce/apex/SapIntegrationRetryController.retryIntegration";
 
 const FIELD_SUCESSO = "SucessoIntegracaoSAP__c";
 const FIELD_STATUS_BODY = "StatusBodyIntegracaoSAP__c";
@@ -16,6 +17,11 @@ export default class SapIntegrationStatus extends LightningElement {
 
   _sucesso = null;
   _statusBody = null;
+  _wiredResult;
+
+  isRetrying = false;
+  isModalOpen = false;
+  modalResult = null;
 
   @api
   get objectApiName() {
@@ -33,7 +39,9 @@ export default class SapIntegrationStatus extends LightningElement {
   }
 
   @wire(getRecord, { recordId: "$recordId", fields: "$_fields" })
-  wiredRecord({ error, data }) {
+  wiredRecord(result) {
+    this._wiredResult = result;
+    const { error, data } = result;
     if (data) {
       this._sucesso = data.fields[FIELD_SUCESSO]?.value ?? null;
       this._statusBody = data.fields[FIELD_STATUS_BODY]?.value ?? null;
@@ -45,6 +53,14 @@ export default class SapIntegrationStatus extends LightningElement {
       this.isLoading = false;
     }
   }
+
+  // ── Visibilidade ──────────────────────────────────────────────
+
+  get hasIntegrationAttempt() {
+    return this._sucesso === true || !!this._statusBody;
+  }
+
+  // ── Status ────────────────────────────────────────────────────
 
   get isSuccess() {
     return this._sucesso === true;
@@ -97,12 +113,96 @@ export default class SapIntegrationStatus extends LightningElement {
     return "PENDENTE";
   }
 
+  // ── Error details ─────────────────────────────────────────────
+
   get hasErrorDetails() {
     return this.isFailure && !!this._statusBody;
   }
 
-  get statusBody() {
-    return this._statusBody;
+  get parsedError() {
+    return this._parseStatusBody(this._statusBody);
+  }
+
+  // ── Modal ─────────────────────────────────────────────────────
+
+  get modalIsSuccess() {
+    return this.modalResult?.success === true;
+  }
+
+  get modalTitle() {
+    if (!this.modalResult) return "";
+    return this.modalResult.success
+      ? "Integração bem-sucedida"
+      : "Falha na integração";
+  }
+
+  get modalIconName() {
+    if (!this.modalResult) return "utility:info";
+    return this.modalResult.success ? "utility:success" : "utility:error";
+  }
+
+  get modalHeaderClass() {
+    const base = "slds-modal__header";
+    if (!this.modalResult) return base;
+    return this.modalResult.success
+      ? `${base} modal-header_success`
+      : `${base} modal-header_error`;
+  }
+
+  get modalParsedError() {
+    if (!this.modalResult || this.modalResult.success) return null;
+    return this._parseStatusBody(this.modalResult.statusBody);
+  }
+
+  // ── Retry handler ─────────────────────────────────────────────
+
+  async handleRetry() {
+    this.isRetrying = true;
+    try {
+      const result = await retryIntegration({
+        recordId: this.recordId,
+        objectApiName: this._objectApiName
+      });
+      this.modalResult = result;
+      this.isModalOpen = true;
+      await refreshApex(this._wiredResult);
+    } catch (e) {
+      this.modalResult = {
+        success: false,
+        statusBody: this._reduceError(e)
+      };
+      this.isModalOpen = true;
+    } finally {
+      this.isRetrying = false;
+    }
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+    this.modalResult = null;
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────
+
+  // Formato esperado: "404 {"codigoHttp":404,"mensagem":"...","resultado":null} OK"
+  _parseStatusBody(raw) {
+    if (!raw) return { codigoHttp: null, mensagem: "", resultado: null };
+    try {
+      const jsonStart = raw.indexOf("{");
+      const jsonEnd = raw.lastIndexOf("}");
+      if (jsonStart !== -1 && jsonEnd !== -1) {
+        const parsed = JSON.parse(raw.substring(jsonStart, jsonEnd + 1));
+        return {
+          codigoHttp: parsed.codigoHttp ?? null,
+          mensagem: parsed.mensagem ?? raw,
+          resultado:
+            parsed.resultado != null ? String(parsed.resultado) : null
+        };
+      }
+    } catch (_) {
+      // fallback para raw string
+    }
+    return { codigoHttp: null, mensagem: raw, resultado: null };
   }
 
   _reduceError(error) {

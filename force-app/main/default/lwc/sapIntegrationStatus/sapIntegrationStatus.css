@@ -124,21 +124,93 @@
   color: #fff;
 }
 
-/* ── Error block ─────────────────────────────────────────────── */
-.error-block {
-  background: #1b1b1b;
+/* ── Visual error card ───────────────────────────────────────── */
+.error-card {
+  background: #fff8f8;
+  border: 1px solid #f0c0c0;
+  border-left: 4px solid #ba0517;
   border-radius: 0.375rem;
-  padding: 0.75rem 1rem;
-  overflow: auto;
-  max-height: 12rem;
+  padding: 0.875rem 1rem;
 }
 
-.error-pre {
-  color: #f0c040;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+.error-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.error-http-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ba0517;
+  color: #fff;
   font-size: 0.7rem;
-  white-space: pre-wrap;
-  word-break: break-all;
-  margin: 0;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.error-card__title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #700c11;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.error-mensagem {
+  font-size: 0.8125rem;
+  color: #2b0000;
+  margin: 0 0 0.25rem;
   line-height: 1.5;
+  word-break: break-word;
+}
+
+.error-resultado {
+  font-size: 0.75rem;
+  color: #555;
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Retry ───────────────────────────────────────────────────── */
+.retry-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Modal header variants ───────────────────────────────────── */
+.modal-header_success {
+  background: #2e844a;
+  color: #fff;
+}
+
+.modal-header_success .slds-modal__title {
+  color: #fff;
+}
+
+.modal-header_error {
+  background: #ba0517;
+  color: #fff;
+}
+
+.modal-header_error .slds-modal__title {
+  color: #fff;
+}
+
+.modal-header__icon {
+  vertical-align: middle;
+}
+
+/* ── Modal success message ───────────────────────────────────── */
+.modal-success-msg {
+  font-size: 0.9rem;
+  color: #2e844a;
+  font-weight: 600;
+  margin: 0;
 }
