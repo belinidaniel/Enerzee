@@ -55,9 +55,7 @@ public without sharing class IntegracaoSAPFornecedor implements Queueable, Datab
     );
 
     for (Consultor__c consultor : consultorList) {
-      String docValue = consultor.CNPJ__c != null
-        ? consultor.CNPJ__c
-        : consultor.CPF__c;
+      String docValue = consultor.SeCPFouCNPJ__c;
       FornecedorRequest corpoRequisicao = new FornecedorRequest();
       corpoRequisicao.CardCode = docValue;
       corpoRequisicao.CardName = consultor.Name;
