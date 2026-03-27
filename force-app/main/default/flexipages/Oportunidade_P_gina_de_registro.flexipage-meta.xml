@@ -373,7 +373,7 @@
                 <fieldItem>Record.Categoria__c</fieldItem>
                 <identifier>RecordCategoria_cField</identifier>
                 <visibilityRule>
-                    <booleanFilter>1 OR 2 OR ( 3 AND 4)</booleanFilter>
+                    <booleanFilter>1 OR 2 OR 5 OR ( 3 AND 4)</booleanFilter>
                     <criteria>
                         <leftValue
             >{!Record.RecordType.DeveloperName}</leftValue>
@@ -396,6 +396,12 @@
                         <leftValue>{!Record.ProdutoSolar__c}</leftValue>
                         <operator>EQUAL</operator>
                         <rightValue>true</rightValue>
+                    </criteria>
+                    <criteria>
+                        <leftValue
+            >{!Record.RecordType.DeveloperName}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>EzeeSolarA</rightValue>
                     </criteria>
                 </visibilityRule>
             </fieldInstance>

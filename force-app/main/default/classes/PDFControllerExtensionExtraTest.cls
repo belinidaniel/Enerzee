@@ -45,7 +45,6 @@ private class PDFControllerExtensionExtraTest {
     Product2 prod = new Product2(
       Name = 'Prod',
       IsActive = true,
-      Id_Externo__c = 'EXT-PROD',
       ExternalId__c = 'EXT-PROD'
     );
     insert prod;
@@ -177,7 +176,6 @@ private class PDFControllerExtensionExtraTest {
       Name = 'Bateria Produto',
       Description = 'Descricao padrao do produto',
       IsActive = true,
-      Id_Externo__c = 'EXT-BATT',
       ExternalId__c = 'EXT-BATT'
     );
     insert prod;
@@ -270,7 +268,10 @@ private class PDFControllerExtensionExtraTest {
     PageReference result = ext.salvarPDF();
     Test.stopTest();
 
-    Assert.isNull(result, 'salvarPDF deve retornar null quando skipAutoSave=true.');
+    Assert.isNull(
+      result,
+      'salvarPDF deve retornar null quando skipAutoSave=true.'
+    );
   }
 
   @IsTest
@@ -351,7 +352,10 @@ private class PDFControllerExtensionExtraTest {
       'dummy',
       false
     );
-    Assert.isNotNull(content, 'generatePdfContent deve retornar blob em test context.');
+    Assert.isNotNull(
+      content,
+      'generatePdfContent deve retornar blob em test context.'
+    );
 
     Id fileId = PDFControllerExtension.savePdfFile(
       opp.Id,
@@ -425,14 +429,46 @@ private class PDFControllerExtensionExtraTest {
     );
 
     Assert.areEqual('-', ext.getTarifaFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getCustoMensalFormatado(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getEconomiaPromocionalFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getEconomiaFixaFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getFaturaPromocionalFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getFaturaFixaFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getEconomiaXMesesPromocionalFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getEconomiaXMesesFixaFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getEconomiaAnualFormatada(), 'null deve retornar hífen.');
+    Assert.areEqual(
+      '-',
+      ext.getCustoMensalFormatado(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getEconomiaPromocionalFormatada(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getEconomiaFixaFormatada(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getFaturaPromocionalFormatada(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getFaturaFixaFormatada(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getEconomiaXMesesPromocionalFormatada(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getEconomiaXMesesFixaFormatada(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getEconomiaAnualFormatada(),
+      'null deve retornar hífen.'
+    );
   }
 
   @IsTest
@@ -491,7 +527,11 @@ private class PDFControllerExtensionExtraTest {
       new ApexPages.StandardController(opp)
     );
     String formatted = ext.getTarifaFormatada();
-    Assert.areEqual('R$ 0,00', formatted, 'Zero deve ser formatado como R$ 0,00.');
+    Assert.areEqual(
+      'R$ 0,00',
+      formatted,
+      'Zero deve ser formatado como R$ 0,00.'
+    );
   }
 
   @IsTest
@@ -639,8 +679,14 @@ private class PDFControllerExtensionExtraTest {
       new ApexPages.StandardController(opp)
     );
 
-    Assert.isTrue(ext.showPaymentMethodNotes, 'showPaymentMethodNotes deve ser true quando há texto esquerdo.');
-    Assert.isNull(ext.salvarPDF(), 'salvarPDF deve retornar null quando salvar=Não.');
+    Assert.isTrue(
+      ext.showPaymentMethodNotes,
+      'showPaymentMethodNotes deve ser true quando há texto esquerdo.'
+    );
+    Assert.isNull(
+      ext.salvarPDF(),
+      'salvarPDF deve retornar null quando salvar=Não.'
+    );
   }
 
   @IsTest
@@ -676,8 +722,14 @@ private class PDFControllerExtensionExtraTest {
       new ApexPages.StandardController(opp)
     );
     String logoUrl = ext.getLogoUrl();
-    Assert.isNotNull(logoUrl, 'getLogoUrl deve retornar URL quando há arquivo Logo vinculado ao parceiro.');
-    Assert.isTrue(logoUrl.startsWith('/sfc/'), 'URL do logo deve começar com /sfc/.');
+    Assert.isNotNull(
+      logoUrl,
+      'getLogoUrl deve retornar URL quando há arquivo Logo vinculado ao parceiro.'
+    );
+    Assert.isTrue(
+      logoUrl.startsWith('/sfc/'),
+      'URL do logo deve começar com /sfc/.'
+    );
   }
 
   @IsTest
@@ -695,8 +747,15 @@ private class PDFControllerExtensionExtraTest {
 
     // Call getMainViabilityStudyChunks when null (branch where it initializes list)
     List<String> chunks = ext.getMainViabilityStudyChunks();
-    Assert.isNotNull(chunks, 'getMainViabilityStudyChunks não deve retornar null.');
-    Assert.areEqual(0, chunks.size(), 'Sem viability deve retornar lista vazia.');
+    Assert.isNotNull(
+      chunks,
+      'getMainViabilityStudyChunks não deve retornar null.'
+    );
+    Assert.areEqual(
+      0,
+      chunks.size(),
+      'Sem viability deve retornar lista vazia.'
+    );
 
     Assert.isFalse(
       ext.getHasMainViabilityLayout(),
@@ -807,7 +866,10 @@ private class PDFControllerExtensionExtraTest {
     PDFControllerExtension ext = new PDFControllerExtension(
       new ApexPages.StandardController(opp)
     );
-    Assert.isTrue(true, 'loadPdfUrls com documento PROPOSTA e TipoKit null nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'loadPdfUrls com documento PROPOSTA e TipoKit null nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -844,7 +906,10 @@ private class PDFControllerExtensionExtraTest {
     PDFControllerExtension ext = new PDFControllerExtension(
       new ApexPages.StandardController(opp)
     );
-    Assert.isTrue(true, 'loadPdfUrls com TipoKitPromocional != null e != 6 nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'loadPdfUrls com TipoKitPromocional != null e != 6 nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -860,7 +925,10 @@ private class PDFControllerExtensionExtraTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'Deve abortar quando skipAsyncProposalGeneration=true.');
+    Assert.isTrue(
+      true,
+      'Deve abortar quando skipAsyncProposalGeneration=true.'
+    );
     OpportunityBO.skipAsyncProposalGeneration = false;
   }
 
@@ -889,6 +957,9 @@ private class PDFControllerExtensionExtraTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'Async main path com forceNewFile=true deve executar sem erro.');
+    Assert.isTrue(
+      true,
+      'Async main path com forceNewFile=true deve executar sem erro.'
+    );
   }
 }

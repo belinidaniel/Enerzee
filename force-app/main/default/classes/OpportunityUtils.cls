@@ -2,16 +2,17 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 03-24-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, EngineeringDateStampFlowTest, InstalacaoBOTest,
  *                       IntegracaoNivelloContratoCoverageTest, IntegracaoNivelloTest, IntegracaoSAPTest,
- *                       OpportunityBOAdditionalTest, OpportunityBOCoverageTest, OpportunityBOEmailTest,
- *                       OpportunityBOHighCoverageTest, OpportunityBOIntegrationVOFixesTest,
- *                       OpportunityBOPaymentReminderTaskTest, OpportunityDiscountRequestControllerTest,
- *                       OpportunityDisqualifyLeadsTest, OpportunityPDFHelperTest, OpportunityTriggerTest,
- *                       OpportunityUtilsTest, PDFControllerExtensionExtraTest, ProjetoTriggerTest,
- *                       ProposalConsoleControllerTest, TaskBOTest, UtilsTest
+ *                       OppClosedLostFlowActionTest, OpportunityBOAdditionalTest, OpportunityBOCoverageTest,
+ *                       OpportunityBOEmailTest, OpportunityBOHighCoverageTest, OpportunityBOIntegrationVOFixesTest,
+ *                       OpportunityBOPaymentConfirmationTaskTest, OpportunityBOPaymentReminderTaskTest,
+ *                       OpportunityDiscountRequestControllerTest, OpportunityDisqualifyLeadsTest,
+ *                       OpportunityPDFHelperTest, OpportunityTriggerTest, OpportunityUtilsTest,
+ *                       PDFControllerExtensionExtraTest, ProjetoTriggerTest, ProposalConsoleControllerTest, TaskBOTest,
+ *                       UtilsTest, ViabilityControllerTest
  **/
 public class OpportunityUtils {
   //	 Status
@@ -43,10 +44,10 @@ public class OpportunityUtils {
   public static String STATUS_ANALISE_CREDITO = 'Análise de Crédito';
   public static String STATUS_INFORMACOES_ADICIONAIS = 'Informações adicionais';
   public static String STATUS_ANALISE_DE_VIABILIDADE = 'Viabilidade Técnica';
+  // @deprecated — alias de STATUS_ANALISE_DE_VIABILIDADE; remover após migração de dados e atualização de todas as classes dependentes
   public static String STATUS_READEQUACAO_DE_PROPOSTA = 'Readequação de Proposta';
   public static String STATUS_AGUARDANDO_ACEITE = 'Aguardando aceite';
   public static String STATUS_CONTRATO = 'Contrato';
-  public static String STATUS_VIABILIDADE_TECNICA = 'Viabilidade Tecnica';
   public static String STATUS_VALIDACAO = 'Validação';
   public static String STATUS_PARECER_DE_ACESSO = 'Parecer de acesso';
   public static String STATUS_EQUIPAMENTO = 'Equipamento';
@@ -288,8 +289,8 @@ public class OpportunityUtils {
 
   public static boolean isStatusViabilityAnalysis(Opportunity opportunity) {
     return opportunity.StageName.equalsIgnoreCase(
-        STATUS_ANALISE_DE_VIABILIDADE
-      ) || opportunity.StageName.equalsIgnoreCase(STATUS_VIABILIDADE_TECNICA);
+      STATUS_ANALISE_DE_VIABILIDADE
+    );
   }
 
   public static boolean isStatusProposalReadjustment(Opportunity opportunity) {
@@ -657,6 +658,15 @@ public class OpportunityUtils {
   ) {
     return !isStatusPaymentConfirmationSinal(oldOpportunity) &&
       isStatusPaymentConfirmationSinal(newOpportunity);
+  }
+
+  // SAL-374: detecta entrada na fase "Confirmação de Pagamento" por qualquer caminho
+  public static boolean isChangingToPaymentConfirmation(
+    Opportunity newOpportunity,
+    Opportunity oldOpportunity
+  ) {
+    return !isStatusPaymentConfirmation(oldOpportunity) &&
+      isStatusPaymentConfirmation(newOpportunity);
   }
 
   public static boolean isChangingToCommercialPresentation(

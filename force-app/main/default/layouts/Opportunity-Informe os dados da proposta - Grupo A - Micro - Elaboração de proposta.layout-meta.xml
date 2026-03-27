@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
     <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <layoutSections>
@@ -374,7 +374,8 @@
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
-        <label>Características do Gerador Fotovoltáico - Dados técnicos dos módulos</label>
+        <label
+    >Características do Gerador Fotovoltáico - Dados técnicos dos módulos</label>
         <layoutColumns>
             <layoutItems>
                 <behavior>Required</behavior>
@@ -409,7 +410,8 @@
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
-        <label>Características do Gerador Fotovoltáico - Dados Técnicos dos Inversores</label>
+        <label
+    >Características do Gerador Fotovoltáico - Dados Técnicos dos Inversores</label>
         <layoutColumns>
             <layoutItems>
                 <behavior>Required</behavior>
@@ -709,7 +711,7 @@
                 <field>PrazoObraDias__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
+        <layoutColumns />
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -766,7 +768,7 @@
                 <field>PrecoCustosAdicionais__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
+        <layoutColumns />
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -834,7 +836,7 @@
                 <field>Description</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns/>
+        <layoutColumns />
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -861,9 +863,9 @@
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
         <label>Custom Links</label>
-        <layoutColumns/>
-        <layoutColumns/>
-        <layoutColumns/>
+        <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>
@@ -928,51 +930,32 @@
             <actionType>QuickAction</actionType>
             <sortOrder>11</sortOrder>
         </platformActionListItems>
-            <platformActionListItems>
-            <actionName>Opportunity.Enviar_para_VO</actionName>
-            <actionType>QuickAction</actionType>
-            <sortOrder>0</sortOrder>
-        </platformActionListItems>
     </platformActionList>
-    <quickActionList>
-        <quickActionListItems>
-            <quickActionName>Opportunity.Gerar_Proposta</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.TextPost</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.ContentPost</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>LogACall</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>NewTask</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>NewEvent</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.LinkPost</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.PollPost</quickActionName>
-        </quickActionListItems>
-            <quickActionListItems>
-            <quickActionName>Opportunity.Enviar_para_VO</quickActionName>
-        </quickActionListItems>
-    </quickActionList>
     <relatedLists>
         <fields>NAME</fields>
         <relatedList>Kit_Instalacao__c.Nome_da_Oportunidade__c</relatedList>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>AddProduct</excludeButtons>
+        <excludeButtons>EditAllProduct</excludeButtons>
+        <excludeButtons>MultiAdd</excludeButtons>
+        <excludeButtons>MultiEdit</excludeButtons>
         <fields>Product2</fields>
         <fields>Quantity</fields>
         <fields>UnitPrice</fields>
         <fields>Description</fields>
         <relatedList>RelatedLineItemList</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>Network3750__c</fields>
+        <fields>TotalProductValue__c</fields>
+        <fields>Installation__c</fields>
+        <fields>Points__c</fields>
+        <fields>Nemi__c</fields>
+        <fields>Bdi__c</fields>
+        <fields>Coupling__c</fields>
+        <relatedList>Composition__c.Opportunity__c</relatedList>    
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>

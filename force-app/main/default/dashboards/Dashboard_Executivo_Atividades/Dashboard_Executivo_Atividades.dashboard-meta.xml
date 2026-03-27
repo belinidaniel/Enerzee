@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Dashboard xmlns="http://soap.sforce.com/2006/04/metadata">
     <backgroundEndColor>#FFFFFF</backgroundEndColor>
     <backgroundFadeDirection>Diagonal</backgroundFadeDirection>
@@ -35,12 +35,13 @@
                 </groupingSortProperties>
                 <header>Atividades em Aberto por Area</header>
                 <legendPosition>Right</legendPosition>
-                <report>Dashboard_Executivo_Atividades/Atividades_em_Aberto_por_Area</report>
+                <report
+        >Dashboard_Executivo_Atividades/Atividades_em_Aberto_por_Area</report>
                 <showPercentage>false</showPercentage>
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
                 <sortBy>RowValueDescending</sortBy>
-                <sortLegendValues>false</sortLegendValues>
+
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
             <rowIndex>0</rowIndex>
@@ -73,12 +74,13 @@
                 </groupingSortProperties>
                 <header>Atividades Atrasadas por Area</header>
                 <legendPosition>Right</legendPosition>
-                <report>Dashboard_Executivo_Atividades/Atividades_Atrasadas_por_Area</report>
+                <report
+        >Dashboard_Executivo_Atividades/Atividades_Atrasadas_por_Area</report>
                 <showPercentage>false</showPercentage>
                 <showTotal>true</showTotal>
                 <showValues>true</showValues>
                 <sortBy>RowValueDescending</sortBy>
-                <sortLegendValues>false</sortLegendValues>
+
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
             <rowIndex>4</rowIndex>
@@ -111,11 +113,12 @@
                 </groupingSortProperties>
                 <header>Atividades Vencendo Hoje e Amanha</header>
                 <legendPosition>Bottom</legendPosition>
-                <report>Dashboard_Executivo_Atividades/Atividades_Vencendo_Hoje_e_Amanha</report>
+                <report
+        >Dashboard_Executivo_Atividades/Atividades_Vencendo_Hoje_e_Amanha</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowValueDescending</sortBy>
-                <sortLegendValues>false</sortLegendValues>
+
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
             <rowIndex>8</rowIndex>
@@ -153,11 +156,12 @@
                 </groupingSortProperties>
                 <header>Atividades por Role Pai e Role</header>
                 <legendPosition>Right</legendPosition>
-                <report>Dashboard_Executivo_Atividades/Atividades_por_Gestor</report>
+                <report
+        >Dashboard_Executivo_Atividades/Atividades_por_Gestor</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowValueDescending</sortBy>
-                <sortLegendValues>false</sortLegendValues>
+
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
             <rowIndex>12</rowIndex>
@@ -194,21 +198,324 @@
                 </groupingSortProperties>
                 <header>Area x Status</header>
                 <legendPosition>Right</legendPosition>
-                <report>Dashboard_Executivo_Atividades/Atividades_por_Area_e_Status</report>
+                <report
+        >Dashboard_Executivo_Atividades/Atividades_por_Area_e_Status</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowValueDescending</sortBy>
-                <sortLegendValues>false</sortLegendValues>
+
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
             <rowIndex>16</rowIndex>
             <rowSpan>5</rowSpan>
         </dashboardGridComponents>
+        <!-- ============================================================ -->
+        <!-- NOVOS COMPONENTES: Aberto e Atrasado por Area e Departamento -->
+        <!-- REQ-001 a REQ-005 | Arquitetura: feature/dashboard-executivo-atividades-refresh -->
+        <!-- NOTA: campo USERS.NAME pode necessitar ajuste para o nome correto do campo de usuario -->
+        <!-- no Report Type Activity caso o deploy retorne erro de campo invalido.                  -->
+        <!-- ============================================================ -->
+
+        <!-- G-01: Atividades em Aberto - Administrativo -->
+        <dashboardGridComponents>
+            <colSpan>6</colSpan>
+            <columnIndex>0</columnIndex>
+            <dashboardComponent>
+                <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
+                <chartAxisRange>Auto</chartAxisRange>
+                <chartSummary>
+                    <axisBinding>y</axisBinding>
+                    <column>RowCount</column>
+                </chartSummary>
+                <componentType>BarStacked</componentType>
+                <decimalPrecision>-1</decimalPrecision>
+                <displayUnits>Auto</displayUnits>
+                <drillEnabled>true</drillEnabled>
+                <drillToDetailEnabled>true</drillToDetailEnabled>
+                <enableHover>true</enableHover>
+                <expandOthers>false</expandOthers>
+                <groupingColumn>Activity.DepartamentoFml__c</groupingColumn>
+                <groupingColumn>Activity.NomeDoProprietario__c</groupingColumn>
+                <groupingSortProperties>
+                    <groupingSorts>
+                        <groupingLevel>g1</groupingLevel>
+                        <sortColumn>RowCount</sortColumn>
+                        <sortOrder>d</sortOrder>
+                    </groupingSorts>
+                </groupingSortProperties>
+                <header>Atividades em Aberto — Administrativo</header>
+                <legendPosition>Right</legendPosition>
+                <report
+        >Dashboard_Executivo_Atividades/Atividades_Aberto_Administrativo</report>
+                <showPercentage>false</showPercentage>
+                <showValues>true</showValues>
+                <sortBy>RowValueDescending</sortBy>
+
+                <title>Por Departamento | Legenda: Usuário</title>
+                <useReportChart>false</useReportChart>
+            </dashboardComponent>
+            <rowIndex>21</rowIndex>
+            <rowSpan>4</rowSpan>
+        </dashboardGridComponents>
+
+        <!-- G-02: Atividades em Aberto - Comercial -->
+        <dashboardGridComponents>
+            <colSpan>6</colSpan>
+            <columnIndex>0</columnIndex>
+            <dashboardComponent>
+                <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
+                <chartAxisRange>Auto</chartAxisRange>
+                <chartSummary>
+                    <axisBinding>y</axisBinding>
+                    <column>RowCount</column>
+                </chartSummary>
+                <componentType>BarStacked</componentType>
+                <decimalPrecision>-1</decimalPrecision>
+                <displayUnits>Auto</displayUnits>
+                <drillEnabled>true</drillEnabled>
+                <drillToDetailEnabled>true</drillToDetailEnabled>
+                <enableHover>true</enableHover>
+                <expandOthers>false</expandOthers>
+                <groupingColumn>Activity.DepartamentoFml__c</groupingColumn>
+                <groupingColumn>Activity.NomeDoProprietario__c</groupingColumn>
+                <groupingSortProperties>
+                    <groupingSorts>
+                        <groupingLevel>g1</groupingLevel>
+                        <sortColumn>RowCount</sortColumn>
+                        <sortOrder>d</sortOrder>
+                    </groupingSorts>
+                </groupingSortProperties>
+                <header>Atividades em Aberto — Comercial</header>
+                <legendPosition>Right</legendPosition>
+                <report
+        >Dashboard_Executivo_Atividades/Atividades_Aberto_Comercial</report>
+                <showPercentage>false</showPercentage>
+                <showValues>true</showValues>
+                <sortBy>RowValueDescending</sortBy>
+
+                <title>Por Departamento | Legenda: Usuário</title>
+                <useReportChart>false</useReportChart>
+            </dashboardComponent>
+            <rowIndex>25</rowIndex>
+            <rowSpan>4</rowSpan>
+        </dashboardGridComponents>
+
+        <!-- G-03: Atividades em Aberto - Engenharia -->
+        <dashboardGridComponents>
+            <colSpan>6</colSpan>
+            <columnIndex>0</columnIndex>
+            <dashboardComponent>
+                <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
+                <chartAxisRange>Auto</chartAxisRange>
+                <chartSummary>
+                    <axisBinding>y</axisBinding>
+                    <column>RowCount</column>
+                </chartSummary>
+                <componentType>BarStacked</componentType>
+                <decimalPrecision>-1</decimalPrecision>
+                <displayUnits>Auto</displayUnits>
+                <drillEnabled>true</drillEnabled>
+                <drillToDetailEnabled>true</drillToDetailEnabled>
+                <enableHover>true</enableHover>
+                <expandOthers>false</expandOthers>
+                <groupingColumn>Activity.DepartamentoFml__c</groupingColumn>
+                <groupingColumn>Activity.NomeDoProprietario__c</groupingColumn>
+                <groupingSortProperties>
+                    <groupingSorts>
+                        <groupingLevel>g1</groupingLevel>
+                        <sortColumn>RowCount</sortColumn>
+                        <sortOrder>d</sortOrder>
+                    </groupingSorts>
+                </groupingSortProperties>
+                <header>Atividades em Aberto — Engenharia</header>
+                <legendPosition>Right</legendPosition>
+                <report
+        >Dashboard_Executivo_Atividades/Atividades_Aberto_Engenharia</report>
+                <showPercentage>false</showPercentage>
+                <showValues>true</showValues>
+                <sortBy>RowValueDescending</sortBy>
+
+                <title>Por Departamento | Legenda: Usuário</title>
+                <useReportChart>false</useReportChart>
+            </dashboardComponent>
+            <rowIndex>29</rowIndex>
+            <rowSpan>4</rowSpan>
+        </dashboardGridComponents>
+
+        <!-- G-04: Atividades Atrasadas - Administrativo -->
+        <dashboardGridComponents>
+            <colSpan>6</colSpan>
+            <columnIndex>0</columnIndex>
+            <dashboardComponent>
+                <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
+                <chartAxisRange>Auto</chartAxisRange>
+                <chartSummary>
+                    <axisBinding>y</axisBinding>
+                    <column>RowCount</column>
+                </chartSummary>
+                <componentType>BarStacked</componentType>
+                <decimalPrecision>-1</decimalPrecision>
+                <displayUnits>Auto</displayUnits>
+                <drillEnabled>true</drillEnabled>
+                <drillToDetailEnabled>true</drillToDetailEnabled>
+                <enableHover>true</enableHover>
+                <expandOthers>false</expandOthers>
+                <groupingColumn>Activity.DepartamentoFml__c</groupingColumn>
+                <groupingColumn>Activity.NomeDoProprietario__c</groupingColumn>
+                <groupingSortProperties>
+                    <groupingSorts>
+                        <groupingLevel>g1</groupingLevel>
+                        <sortColumn>RowCount</sortColumn>
+                        <sortOrder>d</sortOrder>
+                    </groupingSorts>
+                </groupingSortProperties>
+                <header>Atividades Atrasadas — Administrativo</header>
+                <legendPosition>Right</legendPosition>
+                <report
+        >Dashboard_Executivo_Atividades/Atividades_Atrasadas_Administrativo</report>
+                <showPercentage>false</showPercentage>
+                <showValues>true</showValues>
+                <sortBy>RowValueDescending</sortBy>
+
+                <title>Por Departamento | Legenda: Usuário</title>
+                <useReportChart>false</useReportChart>
+            </dashboardComponent>
+            <rowIndex>33</rowIndex>
+            <rowSpan>4</rowSpan>
+        </dashboardGridComponents>
+
+        <!-- G-05: Atividades Atrasadas - Comercial -->
+        <dashboardGridComponents>
+            <colSpan>6</colSpan>
+            <columnIndex>0</columnIndex>
+            <dashboardComponent>
+                <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
+                <chartAxisRange>Auto</chartAxisRange>
+                <chartSummary>
+                    <axisBinding>y</axisBinding>
+                    <column>RowCount</column>
+                </chartSummary>
+                <componentType>BarStacked</componentType>
+                <decimalPrecision>-1</decimalPrecision>
+                <displayUnits>Auto</displayUnits>
+                <drillEnabled>true</drillEnabled>
+                <drillToDetailEnabled>true</drillToDetailEnabled>
+                <enableHover>true</enableHover>
+                <expandOthers>false</expandOthers>
+                <groupingColumn>Activity.DepartamentoFml__c</groupingColumn>
+                <groupingColumn>Activity.NomeDoProprietario__c</groupingColumn>
+                <groupingSortProperties>
+                    <groupingSorts>
+                        <groupingLevel>g1</groupingLevel>
+                        <sortColumn>RowCount</sortColumn>
+                        <sortOrder>d</sortOrder>
+                    </groupingSorts>
+                </groupingSortProperties>
+                <header>Atividades Atrasadas — Comercial</header>
+                <legendPosition>Right</legendPosition>
+                <report
+        >Dashboard_Executivo_Atividades/Atividades_Atrasadas_Comercial</report>
+                <showPercentage>false</showPercentage>
+                <showValues>true</showValues>
+                <sortBy>RowValueDescending</sortBy>
+
+                <title>Por Departamento | Legenda: Usuário</title>
+                <useReportChart>false</useReportChart>
+            </dashboardComponent>
+            <rowIndex>37</rowIndex>
+            <rowSpan>4</rowSpan>
+        </dashboardGridComponents>
+
+        <!-- G-06: Atividades Atrasadas - Engenharia -->
+        <dashboardGridComponents>
+            <colSpan>6</colSpan>
+            <columnIndex>0</columnIndex>
+            <dashboardComponent>
+                <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
+                <chartAxisRange>Auto</chartAxisRange>
+                <chartSummary>
+                    <axisBinding>y</axisBinding>
+                    <column>RowCount</column>
+                </chartSummary>
+                <componentType>BarStacked</componentType>
+                <decimalPrecision>-1</decimalPrecision>
+                <displayUnits>Auto</displayUnits>
+                <drillEnabled>true</drillEnabled>
+                <drillToDetailEnabled>true</drillToDetailEnabled>
+                <enableHover>true</enableHover>
+                <expandOthers>false</expandOthers>
+                <groupingColumn>Activity.DepartamentoFml__c</groupingColumn>
+                <groupingColumn>Activity.NomeDoProprietario__c</groupingColumn>
+                <groupingSortProperties>
+                    <groupingSorts>
+                        <groupingLevel>g1</groupingLevel>
+                        <sortColumn>RowCount</sortColumn>
+                        <sortOrder>d</sortOrder>
+                    </groupingSorts>
+                </groupingSortProperties>
+                <header>Atividades Atrasadas — Engenharia</header>
+                <legendPosition>Right</legendPosition>
+                <report
+        >Dashboard_Executivo_Atividades/Atividades_Atrasadas_Engenharia</report>
+                <showPercentage>false</showPercentage>
+                <showValues>true</showValues>
+                <sortBy>RowValueDescending</sortBy>
+
+                <title>Por Departamento | Legenda: Usuário</title>
+                <useReportChart>false</useReportChart>
+            </dashboardComponent>
+            <rowIndex>41</rowIndex>
+            <rowSpan>4</rowSpan>
+        </dashboardGridComponents>
+
+        <!-- G-07: Atividades Sem Classificação (saneamento operacional) -->
+        <dashboardGridComponents>
+            <colSpan>6</colSpan>
+            <columnIndex>0</columnIndex>
+            <dashboardComponent>
+                <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
+                <chartAxisRange>Auto</chartAxisRange>
+                <chartSummary>
+                    <axisBinding>y</axisBinding>
+                    <column>RowCount</column>
+                </chartSummary>
+                <componentType>BarStacked</componentType>
+                <decimalPrecision>-1</decimalPrecision>
+                <displayUnits>Auto</displayUnits>
+                <drillEnabled>true</drillEnabled>
+                <drillToDetailEnabled>true</drillToDetailEnabled>
+                <enableHover>true</enableHover>
+                <expandOthers>false</expandOthers>
+                <groupingColumn>Activity.AreaFml__c</groupingColumn>
+                <groupingColumn>Activity.DepartamentoFml__c</groupingColumn>
+                <groupingSortProperties>
+                    <groupingSorts>
+                        <groupingLevel>g1</groupingLevel>
+                        <sortColumn>RowCount</sortColumn>
+                        <sortOrder>d</sortOrder>
+                    </groupingSorts>
+                </groupingSortProperties>
+                <header>Atividades Sem Classificação (Saneamento)</header>
+                <legendPosition>Right</legendPosition>
+                <report
+        >Dashboard_Executivo_Atividades/Atividades_Sem_Classificacao</report>
+                <showPercentage>false</showPercentage>
+                <showValues>true</showValues>
+                <sortBy>RowValueDescending</sortBy>
+
+                <title>Saneamento — Sem Classificação</title>
+                <useReportChart>false</useReportChart>
+            </dashboardComponent>
+            <rowIndex>45</rowIndex>
+            <rowSpan>4</rowSpan>
+        </dashboardGridComponents>
+
         <numberOfColumns>6</numberOfColumns>
         <rowHeight>80</rowHeight>
     </dashboardGridLayout>
     <dashboardType>SpecifiedUser</dashboardType>
-    <description>Dashboard executivo de atividades por area e gestor</description>
+    <description
+  >Dashboard executivo de atividades por area e gestor</description>
     <isGridLayout>true</isGridLayout>
     <owner>daniel.belini@enerzee.com.br</owner>
     <runningUser>daniel.belini@enerzee.com.br</runningUser>

@@ -7,6 +7,25 @@
                     <name>actionNames</name>
                     <valueList>
                         <valueListItems>
+                            <value
+              >Opportunity.Enviar_Proposta_manualmente</value>
+                            <visibilityRule>
+                                <booleanFilter>1 OR 2</booleanFilter>
+                                <criteria>
+                                    <leftValue>{!Record.StageName}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue
+                  >Simulação de Proposta</rightValue>
+                                </criteria>
+                                <criteria>
+                                    <leftValue>{!Record.StageName}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue
+                  >Readequação de Proposta</rightValue>
+                                </criteria>
+                            </visibilityRule>
+                        </valueListItems>
+                        <valueListItems>
                             <value>Opportunity.Gerar_Proposta</value>
                             <visibilityRule>
                                 <booleanFilter>1 OR 2</booleanFilter>

@@ -299,7 +299,7 @@ private class IntegracaoSAPCoverageTest {
         Classificacao__c = classificacao,
         NumeroContrato__c = '42',
         NumeroOrigemContrato__c = 'ORI-001',
-        CondicoesPagamento__c = 'Recursos Próprios',
+        CondicaoPagamento2__c = '74',
         IdVirtualOffice__c = 'VO-TEST-001',
         DataEntrega__c = System.today().addDays(30)
       ),
@@ -713,7 +713,7 @@ private class IntegracaoSAPCoverageTest {
           Classificacao__c = cl,
           NumeroContrato__c = '1',
           NumeroOrigemContrato__c = 'ORI-X',
-          CondicoesPagamento__c = 'Recursos Próprios',
+          CondicaoPagamento2__c = '74',
           IdVirtualOffice__c = 'VO-CL-' + voIdx,
           DataEntrega__c = System.today().addDays(30)
         ),
@@ -809,7 +809,7 @@ private class IntegracaoSAPCoverageTest {
         AccountId = acc.Id,
         NumeroContrato__c = '10',
         NumeroOrigemContrato__c = 'ORI-PAY',
-        CondicoesPagamento__c = 'Recursos Próprios',
+        CondicaoPagamento2__c = '74',
         FormaPagamento__c = 'R001',
         IdVirtualOffice__c = 'VO-PAY-001',
         DataEntrega__c = System.today().addDays(30)
@@ -841,11 +841,11 @@ private class IntegracaoSAPCoverageTest {
   }
 
   // -----------------------------------------------------------------------
-  // IntegracaoSAPPedidoVenda — paymentGroupCode TypeException path (SAL-72)
-  // Covers: CondicoesPagamento__c with text value → try/catch returns null
+  // IntegracaoSAPPedidoVenda — paymentGroupCode null path (SAL-413)
+  // Covers: CondicaoPagamento2__c blank → String.isNotBlank returns false → null
   // -----------------------------------------------------------------------
   @IsTest
-  static void shouldCallSendPedidoVendaWithTextCondicoesPagamento() {
+  static void shouldCallSendPedidoVendaWithBlankCondicaoPagamento() {
     if (
       !TestMetadataUtils.hasMetadataRecord(
         'Integrador__mdt',
@@ -856,7 +856,7 @@ private class IntegracaoSAPCoverageTest {
       return;
     }
 
-    // 'Cartão de Crédito' cannot be parsed as Integer → should not throw, paymentGroupCode = null
+    // CondicaoPagamento2__c null → String.isNotBlank false → paymentGroupCode = null, must not throw
     OpportunityTriggerHandler.disableTrigger();
     KitInstalacaoTriggerHandler.disableTrigger();
     Account acc = (Account) TestFactory.createSObject(new Account(), true);
@@ -865,7 +865,7 @@ private class IntegracaoSAPCoverageTest {
         AccountId = acc.Id,
         NumeroContrato__c = '55',
         NumeroOrigemContrato__c = 'ORI-TEX',
-        CondicoesPagamento__c = 'Cartão de Crédito',
+        CondicaoPagamento2__c = null,
         IdVirtualOffice__c = 'VO-TEX-001',
         DataEntrega__c = System.today().addDays(30)
       ),
@@ -892,7 +892,7 @@ private class IntegracaoSAPCoverageTest {
     ];
     Assert.isTrue(
       updated.SucessoIntegracaoSAP__c,
-      'sendPedidoVenda com CondicoesPagamento__c textual nao deve lancar excecao.'
+      'sendPedidoVenda com CondicaoPagamento2__c nulo nao deve lancar excecao.'
     );
   }
 
@@ -967,7 +967,7 @@ private class IntegracaoSAPCoverageTest {
         AccountId = acc.Id,
         NumeroContrato__c = null,
         NumeroOrigemContrato__c = 'ORI-NULL',
-        CondicoesPagamento__c = 'Recursos Próprios',
+        CondicaoPagamento2__c = '74',
         IdVirtualOffice__c = 'VO-NULL-001',
         DataEntrega__c = System.today().addDays(20)
       ),

@@ -4,7 +4,8 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : AdditionalCoverageNewClassesTest, OpportunityBOCoverageTest, OpportunityBOHighCoverageTest,
+ * @test              : AdditionalCoverageNewClassesTest, OppClosedLostFlowActionTest, OpportunityBOCoverageTest,
+ *                       OpportunityBOHighCoverageTest, OpportunityBOPaymentConfirmationTaskTest,
  *                       OpportunityBOPaymentReminderTaskTest, ProjetoBOCoverageTest, ProjetoTriggerTest,
  *                       TaskStateServiceTest, TaskTriggerTest, WorkDeliveryReportPdfControllerTest
  **/

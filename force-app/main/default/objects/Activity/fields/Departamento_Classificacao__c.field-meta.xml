@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Departamento_Classificacao__c</fullName>
+    <description
+  >Departamento de classificacao da atividade. Populado automaticamente pelo Flow Task_ClassificacaoAreaDepartamento. Origem: campo padrao Owner.Department do Usuario responsavel. Bucket de excecao: Departamento nao informado quando Department estiver vazio.</description>
+    <externalId>false</externalId>
+    <label>Departamento de Classificação</label>
+    <length>255</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- REQ-003: Ativa a validação dos campos de Custo Realizado ao tentar avançar para "Obra Concluída".
+     Valida apenas os campos "*Realizado__c" — os campos Planejado são intencionalmente excluídos
+     conforme instrução de Thiago Closs (02/02/2026): "somente os itens realizados". -->
+<CustomMetadata
+  xmlns="http://soap.sforce.com/2006/04/metadata"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+    <label>CUSTO OBRA REALIZADO</label>
+    <protected>false</protected>
+    <values>
+        <field>FieldSetName__c</field>
+        <value xsi:type="xsd:string">CUSTO_OBRA_REALIZADO</value>
+    </values>
+    <values>
+        <field>IsSectionRequired__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>ObjectApiName__c</field>
+        <value xsi:type="xsd:string">Instalacao__c</value>
+    </values>
+    <values>
+        <field>RecordTypeDeveloperName__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>RequiresAttachment__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>RequiresComment__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>SectionLabel__c</field>
+        <value xsi:type="xsd:string">Custo de Obra (Realizado)</value>
+    </values>
+    <values>
+        <field>SortOrder__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>Subject__c</field>
+        <value xsi:type="xsd:string">CUSTO OBRA REALIZADO</value>
+    </values>
+</CustomMetadata>
