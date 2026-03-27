@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPageRegions>
         <itemInstances>
@@ -37,8 +37,10 @@
                     <name>variant</name>
                     <value>linear</value>
                 </componentInstanceProperties>
-                <componentName>runtime_sales_pathassistant:pathAssistant</componentName>
-                <identifier>runtime_sales_pathassistant_pathAssistant</identifier>
+                <componentName
+        >runtime_sales_pathassistant:pathAssistant</componentName>
+                <identifier
+        >runtime_sales_pathassistant_pathAssistant</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
@@ -62,28 +64,19 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.OportunidadeConcluida__c</fieldItem>
-                <identifier>RecordOportunidadeConcluida_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.Oportunidade__c</fieldItem>
                 <identifier>RecordOportunidade_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <!-- REQ-002c: Status da Instalação movido de "Prazos da Instalação" para "Dados Gerais" -->
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ClienteConta__c</fieldItem>
-                <identifier>RecordClienteConta_cField</identifier>
+                <fieldItem>Record.Status__c</fieldItem>
+                <identifier>RecordStatus_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>DadosGeraisCol1</name>
@@ -120,16 +113,7 @@
                 <identifier>RecordGestorObra_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.OwnerId</fieldItem>
-                <identifier>RecordOwnerIdField</identifier>
-            </fieldInstance>
-        </itemInstances>
+        <!-- REQ-002b: OwnerId (Proprietário) removido do formulário a pedido de Elenara 02/02/2026 -->
         <name>DadosGeraisCol2</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -160,38 +144,47 @@
     <flexiPageRegions>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.OportunidadeConcluida__r.AccountId</fieldItem>
+                <fieldItem>Record.Oportunidade__r.AccountId</fieldItem>
                 <identifier>RecordOportunidade_rAccountIdField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.OportunidadeConcluida__r.Categoria__c</fieldItem>
+                <fieldItem>Record.Oportunidade__r.Categoria__c</fieldItem>
                 <identifier>RecordOportunidade_rCategoria_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.OportunidadeConcluida__r.TipoTelhadoEstrutura__c</fieldItem>
-                <identifier>RecordOportunidade_rTipoTelhadoEstrutura_cField</identifier>
+                <fieldItem
+        >Record.Oportunidade__r.TipoTelhadoEstrutura__c</fieldItem>
+                <identifier
+        >RecordOportunidade_rTipoTelhadoEstrutura_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.OportunidadeConcluida__r.PotenciaPicoSistema__c</fieldItem>
-                <identifier>RecordOportunidade_rPotenciaPicoSistema_cField</identifier>
+                <fieldItem
+        >Record.Oportunidade__r.PotenciaPicoSistema__c</fieldItem>
+                <identifier
+        >RecordOportunidade_rPotenciaPicoSistema_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <!-- REQ-002d: PotenciaNominalSistema (kW) agrupado abaixo do PotenciaPicoSistema (kWp) -->
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem
+        >Record.Oportunidade__r.PotenciaNominalSistema__c</fieldItem>
+                <identifier
+        >RecordOportunidade_rPotenciaNominalSistema_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.OportunidadeConcluida__r.PotenciaModulos__c</fieldItem>
-                <identifier>RecordOportunidade_rPotenciaModulos_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.OportunidadeConcluida__r.MainViability__r.StandardAdequacyCost__c</fieldItem>
-                <identifier>RecordOportunidade_rMainViability_rStandardAdequacyCost_cField</identifier>
+                <fieldItem
+        >Record.Oportunidade__r.MainViability__r.StandardAdequacyCost__c</fieldItem>
+                <identifier
+        >RecordOportunidade_rMainViability_rStandardAdequacyCost_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>DadosOportunidadeCol1</name>
@@ -200,31 +193,38 @@
     <flexiPageRegions>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.OportunidadeConcluida__r.NumeroModulos__c</fieldItem>
-                <identifier>RecordOportunidade_rNumeroModulos_cField</identifier>
+                <fieldItem>Record.Oportunidade__r.NumeroModulos__c</fieldItem>
+                <identifier
+        >RecordOportunidade_rNumeroModulos_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <!-- REQ-002d: PotenciaModulos agrupado abaixo do NumeroModulos -->
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.Oportunidade__r.PotenciaModulos__c</fieldItem>
+                <identifier
+        >RecordOportunidade_rPotenciaModulos_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.OportunidadeConcluida__r.NumeroInversores__c</fieldItem>
-                <identifier>RecordOportunidade_rNumeroInversores_cField</identifier>
+                <fieldItem
+        >Record.Oportunidade__r.NumeroInversores__c</fieldItem>
+                <identifier
+        >RecordOportunidade_rNumeroInversores_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.OportunidadeConcluida__r.Inversor_1_Potencia_Nominal__c</fieldItem>
-                <identifier>RecordOportunidade_rInversor_1_Potencia_Nominal_cField</identifier>
+                <fieldItem
+        >Record.Oportunidade__r.Inversor_1_Potencia_Nominal__c</fieldItem>
+                <identifier
+        >RecordOportunidade_rInversor_1_Potencia_Nominal_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.OportunidadeConcluida__r.PotenciaNominalSistema__c</fieldItem>
-                <identifier>RecordOportunidade_rPotenciaNominalSistema_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldItem>Record.OportunidadeConcluida__r.Acoplamento__c</fieldItem>
+                <fieldItem>Record.Oportunidade__r.Acoplamento__c</fieldItem>
                 <identifier>RecordOportunidade_rAcoplamento_cField</identifier>
             </fieldInstance>
         </itemInstances>
@@ -396,16 +396,7 @@
                 <identifier>RecordContagemPrazoContrato_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Status__c</fieldItem>
-                <identifier>RecordStatus_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
+        <!-- REQ-002c: Status__c movido para seção Dados Gerais -->
         <name>PrazosCol1</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -474,8 +465,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ValorMaterialComplementarPlanejado__c</fieldItem>
-                <identifier>RecordValorMaterialComplementarPlanejado_cField</identifier>
+                <fieldItem
+        >Record.ValorMaterialComplementarPlanejado__c</fieldItem>
+                <identifier
+        >RecordValorMaterialComplementarPlanejado_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -508,8 +501,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ValorMaterialComplementarRealizado__c</fieldItem>
-                <identifier>RecordValorMaterialComplementarRealizado_cField</identifier>
+                <fieldItem
+        >Record.ValorMaterialComplementarRealizado__c</fieldItem>
+                <identifier
+        >RecordValorMaterialComplementarRealizado_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -727,7 +722,8 @@
                     <name>showLegacyActivityComposer</name>
                     <value>true</value>
                 </componentInstanceProperties>
-                <componentName>runtime_sales_activities:activityPanel</componentName>
+                <componentName
+        >runtime_sales_activities:activityPanel</componentName>
                 <identifier>runtime_sales_activities_activityPanel</identifier>
             </componentInstance>
         </itemInstances>

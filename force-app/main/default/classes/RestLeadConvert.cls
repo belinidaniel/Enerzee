@@ -96,11 +96,15 @@ global with sharing class RestLeadConvert {
       lc.setLeadId(leadId);
 
       Lead leadRecord = [
-        SELECT Id, CPFCNPJ__c
+        SELECT Id, CPFCNPJ__c, IsConverted
         FROM Lead
         WHERE Id = :leadId
         LIMIT 1
       ];
+
+      if (leadRecord.IsConverted) {
+        throw new BadRequestException('Lead ' + leadId + ' already converted.');
+      }
 
       if (String.isNotBlank(leadRecord.CPFCNPJ__c)) {
         List<Account> accList = [

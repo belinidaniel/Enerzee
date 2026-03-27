@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>62.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
@@ -8,7 +8,8 @@
         <locationX>182</locationX>
         <locationY>503</locationY>
         <assignmentItems>
-            <assignToReference>Get_Latest_Viability.ApproveDate__c</assignToReference>
+            <assignToReference
+      >Get_Latest_Viability.ApproveDate__c</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>$Flow.CurrentDateTime</elementReference>
@@ -35,14 +36,16 @@
                 </rightValue>
             </conditions>
             <conditions>
-                <leftValueReference>$Record__Prior.StageName</leftValueReference>
+                <leftValueReference
+        >$Record__Prior.StageName</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <stringValue>Aguardando aceite</stringValue>
                 </rightValue>
             </conditions>
             <conditions>
-                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <leftValueReference
+        >$Record.RecordType.DeveloperName</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <stringValue>Solar</stringValue>
@@ -64,21 +67,24 @@
                 </rightValue>
             </conditions>
             <conditions>
-                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <leftValueReference
+        >$Record.RecordType.DeveloperName</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <stringValue>Ezee_Solar</stringValue>
                 </rightValue>
             </conditions>
             <conditions>
-                <leftValueReference>$Record__Prior.StageName</leftValueReference>
+                <leftValueReference
+        >$Record__Prior.StageName</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <stringValue>Viabilidade Técnica</stringValue>
                 </rightValue>
             </conditions>
             <conditions>
-                <leftValueReference>$Record__Prior.StageName</leftValueReference>
+                <leftValueReference
+        >$Record__Prior.StageName</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <stringValue>Viabilidade Tecnica</stringValue>
@@ -113,7 +119,8 @@
         </rules>
     </decisions>
     <environments>Default</environments>
-    <interviewLabel>Opportunity - Atualizar aprovação de viabilidade {!$Flow.CurrentDateTime}</interviewLabel>
+    <interviewLabel
+  >Opportunity - Atualizar aprovação de viabilidade {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Opportunity - Atualizar aprovação de viabilidade</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -139,7 +146,8 @@
         <label>Obter última viabilidade</label>
         <locationX>182</locationX>
         <locationY>287</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Has_Viability</targetReference>
         </connector>

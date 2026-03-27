@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPageRegions>
         <itemInstances>
@@ -7,7 +7,8 @@
                     <name>actionNames</name>
                     <valueList>
                         <valueListItems>
-                            <value>Opportunity.Gerar_Proposta</value>
+                            <value
+              >Opportunity.Enviar_Proposta_manualmente</value>
                             <visibilityRule>
                                 <booleanFilter>1 OR 2</booleanFilter>
                                 <criteria>
@@ -25,14 +26,20 @@
                             </visibilityRule>
                         </valueListItems>
                         <valueListItems>
-                            <value
-              >Opportunity.Enviar_Proposta_manualmente</value>
+                            <value>Opportunity.Gerar_Proposta</value>
                             <visibilityRule>
+                                <booleanFilter>1 OR 2</booleanFilter>
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
                                     <rightValue
                   >Simulação de Proposta</rightValue>
+                                </criteria>
+                                <criteria>
+                                    <leftValue>{!Record.StageName}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue
+                  >Readequação de Proposta</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>

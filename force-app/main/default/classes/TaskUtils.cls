@@ -6,7 +6,8 @@
  * @last modified by  : Daniel Belini
  * @test              : ActivityDocumentControllerTest, AdditionalCoverageNewClassesTest, CaseBOTest, CaseTriggerTest,
  *                       EngineeringDateStampFlowTest, ExternalArchiveServiceTest, InstalacaoFinalReportServiceTest,
- *                       LeadTriggerTest, OpportunityBOCoverageTest, OpportunityBOHighCoverageTest,
+ *                       LeadTriggerTest, OppClosedLostFlowActionTest, OpportunityBOCoverageTest,
+ *                       OpportunityBOHighCoverageTest, OpportunityBOPaymentConfirmationTaskTest,
  *                       OpportunityBOPaymentReminderTaskTest, ProjetoTriggerTest, TaskBOTest,
  *                       TaskCompletionServiceTest, TaskDeadlineNotificationBatchTest,
  *                       WorkDeliveryReportPdfControllerTest, WorkDeliveryReportPdfServiceTest
@@ -74,6 +75,9 @@ public with sharing class TaskUtils {
   public static String SUBJECT_SOLICITACAO_DE_PROTOCOLO_E_ANEXAR_DOCUMENTOS_CONCESSIONARIA = 'SOLICITAÇÃO DE PROTOCOLO E ANEXAR DOCUMENTOS CONCESSIONÁRIA';
   public static String SUBJECT_PROTOCOLO_PROJETO_ELETRICO = 'PROTOCOLO PROJETO ELETRICO';
   public static String SUBJECT_APROVACAO_PROJETO_ELETRICO = 'APROVAÇÃO PROJETO ELETRICO';
+  public static String SUBJECT_VERIFICAR_READEQUACAO = 'Verificar a readequação solicitada para a proposta';
+  // SAL-374: task criada ao entrar na fase "Confirmação de Pagamento"
+  public static String SUBJECT_CONFIRMACAO_PAGAMENTO = 'CONFIRMAÇÃO DE PAGAMENTO';
 
   //	 Validação de Status
   public static Boolean isTaskOpen(Task task) {

@@ -24,7 +24,7 @@ public with sharing class IntegracaoSAPPedidoVenda implements Queueable, Databas
         Classificacao__c,
         NumeroOrigemContrato__c,
         DataEntrega__c,
-        CondicoesPagamento__c,
+        CondicaoPagamento2__c,
         FormaPagamento__c,
         ValorTotalProposta__c,
         NumeroContrato__c
@@ -78,9 +78,9 @@ public with sharing class IntegracaoSAPPedidoVenda implements Queueable, Databas
           corpoRequisicao.bpL_IDAssignedToInvoice = 1;
           try {
             corpoRequisicao.paymentGroupCode = String.isNotBlank(
-                opp.CondicoesPagamento__c
+                opp.CondicaoPagamento2__c
               )
-              ? Integer.valueOf(opp.CondicoesPagamento__c)
+              ? Integer.valueOf(opp.CondicaoPagamento2__c)
               : null;
           } catch (TypeException e) {
             corpoRequisicao.paymentGroupCode = null;

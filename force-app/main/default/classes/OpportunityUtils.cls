@@ -6,12 +6,13 @@
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, EngineeringDateStampFlowTest, InstalacaoBOTest,
  *                       IntegracaoNivelloContratoCoverageTest, IntegracaoNivelloTest, IntegracaoSAPTest,
- *                       OpportunityBOAdditionalTest, OpportunityBOCoverageTest, OpportunityBOEmailTest,
- *                       OpportunityBOHighCoverageTest, OpportunityBOIntegrationVOFixesTest,
- *                       OpportunityBOPaymentReminderTaskTest, OpportunityDiscountRequestControllerTest,
- *                       OpportunityDisqualifyLeadsTest, OpportunityPDFHelperTest, OpportunityTriggerTest,
- *                       OpportunityUtilsTest, PDFControllerExtensionExtraTest, ProjetoTriggerTest,
- *                       ProposalConsoleControllerTest, TaskBOTest, UtilsTest
+ *                       OppClosedLostFlowActionTest, OpportunityBOAdditionalTest, OpportunityBOCoverageTest,
+ *                       OpportunityBOEmailTest, OpportunityBOHighCoverageTest, OpportunityBOIntegrationVOFixesTest,
+ *                       OpportunityBOPaymentConfirmationTaskTest, OpportunityBOPaymentReminderTaskTest,
+ *                       OpportunityDiscountRequestControllerTest, OpportunityDisqualifyLeadsTest,
+ *                       OpportunityPDFHelperTest, OpportunityTriggerTest, OpportunityUtilsTest,
+ *                       PDFControllerExtensionExtraTest, ProjetoTriggerTest, ProposalConsoleControllerTest, TaskBOTest,
+ *                       UtilsTest, ViabilityControllerTest
  **/
 public class OpportunityUtils {
   //	 Status
@@ -657,6 +658,15 @@ public class OpportunityUtils {
   ) {
     return !isStatusPaymentConfirmationSinal(oldOpportunity) &&
       isStatusPaymentConfirmationSinal(newOpportunity);
+  }
+
+  // SAL-374: detecta entrada na fase "Confirmação de Pagamento" por qualquer caminho
+  public static boolean isChangingToPaymentConfirmation(
+    Opportunity newOpportunity,
+    Opportunity oldOpportunity
+  ) {
+    return !isStatusPaymentConfirmation(oldOpportunity) &&
+      isStatusPaymentConfirmation(newOpportunity);
   }
 
   public static boolean isChangingToCommercialPresentation(

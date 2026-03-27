@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-18-2026
+ * @last modified on  : 03-20-2026
  * @last modified by  : Daniel Belini
  * @test              : IntegracaoVOPlanoTest, VOIntegrationServiceTest
  **/
@@ -233,6 +233,8 @@ public with sharing class VOIntegrationService {
         DescontoUFV__c,
         ValorTotalPropostaOriginal__c,
         ValorAnteriorDirect__c,
+        ValorPropostoDirect__c,
+        StatusAprovacaoDesconto__c,
         RecordType.DeveloperName,
         RecordType.Name,
         ConsultorOportunidade__r.IdVirtualOffice2__c,
@@ -812,10 +814,45 @@ public with sharing class VOIntegrationService {
       )
     );
 
+    Boolean hasDiscount =
+      opportunityRecord.DescontoUFV__c != null &&
+      opportunityRecord.DescontoUFV__c > 0;
+
+    System.debug('### VOIntegrationService - buildOpportunityPayload');
+    System.debug('### OppId: ' + opportunityRecord.Id);
+    System.debug(
+      '### StatusAprovacaoDesconto__c: ' +
+      opportunityRecord.StatusAprovacaoDesconto__c
+    );
+    System.debug('### hasDiscount: ' + hasDiscount);
+    System.debug('### DescontoUFV__c: ' + opportunityRecord.DescontoUFV__c);
+    System.debug(
+      '### ValorTotalProposta__c: ' + opportunityRecord.ValorTotalProposta__c
+    );
+    System.debug('### Direct__c: ' + opportunityRecord.Direct__c);
+    System.debug(
+      '### ValorPropostoDirect__c: ' + opportunityRecord.ValorPropostoDirect__c
+    );
+    System.debug(
+      '### ValorAnteriorDirect__c: ' + opportunityRecord.ValorAnteriorDirect__c
+    );
+    System.debug(
+      '### ValorTotalPropostaOriginal__c: ' +
+      opportunityRecord.ValorTotalPropostaOriginal__c
+    );
+
     if (planoName == 'Ezee Livre') {
       payload.put('valor', opportunityRecord.Rede__c);
+      System.debug(
+        '### valor (Ezee Livre - Rede__c): ' + opportunityRecord.Rede__c
+      );
     } else {
-      payload.put('valor', opportunityRecord.ValorTotalProposta__c);
+      Decimal valor = opportunityRecord.ValorTotalProposta__c;
+      if (hasDiscount) {
+        valor = (valor != null ? valor : 0) - opportunityRecord.DescontoUFV__c;
+      }
+      payload.put('valor', valor);
+      System.debug('### valor enviado: ' + valor);
     }
 
     if (planoName == 'Direct') {
@@ -841,11 +878,13 @@ public with sharing class VOIntegrationService {
       );
     }
 
-    payload.put('Direct', opportunityRecord.Direct__c);
+    Decimal directValue = hasDiscount &&
+      opportunityRecord.ValorPropostoDirect__c != null
+      ? opportunityRecord.ValorPropostoDirect__c
+      : opportunityRecord.Direct__c;
+    payload.put('Direct', directValue);
+    System.debug('### Direct enviado: ' + directValue);
 
-    Boolean hasDiscount =
-      opportunityRecord.DescontoUFV__c != null &&
-      opportunityRecord.DescontoUFV__c > 0;
     payload.put(
       'ValorDesconto',
       hasDiscount ? opportunityRecord.DescontoUFV__c : null
@@ -858,6 +897,7 @@ public with sharing class VOIntegrationService {
       'ValorDirectAnterior',
       hasDiscount ? opportunityRecord.ValorAnteriorDirect__c : null
     );
+    System.debug('### payload final: ' + JSON.serialize(payload));
 
     return JSON.serialize(payload);
   }
