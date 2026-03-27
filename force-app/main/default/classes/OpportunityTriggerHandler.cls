@@ -5,8 +5,9 @@
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, ClickSignUtilsCoverageTest, IntegracaoNivelloPropostaTest,
- *                       IntegracaoSAPCoverageTest, KitInstalacaoBOTest, OpportunityBOCoverageTest,
- *                       OpportunityBOHighCoverageTest, OpportunityBOPaymentReminderTaskTest,
+ *                       IntegracaoSAPCoverageTest, KitInstalacaoBOTest, OppClosedLostFlowActionTest,
+ *                       OpportunityBOCoverageTest, OpportunityBOHighCoverageTest,
+ *                       OpportunityBOPaymentConfirmationTaskTest, OpportunityBOPaymentReminderTaskTest,
  *                       OpportunityDiscountRequestControllerTest, OpportunityShareHandlerTest,
  *                       OpportunityTriggerHandlerToggleTest, OpportunityTriggerTest, OpportunityUtilsTest,
  *                       ProjetoBOCoverageTest, ProjetoTriggerTest, ProposalPendingControllerTest,
@@ -208,16 +209,7 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
-    // REQ-001: sincroniza ConsultorInstalacao__c nas Instalações quando o Consultor da Opp muda
-    InstalacaoBO.syncConsultorFromOpportunity(
-      (List<Opportunity>) Trigger.new,
-      (Map<Id, Opportunity>) Trigger.oldMap
-    );
     OpportunityBO.closeActivitiesAndFlowsForClosedLost(
-      (List<Opportunity>) Trigger.new,
-      (Map<Id, Opportunity>) Trigger.oldMap
-    );
-    OpportunityBO.closeActivitiesForClosedWon(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
@@ -231,11 +223,6 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (Map<Id, Opportunity>) Trigger.oldMap
     );
     OpportunityBO.sendKitUpdateOnProposalParamsChange(
-      (List<Opportunity>) Trigger.new,
-      (Map<Id, Opportunity>) Trigger.oldMap
-    );
-    // SAL-374: cria Task ao entrar na fase "Confirmação de Pagamento"
-    OpportunityBO.createPaymentConfirmationTask(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
