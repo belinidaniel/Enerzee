@@ -6,8 +6,9 @@
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
  *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
- *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentReminderTaskTest,
- *                       OpportunityDisqualifyLeadsTest, OpportunityTriggerTest, PDFControllerExtensionExtraTest
+ *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentConfirmationTaskTest,
+ *                       OpportunityBOPaymentReminderTaskTest, OpportunityDisqualifyLeadsTest, OpportunityTriggerTest,
+ *                       PDFControllerExtensionExtraTest
  **/
 public class OpportunityBO {
   // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas

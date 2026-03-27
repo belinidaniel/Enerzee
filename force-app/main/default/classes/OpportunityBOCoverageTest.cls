@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 03-24-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -340,6 +340,57 @@ private class OpportunityBOCoverageTest {
       new List<Opportunity>{ newSnapshot },
       new Set<Id>{ UserInfo.getUserId() },
       'Nota teste'
+    );
+  }
+
+  @isTest
+  static void shouldCloseOpportunityTasksWhenChangingToClosedWon() {
+    Account acc = (Account) TestFactory.createSObject(
+      new Account(Name = 'Account Closed Won'),
+      true
+    );
+    Opportunity baseOpp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        StageName = OpportunityUtils.STATUS_NEGOCIACAO
+      ),
+      true
+    );
+    Task wonTask = (Task) TestFactory.createSObject(
+      new Task(
+        Subject = 'Task Won',
+        Status = TaskUtils.STATUS_OPEN,
+        WhatId = baseOpp.Id,
+        ActivityDate = Date.today()
+      ),
+      true
+    );
+    Opportunity wonOldSnapshot = baseOpp.clone(true, true, true, true);
+    wonOldSnapshot.StageName = OpportunityUtils.STATUS_NEGOCIACAO;
+    Opportunity wonNewSnapshot = baseOpp.clone(true, true, true, true);
+    wonNewSnapshot.StageName = OpportunityUtils.STATUS_GANHO_FECHADO;
+
+    Test.startTest();
+    OpportunityBO.closeActivitiesForClosedWon(
+      new List<Opportunity>{ wonNewSnapshot },
+      new Map<Id, Opportunity>{ baseOpp.Id => wonOldSnapshot }
+    );
+    Test.stopTest();
+
+    Task refreshedWonTask = [
+      SELECT Id, Status, Description
+      FROM Task
+      WHERE Id = :wonTask.Id
+    ];
+    Assert.areEqual(
+      TaskUtils.STATUS_CONCLUIDO,
+      refreshedWonTask.Status,
+      'Task da oportunidade deve ser fechada ao ir para Ganho Fechado.'
+    );
+    Assert.isTrue(
+      refreshedWonTask.Description != null &&
+      refreshedWonTask.Description.contains('Encerrado automaticamente'),
+      'Descricao da tarefa deve receber nota de automacao.'
     );
   }
 

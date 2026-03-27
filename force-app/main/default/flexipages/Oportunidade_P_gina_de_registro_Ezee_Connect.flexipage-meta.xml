@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPageRegions>
         <itemInstances>
@@ -29,12 +29,14 @@
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Simulação de Proposta</rightValue>
+                                    <rightValue
+                  >Simulação de Proposta</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Readequação de Proposta</rightValue>
+                                    <rightValue
+                  >Readequação de Proposta</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -45,7 +47,8 @@
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Elaboração de proposta</rightValue>
+                                    <rightValue
+                  >Elaboração de proposta</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
@@ -60,7 +63,8 @@
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Validação do método de pagamento</rightValue>
+                                    <rightValue
+                  >Validação do método de pagamento</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -71,17 +75,20 @@
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>System Administrator</rightValue>
+                                    <rightValue
+                  >System Administrator</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Administrador de sistema</rightValue>
+                                    <rightValue
+                  >Administrador de sistema</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Administrador do sistema</rightValue>
+                                    <rightValue
+                  >Administrador do sistema</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
@@ -158,8 +165,10 @@
                     <name>variant</name>
                     <value>linear</value>
                 </componentInstanceProperties>
-                <componentName>runtime_sales_pathassistant:pathAssistant</componentName>
-                <identifier>runtime_sales_pathassistant_pathAssistant1</identifier>
+                <componentName
+        >runtime_sales_pathassistant:pathAssistant</componentName>
+                <identifier
+        >runtime_sales_pathassistant_pathAssistant1</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
@@ -930,7 +939,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.DataValidacaoClientePelaBowe__c</fieldItem>
-                <identifier>RecordDataValidacaoClientePelaBowe_cField</identifier>
+                <identifier
+        >RecordDataValidacaoClientePelaBowe_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1032,7 +1042,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.ValorTotalaPagarRecorrencia__c</fieldItem>
-                <identifier>RecordValorTotalaPagarRecorrencia_cField</identifier>
+                <identifier
+        >RecordValorTotalaPagarRecorrencia_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -1459,7 +1470,8 @@
                     <name>showLegacyActivityComposer</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentName>runtime_sales_activities:activityPanel</componentName>
+                <componentName
+        >runtime_sales_activities:activityPanel</componentName>
                 <identifier>runtime_sales_activities_activityPanel</identifier>
             </componentInstance>
         </itemInstances>
