@@ -2,25 +2,12 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-17-2026
+ * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
  * @test              : OpportunityEntryRestTest
  **/
 @RestResource(urlMapping='/OpportunityEntry/*')
 global with sharing class OpportunityEntryRest {
-  // Mapa de chave JSON → campo da Composition__c (campos Currency do payload)
-  private static final Map<String, Schema.SObjectField> COMPOSITION_CURRENCY_FIELDS = new Map<String, Schema.SObjectField>{
-    'Bdi' => Composition__c.Bdi__c,
-    'Direct' => Composition__c.Direct__c,
-    'Rede' => Composition__c.Network3750__c,
-    'Pontos' => Composition__c.Points__c,
-    'Installation' => Composition__c.Installation__c,
-    'AdditionalFixedCost' => Composition__c.AdditionalFixedCost__c,
-    'Coupling' => Composition__c.Coupling__c,
-    'FinancialCostWeg' => Composition__c.FinancialCostWeg__c,
-    'TotalProductValue' => Composition__c.TotalProductValue__c
-  };
-
   @HttpPost
   global static void makePost() {
     try {
@@ -198,23 +185,21 @@ global with sharing class OpportunityEntryRest {
         );
       }
 
-      // Upsert das Composições vinculadas às Oportunidades inseridas
-      Map<String, Id> compositionExternalIdToId = CompositionBO.upsertFromRest(
-        results.SingleOpportunity,
-        externalIdToOpportunitiesToInsert
-      );
-
       // Popular Map de todos os Produtos
       for (Product2 product : [
-        SELECT Id, ProductCode, ExternalId__c
+        SELECT Id, ProductCode, Id_Externo__c, ExternalId__c
         FROM Product2
         WHERE
           ProductCode IN :productExternalIds
+          OR Id_Externo__c IN :productExternalIds
           OR ExternalId__c IN :productExternalIds
         WITH SECURITY_ENFORCED
       ]) {
         if (String.isNotBlank(product.ProductCode)) {
           externalIdToProductId.put(product.ProductCode, product.Id);
+        }
+        if (String.isNotBlank(product.Id_Externo__c)) {
+          externalIdToProductId.put(product.Id_Externo__c, product.Id);
         }
         if (String.isNotBlank(product.ExternalId__c)) {
           externalIdToProductId.put(product.ExternalId__c, product.Id);
@@ -224,8 +209,7 @@ global with sharing class OpportunityEntryRest {
       // Oportunidades da Integração, Map linkando com Oportunidades inseridas, e Map de todos os Produtos
       OpportunityBO.mapOpportunityLineItemFieldsRest(
         restObjectsToInsertedOpportunity,
-        externalIdToProductId,
-        compositionExternalIdToId
+        externalIdToProductId
       );
 
       // Consultar as Oportunidades para obter o campo Numeroproposta__c
@@ -327,32 +311,22 @@ global with sharing class OpportunityEntryRest {
     }
     Map<String, Id> productCodeToId = new Map<String, Id>();
     for (Product2 p : [
-      SELECT Id, ProductCode, ExternalId__c
+      SELECT Id, ProductCode, Id_Externo__c, ExternalId__c
       FROM Product2
-      WHERE ProductCode IN :productCodes OR ExternalId__c IN :productCodes
+      WHERE
+        Id_Externo__c IN :productCodes
+        OR ProductCode IN :productCodes
+        OR ExternalId__c IN :productCodes
       WITH SECURITY_ENFORCED
     ]) {
+      if (String.isNotBlank(p.Id_Externo__c)) {
+        productCodeToId.put(p.Id_Externo__c, p.Id);
+      }
       if (String.isNotBlank(p.ProductCode)) {
         productCodeToId.put(p.ProductCode, p.Id);
       }
       if (String.isNotBlank(p.ExternalId__c)) {
         productCodeToId.put(p.ExternalId__c, p.Id);
-      }
-    }
-
-    // Processar Composições — só executa se a chave 'Compositions' estiver presente no payload
-    // (null = chave ausente = não mexer; [] = remover todas)
-    Map<String, Id> compositionExternalIdToId = new Map<String, Id>();
-    List<Object> compositionsRaw = (List<Object>) payload.get('Compositions');
-    Set<String> incomingCompositionExtIds = new Set<String>();
-
-    if (compositionsRaw != null) {
-      for (Object compObj : compositionsRaw) {
-        Map<String, Object> compMap = (Map<String, Object>) compObj;
-        String extId = (String) compMap.get('ExternalId');
-        if (!String.isBlank(extId)) {
-          incomingCompositionExtIds.add(extId);
-        }
       }
     }
 
@@ -365,66 +339,6 @@ global with sharing class OpportunityEntryRest {
     ];
     if (!itemsToDelete.isEmpty()) {
       delete itemsToDelete;
-    }
-
-    // Remover Composições que não vieram no payload (cenário: remoção de composição)
-    // Só executa se 'Compositions' estiver presente no payload (null = não mexer)
-    if (compositionsRaw != null) {
-      List<Composition__c> orphanCompositions = [
-        SELECT Id
-        FROM Composition__c
-        WHERE
-          Opportunity__c = :opp.Id
-          AND ExternalId__c NOT IN :incomingCompositionExtIds
-        WITH SECURITY_ENFORCED
-      ];
-      if (!orphanCompositions.isEmpty()) {
-        delete orphanCompositions;
-      }
-    }
-
-    // Upsert das Composições recebidas no payload
-    if (compositionsRaw != null && !compositionsRaw.isEmpty()) {
-      List<Composition__c> compositionsToUpsert = new List<Composition__c>();
-      for (Object compObj : compositionsRaw) {
-        Map<String, Object> compMap = (Map<String, Object>) compObj;
-        String extId = (String) compMap.get('ExternalId');
-        if (String.isBlank(extId)) {
-          continue;
-        }
-        Composition__c comp = new Composition__c(
-          ExternalId__c = extId,
-          Name = compMap.containsKey('Name') && compMap.get('Name') != null
-            ? (String) compMap.get('Name')
-            : extId,
-          Opportunity__c = opp.Id,
-          ByIntegration__c = true
-        );
-        for (String jsonKey : COMPOSITION_CURRENCY_FIELDS.keySet()) {
-          if (compMap.get(jsonKey) != null) {
-            comp.put(
-              COMPOSITION_CURRENCY_FIELDS.get(jsonKey),
-              Decimal.valueOf(String.valueOf(compMap.get(jsonKey)))
-            );
-          }
-        }
-        compositionsToUpsert.add(comp);
-      }
-      if (!compositionsToUpsert.isEmpty()) {
-        List<Database.UpsertResult> upsertResults = Database.upsert(
-          compositionsToUpsert,
-          Composition__c.ExternalId__c,
-          false
-        );
-        for (Integer i = 0; i < upsertResults.size(); i++) {
-          if (upsertResults.get(i).isSuccess()) {
-            compositionExternalIdToId.put(
-              compositionsToUpsert.get(i).ExternalId__c,
-              upsertResults.get(i).getId()
-            );
-          }
-        }
-      }
     }
 
     // Criar novos OpportunityLineItems
@@ -442,6 +356,8 @@ global with sharing class OpportunityEntryRest {
         return;
       }
 
+      if (product2Id == null)
+        continue;
       OpportunityLineItem oli = new OpportunityLineItem();
       oli.OpportunityId = opp.Id;
       oli.Product2Id = product2Id;
@@ -458,13 +374,6 @@ global with sharing class OpportunityEntryRest {
       ) {
         oli.Description = String.valueOf(prodMap.get('Description'));
       }
-      String compExtId = (String) prodMap.get('CompositionExternalId');
-      if (
-        !String.isBlank(compExtId) &&
-        compositionExternalIdToId.containsKey(compExtId)
-      ) {
-        oli.Composition__c = compositionExternalIdToId.get(compExtId);
-      }
       itemsToInsert.add(oli);
     }
     if (!itemsToInsert.isEmpty()) {
@@ -475,7 +384,6 @@ global with sharing class OpportunityEntryRest {
     Map<String, Object> resp = new Map<String, Object>();
     resp.put('opportunityId', opp.Id);
     resp.put('insertedItems', itemsToInsert.size());
-    resp.put('upsertedCompositions', compositionExternalIdToId.size());
     RestContext.response.responseBody = Blob.valueOf(
       JSON.serializePretty(resp)
     );
