@@ -751,39 +751,54 @@ public class OpportunityBO {
     List<Opportunity> newRecords,
     Map<Id, Opportunity> oldRecordsMap
   ) {
-    List<User> integration = [
-      SELECT Id
-      FROM User
-      WHERE Username = 'integracao@lab065.com' AND IsActive = TRUE
-      LIMIT 1
-    ];
+    Id integrationUserId = resolveIntegrationUserId();
 
-    Id integrationUserId = integration.isEmpty() ? null : integration[0].Id;
-
-    List<Task> tasksToInsert = new List<Task>();
+    List<Opportunity> candidates = new List<Opportunity>();
     for (Opportunity opp : newRecords) {
-      Opportunity oldOpp = oldRecordsMap.get(opp.id);
-
       if (opp.OwnerId == integrationUserId) {
         continue;
       }
-
       if (
-        OpportunityUtils.isOpportunityBeingRequiredReadjustment(opp, oldOpp)
+        OpportunityUtils.isOpportunityBeingRequiredReadjustment(
+          opp,
+          oldRecordsMap.get(opp.Id)
+        )
       ) {
-        tasksToInsert.add(
-          TaskBO.createTask(
-            opp.Id,
-            'Verificar a readequação solicitada para a proposta',
-            'Foi solicitada uma readequação para esta proposta. Favor verificar e validar.',
-            opp.OwnerId,
-            TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 3),
-            '3'
-          )
-        );
+        candidates.add(opp);
       }
     }
-    insert tasksToInsert;
+    if (candidates.isEmpty()) {
+      return;
+    }
+
+    Set<Id> oppIds = new Set<Id>();
+    for (Opportunity opp : candidates) {
+      oppIds.add(opp.Id);
+    }
+    Set<Id> oppsWithOpenTask = TaskDAO.findOppsWithOpenTaskBySubject(
+      oppIds,
+      TaskUtils.SUBJECT_VERIFICAR_READEQUACAO
+    );
+
+    List<Task> tasksToInsert = new List<Task>();
+    for (Opportunity opp : candidates) {
+      if (oppsWithOpenTask.contains(opp.Id)) {
+        continue;
+      }
+      tasksToInsert.add(
+        TaskBO.createTask(
+          opp.Id,
+          TaskUtils.SUBJECT_VERIFICAR_READEQUACAO,
+          'Foi solicitada uma readequação para esta proposta. Favor verificar e validar.',
+          opp.OwnerId,
+          TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 3),
+          '3'
+        )
+      );
+    }
+    if (!tasksToInsert.isEmpty()) {
+      insert tasksToInsert;
+    }
   }
 
   public static Map<String, Id> getOpportunitiesSellers(Set<String> sellerIds) {
@@ -1201,24 +1216,7 @@ public class OpportunityBO {
     List<Opportunity> newList,
     Map<Id, Opportunity> oldMap
   ) {
-    Map<Integer, User> taskNumberToOwnerUser = new Map<Integer, User>{
-      1 => null,
-      2 => null,
-      3 => null,
-      4 => null,
-      5 => null,
-      6 => null,
-      7 => null
-    };
-
-    List<User> integration = [
-      SELECT Id
-      FROM User
-      WHERE Username = 'integracao@lab065.com' AND isActive = TRUE
-      LIMIT 1
-    ];
-
-    Id integrationUserId = integration.isEmpty() ? null : integration[0].Id;
+    Id integrationUserId = resolveIntegrationUserId();
 
     Id financingSimulationOwnerId = resolveActiveUserIdByEmailLike(
       FINANCING_SIMULATION_OWNER_EMAIL_LIKE
@@ -1227,12 +1225,7 @@ public class OpportunityBO {
       financingSimulationOwnerId = UserInfo.getUserId();
     }
 
-    Id financePaymentQueueId = resolveQueueIdByDeveloperName(
-      PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME
-    );
-    Id financePaymentUserFallbackId = financePaymentQueueId == null
-      ? resolveActiveUserIdByEmailLike(PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE)
-      : null;
+    User contractUser = null;
 
     Map<Id, String> opportunityIdToAccountName = new Map<Id, String>();
     Map<Id, Account> accountSet = new Map<Id, Account>(
@@ -1255,50 +1248,17 @@ public class OpportunityBO {
     }
 
     // Controle de assuntos já existentes (tarefas em aberto) para evitar duplicidade
-    Map<Id, Set<String>> existingSubjectsByOpp = new Map<Id, Set<String>>();
     Set<Id> opportunityIds = new Set<Id>();
     for (Opportunity oppIdCollector : newList) {
       opportunityIds.add(oppIdCollector.Id);
-      existingSubjectsByOpp.put(oppIdCollector.Id, new Set<String>());
     }
-    if (!opportunityIds.isEmpty()) {
-      for (Task t : [
-        SELECT WhatId, Subject
-        FROM Task
-        WHERE
-          WhatId IN :opportunityIds
-          AND IsDeleted = FALSE
-          AND Status != :TaskUtils.STATUS_CONCLUIDO
-      ]) {
-        String norm = t.Subject == null ? '' : t.Subject.trim().toLowerCase();
-        if (!existingSubjectsByOpp.containsKey(t.WhatId)) {
-          existingSubjectsByOpp.put(t.WhatId, new Set<String>());
-        }
-        existingSubjectsByOpp.get(t.WhatId).add(norm);
-      }
-    }
+    Map<Id, Set<String>> existingSubjectsByOpp = TaskDAO.findOpenTaskNormalizedSubjectsByOpp(
+      opportunityIds
+    );
 
-    List<Task> taskstoInsert = new List<Task>();
+    List<Task> tasksToInsert = new List<Task>();
     Map<Id, Set<String>> newSubjectsByOpp = new Map<Id, Set<String>>();
-    Set<Id> opportunityOwnerUserIds = new Set<Id>();
-    for (Opportunity opportunityOwnerCollector : newList) {
-      if (
-        opportunityOwnerCollector.OwnerId != null &&
-        String.valueOf(opportunityOwnerCollector.OwnerId).startsWith('005')
-      ) {
-        opportunityOwnerUserIds.add(opportunityOwnerCollector.OwnerId);
-      }
-    }
-    Map<Id, Boolean> ownerUserActiveById = new Map<Id, Boolean>();
-    if (!opportunityOwnerUserIds.isEmpty()) {
-      for (User ownerUser : [
-        SELECT Id, IsActive
-        FROM User
-        WHERE Id IN :opportunityOwnerUserIds
-      ]) {
-        ownerUserActiveById.put(ownerUser.Id, ownerUser.IsActive);
-      }
-    }
+    Map<Id, Boolean> ownerUserActiveById = resolveOwnerActivityMap(newList);
     for (Opportunity opportunity : newList) {
       if (!newSubjectsByOpp.containsKey(opportunity.Id)) {
         newSubjectsByOpp.put(opportunity.Id, new Set<String>());
@@ -1327,88 +1287,8 @@ public class OpportunityBO {
           OpportunityUtils.isStatusProposalSimulation(opportunity)) &&
           opportunity.GrupoTarifario__c != null
         ) {
-          //	GRUPO A
-          // if(opportunity.GrupoTarifario__c.equalsIgnoreCase('Grupo A')){
-          //		 // if(taskNumberToOwnerUser.get(1) == null){
-          //		 //			taskNumberToOwnerUser.put(1, [
-          //		 //					SELECT Id FROM User WHERE Email LIKE 'amanda@enerzee.com.br%' LIMIT 1
-          //		 //			]);
-          //		 // }
-          //		 String subjectGrupoA = 'Informe os dados da proposta - Grupo A - ' + accountName;
-          //		 String normSubjectGrupoA = subjectGrupoA.trim().toLowerCase();
-          //		 if (!existingSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoA)
-          //				 && !newSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoA)) {
-          //				 taskstoInsert.add(TaskBO.createTask(
-          //						 opportunity.Id,
-
-          //						 subjectGrupoA,
-
-          //						 'PREENCHER OS CAMPOS:\n\n Modalidade de Venda\n Tipo da venda\n ' +
-          //						 'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
-          //						 'Tipo do telhado - Estrutura de fixação\n Logradouro\n ' +
-          //						 'Município Instalação\n Consumo Anual\n ' +
-          //						 'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
-          //						 'Validade da proposta (dias)\n Demanda Contratada - Fora Ponta\n ' +
-          //						 'Tarifa Demanda - Fora Ponta\n Consumo Médio - Fora Ponta\n ' +
-          //						 'Tarifa - Fora Ponta\n Consumo Médio - Ponta\n Tarifa - Ponta\n ' +
-          //						 'Tensão de Alimentação\n Potência Pico do Sistema (kWp)\n ' +
-          //						 'Geração mensal estimada\n Geração anual estimada\n ' +
-          //						 'Número de Módulos\n Potência Nominal do Módulo\n Fabricante Módulos\n ' +
-          //						 'Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
-          //						 'Potência Nominal do Sistema (kW)\n' +
-          //						 'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
-
-          //						 (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
-
-          //						 TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
-
-          //						 '1'
-          //				 ));
-          //				 existingSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoA);
-          //				 newSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoA);
-          //		 }
-          //		 continue;
-          // }
-
           //	GRUPO B
           if (opportunity.GrupoTarifario__c.equalsIgnoreCase('Grupo B')) {
-            // if(taskNumberToOwnerUser.get(2) == null){
-            //		 taskNumberToOwnerUser.put(2, [
-            //				 SELECT Id FROM User WHERE Email LIKE 'amanda@enerzee.com.br%' LIMIT 1
-            //		 ]);
-            // }
-            String subjectGrupoB =
-              'Informe os dados da proposta - Grupo B - ' + accountName;
-            String normSubjectGrupoB = subjectGrupoB.trim().toLowerCase();
-            // if (!existingSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoB)
-            //		 && !newSubjectsByOpp.get(opportunity.Id).contains(normSubjectGrupoB)) {
-            //		 taskstoInsert.add(TaskBO.createTask(
-            //				 opportunity.Id,
-
-            //				 subjectGrupoB,
-
-            //				 'PREENCHER OS CAMPOS: \n\nModalidade de Venda\n Tipo da venda\n ' +
-            //				 'Enquadramento da GD\n Grupo Tarifário\n Sub-Grupo Tarifário\n ' +
-            //				 'Tipo do telhado - Estrutura de fixação\n ' +
-            //				 'Logradouro\n Município Instalação\n Consumo Anual\n ' +
-            //				 'Custo Médio Mensal de Energia\n Prazo de Entrega (Dias)\n ' +
-            //				 'Validade da proposta (dias)\n' +
-            //				 'Tarifa com tributos - B\n Tensão de Alimentação\n ' +
-            //				 'Potência Pico do Sistema (kWp)\n Geração mensal estimada\n ' +
-            //				 'Geração anual estimada\n Número de Módulos\n Potência Nominal do Módulo\n ' +
-            //				 'Fabricante Módulos\n Modelo Módulos\n Número de Inversores\n Fabricante Inversor\n ' +
-            //				 'Potência Nominal do Sistema (kW)\n' +
-            //				 'Acréscimo\n Ajuste Anual Tarifa\n Rendimento Médio\n',
-
-            //				 (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId()),
-
-            //				 TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 1),
-
-            //				 '1'
-            //		 ));
-            //		 existingSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoB);
-            //		 newSubjectsByOpp.get(opportunity.Id).add(normSubjectGrupoB);
-            // }
             continue;
           }
         }
@@ -1420,95 +1300,25 @@ public class OpportunityBO {
           continue;
         }
 
-        //	AGUARDANDO DADOS DA VISITA
-        /*if(OpportunityUtils.isStatusAwaitingVisitData(opportunity)){
-										if(taskNumberToOwnerUser.get(4) == null){
-												taskNumberToOwnerUser.put(4, [
-														SELECT Id FROM User WHERE Email LIKE 'wellington.santos@enerzee.com.br%' LIMIT 1
-												]);
-										}
-										taskstoInsert.add(TaskBO.createTask(
-												opportunity.Id,
-
-												'Acusar recebimento dos dados da visita - ' + accountName,
-
-												null,
-
-												(taskNumberToOwnerUser.get(4) != null ? taskNumberToOwnerUser.get(4).Id : (isOwnerUserActive == true ? opportunity.OwnerId : UserInfo.getUserId())),
-
-												opportunity.PrazoAprovacaoViabilidade__c != null ? 
-												Date.valueOf(opportunity.PrazoAprovacaoViabilidade__c) : 
-												TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 2),
-
-												null
-										));
-										continue;
-								}*/
-
-        //	ANALISE DE VIABILIDADE
-        // if(OpportunityUtils.isStatusViabilityAnalysis(opportunity)){
-        //		 /*if(taskNumberToOwnerUser.get(5) == null){
-        //				 taskNumberToOwnerUser.put(5, [
-        //						 SELECT Id FROM Group WHERE DEVELOPERNAME =: 'UsuariosDadosViabilidade' LIMIT 1
-        //				 ]);
-        //		 }*/
-        //		 Id groupId = [SELECT Id FROM Group WHERE DEVELOPERNAME =: 'AnalistaViabilidade' LIMIT 1].id;
-        //		 taskstoInsert.add(TaskBO.createTask(
-        //				 opportunity.Id,
-
-        //				 'Inserir dados da viabilidade - ' + accountName,
-
-        //				 'PREENCHER OS CAMPOS:\N\NCategoria (Fase):\n ' +
-        //				 'Corrente nominal do disjuntor de entrada:\n Seção Nominal(Bitola do cabo):\n ' +
-        //				 'O padrão será readequado?\n ' +
-        //				 'Haverá aumento de carga?\n ' +
-        //				 'Estrutura de fixação (verificado in loco):\n Geração anual estimada:\n ' +
-        //				 'Reforço na estrutura necessário?\n ' +
-        //				 'Posto de transformação ou disponibilidade de acesso?\n ' +
-        //				 'Estudo de estrutura\n ' +
-        //				 'Observações pós-sombreamento:\n Observações pós-visita:\n ' +
-        //				 'Custos adicionais levantados:\n Tipo de Obra/projeto:\n ' +
-        //				 'Haverá aumento da potência nominal do sistema atual?\n ' +
-        //				 'Status da Viabilidade\n ' +
-        //				 'Tensão de Alimentação:\n O.S da Visita Técnica)\n ' +
-        //				 'Relatório de Sombreamento\n ' +
-        //				 'Arquivo do Solergo\n ' +
-        //				 'Roteiro de VT\n Relatório de VT\n ' +
-        //				 'Imagens da VT\n Layout de Instalação',
-
-        //				 //(taskNumberToOwnerUser.get(5) != null ? taskNumberToOwnerUser.get(5).Id : opportunity.OwnerId),
-        //				 (groupId != null ? groupId : opportunity.OwnerId),
-
-        //				 opportunity.PrazoAprovacaoViabilidade__c != null ?
-        //				 TaskBO.getActivityDateBasedOnWorkingDays(Date.valueOf(opportunity.PrazoAprovacaoViabilidade__c), 2).addDays(-1) :
-        //				 TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 2),
-
-        //				 '2'
-        //		 ));
-        //		 continue;
-        // }
-
         //	CONTRATO ENVIADO
         if (OpportunityUtils.isSubStatusContractSent(opportunity)) {
-          if (taskNumberToOwnerUser.get(6) == null) {
-            taskNumberToOwnerUser.put(
-              6,
-              [
-                SELECT Id
-                FROM User
-                WHERE Email LIKE 'contrato@enerzee.com.br%' AND IsActive = TRUE
-                LIMIT 1
-              ]
-            );
+          if (contractUser == null) {
+            List<User> contractUsers = [
+              SELECT Id
+              FROM User
+              WHERE Email LIKE 'contrato@enerzee.com.br%' AND IsActive = TRUE
+              LIMIT 1
+            ];
+            contractUser = contractUsers.isEmpty() ? null : contractUsers[0];
           }
-          taskstoInsert.add(
+          tasksToInsert.add(
             TaskBO.createTask(
               opportunity.Id,
               'É necessário anexar o contrato Assinado referente a oportunidade ' +
               Opportunity.Name,
               'PREENCHER OS CAMPOS:\n\n Fase com Valor Contrato Assinado \n\n',
-              (taskNumberToOwnerUser.get(6) != null
-                ? taskNumberToOwnerUser.get(6).Id
+              (contractUser != null
+                ? contractUser.Id
                 : (isOwnerUserActive == true
                     ? opportunity.OwnerId
                     : UserInfo.getUserId())),
@@ -1521,19 +1331,13 @@ public class OpportunityBO {
 
         //	AGUARDANDO CONFIRMAÇÃO DO PAGAMENTO
         if (OpportunityUtils.isSubStatusAwaitingPayment(opportunity)) {
-          Id paymentTaskOwnerId = resolvePaymentReminderTaskOwner(
-            financePaymentQueueId,
-            financePaymentUserFallbackId,
-            opportunity.OwnerId,
-            isOwnerUserActive
-          );
-          taskstoInsert.add(
+          tasksToInsert.add(
             TaskBO.createTask(
               opportunity.Id,
-              'É necessário	confirmar o pagamento da oportunidade ' +
+              'É necessário confirmar o pagamento da oportunidade ' +
               opportunity.Name,
               'PREENCHER OS CAMPOS:\n\n Fase com Valor Pagamento Confirmado \n\n',
-              paymentTaskOwnerId,
+              resolveFinanceTaskOwnerId(opportunity.OwnerId, isOwnerUserActive),
               TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 3),
               '3'
             )
@@ -1555,7 +1359,7 @@ public class OpportunityBO {
           !existingSubjectsByOpp.get(opportunity.Id).contains(normSubjectFin) &&
           !newSubjectsByOpp.get(opportunity.Id).contains(normSubjectFin)
         ) {
-          taskstoInsert.add(
+          tasksToInsert.add(
             TaskBO.createTask(
               opportunity.Id,
               subjectFin,
@@ -1571,7 +1375,7 @@ public class OpportunityBO {
         continue;
       }
     }
-    if (!taskstoInsert.isEmpty()) {
+    if (!tasksToInsert.isEmpty()) {
       try {
         insert tasksToInsert;
       } catch (DmlException dmle) {
@@ -1608,32 +1412,49 @@ public class OpportunityBO {
 
   @TestVisible
   private static Id resolveActiveUserIdByEmailLike(String emailLike) {
-    if (String.isBlank(emailLike)) {
-      return null;
-    }
-
-    List<User> users = [
-      SELECT Id
-      FROM User
-      WHERE Email LIKE :emailLike AND IsActive = TRUE
-      LIMIT 1
-    ];
-    return users.isEmpty() ? null : users[0].Id;
+    return UserDAO.findActiveUserIdByEmailLike(emailLike);
   }
 
   @TestVisible
   private static Id resolveQueueIdByDeveloperName(String queueDeveloperName) {
-    if (String.isBlank(queueDeveloperName)) {
-      return null;
-    }
+    return UserDAO.findQueueIdByDeveloperName(queueDeveloperName);
+  }
 
-    List<Group> queues = [
-      SELECT Id
-      FROM Group
-      WHERE Type = 'Queue' AND DeveloperName = :queueDeveloperName
-      LIMIT 1
-    ];
-    return queues.isEmpty() ? null : queues[0].Id;
+  private static Id resolveIntegrationUserId() {
+    return UserDAO.findIntegrationUserId();
+  }
+
+  private static Map<Id, Boolean> resolveOwnerActivityMap(
+    List<Opportunity> opps
+  ) {
+    Set<Id> userIds = new Set<Id>();
+    for (Opportunity opp : opps) {
+      if (
+        opp.OwnerId != null && String.valueOf(opp.OwnerId).startsWith('005')
+      ) {
+        userIds.add(opp.OwnerId);
+      }
+    }
+    return UserDAO.findActiveStatusByUserIds(userIds);
+  }
+
+  @TestVisible
+  private static Id resolveFinanceTaskOwnerId(
+    Id oppOwnerId,
+    Boolean isOwnerActive
+  ) {
+    Id queueId = resolveQueueIdByDeveloperName(
+      PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME
+    );
+    Id userFallbackId = queueId == null
+      ? resolveActiveUserIdByEmailLike(PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE)
+      : null;
+    return resolvePaymentReminderTaskOwner(
+      queueId,
+      userFallbackId,
+      oppOwnerId,
+      isOwnerActive
+    );
   }
 
   public static void validateSellBuyOrderAndContractRequiredFields(
@@ -2397,31 +2218,29 @@ public class OpportunityBO {
     List<Opportunity> newRecords,
     Map<Id, Opportunity> oldRecordsMap
   ) {
+    List<Task> revoTasksToInsert = new List<Task>();
     for (Opportunity opp : newRecords) {
       Opportunity oldOpp = oldRecordsMap.get(opp.Id);
 
       // Verifica condições para enviar a integração
       if (OpportunityUtils.isEzeeSolarGrupoBInCreditAnalysis(opp, oldOpp)) {
         RevoIntegrationService.sendToCreditAnalysis(opp.Id);
-        createRevoUploadTask(opp);
+        revoTasksToInsert.add(buildRevoUploadTask(opp));
       }
+    }
+    if (!revoTasksToInsert.isEmpty()) {
+      insert revoTasksToInsert;
     }
   }
 
-  private static void createRevoUploadTask(Opportunity opp) {
-    String taskOwner = [
-      SELECT Id
-      FROM User
-      WHERE IsActive = TRUE AND Email LIKE 'wagner.sampaio@enerzee.com.br%'
-      LIMIT 1
-    ]
-    ?.Id;
-    System.debug('task' + taskOwner);
+  private static Task buildRevoUploadTask(Opportunity opp) {
+    Id taskOwner = resolveActiveUserIdByEmailLike(
+      'wagner.sampaio@enerzee.com.br%'
+    );
     if (taskOwner == null) {
       taskOwner = opp.OwnerId;
     }
-
-    Task newTask = TaskBO.createTask(
+    return TaskBO.createTask(
       opp.Id,
       'Anexar documentos no site da REVO',
       'Favor anexar os documentos necessários na plataforma da REVO para prosseguir com a análise de crédito.',
@@ -2429,7 +2248,6 @@ public class OpportunityBO {
       TaskBO.getActivityDateBasedOnWorkingDays(System.today(), 3),
       'High'
     );
-    insert newTask;
   }
 
   public static void sendCustomerRecordToSAP(
@@ -3007,6 +2825,56 @@ public class OpportunityBO {
       return;
     }
 
+    closeActivitiesAndRelatedRecordsForClosedLost(
+      closedLostOpportunityIds,
+      closedLostOpportunities
+    );
+  }
+
+  public static void closeActivitiesForClosedWon(
+    List<Opportunity> newRecords,
+    Map<Id, Opportunity> oldRecordsMap
+  ) {
+    if (
+      newRecords == null ||
+      newRecords.isEmpty() ||
+      oldRecordsMap == null ||
+      oldRecordsMap.isEmpty()
+    ) {
+      return;
+    }
+
+    Set<Id> closedWonOpportunityIds = new Set<Id>();
+    for (Opportunity opportunity : newRecords) {
+      Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
+      if (oldOpportunity == null) {
+        continue;
+      }
+
+      if (
+        OpportunityUtils.isStatusClosedWon(opportunity) &&
+        !OpportunityUtils.isStatusClosedWon(oldOpportunity)
+      ) {
+        closedWonOpportunityIds.add(opportunity.Id);
+      }
+    }
+
+    closeTasksForOpportunityIds(
+      closedWonOpportunityIds,
+      'Encerrado automaticamente - Oportunidade marcada como Ganho fechado.'
+    );
+  }
+
+  public static void closeActivitiesAndRelatedRecordsForClosedLost(
+    Set<Id> closedLostOpportunityIds,
+    Map<Id, Opportunity> closedLostOpportunities
+  ) {
+    if (
+      closedLostOpportunityIds == null || closedLostOpportunityIds.isEmpty()
+    ) {
+      return;
+    }
+
     final String AUTOMATION_NOTE = 'Encerrado automaticamente - Oportunidade marcada como Fechado Perdido.';
 
     List<Task> tasksToUpdate = new List<Task>();
@@ -3022,7 +2890,21 @@ public class OpportunityBO {
       ? projectFields.get('Description__c')
       : null;
 
-    for (Opportunity opportunity : closedLostOpportunities.values()) {
+    Map<Id, Opportunity> opportunitiesById = closedLostOpportunities != null
+      ? new Map<Id, Opportunity>(closedLostOpportunities)
+      : new Map<Id, Opportunity>();
+
+    if (opportunitiesById.isEmpty()) {
+      opportunitiesById = new Map<Id, Opportunity>(
+        [
+          SELECT Id, Name, OwnerId
+          FROM Opportunity
+          WHERE Id IN :closedLostOpportunityIds
+        ]
+      );
+    }
+
+    for (Opportunity opportunity : opportunitiesById.values()) {
       if (opportunity.OwnerId != null) {
         usersToNotify.add(opportunity.OwnerId);
       }
@@ -3043,23 +2925,33 @@ public class OpportunityBO {
       ')';
 
     for (Projeto__c project : Database.query(projectQuery)) {
+      recordIdsToCloseTasks.add(project.Id);
+
+      Boolean projectChanged = false;
       if (
         project.Status__c == null ||
         project.Status__c != 'Projeto cancelado'
       ) {
         project.Status__c = 'Projeto cancelado';
+        projectChanged = true;
       }
       if (projectDescriptionField != null) {
         String currentDescription = (String) project.get(
           projectDescriptionField
         );
-        project.put(
-          projectDescriptionField,
-          appendAutomationNote(currentDescription, AUTOMATION_NOTE, 255)
+        String updatedDescription = appendAutomationNote(
+          currentDescription,
+          AUTOMATION_NOTE,
+          255
         );
+        if (updatedDescription != currentDescription) {
+          projectChanged = true;
+        }
+        project.put(projectDescriptionField, updatedDescription);
       }
-      projectsToUpdate.add(project);
-      recordIdsToCloseTasks.add(project.Id);
+      if (projectChanged) {
+        projectsToUpdate.add(project);
+      }
 
       if (project.GestorObra__c != null) {
         usersToNotify.add(project.GestorObra__c);
@@ -3071,32 +2963,35 @@ public class OpportunityBO {
       FROM ViabilityStudy__c
       WHERE Opportunity__c IN :closedLostOpportunityIds
     ]) {
+      recordIdsToCloseTasks.add(viability.Id);
+
+      Boolean viabilityChanged = false;
       if (
         viability.StatusFeasibility__c == null ||
         viability.StatusFeasibility__c != 'Viabilidade Finalizada'
       ) {
         viability.StatusFeasibility__c = 'Viabilidade Finalizada';
+        viabilityChanged = true;
       }
-      viability.ObservationsPostVisit__c = appendAutomationNote(
+      String updatedObservations = appendAutomationNote(
         viability.ObservationsPostVisit__c,
         AUTOMATION_NOTE,
         131072
       );
-      viabilityToUpdate.add(viability);
-      recordIdsToCloseTasks.add(viability.Id);
+      if (updatedObservations != viability.ObservationsPostVisit__c) {
+        viabilityChanged = true;
+      }
+      viability.ObservationsPostVisit__c = updatedObservations;
+      if (viabilityChanged) {
+        viabilityToUpdate.add(viability);
+      }
 
       if (viability.OwnerId != null) {
         usersToNotify.add(viability.OwnerId);
       }
     }
 
-    for (Task task : [
-      SELECT Id, Status, Description, OwnerId, WhatId
-      FROM Task
-      WHERE
-        WhatId IN :recordIdsToCloseTasks
-        AND Status != :TaskUtils.STATUS_CONCLUIDO
-    ]) {
+    for (Task task : TaskDAO.findOpenTasksByWhatIds(recordIdsToCloseTasks)) {
       task.Status = TaskUtils.STATUS_CONCLUIDO;
       task.Description = appendAutomationNote(
         task.Description,
@@ -3120,13 +3015,41 @@ public class OpportunityBO {
       update viabilityToUpdate;
     }
     Boolean orgType = [SELECT IsSandbox FROM Organization LIMIT 1].IsSandbox;
+    Boolean hasRelevantChanges =
+      !tasksToUpdate.isEmpty() ||
+      !projectsToUpdate.isEmpty() ||
+      !viabilityToUpdate.isEmpty();
 
-    if (!orgType) {
+    if (!orgType && hasRelevantChanges) {
       sendClosedLostAutomationEmail(
-        closedLostOpportunities.values(),
+        opportunitiesById.values(),
         usersToNotify,
         AUTOMATION_NOTE
       );
+    }
+  }
+
+  private static void closeTasksForOpportunityIds(
+    Set<Id> opportunityIds,
+    String automationNote
+  ) {
+    if (opportunityIds == null || opportunityIds.isEmpty()) {
+      return;
+    }
+
+    List<Task> tasksToUpdate = new List<Task>();
+    for (Task task : TaskDAO.findOpenTasksByWhatIds(opportunityIds)) {
+      task.Status = TaskUtils.STATUS_CONCLUIDO;
+      task.Description = appendAutomationNote(
+        task.Description,
+        automationNote,
+        32000
+      );
+      tasksToUpdate.add(task);
+    }
+
+    if (!tasksToUpdate.isEmpty()) {
+      update tasksToUpdate;
     }
   }
 
@@ -3411,6 +3334,74 @@ public class OpportunityBO {
 
     if (!leadsToUpdate.isEmpty()) {
       update leadsToUpdate;
+    }
+  }
+
+  // SAL-374: cria Task de confirmação de pagamento ao entrar na fase "Confirmação de Pagamento"
+  public static void createPaymentConfirmationTask(
+    List<Opportunity> newRecords,
+    Map<Id, Opportunity> oldRecordsMap
+  ) {
+    List<Opportunity> candidates = new List<Opportunity>();
+    for (Opportunity opp : newRecords) {
+      if (
+        OpportunityUtils.isChangingToPaymentConfirmation(
+          opp,
+          oldRecordsMap.get(opp.Id)
+        )
+      ) {
+        candidates.add(opp);
+      }
+    }
+    if (candidates.isEmpty()) {
+      return;
+    }
+
+    Map<Id, Boolean> ownerActiveById = resolveOwnerActivityMap(candidates);
+
+    Set<Id> oppIds = new Set<Id>();
+    for (Opportunity opp : candidates) {
+      oppIds.add(opp.Id);
+    }
+    Set<Id> oppsWithOpenTask = TaskDAO.findOppsWithOpenTaskBySubject(
+      oppIds,
+      TaskUtils.SUBJECT_CONFIRMACAO_PAGAMENTO
+    );
+
+    Id financeQueueId = resolveQueueIdByDeveloperName(
+      PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME
+    );
+    Id financeUserFallbackId = financeQueueId == null
+      ? resolveActiveUserIdByEmailLike(PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE)
+      : null;
+
+    List<Task> tasksToInsert = new List<Task>();
+    for (Opportunity opp : candidates) {
+      if (oppsWithOpenTask.contains(opp.Id)) {
+        continue;
+      }
+      Boolean isOwnerActive = ownerActiveById.containsKey(opp.OwnerId)
+        ? ownerActiveById.get(opp.OwnerId)
+        : false;
+      Id taskOwner = resolvePaymentReminderTaskOwner(
+        financeQueueId,
+        financeUserFallbackId,
+        opp.OwnerId,
+        isOwnerActive
+      );
+      tasksToInsert.add(
+        TaskBO.createTask(
+          opp.Id,
+          TaskUtils.SUBJECT_CONFIRMACAO_PAGAMENTO,
+          null,
+          taskOwner,
+          System.today(),
+          null
+        )
+      );
+    }
+    if (!tasksToInsert.isEmpty()) {
+      insert tasksToInsert;
     }
   }
 }
