@@ -58,7 +58,7 @@ public with sharing class IntegracaoSAPCliente implements Queueable, Database.Al
     );
 
     for (Account acc : accountList) {
-      String docValue = acc.CNPJ__c != null ? acc.CNPJ__c : acc.CPF__c;
+      String docValue = acc.SeCPFouCNPJ__c;
       ClienteRequest corpoRequisicao = new ClienteRequest();
       corpoRequisicao.CardCode = docValue;
       corpoRequisicao.CardName = acc.Name;

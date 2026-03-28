@@ -42,9 +42,7 @@ public with sharing class IntegracaoSAPIntegrador implements Queueable, Database
     );
 
     for (Integradores__c integrador : IntegradorList) {
-      String docValue = integrador.CNPJ__c != null
-        ? integrador.CNPJ__c
-        : integrador.CPF__c;
+      String docValue = integrador.SeCPFouCNPJ__c;
       String formattedEstado = SAPBusinessPartnerMapper.normalizeState(
         integrador.Estado__c
       );
