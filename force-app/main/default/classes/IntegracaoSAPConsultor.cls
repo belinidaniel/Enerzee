@@ -51,7 +51,7 @@ public without sharing class IntegracaoSAPConsultor implements Queueable, Databa
     );
 
     for (Consultor__c acc : consultorList) {
-      String docValue = acc.CNPJ__c != null ? acc.CNPJ__c : acc.CPF__c;
+      String docValue = acc.SeCPFouCNPJ__c;
       ConsultorRequest corpoRequisicao = new ConsultorRequest();
       corpoRequisicao.CardCode = docValue;
       corpoRequisicao.CardName = acc.Name;
