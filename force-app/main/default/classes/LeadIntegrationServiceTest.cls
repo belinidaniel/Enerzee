@@ -255,6 +255,89 @@ private class LeadIntegrationServiceTest {
     System.assertEquals(500, logs[0].StatusCode__c);
   }
 
+  private class CapturingMock implements HttpCalloutMock {
+    public String capturedBody;
+    public HTTPResponse respond(HTTPRequest req) {
+      capturedBody = req.getBody();
+      HttpResponse res = new HttpResponse();
+      res.setHeader('Content-Type', 'application/json');
+      res.setStatusCode(200);
+      res.setBody('{"data":{"id":"EXT-LEAD-CAP"}}');
+      return res;
+    }
+  }
+
+  @isTest
+  static void shouldMapWebToLeadConsultorLeadSource() {
+    if (!hasLeadIntegrationMetadata()) {
+      return;
+    }
+
+    Map<String, Schema.SObjectField> leadFields = Schema.SObjectType.Lead.fields.getMap();
+    Lead leadRecord = createLeadForIntegration(true);
+
+    if (leadFields.containsKey('LeadSource')) {
+      leadRecord.put('LeadSource', 'Web-To-Lead Consultor');
+      LeadTriggerHandler.disableTrigger();
+      try {
+        update leadRecord;
+      } finally {
+        LeadTriggerHandler.enableTrigger();
+      }
+    }
+
+    Test.setMock(HttpCalloutMock.class, new SuccessMock());
+
+    Test.startTest();
+    LeadIntegrationService.integrateLead(leadRecord.Id);
+    Test.stopTest();
+
+    Lead updatedLead = [
+      SELECT Lab065_IntegracaoDistribuicaoLead__c
+      FROM Lead
+      WHERE Id = :leadRecord.Id
+    ];
+
+    Assert.areEqual(
+      true,
+      updatedLead.Lab065_IntegracaoDistribuicaoLead__c,
+      'Web-To-Lead Consultor must resolve to leadSource=17 and complete integration.'
+    );
+  }
+
+  @isTest
+  static void shouldSendTypeRegisterLeadInPayload() {
+    if (!hasLeadIntegrationMetadata()) {
+      return;
+    }
+
+    Lead leadRecord = createLeadForIntegration(true);
+
+    CapturingMock capturingMock = new CapturingMock();
+    Test.setMock(HttpCalloutMock.class, capturingMock);
+
+    Test.startTest();
+    LeadIntegrationService.integrateLead(leadRecord.Id);
+    Test.stopTest();
+
+    Lead updatedLead = [
+      SELECT Lab065_IntegracaoDistribuicaoLead__c
+      FROM Lead
+      WHERE Id = :leadRecord.Id
+    ];
+
+    Assert.areEqual(
+      true,
+      updatedLead.Lab065_IntegracaoDistribuicaoLead__c,
+      'Integration must succeed with TypeRegisterLead in payload.'
+    );
+    Assert.isTrue(
+      capturingMock.capturedBody != null &&
+        capturingMock.capturedBody.contains('TypeRegisterLead'),
+      'Payload must include TypeRegisterLead field.'
+    );
+  }
+
   @isTest
   static void shouldHandleExceptionAndCreateLogs() {
     if (!hasLeadIntegrationMetadata()) {
