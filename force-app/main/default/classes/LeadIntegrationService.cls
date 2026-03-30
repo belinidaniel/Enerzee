@@ -79,7 +79,8 @@ public with sharing class LeadIntegrationService {
         Complemento__c,
         ReasonNotConverted__c,
         OtherReason__c,
-        PostalCode
+        PostalCode,
+        RecordType.Name
       FROM Lead
       WHERE Id = :leadId
       LIMIT 1
@@ -168,6 +169,9 @@ public with sharing class LeadIntegrationService {
         }
         when 'Outro' {
           leadSourceValue = 16;
+        }
+        when 'Web-To-Lead Consultor' {
+          leadSourceValue = 17;
         }
         when else {
           leadSourceValue = null; // Valor default se não for nenhum dos casos
@@ -310,7 +314,10 @@ public with sharing class LeadIntegrationService {
         'propertyType' => leadPropertyTypeValue,
         'IdEnergyCostMonth' => leadCustoEnergiaMesValue,
         'IdEnergyBill' => leadValorContaEnergiaValue,
-        'IdRatting' => leadRatingValue
+        'IdRatting' => leadRatingValue,
+        'TypeRegisterLead' => leadRecord.RecordType != null
+          ? leadRecord.RecordType.Name
+          : null
       };
 
       String jsonPayload = JSON.serialize(payload);
