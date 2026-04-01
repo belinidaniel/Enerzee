@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AdSourceUrl__c</fullName>
+    <description
+  >URL do anúncio Meta de origem do Lead (source_url do referral do webhook). Rastreabilidade da campanha Click-to-WhatsApp.</description>
+    <externalId>false</externalId>
+    <label>Ad Source URL</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Url</type>
+</CustomField>
