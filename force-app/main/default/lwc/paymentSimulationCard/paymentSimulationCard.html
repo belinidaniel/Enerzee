@@ -1,0 +1,28 @@
+<template>
+  <div class={cardClass}>
+    <div class="card-header">
+      <span class="card-title">{card.proposalLabel}</span>
+      <span class="card-subtitle">{paymentTypeLabel}</span>
+    </div>
+    <div class="options-container">
+      <template for:each={processedOptions} for:item="option">
+        <button
+          key={option.id}
+          class={option.optionClass}
+          data-id={option.id}
+          onclick={handleOptionClick}
+          title={option.tooltip}
+        >
+          <span class="installment-count">{option.installmentCount}x</span>
+          <span class="installment-amount">{option.formattedAmount}</span>
+        </button>
+      </template>
+    </div>
+    <div class="card-footer">
+      <p class="disclaimer">
+        * Crédito sujeito a análise, consulte condições e carências no ato da
+        contratação. Simulação sujeita a alterações.
+      </p>
+    </div>
+  </div>
+</template>

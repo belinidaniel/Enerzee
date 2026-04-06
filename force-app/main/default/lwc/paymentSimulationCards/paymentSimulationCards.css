@@ -1,0 +1,12 @@
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.no-simulations {
+  color: #706e6b;
+  font-style: italic;
+  padding: 8px 0;
+}

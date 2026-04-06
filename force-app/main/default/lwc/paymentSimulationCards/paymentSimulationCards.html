@@ -1,0 +1,18 @@
+<template>
+  <template if:true={hasCards}>
+    <div class="cards-container">
+      <template for:each={cards} for:item="card">
+        <c-payment-simulation-card
+          key={card.proposalLabel}
+          card={card}
+          onoptionselect={handleOptionSelect}
+        ></c-payment-simulation-card>
+      </template>
+    </div>
+  </template>
+  <template if:false={hasCards}>
+    <div class="no-simulations">
+      <p>Nenhuma simulação de pagamento disponível.</p>
+    </div>
+  </template>
+</template>

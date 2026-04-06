@@ -69,6 +69,26 @@ public class GORecordsTO {
 
   // - DetalhesDoProcessoFinanceiro
   public String FinancingProcessDetail;
+  public List<FinancingOptionTO> OptionsFinanciamentos;
 
   public Datetime AppointmentDateTime;
+
+  public class FinancingOptionTO {
+    public String OptionName;
+    public String OptionId;
+    public Boolean OptionSelected;
+
+    public FinancingOptionTO() {
+    }
+
+    public FinancingOptionTO(
+      String optionName,
+      String optionId,
+      Boolean optionSelected
+    ) {
+      this.OptionName = optionName;
+      this.OptionId = optionId;
+      this.OptionSelected = optionSelected;
+    }
+  }
 }

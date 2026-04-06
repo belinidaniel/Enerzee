@@ -10,9 +10,10 @@
  *                       OpportunityBOPaymentConfirmationTaskTest, OpportunityBOPaymentReminderTaskTest,
  *                       OpportunityDiscountRequestControllerTest, OpportunityShareHandlerTest,
  *                       OpportunityTriggerHandlerToggleTest, OpportunityTriggerTest, OpportunityUtilsTest,
- *                       ProjetoBOCoverageTest, ProjetoTriggerTest, ProposalPendingControllerTest,
- *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest, ServiceAppointmentBOTest,
- *                       WorkDeliveryReportPdfControllerTest
+ *                       PaymentSimulationBOTest, PaymentSimulationCardControllerTest, ProjetoBOCoverageTest,
+ *                       ProjetoTriggerTest, ProposalPendingControllerTest, ProposalPendingResponseRestTest,
+ *                       ProposalPendingStatusQueueableTest, ProposalServicePaymentSimulationTest,
+ *                       ServiceAppointmentBOTest, WorkDeliveryReportPdfControllerTest
  **/
 public class OpportunityTriggerHandler extends TriggerHandler {
   public OpportunityTriggerHandler() {
@@ -59,6 +60,9 @@ public class OpportunityTriggerHandler extends TriggerHandler {
     OpportunityCommentNotificationService.notifyOnConsultantCommentChange(
       (List<Opportunity>) Trigger.new,
       new Map<Id, Opportunity>()
+    );
+    PaymentSimulationBO.createSimulationsForOpportunities(
+      (List<Opportunity>) Trigger.new
     );
   }
 
@@ -223,6 +227,10 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (Map<Id, Opportunity>) Trigger.oldMap
     );
     OpportunityBO.sendKitUpdateOnProposalParamsChange(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
+    PaymentSimulationBO.recalculateOnAmountChange(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
