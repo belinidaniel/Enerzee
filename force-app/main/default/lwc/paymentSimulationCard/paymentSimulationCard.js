@@ -15,9 +15,13 @@ export default class PaymentSimulationCard extends LightningElement {
   @api card;
 
   get cardClass() {
+    const hasApiSelection = !!this.card?.selectedSimulationId;
+    if (!hasApiSelection) {
+      return "simulation-card";
+    }
     return this.card?.hasSelected
-      ? "simulation-card simulation-card--selected"
-      : "simulation-card";
+      ? "simulation-card"
+      : "simulation-card simulation-card--inactive";
   }
 
   get paymentTypeLabel() {

@@ -39,6 +39,7 @@
         <members>FinancingRate__c.PaymentType__c</members>
         <members>FinancingRate__c.ProposalLabel__c</members>
         <members>Opportunity.FinancingProcessDetails__c</members>
+        <members>Opportunity.SelectedSimulation__c</members>
         <members>Opportunity.GrupoTarifario__c</members>
         <members>Opportunity.ObservacaoPagamentoDireito__c</members>
         <members>Opportunity.ObservacaoPagamentoEsquerdo__c</members>

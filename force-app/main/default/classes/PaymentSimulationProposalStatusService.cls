@@ -53,7 +53,7 @@ public without sharing class PaymentSimulationProposalStatusService {
         .add(
           new GORecordsTO.FinancingOptionTO(
             buildOptionName(optionIndex, simulationRecord),
-            simulationRecord.Name,
+            simulationRecord.Id,
             simulationRecord.Selected__c == true
           )
         );

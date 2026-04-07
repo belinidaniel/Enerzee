@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <classAccesses>
         <apexClass>APIOpcoesCondicaoPagamento</apexClass>
@@ -6033,7 +6033,8 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>jif6QH2I3t7Mptz__GoToConnectPhoneControllerDevTest</apexClass>
+        <apexClass
+    >jif6QH2I3t7Mptz__GoToConnectPhoneControllerDevTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -6053,11 +6054,13 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>jif6QH2I3t7Mptz__GoToMeetingEventDetailsController</apexClass>
+        <apexClass
+    >jif6QH2I3t7Mptz__GoToMeetingEventDetailsController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>jif6QH2I3t7Mptz__GoToMeetingEventDetailsControllerTest</apexClass>
+        <apexClass
+    >jif6QH2I3t7Mptz__GoToMeetingEventDetailsControllerTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -7577,19 +7580,23 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>sf_fieldservice__FSL_RESTController_GoogleApis_Directions</apexClass>
+        <apexClass
+    >sf_fieldservice__FSL_RESTController_GoogleApis_Directions</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>sf_fieldservice__FSL_RESTController_GoogleApis_Geo</apexClass>
+        <apexClass
+    >sf_fieldservice__FSL_RESTController_GoogleApis_Geo</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>sf_fieldservice__FSL_RESTController_GoogleApis_Requestor</apexClass>
+        <apexClass
+    >sf_fieldservice__FSL_RESTController_GoogleApis_Requestor</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>sf_fieldservice__FSL_RESTController_GoogleApis_Tests</apexClass>
+        <apexClass
+    >sf_fieldservice__FSL_RESTController_GoogleApis_Tests</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -7609,7 +7616,8 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>sfleadcaphfprod__SalesforceLeadCaptureControllerTest</apexClass>
+        <apexClass
+    >sfleadcaphfprod__SalesforceLeadCaptureControllerTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <fieldPermissions>

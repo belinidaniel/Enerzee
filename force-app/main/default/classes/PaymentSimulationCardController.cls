@@ -2,7 +2,7 @@
  * @description       : Controller LWC para exibição das simulações de pagamento agrupadas por ProposalLabel
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-06-2026
+ * @last modified on  : 04-07-2026
  * @last modified by  : Daniel Belini
  * @test              : PaymentSimulationCardControllerTest
  **/
@@ -12,6 +12,17 @@ public with sharing class PaymentSimulationCardController {
     if (opportunityId == null) {
       return new List<ProposalCardWrapper>();
     }
+
+    List<Opportunity> opps = [
+      SELECT SelectedSimulation__c
+      FROM Opportunity
+      WHERE Id = :opportunityId
+      WITH SECURITY_ENFORCED
+      LIMIT 1
+    ];
+    String selectedSimulationId = opps.isEmpty()
+      ? null
+      : opps[0].SelectedSimulation__c;
 
     List<PaymentSimulation__c> simulations = PaymentSimulationDAO.getByOpportunityIds(
       new Set<Id>{ opportunityId }
@@ -31,10 +42,15 @@ public with sharing class PaymentSimulationCardController {
         card.proposalLabel = label;
         card.paymentType = sim.PaymentType__c;
         card.hasSelected = false;
+        card.selectedSimulationId = selectedSimulationId;
         card.options = new List<SimulationOptionWrapper>();
         cardsByLabel.put(label, card);
         labelOrder.add(label);
       }
+
+      Boolean isAppSelected =
+        String.isNotBlank(selectedSimulationId) &&
+        sim.Id == (Id) selectedSimulationId;
 
       SimulationOptionWrapper option = new SimulationOptionWrapper();
       option.id = sim.Id;
@@ -44,12 +60,12 @@ public with sharing class PaymentSimulationCardController {
         : Integer.valueOf(String.valueOf(sim.InstallmentCount__c));
       option.installmentAmount = sim.InstallmentAmount__c;
       option.interestRate = sim.InterestRate__c;
-      option.selected = sim.Selected__c;
+      option.selected = isAppSelected;
 
       ProposalCardWrapper card = cardsByLabel.get(label);
       card.options.add(option);
 
-      if (sim.Selected__c) {
+      if (isAppSelected) {
         card.hasSelected = true;
       }
     }
@@ -68,6 +84,8 @@ public with sharing class PaymentSimulationCardController {
     public String paymentType;
     @AuraEnabled
     public Boolean hasSelected;
+    @AuraEnabled
+    public String selectedSimulationId;
     @AuraEnabled
     public List<SimulationOptionWrapper> options;
   }
