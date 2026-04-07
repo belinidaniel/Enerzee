@@ -3,6 +3,7 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { refreshApex } from "@salesforce/apex";
 import { updateRecord } from "lightning/uiRecordApi";
 import SELECTED_FIELD from "@salesforce/schema/PaymentSimulation__c.Selected__c";
+import SELECTED_SIMULATION_FIELD from "@salesforce/schema/Opportunity.SelectedSimulation__c";
 import getSimulationCards from "@salesforce/apex/PaymentSimulationCardController.getSimulationCards";
 
 export default class PaymentSimulationCards extends LightningElement {
@@ -10,6 +11,8 @@ export default class PaymentSimulationCards extends LightningElement {
 
   _wiredResult;
   cards = [];
+  pendingSimulationId = null;
+  isSaving = false;
 
   @wire(getSimulationCards, { opportunityId: "$recordId" })
   wiredCards(result) {
@@ -31,23 +34,70 @@ export default class PaymentSimulationCards extends LightningElement {
     return this.cards && this.cards.length > 0;
   }
 
+  get hasPendingSelection() {
+    return !!this.pendingSimulationId;
+  }
+
   handleOptionSelect(event) {
     const simulationId = event.detail.simulationId;
-    updateRecord({
+    const currentSelectedId = this._getCurrentSelectedSimulationId();
+    if (simulationId === currentSelectedId) {
+      return;
+    }
+    this.pendingSimulationId = simulationId;
+  }
+
+  handleCancel() {
+    this.pendingSimulationId = null;
+  }
+
+  handleSave() {
+    if (!this.pendingSimulationId || this.isSaving) {
+      return;
+    }
+    this.isSaving = true;
+    const opportunityUpdate = updateRecord({
       fields: {
-        Id: simulationId,
+        Id: this.recordId,
+        [SELECTED_SIMULATION_FIELD.fieldApiName]: this.pendingSimulationId
+      }
+    });
+    const simulationUpdate = updateRecord({
+      fields: {
+        Id: this.pendingSimulationId,
         [SELECTED_FIELD.fieldApiName]: true
       }
-    })
+    });
+    Promise.all([opportunityUpdate, simulationUpdate])
       .then(() => refreshApex(this._wiredResult))
-      .catch((err) => {
+      .then(() => {
+        this.pendingSimulationId = null;
+        this.isSaving = false;
         this.dispatchEvent(
           new ShowToastEvent({
-            title: "Erro ao selecionar opção",
+            title: "Simulação salva",
+            message: "A simulação selecionada foi atualizada.",
+            variant: "success"
+          })
+        );
+      })
+      .catch((err) => {
+        this.isSaving = false;
+        this.dispatchEvent(
+          new ShowToastEvent({
+            title: "Erro ao salvar simulação",
             message: err.body?.message,
             variant: "error"
           })
         );
       });
+  }
+
+  _getCurrentSelectedSimulationId() {
+    if (!this.cards) return null;
+    for (const card of this.cards) {
+      if (card.selectedSimulationId) return card.selectedSimulationId;
+    }
+    return null;
   }
 }

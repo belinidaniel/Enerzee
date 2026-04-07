@@ -87,6 +87,12 @@
   border-color: #1c3a14;
 }
 
+.option-btn--pending {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-color: #e65100;
+  border-style: dashed;
+}
+
 .installment-count {
   font-size: 0.75rem;
   font-weight: 600;

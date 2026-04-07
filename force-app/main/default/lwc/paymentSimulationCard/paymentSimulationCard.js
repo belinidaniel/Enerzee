@@ -13,6 +13,7 @@ const BRL_FORMATTER = new Intl.NumberFormat("pt-BR", {
 
 export default class PaymentSimulationCard extends LightningElement {
   @api card;
+  @api pendingSimulationId;
 
   get cardClass() {
     const hasApiSelection = !!this.card?.selectedSimulationId;
@@ -31,15 +32,21 @@ export default class PaymentSimulationCard extends LightningElement {
 
   get processedOptions() {
     if (!this.card?.options) return [];
-    return this.card.options.map((opt) => ({
-      id: opt.id,
-      installmentCount: opt.installmentCount,
-      formattedAmount: BRL_FORMATTER.format(opt.installmentAmount || 0),
-      optionClass: opt.selected
-        ? "option-btn option-btn--active"
-        : "option-btn",
-      tooltip: opt.name
-    }));
+    return this.card.options.map((opt) => {
+      let optionClass = "option-btn";
+      if (this.pendingSimulationId && opt.id === this.pendingSimulationId) {
+        optionClass = "option-btn option-btn--pending";
+      } else if (!this.pendingSimulationId && opt.selected) {
+        optionClass = "option-btn option-btn--active";
+      }
+      return {
+        id: opt.id,
+        installmentCount: opt.installmentCount,
+        formattedAmount: BRL_FORMATTER.format(opt.installmentAmount || 0),
+        optionClass,
+        tooltip: opt.name
+      };
+    });
   }
 
   handleOptionClick(event) {

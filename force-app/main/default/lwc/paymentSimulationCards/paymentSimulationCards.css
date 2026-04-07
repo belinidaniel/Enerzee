@@ -10,3 +10,47 @@
   font-style: italic;
   padding: 8px 0;
 }
+
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 0 4px;
+}
+
+.btn-cancel,
+.btn-save {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    opacity 0.15s;
+}
+
+.btn-cancel {
+  background-color: #e0e0e0;
+  color: #3e3e3c;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background-color: #c8c8c8;
+}
+
+.btn-save {
+  background-color: #2e7d32;
+  color: #ffffff;
+}
+
+.btn-save:hover:not(:disabled) {
+  background-color: #1b5e20;
+}
+
+.btn-cancel:disabled,
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
