@@ -343,7 +343,7 @@ public without sharing class KitInstalacaoBO {
               Quantity,
               UnitPrice,
               product2.Family,
-              product2.ExternalId__c
+              PricebookEntry.ExternalId__c
             FROM OpportunityLineItems
           )
         FROM Opportunity
@@ -433,7 +433,7 @@ public without sharing class KitInstalacaoBO {
       product.valueUnity = oli.UnitPrice;
       product.productFamily = oli.Product2.Family;
 
-      product.externalId = oli.Product2.ExternalId__c;
+      product.externalId = oli.PricebookEntry.ExternalId__c;
       request.listProducts.add(product);
     }
     return request;

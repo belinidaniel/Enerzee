@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>KitInstalacaoBO</members>
+        <members>OpportunityEntryRest</members>
+        <members>OpportunityEntryRestTest</members>
+        <members>PricebookEntryDeactivateRest</members>
+        <members>PricebookEntryDeactivateRestTest</members>
+        <members>ProductUpdateEntryRest</members>
+        <members>ProductUpdateEntryRestTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>PricebookEntry.ExternalId__c</members>
+        <members>Product2.Category__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>TipoKitPromocional</members>
+        <name>GlobalValueSet</name>
+    </types>
+    <types>
+        <members>Engenharia</members>
+        <name>PermissionSet</name>
+    </types>
+    <version>63.0</version>
+</Package>
