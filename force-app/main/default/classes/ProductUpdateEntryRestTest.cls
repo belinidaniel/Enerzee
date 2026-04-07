@@ -181,6 +181,39 @@ public with sharing class ProductUpdateEntryRestTest {
   }
 
   @IsTest
+  static void testReusesInactivePricebookEntry_WhenNewExternalIdArrives() {
+    Product2 productRecord = createProduct(
+      'Produto inativo',
+      'PC-INACTIVE',
+      'LEG-INACTIVE',
+      120
+    );
+    updatePbeExternalId(productRecord.Id, 'PBE-OLD-INACTIVE', false);
+
+    Test.startTest();
+    ProductUpdateEntryRest.testUpdateProductPrices(
+      '[{"productCode":"PC-INACTIVE","externalId":"PBE-NEW-INACTIVE","name":"Produto inativo atualizado","price":321.45,"productFamily":"Solar"}]'
+    );
+    Test.stopTest();
+
+    String responseBody = RestContext.response.responseBody.toString();
+    List<PricebookEntry> pricebookEntries = getStdPbes(productRecord.Id);
+    Product2 updatedProduct = [
+      SELECT Name, Family
+      FROM Product2
+      WHERE Id = :productRecord.Id
+    ];
+
+    System.assert(responseBody.contains('"Updated"'));
+    System.assertEquals(1, pricebookEntries.size());
+    System.assertEquals('PBE-NEW-INACTIVE', pricebookEntries[0].ExternalId__c);
+    System.assertEquals(321.45, pricebookEntries[0].UnitPrice);
+    System.assertEquals(true, pricebookEntries[0].IsActive);
+    System.assertEquals('Produto inativo atualizado', updatedProduct.Name);
+    System.assertEquals('Solar', updatedProduct.Family);
+  }
+
+  @IsTest
   static void testSingleObjectPayloadCreatesProductAndEntry() {
     Test.startTest();
     ProductUpdateEntryRest.testUpdateProductPrices(

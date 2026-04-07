@@ -371,6 +371,10 @@ global with sharing class ProductUpdateEntryRest {
           candidateEntries,
           matchingEntry != null ? matchingEntry.Id : null
         );
+        PricebookEntry inactiveEntry = findInactivePricebookEntry(
+          candidateEntries,
+          matchingEntry != null ? matchingEntry.Id : null
+        );
 
         if (matchingEntry != null) {
           if (activeEntry != null && activeEntry.Id != matchingEntry.Id) {
@@ -412,6 +416,26 @@ global with sharing class ProductUpdateEntryRest {
               'There is already an active PricebookEntry for the product.'
             );
           }
+          continue;
+        }
+
+        if (inactiveEntry != null) {
+          String previousExternalId = normalize(inactiveEntry.ExternalId__c);
+          if (!String.isBlank(previousExternalId)) {
+            refreshedExternalIdToPricebookEntry.remove(previousExternalId);
+          }
+          inactiveEntry.ExternalId__c = item.externalId;
+          inactiveEntry.UnitPrice = item.payload.price;
+          inactiveEntry.IsActive = true;
+          item.pricebookEntryId = inactiveEntry.Id;
+          refreshedExternalIdToPricebookEntry.put(
+            item.externalId,
+            inactiveEntry
+          );
+          entriesToUpdate.add(
+            buildPricebookEntryAction(item.index, 'Updated', inactiveEntry)
+          );
+          plannedExternalIdByProductId.put(item.productId, item.externalId);
           continue;
         }
 
@@ -635,6 +659,21 @@ global with sharing class ProductUpdateEntryRest {
     }
     for (PricebookEntry entry : entries) {
       if (entry.IsActive && (ignoredId == null || entry.Id != ignoredId)) {
+        return entry;
+      }
+    }
+    return null;
+  }
+
+  private static PricebookEntry findInactivePricebookEntry(
+    List<PricebookEntry> entries,
+    Id ignoredId
+  ) {
+    if (entries == null || entries.isEmpty()) {
+      return null;
+    }
+    for (PricebookEntry entry : entries) {
+      if (!entry.IsActive && (ignoredId == null || entry.Id != ignoredId)) {
         return entry;
       }
     }
