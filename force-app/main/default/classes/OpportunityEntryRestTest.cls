@@ -432,6 +432,60 @@ public class OpportunityEntryRestTest {
   }
 
   @isTest
+  static void testUpdateOpportunityProductsByPricebookEntryExternalId() {
+    Account accountRecord = (Account) TestFactory.createSObject(
+      new Account(Name = 'REST Update Account PBE'),
+      true
+    );
+    Opportunity opportunityRecord = createOpportunityForRest(accountRecord);
+    Product2 productRecord = createProductForRest(
+      'REST-PROD-PBE',
+      'Produto PBE',
+      15
+    );
+
+    PricebookEntry pricebookEntry = [
+      SELECT Id, ExternalId__c
+      FROM PricebookEntry
+      WHERE
+        Pricebook2Id = :Test.getStandardPricebookId()
+        AND Product2Id = :productRecord.Id
+      LIMIT 1
+    ];
+    pricebookEntry.ExternalId__c = 'PBE-REST-1';
+    update pricebookEntry;
+
+    RestRequest req = new RestRequest();
+    RestResponse res = new RestResponse();
+    req.requestBody = Blob.valueOf(
+      '{"opportunityId":"' +
+        opportunityRecord.Id +
+        '","Products":[{"Id":"PBE-REST-1","Quantity":4,"UnitaryValue":250.75,"Description":"Usando PBE"}]}'
+    );
+    RestContext.request = req;
+    RestContext.response = res;
+
+    Test.startTest();
+    OpportunityEntryRest.updateOpportunityProducts();
+    Test.stopTest();
+
+    OpportunityLineItem insertedItem = [
+      SELECT Quantity, UnitPrice, Description, PricebookEntry.ExternalId__c
+      FROM OpportunityLineItem
+      WHERE OpportunityId = :opportunityRecord.Id
+      LIMIT 1
+    ];
+
+    System.assertEquals(4, insertedItem.Quantity);
+    System.assertEquals(250.75, insertedItem.UnitPrice);
+    System.assertEquals('Usando PBE', insertedItem.Description);
+    System.assertEquals(
+      'PBE-REST-1',
+      insertedItem.PricebookEntry.ExternalId__c
+    );
+  }
+
+  @isTest
   static void testUpdateOpportunityProductsMissingOpportunityId() {
     RestRequest req = new RestRequest();
     RestResponse res = new RestResponse();
