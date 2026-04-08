@@ -2,8 +2,8 @@
  * @description       : Deactivates standard price book entries by externalId.
  * @author            : Codex
  * @group             :
- * @last modified on  : 04-06-2026
- * @last modified by  : Codex
+ * @last modified on  : 04-07-2026
+ * @last modified by  : Daniel Belini
  * @test              : PricebookEntryDeactivateRestTest
  **/
 @RestResource(urlMapping='/PricebookEntryDeactivate/*')
@@ -110,7 +110,7 @@ global with sharing class PricebookEntryDeactivateRest {
               'productId' => pricebookEntry.Product2Id,
               'productCode' => pricebookEntry.Product2.ProductCode,
               'name' => pricebookEntry.Product2.Name,
-              'pricebookEntryId' => pricebookEntry.Id
+              'Id' => pricebookEntry.Id
             }
           );
           continue;
@@ -135,7 +135,7 @@ global with sharing class PricebookEntryDeactivateRest {
                 'productId' => pricebookEntry.Product2Id,
                 'productCode' => pricebookEntry.Product2.ProductCode,
                 'name' => pricebookEntry.Product2.Name,
-                'pricebookEntryId' => pricebookEntry.Id
+                'Id' => pricebookEntry.Id
               }
             );
             continue;
@@ -149,7 +149,7 @@ global with sharing class PricebookEntryDeactivateRest {
               'productId' => pricebookEntry.Product2Id,
               'productCode' => pricebookEntry.Product2.ProductCode,
               'name' => pricebookEntry.Product2.Name,
-              'pricebookEntryId' => pricebookEntry.Id
+              'Id' => pricebookEntry.Id
             }
           );
         }

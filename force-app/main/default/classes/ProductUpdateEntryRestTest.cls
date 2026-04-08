@@ -89,6 +89,11 @@ public with sharing class ProductUpdateEntryRestTest {
     System.assertEquals('KIT Atualizado', updatedProduct.Name);
     System.assertEquals('SUL', updatedProduct.Family);
     System.assertEquals('3', updatedProduct.Category__c);
+    String responseBody = RestContext.response.responseBody.toString();
+    System.assert(responseBody.contains('"Id"'));
+    System.assert(responseBody.contains(String.valueOf(pricebookEntry.Id)));
+    System.assert(responseBody.contains('"ProposalNumber"'));
+    System.assert(responseBody.contains('"Success" : true'));
   }
 
   @IsTest
@@ -174,7 +179,12 @@ public with sharing class ProductUpdateEntryRestTest {
     String responseBody = RestContext.response.responseBody.toString();
     List<PricebookEntry> pricebookEntries = getStdPbes(productRecord.Id);
 
-    System.assert(responseBody.contains('"Conflict"'));
+    System.assert(responseBody.contains('"Success" : false'));
+    System.assert(
+      responseBody.contains(
+        'There is already an active PricebookEntry for the product.'
+      )
+    );
     System.assertEquals(1, pricebookEntries.size());
     System.assertEquals('PBE-ACTIVE', pricebookEntries[0].ExternalId__c);
     System.assertEquals(80, pricebookEntries[0].UnitPrice);
@@ -204,7 +214,11 @@ public with sharing class ProductUpdateEntryRestTest {
       WHERE Id = :productRecord.Id
     ];
 
-    System.assert(responseBody.contains('"Updated"'));
+    System.assert(responseBody.contains('"Success" : true'));
+    System.assert(responseBody.contains('"Id"'));
+    System.assert(
+      responseBody.contains(String.valueOf(pricebookEntries[0].Id))
+    );
     System.assertEquals(1, pricebookEntries.size());
     System.assertEquals('PBE-NEW-INACTIVE', pricebookEntries[0].ExternalId__c);
     System.assertEquals(321.45, pricebookEntries[0].UnitPrice);
@@ -241,7 +255,7 @@ public with sharing class ProductUpdateEntryRestTest {
     Test.stopTest();
 
     String responseBody = RestContext.response.responseBody.toString();
-    System.assert(responseBody.contains('"status"'));
-    System.assert(responseBody.contains('Error'));
+    System.assert(responseBody.contains('"Success" : false'));
+    System.assert(responseBody.contains('No products provided.'));
   }
 }
