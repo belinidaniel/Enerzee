@@ -2,8 +2,8 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-06-2026
- * @last modified by  : Codex
+ * @last modified on  : 04-07-2026
+ * @last modified by  : Daniel Belini
  * @test              : ProductUpdateEntryRestTest
  **/
 @RestResource(urlMapping='/ProductUpdateEntry/*')
@@ -19,9 +19,11 @@ global with sharing class ProductUpdateEntryRest {
   }
 
   global class ResponseWrapper {
-    public String status;
-    public String message;
-    public List<Map<String, String>> results;
+    public Map<String, String> Content;
+    public List<String> Errors;
+    public String Id;
+    public String ProposalNumber;
+    public Boolean Success;
   }
 
   private class ProcessingItem {
@@ -46,16 +48,13 @@ global with sharing class ProductUpdateEntryRest {
   global static void updateProductPrices() {
     RestRequest req = RestContext.request;
     String body = req.requestBody != null ? req.requestBody.toString() : '';
-    ResponseWrapper resp = new ResponseWrapper();
-    resp.results = new List<Map<String, String>>();
+    List<ResponseWrapper> responseItems = new List<ResponseWrapper>();
 
     try {
       List<ProductPriceUpdate> updates = parsePayload(body);
       if (updates.isEmpty()) {
-        resp.status = 'Error';
-        resp.message = 'No products provided.';
         RestContext.response.responseBody = Blob.valueOf(
-          JSON.serializePretty(resp)
+          JSON.serializePretty(buildErrorResponse('No products provided.'))
         );
         return;
       }
@@ -513,30 +512,24 @@ global with sharing class ProductUpdateEntryRest {
         if (item.status == 'Created' || item.status == 'Updated') {
           successCount++;
         }
-        resp.results.add(buildResultMap(item, productRecord));
+        responseItems.add(buildResponseItem(item, productRecord));
       }
-
-      resp.status = successCount > 0 ? 'Success' : 'Error';
-      resp.message = 'Products processed.';
       RestContext.response.responseBody = Blob.valueOf(
-        JSON.serializePretty(resp)
+        JSON.serializePretty(responseItems)
       );
     } catch (Exception e) {
-      ResponseWrapper err = new ResponseWrapper();
-      err.status = 'Error';
-      err.message = 'Error: ' + e.getMessage();
-      err.results = new List<Map<String, String>>();
       RestContext.response.responseBody = Blob.valueOf(
-        JSON.serializePretty(err)
+        JSON.serializePretty(buildErrorResponse('Error: ' + e.getMessage()))
       );
     }
   }
 
-  private static Map<String, String> buildResultMap(
+  private static ResponseWrapper buildResponseItem(
     ProcessingItem item,
     Product2 productRecord
   ) {
-    return new Map<String, String>{
+    ResponseWrapper responseItem = new ResponseWrapper();
+    responseItem.Content = new Map<String, String>{
       'name' => productRecord != null
         ? productRecord.Name
         : item.payload != null ? item.payload.name : null,
@@ -553,9 +546,27 @@ global with sharing class ProductUpdateEntryRest {
         item.payload.price != null
         ? String.valueOf(item.payload.price)
         : null,
-      'productId' => productRecord != null ? productRecord.Id : null,
-      'pricebookEntryId' => item.pricebookEntryId
+      'productId' => productRecord != null ? productRecord.Id : null
     };
+    responseItem.Errors = String.isBlank(item.message)
+      ? null
+      : new List<String>{ item.message };
+    responseItem.Id = item.pricebookEntryId != null
+      ? String.valueOf(item.pricebookEntryId)
+      : null;
+    responseItem.ProposalNumber = null;
+    responseItem.Success = item.status == 'Created' || item.status == 'Updated';
+    return responseItem;
+  }
+
+  private static List<ResponseWrapper> buildErrorResponse(String message) {
+    ResponseWrapper responseItem = new ResponseWrapper();
+    responseItem.Content = null;
+    responseItem.Errors = new List<String>{ message };
+    responseItem.Id = null;
+    responseItem.ProposalNumber = null;
+    responseItem.Success = false;
+    return new List<ResponseWrapper>{ responseItem };
   }
 
   private static void applyProductFields(
