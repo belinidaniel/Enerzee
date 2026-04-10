@@ -82,22 +82,6 @@ public with sharing class ProposalGenerationService {
       templateVersion.Id
     );
 
-    ContentVersion existingVersion = ProposalFileService.findExistingProposal(
-      context.opportunity.Id,
-      payload.payloadHash
-    );
-    if (existingVersion != null) {
-      ProposalResult reusedResult = new ProposalResult();
-      reusedResult.success = true;
-      reusedResult.message = 'Proposta reutilizada a partir da ultima versao gerada.';
-      reusedResult.contentVersionId = existingVersion.Id;
-      reusedResult.previewUrl = ProposalFileService.buildPreviewUrl(
-        existingVersion.Id
-      );
-      reusedResult.reusedExistingFile = true;
-      return reusedResult;
-    }
-
     ProposalApiClient.ApiResponse apiResponse = ProposalApiClient.convertProposal(
       templateVersion,
       payload.tagsJson,

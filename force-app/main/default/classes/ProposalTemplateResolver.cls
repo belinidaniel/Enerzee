@@ -7,20 +7,34 @@
  * @test              : ProposalConsoleControllerApiTest, ProposalConsoleControllerTest, ProposalEngineSupportTest
  **/
 public with sharing class ProposalTemplateResolver {
-  private static final String TEMPLATE_ROLE_API = 'API_PPTX_TEMPLATE';
-
   public static ContentVersion resolveTemplate(
     ProposalContextResolver.Context context
   ) {
-    if (context == null || context.cover == null) {
+    if (
+      context == null ||
+      context.opportunity == null ||
+      context.cover == null
+    ) {
       throw new AuraHandledException('Contexto de proposta invalido.');
     }
+
+    Id coverId = context.cover.Id;
+    String tipoKit = context.opportunity.TipoKitPromocional__c;
+
+    System.debug(
+      '[ProposalTemplateResolver] coverId=' + coverId + ' tipoKit=' + tipoKit
+    );
 
     List<ContentDocumentLink> links = [
       SELECT ContentDocument.LatestPublishedVersionId
       FROM ContentDocumentLink
-      WHERE LinkedEntityId = :context.cover.Id
+      WHERE LinkedEntityId = :coverId
     ];
+
+    System.debug(
+      '[ProposalTemplateResolver] ContentDocumentLinks encontrados: ' +
+      links.size()
+    );
 
     Set<Id> versionIds = new Set<Id>();
     for (ContentDocumentLink link : links) {
@@ -32,8 +46,12 @@ public with sharing class ProposalTemplateResolver {
       }
     }
 
+    System.debug('[ProposalTemplateResolver] versionIds: ' + versionIds);
+
     if (versionIds.isEmpty()) {
-      return null;
+      throw new AuraHandledException(
+        'Nenhum arquivo encontrado na Capa de Proposta selecionada.'
+      );
     }
 
     List<ContentVersion> candidates = [
@@ -46,40 +64,82 @@ public with sharing class ProposalTemplateResolver {
         VersionData,
         ContentDocumentId,
         IsTemplate__c,
-        ProposalTemplateRole__c,
         TipoKitPromocional__c
       FROM ContentVersion
-      WHERE Id IN :versionIds
+      WHERE Id IN :versionIds AND FileExtension = 'pptx'
       ORDER BY CreatedDate DESC
     ];
 
-    List<ContentVersion> matches = new List<ContentVersion>();
-    for (ContentVersion version : candidates) {
-      if (
-        version.IsTemplate__c != true ||
-        version.ProposalTemplateRole__c != TEMPLATE_ROLE_API
-      ) {
-        continue;
-      }
-
-      if (context.isPromotional == true) {
-        if (
-          version.TipoKitPromocional__c ==
-          context.opportunity.TipoKitPromocional__c
-        ) {
-          matches.add(version);
-        }
-      } else if (String.isBlank(version.TipoKitPromocional__c)) {
-        matches.add(version);
-      }
-    }
-
-    if (matches.size() > 1) {
-      throw new AuraHandledException(
-        'Configuracao ambigua: existe mais de um template PPTX valido para a capa selecionada.'
+    System.debug(
+      '[ProposalTemplateResolver] candidates PPTX encontrados: ' +
+      candidates.size()
+    );
+    for (ContentVersion cv : candidates) {
+      System.debug(
+        '[ProposalTemplateResolver] candidate => Id=' +
+          cv.Id +
+          ' Title=' +
+          cv.Title +
+          ' TipoKitPromocional__c=' +
+          cv.TipoKitPromocional__c
       );
     }
 
-    return matches.isEmpty() ? null : matches[0];
+    List<ContentVersion> matches = new List<ContentVersion>();
+    for (ContentVersion version : candidates) {
+      if (String.isBlank(tipoKit)) {
+        if (String.isBlank(version.TipoKitPromocional__c)) {
+          System.debug(
+            '[ProposalTemplateResolver] MATCH (sem kit): ' + version.Title
+          );
+          matches.add(version);
+        } else {
+          System.debug(
+            '[ProposalTemplateResolver] SKIP (opp sem kit, template tem kit): ' +
+            version.Title
+          );
+        }
+      } else {
+        if (
+          String.isBlank(version.TipoKitPromocional__c) ||
+          version.TipoKitPromocional__c == tipoKit
+        ) {
+          System.debug(
+            '[ProposalTemplateResolver] MATCH (com kit): ' +
+              version.Title +
+              ' templateKit=' +
+              version.TipoKitPromocional__c
+          );
+          matches.add(version);
+        } else {
+          System.debug(
+            '[ProposalTemplateResolver] SKIP (kit diferente): ' +
+              version.Title +
+              ' templateKit=' +
+              version.TipoKitPromocional__c +
+              ' oppKit=' +
+              tipoKit
+          );
+        }
+      }
+    }
+
+    System.debug(
+      '[ProposalTemplateResolver] matches finais: ' + matches.size()
+    );
+
+    if (matches.size() > 1) {
+      throw new AuraHandledException(
+        'Configuracao ambigua: existe mais de um template PPTX valido para a Capa e kit selecionados.'
+      );
+    }
+
+    if (matches.isEmpty()) {
+      throw new AuraHandledException(
+        'Nenhum arquivo PPTX configurado para a Capa e kit selecionados.'
+      );
+    }
+
+    return matches[0];
   }
 }

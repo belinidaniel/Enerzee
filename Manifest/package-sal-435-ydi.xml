@@ -103,7 +103,6 @@
         <members>ProposalTagMapping__mdt.SortOrder__c</members>
         <members>ProposalTagMapping__mdt.SourcePath__c</members>
         <members>ProposalTagMapping__mdt.TagKey__c</members>
-        <members>ProposalSectionRule__mdt.SectionsJson__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -136,14 +135,7 @@
         <name>CustomTab</name>
     </types>
     <types>
-        <members>EnerzeeProposalApi</members>
-        <name>ExternalCredential</name>
-    </types>
-    <types>
-        <members>Enerzee_Proposal_Api</members>
-        <name>NamedCredential</name>
-    </types>
-    <types>
+        <members>Integrador.EnerzeeProposalApi</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_NumeroProposta</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_NomeConta</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_ValidadeProposta</members>
@@ -161,6 +153,37 @@
         <members>ProposalTagMapping.GRUPO_B_PADRAO_NumeroParcelas</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_ValorParcela</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_TaxaJuros</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_Logradouro</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_Complemento</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_Bairro</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_CEP</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_MunicipioInst</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_EstadoInst</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_Modelo</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_NumeroInversores</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_PotenciaPico</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_FabricanteInv</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_ModeloInversor</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_Inv1PotNominal</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_TipoTelhado</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_AreaM</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_PrazoEntrega</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_TarifaTributos</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_ConsumoInfB</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_ConsumoAnualInf</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_CustoMedioEn</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_EconomiaAnual</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_EconomiaAcum</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_NomeDaConta</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_SeCPFouCNPJ</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_ConsultorOpp</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_GrupoTarifario</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_NumeroProposta2</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_DataProposta</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_GeracaoMensalC</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_EconomiaMensalC</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_ValorTotalPropostaC</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_KwhC</members>
         <members>ProposalSectionRule.GB_PADRAO_INITIAL</members>
         <members>ProposalSectionRule.GB_PADRAO_FINANCING</members>
         <members>ProposalSectionRule.GB_PADRAO_RENTAL</members>

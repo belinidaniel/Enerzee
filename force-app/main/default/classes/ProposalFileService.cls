@@ -28,6 +28,21 @@ public with sharing class ProposalFileService {
     return matches.isEmpty() ? null : matches[0];
   }
 
+  public static ContentVersion findLatestProposal(Id opportunityId) {
+    if (opportunityId == null) {
+      return null;
+    }
+
+    List<ContentVersion> matches = [
+      SELECT Id, Title, FileExtension, ContentDocumentId
+      FROM ContentVersion
+      WHERE FirstPublishLocationId = :opportunityId AND IsProposal__c = TRUE
+      ORDER BY CreatedDate DESC
+      LIMIT 1
+    ];
+    return matches.isEmpty() ? null : matches[0];
+  }
+
   public static Id saveGeneratedProposal(
     ProposalContextResolver.Context context,
     ProposalApiClient.ApiResponse apiResponse,
@@ -74,7 +89,8 @@ public with sharing class ProposalFileService {
   public static String buildPreviewUrl(Id contentVersionId) {
     return contentVersionId == null
       ? null
-      : '/sfc/servlet.shepherd/version/download/' + contentVersionId;
+      : '/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Pdf&versionId=' +
+        contentVersionId;
   }
 
   private static String buildFileName(

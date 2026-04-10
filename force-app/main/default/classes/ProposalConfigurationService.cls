@@ -138,6 +138,9 @@ public with sharing class ProposalConfigurationService {
       if (normalize(record.CoverKey__c) != normalize(coverKey)) {
         continue;
       }
+      if (String.isBlank(record.SectionsJson__c)) {
+        continue;
+      }
       String key = String.isBlank(record.PaymentType__c)
         ? SCENARIO_INITIAL
         : record.PaymentType__c.trim();

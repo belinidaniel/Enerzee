@@ -7,7 +7,7 @@
  * @test              : ProposalEngineSupportTest
  **/
 public with sharing class ProposalApiClient {
-  private static final String NAMED_CREDENTIAL = 'callout:Enerzee_Proposal_Api';
+  private static final String INTEGRADOR_DEV_NAME = 'EnerzeeProposalApi';
   private static final Integer TIMEOUT_MS = 120000;
 
   public class ApiResponse {
@@ -28,20 +28,50 @@ public with sharing class ProposalApiClient {
       );
     }
 
+    String tagsResolved = String.isBlank(tagsJson) ? '{}' : tagsJson;
+    String sectionsResolved = String.isBlank(sectionsJson)
+      ? '[]'
+      : sectionsJson;
+    String fileName = getFileName(templateVersion);
+
+    System.debug('[ProposalApiClient] fileName=' + fileName);
+    System.debug('[ProposalApiClient] templateVersionId=' + templateVersion.Id);
+    System.debug(
+      '[ProposalApiClient] templateSize=' +
+      (templateVersion.VersionData != null
+        ? templateVersion.VersionData.size()
+        : 0)
+    );
+    System.debug('[ProposalApiClient] tags=' + tagsResolved);
+    System.debug('[ProposalApiClient] sections_to_show=' + sectionsResolved);
+
     Map<String, String> formFields = new Map<String, String>{
-      'tags' => String.isBlank(tagsJson) ? '{}' : tagsJson,
-      'sections_to_show' => String.isBlank(sectionsJson) ? '[]' : sectionsJson
+      'tags' => tagsResolved,
+      'sections_to_show' => sectionsResolved
     };
     Blob requestBody = ProposalMultipartFormBuilder.compose(
       formFields,
       'file',
-      getFileName(templateVersion),
+      fileName,
       'application/vnd.openxmlformats-officedocument.presentationml.presentation',
       templateVersion.VersionData
     );
 
+    Integrador__mdt integrador = [
+      SELECT URL__c
+      FROM Integrador__mdt
+      WHERE DeveloperName = :INTEGRADOR_DEV_NAME
+      LIMIT 1
+    ];
+
+    System.debug('[ProposalApiClient] endpoint=' + integrador.URL__c);
+    System.debug(
+      '[ProposalApiClient] Content-Type=' +
+      ProposalMultipartFormBuilder.getContentType()
+    );
+
     HttpRequest request = new HttpRequest();
-    request.setEndpoint(NAMED_CREDENTIAL + '/convertProposal');
+    request.setEndpoint(integrador.URL__c);
     request.setMethod('POST');
     request.setTimeout(TIMEOUT_MS);
     request.setHeader(
@@ -57,6 +87,9 @@ public with sharing class ProposalApiClient {
         'A API de proposta nao retornou resposta.'
       );
     }
+
+    System.debug('[ProposalApiClient] statusCode=' + response.getStatusCode());
+
     if (response.getStatusCode() < 200 || response.getStatusCode() >= 300) {
       throw new AuraHandledException(
         'Falha ao gerar proposta na API. Status ' +
@@ -75,12 +108,24 @@ public with sharing class ProposalApiClient {
   ) {
     ApiResponse apiResponse = new ApiResponse();
     String contentType = response.getHeader('Content-Type');
+    Blob responseBlob = response.getBodyAsBlob();
 
-    if (
-      String.isNotBlank(contentType) &&
-      contentType.toLowerCase().contains('application/pdf')
-    ) {
-      apiResponse.fileBlob = response.getBodyAsBlob();
+    System.debug(
+      '[ProposalApiClient.parseResponse] Content-Type=' + contentType
+    );
+    System.debug(
+      '[ProposalApiClient.parseResponse] bodySize=' + responseBlob.size()
+    );
+
+    Boolean isPdf =
+      (String.isNotBlank(contentType) &&
+      contentType.toLowerCase().contains('application/pdf')) ||
+      EncodingUtil.base64Encode(responseBlob).startsWith('JVBER');
+
+    System.debug('[ProposalApiClient.parseResponse] isPdf=' + isPdf);
+
+    if (isPdf) {
+      apiResponse.fileBlob = responseBlob;
       apiResponse.fileName = fallbackTitle + '.pdf';
       apiResponse.mimeType = 'application/pdf';
       return apiResponse;
