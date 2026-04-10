@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 04-10-2026
  * @last modified by  : Daniel Belini
- * @test              : ProposalConsoleControllerApiTest, ProposalConsoleControllerTest, ProposalEngineSupportTest
+ * @test              : ProposalEngineSupportTest
  **/
 public with sharing class ProposalTemplateResolver {
   public static ContentVersion resolveTemplate(
@@ -83,6 +83,13 @@ public with sharing class ProposalTemplateResolver {
           ' TipoKitPromocional__c=' +
           cv.TipoKitPromocional__c
       );
+    }
+
+    if (candidates.size() == 1) {
+      System.debug(
+        '[ProposalTemplateResolver] unico PPTX encontrado, usando o arquivo anexado sem desambiguacao adicional.'
+      );
+      return candidates[0];
     }
 
     List<ContentVersion> matches = new List<ContentVersion>();

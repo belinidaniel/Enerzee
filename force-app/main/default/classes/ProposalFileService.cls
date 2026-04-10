@@ -7,12 +7,20 @@
  * @test              : ProposalEngineSupportTest
  **/
 public with sharing class ProposalFileService {
+  @TestVisible
+  private static Map<String, Id> generatedProposalIdsByKey = new Map<String, Id>();
+
   public static ContentVersion findExistingProposal(
     Id opportunityId,
     String payloadHash
   ) {
     if (opportunityId == null || String.isBlank(payloadHash)) {
       return null;
+    }
+
+    String cacheKey = buildCacheKey(opportunityId, payloadHash);
+    if (generatedProposalIdsByKey.containsKey(cacheKey)) {
+      return new ContentVersion(Id = generatedProposalIdsByKey.get(cacheKey));
     }
 
     List<ContentVersion> matches = [
@@ -82,6 +90,10 @@ public with sharing class ProposalFileService {
       )
       .getRecords();
     insert sanitized;
+    generatedProposalIdsByKey.put(
+      buildCacheKey(context.opportunity.Id, payloadHash),
+      sanitized[0].Id
+    );
 
     return sanitized[0].Id;
   }
@@ -132,5 +144,9 @@ public with sharing class ProposalFileService {
       return baseLabel + ' B ' + nomeRegistro + '.pdf';
     }
     return baseLabel + ' ' + nomeRegistro + '.pdf';
+  }
+
+  private static String buildCacheKey(Id opportunityId, String payloadHash) {
+    return String.valueOf(opportunityId) + '|' + payloadHash;
   }
 }

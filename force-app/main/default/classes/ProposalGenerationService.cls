@@ -35,7 +35,7 @@ public with sharing class ProposalGenerationService {
     );
     if (String.isBlank(context.coverKey)) {
       throw new AuraHandledException(
-        'A capa selecionada nao possui IntegrationKey configurada.'
+        'A capa selecionada nao possui configuracao valida para geracao via API.'
       );
     }
 
@@ -81,6 +81,22 @@ public with sharing class ProposalGenerationService {
       sectionsToShow,
       templateVersion.Id
     );
+
+    ContentVersion existingProposal = ProposalFileService.findExistingProposal(
+      context.opportunity.Id,
+      payload.payloadHash
+    );
+    if (existingProposal != null) {
+      ProposalResult reusedResult = new ProposalResult();
+      reusedResult.success = true;
+      reusedResult.message = 'Proposta reutilizada com sucesso.';
+      reusedResult.contentVersionId = existingProposal.Id;
+      reusedResult.previewUrl = ProposalFileService.buildPreviewUrl(
+        existingProposal.Id
+      );
+      reusedResult.reusedExistingFile = true;
+      return reusedResult;
+    }
 
     ProposalApiClient.ApiResponse apiResponse = ProposalApiClient.convertProposal(
       templateVersion,

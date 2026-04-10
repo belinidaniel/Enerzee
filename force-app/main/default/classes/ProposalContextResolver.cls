@@ -21,15 +21,7 @@ public with sharing class ProposalContextResolver {
       return false;
     }
 
-    if (
-      opportunityRecord.Parceiro__r != null &&
-      opportunityRecord.Parceiro__r.Name == 'Bow-e'
-    ) {
-      return true;
-    }
-
-    return opportunityRecord.isPromotional__c == true ||
-      String.isNotBlank(opportunityRecord.TipoKitPromocional__c);
+    return String.isNotBlank(opportunityRecord.TipoKitPromocional__c);
   }
 
   public static Context resolve(Id opportunityId, Id coverId) {
@@ -66,7 +58,13 @@ public with sharing class ProposalContextResolver {
     ];
 
     ProposalCover__c coverRecord = [
-      SELECT Id, Name, Template__c, IsActive__c, IntegrationKey__c
+      SELECT
+        Id,
+        Name,
+        Template__c,
+        IsActive__c,
+        IntegrationKey__c,
+        isPromotional__c
       FROM ProposalCover__c
       WHERE Id = :coverId
       LIMIT 1
@@ -81,7 +79,7 @@ public with sharing class ProposalContextResolver {
     Context context = new Context();
     context.opportunity = opportunityRecord;
     context.cover = coverRecord;
-    context.coverKey = coverRecord.IntegrationKey__c;
+    context.coverKey = ProposalCoverRoutingService.resolveCoverKey(coverRecord);
     context.paymentType = opportunityRecord.SelectedSimulation__r != null
       ? opportunityRecord.SelectedSimulation__r.PaymentType__c
       : null;

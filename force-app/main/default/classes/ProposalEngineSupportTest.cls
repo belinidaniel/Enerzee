@@ -132,6 +132,108 @@ private class ProposalEngineSupportTest {
   }
 
   @isTest
+  static void determineIsPromotionalDependsOnTipoKitPromocional() {
+    Assert.isFalse(
+      ProposalContextResolver.determineIsPromotional(null),
+      'O helper deve retornar falso quando a oportunidade não for informada.'
+    );
+
+    Opportunity opportunityRecord = new Opportunity(
+      isPromotional__c = true,
+      TipoKitPromocional__c = null
+    );
+
+    Assert.isFalse(
+      ProposalContextResolver.determineIsPromotional(opportunityRecord),
+      'Sem TipoKitPromocional preenchido, a oportunidade não deve ser tratada como promocional.'
+    );
+
+    opportunityRecord.TipoKitPromocional__c = '6';
+
+    Assert.isTrue(
+      ProposalContextResolver.determineIsPromotional(opportunityRecord),
+      'Com TipoKitPromocional preenchido, a oportunidade deve ser tratada como promocional.'
+    );
+
+    Assert.areEqual(
+      'GRUPO_B_PADRAO',
+      ProposalCoverRoutingService.resolveCoverKey(
+        new ProposalCover__c(
+          Template__c = 'ModeloPropostaB',
+          isPromotional__c = false
+        )
+      ),
+      'A capa padrão ModeloPropostaB não promocional deve ser redirecionada para a chave da API.'
+    );
+    Assert.isTrue(
+      ProposalCoverRoutingService.usesApiFlow(
+        new ProposalCover__c(
+          Template__c = 'ModeloPropostaB',
+          isPromotional__c = false
+        )
+      ),
+      'O fluxo deve reconhecer a capa padrão ModeloPropostaB como elegível para a API.'
+    );
+    Assert.areEqual(
+      'CHAVE_EXPLICITA',
+      ProposalCoverRoutingService.resolveCoverKey(
+        new ProposalCover__c(IntegrationKey__c = 'CHAVE_EXPLICITA')
+      ),
+      'Quando existir IntegrationKey explícita ela deve ter prioridade.'
+    );
+    Assert.areEqual(
+      null,
+      ProposalCoverRoutingService.resolveCoverKey(
+        new ProposalCover__c(
+          Template__c = 'ModeloPropostaB',
+          isPromotional__c = true
+        )
+      ),
+      'A capa promocional não deve usar o fallback da capa padrão.'
+    );
+  }
+
+  @isTest
+  static void contextResolverValidatesRequiredIdsAndInactiveCover() {
+    Opportunity opportunityRecord = [
+      SELECT Id
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+
+    try {
+      ProposalContextResolver.resolve(null, null);
+      Assert.fail('Os identificadores obrigatórios deveriam ser validados.');
+    } catch (AuraHandledException handledException) {
+      Assert.isTrue(
+        String.isNotBlank(handledException.getMessage()),
+        'A validação precisa retornar uma mensagem de erro.'
+      );
+    }
+
+    ProposalCover__c inactiveCover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(
+        Name = TestFactory.nextUniqueValue('CapaInativa'),
+        GrupoTarifario__c = 'Grupo B',
+        IsActive__c = false,
+        IntegrationKey__c = TestFactory.nextUniqueValue('COVER_INACTIVE')
+      ),
+      true
+    );
+
+    try {
+      ProposalContextResolver.resolve(opportunityRecord.Id, inactiveCover.Id);
+      Assert.fail('Capas inativas não podem ser resolvidas.');
+    } catch (AuraHandledException handledException) {
+      Assert.isTrue(
+        String.isNotBlank(handledException.getMessage()),
+        'A validação da capa inativa precisa retornar uma mensagem de erro.'
+      );
+    }
+  }
+
+  @isTest
   static void payloadBuilderFormatsValuesAndValidatesRequiredFields() {
     Opportunity opportunityRecord = [
       SELECT Id
@@ -272,6 +374,160 @@ private class ProposalEngineSupportTest {
         .contains(String.valueOf(contentVersionId)),
       'A URL de preview deve usar o identificador da versão.'
     );
+  }
+
+  @isTest
+  static void fileServiceHandlesLatestLookupAndCustomFileNames() {
+    Opportunity opportunityRecord = [
+      SELECT Id
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+    ProposalContextResolver.Context context = ProposalContextResolver.resolve(
+      opportunityRecord.Id,
+      cover.Id
+    );
+
+    ProposalApiClient.ApiResponse response = new ProposalApiClient.ApiResponse();
+    response.fileBlob = Blob.valueOf('pdf-custom');
+    response.fileName = 'arquivo-personalizado';
+    response.mimeType = 'application/pdf';
+
+    Id contentVersionId = ProposalFileService.saveGeneratedProposal(
+      context,
+      response,
+      'HASH-LATEST-001'
+    );
+
+    ContentVersion latestProposal = ProposalFileService.findLatestProposal(
+      opportunityRecord.Id
+    );
+    Assert.areEqual(
+      contentVersionId,
+      latestProposal.Id,
+      'A busca da proposta mais recente deve retornar o último PDF salvo.'
+    );
+    Assert.areEqual(
+      null,
+      ProposalFileService.findLatestProposal(null),
+      'Sem oportunidade informada, não deve existir proposta mais recente.'
+    );
+    Assert.areEqual(
+      null,
+      ProposalFileService.findExistingProposal(null, 'HASH'),
+      'Sem oportunidade informada, a busca por hash deve retornar nulo.'
+    );
+    Assert.areEqual(
+      null,
+      ProposalFileService.findExistingProposal(opportunityRecord.Id, null),
+      'Sem hash informado, a busca por hash deve retornar nulo.'
+    );
+    Assert.areEqual(
+      null,
+      ProposalFileService.buildPreviewUrl(null),
+      'Sem versão informada, a URL de preview deve ser nula.'
+    );
+
+    ContentVersion savedVersion = [
+      SELECT Title, PathOnClient
+      FROM ContentVersion
+      WHERE Id = :contentVersionId
+    ];
+    Assert.areEqual(
+      'arquivo-personalizado.pdf',
+      savedVersion.PathOnClient,
+      'O nome do arquivo sugerido pela API deve ser normalizado para PDF.'
+    );
+    Assert.areEqual(
+      'arquivo-personalizado',
+      savedVersion.Title,
+      'O título salvo não deve repetir a extensão do PDF.'
+    );
+  }
+
+  @isTest
+  static void templateResolverUsesSinglePptxAttachedToStandardCover() {
+    Account account = new Account(
+      Name = TestFactory.nextUniqueValue('ContaTemplateUnico')
+    );
+    Database.DMLOptions accountOptions = new Database.DMLOptions();
+    accountOptions.DuplicateRuleHeader.allowSave = true;
+    account.setOptions(accountOptions);
+    insert account;
+
+    ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(
+        Name = TestFactory.nextUniqueValue('CapaTemplateUnico'),
+        GrupoTarifario__c = 'Grupo B',
+        Template__c = 'ModeloPropostaB',
+        isPromotional__c = false
+      ),
+      true
+    );
+
+    Parceiro__c partner = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(
+        Name = TestFactory.nextUniqueValue('ParceiroTemplateUnico'),
+        Produto__c = 'Solar',
+        GrupoTarifario__c = 'Grupo B',
+        CapaProposta__c = cover.Id
+      ),
+      true
+    );
+
+    Opportunity opportunityRecord = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = account.Id,
+        StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
+        Parceiro__c = partner.Id,
+        GrupoTarifario__c = 'Grupo B',
+        IdVirtualOffice__c = TestFactory.nextUniqueValue('VO-SINGLE-PPTX')
+      ),
+      true
+    );
+
+    insert new ContentVersion(
+      Title = 'Template Unico',
+      PathOnClient = 'template-unico.pptx',
+      VersionData = Blob.valueOf('pptx-single-template'),
+      FirstPublishLocationId = cover.Id,
+      IsTemplate__c = true,
+      TipoKitPromocional__c = '6'
+    );
+
+    ProposalContextResolver.Context context = ProposalContextResolver.resolve(
+      opportunityRecord.Id,
+      cover.Id
+    );
+    ContentVersion resolvedTemplate = ProposalTemplateResolver.resolveTemplate(
+      context
+    );
+
+    Assert.areEqual(
+      'Template Unico',
+      resolvedTemplate.Title,
+      'Quando existir apenas um PPTX anexado, ele deve ser utilizado diretamente.'
+    );
+  }
+
+  @isTest
+  static void templateResolverValidatesContext() {
+    try {
+      ProposalTemplateResolver.resolveTemplate(null);
+      Assert.fail('O resolver deveria validar o contexto obrigatório.');
+    } catch (AuraHandledException handledException) {
+      Assert.isTrue(
+        String.isNotBlank(handledException.getMessage()),
+        'A validação de contexto inválido deve retornar uma mensagem de erro.'
+      );
+    }
   }
 
   @isTest

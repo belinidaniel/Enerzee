@@ -275,6 +275,81 @@ private class ProposalConsoleControllerApiTest {
   }
 
   @isTest
+  static void loadProposalDataIgnoresPromotionalCoverWhenKitIsBlank() {
+    Account account = new Account(
+      Name = TestFactory.nextUniqueValue('ContaSemKit')
+    );
+    Database.DMLOptions accountOptions = new Database.DMLOptions();
+    accountOptions.DuplicateRuleHeader.allowSave = true;
+    account.setOptions(accountOptions);
+    insert account;
+
+    ProposalCover__c standardCover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(
+        Name = TestFactory.nextUniqueValue('CapaPadraoSemKit'),
+        GrupoTarifario__c = 'Grupo B',
+        isPromotional__c = false
+      ),
+      true
+    );
+    ProposalCover__c promotionalCover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(
+        Name = TestFactory.nextUniqueValue('CapaPromoSemKit'),
+        GrupoTarifario__c = 'Grupo B',
+        isPromotional__c = true
+      ),
+      true
+    );
+    Parceiro__c partner = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(
+        Name = TestFactory.nextUniqueValue('ParceiroSemKit'),
+        Produto__c = 'Solar',
+        GrupoTarifario__c = 'Grupo B',
+        CapaProposta__c = standardCover.Id,
+        CapaPromocional__c = promotionalCover.Id
+      ),
+      true
+    );
+    Opportunity opportunityWithoutKit = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = account.Id,
+        StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
+        Parceiro__c = partner.Id,
+        GrupoTarifario__c = 'Grupo B'
+      ),
+      true
+    );
+
+    update new Opportunity(
+      Id = opportunityWithoutKit.Id,
+      TipoKitPromocional__c = null,
+      isPromotional__c = false
+    );
+
+    Test.startTest();
+    ProposalConsoleController.ProposalDataDTO result = ProposalConsoleController.loadProposalData(
+      opportunityWithoutKit.Id
+    );
+    Test.stopTest();
+
+    Assert.areEqual(
+      standardCover.Id,
+      result.defaultTemplateId,
+      'Sem kit promocional preenchido, a capa padrão deve continuar como default.'
+    );
+    Assert.areEqual(
+      1,
+      result.templates.size(),
+      'Sem kit promocional preenchido, a capa promocional não deve ser exibida.'
+    );
+    Assert.areEqual(
+      standardCover.Id,
+      result.templates[0].id,
+      'A única opção disponível deve ser a capa padrão.'
+    );
+  }
+
+  @isTest
   static void generatePreviewFailsWhenApiTemplateConfigurationIsAmbiguous() {
     Opportunity opportunityRecord = [
       SELECT Id
@@ -318,6 +393,85 @@ private class ProposalConsoleControllerApiTest {
         );
       }
       Test.stopTest();
+    } finally {
+      clearApiMappings();
+    }
+  }
+
+  @isTest
+  static void generatePreviewUsesApiFallbackWhenLegacyTemplateIsMapped() {
+    Account account = new Account(
+      Name = TestFactory.nextUniqueValue('ContaFallbackApi')
+    );
+    Database.DMLOptions accountOptions = new Database.DMLOptions();
+    accountOptions.DuplicateRuleHeader.allowSave = true;
+    account.setOptions(accountOptions);
+    insert account;
+
+    ProposalCover__c mappedCover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(
+        Name = TestFactory.nextUniqueValue('CapaFallbackApi'),
+        GrupoTarifario__c = 'Grupo B',
+        Template__c = 'ModeloPropostaB'
+      ),
+      true
+    );
+
+    Parceiro__c partner = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(
+        Name = TestFactory.nextUniqueValue('ParceiroFallbackApi'),
+        Produto__c = 'Solar',
+        GrupoTarifario__c = 'Grupo B',
+        CapaProposta__c = mappedCover.Id
+      ),
+      true
+    );
+
+    Opportunity opportunityRecord = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = account.Id,
+        StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
+        Parceiro__c = partner.Id,
+        GrupoTarifario__c = 'Grupo B',
+        IdVirtualOffice__c = TestFactory.nextUniqueValue('VO-FALLBACK')
+      ),
+      true
+    );
+
+    insert new ContentVersion(
+      Title = 'Template Fallback API',
+      PathOnClient = 'template-fallback-api.pptx',
+      VersionData = Blob.valueOf('pptx-template-fallback'),
+      FirstPublishLocationId = mappedCover.Id,
+      IsTemplate__c = true,
+      ProposalTemplateRole__c = 'API_PPTX_TEMPLATE'
+    );
+
+    configureApiMappings('GRUPO_B_PADRAO');
+    resetCalloutCounters();
+    Test.setMock(HttpCalloutMock.class, new ProposalApiAndNivelloMock());
+
+    try {
+      Test.startTest();
+      ProposalConsoleController.ProposalActionResult result = ProposalConsoleController.generatePreview(
+        opportunityRecord.Id,
+        mappedCover.Id
+      );
+      Test.stopTest();
+
+      Assert.isTrue(
+        result.success,
+        'A capa legada mapeada deve gerar preview usando a API.'
+      );
+      Assert.isTrue(
+        String.isNotBlank(result.previewUrl),
+        'O preview precisa retornar a URL do PDF gerado.'
+      );
+      Assert.areEqual(
+        1,
+        proposalCallCount,
+        'A geração deve passar pela API quando o template legado estiver mapeado.'
+      );
     } finally {
       clearApiMappings();
     }
