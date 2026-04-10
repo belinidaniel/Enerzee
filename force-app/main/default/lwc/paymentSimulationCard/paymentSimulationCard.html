@@ -1,8 +1,23 @@
 <template>
   <div class={cardClass}>
     <div class="card-header">
-      <span class="card-title">{card.proposalLabel}</span>
+      <div class="title-row">
+        <span class="card-title">{card.proposalLabel}</span>
+        <template if:true={isManualCard}>
+          <span class="manual-badge">Personalizada</span>
+        </template>
+      </div>
       <span class="card-subtitle">{paymentTypeLabel}</span>
+      <template if:true={isManualCard}>
+        <span class="manual-summary">
+          Valor ajustado manualmente para a proposta.
+        </span>
+      </template>
+      <template if:true={hasSelectedOptionSummary}>
+        <span class="selected-summary">
+          Simulação selecionada: {selectedOptionSummary}
+        </span>
+      </template>
     </div>
     <div class="options-container">
       <template for:each={processedOptions} for:item="option">

@@ -67,7 +67,8 @@ public class PaymentSimulationTriggerHandler extends TriggerHandler {
 
     PaymentSimulationBO.syncSelectedToOpportunity(
       (List<PaymentSimulation__c>) Trigger.new,
-      (Map<Id, PaymentSimulation__c>) Trigger.oldMap
+      (Map<Id, PaymentSimulation__c>) Trigger.oldMap,
+      true
     );
   }
 
@@ -75,5 +76,14 @@ public class PaymentSimulationTriggerHandler extends TriggerHandler {
   }
 
   public override void afterDelete() {
+    if (isRunning) {
+      return;
+    }
+
+    PaymentSimulationBO.syncSelectedToOpportunity(
+      (List<PaymentSimulation__c>) Trigger.old,
+      null,
+      true
+    );
   }
 }

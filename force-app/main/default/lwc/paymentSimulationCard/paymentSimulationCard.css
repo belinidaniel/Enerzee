@@ -11,6 +11,10 @@
   transition: box-shadow 0.2s;
 }
 
+.simulation-card--manual {
+  box-shadow: 0 0 0 2px rgba(28, 58, 20, 0.12);
+}
+
 .simulation-card--inactive {
   background-color: #d9d9d9;
 }
@@ -39,6 +43,13 @@
   gap: 2px;
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .card-title {
   font-weight: 700;
   font-size: 0.875rem;
@@ -50,6 +61,29 @@
   font-size: 0.8125rem;
   font-weight: 600;
   color: #2d5a1b;
+}
+
+.manual-badge {
+  background: rgba(28, 58, 20, 0.12);
+  border: 1px solid rgba(28, 58, 20, 0.18);
+  border-radius: 999px;
+  color: #1c3a14;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  text-transform: uppercase;
+}
+
+.manual-summary {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1c3a14;
+}
+
+.selected-summary {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #17370e;
 }
 
 .options-container {

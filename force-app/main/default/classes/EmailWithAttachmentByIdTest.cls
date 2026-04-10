@@ -89,4 +89,38 @@ private class EmailWithAttachmentByIdTest {
     Assert.areEqual(true, hasValidationError);
     Assert.areEqual(null, EmailWithAttachmentById.convertToPlainText(null));
   }
+
+  @isTest
+  static void shouldAllowSendingWithoutAttachment() {
+    EmailWithAttachmentById.Request missingAttachmentRequest = new EmailWithAttachmentById.Request();
+    missingAttachmentRequest.recipientEmail = 'destinatario4@teste.com';
+    missingAttachmentRequest.subject = 'Assunto sem anexo';
+    missingAttachmentRequest.body = '<p>Teste sem anexo</p>';
+
+    EmailWithAttachmentById.Request invalidAttachmentRequest = new EmailWithAttachmentById.Request();
+    invalidAttachmentRequest.recipientEmail = 'destinatario5@teste.com';
+    invalidAttachmentRequest.subject = 'Assunto id inválido';
+    invalidAttachmentRequest.body = '<p>Teste com id inválido</p>';
+    invalidAttachmentRequest.contentDocumentId = '069000000000000AAA';
+
+    Test.startTest();
+    EmailWithAttachmentById.sendEmailWithAttachment(
+      new List<EmailWithAttachmentById.Request>{
+        missingAttachmentRequest,
+        invalidAttachmentRequest
+      }
+    );
+    Test.stopTest();
+
+    Assert.areEqual(
+      null,
+      EmailWithAttachmentById.resolveContentVersion(null),
+      'Sem id do arquivo a rotina deve seguir sem anexo.'
+    );
+    Assert.areEqual(
+      null,
+      EmailWithAttachmentById.resolveContentVersion('069000000000000AAA'),
+      'Um id inexistente não deve quebrar a rotina.'
+    );
+  }
 }

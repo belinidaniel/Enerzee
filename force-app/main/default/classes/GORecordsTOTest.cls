@@ -18,8 +18,9 @@ private class GORecordsTOTest {
     record.FinancingProcessDetail = '{"selected":true}';
     record.OptionsFinanciamentos = new List<GORecordsTO.FinancingOptionTO>{
       new GORecordsTO.FinancingOptionTO(
-        'Opcao 1 12 parcelas',
+        'Opção 1 - 12 Parcelas de R$ 123,45',
         'PS-000001',
+        1,
         true
       )
     };
@@ -31,6 +32,7 @@ private class GORecordsTOTest {
     System.assert(jsonBody.contains('FinancingProcessDetail'));
     System.assert(jsonBody.contains('OptionsFinanciamentos'));
     System.assert(jsonBody.contains('OptionId'));
+    System.assert(jsonBody.contains('OptionType'));
     System.assert(jsonBody.contains('OptionSelected'));
   }
 }

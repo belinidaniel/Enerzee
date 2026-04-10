@@ -224,6 +224,258 @@ public class PaymentSimulationCardControllerTest {
     Assert.isNotNull(opt.name, 'name não deve ser nulo');
   }
 
+  @IsTest
+  static void createManualSimulationCreatesSelectedSimulationForReadjustment() {
+    Account acc = createAccount();
+    Opportunity opp = createOpportunity(acc.Id);
+    setOpportunityStage(opp.Id, 'Readequação de Proposta');
+
+    FinancingRate__c fr = createFinancingRate(
+      'Opção 1',
+      'Financing',
+      true,
+      25,
+      0.02,
+      38,
+      0.03,
+      null,
+      null,
+      null,
+      null
+    );
+    List<PaymentSimulation__c> sims = insertSimulations(opp.Id, fr);
+    setSelectedSimulation(opp.Id, sims[0].Id);
+
+    Test.startTest();
+    PaymentSimulationCardController.ManualSimulationResult result = PaymentSimulationCardController.createManualSimulation(
+      opp.Id,
+      sims[0].Id,
+      72,
+      1492.28
+    );
+    Test.stopTest();
+
+    List<PaymentSimulation__c> updatedSimulations = [
+      SELECT
+        Id,
+        Name,
+        ProposalLabel__c,
+        PaymentType__c,
+        InstallmentCount__c,
+        InstallmentAmount__c,
+        InterestRate__c,
+        Selected__c
+      FROM PaymentSimulation__c
+      WHERE Opportunity__c = :opp.Id
+      ORDER BY CreatedDate ASC, Name ASC
+    ];
+    Opportunity updatedOpportunity = getOpportunity(opp.Id);
+
+    Assert.areEqual(
+      true,
+      result.createdNewSimulation,
+      'Ao informar novos valores, deve criar uma nova simulação.'
+    );
+    Assert.areEqual(
+      3,
+      updatedSimulations.size(),
+      'Deve ter criado uma nova linha.'
+    );
+    Assert.areEqual(
+      result.simulationId,
+      updatedOpportunity.SelectedSimulation__c,
+      'A oportunidade deve apontar para a simulação criada.'
+    );
+
+    PaymentSimulation__c createdSimulation;
+    Integer selectedCount = 0;
+    for (PaymentSimulation__c simulationRecord : updatedSimulations) {
+      if (simulationRecord.Selected__c == true) {
+        selectedCount++;
+      }
+      if (simulationRecord.Id == result.simulationId) {
+        createdSimulation = simulationRecord;
+      }
+    }
+
+    Assert.areEqual(
+      1,
+      selectedCount,
+      'Deve existir apenas uma simulação selecionada.'
+    );
+    Assert.isNotNull(
+      createdSimulation,
+      'A simulação retornada pela ação deve existir na base.'
+    );
+    Assert.areEqual('Simulação ajustada', createdSimulation.ProposalLabel__c);
+    Assert.areEqual('Financing', createdSimulation.PaymentType__c);
+    Assert.areEqual(72, createdSimulation.InstallmentCount__c);
+    Assert.areEqual(1492.28, createdSimulation.InstallmentAmount__c);
+    Assert.areEqual(0.02, createdSimulation.InterestRate__c);
+    Assert.areEqual(true, createdSimulation.Selected__c);
+
+    List<PaymentSimulationCardController.ProposalCardWrapper> cards = PaymentSimulationCardController.getSimulationCards(
+      opp.Id
+    );
+    PaymentSimulationCardController.ProposalCardWrapper manualCard;
+    for (PaymentSimulationCardController.ProposalCardWrapper card : cards) {
+      if (card.proposalLabel == 'Simulação ajustada') {
+        manualCard = card;
+        break;
+      }
+    }
+
+    Assert.isNotNull(
+      manualCard,
+      'A simulação manual deve aparecer em um card separado.'
+    );
+    Assert.areEqual(true, manualCard.isManual);
+    Assert.areEqual('Financing', manualCard.paymentType);
+    Assert.areEqual(1, manualCard.options.size());
+    Assert.areEqual(result.simulationId, manualCard.options[0].id);
+  }
+
+  @IsTest
+  static void createManualSimulationReusesBaseSimulationWhenValuesMatch() {
+    Account acc = createAccount();
+    Opportunity opp = createOpportunity(acc.Id);
+    setOpportunityStage(opp.Id, 'Readequação de Proposta');
+
+    FinancingRate__c fr = createFinancingRate(
+      'Solar Aluguel',
+      'Rental',
+      true,
+      12,
+      0.01,
+      24,
+      0.02,
+      null,
+      null,
+      null,
+      null
+    );
+    List<PaymentSimulation__c> sims = insertSimulations(opp.Id, fr);
+
+    Test.startTest();
+    PaymentSimulationCardController.ManualSimulationResult result = PaymentSimulationCardController.createManualSimulation(
+      opp.Id,
+      sims[0].Id,
+      12,
+      1000
+    );
+    Test.stopTest();
+
+    Integer simulationCount = [
+      SELECT COUNT()
+      FROM PaymentSimulation__c
+      WHERE Opportunity__c = :opp.Id
+    ];
+    Opportunity updatedOpportunity = getOpportunity(opp.Id);
+    PaymentSimulation__c selectedSimulation = [
+      SELECT Id, Selected__c
+      FROM PaymentSimulation__c
+      WHERE Id = :sims[0].Id
+      LIMIT 1
+    ];
+
+    Assert.areEqual(
+      false,
+      result.createdNewSimulation,
+      'Sem alteração de valores, deve reaproveitar a simulação base.'
+    );
+    Assert.areEqual(2, simulationCount, 'Não deve criar um novo registro.');
+    Assert.areEqual(
+      sims[0].Id,
+      result.simulationId,
+      'Deve retornar a simulação base.'
+    );
+    Assert.areEqual(
+      sims[0].Id,
+      updatedOpportunity.SelectedSimulation__c,
+      'A oportunidade deve manter a simulação base selecionada.'
+    );
+    Assert.areEqual(
+      true,
+      selectedSimulation.Selected__c,
+      'A simulação base deve ficar marcada como selecionada.'
+    );
+  }
+
+  @IsTest
+  static void createManualSimulationCreatesOneCardPerManualSimulation() {
+    Account acc = createAccount();
+    Opportunity opp = createOpportunity(acc.Id);
+    setOpportunityStage(opp.Id, 'Readequação de Proposta');
+
+    FinancingRate__c fr = createFinancingRate(
+      'Opção 1',
+      'Financing',
+      true,
+      25,
+      0.02,
+      38,
+      0.03,
+      null,
+      null,
+      null,
+      null
+    );
+    List<PaymentSimulation__c> sims = insertSimulations(opp.Id, fr);
+    setSelectedSimulation(opp.Id, sims[0].Id);
+
+    Test.startTest();
+    PaymentSimulationCardController.ManualSimulationResult firstResult = PaymentSimulationCardController.createManualSimulation(
+      opp.Id,
+      sims[0].Id,
+      72,
+      1492.28
+    );
+    PaymentSimulationCardController.ManualSimulationResult secondResult = PaymentSimulationCardController.createManualSimulation(
+      opp.Id,
+      firstResult.simulationId,
+      84,
+      1325.45
+    );
+    Test.stopTest();
+
+    List<PaymentSimulationCardController.ProposalCardWrapper> cards = PaymentSimulationCardController.getSimulationCards(
+      opp.Id
+    );
+    Integer manualCardCount = 0;
+    Integer selectedManualCardCount = 0;
+    for (PaymentSimulationCardController.ProposalCardWrapper card : cards) {
+      if (card.proposalLabel != 'Simulação ajustada') {
+        continue;
+      }
+
+      manualCardCount++;
+      Assert.areEqual(
+        1,
+        card.options.size(),
+        'Cada simulação manual deve aparecer em seu próprio card.'
+      );
+      if (card.hasSelected) {
+        selectedManualCardCount++;
+        Assert.areEqual(
+          secondResult.simulationId,
+          card.options[0].id,
+          'O card manual selecionado deve apontar para a última simulação criada.'
+        );
+      }
+    }
+
+    Assert.areEqual(
+      2,
+      manualCardCount,
+      'Duas simulações manuais devem resultar em dois cards distintos.'
+    );
+    Assert.areEqual(
+      1,
+      selectedManualCardCount,
+      'Apenas o card da última simulação manual deve ficar selecionado.'
+    );
+  }
+
   // ─── helpers ─────────────────────────────────────────────────────────────
 
   private static Account createAccount() {
@@ -256,6 +508,36 @@ public class PaymentSimulationCardControllerTest {
       OpportunityTriggerHandler.enableTrigger();
     }
     return opp;
+  }
+
+  private static Opportunity getOpportunity(Id opportunityId) {
+    return [
+      SELECT Id, StageName, SelectedSimulation__c
+      FROM Opportunity
+      WHERE Id = :opportunityId
+      LIMIT 1
+    ];
+  }
+
+  private static void setOpportunityStage(Id opportunityId, String stageName) {
+    OpportunityTriggerHandler.disableTrigger();
+    try {
+      update new Opportunity(Id = opportunityId, StageName = stageName);
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
+  }
+
+  private static void setSelectedSimulation(Id opportunityId, Id simulationId) {
+    OpportunityTriggerHandler.disableTrigger();
+    try {
+      update new Opportunity(
+        Id = opportunityId,
+        SelectedSimulation__c = simulationId
+      );
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
   }
 
   private static FinancingRate__c createFinancingRate(

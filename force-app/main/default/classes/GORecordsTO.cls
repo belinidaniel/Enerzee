@@ -76,6 +76,7 @@ public class GORecordsTO {
   public class FinancingOptionTO {
     public String OptionName;
     public String OptionId;
+    public Integer OptionType;
     public Boolean OptionSelected;
 
     public FinancingOptionTO() {
@@ -84,10 +85,12 @@ public class GORecordsTO {
     public FinancingOptionTO(
       String optionName,
       String optionId,
+      Integer optionType,
       Boolean optionSelected
     ) {
       this.OptionName = optionName;
       this.OptionId = optionId;
+      this.OptionType = optionType;
       this.OptionSelected = optionSelected;
     }
   }

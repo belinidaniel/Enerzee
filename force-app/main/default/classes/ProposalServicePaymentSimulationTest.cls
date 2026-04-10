@@ -43,26 +43,58 @@ private class ProposalServicePaymentSimulationTest {
     PaymentSimulationBO.createSimulationsForOpportunities(
       new List<Opportunity>{ opportunityRecord }
     );
+    PaymentSimulationProposalStatusService.enqueueOpportunityStatusSync(
+      new Set<Id>{ opportunityRecord.Id }
+    );
     Test.stopTest();
 
     Map<String, Object> payload = getFirstPayload();
     List<Object> options = (List<Object>) payload.get('OptionsFinanciamentos');
     Map<String, Object> firstOption = (Map<String, Object>) options[0];
+    List<PaymentSimulation__c> simulations = getSimulations(
+      opportunityRecord.Id
+    );
 
     System.assertEquals(
       4,
       options.size(),
       'O payload deve enviar uma opção por linha de simulação.'
     );
-    System.assertEquals(
-      'Banco App 12 Parcelas',
+    System.assert(
       String.valueOf(firstOption.get('OptionName'))
+        .startsWith('Opção 1 - 12 Parcelas de R$ '),
+      'O nome da opção deve ser numerado por tipo e incluir o valor da parcela.'
     );
     System.assert(
-      String.valueOf(firstOption.get('OptionId')).startsWith('PS-'),
-      'O payload deve enviar o número da simulação como OptionId.'
+      String.valueOf(firstOption.get('OptionId')) ==
+      String.valueOf(simulations[0].Id),
+      'O payload deve enviar o Id Salesforce da simulação como OptionId.'
+    );
+    System.assertEquals(
+      1,
+      Integer.valueOf(String.valueOf(firstOption.get('OptionType'))),
+      'Opções de financiamento devem enviar OptionType = 1.'
     );
     System.assertEquals(false, firstOption.get('OptionSelected'));
+
+    Boolean foundRentalOption = false;
+    for (Object optionItem : options) {
+      Map<String, Object> optionMap = (Map<String, Object>) optionItem;
+      if (Integer.valueOf(String.valueOf(optionMap.get('OptionType'))) == 2) {
+        foundRentalOption = true;
+        System.assert(
+          String.valueOf(optionMap.get('OptionName'))
+            .startsWith('Opção 1 - 10 Parcelas de R$ '),
+          'As opções de aluguel também devem reiniciar a numeração por tipo.'
+        );
+        break;
+      }
+    }
+    System.assertEquals(
+      true,
+      foundRentalOption,
+      'Ao menos uma opção de aluguel deve enviar OptionType = 2.'
+    );
   }
 
   @IsTest
@@ -100,19 +132,25 @@ private class ProposalServicePaymentSimulationTest {
 
     System.assertEquals(true, selectedOption.get('OptionSelected'));
     System.assertEquals(
-      simulations[1].Name,
+      String.valueOf(simulations[1].Id),
       String.valueOf(selectedOption.get('OptionId'))
     );
-    System.assertEquals(
-      'Banco Selecao 24 Parcelas',
+    System.assert(
       String.valueOf(selectedOption.get('OptionName'))
+        .startsWith('Opção 2 - 24 Parcelas de R$ '),
+      'A segunda opção de financiamento deve usar o índice 2 e incluir o valor.'
     );
     System.assertEquals(
-      simulations[1].Name,
+      1,
+      Integer.valueOf(String.valueOf(selectedOption.get('OptionType'))),
+      'Simulação de financiamento selecionada deve enviar OptionType = 1.'
+    );
+    System.assertEquals(
+      String.valueOf(simulations[1].Id),
       String.valueOf(financingDetail.get('optionId'))
     );
     System.assertEquals(
-      'Banco Selecao 24 Parcelas',
+      String.valueOf(selectedOption.get('OptionName')),
       String.valueOf(financingDetail.get('optionName'))
     );
   }
@@ -173,8 +211,13 @@ private class ProposalServicePaymentSimulationTest {
 
     System.assertEquals(true, selectedOption.get('OptionSelected'));
     System.assertEquals(
-      simulations[0].Name,
+      String.valueOf(simulations[0].Id),
       String.valueOf(selectedOption.get('OptionId'))
+    );
+    System.assertEquals(
+      1,
+      Integer.valueOf(String.valueOf(selectedOption.get('OptionType'))),
+      'A integração do projeto deve levar o tipo da opção selecionada.'
     );
     System.assertNotEquals(null, payload.get('FinancingProcessDetail'));
   }

@@ -16,18 +16,43 @@ export default class PaymentSimulationCard extends LightningElement {
   @api pendingSimulationId;
 
   get cardClass() {
-    const hasApiSelection = !!this.card?.selectedSimulationId;
-    if (!hasApiSelection) {
-      return "simulation-card";
+    const classes = ["simulation-card"];
+    if (this.isManualCard) {
+      classes.push("simulation-card--manual");
     }
-    return this.card?.hasSelected
-      ? "simulation-card"
-      : "simulation-card simulation-card--inactive";
+    const hasApiSelection = !!this.card?.selectedSimulationId;
+    if (hasApiSelection && !this.card?.hasSelected) {
+      classes.push("simulation-card--inactive");
+    }
+    return classes.join(" ");
+  }
+
+  get isManualCard() {
+    return this.card?.isManual === true;
   }
 
   get paymentTypeLabel() {
     if (!this.card?.paymentType) return "";
     return PAYMENT_TYPE_LABELS[this.card.paymentType] || this.card.paymentType;
+  }
+
+  get hasSelectedOptionSummary() {
+    return !!this.selectedOptionSummary;
+  }
+
+  get selectedOptionSummary() {
+    const selectedOption = (this.card?.options || []).find(
+      (option) =>
+        option.id === this.card?.selectedSimulationId ||
+        option.selected === true
+    );
+    if (!selectedOption) {
+      return "";
+    }
+
+    return `${selectedOption.installmentCount}x ${BRL_FORMATTER.format(
+      selectedOption.installmentAmount || 0
+    )}`;
   }
 
   get processedOptions() {

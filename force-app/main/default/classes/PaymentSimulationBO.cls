@@ -32,6 +32,12 @@ public without sharing class PaymentSimulationBO {
     List<Opportunity> newList,
     Map<Id, Opportunity> oldMap
   ) {
+    if (newList == null || newList.isEmpty()) {
+      return;
+    }
+
+    // On update we intentionally resync every eligible opportunity so a plain
+    // edit/save can backfill missing simulations or normalize legacy rows.
     syncSimulationsForOpportunities(newList);
   }
 
@@ -119,19 +125,32 @@ public without sharing class PaymentSimulationBO {
   }
 
   public static void syncSelectedToOpportunity(
-    List<PaymentSimulation__c> newList,
+    List<PaymentSimulation__c> simulationList,
     Map<Id, PaymentSimulation__c> oldMap
+  ) {
+    syncSelectedToOpportunity(simulationList, oldMap, false);
+  }
+
+  public static void syncSelectedToOpportunity(
+    List<PaymentSimulation__c> simulationList,
+    Map<Id, PaymentSimulation__c> oldMap,
+    Boolean notifyExternal
   ) {
     Set<Id> affectedOpportunityIds = new Set<Id>();
 
-    for (PaymentSimulation__c simulationRecord : newList) {
+    for (PaymentSimulation__c simulationRecord : simulationList) {
       if (simulationRecord.Opportunity__c == null) {
         continue;
       }
 
-      PaymentSimulation__c previousSimulation = oldMap == null
-        ? null
-        : oldMap.get(simulationRecord.Id);
+      // On insert (oldMap == null), always sync so the Opportunity reflects the
+      // initial simulation state — avoids a redundant DML from the caller.
+      if (oldMap == null) {
+        affectedOpportunityIds.add(simulationRecord.Opportunity__c);
+        continue;
+      }
+
+      PaymentSimulation__c previousSimulation = oldMap.get(simulationRecord.Id);
       if (
         didSelectionChange(simulationRecord, previousSimulation) ||
         didSelectedSimulationDetailsChange(simulationRecord, previousSimulation)
@@ -145,9 +164,16 @@ public without sharing class PaymentSimulationBO {
     }
 
     syncSelectedSimulationDetailsToOpportunity(affectedOpportunityIds);
-    PaymentSimulationProposalStatusService.enqueueOpportunityStatusSync(
-      affectedOpportunityIds
-    );
+
+    // Only notify external systems when explicitly requested (update/delete).
+    // On insert, the Opportunity status was already sent when the Opportunity
+    // itself was created — re-sending triggers an unwanted Nivello callback
+    // that resets the Stage.
+    if (notifyExternal) {
+      PaymentSimulationProposalStatusService.enqueueOpportunityStatusSync(
+        affectedOpportunityIds
+      );
+    }
   }
 
   private static void syncSimulationsForOpportunities(
@@ -189,10 +215,7 @@ public without sharing class PaymentSimulationBO {
       update syncPlan.simulationsToUpdate;
     }
 
-    syncSelectedSimulationDetailsToOpportunity(syncPlan.affectedOpportunityIds);
-    PaymentSimulationProposalStatusService.enqueueOpportunityStatusSync(
-      syncPlan.affectedOpportunityIds
-    );
+    // Opportunity sync is handled by PaymentSimulationTrigger afterInsert/afterUpdate/afterDelete.
   }
 
   private static SimulationSyncPlan buildSyncPlan(
@@ -411,7 +434,7 @@ public without sharing class PaymentSimulationBO {
     }
 
     Map<Id, PaymentSimulation__c> selectedSimulationByOpportunityId = new Map<Id, PaymentSimulation__c>();
-    Map<Id, Integer> optionIndexByOpportunityId = new Map<Id, Integer>();
+    Map<String, Integer> optionIndexByTypeKey = new Map<String, Integer>();
     Map<Id, String> optionNameBySimulationId = new Map<Id, String>();
 
     for (
@@ -419,21 +442,20 @@ public without sharing class PaymentSimulationBO {
         affectedOpportunityIds
       )
     ) {
-      Integer optionIndex = optionIndexByOpportunityId.containsKey(
-          simulationRecord.Opportunity__c
-        )
-        ? optionIndexByOpportunityId.get(simulationRecord.Opportunity__c) + 1
-        : 1;
-      optionIndexByOpportunityId.put(
+      String optionTypeKey = buildOptionTypeKey(
         simulationRecord.Opportunity__c,
-        optionIndex
+        simulationRecord.PaymentType__c
       );
+      Integer optionIndex = optionIndexByTypeKey.containsKey(optionTypeKey)
+        ? optionIndexByTypeKey.get(optionTypeKey) + 1
+        : 1;
+      optionIndexByTypeKey.put(optionTypeKey, optionIndex);
       optionNameBySimulationId.put(
         simulationRecord.Id,
         buildOptionName(
-          simulationRecord.ProposalLabel__c,
           optionIndex,
-          simulationRecord.InstallmentCount__c
+          simulationRecord.InstallmentCount__c,
+          simulationRecord.InstallmentAmount__c
         )
       );
 
@@ -662,6 +684,22 @@ public without sharing class PaymentSimulationBO {
       String.valueOf(currentValue) == String.valueOf(desiredValue);
   }
 
+  private static Boolean didSimulationInputsChange(
+    Opportunity currentOpportunity,
+    Opportunity previousOpportunity
+  ) {
+    if (previousOpportunity == null) {
+      return true;
+    }
+
+    return getSimulationAmount(currentOpportunity) !=
+      getSimulationAmount(previousOpportunity) ||
+      currentOpportunity.GrupoTarifario__c !=
+      previousOpportunity.GrupoTarifario__c ||
+      currentOpportunity.AccountId != previousOpportunity.AccountId ||
+      currentOpportunity.RecordTypeId != previousOpportunity.RecordTypeId;
+  }
+
   private static Integer getInstallmentCount(
     FinancingRate__c financingRate,
     Integer optionIndex
@@ -730,20 +768,23 @@ public without sharing class PaymentSimulationBO {
   }
 
   private static String buildOptionName(
-    String proposalLabel,
     Integer optionIndex,
-    Decimal installmentCount
+    Decimal installmentCount,
+    Decimal installmentAmount
   ) {
-    String normalizedProposalLabel = String.isBlank(proposalLabel)
-      ? 'Opcao ' + optionIndex
-      : proposalLabel.trim();
+    Integer normalizedOptionIndex = optionIndex == null ||
+      optionIndex <= 0
+      ? 1
+      : optionIndex;
     Integer normalizedInstallmentCount = installmentCount == null
       ? 0
       : Integer.valueOf(String.valueOf(installmentCount));
-    return normalizedProposalLabel +
-      ' ' +
+    return 'Opção ' +
+      normalizedOptionIndex +
+      ' - ' +
       normalizedInstallmentCount +
-      ' Parcelas';
+      ' Parcelas de ' +
+      formatCurrencyBr(installmentAmount);
   }
 
   private static Boolean isRentalPaymentType(String paymentType) {
@@ -799,7 +840,7 @@ public without sharing class PaymentSimulationBO {
     SelectedSimulationDetails payload = new SelectedSimulationDetails();
     payload.paymentSimulationId = selectedSimulation.Id;
     payload.paymentSimulationNumber = selectedSimulation.Name;
-    payload.optionId = selectedSimulation.Name;
+    payload.optionId = String.valueOf(selectedSimulation.Id);
     payload.optionName = optionName;
     payload.financingRateId = selectedSimulation.FinancingRate__c;
     payload.paymentType = selectedSimulation.PaymentType__c;
@@ -847,6 +888,37 @@ public without sharing class PaymentSimulationBO {
     return populatedFields.containsKey('Amount')
       ? (Decimal) populatedFields.get('Amount')
       : opportunityRecord.Amount;
+  }
+
+  private static String buildOptionTypeKey(
+    Id opportunityId,
+    String paymentType
+  ) {
+    return String.valueOf(opportunityId) + '|' + String.valueOf(paymentType);
+  }
+
+  private static String formatCurrencyBr(Decimal value) {
+    if (value == null) {
+      return 'R$ 0,00';
+    }
+
+    String str = String.valueOf(value.setScale(2, RoundingMode.HALF_UP));
+    List<String> parts = str.split('\\.');
+    String intPart = parts[0];
+    String decPart = parts.size() > 1 ? parts[1] : '00';
+
+    String formattedInt = '';
+    Integer count = 0;
+    for (Integer i = intPart.length() - 1; i >= 0; i--) {
+      formattedInt = intPart.substring(i, i + 1) + formattedInt;
+      count++;
+      if (count == 3 && i != 0) {
+        formattedInt = '.' + formattedInt;
+        count = 0;
+      }
+    }
+
+    return 'R$ ' + formattedInt + ',' + decPart;
   }
 
   private static Id getSolarRecordTypeId() {

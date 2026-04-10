@@ -391,12 +391,13 @@ public class PaymentSimulationBOTest {
       String.valueOf(paymentDetails.get('paymentSimulationId'))
     );
     System.assertEquals(
-      simulations[1].Name,
+      String.valueOf(simulations[1].Id),
       String.valueOf(paymentDetails.get('optionId'))
     );
-    System.assertEquals(
-      'Banco Selecao 24 Parcelas',
+    System.assert(
       String.valueOf(paymentDetails.get('optionName'))
+        .startsWith('Opção 2 - 24 Parcelas de R$ '),
+      'O detalhamento salvo na Opportunity deve refletir a opção numerada com o valor da parcela.'
     );
   }
 

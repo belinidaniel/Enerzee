@@ -16,7 +16,7 @@ public without sharing class PaymentSimulationProposalStatusService {
     Set<Id> opportunityIds
   ) {
     Map<Id, List<GORecordsTO.FinancingOptionTO>> optionsByOpportunityId = new Map<Id, List<GORecordsTO.FinancingOptionTO>>();
-    Map<Id, Integer> optionIndexByOpportunityId = new Map<Id, Integer>();
+    Map<String, Integer> optionIndexByTypeKey = new Map<String, Integer>();
     if (opportunityIds == null || opportunityIds.isEmpty()) {
       return optionsByOpportunityId;
     }
@@ -39,21 +39,21 @@ public without sharing class PaymentSimulationProposalStatusService {
         );
       }
 
-      Integer optionIndex = optionIndexByOpportunityId.containsKey(
-          simulationRecord.Opportunity__c
-        )
-        ? optionIndexByOpportunityId.get(simulationRecord.Opportunity__c) + 1
-        : 1;
-      optionIndexByOpportunityId.put(
+      String optionTypeKey = buildOptionTypeKey(
         simulationRecord.Opportunity__c,
-        optionIndex
+        simulationRecord.PaymentType__c
       );
+      Integer optionIndex = optionIndexByTypeKey.containsKey(optionTypeKey)
+        ? optionIndexByTypeKey.get(optionTypeKey) + 1
+        : 1;
+      optionIndexByTypeKey.put(optionTypeKey, optionIndex);
 
       optionsByOpportunityId.get(simulationRecord.Opportunity__c)
         .add(
           new GORecordsTO.FinancingOptionTO(
             buildOptionName(optionIndex, simulationRecord),
-            simulationRecord.Id,
+            String.valueOf(simulationRecord.Id),
+            resolveOptionType(simulationRecord),
             simulationRecord.Selected__c == true
           )
         );
@@ -92,14 +92,76 @@ public without sharing class PaymentSimulationProposalStatusService {
     Integer optionIndex,
     PaymentSimulation__c simulationRecord
   ) {
-    String proposalLabel = simulationRecord == null ||
-      String.isBlank(simulationRecord.ProposalLabel__c)
-      ? 'Opcao'
-      : simulationRecord.ProposalLabel__c.trim();
+    Integer normalizedOptionIndex = optionIndex == null ||
+      optionIndex <= 0
+      ? 1
+      : optionIndex;
     Integer installmentCount = simulationRecord == null ||
       simulationRecord.InstallmentCount__c == null
       ? 0
       : Integer.valueOf(String.valueOf(simulationRecord.InstallmentCount__c));
-    return proposalLabel + ' ' + installmentCount + ' Parcelas';
+    Decimal installmentAmount = simulationRecord == null
+      ? null
+      : simulationRecord.InstallmentAmount__c;
+
+    return 'Opção ' +
+      normalizedOptionIndex +
+      ' - ' +
+      installmentCount +
+      ' Parcelas de ' +
+      formatCurrencyBr(installmentAmount);
+  }
+
+  @TestVisible
+  private static Integer resolveOptionType(
+    PaymentSimulation__c simulationRecord
+  ) {
+    if (
+      simulationRecord == null ||
+      String.isBlank(simulationRecord.PaymentType__c)
+    ) {
+      return null;
+    }
+
+    if ('Financing'.equalsIgnoreCase(simulationRecord.PaymentType__c)) {
+      return 1;
+    }
+    if ('Rental'.equalsIgnoreCase(simulationRecord.PaymentType__c)) {
+      return 2;
+    }
+
+    return null;
+  }
+
+  private static String buildOptionTypeKey(
+    Id opportunityId,
+    String paymentType
+  ) {
+    return String.valueOf(opportunityId) + '|' + String.valueOf(paymentType);
+  }
+
+  @TestVisible
+  private static String formatCurrencyBr(Decimal value) {
+    if (value == null) {
+      return 'R$ 0,00';
+    }
+
+    String str = String.valueOf(value.setScale(2, RoundingMode.HALF_UP));
+    List<String> parts = str.split('\\.');
+    String intPart = parts[0];
+    String decPart = parts.size() > 1 ? parts[1] : '00';
+
+    String formattedInt = '';
+    Integer count = 0;
+    for (Integer i = intPart.length() - 1; i >= 0; i--) {
+      formattedInt = intPart.substring(i, i + 1) + formattedInt;
+      count++;
+      if (count == 3 && i != 0) {
+        formattedInt = '.' + formattedInt;
+        count = 0;
+      }
+    }
+
+    return 'R$ ' + formattedInt + ',' + decPart;
   }
 }
