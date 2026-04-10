@@ -2108,6 +2108,16 @@
                 <identifier>RecordNumeroOrigemContrato_cField2</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.SelectedSimulation__c</fieldItem>
+                <identifier>RecordSelectedSimulation_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-16e2bbdf-7733-43c8-83e7-2a1e1d07fa25</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -3975,6 +3985,16 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>paymentSimulationCards</componentName>
+                <identifier>c_paymentSimulationCards</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-3dffbaf3-61f3-44e5-a28c-d83ca3f32eba</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>active</name>
                     <value>true</value>
@@ -4031,6 +4051,20 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>flexipage_tab_pendencias</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-3dffbaf3-61f3-44e5-a28c-d83ca3f32eba</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Simuções</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>flexipage_tab4</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-9a8e9493-6a99-4ad6-be40-f4c3005a32ca</name>

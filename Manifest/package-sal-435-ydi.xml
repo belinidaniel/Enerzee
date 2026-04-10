@@ -4,6 +4,7 @@
         <members>GORecordsTO</members>
         <members>GORecordsTOTest</members>
         <members>IntegracaoNivelloProjetos</members>
+        <members>IntegracaoNivelloProposta</members>
         <members>OpportunityTriggerHandler</members>
         <members>PaymentSimulationBO</members>
         <members>PaymentSimulationBOTest</members>
@@ -12,8 +13,20 @@
         <members>PaymentSimulationDAO</members>
         <members>PaymentSimulationProposalStatusService</members>
         <members>PaymentSimulationTriggerHandler</members>
+        <members>ProposalApiClient</members>
+        <members>ProposalConfigurationService</members>
+        <members>ProposalConsoleController</members>
+        <members>ProposalConsoleControllerApiTest</members>
+        <members>ProposalConsoleControllerTest</members>
+        <members>ProposalContextResolver</members>
+        <members>ProposalEngineSupportTest</members>
+        <members>ProposalFileService</members>
+        <members>ProposalGenerationService</members>
+        <members>ProposalMultipartFormBuilder</members>
+        <members>ProposalPayloadBuilder</members>
         <members>ProposalService</members>
         <members>ProposalServicePaymentSimulationTest</members>
+        <members>ProposalTemplateResolver</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -23,6 +36,9 @@
     <types>
         <members>FinancingRate__c</members>
         <members>PaymentSimulation__c</members>
+        <members>ProposalCover__c</members>
+        <members>ProposalSectionRule__mdt</members>
+        <members>ProposalTagMapping__mdt</members>
         <name>CustomObject</name>
     </types>
     <types>
@@ -64,9 +80,32 @@
         <members>PaymentSimulation__c.ProposalLabel__c</members>
         <members>PaymentSimulation__c.Selected__c</members>
         <members>PaymentSimulation__c.SelectedInstallmentOption__c</members>
+        <members>ContentVersion.ProposalCoverKey__c</members>
+        <members>ContentVersion.ProposalPayloadHash__c</members>
+        <members>ContentVersion.ProposalPaymentType__c</members>
+        <members>ContentVersion.ProposalScenario__c</members>
+        <members>ContentVersion.ProposalTemplateRole__c</members>
+        <members>ProposalCover__c.IntegrationKey__c</members>
+        <members>ProposalSectionRule__mdt.Active__c</members>
+        <members>ProposalSectionRule__mdt.CoverKey__c</members>
+        <members>ProposalSectionRule__mdt.PaymentType__c</members>
+        <members>ProposalSectionRule__mdt.Scenario__c</members>
+        <members>ProposalSectionRule__mdt.SectionName__c</members>
+        <members>ProposalSectionRule__mdt.SortOrder__c</members>
+        <members>ProposalTagMapping__mdt.Active__c</members>
+        <members>ProposalTagMapping__mdt.CoverKey__c</members>
+        <members>ProposalTagMapping__mdt.DefaultValue__c</members>
+        <members>ProposalTagMapping__mdt.Format__c</members>
+        <members>ProposalTagMapping__mdt.PaymentType__c</members>
+        <members>ProposalTagMapping__mdt.Required__c</members>
+        <members>ProposalTagMapping__mdt.Scenario__c</members>
+        <members>ProposalTagMapping__mdt.SortOrder__c</members>
+        <members>ProposalTagMapping__mdt.SourcePath__c</members>
+        <members>ProposalTagMapping__mdt.TagKey__c</members>
         <name>CustomField</name>
     </types>
     <types>
+        <members>opportunityProposalConsole</members>
         <members>paymentSimulationCard</members>
         <members>paymentSimulationCards</members>
         <name>LightningComponentBundle</name>
@@ -75,6 +114,7 @@
         <members>Oportunidade_P_gina_de_registro</members>
         <members>Oportunidade_P_gina_de_registro1</members>
         <members>Oportunidade_P_gina_de_registro1_Ezee_Solar</members>
+        <members>Oportunidade_P_gina_de_registro_Ezee_Connect</members>
         <name>FlexiPage</name>
     </types>
     <types>
@@ -92,6 +132,14 @@
         <members>FinancingRate__c</members>
         <members>PaymentSimulation__c</members>
         <name>CustomTab</name>
+    </types>
+    <types>
+        <members>EnerzeeProposalApi</members>
+        <name>ExternalCredential</name>
+    </types>
+    <types>
+        <members>Enerzee_Proposal_Api</members>
+        <name>NamedCredential</name>
     </types>
     <version>64.0</version>
 </Package>

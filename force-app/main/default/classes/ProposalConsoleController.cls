@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : ProposalConsoleControllerTest
+ * @test              : ProposalConsoleControllerApiTest, ProposalConsoleControllerTest, ProposalEngineSupportTest
  **/
 public with sharing class ProposalConsoleController {
   public class ProposalTemplateDTO {
@@ -55,6 +55,10 @@ public with sharing class ProposalConsoleController {
     public String message;
     @AuraEnabled
     public Id contentVersionId;
+    @AuraEnabled
+    public String previewUrl;
+    @AuraEnabled
+    public Boolean reusedExistingFile;
   }
 
   private static Boolean hasViabilityRecords(Id opportunityId) {
@@ -79,9 +83,11 @@ public with sharing class ProposalConsoleController {
         RecordTypeId,
         Parceiro__r.CapaProposta__c,
         Parceiro__r.CapaPromocional__c,
+        Parceiro__r.Name,
         ViabilityStudyFinished__c,
         TipoKitPromocional__c,
-        DescricaoBateria__c
+        DescricaoBateria__c,
+        isPromotional__c
       FROM Opportunity
       WHERE Id = :opportunityId
       LIMIT 1
@@ -98,6 +104,7 @@ public with sharing class ProposalConsoleController {
     }
 
     List<ProposalTemplateDTO> templates = new List<ProposalTemplateDTO>();
+    Set<Id> availableTemplateIds = new Set<Id>();
     if (!coverIds.isEmpty()) {
       for (ProposalCover__c cover : [
         SELECT Id, Name, Template__c
@@ -110,6 +117,7 @@ public with sharing class ProposalConsoleController {
         dto.label = cover.Name;
         dto.templateName = cover.Template__c;
         templates.add(dto);
+        availableTemplateIds.add(cover.Id);
       }
     }
 
@@ -155,11 +163,43 @@ public with sharing class ProposalConsoleController {
     result.batteryDescription = opp.DescricaoBateria__c;
     result.tipoKitPromocional = opp.TipoKitPromocional__c;
     if (opp.Parceiro__r != null) {
-      result.defaultTemplateId = opp.Parceiro__r.CapaProposta__c;
+      Boolean isPromotional = ProposalContextResolver.determineIsPromotional(
+        opp
+      );
+      result.defaultTemplateId = isPromotional
+        ? opp.Parceiro__r.CapaPromocional__c
+        : opp.Parceiro__r.CapaProposta__c;
+    }
+    if (
+      result.defaultTemplateId != null &&
+      !availableTemplateIds.contains(result.defaultTemplateId)
+    ) {
+      result.defaultTemplateId = null;
     }
     if (result.defaultTemplateId == null && !templates.isEmpty()) {
       result.defaultTemplateId = templates[0].id;
     }
+    return result;
+  }
+
+  @AuraEnabled
+  public static ProposalActionResult generatePreview(
+    Id opportunityId,
+    Id coverId
+  ) {
+    validateOpportunityId(opportunityId);
+    ProposalCover__c cover = resolveActiveCover(coverId);
+
+    if (isApiCover(cover)) {
+      return fromServiceResult(
+        ProposalGenerationService.generatePreview(opportunityId, cover.Id)
+      );
+    }
+
+    ProposalActionResult result = new ProposalActionResult();
+    result.success = true;
+    result.message = 'Pré-visualização preparada com sucesso.';
+    result.previewUrl = buildLegacyPreviewUrl(opportunityId, cover);
     return result;
   }
 
@@ -190,15 +230,28 @@ public with sharing class ProposalConsoleController {
       LIMIT 1
     ];
 
-    ProposalCover__c cover = [
-      SELECT Id, Template__c
-      FROM ProposalCover__c
-      WHERE Id = :coverId AND IsActive__c = TRUE
-      LIMIT 1
-    ];
+    ProposalCover__c cover = resolveActiveCover(coverId);
 
-    if (cover == null || String.isBlank(cover.Template__c)) {
-      throw new AuraHandledException('Modelo de proposta inválido.');
+    if (isApiCover(cover)) {
+      ProposalGenerationService.ProposalResult generatedProposal = ProposalGenerationService.generateProposal(
+        opp.Id,
+        cover.Id
+      );
+
+      IntegracaoNivelloProposta.ProposalIntegrationResult integrationResult = applyPostGenerationUpdates(
+        opp,
+        true,
+        generatedProposal.contentVersionId
+      );
+
+      ProposalActionResult result = fromServiceResult(generatedProposal);
+      result.success = true;
+      result.message = String.isNotBlank(
+          integrationResult != null ? integrationResult.message : null
+        )
+        ? integrationResult.message
+        : 'Proposta enviada para o aplicativo.';
+      return result;
     }
 
     Blob pdfContent = PDFControllerExtension.generatePdfContent(
@@ -235,10 +288,7 @@ public with sharing class ProposalConsoleController {
     );
 
     ProposalActionResult result = new ProposalActionResult();
-    result.success =
-      integrationResult == null ||
-      integrationResult.success == null ||
-      integrationResult.success;
+    result.success = true;
     result.contentVersionId = contentVersionId;
     result.message = String.isNotBlank(
         integrationResult != null ? integrationResult.message : null
@@ -246,6 +296,62 @@ public with sharing class ProposalConsoleController {
       ? integrationResult.message
       : 'Proposta enviada para o aplicativo.';
     return result;
+  }
+
+  private static ProposalActionResult fromServiceResult(
+    ProposalGenerationService.ProposalResult serviceResult
+  ) {
+    ProposalActionResult result = new ProposalActionResult();
+    result.success = serviceResult != null && serviceResult.success == true;
+    result.message = serviceResult != null ? serviceResult.message : null;
+    result.contentVersionId = serviceResult != null
+      ? serviceResult.contentVersionId
+      : null;
+    result.previewUrl = serviceResult != null ? serviceResult.previewUrl : null;
+    result.reusedExistingFile = serviceResult != null
+      ? serviceResult.reusedExistingFile
+      : false;
+    return result;
+  }
+
+  private static ProposalCover__c resolveActiveCover(Id coverId) {
+    if (coverId == null) {
+      throw new AuraHandledException('Selecione um modelo de proposta.');
+    }
+
+    List<ProposalCover__c> covers = [
+      SELECT Id, Template__c, IntegrationKey__c, IsActive__c
+      FROM ProposalCover__c
+      WHERE Id = :coverId
+      LIMIT 1
+    ];
+
+    if (covers.isEmpty() || covers[0].IsActive__c != true) {
+      throw new AuraHandledException('Modelo de proposta inválido.');
+    }
+
+    ProposalCover__c cover = covers[0];
+    if (!isApiCover(cover) && String.isBlank(cover.Template__c)) {
+      throw new AuraHandledException('Modelo de proposta inválido.');
+    }
+    return cover;
+  }
+
+  private static Boolean isApiCover(ProposalCover__c cover) {
+    return cover != null && String.isNotBlank(cover.IntegrationKey__c);
+  }
+
+  private static String buildLegacyPreviewUrl(
+    Id opportunityId,
+    ProposalCover__c cover
+  ) {
+    return '/apex/' +
+      cover.Template__c +
+      '?id=' +
+      opportunityId +
+      '&selectedCoverId=' +
+      cover.Id +
+      '&isManual=true&skipAutoSave=true';
   }
 
   private static String buildFilePrefix(Opportunity opp) {
@@ -321,10 +427,20 @@ public with sharing class ProposalConsoleController {
     try {
       if (waitForIntegration == true) {
         integrationResult = contentVersionId != null
-          ? IntegracaoNivelloProposta.gerandoPropostaSincrona(sourceOpp.Id)
+          ? IntegracaoNivelloProposta.gerandoPropostaSincrona(
+              sourceOpp.Id,
+              contentVersionId
+            )
           : IntegracaoNivelloProposta.gerandoPropostaSincrona(sourceOpp.Id);
       } else {
-        IntegracaoNivelloProposta.gerandoProposta(sourceOpp.Id);
+        if (contentVersionId != null) {
+          IntegracaoNivelloProposta.gerandoProposta(
+            sourceOpp.Id,
+            contentVersionId
+          );
+        } else {
+          IntegracaoNivelloProposta.gerandoProposta(sourceOpp.Id);
+        }
       }
     } catch (Exception integrationEx) {
       Utils.createLog(

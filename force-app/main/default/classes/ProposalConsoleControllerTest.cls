@@ -38,7 +38,8 @@ private class ProposalConsoleControllerTest {
         AccountId = account.Id,
         StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
         Parceiro__c = parceiro.Id,
-        GrupoTarifario__c = 'Grupo B'
+        GrupoTarifario__c = 'Grupo B',
+        IdVirtualOffice__c = 'VO-LEGACY-001'
       ),
       true
     );

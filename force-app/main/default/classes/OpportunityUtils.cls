@@ -11,8 +11,9 @@
  *                       OpportunityBOPaymentConfirmationTaskTest, OpportunityBOPaymentReminderTaskTest,
  *                       OpportunityDiscountRequestControllerTest, OpportunityDisqualifyLeadsTest,
  *                       OpportunityPDFHelperTest, OpportunityTriggerTest, OpportunityUtilsTest,
- *                       PDFControllerExtensionExtraTest, ProjetoTriggerTest, ProposalConsoleControllerTest, TaskBOTest,
- *                       UtilsTest, ViabilityControllerTest
+ *                       PDFControllerExtensionExtraTest, ProjetoTriggerTest, ProposalConsoleControllerApiTest,
+ *                       ProposalConsoleControllerTest, ProposalEngineSupportTest, TaskBOTest, UtilsTest,
+ *                       ViabilityControllerTest
  **/
 public class OpportunityUtils {
   //	 Status
