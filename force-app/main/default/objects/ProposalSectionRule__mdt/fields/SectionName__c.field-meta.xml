@@ -3,6 +3,6 @@
     <fullName>SectionName__c</fullName>
     <label>Nome da Secao</label>
     <length>255</length>
-    <required>true</required>
+    <required>false</required>
     <type>Text</type>
 </CustomField>

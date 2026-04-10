@@ -333,24 +333,21 @@ private class ProposalConsoleControllerApiTest {
     tagConfig.sortOrder = 1;
     tagConfig.active = true;
 
-    ProposalConfigurationService.SectionConfig sectionConfig = new ProposalConfigurationService.SectionConfig();
-    sectionConfig.coverKey = coverKey;
-    sectionConfig.scenario = ProposalConfigurationService.SCENARIO_INITIAL;
-    sectionConfig.sectionName = 'Proposta';
-    sectionConfig.sortOrder = 1;
-    sectionConfig.active = true;
-
     ProposalConfigurationService.setTestTagConfigs(
       new List<ProposalConfigurationService.TagConfig>{ tagConfig }
     );
-    ProposalConfigurationService.setTestSectionConfigs(
-      new List<ProposalConfigurationService.SectionConfig>{ sectionConfig }
+    ProposalConfigurationService.setTestSectionsByKey(
+      new Map<String, List<String>>{
+        ProposalConfigurationService.SCENARIO_INITIAL => new List<String>{
+          'Proposta'
+        }
+      }
     );
   }
 
   private static void clearApiMappings() {
     ProposalConfigurationService.setTestTagConfigs(null);
-    ProposalConfigurationService.setTestSectionConfigs(null);
+    ProposalConfigurationService.setTestSectionsByKey(null);
   }
 
   private static void resetCalloutCounters() {

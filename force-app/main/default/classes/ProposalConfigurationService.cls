@@ -35,30 +35,10 @@ public with sharing class ProposalConfigurationService {
     }
   }
 
-  public class SectionConfig implements Comparable {
-    public String coverKey;
-    public String scenario;
-    public String paymentType;
-    public String sectionName;
-    public Integer sortOrder;
-    public Boolean active;
-
-    public Integer compareTo(Object otherObject) {
-      SectionConfig other = (SectionConfig) otherObject;
-      Integer left = sortOrder == null ? 0 : sortOrder;
-      Integer right = other.sortOrder == null ? 0 : other.sortOrder;
-      if (left == right) {
-        return String.valueOf(sectionName)
-          .compareTo(String.valueOf(other.sectionName));
-      }
-      return left < right ? -1 : 1;
-    }
-  }
-
   @TestVisible
   private static List<TagConfig> testTagConfigs;
   @TestVisible
-  private static List<SectionConfig> testSectionConfigs;
+  private static Map<String, List<String>> testSectionsByKey;
 
   @TestVisible
   public static void setTestTagConfigs(List<TagConfig> configs) {
@@ -66,8 +46,10 @@ public with sharing class ProposalConfigurationService {
   }
 
   @TestVisible
-  public static void setTestSectionConfigs(List<SectionConfig> configs) {
-    testSectionConfigs = configs;
+  public static void setTestSectionsByKey(
+    Map<String, List<String>> sectionsByKey
+  ) {
+    testSectionsByKey = sectionsByKey;
   }
 
   public static List<TagConfig> getTagConfigs(
@@ -100,32 +82,17 @@ public with sharing class ProposalConfigurationService {
     String scenario,
     String paymentType
   ) {
-    List<SectionConfig> exactMatches = new List<SectionConfig>();
-    List<SectionConfig> genericMatches = new List<SectionConfig>();
-    for (SectionConfig config : loadSectionConfigs()) {
-      if (!matchesCover(config.coverKey, coverKey) || config.active != true) {
-        continue;
-      }
-      if (!matchesScenario(config.scenario, scenario, false)) {
-        continue;
-      }
-      if (String.isBlank(config.paymentType)) {
-        genericMatches.add(config);
-      } else if (matchesPaymentType(config.paymentType, paymentType)) {
-        exactMatches.add(config);
-      }
+    String resolvedKey = String.isBlank(paymentType)
+      ? SCENARIO_INITIAL
+      : paymentType;
+    Map<String, List<String>> sectionsByKey = loadSectionsByKey(coverKey);
+    if (sectionsByKey.containsKey(resolvedKey)) {
+      return sectionsByKey.get(resolvedKey);
     }
-
-    List<SectionConfig> selected = !exactMatches.isEmpty()
-      ? exactMatches
-      : genericMatches;
-    selected.sort();
-
-    List<String> sections = new List<String>();
-    for (SectionConfig config : selected) {
-      sections.add(config.sectionName);
+    if (sectionsByKey.containsKey(SCENARIO_INITIAL)) {
+      return sectionsByKey.get(SCENARIO_INITIAL);
     }
-    return sections;
+    return new List<String>();
   }
 
   private static List<TagConfig> loadTagConfigs() {
@@ -155,28 +122,32 @@ public with sharing class ProposalConfigurationService {
     return results;
   }
 
-  private static List<SectionConfig> loadSectionConfigs() {
-    if (testSectionConfigs != null) {
-      return new List<SectionConfig>(testSectionConfigs);
+  private static Map<String, List<String>> loadSectionsByKey(String coverKey) {
+    if (testSectionsByKey != null) {
+      return testSectionsByKey;
     }
 
-    List<SectionConfig> results = new List<SectionConfig>();
+    Map<String, List<String>> result = new Map<String, List<String>>();
     for (
       ProposalSectionRule__mdt record : ProposalSectionRule__mdt.getAll()
         .values()
     ) {
-      SectionConfig config = new SectionConfig();
-      config.coverKey = record.CoverKey__c;
-      config.scenario = normalize(record.Scenario__c);
-      config.paymentType = normalize(record.PaymentType__c);
-      config.sectionName = record.SectionName__c;
-      config.sortOrder = record.SortOrder__c == null
-        ? 0
-        : Integer.valueOf(record.SortOrder__c);
-      config.active = record.Active__c;
-      results.add(config);
+      if (record.Active__c != true) {
+        continue;
+      }
+      if (normalize(record.CoverKey__c) != normalize(coverKey)) {
+        continue;
+      }
+      String key = String.isBlank(record.PaymentType__c)
+        ? SCENARIO_INITIAL
+        : record.PaymentType__c.trim();
+      List<String> sections = (List<String>) JSON.deserialize(
+        record.SectionsJson__c,
+        List<String>.class
+      );
+      result.put(key, sections);
     }
-    return results;
+    return result;
   }
 
   private static Boolean matchesCover(String configCoverKey, String coverKey) {

@@ -81,28 +81,15 @@ private class ProposalEngineSupportTest {
     paymentTag.sortOrder = 1;
     paymentTag.active = true;
 
-    ProposalConfigurationService.SectionConfig genericSection = new ProposalConfigurationService.SectionConfig();
-    genericSection.coverKey = COVER_KEY;
-    genericSection.scenario = ProposalConfigurationService.SCENARIO_INITIAL;
-    genericSection.sectionName = 'Proposta';
-    genericSection.sortOrder = 2;
-    genericSection.active = true;
-
-    ProposalConfigurationService.SectionConfig paymentSection = new ProposalConfigurationService.SectionConfig();
-    paymentSection.coverKey = COVER_KEY;
-    paymentSection.scenario = ProposalConfigurationService.SCENARIO_PAYMENT_SELECTED;
-    paymentSection.paymentType = 'FINANCING';
-    paymentSection.sectionName = 'Valor Financiamento';
-    paymentSection.sortOrder = 1;
-    paymentSection.active = true;
-
     ProposalConfigurationService.setTestTagConfigs(
       new List<ProposalConfigurationService.TagConfig>{ genericTag, paymentTag }
     );
-    ProposalConfigurationService.setTestSectionConfigs(
-      new List<ProposalConfigurationService.SectionConfig>{
-        genericSection,
-        paymentSection
+    ProposalConfigurationService.setTestSectionsByKey(
+      new Map<String, List<String>>{
+        ProposalConfigurationService.SCENARIO_INITIAL => new List<String>{
+          'Proposta'
+        },
+        'Financing' => new List<String>{ 'Valor Financiamento' }
       }
     );
 
@@ -140,7 +127,7 @@ private class ProposalEngineSupportTest {
       );
     } finally {
       ProposalConfigurationService.setTestTagConfigs(null);
-      ProposalConfigurationService.setTestSectionConfigs(null);
+      ProposalConfigurationService.setTestSectionsByKey(null);
     }
   }
 

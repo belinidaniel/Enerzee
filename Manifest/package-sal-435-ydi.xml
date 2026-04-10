@@ -91,6 +91,7 @@
         <members>ProposalSectionRule__mdt.PaymentType__c</members>
         <members>ProposalSectionRule__mdt.Scenario__c</members>
         <members>ProposalSectionRule__mdt.SectionName__c</members>
+        <members>ProposalSectionRule__mdt.SectionsJson__c</members>
         <members>ProposalSectionRule__mdt.SortOrder__c</members>
         <members>ProposalTagMapping__mdt.Active__c</members>
         <members>ProposalTagMapping__mdt.CoverKey__c</members>
@@ -102,6 +103,7 @@
         <members>ProposalTagMapping__mdt.SortOrder__c</members>
         <members>ProposalTagMapping__mdt.SourcePath__c</members>
         <members>ProposalTagMapping__mdt.TagKey__c</members>
+        <members>ProposalSectionRule__mdt.SectionsJson__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -140,6 +142,29 @@
     <types>
         <members>Enerzee_Proposal_Api</members>
         <name>NamedCredential</name>
+    </types>
+    <types>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_NumeroProposta</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_NomeConta</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_ValidadeProposta</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_ValorTotalProposta</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_PotenciaNominalSistema</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_GeracaoMensalEstimada</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_EconomiaMensalEstimada</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_PaybackAnos</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_NumeroModulos</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_FormaPagamento</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_LabelSimulacao</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_NumeroParcelas</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_ValorParcela</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_TaxaJuros</members>
+        <members>ProposalSectionRule.GB_PADRAO_INITIAL</members>
+        <members>ProposalSectionRule.GB_PADRAO_FINANCING</members>
+        <members>ProposalSectionRule.GB_PADRAO_RENTAL</members>
+        <name>CustomMetadata</name>
     </types>
     <version>64.0</version>
 </Package>
