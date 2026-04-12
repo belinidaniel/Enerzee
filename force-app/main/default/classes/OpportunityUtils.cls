@@ -5,15 +5,15 @@
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, EngineeringDateStampFlowTest, InstalacaoBOTest,
- *                       IntegracaoNivelloContratoCoverageTest, IntegracaoNivelloTest, IntegracaoSAPTest,
- *                       OppClosedLostFlowActionTest, OpportunityBOAdditionalTest, OpportunityBOCoverageTest,
- *                       OpportunityBOEmailTest, OpportunityBOHighCoverageTest, OpportunityBOIntegrationVOFixesTest,
- *                       OpportunityBOPaymentConfirmationTaskTest, OpportunityBOPaymentReminderTaskTest,
- *                       OpportunityDiscountRequestControllerTest, OpportunityDisqualifyLeadsTest,
- *                       OpportunityPDFHelperTest, OpportunityTriggerTest, OpportunityUtilsTest,
- *                       PDFControllerExtensionExtraTest, ProjetoTriggerTest, ProposalConsoleControllerApiTest,
- *                       ProposalConsoleControllerTest, ProposalEngineSupportTest, TaskBOTest, UtilsTest,
- *                       ViabilityControllerTest
+ *                       IntegracaoNivelloContratoCoverageTest, IntegracaoNivelloPropostaTest, IntegracaoNivelloTest,
+ *                       IntegracaoSAPTest, OppClosedLostFlowActionTest, OpportunityBOAdditionalTest,
+ *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
+ *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentConfirmationTaskTest,
+ *                       OpportunityBOPaymentReminderTaskTest, OpportunityDiscountRequestControllerTest,
+ *                       OpportunityDisqualifyLeadsTest, OpportunityPDFHelperTest, OpportunityTriggerTest,
+ *                       OpportunityUtilsTest, PDFControllerExtensionExtraTest, ProjetoTriggerTest,
+ *                       ProposalConsoleControllerApiTest, ProposalConsoleControllerTest, ProposalEngineSupportTest,
+ *                       TaskBOTest, UtilsTest, ViabilityControllerTest
  **/
 public class OpportunityUtils {
   //	 Status

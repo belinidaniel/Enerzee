@@ -139,6 +139,8 @@ private class ProposalConsoleControllerApiTest {
       ContentVersion generatedVersion = [
         SELECT
           Id,
+          Title,
+          PathOnClient,
           FirstPublishLocationId,
           IsProposal__c,
           ProposalCoverKey__c,
@@ -159,6 +161,21 @@ private class ProposalConsoleControllerApiTest {
         COVER_KEY,
         generatedVersion.ProposalCoverKey__c,
         'A auditoria do arquivo precisa guardar a chave da capa.'
+      );
+      Opportunity persistedOpportunity = [
+        SELECT Id, Name, Numeroproposta__c, Account.Name
+        FROM Opportunity
+        WHERE Id = :opportunityRecord.Id
+      ];
+      Assert.areEqual(
+        ProposalFileService.buildProposalTitle(persistedOpportunity),
+        generatedVersion.Title,
+        'O titulo do PDF deve seguir o padrao de nomenclatura da proposta.'
+      );
+      Assert.areEqual(
+        ProposalFileService.buildProposalFileName(persistedOpportunity),
+        generatedVersion.PathOnClient,
+        'O nome fisico do PDF deve seguir o mesmo padrao padronizado.'
       );
       Assert.areEqual(
         ProposalConfigurationService.SCENARIO_INITIAL,
@@ -186,7 +203,12 @@ private class ProposalConsoleControllerApiTest {
       );
 
       List<OpportunityAttachmentLink__c> attachmentLinks = [
-        SELECT AttachmentURL__c, ExternalId__c, OpportunityId__c, Type__c
+        SELECT
+          AttachmentURL__c,
+          AttachmentDescription__c,
+          ExternalId__c,
+          OpportunityId__c,
+          Type__c
         FROM OpportunityAttachmentLink__c
         WHERE OpportunityId__c = :opportunityRecord.Id
         LIMIT 1
@@ -202,6 +224,11 @@ private class ProposalConsoleControllerApiTest {
           'ATT-001',
           attachmentLink.ExternalId__c,
           'O identificador externo deve ser guardado no link da proposta.'
+        );
+        Assert.areEqual(
+          ProposalFileService.buildProposalTitle(persistedOpportunity),
+          attachmentLink.AttachmentDescription__c,
+          'O anexo externo deve expor o mesmo nome padronizado da proposta.'
         );
         Assert.areEqual(
           'Proposal',

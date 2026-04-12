@@ -282,30 +282,7 @@ public with sharing class ProposalConsoleController {
   }
 
   private static String buildFilePrefix(Opportunity opp) {
-    String accountName = (opp.Account != null &&
-      !String.isBlank(opp.Account.Name))
-      ? opp.Account.Name
-      : opp.Name;
-    String numero = String.isBlank(opp.Numeroproposta__c)
-      ? ''
-      : opp.Numeroproposta__c + ' ';
-    String nomeRegistro = (numero + accountName).trim();
-    String parceiro = (opp.Parceiro__r != null) ? opp.Parceiro__r.Name : null;
-    String baseLabel = opp.ViabilityStudyFinished__c
-      ? 'Readequacao'
-      : 'Proposta';
-
-    if (opp.GrupoTarifario__c == 'Grupo A' || parceiro == 'Enerzee - Grupo A') {
-      return baseLabel + ' A ' + nomeRegistro;
-    } else if (
-      opp.GrupoTarifario__c == 'Grupo B' ||
-      opp.GrupoTarifario__c == 'Grupo B Optante' ||
-      parceiro == 'Enerzee - Grupo B'
-    ) {
-      return baseLabel + ' B ' + nomeRegistro;
-    }
-
-    return baseLabel + ' ' + nomeRegistro;
+    return ProposalFileService.buildProposalTitle(opp);
   }
 
   private static IntegracaoNivelloProposta.ProposalIntegrationResult applyPostGenerationUpdates(

@@ -4,9 +4,11 @@
  * @group             :
  * @last modified on  : 04-10-2026
  * @last modified by  : Daniel Belini
- * @test              : ProposalEngineSupportTest
+ * @test              : ProposalConsoleControllerApiTest, ProposalEngineSupportTest
  **/
 public with sharing class ProposalFileService {
+  private static final Integer MAX_TITLE_LENGTH = 200;
+
   @TestVisible
   private static Map<String, Id> generatedProposalIdsByKey = new Map<String, Id>();
 
@@ -139,10 +141,8 @@ public with sharing class ProposalFileService {
       );
     }
 
-    String fileName = buildFileName(context.opportunity, apiResponse.fileName);
-    String title = fileName.toLowerCase().endsWith('.pdf')
-      ? fileName.substring(0, fileName.length() - 4)
-      : fileName;
+    String title = buildProposalTitle(context.opportunity);
+    String fileName = buildProposalFileName(context.opportunity);
 
     ContentVersion version = new ContentVersion();
     version.Title = title;
@@ -177,48 +177,111 @@ public with sharing class ProposalFileService {
         contentVersionId;
   }
 
-  private static String buildFileName(
-    Opportunity opportunityRecord,
-    String suggestedFileName
-  ) {
-    if (String.isNotBlank(suggestedFileName)) {
-      return suggestedFileName.toLowerCase().endsWith('.pdf')
-        ? suggestedFileName
-        : suggestedFileName + '.pdf';
+  public static String buildProposalTitle(Opportunity opportunityRecord) {
+    if (opportunityRecord == null) {
+      return 'Proposta';
     }
 
-    String baseLabel = opportunityRecord.ViabilityStudyFinished__c
-      ? 'Readequacao'
-      : 'Proposta';
-    String accountName = opportunityRecord.Account != null &&
-      String.isNotBlank(opportunityRecord.Account.Name)
-      ? opportunityRecord.Account.Name
-      : opportunityRecord.Name;
-    String numero = String.isBlank(opportunityRecord.Numeroproposta__c)
-      ? ''
-      : opportunityRecord.Numeroproposta__c + ' ';
-    String nomeRegistro = (numero + accountName).trim();
-    String parceiro = opportunityRecord.Parceiro__r != null
-      ? opportunityRecord.Parceiro__r.Name
-      : null;
+    String proposalNumber = normalizeWhitespace(
+      (String) opportunityRecord.get('Numeroproposta__c')
+    );
+    String primaryName = normalizeWhitespace(
+      opportunityRecord.Account != null
+        ? opportunityRecord.Account.Name
+        : opportunityRecord.Name
+    );
 
-    if (
-      opportunityRecord.GrupoTarifario__c == 'Grupo A' ||
-      parceiro == 'Enerzee - Grupo A'
-    ) {
-      return baseLabel + ' A ' + nomeRegistro + '.pdf';
+    List<String> parts = new List<String>();
+    if (String.isNotBlank(proposalNumber)) {
+      parts.add(proposalNumber);
     }
-    if (
-      opportunityRecord.GrupoTarifario__c == 'Grupo B' ||
-      opportunityRecord.GrupoTarifario__c == 'Grupo B Optante' ||
-      parceiro == 'Enerzee - Grupo B'
-    ) {
-      return baseLabel + ' B ' + nomeRegistro + '.pdf';
+    if (String.isNotBlank(primaryName)) {
+      parts.add(primaryName);
     }
-    return baseLabel + ' ' + nomeRegistro + '.pdf';
+
+    String title = parts.isEmpty() ? 'Proposta' : String.join(parts, ' ');
+    title = normalizeWhitespace(title);
+
+    if (title.length() > MAX_TITLE_LENGTH) {
+      title = title.substring(0, MAX_TITLE_LENGTH).trim();
+    }
+
+    return title;
+  }
+
+  public static String buildProposalFileName(Opportunity opportunityRecord) {
+    return sanitizeFileName(buildProposalTitle(opportunityRecord)) + '.pdf';
+  }
+
+  public static String sanitizeFileName(String baseTitle) {
+    String sanitized = normalizeWhitespace(baseTitle);
+    if (String.isBlank(sanitized)) {
+      sanitized = 'Proposta';
+    }
+
+    sanitized = sanitized.replaceAll('[\\\\/:*?\"<>|]+', ' ');
+    sanitized = normalizeWhitespace(sanitized);
+
+    if (sanitized.length() > MAX_TITLE_LENGTH) {
+      sanitized = sanitized.substring(0, MAX_TITLE_LENGTH).trim();
+    }
+
+    return sanitized;
+  }
+
+  public static void deleteStoredProposals(Set<Id> opportunityIds) {
+    if (opportunityIds == null || opportunityIds.isEmpty()) {
+      return;
+    }
+
+    Set<Id> validOpportunityIds = new Set<Id>();
+    for (Id opportunityId : opportunityIds) {
+      if (opportunityId != null) {
+        validOpportunityIds.add(opportunityId);
+      }
+    }
+
+    if (validOpportunityIds.isEmpty()) {
+      return;
+    }
+
+    Set<Id> documentIdsToDelete = new Set<Id>();
+    for (ContentVersion version : [
+      SELECT ContentDocumentId
+      FROM ContentVersion
+      WHERE
+        FirstPublishLocationId IN :validOpportunityIds
+        AND IsProposal__c = TRUE
+        AND ContentDocumentId != NULL
+    ]) {
+      documentIdsToDelete.add(version.ContentDocumentId);
+    }
+
+    if (documentIdsToDelete.isEmpty()) {
+      return;
+    }
+
+    try {
+      delete [
+        SELECT Id
+        FROM ContentDocument
+        WHERE Id IN :documentIdsToDelete
+      ];
+    } catch (Exception e) {
+      Utils.createLog('ProposalFileService', 'deleteStoredProposals', e);
+    }
   }
 
   private static String buildCacheKey(Id opportunityId, String payloadHash) {
     return String.valueOf(opportunityId) + '|' + payloadHash;
+  }
+
+  @TestVisible
+  private static String normalizeWhitespace(String value) {
+    if (String.isBlank(value)) {
+      return null;
+    }
+
+    return value.replaceAll('\\s+', ' ').trim();
   }
 }

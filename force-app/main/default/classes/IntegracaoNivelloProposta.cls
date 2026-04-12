@@ -39,8 +39,11 @@ public with sharing class IntegracaoNivelloProposta {
     Opportunity opp = [
       SELECT
         Id,
+        Name,
+        Numeroproposta__c,
         IdVirtualOffice__c,
         OwnerId,
+        Account.Name,
         StatusBodyIntegracaoNivello__c,
         SucessoIntegracaoNivello__c,
         StageName,
@@ -93,7 +96,7 @@ public with sharing class IntegracaoNivelloProposta {
       result.responseBody = response != null ? response.getBody() : null;
 
       if (response != null && response.getStatusCode() == 200) {
-        handleAttachmentResponse(opp.Id, response);
+        handleAttachmentResponse(opp, response);
         opp.SucessoIntegracaoNivello__c = true;
         opp.VerificarCamposElaboracao__c = false;
         opp.PropostaGerada__c = true;
@@ -426,7 +429,7 @@ public with sharing class IntegracaoNivelloProposta {
   }
 
   private static Id handleAttachmentResponse(
-    Id opportunityId,
+    Opportunity opportunityRecord,
     HttpResponse response
   ) {
     if (response == null || String.isBlank(response.getBody())) {
@@ -462,15 +465,17 @@ public with sharing class IntegracaoNivelloProposta {
       }
 
       OpportunityAttachmentLinkService.AttachmentInput input = new OpportunityAttachmentLinkService.AttachmentInput();
-      input.opportunityId = opportunityId;
+      input.opportunityId = opportunityRecord.Id;
       input.attachmentUrl = attachmentUrl;
       input.externalId = externalId;
       input.type = 'Proposal';
 
       String decodedFileName = extractFileName(attachmentUrl);
-      if (String.isNotBlank(decodedFileName)) {
-        input.description = decodedFileName;
-      }
+      input.description = String.isNotBlank(
+          ProposalFileService.buildProposalTitle(opportunityRecord)
+        )
+        ? ProposalFileService.buildProposalTitle(opportunityRecord)
+        : decodedFileName;
 
       OpportunityAttachmentLinkService.upsertAttachment(input);
       if (String.isNotBlank(input.externalId)) {
@@ -488,7 +493,7 @@ public with sharing class IntegracaoNivelloProposta {
         'IntegracaoNivelloProposta',
         'handleAttachmentResponse',
         e,
-        opportunityId
+        opportunityRecord != null ? opportunityRecord.Id : null
       );
       return null;
     }

@@ -2876,6 +2876,41 @@ public class OpportunityBO {
     );
   }
 
+  public static void deleteStoredProposalFilesOnClosure(
+    List<Opportunity> newRecords,
+    Map<Id, Opportunity> oldRecordsMap
+  ) {
+    if (
+      newRecords == null ||
+      newRecords.isEmpty() ||
+      oldRecordsMap == null ||
+      oldRecordsMap.isEmpty()
+    ) {
+      return;
+    }
+
+    Set<Id> opportunityIdsToCleanup = new Set<Id>();
+    for (Opportunity opportunity : newRecords) {
+      Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
+      if (oldOpportunity == null) {
+        continue;
+      }
+
+      if (
+        OpportunityUtils.isChangingToClosedWon(opportunity, oldOpportunity) ||
+        OpportunityUtils.isChangingToClosedLost(opportunity, oldOpportunity)
+      ) {
+        opportunityIdsToCleanup.add(opportunity.Id);
+      }
+    }
+
+    if (opportunityIdsToCleanup.isEmpty()) {
+      return;
+    }
+
+    ProposalFileService.deleteStoredProposals(opportunityIdsToCleanup);
+  }
+
   public static void closeActivitiesAndRelatedRecordsForClosedLost(
     Set<Id> closedLostOpportunityIds,
     Map<Id, Opportunity> closedLostOpportunities

@@ -426,19 +426,48 @@ private class ProposalEngineSupportTest {
     );
 
     ContentVersion savedVersion = [
-      SELECT Title, PathOnClient
+      SELECT Title, PathOnClient, FirstPublishLocationId
       FROM ContentVersion
       WHERE Id = :contentVersionId
     ];
+    Opportunity sourceOpportunity = [
+      SELECT Id, Name, Numeroproposta__c, Account.Name
+      FROM Opportunity
+      WHERE Id = :savedVersion.FirstPublishLocationId
+    ];
     Assert.areEqual(
-      'arquivo-personalizado.pdf',
+      ProposalFileService.buildProposalFileName(sourceOpportunity),
       savedVersion.PathOnClient,
-      'O nome do arquivo sugerido pela API deve ser normalizado para PDF.'
+      'O PDF salvo deve seguir o padrao de nomenclatura da proposta.'
     );
     Assert.areEqual(
-      'arquivo-personalizado',
+      ProposalFileService.buildProposalTitle(sourceOpportunity),
       savedVersion.Title,
-      'O título salvo não deve repetir a extensão do PDF.'
+      'O titulo salvo deve seguir o padrao de nomenclatura da proposta.'
+    );
+  }
+
+  @isTest
+  static void proposalNamingServiceUsesProposalNumberAndAccountName() {
+    Opportunity opportunityRecord = (Opportunity) JSON.deserialize(
+      '{"attributes":{"type":"Opportunity"},"Name":"Nome XPTO","Numeroproposta__c":"P-ENGINE-001"}',
+      Opportunity.class
+    );
+
+    Assert.areEqual(
+      'P-ENGINE-001 Nome XPTO',
+      ProposalFileService.buildProposalTitle(opportunityRecord),
+      'O titulo deve seguir o padrao numero da proposta + nome principal.'
+    );
+    Assert.isTrue(
+      ProposalFileService.buildProposalFileName(opportunityRecord)
+        .endsWith('.pdf'),
+      'O nome de arquivo precisa manter a extensao PDF.'
+    );
+    Assert.areEqual(
+      'P-001 Cliente Teste',
+      ProposalFileService.sanitizeFileName('P-001/Cliente:Teste'),
+      'Caracteres invalidos de nome de arquivo devem ser higienizados.'
     );
   }
 

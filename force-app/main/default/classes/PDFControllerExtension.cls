@@ -341,15 +341,9 @@ public with sharing class PDFControllerExtension {
     String selectedCoverId = propostas[0].Id;
 
     // Nome do arquivo
-    String nomeArquivo;
-    if (grupoTarifario == 'Grupo A' || parceiro == 'Enerzee - Grupo A') {
-      nomeArquivo = 'Proposta A ' + nomeRegistro;
-    } else if (grupoTarifario == 'Grupo B' || parceiro == 'Enerzee - Grupo B') {
-      // << corrigido ||
-      nomeArquivo = 'Proposta B ' + nomeRegistro;
-    } else {
-      nomeArquivo = nomeRegistro;
-    }
+    String nomeArquivo = ProposalFileService.buildProposalTitle(
+      this.opportunity
+    );
 
     // Geração do PDF e salvamento
     Blob conteudoPdf = generatePdfContent(
@@ -448,30 +442,16 @@ public with sharing class PDFControllerExtension {
     Boolean isChanged
   ) {
     try {
-      DateTime today = DateTime.Now();
-      String dateString =
-        today.day() +
-        '-' +
-        today.month() +
-        '-' +
-        today.year();
-      String timeString =
-        today.hour() +
-        ':' +
-        String.valueOf(today.minute()).leftPad(2, '0');
-
+      String titulo = String.isNotBlank(numeroProposta)
+        ? numeroProposta.trim()
+        : 'Proposta';
       String nomeArquivo =
-        numeroProposta +
-        '-' +
-        dateString +
-        ' ' +
-        timeString +
-        '.pdf';
+        ProposalFileService.sanitizeFileName(titulo) + '.pdf';
       ContentVersion cv = new ContentVersion();
       cv.ContentLocation = 'S';
       cv.FirstPublishLocationId = opportunityId;
       cv.VersionData = conteudoPdf;
-      cv.Title = numeroProposta + '-' + dateString + ' ' + timeString;
+      cv.Title = titulo;
       cv.PathOnClient = nomeArquivo;
       cv.NomePaginaPDF__c = nomePagina;
       cv.IsProposal__c = true;
@@ -650,19 +630,10 @@ public with sharing class PDFControllerExtension {
       capaId = proposta.Id;
       pageName = proposta.Template__c;
 
-      String baseLabel = opp.ViabilityStudyFinished__c
-        ? 'Readequacao'
-        : 'Proposta';
-      if (grupoTarifario == 'Grupo A' || produto == 'EzeeSolarA') {
-        nomeArquivo = baseLabel + ' A ' + nomeRegistro;
-      } else if (grupoTarifario == 'Grupo B' || produto == 'EzeeSolarB') {
-        nomeArquivo = baseLabel + ' B ' + nomeRegistro;
-      } else {
-        nomeArquivo = baseLabel + ' ' + nomeRegistro;
-      }
+      nomeArquivo = ProposalFileService.buildProposalTitle(opp);
     } else {
       pageName = 'DefaultDescricao';
-      nomeArquivo = pageName + ' ' + nomeRegistro;
+      nomeArquivo = ProposalFileService.buildProposalTitle(opp);
     }
 
     // Evita duplicidade: se já existe proposta (IsProposal__c), apenas garante flag e integração.
