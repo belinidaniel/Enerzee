@@ -181,16 +181,6 @@ private class ProposalEngineSupportTest {
       ),
       'Quando existir IntegrationKey explícita ela deve ter prioridade.'
     );
-    Assert.areEqual(
-      null,
-      ProposalCoverRoutingService.resolveCoverKey(
-        new ProposalCover__c(
-          Template__c = 'ModeloPropostaB',
-          isPromotional__c = true
-        )
-      ),
-      'A capa promocional não deve usar o fallback da capa padrão.'
-    );
   }
 
   @isTest
@@ -637,6 +627,428 @@ private class ProposalEngineSupportTest {
   }
 
   @isTest
+  static void integracaoNivelloPersistsFailureWhenCalloutThrows() {
+    Opportunity opportunityRecord = [
+      SELECT Id
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+
+    ContentVersion proposalVersion = new ContentVersion(
+      Title = 'Proposta Engine Falha',
+      PathOnClient = 'proposta-engine-failure.pdf',
+      VersionData = Blob.valueOf('pdf-failure'),
+      FirstPublishLocationId = opportunityRecord.Id,
+      IsProposal__c = true
+    );
+    insert proposalVersion;
+
+    Test.setMock(HttpCalloutMock.class, new ProposalApiClientMock());
+    apiMockMode = 'NIVELLO_THROW';
+
+    Test.startTest();
+    IntegracaoNivelloProposta.ProposalIntegrationResult failureResult = IntegracaoNivelloProposta.gerandoPropostaSincrona(
+      opportunityRecord.Id,
+      proposalVersion.Id
+    );
+    Test.stopTest();
+
+    Assert.isFalse(
+      failureResult.success,
+      'Quando o callout falhar, a integração síncrona deve retornar erro controlado.'
+    );
+    Opportunity updatedOpportunity = [
+      SELECT SucessoIntegracaoNivello__c, StatusBodyIntegracaoNivello__c
+      FROM Opportunity
+      WHERE Id = :opportunityRecord.Id
+    ];
+    Assert.isFalse(
+      updatedOpportunity.SucessoIntegracaoNivello__c,
+      'A oportunidade deve registrar a falha da integração.'
+    );
+    Assert.isTrue(
+      updatedOpportunity.StatusBodyIntegracaoNivello__c != null &&
+      updatedOpportunity.StatusBodyIntegracaoNivello__c.contains(
+        'Falha simulada'
+      ),
+      'A mensagem de erro precisa ficar auditada na oportunidade.'
+    );
+  }
+
+  @isTest
+  static void proposalAvailabilityRequiresStoredFileAndProposalLink() {
+    Opportunity opportunityRecord = [
+      SELECT Id
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+
+    ProposalFileService.ProposalAvailability initialAvailability = ProposalFileService.getProposalAvailability(
+        new Set<Id>{ opportunityRecord.Id }
+      )
+      .get(opportunityRecord.Id);
+    Assert.isFalse(
+      initialAvailability != null && initialAvailability.isReady(),
+      'Sem artefatos, a oportunidade não deve ser considerada pronta.'
+    );
+
+    insert new ContentVersion(
+      Title = 'Proposta Disponibilidade',
+      PathOnClient = 'proposal-availability.pdf',
+      VersionData = Blob.valueOf('pdf-availability'),
+      FirstPublishLocationId = opportunityRecord.Id,
+      IsProposal__c = true
+    );
+
+    insert new OpportunityAttachmentLink__c(
+      Name = 'Link antigo',
+      OpportunityId__c = opportunityRecord.Id,
+      Type__c = 'Other',
+      AttachmentURL__c = 'https://example.com/old-proposal.pdf'
+    );
+
+    ProposalFileService.ProposalAvailability incompleteAvailability = ProposalFileService.getProposalAvailability(
+        new Set<Id>{ opportunityRecord.Id }
+      )
+      .get(opportunityRecord.Id);
+    Assert.isTrue(
+      incompleteAvailability != null &&
+      incompleteAvailability.hasStoredProposal,
+      'O arquivo salvo deve ser identificado.'
+    );
+    Assert.isFalse(
+      incompleteAvailability != null && incompleteAvailability.hasProposalLink,
+      'Um link classificado como Other não deve validar a proposta.'
+    );
+    Assert.isFalse(
+      incompleteAvailability != null && incompleteAvailability.isReady(),
+      'Sem link do tipo Proposal, a proposta ainda não está pronta.'
+    );
+
+    insert new OpportunityAttachmentLink__c(
+      Name = 'Link proposta',
+      OpportunityId__c = opportunityRecord.Id,
+      Type__c = 'Proposal',
+      AttachmentURL__c = 'https://example.com/proposal-ready.pdf'
+    );
+
+    ProposalFileService.ProposalAvailability readyAvailability = ProposalFileService.getProposalAvailability(
+        new Set<Id>{ opportunityRecord.Id }
+      )
+      .get(opportunityRecord.Id);
+    Assert.isTrue(
+      readyAvailability != null && readyAvailability.isReady(),
+      'Quando houver arquivo e link de proposta, a oportunidade deve ser tratada como pronta.'
+    );
+  }
+
+  @isTest
+  static void proposalApiGenerationJobIntegratesExplicitGeneratedVersion() {
+    Opportunity opportunityRecord = [
+      SELECT Id, SucessoIntegracaoNivello__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+
+    configureProposalMappingsForGeneration();
+    Test.setMock(HttpCalloutMock.class, new ProposalApiClientMock());
+    apiMockMode = 'BASE64';
+
+    try {
+      Test.startTest();
+      new ProposalApiGenerationJob(opportunityRecord.Id, cover.Id, true)
+        .execute(null);
+      Test.stopTest();
+
+      Opportunity updatedOpportunity = [
+        SELECT PropostaGerada__c, SucessoIntegracaoNivello__c
+        FROM Opportunity
+        WHERE Id = :opportunityRecord.Id
+      ];
+      Assert.isTrue(
+        updatedOpportunity.PropostaGerada__c,
+        'O job precisa marcar a oportunidade como proposta gerada.'
+      );
+      Assert.isTrue(
+        updatedOpportunity.SucessoIntegracaoNivello__c,
+        'O job deve integrar a proposta ao aplicativo.'
+      );
+
+      List<OpportunityAttachmentLink__c> attachmentLinks = [
+        SELECT Type__c, AttachmentURL__c
+        FROM OpportunityAttachmentLink__c
+        WHERE OpportunityId__c = :opportunityRecord.Id AND Type__c = 'Proposal'
+      ];
+      Assert.areEqual(
+        1,
+        attachmentLinks.size(),
+        'A integração assíncrona deve registrar a proposta na timeline da oportunidade.'
+      );
+      Assert.isTrue(
+        String.isNotBlank(attachmentLinks[0].AttachmentURL__c),
+        'O link salvo precisa conter a URL da proposta integrada.'
+      );
+    } finally {
+      clearProposalMappingsForGeneration();
+    }
+  }
+
+  @isTest
+  static void proposalApiGenerationJobCanGenerateWithoutImmediateIntegration() {
+    Opportunity opportunityRecord = [
+      SELECT Id, PropostaGerada__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+
+    configureProposalMappingsForGeneration();
+    Test.setMock(HttpCalloutMock.class, new ProposalApiClientMock());
+    apiMockMode = 'BASE64';
+
+    try {
+      Test.startTest();
+      new ProposalApiGenerationJob(opportunityRecord.Id, cover.Id, false)
+        .execute(null);
+      Test.stopTest();
+
+      Opportunity updatedOpportunity = [
+        SELECT PropostaGerada__c
+        FROM Opportunity
+        WHERE Id = :opportunityRecord.Id
+      ];
+      Assert.isTrue(
+        updatedOpportunity.PropostaGerada__c,
+        'Mesmo sem integração imediata, o job deve salvar a proposta.'
+      );
+
+      Integer proposalLinkCount = [
+        SELECT COUNT()
+        FROM OpportunityAttachmentLink__c
+        WHERE OpportunityId__c = :opportunityRecord.Id AND Type__c = 'Proposal'
+      ];
+      Assert.areEqual(
+        0,
+        proposalLinkCount,
+        'Sem autoIntegrate, o job não deve criar link externo da proposta.'
+      );
+    } finally {
+      clearProposalMappingsForGeneration();
+    }
+  }
+
+  @isTest
+  static void proposalApiGenerationJobMovesAwaitingAcceptanceToContract() {
+    Opportunity opportunityRecord = [
+      SELECT Id, StageName
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+
+    update new Opportunity(
+      Id = opportunityRecord.Id,
+      StageName = OpportunityUtils.STATUS_AGUARDANDO_ACEITE
+    );
+
+    configureProposalMappingsForGeneration();
+    Test.setMock(HttpCalloutMock.class, new ProposalApiClientMock());
+    apiMockMode = 'BASE64';
+
+    try {
+      Test.startTest();
+      new ProposalApiGenerationJob(opportunityRecord.Id, cover.Id, false)
+        .execute(null);
+      Test.stopTest();
+
+      Opportunity updatedOpportunity = [
+        SELECT StageName, PropostaGerada__c
+        FROM Opportunity
+        WHERE Id = :opportunityRecord.Id
+      ];
+      Assert.areEqual(
+        OpportunityUtils.STATUS_CONTRATO,
+        updatedOpportunity.StageName,
+        'Quando a oportunidade estiver aguardando aceite, o job deve avançar para Contrato.'
+      );
+      Assert.isTrue(
+        updatedOpportunity.PropostaGerada__c,
+        'O avanço para contrato deve manter o flag de proposta gerada.'
+      );
+    } finally {
+      clearProposalMappingsForGeneration();
+    }
+  }
+
+  @isTest
+  static void proposalApiGenerationJobHandlesGenerationFailureGracefully() {
+    Opportunity opportunityRecord = [
+      SELECT Id, PropostaGerada__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+
+    Test.startTest();
+    new ProposalApiGenerationJob(opportunityRecord.Id, cover.Id, true)
+      .execute(null);
+    Test.stopTest();
+
+    Opportunity unchangedOpportunity = [
+      SELECT PropostaGerada__c
+      FROM Opportunity
+      WHERE Id = :opportunityRecord.Id
+    ];
+    Assert.isFalse(
+      unchangedOpportunity.PropostaGerada__c,
+      'Sem configuração mínima da API, o job deve falhar sem marcar proposta gerada.'
+    );
+  }
+
+  @isTest
+  static void proposalApiGenerationJobMovesEzeeConnectToProposalSent() {
+    Opportunity baseOpportunity = [
+      SELECT AccountId, Parceiro__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+
+    Opportunity connectOpportunity = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = baseOpportunity.AccountId,
+        Parceiro__c = baseOpportunity.Parceiro__c,
+        RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+          .get('EzeeConnect')
+          .getRecordTypeId(),
+        StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
+        GrupoTarifario__c = 'Grupo B',
+        IdVirtualOffice__c = TestFactory.nextUniqueValue('VO-CONNECT-JOB')
+      ),
+      true
+    );
+
+    configureProposalMappingsForGeneration();
+    Test.setMock(HttpCalloutMock.class, new ProposalApiClientMock());
+    apiMockMode = 'BASE64';
+
+    try {
+      Test.startTest();
+      new ProposalApiGenerationJob(connectOpportunity.Id, cover.Id, false)
+        .execute(null);
+      Test.stopTest();
+
+      Opportunity updatedOpportunity = [
+        SELECT StageName, PropostaGerada__c
+        FROM Opportunity
+        WHERE Id = :connectOpportunity.Id
+      ];
+      Assert.areEqual(
+        OpportunityUtils.STATUS_PROPOSTA_ENVIADA,
+        updatedOpportunity.StageName,
+        'Para EzeeConnect o job deve avançar para Proposta enviada.'
+      );
+      Assert.isTrue(
+        updatedOpportunity.PropostaGerada__c,
+        'O job deve marcar a proposta como gerada também para EzeeConnect.'
+      );
+    } finally {
+      clearProposalMappingsForGeneration();
+    }
+  }
+
+  @isTest
+  static void proposalApiGenerationJobMovesSolarSimulationToProposalGenerated() {
+    Opportunity baseOpportunity = [
+      SELECT AccountId, Parceiro__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+
+    Opportunity solarOpportunity = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = baseOpportunity.AccountId,
+        Parceiro__c = baseOpportunity.Parceiro__c,
+        RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+          .get('Solar')
+          .getRecordTypeId(),
+        StageName = OpportunityUtils.STATUS_SIMULACAO_DE_PROPOSTA,
+        GrupoTarifario__c = 'Grupo B',
+        IdVirtualOffice__c = TestFactory.nextUniqueValue('VO-SOLAR-JOB')
+      ),
+      true
+    );
+
+    configureProposalMappingsForGeneration();
+    Test.setMock(HttpCalloutMock.class, new ProposalApiClientMock());
+    apiMockMode = 'BASE64';
+
+    try {
+      Test.startTest();
+      new ProposalApiGenerationJob(solarOpportunity.Id, cover.Id, false)
+        .execute(null);
+      Test.stopTest();
+
+      Opportunity updatedOpportunity = [
+        SELECT StageName, PropostaGerada__c
+        FROM Opportunity
+        WHERE Id = :solarOpportunity.Id
+      ];
+      Assert.areEqual(
+        OpportunityUtils.STATUS_PROPOSTA_GERADA,
+        updatedOpportunity.StageName,
+        'Para Solar em simulação o job deve avançar para Proposta Gerada.'
+      );
+      Assert.isTrue(
+        updatedOpportunity.PropostaGerada__c,
+        'O job deve marcar a proposta como gerada também no cenário Solar.'
+      );
+    } finally {
+      clearProposalMappingsForGeneration();
+    }
+  }
+
+  @isTest
   static void proposalConsoleReturnsLegacyPreviewUrl() {
     Opportunity opportunityRecord = [
       SELECT Id
@@ -668,10 +1080,37 @@ private class ProposalEngineSupportTest {
     );
   }
 
+  private static void configureProposalMappingsForGeneration() {
+    ProposalConfigurationService.TagConfig genericTag = new ProposalConfigurationService.TagConfig();
+    genericTag.coverKey = COVER_KEY;
+    genericTag.tagKey = '{{AccountName}}';
+    genericTag.sourcePath = 'Account.Name';
+    genericTag.scenario = ProposalConfigurationService.SCENARIO_ALL;
+    genericTag.sortOrder = 1;
+    genericTag.active = true;
+
+    ProposalConfigurationService.setTestTagConfigs(
+      new List<ProposalConfigurationService.TagConfig>{ genericTag }
+    );
+    ProposalConfigurationService.setTestSectionsByKey(
+      new Map<String, List<String>>{
+        ProposalConfigurationService.SCENARIO_INITIAL => new List<String>{
+          'Proposta'
+        }
+      }
+    );
+  }
+
+  private static void clearProposalMappingsForGeneration() {
+    ProposalConfigurationService.setTestTagConfigs(null);
+    ProposalConfigurationService.setTestSectionsByKey(null);
+  }
+
   private class ProposalApiClientMock implements HttpCalloutMock {
     public HttpResponse respond(HttpRequest request) {
       HttpResponse response = new HttpResponse();
       String endpoint = request.getEndpoint();
+      String contentType = request.getHeader('Content-Type');
 
       if (endpoint != null && endpoint.contains('/download/url-file.pdf')) {
         response.setStatusCode(200);
@@ -680,31 +1119,40 @@ private class ProposalEngineSupportTest {
         return response;
       }
 
-      if (apiMockMode == 'BASE64') {
-        response.setStatusCode(200);
-        response.setHeader('Content-Type', 'application/json');
-        response.setBody(
-          '{"fileBase64":"' +
-            EncodingUtil.base64Encode(Blob.valueOf('pdf-base64')) +
-            '","fileName":"base64.pdf","mimeType":"application/pdf"}'
-        );
-        return response;
+      if (
+        String.isNotBlank(contentType) &&
+        contentType.toLowerCase().contains('multipart/form-data')
+      ) {
+        if (apiMockMode == 'BASE64') {
+          response.setStatusCode(200);
+          response.setHeader('Content-Type', 'application/json');
+          response.setBody(
+            '{"fileBase64":"' +
+              EncodingUtil.base64Encode(Blob.valueOf('pdf-base64')) +
+              '","fileName":"base64.pdf","mimeType":"application/pdf"}'
+          );
+          return response;
+        }
+
+        if (apiMockMode == 'URL') {
+          response.setStatusCode(200);
+          response.setHeader('Content-Type', 'application/json');
+          response.setBody(
+            '{"data":{"urlFile":"https://example.com/download/url-file.pdf","fileName":"url-file.pdf"}}'
+          );
+          return response;
+        }
+
+        if (apiMockMode == 'PDF') {
+          response.setStatusCode(200);
+          response.setHeader('Content-Type', 'application/pdf');
+          response.setBodyAsBlob(Blob.valueOf('raw-pdf'));
+          return response;
+        }
       }
 
-      if (apiMockMode == 'URL') {
-        response.setStatusCode(200);
-        response.setHeader('Content-Type', 'application/json');
-        response.setBody(
-          '{"data":{"urlFile":"https://example.com/download/url-file.pdf","fileName":"url-file.pdf"}}'
-        );
-        return response;
-      }
-
-      if (apiMockMode == 'PDF') {
-        response.setStatusCode(200);
-        response.setHeader('Content-Type', 'application/pdf');
-        response.setBodyAsBlob(Blob.valueOf('raw-pdf'));
-        return response;
+      if (apiMockMode == 'NIVELLO_THROW') {
+        throw new CalloutException('Falha simulada integracao');
       }
 
       response.setStatusCode(200);

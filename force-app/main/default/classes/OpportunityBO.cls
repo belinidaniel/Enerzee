@@ -1987,12 +1987,22 @@ public class OpportunityBO {
     Map<Id, Opportunity> newMap,
     Map<Id, Opportunity> oldMap
   ) {
+    Map<Id, ProposalFileService.ProposalAvailability> proposalAvailabilityByOpportunityId = ProposalFileService.getProposalAvailability(
+      newMap != null ? new Set<Id>(newMap.keySet()) : null
+    );
+
     for (Opportunity opp : newMap.values()) {
       Opportunity oldOpp = oldMap.get(opp.Id);
+      ProposalFileService.ProposalAvailability availability = proposalAvailabilityByOpportunityId.get(
+        opp.Id
+      );
+      Boolean hasReadyProposal = availability != null && availability.isReady();
+
       // Se já gerada e não é readequação solicitada, não enfileira novamente
       if (
         opp.PropostaGerada__c == true &&
-        opp.ReadequacaoSolicitada__c != true
+        opp.ReadequacaoSolicitada__c != true &&
+        hasReadyProposal
       ) {
         continue;
       }

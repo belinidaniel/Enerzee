@@ -27,6 +27,8 @@
         <members>ProposalService</members>
         <members>ProposalServicePaymentSimulationTest</members>
         <members>ProposalTemplateResolver</members>
+        <members>ProposalApiGenerationJob</members>
+        <members>PDFControllerExtension</members>
         <name>ApexClass</name>
     </types>
     <types>

@@ -836,7 +836,53 @@ public with sharing class PDFControllerExtension {
       this.forceNewFile = forceNewFile;
     }
     public void execute(QueueableContext ctx) {
+      Id resolvedCoverId = resolveApiCoverId(oppId);
+      if (resolvedCoverId != null) {
+        System.enqueueJob(
+          new ProposalApiGenerationJob(oppId, resolvedCoverId, autoIntegrate)
+        );
+        return;
+      }
       savePdfFileAsyncInternal(oppId, autoIntegrate, forceNewFile);
+    }
+
+    private Id resolveApiCoverId(Id opportunityId) {
+      List<Opportunity> opps = [
+        SELECT
+          Parceiro__r.CapaProposta__c,
+          Parceiro__r.CapaPromocional__c,
+          TipoKitPromocional__c,
+          isPromotional__c,
+          Parceiro__r.Name
+        FROM Opportunity
+        WHERE Id = :opportunityId
+        LIMIT 1
+      ];
+      if (opps.isEmpty() || opps[0].Parceiro__r == null) {
+        return null;
+      }
+      Opportunity opp = opps[0];
+      Boolean isPromotional = ProposalContextResolver.determineIsPromotional(
+        opp
+      );
+      Id candidateCoverId = isPromotional
+        ? opp.Parceiro__r.CapaPromocional__c
+        : opp.Parceiro__r.CapaProposta__c;
+      if (candidateCoverId == null) {
+        return null;
+      }
+      List<ProposalCover__c> covers = [
+        SELECT Id, IntegrationKey__c, Template__c, IsActive__c, isPromotional__c
+        FROM ProposalCover__c
+        WHERE Id = :candidateCoverId AND IsActive__c = TRUE
+        LIMIT 1
+      ];
+      if (covers.isEmpty()) {
+        return null;
+      }
+      return ProposalCoverRoutingService.usesApiFlow(covers[0])
+        ? covers[0].Id
+        : null;
     }
   }
 

@@ -175,17 +175,13 @@ public with sharing class ProposalConsoleController {
 
       IntegracaoNivelloProposta.ProposalIntegrationResult integrationResult = applyPostGenerationUpdates(
         opp,
-        true,
+        false,
         generatedProposal.contentVersionId
       );
 
       ProposalActionResult result = fromServiceResult(generatedProposal);
       result.success = true;
-      result.message = String.isNotBlank(
-          integrationResult != null ? integrationResult.message : null
-        )
-        ? integrationResult.message
-        : 'Proposta enviada para o aplicativo.';
+      result.message = resolveSendMessage(false, integrationResult);
       return result;
     }
 
@@ -218,18 +214,14 @@ public with sharing class ProposalConsoleController {
 
     IntegracaoNivelloProposta.ProposalIntegrationResult integrationResult = applyPostGenerationUpdates(
       opp,
-      true,
+      false,
       contentVersionId
     );
 
     ProposalActionResult result = new ProposalActionResult();
     result.success = true;
     result.contentVersionId = contentVersionId;
-    result.message = String.isNotBlank(
-        integrationResult != null ? integrationResult.message : null
-      )
-      ? integrationResult.message
-      : 'Proposta enviada para o aplicativo.';
+    result.message = resolveSendMessage(false, integrationResult);
     return result;
   }
 
@@ -394,6 +386,21 @@ public with sharing class ProposalConsoleController {
     }
 
     return integrationResult;
+  }
+
+  private static String resolveSendMessage(
+    Boolean waitForIntegration,
+    IntegracaoNivelloProposta.ProposalIntegrationResult integrationResult
+  ) {
+    if (
+      integrationResult != null && String.isNotBlank(integrationResult.message)
+    ) {
+      return integrationResult.message;
+    }
+
+    return waitForIntegration == true
+      ? 'Proposta enviada para o aplicativo.'
+      : 'Proposta gerada e envio para o aplicativo iniciado. Aguarde alguns instantes.';
   }
 
   private static void validateOpportunityId(Id opportunityId) {

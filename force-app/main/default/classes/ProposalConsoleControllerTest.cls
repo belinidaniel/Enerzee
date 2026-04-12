@@ -120,6 +120,11 @@ private class ProposalConsoleControllerTest {
       result.success,
       'A chamada deveria retornar sucesso.'
     );
+    System.assert(
+      result.message != null &&
+      result.message.contains('envio para o aplicativo iniciado'),
+      'O retorno do botão enviar deve indicar que a integração foi iniciada em segundo plano.'
+    );
     System.assertNotEquals(
       null,
       result.contentVersionId,

@@ -117,6 +117,21 @@ public with sharing class IntegracaoNivelloProposta {
       }
     } catch (Exception e) {
       Utils.createLog('IntegracaoNivelloProposta', 'gerandoProposta', e, oppId);
+      opp.SucessoIntegracaoNivello__c = false;
+      opp.StatusBodyIntegracaoNivello__c = e.getMessage();
+      OpportunityTriggerHandler.disableTrigger();
+      try {
+        update opp;
+      } catch (Exception updateEx) {
+        Utils.createLog(
+          'IntegracaoNivelloProposta',
+          'gerandoProposta.updateFailureStatus',
+          updateEx,
+          oppId
+        );
+      } finally {
+        OpportunityTriggerHandler.enableTrigger();
+      }
       result.success = false;
       result.message = 'Falha ao enviar a proposta para o aplicativo.';
       result.responseBody = e.getMessage();

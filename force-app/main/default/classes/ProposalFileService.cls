@@ -10,6 +10,15 @@ public with sharing class ProposalFileService {
   @TestVisible
   private static Map<String, Id> generatedProposalIdsByKey = new Map<String, Id>();
 
+  public class ProposalAvailability {
+    public Boolean hasStoredProposal = false;
+    public Boolean hasProposalLink = false;
+
+    public Boolean isReady() {
+      return hasStoredProposal == true && hasProposalLink == true;
+    }
+  }
+
   public static ContentVersion findExistingProposal(
     Id opportunityId,
     String payloadHash
@@ -49,6 +58,69 @@ public with sharing class ProposalFileService {
       LIMIT 1
     ];
     return matches.isEmpty() ? null : matches[0];
+  }
+
+  public static Map<Id, ProposalAvailability> getProposalAvailability(
+    Set<Id> opportunityIds
+  ) {
+    Map<Id, ProposalAvailability> availabilityByOpportunityId = new Map<Id, ProposalAvailability>();
+    if (opportunityIds == null || opportunityIds.isEmpty()) {
+      return availabilityByOpportunityId;
+    }
+
+    Set<Id> validOpportunityIds = new Set<Id>();
+    for (Id opportunityId : opportunityIds) {
+      if (opportunityId == null) {
+        continue;
+      }
+      validOpportunityIds.add(opportunityId);
+      availabilityByOpportunityId.put(
+        opportunityId,
+        new ProposalAvailability()
+      );
+    }
+
+    if (validOpportunityIds.isEmpty()) {
+      return availabilityByOpportunityId;
+    }
+
+    for (AggregateResult result : [
+      SELECT FirstPublishLocationId locationId, COUNT(Id) total
+      FROM ContentVersion
+      WHERE
+        FirstPublishLocationId IN :validOpportunityIds
+        AND IsProposal__c = TRUE
+      GROUP BY FirstPublishLocationId
+    ]) {
+      Id opportunityId = (Id) result.get('locationId');
+      ProposalAvailability availability = availabilityByOpportunityId.get(
+        opportunityId
+      );
+      if (availability != null) {
+        availability.hasStoredProposal = true;
+      }
+    }
+
+    for (AggregateResult result : [
+      SELECT OpportunityId__c opportunityId, COUNT(Id) total
+      FROM OpportunityAttachmentLink__c
+      WHERE
+        OpportunityId__c IN :validOpportunityIds
+        AND Type__c = 'Proposal'
+        AND (AttachmentURL__c != NULL
+        OR InternalAttachmentURL__c != NULL)
+      GROUP BY OpportunityId__c
+    ]) {
+      Id opportunityId = (Id) result.get('opportunityId');
+      ProposalAvailability availability = availabilityByOpportunityId.get(
+        opportunityId
+      );
+      if (availability != null) {
+        availability.hasProposalLink = true;
+      }
+    }
+
+    return availabilityByOpportunityId;
   }
 
   public static Id saveGeneratedProposal(

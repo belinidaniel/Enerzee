@@ -111,6 +111,11 @@ private class ProposalConsoleControllerApiTest {
         sendResult.success,
         'O envio da proposta deve retornar sucesso.'
       );
+      Assert.isTrue(
+        sendResult.message != null &&
+        sendResult.message.contains('envio para o aplicativo iniciado'),
+        'O retorno do envio deve explicar que a integração roda em segundo plano.'
+      );
       Assert.areEqual(
         previewResult.contentVersionId,
         sendResult.contentVersionId,
@@ -513,6 +518,7 @@ private class ProposalConsoleControllerApiTest {
     public HttpResponse respond(HttpRequest request) {
       HttpResponse response = new HttpResponse();
       String endpoint = request.getEndpoint();
+      String requestBody = request.getBody();
 
       if (endpoint != null && endpoint.contains('/convertProposal')) {
         ProposalConsoleControllerApiTest.proposalCallCount++;
@@ -526,7 +532,9 @@ private class ProposalConsoleControllerApiTest {
         return response;
       }
 
-      ProposalConsoleControllerApiTest.nivelloCallCount++;
+      if (requestBody != null && requestBody.contains('"contract"')) {
+        ProposalConsoleControllerApiTest.nivelloCallCount++;
+      }
       response.setStatusCode(200);
       response.setHeader('Content-Type', 'application/json');
       response.setBody(
