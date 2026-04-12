@@ -307,10 +307,6 @@ public with sharing class PDFControllerExtension {
 
   public Id salvarArquivo(String opportunityId, String pageName) {
     // Dados base
-    String nomeRegistro =
-      this.opportunity.Numeroproposta__c +
-      ' ' +
-      this.opportunity.Account.Name;
     String grupoTarifario = this.opportunity.GrupoTarifario__c;
     String capaPropostaId = this.opportunity.Parceiro__r.CapaProposta__c;
     String capaPromocionalId = this.opportunity.Parceiro__r.CapaPromocional__c;

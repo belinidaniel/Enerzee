@@ -1135,6 +1135,78 @@ private class ProposalEngineSupportTest {
     ProposalConfigurationService.setTestSectionsByKey(null);
   }
 
+  @isTest
+  static void proposalApiGenerationJobHandlesApiFailureGracefully() {
+    Opportunity opportunityRecord = [
+      SELECT Id
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+
+    configureProposalMappingsForGeneration();
+    Test.setMock(HttpCalloutMock.class, new ProposalApiClientMock());
+    apiMockMode = 'API_FAIL';
+
+    try {
+      Test.startTest();
+      new ProposalApiGenerationJob(opportunityRecord.Id, cover.Id, true)
+        .execute(null);
+      Test.stopTest();
+
+      Opportunity updatedOpportunity = [
+        SELECT PropostaGerada__c
+        FROM Opportunity
+        WHERE Id = :opportunityRecord.Id
+      ];
+      Assert.isFalse(
+        updatedOpportunity.PropostaGerada__c == true,
+        'Quando a API falha o job nao deve marcar proposta como gerada.'
+      );
+    } finally {
+      clearProposalMappingsForGeneration();
+    }
+  }
+
+  @isTest
+  static void proposalConfigurationServiceLoadsRealMetadataWithoutTestOverride() {
+    // Remove overrides para forcar execucao dos caminhos reais
+    ProposalConfigurationService.setTestTagConfigs(null);
+    ProposalConfigurationService.setTestSectionsByKey(null);
+
+    Test.startTest();
+    List<ProposalConfigurationService.TagConfig> tags = ProposalConfigurationService.getTagConfigs(
+      'GRUPO_B_PADRAO',
+      ProposalConfigurationService.SCENARIO_INITIAL,
+      null
+    );
+    List<String> sections = ProposalConfigurationService.getSectionsToShow(
+      'GRUPO_B_PADRAO',
+      ProposalConfigurationService.SCENARIO_INITIAL,
+      'FINANCING'
+    );
+    List<String> sectionsDefault = ProposalConfigurationService.getSectionsToShow(
+      'GRUPO_B_PADRAO',
+      ProposalConfigurationService.SCENARIO_INITIAL,
+      null
+    );
+    Test.stopTest();
+
+    // Nao ha assertions sobre valores especificos — apenas garantindo cobertura dos caminhos reais
+    Assert.isNotNull(tags, 'getTagConfigs nao deve retornar null.');
+    Assert.isNotNull(sections, 'getSectionsToShow nao deve retornar null.');
+    Assert.isNotNull(
+      sectionsDefault,
+      'getSectionsToShow sem paymentType nao deve retornar null.'
+    );
+  }
+
   private class ProposalApiClientMock implements HttpCalloutMock {
     public HttpResponse respond(HttpRequest request) {
       HttpResponse response = new HttpResponse();
@@ -1145,6 +1217,13 @@ private class ProposalEngineSupportTest {
         response.setStatusCode(200);
         response.setHeader('Content-Type', 'application/pdf');
         response.setBodyAsBlob(Blob.valueOf('downloaded-pdf'));
+        return response;
+      }
+
+      if (apiMockMode == 'API_FAIL') {
+        response.setStatusCode(500);
+        response.setHeader('Content-Type', 'application/json');
+        response.setBody('{"success":false,"error":"Internal Server Error"}');
         return response;
       }
 
