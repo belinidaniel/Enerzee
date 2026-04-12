@@ -5,7 +5,10 @@
         <members>GORecordsTOTest</members>
         <members>IntegracaoNivelloProjetos</members>
         <members>IntegracaoNivelloProposta</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityBOCoverageTest</members>
         <members>OpportunityTriggerHandler</members>
+        <members>OpportunityUtils</members>
         <members>PaymentSimulationBO</members>
         <members>PaymentSimulationBOTest</members>
         <members>PaymentSimulationCardController</members>

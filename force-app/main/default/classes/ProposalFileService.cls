@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-10-2026
+ * @last modified on  : 04-12-2026
  * @last modified by  : Daniel Belini
  * @test              : ProposalConsoleControllerApiTest, ProposalEngineSupportTest
  **/
@@ -230,7 +230,15 @@ public with sharing class ProposalFileService {
   }
 
   public static void deleteStoredProposals(Set<Id> opportunityIds) {
+    System.debug(
+      '[ProposalFileService.deleteStoredProposals] INPUT opportunityIds=' +
+      opportunityIds
+    );
+
     if (opportunityIds == null || opportunityIds.isEmpty()) {
+      System.debug(
+        '[ProposalFileService.deleteStoredProposals] EARLY RETURN: opportunityIds null or empty'
+      );
       return;
     }
 
@@ -241,33 +249,136 @@ public with sharing class ProposalFileService {
       }
     }
 
+    System.debug(
+      '[ProposalFileService.deleteStoredProposals] validOpportunityIds=' +
+      validOpportunityIds
+    );
+
     if (validOpportunityIds.isEmpty()) {
+      System.debug(
+        '[ProposalFileService.deleteStoredProposals] EARLY RETURN: validOpportunityIds empty after null filter'
+      );
       return;
     }
 
+    Set<String> proposalNumberPrefixes = new Set<String>();
+    for (Opportunity opp : [
+      SELECT Numeroproposta__c
+      FROM Opportunity
+      WHERE Id IN :validOpportunityIds AND Numeroproposta__c != NULL
+    ]) {
+      proposalNumberPrefixes.add(opp.Numeroproposta__c + '%');
+    }
+    System.debug(
+      '[ProposalFileService.deleteStoredProposals] proposalNumberPrefixes=' +
+      proposalNumberPrefixes
+    );
+
     Set<Id> documentIdsToDelete = new Set<Id>();
-    for (ContentVersion version : [
-      SELECT ContentDocumentId
+
+    List<ContentVersion> byFlag = [
+      SELECT ContentDocumentId, Title, IsProposal__c
       FROM ContentVersion
       WHERE
         FirstPublishLocationId IN :validOpportunityIds
         AND IsProposal__c = TRUE
         AND ContentDocumentId != NULL
-    ]) {
+    ];
+    System.debug(
+      '[ProposalFileService.deleteStoredProposals] byFlag count=' +
+      byFlag.size()
+    );
+    for (ContentVersion version : byFlag) {
+      System.debug(
+        '[ProposalFileService.deleteStoredProposals] byFlag hit: Title=' +
+          version.Title +
+          ' DocId=' +
+          version.ContentDocumentId
+      );
       documentIdsToDelete.add(version.ContentDocumentId);
     }
 
+    if (!proposalNumberPrefixes.isEmpty()) {
+      // Busca os ContentDocumentIds linkados à oportunidade (independente de FirstPublishLocationId)
+      Set<Id> linkedDocumentIds = new Set<Id>();
+      for (ContentDocumentLink link : [
+        SELECT ContentDocumentId
+        FROM ContentDocumentLink
+        WHERE LinkedEntityId IN :validOpportunityIds
+      ]) {
+        linkedDocumentIds.add(link.ContentDocumentId);
+      }
+      System.debug(
+        '[ProposalFileService.deleteStoredProposals] linkedDocumentIds count=' +
+        linkedDocumentIds.size()
+      );
+
+      if (!linkedDocumentIds.isEmpty()) {
+        List<String> likeConditions = new List<String>();
+        for (String prefix : proposalNumberPrefixes) {
+          likeConditions.add(
+            'Title LIKE \'' + String.escapeSingleQuotes(prefix) + '\''
+          );
+        }
+        String dynamicQuery =
+          'SELECT ContentDocumentId, Title FROM ContentVersion WHERE ' +
+          'ContentDocumentId IN :linkedDocumentIds AND ' +
+          'IsLatest = TRUE AND (' +
+          String.join(likeConditions, ' OR ') +
+          ')';
+        System.debug(
+          '[ProposalFileService.deleteStoredProposals] dynamicQuery=' +
+          dynamicQuery
+        );
+        List<ContentVersion> byPrefix = Database.query(dynamicQuery);
+        System.debug(
+          '[ProposalFileService.deleteStoredProposals] byPrefix count=' +
+          byPrefix.size()
+        );
+        for (ContentVersion version : byPrefix) {
+          System.debug(
+            '[ProposalFileService.deleteStoredProposals] byPrefix hit: Title=' +
+              version.Title +
+              ' DocId=' +
+              version.ContentDocumentId
+          );
+          documentIdsToDelete.add(version.ContentDocumentId);
+        }
+      }
+    }
+
+    System.debug(
+      '[ProposalFileService.deleteStoredProposals] documentIdsToDelete=' +
+      documentIdsToDelete
+    );
+
     if (documentIdsToDelete.isEmpty()) {
+      System.debug(
+        '[ProposalFileService.deleteStoredProposals] EARLY RETURN: nothing to delete'
+      );
       return;
     }
 
     try {
-      delete [
+      List<ContentDocument> toDelete = [
         SELECT Id
         FROM ContentDocument
         WHERE Id IN :documentIdsToDelete
       ];
+      System.debug(
+        '[ProposalFileService.deleteStoredProposals] deleting ' +
+          toDelete.size() +
+          ' ContentDocuments'
+      );
+      delete toDelete;
+      System.debug('[ProposalFileService.deleteStoredProposals] DELETE OK');
     } catch (Exception e) {
+      System.debug(
+        '[ProposalFileService.deleteStoredProposals] DELETE ERROR: ' +
+          e.getMessage() +
+          ' | ' +
+          e.getStackTraceString()
+      );
       Utils.createLog('ProposalFileService', 'deleteStoredProposals', e);
     }
   }
