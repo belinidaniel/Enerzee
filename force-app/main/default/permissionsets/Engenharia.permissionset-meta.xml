@@ -5904,27 +5904,6 @@
     >sf_fieldservice__FSL_RESTController_GoogleApis_Tests</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <classAccesses>
-        <apexClass>sf_fieldservice__PendingUploadErrorFixAndroid</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>sfleadcaphfprod__LeadCapturePostInstallClass</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>sfleadcaphfprod__LeadCapturePostInstallClassTest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>sfleadcaphfprod__SalesforceLeadCaptureController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass
-    >sfleadcaphfprod__SalesforceLeadCaptureControllerTest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
     <fieldPermissions>
         <editable>true</editable>
         <field>Event.DispensarAtividade__c</field>
