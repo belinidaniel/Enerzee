@@ -301,33 +301,115 @@ global with sharing class OpportunityEntryRest {
       return;
     }
 
-    // Mapear ProductCode -> Product2.Id
-    Set<String> productCodes = new Set<String>();
+    // Mapear referencias recebidas para PricebookEntry no pricebook da oportunidade
+    Set<String> productReferences = new Set<String>();
     for (Object prodObj : productsRaw) {
       Map<String, Object> prodMap = (Map<String, Object>) prodObj;
-      if (prodMap.containsKey('Id')) {
-        productCodes.add((String) prodMap.get('Id'));
+      if (prodMap.containsKey('Id') && prodMap.get('Id') != null) {
+        productReferences.add(String.valueOf(prodMap.get('Id')));
       }
     }
-    Map<String, Id> productCodeToId = new Map<String, Id>();
-    for (Product2 p : [
-      SELECT Id, ProductCode, Id_Externo__c, ExternalId__c
-      FROM Product2
-      WHERE
-        Id_Externo__c IN :productCodes
-        OR ProductCode IN :productCodes
-        OR ExternalId__c IN :productCodes
-      WITH SECURITY_ENFORCED
-    ]) {
-      if (String.isNotBlank(p.Id_Externo__c)) {
-        productCodeToId.put(p.Id_Externo__c, p.Id);
+
+    Map<String, PricebookEntry> referenceToPricebookEntry = new Map<String, PricebookEntry>();
+    if (!productReferences.isEmpty()) {
+      for (PricebookEntry pricebookEntry : [
+        SELECT Id, Product2Id, ExternalId__c
+        FROM PricebookEntry
+        WHERE
+          Pricebook2Id = :opp.Pricebook2Id
+          AND ExternalId__c IN :productReferences
+      ]) {
+        referenceToPricebookEntry.put(
+          pricebookEntry.ExternalId__c,
+          pricebookEntry
+        );
       }
-      if (String.isNotBlank(p.ProductCode)) {
-        productCodeToId.put(p.ProductCode, p.Id);
+    }
+
+    Set<String> unresolvedReferences = new Set<String>(productReferences);
+    unresolvedReferences.removeAll(referenceToPricebookEntry.keySet());
+
+    Map<String, Id> referenceToProductId = new Map<String, Id>();
+    if (!unresolvedReferences.isEmpty()) {
+      for (Product2 productRecord : [
+        SELECT Id, ProductCode, Id_Externo__c, ExternalId__c
+        FROM Product2
+        WHERE
+          Id_Externo__c IN :unresolvedReferences
+          OR ProductCode IN :unresolvedReferences
+          OR ExternalId__c IN :unresolvedReferences
+        WITH SECURITY_ENFORCED
+      ]) {
+        if (String.isNotBlank(productRecord.Id_Externo__c)) {
+          referenceToProductId.put(
+            productRecord.Id_Externo__c,
+            productRecord.Id
+          );
+        }
+        if (String.isNotBlank(productRecord.ProductCode)) {
+          referenceToProductId.put(productRecord.ProductCode, productRecord.Id);
+        }
+        if (String.isNotBlank(productRecord.ExternalId__c)) {
+          referenceToProductId.put(
+            productRecord.ExternalId__c,
+            productRecord.Id
+          );
+        }
       }
-      if (String.isNotBlank(p.ExternalId__c)) {
-        productCodeToId.put(p.ExternalId__c, p.Id);
+    }
+
+    Set<Id> fallbackProductIds = new Set<Id>(referenceToProductId.values());
+    Map<Id, PricebookEntry> productIdToActivePricebookEntry = new Map<Id, PricebookEntry>();
+    if (!fallbackProductIds.isEmpty()) {
+      for (PricebookEntry pricebookEntry : [
+        SELECT Id, Product2Id
+        FROM PricebookEntry
+        WHERE
+          Pricebook2Id = :opp.Pricebook2Id
+          AND Product2Id IN :fallbackProductIds
+          AND IsActive = TRUE
+      ]) {
+        if (
+          !productIdToActivePricebookEntry.containsKey(
+            pricebookEntry.Product2Id
+          )
+        ) {
+          productIdToActivePricebookEntry.put(
+            pricebookEntry.Product2Id,
+            pricebookEntry
+          );
+        }
       }
+    }
+
+    Map<Integer, Id> itemIndexToPricebookEntryId = new Map<Integer, Id>();
+    for (Integer idx = 0; idx < productsRaw.size(); idx++) {
+      Map<String, Object> prodMap = (Map<String, Object>) productsRaw[idx];
+      String productReference = prodMap.get('Id') != null
+        ? String.valueOf(prodMap.get('Id'))
+        : null;
+      PricebookEntry resolvedEntry = referenceToPricebookEntry.get(
+        productReference
+      );
+
+      if (
+        resolvedEntry == null &&
+        referenceToProductId.containsKey(productReference)
+      ) {
+        resolvedEntry = productIdToActivePricebookEntry.get(
+          referenceToProductId.get(productReference)
+        );
+      }
+
+      if (resolvedEntry == null) {
+        RestContext.response.statusCode = 400;
+        RestContext.response.responseBody = Blob.valueOf(
+          'Product with Id ' + productReference + ' not found'
+        );
+        return;
+      }
+
+      itemIndexToPricebookEntryId.put(idx, resolvedEntry.Id);
     }
 
     // Deletar OpportunityLineItems existentes da oportunidade
@@ -343,24 +425,11 @@ global with sharing class OpportunityEntryRest {
 
     // Criar novos OpportunityLineItems
     List<OpportunityLineItem> itemsToInsert = new List<OpportunityLineItem>();
-    for (Object prodObj : productsRaw) {
-      Map<String, Object> prodMap = (Map<String, Object>) prodObj;
-      String prodCode = (String) prodMap.get('Id');
-      Id product2Id = productCodeToId.get(prodCode);
-
-      if (product2Id == null) {
-        RestContext.response.statusCode = 400;
-        RestContext.response.responseBody = Blob.valueOf(
-          'Product with Id ' + prodCode + ' not found'
-        );
-        return;
-      }
-
-      if (product2Id == null)
-        continue;
+    for (Integer idx = 0; idx < productsRaw.size(); idx++) {
+      Map<String, Object> prodMap = (Map<String, Object>) productsRaw[idx];
       OpportunityLineItem oli = new OpportunityLineItem();
       oli.OpportunityId = opp.Id;
-      oli.Product2Id = product2Id;
+      oli.PricebookEntryId = itemIndexToPricebookEntryId.get(idx);
       oli.Quantity = (prodMap.containsKey('Quantity') &&
         prodMap.get('Quantity') != null)
         ? Decimal.valueOf(String.valueOf(prodMap.get('Quantity')))
