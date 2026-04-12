@@ -501,7 +501,11 @@ private class OpportunityBOCoverageTest {
       StageName = OpportunityUtils.STATUS_NEGOCIACAO
     );
     insert opp;
-    opp = [SELECT Id, Numeroproposta__c FROM Opportunity WHERE Id = :opp.Id];
+    opp = [
+      SELECT Id, StageName, Numeroproposta__c
+      FROM Opportunity
+      WHERE Id = :opp.Id
+    ];
 
     ContentVersion fileWithPrefix = new ContentVersion(
       Title = opp.Numeroproposta__c + ' Nome da Conta',

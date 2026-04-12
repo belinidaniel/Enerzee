@@ -316,7 +316,7 @@ public with sharing class PDFControllerExtension {
     String capaPromocionalId = this.opportunity.Parceiro__r.CapaPromocional__c;
     Boolean isPromotional = (this.opportunity.Parceiro__r.Name == 'Bow-e')
       ? true
-      : this.opportunity.isPromotional__c;
+      : (this.opportunity.isPromotional__c == true);
     this.isChanged = this.opportunity.PropostaAlterada__c;
     String parceiro = this.opportunity.Parceiro__r.Name;
 
