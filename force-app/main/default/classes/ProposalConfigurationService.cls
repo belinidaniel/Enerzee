@@ -77,6 +77,8 @@ public with sharing class ProposalConfigurationService {
     return candidates;
   }
 
+  public static final String PAYMENT_TYPE_OTHERS = 'OTHERS';
+
   public static List<String> getSectionsToShow(
     String coverKey,
     String scenario,
@@ -88,6 +90,12 @@ public with sharing class ProposalConfigurationService {
     Map<String, List<String>> sectionsByKey = loadSectionsByKey(coverKey);
     if (sectionsByKey.containsKey(resolvedKey)) {
       return sectionsByKey.get(resolvedKey);
+    }
+    if (
+      String.isNotBlank(paymentType) &&
+      sectionsByKey.containsKey(PAYMENT_TYPE_OTHERS)
+    ) {
+      return sectionsByKey.get(PAYMENT_TYPE_OTHERS);
     }
     if (sectionsByKey.containsKey(SCENARIO_INITIAL)) {
       return sectionsByKey.get(SCENARIO_INITIAL);

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomMetadata
+  xmlns="http://soap.sforce.com/2006/04/metadata"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+    <label>CondicoesAdicionais</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>FieldApiName__c</field>
+        <value xsi:type="xsd:string">CondicoesAdicionais__c</value>
+    </values>
+    <values>
+        <field>DefaultValue__c</field>
+        <value xsi:type="xsd:string">Essa prévia aprovação do projeto ocorrerá:
+- Em todos os clientes participantes do grupo A, clientes com potência inversora a partir de 50 kW, clientes, independentemente da potência, que sejam dos estados de MG ou MT.
+
+- Informamos que esta proposta não inclui os custos relacionados à implementação da função de desligamento rápido (Rapid Shutdown), conforme previsto na NBR 17193:2025, norma já adotada em alguns estados do Brasil. A obrigatoriedade desse recurso, voltado à segurança contra incêndios em sistemas fotovoltaicos, pode representar acréscimo no valor do sistema. Caso a norma esteja vigente no local da instalação e a exigência seja aplicada pelos órgãos competentes (como o Corpo de Bombeiros), será necessária a inclusão do RSD.</value>
+    </values>
+</CustomMetadata>

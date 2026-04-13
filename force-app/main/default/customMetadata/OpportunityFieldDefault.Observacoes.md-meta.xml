@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomMetadata
+  xmlns="http://soap.sforce.com/2006/04/metadata"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+    <label>Observacoes</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>FieldApiName__c</field>
+        <value xsi:type="xsd:string">Observacoes__c</value>
+    </values>
+    <values>
+        <field>DefaultValue__c</field>
+        <value
+      xsi:type="xsd:string"
+    >- Em caso de aplicação dos módulos em telhado, todo reforço necessário deverá ser executado sob responsabilidade e custo do cliente. A Enerzee, após 30 (trinta) dias da contratação, apresentará o layout de instalação dos módulos para que o cliente execute o reforço.
+
+- Para instalações em zonas rurais, após análise de viabilidade, esta proposta está sujeita a acréscimo de frete, a depender do porte e local da usina solar.
+
+- O sistema de monitoramento necessita de acesso à internet, sendo que o sinal deverá alcançar o inversor.
+
+- No caso de indisponibilidade do módulo ofertado no momento da compra, poderemos alterar esse item sem prejuízo da potência.
+
+- O padrão de instalação da Enerzee é com eletrodutos aparentes e materiais galvanizados. Para utilização de materiais diferentes, deverá ser consultada a área comercial quanto a possíveis acréscimos de custos.
+
+- Em propostas cujo cliente seja pessoa jurídica, caso a entrega dos equipamentos fotovoltaicos (local da obra) seja em endereço diferente do indicado no cartão CNPJ, poderá haver custo adicional de frete para transporte do material até o local da usina fotovoltaica.
+
+- Em consonância com a REN ANEEL 1.000/2021 e com as práticas atuais de análise de projeto realizadas pelas concessionárias de energia, para continuidade dos processos dos clientes que pretendem instalar usinas fotovoltaicas com a Enerzee, será realizada primeiramente a aprovação do projeto junto à concessionária, a fim de verificar se a rede está apta a receber a conexão da usina. Na aprovação do projeto, serão indicadas possíveis obras na rede, caso necessárias, bem como seus custos e prazos de execução.</value>
+    </values>
+</CustomMetadata>

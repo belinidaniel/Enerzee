@@ -477,8 +477,6 @@ public class TestFactoryDefaults {
         Opportunity.Corrente_nominal_do_disjuntor_de_entrada__c => 'teste',
         Opportunity.Secao_Nominal_Bitola_do_cabo__c => 'teste',
         Opportunity.Estrutura_de_fixacao_verificado_in_loco__c => 'teste',
-        Opportunity.Observacoes_pos_sombreamento__c => 'teste',
-        Opportunity.Observacoes_pos_visita__c => 'teste',
         Opportunity.Custos_adicionais_levantados__c => 'teste',
         Opportunity.Equipe_Propria_ou_Terceira__c => 'Integrador',
         Opportunity.Duracao_estimada_da_visita_em_minutos__c => 12,

@@ -1166,27 +1166,6 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Observacoes_pos_sombreamento__c</fieldItem>
-                <identifier
-        >RecordObservacoes_pos_sombreamento_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Observacoes_pos_visita__c</fieldItem>
-                <identifier>RecordObservacoes_pos_visita_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.CustoAdicional__c</fieldItem>
                 <identifier>RecordCustoAdicional_cField2</identifier>
             </fieldInstance>

@@ -19,6 +19,40 @@ public class OpportunityBO {
   private static String PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE = 'financeiro@enerzee.com.br%';
   @TestVisible
   private static String FINANCING_SIMULATION_OWNER_EMAIL_LIKE = 'dayane.silva@enerzee.com.br%';
+  @TestVisible
+  private static Map<String, String> testProposalFieldDefaults;
+
+  public static void setProposalFieldDefaults(List<Opportunity> newRecords) {
+    Map<String, String> defaultsByField = loadProposalFieldDefaults();
+    if (defaultsByField.isEmpty()) {
+      return;
+    }
+    for (Opportunity opp : newRecords) {
+      for (String fieldApiName : defaultsByField.keySet()) {
+        if (opp.get(fieldApiName) == null) {
+          opp.put(fieldApiName, defaultsByField.get(fieldApiName));
+        }
+      }
+    }
+  }
+
+  private static Map<String, String> loadProposalFieldDefaults() {
+    if (testProposalFieldDefaults != null) {
+      return testProposalFieldDefaults;
+    }
+    Map<String, String> result = new Map<String, String>();
+    for (
+      OpportunityFieldDefault__mdt record : OpportunityFieldDefault__mdt.getAll()
+        .values()
+    ) {
+      if (record.Active__c != true || String.isBlank(record.FieldApiName__c)) {
+        continue;
+      }
+      result.put(record.FieldApiName__c, record.DefaultValue__c);
+    }
+    return result;
+  }
+
   //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
   public static void createSellBuyOrder(
     List<Opportunity> newRecords,

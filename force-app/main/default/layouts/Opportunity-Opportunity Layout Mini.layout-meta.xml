@@ -668,14 +668,6 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Observacoes_pos_sombreamento__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Observacoes_pos_visita__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>Custos_adicionais_levantados__c</field>
             </layoutItems>
             <layoutItems>
