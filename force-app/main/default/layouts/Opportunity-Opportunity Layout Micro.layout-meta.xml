@@ -1052,9 +1052,6 @@
         <quickActionListItems>
             <quickActionName>FSL__NewTask</quickActionName>
         </quickActionListItems>
-            <quickActionListItems>
-            <quickActionName>Opportunity.Enviar_para_VO</quickActionName>
-        </quickActionListItems>
     </quickActionList>
     <relatedLists>
         <fields>ContactName</fields>

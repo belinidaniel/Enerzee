@@ -950,9 +950,6 @@
         <quickActionListItems>
             <quickActionName>FeedItem.PollPost</quickActionName>
         </quickActionListItems>
-            <quickActionListItems>
-            <quickActionName>Opportunity.Enviar_para_VO</quickActionName>
-        </quickActionListItems>
     </quickActionList>
     <relatedLists>
         <fields>ContactName</fields>

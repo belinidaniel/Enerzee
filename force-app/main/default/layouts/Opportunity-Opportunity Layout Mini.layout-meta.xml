@@ -1096,17 +1096,7 @@
         <fields>Description</fields>
         <relatedList>RelatedLineItemList</relatedList>
     </relatedLists>
-    <relatedLists>
-        <fields>NAME</fields>
-        <fields>Network3750__c</fields>
-        <fields>TotalProductValue__c</fields>
-        <fields>Installation__c</fields>
-        <fields>Points__c</fields>
-        <fields>Nemi__c</fields>
-        <fields>Bdi__c</fields>
-        <fields>Coupling__c</fields>
-        <relatedList>Composition__c.Opportunity__c</relatedList>
-    </relatedLists>
+
     <relatedLists>
         <fields>NAME</fields>
         <fields>CategoryPhase__c</fields>

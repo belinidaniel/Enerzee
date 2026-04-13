@@ -36,10 +36,7 @@
         <field>Validade_token__c</field>
         <value xsi:nil="true" />
     </values>
-    <values>
-        <field>Verify_Token__c</field>
-        <value xsi:nil="true" />
-    </values>
+
     <values>
         <field>login__c</field>
         <value xsi:nil="true" />
