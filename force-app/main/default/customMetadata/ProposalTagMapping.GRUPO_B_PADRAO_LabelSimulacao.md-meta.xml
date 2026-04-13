@@ -15,8 +15,28 @@
         <value xsi:type="xsd:string">GRUPO_B_PADRAO</value>
     </values>
     <values>
-        <field>TagKey__c</field>
-        <value xsi:type="xsd:string">{{LabelSimulacao}}</value>
+        <field>DefaultValue__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>Format__c</field>
+        <value xsi:type="xsd:string">RAW</value>
+    </values>
+    <values>
+        <field>PaymentType__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>Required__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Scenario__c</field>
+        <value xsi:type="xsd:string">PAYMENT_SELECTED</value>
+    </values>
+    <values>
+        <field>SortOrder__c</field>
+        <value xsi:type="xsd:double">110.0</value>
     </values>
     <values>
         <field>SourcePath__c</field>
@@ -25,27 +45,7 @@
     >SelectedSimulation__r.ProposalLabel__c</value>
     </values>
     <values>
-        <field>Scenario__c</field>
-        <value xsi:type="xsd:string">PAYMENT_SELECTED</value>
-    </values>
-    <values>
-        <field>PaymentType__c</field>
-        <value xsi:nil="true" />
-    </values>
-    <values>
-        <field>Format__c</field>
-        <value xsi:type="xsd:string">RAW</value>
-    </values>
-    <values>
-        <field>DefaultValue__c</field>
-        <value xsi:nil="true" />
-    </values>
-    <values>
-        <field>Required__c</field>
-        <value xsi:type="xsd:boolean">false</value>
-    </values>
-    <values>
-        <field>SortOrder__c</field>
-        <value xsi:type="xsd:double">110</value>
+        <field>TagKey__c</field>
+        <value xsi:type="xsd:string">{{LabelSimulacao}}</value>
     </values>
 </CustomMetadata>

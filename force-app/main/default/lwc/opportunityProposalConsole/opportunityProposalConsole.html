@@ -179,7 +179,7 @@
               name="template"
               label="Modelo de proposta"
               value={comboboxValue}
-              placeholder="Selecione"
+              placeholder="Selecione um modelo"
               options={templateOptions}
               onchange={handleTemplateChange}
               disabled={disablePaymentField}
@@ -274,6 +274,8 @@
                   src={filePreviewUrl}
                   alt="Pré-visualização"
                   class="file-preview__image"
+                  onload={handleAttachmentPreviewLoad}
+                  onerror={handleAttachmentPreviewError}
                 />
               </template>
               <template if:true={filePreviewIsPdf}>
@@ -282,6 +284,7 @@
                   title="Documento em PDF"
                   class="file-preview__frame"
                   style="width: 100%; height: 1000px"
+                  onload={handleAttachmentPreviewLoad}
                 ></iframe>
               </template>
               <template if:true={filePreviewIsUnsupported}>

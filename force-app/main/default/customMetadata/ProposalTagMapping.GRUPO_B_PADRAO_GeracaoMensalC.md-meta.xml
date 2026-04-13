@@ -15,19 +15,7 @@
         <value xsi:type="xsd:string">GRUPO_B_PADRAO</value>
     </values>
     <values>
-        <field>TagKey__c</field>
-        <value xsi:type="xsd:string">{{GeracaoMensalEstimada__c}}</value>
-    </values>
-    <values>
-        <field>SourcePath__c</field>
-        <value xsi:type="xsd:string">Kwh__c</value>
-    </values>
-    <values>
-        <field>Scenario__c</field>
-        <value xsi:type="xsd:string">ALL</value>
-    </values>
-    <values>
-        <field>PaymentType__c</field>
+        <field>DefaultValue__c</field>
         <value xsi:nil="true" />
     </values>
     <values>
@@ -35,7 +23,7 @@
         <value xsi:type="xsd:string">DECIMAL_BR</value>
     </values>
     <values>
-        <field>DefaultValue__c</field>
+        <field>PaymentType__c</field>
         <value xsi:nil="true" />
     </values>
     <values>
@@ -43,7 +31,19 @@
         <value xsi:type="xsd:boolean">false</value>
     </values>
     <values>
+        <field>Scenario__c</field>
+        <value xsi:type="xsd:string">ALL</value>
+    </values>
+    <values>
         <field>SortOrder__c</field>
-        <value xsi:type="xsd:double">12</value>
+        <value xsi:type="xsd:double">12.0</value>
+    </values>
+    <values>
+        <field>SourcePath__c</field>
+        <value xsi:type="xsd:string">Kwh__c</value>
+    </values>
+    <values>
+        <field>TagKey__c</field>
+        <value xsi:type="xsd:string">{{GeracaoMensalEstimada__c}}</value>
     </values>
 </CustomMetadata>
