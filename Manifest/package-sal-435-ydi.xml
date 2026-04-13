@@ -63,6 +63,8 @@
         <members>Opportunity.FinancingProcessDetails__c</members>
         <members>Opportunity.SelectedSimulation__c</members>
         <members>Opportunity.GrupoTarifario__c</members>
+        <members>Opportunity.CO2Evitado25Anos__c</members>
+        <members>Opportunity.ArvoresEquivalentes25Anos__c</members>
         <members>Opportunity.ObservacaoPagamentoDireito__c</members>
         <members>Opportunity.ObservacaoPagamentoEsquerdo__c</members>
         <members>PaymentSimulation__c.FinancingRate__c</members>
@@ -190,6 +192,9 @@
         <members>ProposalTagMapping.GRUPO_B_PADRAO_EconomiaMensalC</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_ValorTotalPropostaC</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_KwhC</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_CO2Evitado25Anos</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_ArvoresEquivalentes25Anos</members>
         <members>ProposalSectionRule.GB_PADRAO_INITIAL</members>
         <members>ProposalSectionRule.GB_PADRAO_FINANCING</members>
         <members>ProposalSectionRule.GB_PADRAO_RENTAL</members>

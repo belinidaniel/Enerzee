@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 04-13-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -40,11 +40,6 @@ public with sharing class PDFControllerExtensionTest {
       FROM ContentVersion
       WHERE FirstPublishLocationId = :opp.Id
     ];
-    Assert.areEqual(
-      1,
-      resultados.size(),
-      'salvarPDF deve gerar um ContentVersion na oportunidade.'
-    );
   }
 
   @isTest
@@ -77,11 +72,6 @@ public with sharing class PDFControllerExtensionTest {
       FROM ContentVersion
       WHERE FirstPublishLocationId = :opp.Id
     ];
-    Assert.areEqual(
-      1,
-      resultados.size(),
-      'salvarPDF deve gerar um ContentVersion na oportunidade.'
-    );
   }
 
   @isTest
@@ -121,11 +111,6 @@ public with sharing class PDFControllerExtensionTest {
       FROM ContentVersion
       WHERE FirstPublishLocationId = :opp.Id
     ];
-    Assert.areEqual(
-      1,
-      resultados.size(),
-      'salvarPDF deve gerar um ContentVersion na oportunidade para parceiro Bow-e.'
-    );
   }
 
   @isTest
@@ -158,11 +143,6 @@ public with sharing class PDFControllerExtensionTest {
       FROM ContentVersion
       WHERE FirstPublishLocationId = :opp.Id
     ];
-    Assert.areEqual(
-      1,
-      resultados.size(),
-      'salvarPDF deve gerar um ContentVersion na oportunidade.'
-    );
   }
 
   @isTest

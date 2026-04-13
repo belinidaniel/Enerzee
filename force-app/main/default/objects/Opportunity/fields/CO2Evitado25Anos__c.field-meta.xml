@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CO2Evitado25Anos__c</fullName>
+    <description
+  >Quantidade estimada de CO2 evitado em 25 anos, em toneladas, com base na geração anual estimada do sistema.</description>
+    <formula>IF(
+    ISBLANK(GeracaoAnualEstimada__c),
+    null,
+    (GeracaoAnualEstimada__c * 0.084 * 25) / 1000
+)</formula>
+    <inlineHelpText
+  >Calculado como geração anual estimada x 0,084 x 25 anos, convertido de kg para toneladas.</inlineHelpText>
+    <label>CO2 evitado em 25 anos (t)</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>
