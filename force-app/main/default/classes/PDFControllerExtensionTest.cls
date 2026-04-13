@@ -20,40 +20,31 @@ public with sharing class PDFControllerExtensionTest {
       new Parceiro__c(CapaProposta__c = proposalCover.id, Produto__c = 'Solar'),
       true
     );
-
     Opportunity opp = (Opportunity) TestFactory.createSObject(
       new Opportunity(Parceiro__c = parceiro.id),
       true
     );
 
-    //Criar VFP
-    test.startTest();
-
-    ApexPages.StandardController sc = new ApexPages.StandardController(opp);
-    PDFControllerExtension ext = new PDFControllerExtension(sc);
-    ext.selectedCoverId = proposalCover.Id;
-
     PageReference pageRef = Page.PropostaContainer;
     pageRef.getParameters().put('id', String.valueOf(opp.Id));
-
     Test.setCurrentPage(pageRef);
 
+    test.startTest();
+    ApexPages.StandardController sc = new ApexPages.StandardController(opp);
+    PDFControllerExtension ext = new PDFControllerExtension(sc);
     ext.salvarPDF();
-
     test.stopTest();
 
-    //Avaliar o resultado
-    List<ContentDocumentLink> linkResultado = [
-      SELECT Id, LinkedEntityId
-      FROM ContentDocumentLink
-      WHERE LinkedEntityId = :opp.Id
-    ];
-
-    ContentVersion resultado = [
-      SELECT Id, FirstPublishLocationId, VersionData, NomePaginaPDF__c
+    List<ContentVersion> resultados = [
+      SELECT Id, FirstPublishLocationId, NomePaginaPDF__c
       FROM ContentVersion
       WHERE FirstPublishLocationId = :opp.Id
     ];
+    Assert.areEqual(
+      1,
+      resultados.size(),
+      'salvarPDF deve gerar um ContentVersion na oportunidade.'
+    );
   }
 
   @isTest
@@ -66,86 +57,75 @@ public with sharing class PDFControllerExtensionTest {
       new Parceiro__c(CapaProposta__c = proposalCover.id, Produto__c = 'Solar'),
       true
     );
-
     Opportunity opp = (Opportunity) TestFactory.createSObject(
       new Opportunity(Parceiro__c = parceiro.id),
       true
     );
 
-    //Criar VFP
-    test.startTest();
-
-    ApexPages.StandardController sc = new ApexPages.StandardController(opp);
-    PDFControllerExtension ext = new PDFControllerExtension(sc);
-    ext.selectedCoverId = proposalCover.Id;
-
     PageReference pageRef = Page.PropostaContainer;
     pageRef.getParameters().put('id', String.valueOf(opp.Id));
-
     Test.setCurrentPage(pageRef);
 
+    test.startTest();
+    ApexPages.StandardController sc = new ApexPages.StandardController(opp);
+    PDFControllerExtension ext = new PDFControllerExtension(sc);
     ext.salvarPDF();
-
     test.stopTest();
 
-    //Avaliar o resultado
-    List<ContentDocumentLink> linkResultado = [
-      SELECT Id, LinkedEntityId
-      FROM ContentDocumentLink
-      WHERE LinkedEntityId = :opp.Id
-    ];
-
-    ContentVersion resultado = [
-      SELECT Id, FirstPublishLocationId, VersionData, NomePaginaPDF__c
+    List<ContentVersion> resultados = [
+      SELECT Id, FirstPublishLocationId, NomePaginaPDF__c
       FROM ContentVersion
       WHERE FirstPublishLocationId = :opp.Id
     ];
+    Assert.areEqual(
+      1,
+      resultados.size(),
+      'salvarPDF deve gerar um ContentVersion na oportunidade.'
+    );
   }
 
   @isTest
   static void testePositivoBowe() {
     ProposalCover__c proposalCover = (ProposalCover__c) TestFactory.createSObject(
-      new ProposalCover__c(Template__c = 'ModeloPropostaBowe'),
+      new ProposalCover__c(
+        Template__c = 'ModeloPropostaBowe',
+        isPromotional__c = true
+      ),
       true
     );
     Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
-      new Parceiro__c(CapaProposta__c = proposalCover.id, Produto__c = 'Solar'),
+      new Parceiro__c(
+        Name = 'Bow-e',
+        CapaPromocional__c = proposalCover.id,
+        Produto__c = 'Solar'
+      ),
       true
     );
-
     Opportunity opp = (Opportunity) TestFactory.createSObject(
       new Opportunity(Parceiro__c = parceiro.id),
       true
     );
 
-    //Criar VFP
-    test.startTest();
-
-    ApexPages.StandardController sc = new ApexPages.StandardController(opp);
-    PDFControllerExtension ext = new PDFControllerExtension(sc);
-    ext.selectedCoverId = proposalCover.Id;
-
     PageReference pageRef = Page.PropostaContainer;
     pageRef.getParameters().put('id', String.valueOf(opp.Id));
-
     Test.setCurrentPage(pageRef);
 
+    test.startTest();
+    ApexPages.StandardController sc = new ApexPages.StandardController(opp);
+    PDFControllerExtension ext = new PDFControllerExtension(sc);
     ext.salvarPDF();
-
     test.stopTest();
 
-    //Avaliar o resultado
-    List<ContentDocumentLink> linkResultado = [
-      SELECT Id, LinkedEntityId
-      FROM ContentDocumentLink
-      WHERE LinkedEntityId = :opp.Id
-    ];
-
-    ContentVersion resultado = [
-      SELECT Id, FirstPublishLocationId, VersionData, NomePaginaPDF__c
+    List<ContentVersion> resultados = [
+      SELECT Id, FirstPublishLocationId, NomePaginaPDF__c
       FROM ContentVersion
       WHERE FirstPublishLocationId = :opp.Id
     ];
+    Assert.areEqual(
+      1,
+      resultados.size(),
+      'salvarPDF deve gerar um ContentVersion na oportunidade para parceiro Bow-e.'
+    );
   }
 
   @isTest
@@ -158,40 +138,31 @@ public with sharing class PDFControllerExtensionTest {
       new Parceiro__c(CapaProposta__c = proposalCover.id, Produto__c = 'Solar'),
       true
     );
-
     Opportunity opp = (Opportunity) TestFactory.createSObject(
       new Opportunity(Parceiro__c = parceiro.id),
       true
     );
 
-    //Criar VFP
-    test.startTest();
-
-    ApexPages.StandardController sc = new ApexPages.StandardController(opp);
-    PDFControllerExtension ext = new PDFControllerExtension(sc);
-    ext.selectedCoverId = proposalCover.Id;
-
     PageReference pageRef = Page.PropostaContainer;
     pageRef.getParameters().put('id', String.valueOf(opp.Id));
-
     Test.setCurrentPage(pageRef);
 
+    test.startTest();
+    ApexPages.StandardController sc = new ApexPages.StandardController(opp);
+    PDFControllerExtension ext = new PDFControllerExtension(sc);
     ext.salvarPDF();
-
     test.stopTest();
 
-    //Avaliar o resultado
-    List<ContentDocumentLink> linkResultado = [
-      SELECT Id, LinkedEntityId
-      FROM ContentDocumentLink
-      WHERE LinkedEntityId = :opp.Id
-    ];
-
-    ContentVersion resultado = [
-      SELECT Id, FirstPublishLocationId, VersionData, NomePaginaPDF__c
+    List<ContentVersion> resultados = [
+      SELECT Id, FirstPublishLocationId, NomePaginaPDF__c
       FROM ContentVersion
       WHERE FirstPublishLocationId = :opp.Id
     ];
+    Assert.areEqual(
+      1,
+      resultados.size(),
+      'salvarPDF deve gerar um ContentVersion na oportunidade.'
+    );
   }
 
   @isTest

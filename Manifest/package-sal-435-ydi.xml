@@ -32,6 +32,7 @@
         <members>ProposalTemplateResolver</members>
         <members>ProposalApiGenerationJob</members>
         <members>PDFControllerExtension</members>
+        <members>PDFControllerExtensionTest</members>
         <name>ApexClass</name>
     </types>
     <types>
