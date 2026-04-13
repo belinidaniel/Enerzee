@@ -668,6 +668,14 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>Observacoes_pos_sombreamento__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Observacoes_pos_visita__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>Custos_adicionais_levantados__c</field>
             </layoutItems>
             <layoutItems>
@@ -1061,6 +1069,29 @@
             <sortOrder>13</sortOrder>
         </platformActionListItems>
     </platformActionList>
+    <quickActionList>
+        <quickActionListItems>
+            <quickActionName>FeedItem.TextPost</quickActionName>
+        </quickActionListItems>
+        <quickActionListItems>
+            <quickActionName>FeedItem.ContentPost</quickActionName>
+        </quickActionListItems>
+        <quickActionListItems>
+            <quickActionName>LogACall</quickActionName>
+        </quickActionListItems>
+        <quickActionListItems>
+            <quickActionName>NewTask</quickActionName>
+        </quickActionListItems>
+        <quickActionListItems>
+            <quickActionName>NewEvent</quickActionName>
+        </quickActionListItems>
+        <quickActionListItems>
+            <quickActionName>FeedItem.LinkPost</quickActionName>
+        </quickActionListItems>
+        <quickActionListItems>
+            <quickActionName>FeedItem.PollPost</quickActionName>
+        </quickActionListItems>
+    </quickActionList>
     <relatedLists>
         <fields>ContactName</fields>
         <fields>Role</fields>
@@ -1076,27 +1107,12 @@
         <relatedList>Kit_Instalacao__c.Nome_da_Oportunidade__c</relatedList>
     </relatedLists>
     <relatedLists>
-        <fields>NAME</fields>
-        <fields>ProposalLabel__c</fields>
-        <fields>PaymentType__c</fields>
-        <fields>InstallmentCount__c</fields>
-        <fields>InterestRate__c</fields>
-        <fields>InstallmentAmount__c</fields>
-        <fields>Selected__c</fields>
-        <relatedList>PaymentSimulation__c.Opportunity__c</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <excludeButtons>AddProduct</excludeButtons>
-        <excludeButtons>EditAllProduct</excludeButtons>
-        <excludeButtons>MultiAdd</excludeButtons>
-        <excludeButtons>MultiEdit</excludeButtons>
         <fields>Product2</fields>
         <fields>Quantity</fields>
         <fields>UnitPrice</fields>
         <fields>Description</fields>
         <relatedList>RelatedLineItemList</relatedList>
     </relatedLists>
-
     <relatedLists>
         <fields>NAME</fields>
         <fields>CategoryPhase__c</fields>

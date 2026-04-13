@@ -62,6 +62,7 @@ public with sharing class ProposalContextResolver {
         Id,
         Name,
         Template__c,
+        TemplateUrl__c,
         IsActive__c,
         IntegrationKey__c,
         isPromotional__c

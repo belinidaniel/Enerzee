@@ -32,6 +32,15 @@ public with sharing class ProposalApiClient {
     String tagsJson,
     String sectionsJson
   ) {
+    return convertProposal(templateVersion, tagsJson, sectionsJson, null);
+  }
+
+  public static ApiResponse convertProposal(
+    ContentVersion templateVersion,
+    String tagsJson,
+    String sectionsJson,
+    ProposalCover__c cover
+  ) {
     String tagsResolved = (String.isBlank(tagsJson) || tagsJson == 'null')
       ? '{}'
       : tagsJson;
@@ -42,6 +51,11 @@ public with sharing class ProposalApiClient {
     String title = templateVersion != null ? templateVersion.Title : 'Proposta';
     String integrationUrl = loadIntegrationUrl();
 
+    String templateUrl = (cover != null &&
+      String.isNotBlank(cover.TemplateUrl__c))
+      ? cover.TemplateUrl__c
+      : TEMPLATE_URL_OVERRIDE;
+
     // Monta multipart/form-data com campos de texto apenas (sem arquivo)
     String crlf = '\r\n';
     String body =
@@ -51,7 +65,7 @@ public with sharing class ProposalApiClient {
       'Content-Disposition: form-data; name="templateUrl"' +
       crlf +
       crlf +
-      TEMPLATE_URL_OVERRIDE +
+      templateUrl +
       crlf +
       '--' +
       BOUNDARY +
@@ -74,7 +88,7 @@ public with sharing class ProposalApiClient {
       '--';
 
     System.debug('[ProposalApiClient] endpoint=' + integrationUrl);
-    System.debug('[ProposalApiClient] templateUrl=' + TEMPLATE_URL_OVERRIDE);
+    System.debug('[ProposalApiClient] templateUrl=' + templateUrl);
     System.debug(
       '[ProposalApiClient] tags (primeiros 500)=' + tagsResolved.left(500)
     );

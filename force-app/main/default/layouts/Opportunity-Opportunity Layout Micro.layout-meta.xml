@@ -686,6 +686,14 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>Observacoes_pos_sombreamento__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Observacoes_pos_visita__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>Custos_adicionais_levantados__c</field>
             </layoutItems>
             <layoutItems>
@@ -1017,11 +1025,6 @@
             <actionName>NewTask</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>13</sortOrder>
-        </platformActionListItems>
-            <platformActionListItems>
-            <actionName>Opportunity.Enviar_para_VO</actionName>
-            <actionType>QuickAction</actionType>
-            <sortOrder>0</sortOrder>
         </platformActionListItems>
     </platformActionList>
     <quickActionList>

@@ -101,7 +101,8 @@ public with sharing class ProposalGenerationService {
     ProposalApiClient.ApiResponse apiResponse = ProposalApiClient.convertProposal(
       templateVersion,
       payload.tagsJson,
-      payload.sectionsJson
+      payload.sectionsJson,
+      context.cover
     );
     Id contentVersionId = ProposalFileService.saveGeneratedProposal(
       context,
