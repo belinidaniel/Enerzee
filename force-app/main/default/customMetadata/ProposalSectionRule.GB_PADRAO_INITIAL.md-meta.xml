@@ -19,9 +19,21 @@
         <value xsi:type="xsd:string">INITIAL</value>
     </values>
     <values>
+        <field>Scenario__c</field>
+        <value xsi:type="xsd:string">INITIAL</value>
+    </values>
+    <values>
+        <field>SectionName__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
         <field>SectionsJson__c</field>
         <value
       xsi:type="xsd:string"
-    >["Proposta","Proposta de valores","Valor Selecionado","Rodape da proposta"]</value>
+    >[&quot;Proposta&quot;,&quot;Proposta de valores&quot;,&quot;Valor Selecionado&quot;,&quot;Rodape da proposta&quot;]</value>
+    </values>
+    <values>
+        <field>SortOrder__c</field>
+        <value xsi:nil="true" />
     </values>
 </CustomMetadata>
