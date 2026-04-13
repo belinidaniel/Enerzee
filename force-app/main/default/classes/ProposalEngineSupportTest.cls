@@ -600,6 +600,142 @@ private class ProposalEngineSupportTest {
   }
 
   @isTest
+  static void payloadBuilderResolvesSimulationSummaryMappings() {
+    Opportunity opportunityRecord = [
+      SELECT Id, CustoMedioEnergia__c, EconomiaMensalEstimada__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    opportunityRecord.CustoMedioEnergia__c = 1511;
+    opportunityRecord.EconomiaMensalEstimada__c = 380;
+    update opportunityRecord;
+
+    insert new List<PaymentSimulation__c>{
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Financing',
+        ProposalLabel__c = 'Opção 1',
+        InstallmentCount__c = 36,
+        InstallmentAmount__c = 2208.67
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Financing',
+        ProposalLabel__c = 'Opção 1',
+        InstallmentCount__c = 48,
+        InstallmentAmount__c = 2228.09
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Financing',
+        ProposalLabel__c = 'Opção 1',
+        InstallmentCount__c = 60,
+        InstallmentAmount__c = 2488.41
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Rental',
+        ProposalLabel__c = 'Solar Aluguel',
+        InstallmentCount__c = 72,
+        InstallmentAmount__c = 1540.55
+      )
+    };
+
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+    ProposalContextResolver.Context context = ProposalContextResolver.resolve(
+      opportunityRecord.Id,
+      cover.Id
+    );
+
+    List<ProposalConfigurationService.TagConfig> configs = new List<ProposalConfigurationService.TagConfig>();
+
+    ProposalConfigurationService.TagConfig aluguelValor = new ProposalConfigurationService.TagConfig();
+    aluguelValor.tagKey = '{{AluguelValor__c}}';
+    aluguelValor.sourcePath = 'SimulationSummary.Rental.InstallmentAmount1';
+    aluguelValor.formatValue = 'CURRENCY_BR';
+    configs.add(aluguelValor);
+
+    ProposalConfigurationService.TagConfig aluguelPercentual = new ProposalConfigurationService.TagConfig();
+    aluguelPercentual.tagKey = '{{AluguelPorcentagem__c}}';
+    aluguelPercentual.sourcePath = 'Calculated.EconomiaPercentual';
+    aluguelPercentual.formatValue = 'DECIMAL_BR';
+    configs.add(aluguelPercentual);
+
+    ProposalConfigurationService.TagConfig financiamento1 = new ProposalConfigurationService.TagConfig();
+    financiamento1.tagKey = '{{Financiamento1__c}}';
+    financiamento1.sourcePath = 'SimulationSummary.Financing.InstallmentAmount1';
+    financiamento1.formatValue = 'CURRENCY_BR';
+    configs.add(financiamento1);
+
+    ProposalConfigurationService.TagConfig financiamento2 = new ProposalConfigurationService.TagConfig();
+    financiamento2.tagKey = '{{Financiamento2__c}}';
+    financiamento2.sourcePath = 'SimulationSummary.Financing.InstallmentAmount2';
+    financiamento2.formatValue = 'CURRENCY_BR';
+    configs.add(financiamento2);
+
+    ProposalConfigurationService.TagConfig financiamento3 = new ProposalConfigurationService.TagConfig();
+    financiamento3.tagKey = '{{Financiamento3__c}}';
+    financiamento3.sourcePath = 'SimulationSummary.Financing.InstallmentAmount3';
+    financiamento3.formatValue = 'CURRENCY_BR';
+    configs.add(financiamento3);
+
+    ProposalConfigurationService.TagConfig financiamentoMensal = new ProposalConfigurationService.TagConfig();
+    financiamentoMensal.tagKey = '{{FinanciamentoMensal__c}}';
+    financiamentoMensal.sourcePath = 'EconomiaMensalEstimada__c';
+    financiamentoMensal.formatValue = 'CURRENCY_BR';
+    configs.add(financiamentoMensal);
+
+    Opportunity queriedOpportunity = ProposalPayloadBuilder.queryOpportunityForTags(
+      opportunityRecord.Id,
+      configs
+    );
+    ProposalPayloadBuilder.Payload payload = ProposalPayloadBuilder.buildPayload(
+      context,
+      queriedOpportunity,
+      configs,
+      new List<String>{ 'Proposta de valores' },
+      '068000000000009AAA'
+    );
+
+    Assert.areEqual(
+      '1540,55',
+      payload.tags.get('{{AluguelValor__c}}'),
+      'O aluguel deve usar a simulacao relacionada de 72x.'
+    );
+    Assert.areEqual(
+      '25,15',
+      payload.tags.get('{{AluguelPorcentagem__c}}'),
+      'A porcentagem de economia deve ser calculada a partir da oportunidade.'
+    );
+    Assert.areEqual(
+      '2208,67',
+      payload.tags.get('{{Financiamento1__c}}'),
+      'A primeira opcao de financiamento deve vir da simulacao relacionada.'
+    );
+    Assert.areEqual(
+      '2228,09',
+      payload.tags.get('{{Financiamento2__c}}'),
+      'A segunda opcao de financiamento deve vir da simulacao relacionada.'
+    );
+    Assert.areEqual(
+      '2488,41',
+      payload.tags.get('{{Financiamento3__c}}'),
+      'A terceira opcao de financiamento deve vir da simulacao relacionada.'
+    );
+    Assert.areEqual(
+      '380,00',
+      payload.tags.get('{{FinanciamentoMensal__c}}'),
+      'A economia mensal deve continuar vindo da oportunidade.'
+    );
+  }
+
+  @isTest
   static void integracaoNivelloHandlesEmptyAndExplicitProposal() {
     Opportunity opportunityRecord = [
       SELECT Id, SucessoIntegracaoNivello__c

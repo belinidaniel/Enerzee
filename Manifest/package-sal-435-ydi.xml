@@ -25,6 +25,7 @@
         <members>PaymentSimulationProposalStatusService</members>
         <members>PaymentSimulationTriggerHandler</members>
         <members>ProposalApiClient</members>
+        <members>ProposalComputedValueService</members>
         <members>ProposalApiGenerationJob</members>
         <members>ProposalConfigurationService</members>
         <members>ProposalConsoleController</members>
@@ -182,6 +183,8 @@
         <members>ProposalTagMapping.GRUPO_B_PADRAO_FinanciamentoMensal</members>
         <members
     >ProposalTagMapping.GRUPO_B_PADRAO_FinanciamentoPorcentagem</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_Autossuficiencia</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_ReducaoNaConta</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_Retorno</members>
         <members>ProposalSectionRule.GB_PADRAO_FINANCING</members>
         <members>ProposalSectionRule.GB_PADRAO_INITIAL</members>

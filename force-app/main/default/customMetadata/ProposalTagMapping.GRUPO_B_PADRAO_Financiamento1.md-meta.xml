@@ -24,7 +24,7 @@
     </values>
     <values>
         <field>PaymentType__c</field>
-        <value xsi:type="xsd:string">Financing</value>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Required__c</field>
@@ -42,7 +42,7 @@
         <field>SourcePath__c</field>
         <value
       xsi:type="xsd:string"
-    >SelectedSimulation__r.InstallmentAmount1__c</value>
+    >SimulationSummary.Financing.InstallmentAmount1</value>
     </values>
     <values>
         <field>TagKey__c</field>

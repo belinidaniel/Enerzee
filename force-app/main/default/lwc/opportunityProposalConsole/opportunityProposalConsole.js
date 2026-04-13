@@ -497,6 +497,18 @@ export default class OpportunityProposalConsole extends LightningElement {
     }
   }
 
+  openAttachmentRecord(event) {
+    const recordId = event.currentTarget?.dataset?.id;
+    if (!recordId) {
+      return;
+    }
+
+    window.open(
+      `/lightning/r/OpportunityAttachmentLink__c/${recordId}/view`,
+      "_blank"
+    );
+  }
+
   formatAttachments(records, collection) {
     return records.map((record) => {
       const date = record.createdDate ? new Date(record.createdDate) : null;

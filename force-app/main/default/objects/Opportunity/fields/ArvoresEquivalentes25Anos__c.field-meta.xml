@@ -2,6 +2,8 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ArvoresEquivalentes25Anos__c</fullName>
     <description>Árvores equivalentes plantadas em 25 anos.</description>
+    <formula>(KwhAnual__c / 262) * 25</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Árvores Equivalentes (25 Anos)</label>
     <precision>18</precision>
     <required>false</required>

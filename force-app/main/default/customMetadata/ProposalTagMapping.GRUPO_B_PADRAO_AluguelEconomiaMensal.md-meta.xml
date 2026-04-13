@@ -24,7 +24,7 @@
     </values>
     <values>
         <field>PaymentType__c</field>
-        <value xsi:type="xsd:string">Rental</value>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Required__c</field>

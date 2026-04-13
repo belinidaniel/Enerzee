@@ -4,7 +4,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 >
-    <label>GRUPO_B_PADRAO - FinanciamentoPorcentagem</label>
+    <label>GB Padrao - FinancPct</label>
     <protected>false</protected>
     <values>
         <field>Active__c</field>
@@ -24,7 +24,7 @@
     </values>
     <values>
         <field>PaymentType__c</field>
-        <value xsi:type="xsd:string">Financing</value>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>Required__c</field>
@@ -40,9 +40,7 @@
     </values>
     <values>
         <field>SourcePath__c</field>
-        <value
-      xsi:type="xsd:string"
-    >SelectedSimulation__r.InterestRate__c</value>
+        <value xsi:type="xsd:string">Calculated.EconomiaPercentual</value>
     </values>
     <values>
         <field>TagKey__c</field>

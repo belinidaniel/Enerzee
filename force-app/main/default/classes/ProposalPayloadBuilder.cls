@@ -29,6 +29,9 @@ public with sharing class ProposalPayloadBuilder {
         if (String.isBlank(config.sourcePath)) {
           continue;
         }
+        if (ProposalComputedValueService.isComputedPath(config.sourcePath)) {
+          continue;
+        }
         validatePath(config.sourcePath);
         selectFields.add(config.sourcePath);
       }
@@ -59,13 +62,21 @@ public with sharing class ProposalPayloadBuilder {
     }
 
     Payload payload = new Payload();
+    Map<String, Object> computedValues = ProposalComputedValueService.build(
+      context.opportunity.Id,
+      opportunityRecord
+    );
     payload.sectionsToShow = sectionsToShow == null
       ? new List<String>()
       : new List<String>(sectionsToShow);
 
     if (tagConfigs != null) {
       for (ProposalConfigurationService.TagConfig config : tagConfigs) {
-        String resolvedValue = resolveTagValue(opportunityRecord, config);
+        String resolvedValue = resolveTagValue(
+          opportunityRecord,
+          config,
+          computedValues
+        );
         payload.tags.put(config.tagKey, resolvedValue);
       }
     }
@@ -88,9 +99,17 @@ public with sharing class ProposalPayloadBuilder {
 
   private static String resolveTagValue(
     Opportunity opportunityRecord,
-    ProposalConfigurationService.TagConfig config
+    ProposalConfigurationService.TagConfig config,
+    Map<String, Object> computedValues
   ) {
-    Object rawValue = extractValue(opportunityRecord, config.sourcePath);
+    Object rawValue = ProposalComputedValueService.isComputedPath(
+        config.sourcePath
+      )
+      ? ProposalComputedValueService.resolveValue(
+          config.sourcePath,
+          computedValues
+        )
+      : extractValue(opportunityRecord, config.sourcePath);
     if (rawValue == null) {
       rawValue = config.defaultValue;
     }
