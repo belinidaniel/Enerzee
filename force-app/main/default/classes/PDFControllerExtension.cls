@@ -317,15 +317,12 @@ public with sharing class PDFControllerExtension {
     String parceiro = this.opportunity.Parceiro__r.Name;
 
     // Capa/Template
-    List<ProposalCover__c> propostas = [
-      SELECT Id, Template__c, isPromotional__c
-      FROM ProposalCover__c
-      WHERE
-        Id IN (:capaPropostaId, :capaPromocionalId)
-        AND isPromotional__c = :isPromotional
-      LIMIT 1
-    ];
-    if (propostas.isEmpty()) {
+    ProposalCover__c selectedCover = resolveLegacyProposalCover(
+      capaPropostaId,
+      capaPromocionalId,
+      isPromotional
+    );
+    if (selectedCover == null) {
       ApexPages.addMessage(
         new ApexPages.Message(
           ApexPages.Severity.ERROR,
@@ -334,7 +331,7 @@ public with sharing class PDFControllerExtension {
       );
       return null;
     }
-    String selectedCoverId = propostas[0].Id;
+    String selectedCoverId = selectedCover.Id;
 
     // Nome do arquivo
     String nomeArquivo = ProposalFileService.buildProposalTitle(
@@ -466,18 +463,13 @@ public with sharing class PDFControllerExtension {
     String pageName,
     Boolean isAsync
   ) {
-    if (Test.isRunningTest()) {
-      return Blob.valueOf('TESTE CONTEUDO PDF');
-    }
-
-    // Se for chamada síncrona, use a lógica atual
     if (!isAsync) {
-      ApexPages.PageReference refPagina = ApexPages.currentPage();
-      if (!Test.isRunningTest()) {
-        return refPagina.getContent();
-      } else {
+      // Se for chamada síncrona, use a lógica atual
+      if (Test.isRunningTest()) {
         return Blob.valueOf('TESTE CONTEUDO PDF');
       }
+      ApexPages.PageReference refPagina = ApexPages.currentPage();
+      return refPagina.getContent();
     }
     System.DEBUG(
       '--------------------------------- generatePdfContent ---------------------------------------'
@@ -489,6 +481,10 @@ public with sharing class PDFControllerExtension {
     pdfPage.getParameters().put('id', opportunityId);
     pdfPage.getParameters().put('selectedCoverId', capaPropostaId);
     pdfPage.getParameters().put('skipAutoSave', 'true');
+
+    if (Test.isRunningTest()) {
+      return Blob.valueOf('TESTE CONTEUDO PDF');
+    }
 
     try {
       return pdfPage.getContent();
@@ -613,14 +609,20 @@ public with sharing class PDFControllerExtension {
     String nomeArquivo;
     String pageName;
 
-    ProposalCover__c proposta = [
+    List<ProposalCover__c> propostas = [
       SELECT Id, Template__c, isPromotional__c
       FROM ProposalCover__c
-      WHERE
-        Id IN (:capaPropostaId, :capaPromocionalId)
-        AND isPromotional__c = :isPromotional
-      LIMIT 1
+      WHERE Id IN (:capaPropostaId, :capaPromocionalId)
     ];
+
+    ProposalCover__c proposta = pickLegacyProposalCover(
+      propostas,
+      isPromotional
+    );
+    if (proposta == null) {
+      processingOpps.remove(opportunityId);
+      return;
+    }
 
     if (proposta.Template__c != null) {
       capaId = proposta.Id;
@@ -966,6 +968,42 @@ public with sharing class PDFControllerExtension {
 
   public String getEconomiaAnualFormatada() {
     return formatCurrencyBR(this.opportunity.EconomiaAnualEstimada__c);
+  }
+
+  @TestVisible
+  private static ProposalCover__c resolveLegacyProposalCover(
+    Id capaPropostaId,
+    Id capaPromocionalId,
+    Boolean isPromotional
+  ) {
+    List<ProposalCover__c> proposals = [
+      SELECT Id, Template__c, isPromotional__c
+      FROM ProposalCover__c
+      WHERE Id IN (:capaPropostaId, :capaPromocionalId)
+    ];
+    return pickLegacyProposalCover(proposals, isPromotional);
+  }
+
+  private static ProposalCover__c pickLegacyProposalCover(
+    List<ProposalCover__c> proposals,
+    Boolean isPromotional
+  ) {
+    if (proposals == null || proposals.isEmpty()) {
+      return null;
+    }
+
+    ProposalCover__c nullFallbackCover;
+    for (ProposalCover__c cover : proposals) {
+      Boolean coverIsPromotional = cover.isPromotional__c == true;
+      if (coverIsPromotional == isPromotional) {
+        return cover;
+      }
+      if (isPromotional != true && cover.isPromotional__c == null) {
+        nullFallbackCover = cover;
+      }
+    }
+
+    return nullFallbackCover;
   }
 
   private void loadViabilityCostDetails() {

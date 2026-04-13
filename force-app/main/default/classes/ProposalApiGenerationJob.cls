@@ -27,37 +27,13 @@ public with sharing class ProposalApiGenerationJob implements Queueable, Databas
         opportunityId,
         coverId
       );
-
-      if (result == null || result.success != true) {
-        Utils.createLog(
-          'ProposalApiGenerationJob',
-          'execute',
-          new AuraHandledException(
-            'Geracao de proposta via API falhou sem excecao.'
-          )
-        );
-        return;
-      }
-
       advanceStage(opportunityId);
 
       if (autoIntegrate == true) {
-        try {
-          if (result.contentVersionId != null) {
-            IntegracaoNivelloProposta.gerandoProposta(
-              opportunityId,
-              result.contentVersionId
-            );
-          } else {
-            IntegracaoNivelloProposta.gerandoProposta(opportunityId);
-          }
-        } catch (Exception eInteg) {
-          Utils.createLog(
-            'ProposalApiGenerationJob',
-            'execute.integration',
-            eInteg
-          );
-        }
+        IntegracaoNivelloProposta.gerandoProposta(
+          opportunityId,
+          result.contentVersionId
+        );
       }
     } catch (Exception e) {
       Utils.createLog('ProposalApiGenerationJob', 'execute', e);
