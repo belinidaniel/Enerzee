@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-10-2026
+ * @last modified on  : 04-13-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -283,7 +283,7 @@ private class ProposalEngineSupportTest {
     Assert.areEqual(
       '123,45',
       payload.tags.get('{{Amount}}'),
-      'O payload deve aplicar formatação monetária pt-BR.'
+      'O payload deve aplicar formatação monetária pt-BR com prefixo e separador de milhar.'
     );
     Assert.isTrue(
       payload.tags.get('{{CloseDate}}').contains('/'),
@@ -704,9 +704,9 @@ private class ProposalEngineSupportTest {
     );
 
     Assert.areEqual(
-      '1540,55',
+      '1.540,55',
       payload.tags.get('{{AluguelValor__c}}'),
-      'O aluguel deve usar a simulacao relacionada de 72x.'
+      'O aluguel deve usar a simulacao relacionada de 72x com prefixo e separador de milhar.'
     );
     Assert.areEqual(
       '25,15',
@@ -714,24 +714,24 @@ private class ProposalEngineSupportTest {
       'A porcentagem de economia deve ser calculada a partir da oportunidade.'
     );
     Assert.areEqual(
-      '2208,67',
+      '2.208,67',
       payload.tags.get('{{Financiamento1__c}}'),
-      'A primeira opcao de financiamento deve vir da simulacao relacionada.'
+      'A primeira opcao de financiamento deve vir da simulacao relacionada com prefixo R$.'
     );
     Assert.areEqual(
-      '2228,09',
+      '2.228,09',
       payload.tags.get('{{Financiamento2__c}}'),
-      'A segunda opcao de financiamento deve vir da simulacao relacionada.'
+      'A segunda opcao de financiamento deve vir da simulacao relacionada com prefixo R$.'
     );
     Assert.areEqual(
-      '2488,41',
+      '2.488,41',
       payload.tags.get('{{Financiamento3__c}}'),
-      'A terceira opcao de financiamento deve vir da simulacao relacionada.'
+      'A terceira opcao de financiamento deve vir da simulacao relacionada com prefixo R$.'
     );
     Assert.areEqual(
       '380,00',
       payload.tags.get('{{FinanciamentoMensal__c}}'),
-      'A economia mensal deve continuar vindo da oportunidade.'
+      'A economia mensal deve continuar vindo da oportunidade com prefixo R$.'
     );
   }
 

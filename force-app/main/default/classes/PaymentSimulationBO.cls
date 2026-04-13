@@ -2,8 +2,8 @@
  * @description       : Orquestra a geração, recalculo e sincronização das simulações de pagamento do Solar Grupo B
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-06-2026
- * @last modified by  : OpenAI Codex
+ * @last modified on  : 04-13-2026
+ * @last modified by  : Daniel Belini
  * @test              : OpportunityTriggerTest, PaymentSimulationBOTest, ProposalServicePaymentSimulationTest
  **/
 public without sharing class PaymentSimulationBO {
@@ -17,6 +17,8 @@ public without sharing class PaymentSimulationBO {
   private static final Decimal PF_RENTAL_LIMIT = 70000;
   @TestVisible
   private static final Decimal PJ_RENTAL_LIMIT = 250000;
+  @TestVisible
+  private static final String HYBRID_KIT_VALUE = 'KIT SOLAR + BESS';
   @TestVisible
   private static final Integer MAX_INSTALLMENT_OPTIONS = 4;
 
@@ -306,7 +308,11 @@ public without sharing class PaymentSimulationBO {
       }
       if (
         isRentalPaymentType(financingRate.PaymentType__c) &&
-        !isRentalEligible(simulationAmount, cnpj)
+        !isRentalEligible(
+          simulationAmount,
+          cnpj,
+          opportunityRecord.TipoKitPromocional__c
+        )
       ) {
         continue;
       }
@@ -416,8 +422,16 @@ public without sharing class PaymentSimulationBO {
   }
 
   @TestVisible
-  private static Boolean isRentalEligible(Decimal amount, String cnpj) {
+  private static Boolean isRentalEligible(
+    Decimal amount,
+    String cnpj,
+    String tipoKitPromocional
+  ) {
     if (amount == null) {
+      return false;
+    }
+
+    if (HYBRID_KIT_VALUE.equalsIgnoreCase(tipoKitPromocional)) {
       return false;
     }
 
@@ -899,7 +913,7 @@ public without sharing class PaymentSimulationBO {
 
   private static String formatCurrencyBr(Decimal value) {
     if (value == null) {
-      return 'R$ 0,00';
+      return '0,00';
     }
 
     String str = String.valueOf(value.setScale(2, RoundingMode.HALF_UP));
@@ -918,7 +932,7 @@ public without sharing class PaymentSimulationBO {
       }
     }
 
-    return 'R$ ' + formattedInt + ',' + decPart;
+    return formattedInt + ',' + decPart;
   }
 
   private static Id getSolarRecordTypeId() {

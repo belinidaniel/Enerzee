@@ -236,7 +236,6 @@ export default class OpportunityProposalConsole extends LightningElement {
   }
 
   closeModal() {
-    this.previewRequestSequence += 1;
     this.isModalOpen = false;
     this.isSendMode = false;
     this.previewUrl = null;
@@ -247,6 +246,7 @@ export default class OpportunityProposalConsole extends LightningElement {
   handleTemplateChange(event) {
     const selectedValue = event.detail.value;
     this.selectedTemplateId = selectedValue || null;
+    this.isSavingBatteryDescription = true;
     this.updatePreviewUrl();
   }
 
@@ -497,18 +497,6 @@ export default class OpportunityProposalConsole extends LightningElement {
     }
   }
 
-  openAttachmentRecord(event) {
-    const recordId = event.currentTarget?.dataset?.id;
-    if (!recordId) {
-      return;
-    }
-
-    window.open(
-      `/lightning/r/OpportunityAttachmentLink__c/${recordId}/view`,
-      "_blank"
-    );
-  }
-
   formatAttachments(records, collection) {
     return records.map((record) => {
       const date = record.createdDate ? new Date(record.createdDate) : null;
@@ -579,28 +567,10 @@ export default class OpportunityProposalConsole extends LightningElement {
       this.error = this.reduceError(error);
       this.filePreviewUrl = null;
     } finally {
-      if (!previewSupported) {
-        this.isAttachmentPreviewLoading = false;
-      }
+      this.isAttachmentPreviewLoading = false;
     }
 
     return previewSupported;
-  }
-
-  handleAttachmentPreviewLoad() {
-    this.isAttachmentPreviewLoading = false;
-  }
-
-  handleAttachmentPreviewError() {
-    this.isAttachmentPreviewLoading = false;
-    this.filePreviewUrl = null;
-    this.dispatchEvent(
-      new ShowToastEvent({
-        title: "Erro ao carregar arquivo",
-        message: "Não foi possível carregar a pré-visualização do arquivo.",
-        variant: "error"
-      })
-    );
   }
 
   get filePreviewIsUnsupported() {

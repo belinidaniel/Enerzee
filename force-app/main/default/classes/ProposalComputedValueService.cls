@@ -117,6 +117,27 @@ public with sharing class ProposalComputedValueService {
           .setScale(2, RoundingMode.HALF_UP)
       );
     }
+
+    // % diferenca entre custo mensal atual e parcela 60x do financiamento (opcao 3)
+    // Formula: (CustoMedioEnergia - Financiamento3_60x) / CustoMedioEnergia * 100
+    // Retorna null quando parcela >= custo (economia negativa nao faz sentido na proposta)
+    Decimal financing3Amount = toDecimal(
+      values.get(SIMULATION_PREFIX + 'Financing.InstallmentAmount3')
+    );
+    if (
+      financing3Amount != null &&
+      currentEnergyCost != null &&
+      currentEnergyCost != 0 &&
+      financing3Amount < currentEnergyCost
+    ) {
+      values.put(
+        CALCULATED_PREFIX + 'EconomiaPercentualFinanciamento',
+        ((currentEnergyCost - financing3Amount) /
+          currentEnergyCost *
+          100)
+          .setScale(2, RoundingMode.HALF_UP)
+      );
+    }
   }
 
   private static PaymentSimulation__c addSimulationSummaryValues(

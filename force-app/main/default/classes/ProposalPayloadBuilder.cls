@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-10-2026
+ * @last modified on  : 04-13-2026
  * @last modified by  : Daniel Belini
  * @test              : ProposalEngineSupportTest
  **/
@@ -181,16 +181,50 @@ public with sharing class ProposalPayloadBuilder {
         ? String.valueOf(value)
         : String.valueOf(decimalValue.setScale(0));
     }
-    if (normalizedFormat == 'DECIMAL_BR' || normalizedFormat == 'CURRENCY_BR') {
+    if (normalizedFormat == 'DECIMAL_BR') {
       Decimal decimalValue = toDecimal(value);
       if (decimalValue == null) {
         return String.valueOf(value);
       }
-      Integer scale = normalizedFormat == 'CURRENCY_BR' ? 2 : 2;
-      return String.valueOf(decimalValue.setScale(scale)).replace('.', ',');
+      return formatDecimalBR(decimalValue, 2);
+    }
+    if (normalizedFormat == 'CURRENCY_BR') {
+      Decimal decimalValue = toDecimal(value);
+      if (decimalValue == null) {
+        return String.valueOf(value);
+      }
+      return formatDecimalBR(decimalValue, 2);
     }
 
     return String.valueOf(value);
+  }
+
+  private static String formatDecimalBR(Decimal value, Integer scale) {
+    Decimal scaled = value.setScale(scale, RoundingMode.HALF_UP);
+    Long integerPart = scaled.longValue();
+    Decimal fractionalPart = (scaled - integerPart)
+      .abs()
+      .setScale(scale, RoundingMode.HALF_UP);
+
+    String intStr = String.valueOf(
+      integerPart < 0 ? -integerPart : integerPart
+    );
+    String intFormatted = '';
+    Integer remainder = Math.mod(intStr.length(), 3);
+    for (Integer i = 0; i < intStr.length(); i++) {
+      if (i > 0 && Math.mod(i - remainder, 3) == 0 && i >= remainder) {
+        intFormatted += '.';
+      }
+      intFormatted += intStr.substring(i, i + 1);
+    }
+
+    String fracStr = String.valueOf(fractionalPart).replace('0.', '');
+    while (fracStr.length() < scale) {
+      fracStr += '0';
+    }
+
+    String result = intFormatted + ',' + fracStr;
+    return integerPart < 0 ? '-' + result : result;
   }
 
   private static Decimal toDecimal(Object value) {

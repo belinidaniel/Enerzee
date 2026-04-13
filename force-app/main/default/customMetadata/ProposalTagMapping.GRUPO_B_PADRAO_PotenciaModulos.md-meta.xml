@@ -4,7 +4,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 >
-    <label>GB Padrao - FinancPct</label>
+    <label>GRUPO_B_PADRAO - PotenciaModulos</label>
     <protected>false</protected>
     <values>
         <field>Active__c</field>
@@ -20,7 +20,7 @@
     </values>
     <values>
         <field>Format__c</field>
-        <value xsi:type="xsd:string">DECIMAL_BR</value>
+        <value xsi:type="xsd:string">RAW</value>
     </values>
     <values>
         <field>PaymentType__c</field>
@@ -40,12 +40,10 @@
     </values>
     <values>
         <field>SourcePath__c</field>
-        <value
-      xsi:type="xsd:string"
-    >Calculated.EconomiaPercentualFinanciamento</value>
+        <value xsi:type="xsd:string">PotenciaModulos__c</value>
     </values>
     <values>
         <field>TagKey__c</field>
-        <value xsi:type="xsd:string">{{FinanciamentoPorcentagem__c}}</value>
+        <value xsi:type="xsd:string">{{PotenciaModulos_c}}</value>
     </values>
 </CustomMetadata>

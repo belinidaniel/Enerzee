@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 01-09-2026
+  @last modified on  : 04-13-2026
   @last modified by  : Daniel Belini
 -->
 <template>
@@ -56,7 +56,8 @@
                   class="slds-media__body file-body slds-button_reset"
                   type="button"
                   data-id={file.id}
-                  onclick={openAttachmentRecord}
+                  data-collection="proposal"
+                  onclick={handlePreviewFile}
                 >
                   <span class="file-title">{file.title}</span>
                   <p
@@ -68,9 +69,9 @@
                 <div class="file-actions">
                   <lightning-button-icon
                     icon-name="utility:new_window"
-                    alternative-text="Abrir registro"
-                    onclick={openAttachmentRecord}
-                    data-id={file.id}
+                    alternative-text="Abrir"
+                    onclick={openFile}
+                    data-url={file.downloadUrl}
                   ></lightning-button-icon>
                 </div>
               </article>
@@ -111,7 +112,8 @@
                   class="slds-media__body file-body slds-button_reset"
                   type="button"
                   data-id={file.id}
-                  onclick={openAttachmentRecord}
+                  data-collection="other"
+                  onclick={handlePreviewFile}
                 >
                   <span class="file-title">{file.title}</span>
                   <p
@@ -257,23 +259,21 @@
         <div
           class="slds-modal__content slds-var-p-around_medium file-preview__content"
         >
-          <template if:true={hasPreviewUrl}>
-            <div class="file-preview__viewer">
-              <template if:true={isAttachmentPreviewLoading}>
-                <div class="spinner-wrapper spinner-wrapper--overlay">
-                  <lightning-spinner
-                    alternative-text="Carregando documento"
-                    size="medium"
-                  ></lightning-spinner>
-                </div>
-              </template>
+          <template if:true={isAttachmentPreviewLoading}>
+            <div class="spinner-wrapper">
+              <lightning-spinner
+                alternative-text="Carregando documento"
+                size="medium"
+              ></lightning-spinner>
+            </div>
+          </template>
+          <template if:false={isAttachmentPreviewLoading}>
+            <template if:true={hasPreviewUrl}>
               <template if:true={filePreviewIsImage}>
                 <img
                   src={filePreviewUrl}
                   alt="Pré-visualização"
                   class="file-preview__image"
-                  onload={handleAttachmentPreviewLoad}
-                  onerror={handleAttachmentPreviewError}
                 />
               </template>
               <template if:true={filePreviewIsPdf}>
@@ -281,13 +281,26 @@
                   src={filePreviewUrl}
                   title="Documento em PDF"
                   class="file-preview__frame"
-                  onload={handleAttachmentPreviewLoad}
+                  style="width: 100%; height: 1000px"
                 ></iframe>
               </template>
-            </div>
-          </template>
-          <template if:false={hasPreviewUrl}>
-            <p>Arquivo não disponível para visualização.</p>
+              <template if:true={filePreviewIsUnsupported}>
+                <p>
+                  Visualização não suportada. Utilize o botão abaixo para abrir
+                  o arquivo.
+                </p>
+                <div class="slds-text-align_center slds-p-top_medium">
+                  <lightning-button
+                    label="Abrir em nova aba"
+                    variant="neutral"
+                    onclick={downloadCurrentFile}
+                  ></lightning-button>
+                </div>
+              </template>
+            </template>
+            <template if:false={hasPreviewUrl}>
+              <p>Arquivo não disponível para visualização.</p>
+            </template>
           </template>
         </div>
         <footer class="slds-modal__footer file-preview__footer">

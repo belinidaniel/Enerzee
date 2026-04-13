@@ -213,6 +213,79 @@ public class PaymentSimulationBOTest {
   }
 
   @IsTest
+  static void hybridKitExcludesRentalRegardlessOfAmount() {
+    createFinancingRate(
+      'Financing Hibrido',
+      'Financing',
+      true,
+      12,
+      0.0199,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    );
+    createFinancingRate(
+      'Rental Hibrido',
+      'Rental',
+      true,
+      12,
+      0,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    );
+
+    Account physicalAccount = createAccount(
+      'TestFactoryDefaults.PhysicalPersonAccount'
+    );
+    Opportunity hybridKitOpportunity = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = physicalAccount.Id,
+        Amount = 30000,
+        RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+          .get('Solar')
+          .getRecordTypeId(),
+        GrupoTarifario__c = 'Grupo B',
+        TipoKitPromocional__c = PaymentSimulationBO.HYBRID_KIT_VALUE
+      )
+    );
+    hybridKitOpportunity.IdVirtualOffice__c = TestFactory.nextUniqueValue(
+      'OPPVO'
+    );
+    OpportunityTriggerHandler.disableTrigger();
+    try {
+      insert hybridKitOpportunity;
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
+    hybridKitOpportunity = getOpportunity(hybridKitOpportunity.Id);
+
+    Test.startTest();
+    PaymentSimulationBO.createSimulationsForOpportunities(
+      new List<Opportunity>{ hybridKitOpportunity }
+    );
+    Test.stopTest();
+
+    List<PaymentSimulation__c> simulations = getSimulations(
+      hybridKitOpportunity.Id
+    );
+
+    for (PaymentSimulation__c sim : simulations) {
+      Assert.areNotEqual(
+        'Rental',
+        sim.PaymentType__c,
+        'Kit híbrido KIT SOLAR + BESS não deve gerar simulações de aluguel.'
+      );
+    }
+  }
+
+  @IsTest
   static void recalculateOnAmountChangeBackfillsAndUpdatesOptions() {
     createFinancingRate(
       'Banco Recalculo',
@@ -446,7 +519,13 @@ public class PaymentSimulationBOTest {
 
   private static Opportunity getOpportunity(Id opportunityId) {
     return [
-      SELECT Id, AccountId, Amount, RecordTypeId, GrupoTarifario__c
+      SELECT
+        Id,
+        AccountId,
+        Amount,
+        RecordTypeId,
+        GrupoTarifario__c,
+        TipoKitPromocional__c
       FROM Opportunity
       WHERE Id = :opportunityId
     ];
