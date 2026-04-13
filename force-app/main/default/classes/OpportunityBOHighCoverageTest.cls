@@ -117,7 +117,7 @@ private class OpportunityBOHighCoverageTest {
       EconomiaMensalEstimada__c = 10,
       EconomiaAnualEstimada__c = 100,
       EconomiaAcumulada__c = 100,
-      TipoTelhadoEstrutura__c = 'Estrutura',
+      TipoTelhadoEstrutura__c = 'Ao Solo',
       AreaM__c = 10,
       PrazoEntregaDias__c = '30',
       Amount = 1000,
@@ -846,7 +846,7 @@ private class OpportunityBOHighCoverageTest {
       EconomiaMensalEstimada__c = 10,
       EconomiaAnualEstimada__c = 100,
       EconomiaAcumulada__c = 100,
-      TipoTelhadoEstrutura__c = 'Estrutura',
+      TipoTelhadoEstrutura__c = 'Ao Solo',
       AreaM__c = 10,
       PrazoEntregaDias__c = '30',
       Amount = 1000,
@@ -2045,6 +2045,123 @@ private class OpportunityBOHighCoverageTest {
     System.assertEquals(
       UserInfo.getUserId(),
       OpportunityBO.resolvePaymentReminderTaskOwner(null, null, null, false)
+    );
+  }
+
+  @IsTest
+  static void shouldEnqueueProposalWhenFlagIsTrueButProposalLinkIsMissing() {
+    ApprovalProcessService.queuedProposalOpps.clear();
+    OpportunityTriggerHandler.disableTrigger();
+
+    Id solarRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+      .get('Solar')
+      .getRecordTypeId();
+
+    Account accountRecord = createUniqueAccount('PROPOSALREADY');
+    ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(),
+      true
+    );
+    Parceiro__c partner = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(CapaProposta__c = cover.Id, Produto__c = 'Solar'),
+      true
+    );
+    Opportunity opportunityRecord = new Opportunity(
+      Name = 'Opp Proposal Ready Check',
+      AccountId = accountRecord.Id,
+      Parceiro__c = partner.Id,
+      IdVirtualOffice__c = 'VO-HC-PROPOSAL-' +
+        String.valueOf(DateTime.now().getTime()),
+      OwnerId = UserInfo.getUserId(),
+      StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
+      CloseDate = Date.today().addDays(7),
+      RecordTypeId = solarRecordTypeId,
+      GrupoTarifario__c = 'Grupo B',
+      PotenciaPicoSistema__c = 1,
+      ValidadeProposta__c = '7',
+      ConsumoAnual__c = 1,
+      CustoMedioEnergia__c = 1,
+      NumeroModulos__c = 1,
+      FabricanteModulos__c = 'Fabricante',
+      Modelo__c = 'Modelo',
+      PotenciaNominalWp__c = 550,
+      Pesokg__c = 1,
+      NumeroInversores__c = 1,
+      FabricanteInversor__c = 'Fabricante',
+      ModeloInversor__c = 'Modelo Inversor',
+      PotenciaNominalSistema__c = 100,
+      GeracaoAnualEstimada__c = 100,
+      GeracaoMensalEstimada__c = 10,
+      PaybackAnos__c = 1,
+      EconomiaMensalEstimada__c = 10,
+      EconomiaAnualEstimada__c = 100,
+      EconomiaAcumulada__c = 100,
+      TipoTelhadoEstrutura__c = 'Ao Solo',
+      AreaM__c = 10,
+      PrazoEntregaDias__c = '30',
+      Amount = 1000,
+      PropostaGerada__c = true
+    );
+    insert opportunityRecord;
+    OpportunityTriggerHandler.enableTrigger();
+
+    insert new ContentVersion(
+      Title = 'Proposta existente',
+      PathOnClient = 'proposta-existente.pdf',
+      VersionData = Blob.valueOf('pdf'),
+      FirstPublishLocationId = opportunityRecord.Id,
+      IsProposal__c = true
+    );
+
+    insert new OpportunityAttachmentLink__c(
+      Name = 'Link legado',
+      OpportunityId__c = opportunityRecord.Id,
+      Type__c = 'Other',
+      AttachmentURL__c = 'https://example.com/legacy.pdf'
+    );
+
+    Opportunity oldOpportunity = opportunityRecord.clone(
+      true,
+      true,
+      true,
+      true
+    );
+    oldOpportunity.CustoFinanceiroWeg__c = 0;
+
+    Opportunity newOpportunity = opportunityRecord.clone(
+      true,
+      true,
+      true,
+      true
+    );
+    newOpportunity.CustoFinanceiroWeg__c = 10;
+
+    OpportunityBO.generateProposalAsync(
+      new Map<Id, Opportunity>{ opportunityRecord.Id => newOpportunity },
+      new Map<Id, Opportunity>{ opportunityRecord.Id => oldOpportunity }
+    );
+    System.assert(
+      ApprovalProcessService.queuedProposalOpps.contains(opportunityRecord.Id),
+      'Com PropostaGerada__c=true mas sem link Proposal válido, o after update deve voltar a enfileirar.'
+    );
+
+    ApprovalProcessService.queuedProposalOpps.clear();
+
+    insert new OpportunityAttachmentLink__c(
+      Name = 'Link proposta',
+      OpportunityId__c = opportunityRecord.Id,
+      Type__c = 'Proposal',
+      AttachmentURL__c = 'https://example.com/proposal.pdf'
+    );
+
+    OpportunityBO.generateProposalAsync(
+      new Map<Id, Opportunity>{ opportunityRecord.Id => newOpportunity },
+      new Map<Id, Opportunity>{ opportunityRecord.Id => oldOpportunity }
+    );
+    System.assertEquals(
+      false,
+      ApprovalProcessService.queuedProposalOpps.contains(opportunityRecord.Id),
+      'Quando a proposta já estiver pronta de verdade, o after update não deve enfileirar novamente.'
     );
   }
 }

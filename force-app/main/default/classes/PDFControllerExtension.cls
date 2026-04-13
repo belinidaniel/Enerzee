@@ -307,29 +307,22 @@ public with sharing class PDFControllerExtension {
 
   public Id salvarArquivo(String opportunityId, String pageName) {
     // Dados base
-    String nomeRegistro =
-      this.opportunity.Numeroproposta__c +
-      ' ' +
-      this.opportunity.Account.Name;
     String grupoTarifario = this.opportunity.GrupoTarifario__c;
     String capaPropostaId = this.opportunity.Parceiro__r.CapaProposta__c;
     String capaPromocionalId = this.opportunity.Parceiro__r.CapaPromocional__c;
     Boolean isPromotional = (this.opportunity.Parceiro__r.Name == 'Bow-e')
       ? true
-      : this.opportunity.isPromotional__c;
+      : (this.opportunity.isPromotional__c == true);
     this.isChanged = this.opportunity.PropostaAlterada__c;
     String parceiro = this.opportunity.Parceiro__r.Name;
 
     // Capa/Template
-    List<ProposalCover__c> propostas = [
-      SELECT Id, Template__c, isPromotional__c
-      FROM ProposalCover__c
-      WHERE
-        Id IN (:capaPropostaId, :capaPromocionalId)
-        AND isPromotional__c = :isPromotional
-      LIMIT 1
-    ];
-    if (propostas.isEmpty()) {
+    ProposalCover__c selectedCover = resolveLegacyProposalCover(
+      capaPropostaId,
+      capaPromocionalId,
+      isPromotional
+    );
+    if (selectedCover == null) {
       ApexPages.addMessage(
         new ApexPages.Message(
           ApexPages.Severity.ERROR,
@@ -338,18 +331,12 @@ public with sharing class PDFControllerExtension {
       );
       return null;
     }
-    String selectedCoverId = propostas[0].Id;
+    String selectedCoverId = selectedCover.Id;
 
     // Nome do arquivo
-    String nomeArquivo;
-    if (grupoTarifario == 'Grupo A' || parceiro == 'Enerzee - Grupo A') {
-      nomeArquivo = 'Proposta A ' + nomeRegistro;
-    } else if (grupoTarifario == 'Grupo B' || parceiro == 'Enerzee - Grupo B') {
-      // << corrigido ||
-      nomeArquivo = 'Proposta B ' + nomeRegistro;
-    } else {
-      nomeArquivo = nomeRegistro;
-    }
+    String nomeArquivo = ProposalFileService.buildProposalTitle(
+      this.opportunity
+    );
 
     // Geração do PDF e salvamento
     Blob conteudoPdf = generatePdfContent(
@@ -448,30 +435,16 @@ public with sharing class PDFControllerExtension {
     Boolean isChanged
   ) {
     try {
-      DateTime today = DateTime.Now();
-      String dateString =
-        today.day() +
-        '-' +
-        today.month() +
-        '-' +
-        today.year();
-      String timeString =
-        today.hour() +
-        ':' +
-        String.valueOf(today.minute()).leftPad(2, '0');
-
+      String titulo = String.isNotBlank(numeroProposta)
+        ? numeroProposta.trim()
+        : 'Proposta';
       String nomeArquivo =
-        numeroProposta +
-        '-' +
-        dateString +
-        ' ' +
-        timeString +
-        '.pdf';
+        ProposalFileService.sanitizeFileName(titulo) + '.pdf';
       ContentVersion cv = new ContentVersion();
       cv.ContentLocation = 'S';
       cv.FirstPublishLocationId = opportunityId;
       cv.VersionData = conteudoPdf;
-      cv.Title = numeroProposta + '-' + dateString + ' ' + timeString;
+      cv.Title = titulo;
       cv.PathOnClient = nomeArquivo;
       cv.NomePaginaPDF__c = nomePagina;
       cv.IsProposal__c = true;
@@ -490,18 +463,13 @@ public with sharing class PDFControllerExtension {
     String pageName,
     Boolean isAsync
   ) {
-    if (Test.isRunningTest()) {
-      return Blob.valueOf('TESTE CONTEUDO PDF');
-    }
-
-    // Se for chamada síncrona, use a lógica atual
     if (!isAsync) {
-      ApexPages.PageReference refPagina = ApexPages.currentPage();
-      if (!Test.isRunningTest()) {
-        return refPagina.getContent();
-      } else {
+      // Se for chamada síncrona, use a lógica atual
+      if (Test.isRunningTest()) {
         return Blob.valueOf('TESTE CONTEUDO PDF');
       }
+      ApexPages.PageReference refPagina = ApexPages.currentPage();
+      return refPagina.getContent();
     }
     System.DEBUG(
       '--------------------------------- generatePdfContent ---------------------------------------'
@@ -513,6 +481,10 @@ public with sharing class PDFControllerExtension {
     pdfPage.getParameters().put('id', opportunityId);
     pdfPage.getParameters().put('selectedCoverId', capaPropostaId);
     pdfPage.getParameters().put('skipAutoSave', 'true');
+
+    if (Test.isRunningTest()) {
+      return Blob.valueOf('TESTE CONTEUDO PDF');
+    }
 
     try {
       return pdfPage.getContent();
@@ -637,32 +609,29 @@ public with sharing class PDFControllerExtension {
     String nomeArquivo;
     String pageName;
 
-    ProposalCover__c proposta = [
+    List<ProposalCover__c> propostas = [
       SELECT Id, Template__c, isPromotional__c
       FROM ProposalCover__c
-      WHERE
-        Id IN (:capaPropostaId, :capaPromocionalId)
-        AND isPromotional__c = :isPromotional
-      LIMIT 1
+      WHERE Id IN (:capaPropostaId, :capaPromocionalId)
     ];
+
+    ProposalCover__c proposta = pickLegacyProposalCover(
+      propostas,
+      isPromotional
+    );
+    if (proposta == null) {
+      processingOpps.remove(opportunityId);
+      return;
+    }
 
     if (proposta.Template__c != null) {
       capaId = proposta.Id;
       pageName = proposta.Template__c;
 
-      String baseLabel = opp.ViabilityStudyFinished__c
-        ? 'Readequacao'
-        : 'Proposta';
-      if (grupoTarifario == 'Grupo A' || produto == 'EzeeSolarA') {
-        nomeArquivo = baseLabel + ' A ' + nomeRegistro;
-      } else if (grupoTarifario == 'Grupo B' || produto == 'EzeeSolarB') {
-        nomeArquivo = baseLabel + ' B ' + nomeRegistro;
-      } else {
-        nomeArquivo = baseLabel + ' ' + nomeRegistro;
-      }
+      nomeArquivo = ProposalFileService.buildProposalTitle(opp);
     } else {
       pageName = 'DefaultDescricao';
-      nomeArquivo = pageName + ' ' + nomeRegistro;
+      nomeArquivo = ProposalFileService.buildProposalTitle(opp);
     }
 
     // Evita duplicidade: se já existe proposta (IsProposal__c), apenas garante flag e integração.
@@ -836,7 +805,53 @@ public with sharing class PDFControllerExtension {
       this.forceNewFile = forceNewFile;
     }
     public void execute(QueueableContext ctx) {
+      Id resolvedCoverId = resolveApiCoverId(oppId);
+      if (resolvedCoverId != null) {
+        System.enqueueJob(
+          new ProposalApiGenerationJob(oppId, resolvedCoverId, autoIntegrate)
+        );
+        return;
+      }
       savePdfFileAsyncInternal(oppId, autoIntegrate, forceNewFile);
+    }
+
+    private Id resolveApiCoverId(Id opportunityId) {
+      List<Opportunity> opps = [
+        SELECT
+          Parceiro__r.CapaProposta__c,
+          Parceiro__r.CapaPromocional__c,
+          TipoKitPromocional__c,
+          isPromotional__c,
+          Parceiro__r.Name
+        FROM Opportunity
+        WHERE Id = :opportunityId
+        LIMIT 1
+      ];
+      if (opps.isEmpty() || opps[0].Parceiro__r == null) {
+        return null;
+      }
+      Opportunity opp = opps[0];
+      Boolean isPromotional = ProposalContextResolver.determineIsPromotional(
+        opp
+      );
+      Id candidateCoverId = isPromotional
+        ? opp.Parceiro__r.CapaPromocional__c
+        : opp.Parceiro__r.CapaProposta__c;
+      if (candidateCoverId == null) {
+        return null;
+      }
+      List<ProposalCover__c> covers = [
+        SELECT Id, IntegrationKey__c, Template__c, IsActive__c, isPromotional__c
+        FROM ProposalCover__c
+        WHERE Id = :candidateCoverId AND IsActive__c = TRUE
+        LIMIT 1
+      ];
+      if (covers.isEmpty()) {
+        return null;
+      }
+      return ProposalCoverRoutingService.usesApiFlow(covers[0])
+        ? covers[0].Id
+        : null;
     }
   }
 
@@ -953,6 +968,42 @@ public with sharing class PDFControllerExtension {
 
   public String getEconomiaAnualFormatada() {
     return formatCurrencyBR(this.opportunity.EconomiaAnualEstimada__c);
+  }
+
+  @TestVisible
+  private static ProposalCover__c resolveLegacyProposalCover(
+    Id capaPropostaId,
+    Id capaPromocionalId,
+    Boolean isPromotional
+  ) {
+    List<ProposalCover__c> proposals = [
+      SELECT Id, Template__c, isPromotional__c
+      FROM ProposalCover__c
+      WHERE Id IN (:capaPropostaId, :capaPromocionalId)
+    ];
+    return pickLegacyProposalCover(proposals, isPromotional);
+  }
+
+  private static ProposalCover__c pickLegacyProposalCover(
+    List<ProposalCover__c> proposals,
+    Boolean isPromotional
+  ) {
+    if (proposals == null || proposals.isEmpty()) {
+      return null;
+    }
+
+    ProposalCover__c nullFallbackCover;
+    for (ProposalCover__c cover : proposals) {
+      Boolean coverIsPromotional = cover.isPromotional__c == true;
+      if (coverIsPromotional == isPromotional) {
+        return cover;
+      }
+      if (isPromotional != true && cover.isPromotional__c == null) {
+        nullFallbackCover = cover;
+      }
+    }
+
+    return nullFallbackCover;
   }
 
   private void loadViabilityCostDetails() {

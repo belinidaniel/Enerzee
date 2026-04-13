@@ -221,6 +221,190 @@ private class PDFControllerExtensionExtraTest {
   }
 
   @IsTest
+  static void shouldFallbackToProductDescriptionWhenBatteryDescriptionIsBlank() {
+    ProposalCover__c proposalCover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(Template__c = 'ModeloPropostaA'),
+      true
+    );
+    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(CapaProposta__c = proposalCover.Id, Produto__c = 'Solar'),
+      true
+    );
+
+    Opportunity opp = createOpp();
+    opp.Parceiro__c = parceiro.Id;
+    insert opp;
+
+    Pricebook2 pb = new Pricebook2(
+      Name = 'Battery Fallback PB',
+      IsActive = true
+    );
+    insert pb;
+    opp.Pricebook2Id = pb.Id;
+    update opp;
+
+    Product2 prod = new Product2(
+      Name = 'Produto fallback',
+      Description = 'Descricao vinda do produto',
+      IsActive = true,
+      Id_Externo__c = 'EXT-BATT-FALLBACK',
+      ExternalId__c = 'EXT-BATT-FALLBACK'
+    );
+    insert prod;
+
+    Id stdPbId = Test.getStandardPricebookId();
+    insert new PricebookEntry(
+      Pricebook2Id = stdPbId,
+      Product2Id = prod.Id,
+      UnitPrice = 1,
+      IsActive = true
+    );
+
+    PricebookEntry pbe = new PricebookEntry(
+      Pricebook2Id = pb.Id,
+      Product2Id = prod.Id,
+      UnitPrice = 1,
+      IsActive = true
+    );
+    insert pbe;
+
+    insert new OpportunityLineItem(
+      OpportunityId = opp.Id,
+      PricebookEntryId = pbe.Id,
+      Quantity = 1,
+      TotalPrice = 1
+    );
+
+    PageReference pref = new PageReference('/apex/dummy');
+    pref.getParameters().put('id', opp.Id);
+    Test.setCurrentPage(pref);
+
+    PDFControllerExtension ext = new PDFControllerExtension(
+      new ApexPages.StandardController(opp)
+    );
+
+    Assert.areEqual(
+      'Descricao vinda do produto',
+      ext.description,
+      'Quando DescricaoBateria__c estiver vazia, a descricao deve vir do primeiro item da oportunidade.'
+    );
+  }
+
+  @IsTest
+  static void shouldResolveLegacyProposalCoverWhenDefaultCoverHasNullPromoFlag() {
+    ProposalCover__c defaultCover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(Template__c = 'ModeloPropostaA'),
+      true
+    );
+    ProposalCover__c promoCover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(
+        Template__c = 'ModeloPropostaBowe',
+        isPromotional__c = true
+      ),
+      true
+    );
+
+    ProposalCover__c resolvedDefault = PDFControllerExtension.resolveLegacyProposalCover(
+      defaultCover.Id,
+      promoCover.Id,
+      false
+    );
+    ProposalCover__c resolvedPromo = PDFControllerExtension.resolveLegacyProposalCover(
+      defaultCover.Id,
+      promoCover.Id,
+      true
+    );
+
+    Assert.areEqual(
+      defaultCover.Id,
+      resolvedDefault.Id,
+      'Quando a capa padrão estiver com isPromotional__c nulo ela ainda deve ser escolhida para o fluxo não promocional.'
+    );
+    Assert.areEqual(
+      promoCover.Id,
+      resolvedPromo.Id,
+      'No fluxo promocional a capa explicitamente promocional deve ser priorizada.'
+    );
+  }
+
+  @IsTest
+  static void shouldSalvarArquivoDirectlyPersistProposalForLegacyCover() {
+    ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(Template__c = 'ModeloPropostaA'),
+      true
+    );
+    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(CapaProposta__c = cover.Id, Produto__c = 'Solar'),
+      true
+    );
+
+    Opportunity opp = createOpp();
+    opp.Parceiro__c = parceiro.Id;
+    opp.StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA;
+    opp.PropostaAlterada__c = true;
+    insert opp;
+
+    PageReference pref = new PageReference('/apex/ModeloPropostaA');
+    pref.getParameters().put('id', opp.Id);
+    Test.setCurrentPage(pref);
+
+    Test.startTest();
+    PDFControllerExtension ext = new PDFControllerExtension(
+      new ApexPages.StandardController(new Opportunity(Id = opp.Id))
+    );
+    Id savedVersionId = ext.salvarArquivo(opp.Id, 'ModeloPropostaA');
+    Test.stopTest();
+
+    Assert.isNotNull(
+      savedVersionId,
+      'O fluxo legado deve persistir um PDF quando houver uma capa padrão válida.'
+    );
+
+    Opportunity updatedOpp = [
+      SELECT PropostaGerada__c, PropostaAlterada__c
+      FROM Opportunity
+      WHERE Id = :opp.Id
+    ];
+    Assert.isTrue(updatedOpp.PropostaGerada__c);
+    Assert.isFalse(
+      updatedOpp.PropostaAlterada__c,
+      'Após salvar a proposta alterada, o flag deve voltar para falso.'
+    );
+  }
+
+  @IsTest
+  static void shouldSalvarPdfMarkFailureWhenPartnerHasNoCover() {
+    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(Produto__c = 'Solar'),
+      true
+    );
+
+    Opportunity opp = createOpp();
+    opp.Parceiro__c = parceiro.Id;
+    insert opp;
+
+    PageReference pref = new PageReference('/apex/ModeloPropostaA');
+    pref.getParameters().put('id', opp.Id);
+    Test.setCurrentPage(pref);
+
+    Test.startTest();
+    PDFControllerExtension ext = new PDFControllerExtension(
+      new ApexPages.StandardController(new Opportunity(Id = opp.Id))
+    );
+    ext.salvarPDF();
+    Test.stopTest();
+
+    Assert.isFalse(
+      ext.lastSaveSuccess,
+      'Sem capa configurada o controller deve marcar a tentativa como falha.'
+    );
+    Assert.isTrue(
+      String.isNotBlank(ext.lastSaveMessage),
+      'A falha precisa expor uma mensagem amigável.'
+    );
+  }
+
+  @IsTest
   static void shouldHandleMainViabilityHelpers() {
     Opportunity opp = createOpp();
     insert opp;
@@ -270,7 +454,10 @@ private class PDFControllerExtensionExtraTest {
     PageReference result = ext.salvarPDF();
     Test.stopTest();
 
-    Assert.isNull(result, 'salvarPDF deve retornar null quando skipAutoSave=true.');
+    Assert.isNull(
+      result,
+      'salvarPDF deve retornar null quando skipAutoSave=true.'
+    );
   }
 
   @IsTest
@@ -351,7 +538,10 @@ private class PDFControllerExtensionExtraTest {
       'dummy',
       false
     );
-    Assert.isNotNull(content, 'generatePdfContent deve retornar blob em test context.');
+    Assert.isNotNull(
+      content,
+      'generatePdfContent deve retornar blob em test context.'
+    );
 
     Id fileId = PDFControllerExtension.savePdfFile(
       opp.Id,
@@ -425,14 +615,46 @@ private class PDFControllerExtensionExtraTest {
     );
 
     Assert.areEqual('-', ext.getTarifaFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getCustoMensalFormatado(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getEconomiaPromocionalFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getEconomiaFixaFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getFaturaPromocionalFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getFaturaFixaFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getEconomiaXMesesPromocionalFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getEconomiaXMesesFixaFormatada(), 'null deve retornar hífen.');
-    Assert.areEqual('-', ext.getEconomiaAnualFormatada(), 'null deve retornar hífen.');
+    Assert.areEqual(
+      '-',
+      ext.getCustoMensalFormatado(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getEconomiaPromocionalFormatada(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getEconomiaFixaFormatada(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getFaturaPromocionalFormatada(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getFaturaFixaFormatada(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getEconomiaXMesesPromocionalFormatada(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getEconomiaXMesesFixaFormatada(),
+      'null deve retornar hífen.'
+    );
+    Assert.areEqual(
+      '-',
+      ext.getEconomiaAnualFormatada(),
+      'null deve retornar hífen.'
+    );
   }
 
   @IsTest
@@ -491,7 +713,11 @@ private class PDFControllerExtensionExtraTest {
       new ApexPages.StandardController(opp)
     );
     String formatted = ext.getTarifaFormatada();
-    Assert.areEqual('R$ 0,00', formatted, 'Zero deve ser formatado como R$ 0,00.');
+    Assert.areEqual(
+      'R$ 0,00',
+      formatted,
+      'Zero deve ser formatado como R$ 0,00.'
+    );
   }
 
   @IsTest
@@ -639,8 +865,14 @@ private class PDFControllerExtensionExtraTest {
       new ApexPages.StandardController(opp)
     );
 
-    Assert.isTrue(ext.showPaymentMethodNotes, 'showPaymentMethodNotes deve ser true quando há texto esquerdo.');
-    Assert.isNull(ext.salvarPDF(), 'salvarPDF deve retornar null quando salvar=Não.');
+    Assert.isTrue(
+      ext.showPaymentMethodNotes,
+      'showPaymentMethodNotes deve ser true quando há texto esquerdo.'
+    );
+    Assert.isNull(
+      ext.salvarPDF(),
+      'salvarPDF deve retornar null quando salvar=Não.'
+    );
   }
 
   @IsTest
@@ -676,8 +908,14 @@ private class PDFControllerExtensionExtraTest {
       new ApexPages.StandardController(opp)
     );
     String logoUrl = ext.getLogoUrl();
-    Assert.isNotNull(logoUrl, 'getLogoUrl deve retornar URL quando há arquivo Logo vinculado ao parceiro.');
-    Assert.isTrue(logoUrl.startsWith('/sfc/'), 'URL do logo deve começar com /sfc/.');
+    Assert.isNotNull(
+      logoUrl,
+      'getLogoUrl deve retornar URL quando há arquivo Logo vinculado ao parceiro.'
+    );
+    Assert.isTrue(
+      logoUrl.startsWith('/sfc/'),
+      'URL do logo deve começar com /sfc/.'
+    );
   }
 
   @IsTest
@@ -695,8 +933,15 @@ private class PDFControllerExtensionExtraTest {
 
     // Call getMainViabilityStudyChunks when null (branch where it initializes list)
     List<String> chunks = ext.getMainViabilityStudyChunks();
-    Assert.isNotNull(chunks, 'getMainViabilityStudyChunks não deve retornar null.');
-    Assert.areEqual(0, chunks.size(), 'Sem viability deve retornar lista vazia.');
+    Assert.isNotNull(
+      chunks,
+      'getMainViabilityStudyChunks não deve retornar null.'
+    );
+    Assert.areEqual(
+      0,
+      chunks.size(),
+      'Sem viability deve retornar lista vazia.'
+    );
 
     Assert.isFalse(
       ext.getHasMainViabilityLayout(),
@@ -807,7 +1052,10 @@ private class PDFControllerExtensionExtraTest {
     PDFControllerExtension ext = new PDFControllerExtension(
       new ApexPages.StandardController(opp)
     );
-    Assert.isTrue(true, 'loadPdfUrls com documento PROPOSTA e TipoKit null nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'loadPdfUrls com documento PROPOSTA e TipoKit null nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -844,7 +1092,10 @@ private class PDFControllerExtensionExtraTest {
     PDFControllerExtension ext = new PDFControllerExtension(
       new ApexPages.StandardController(opp)
     );
-    Assert.isTrue(true, 'loadPdfUrls com TipoKitPromocional != null e != 6 nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'loadPdfUrls com TipoKitPromocional != null e != 6 nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -860,7 +1111,10 @@ private class PDFControllerExtensionExtraTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'Deve abortar quando skipAsyncProposalGeneration=true.');
+    Assert.isTrue(
+      true,
+      'Deve abortar quando skipAsyncProposalGeneration=true.'
+    );
     OpportunityBO.skipAsyncProposalGeneration = false;
   }
 
@@ -889,6 +1143,52 @@ private class PDFControllerExtensionExtraTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'Async main path com forceNewFile=true deve executar sem erro.');
+    Assert.isTrue(
+      true,
+      'Async main path com forceNewFile=true deve executar sem erro.'
+    );
+  }
+
+  @IsTest
+  static void shouldReuseExistingLegacyProposalInAsyncFlow() {
+    ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(Template__c = 'ModeloPropostaA'),
+      true
+    );
+    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(CapaProposta__c = cover.Id, Produto__c = 'Solar'),
+      true
+    );
+
+    Opportunity opp = createOpp();
+    opp.Parceiro__c = parceiro.Id;
+    opp.StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA;
+    opp.PropostaGerada__c = false;
+    insert opp;
+
+    insert new ContentVersion(
+      Title = 'PROPOSTA_EXISTENTE',
+      PathOnClient = 'PROPOSTA_EXISTENTE.pdf',
+      FirstPublishLocationId = opp.Id,
+      IsMajorVersion = true,
+      VersionData = Blob.valueOf('pdf'),
+      IsProposal__c = true
+    );
+
+    Test.startTest();
+    System.enqueueJob(
+      new PDFControllerExtension.SavePdfJob(opp.Id, false, false)
+    );
+    Test.stopTest();
+
+    Opportunity updatedOpp = [
+      SELECT PropostaGerada__c, StageName
+      FROM Opportunity
+      WHERE Id = :opp.Id
+    ];
+    Assert.isTrue(
+      updatedOpp.PropostaGerada__c,
+      'Quando já existir proposta interna, o fluxo assíncrono deve apenas reaproveitar o arquivo.'
+    );
   }
 }

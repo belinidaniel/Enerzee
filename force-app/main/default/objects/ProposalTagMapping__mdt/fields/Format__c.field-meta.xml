@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Format__c</fullName>
+    <label>Formato</label>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>RAW</fullName>
+                <default>true</default>
+                <label>Raw</label>
+            </value>
+            <value>
+                <fullName>DATE_BR</fullName>
+                <default>false</default>
+                <label>Date BR</label>
+            </value>
+            <value>
+                <fullName>CURRENCY_BR</fullName>
+                <default>false</default>
+                <label>Currency BR</label>
+            </value>
+            <value>
+                <fullName>DECIMAL_BR</fullName>
+                <default>false</default>
+                <label>Decimal BR</label>
+            </value>
+            <value>
+                <fullName>INTEGER</fullName>
+                <default>false</default>
+                <label>Integer</label>
+            </value>
+            <value>
+                <fullName>UPPER</fullName>
+                <default>false</default>
+                <label>Upper</label>
+            </value>
+            <value>
+                <fullName>LOWER</fullName>
+                <default>false</default>
+                <label>Lower</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPageRegions>
         <itemInstances>
@@ -9,46 +9,57 @@
                         <valueListItems>
                             <value>Opportunity.Gerar_Proposta</value>
                             <visibilityRule>
-                                <booleanFilter>((5 OR 8) AND ((1 OR 2) AND (3 OR 4 OR 6 OR 7)))</booleanFilter>
+                                <booleanFilter
+                >((5 OR 8) AND ((1 OR 2) AND (3 OR 4 OR 6 OR 7)))</booleanFilter>
                                 <criteria>
-                                    <leftValue>{!Record.GrupoTarifario__c}</leftValue>
+                                    <leftValue
+                  >{!Record.GrupoTarifario__c}</leftValue>
                                     <operator>EQUAL</operator>
                                     <rightValue>Grupo B</rightValue>
                                 </criteria>
                                 <criteria>
-                                    <leftValue>{!Record.GrupoTarifario__c}</leftValue>
+                                    <leftValue
+                  >{!Record.GrupoTarifario__c}</leftValue>
                                     <operator>EQUAL</operator>
                                     <rightValue>Grupo A</rightValue>
                                 </criteria>
                                 <criteria>
-                                    <leftValue>{!Record.RecordType.DeveloperName}</leftValue>
+                                    <leftValue
+                  >{!Record.RecordType.DeveloperName}</leftValue>
                                     <operator>EQUAL</operator>
                                     <rightValue>ContratoMicro</rightValue>
                                 </criteria>
                                 <criteria>
-                                    <leftValue>{!Record.Proposta_aprovada__c}</leftValue>
+                                    <leftValue
+                  >{!Record.Proposta_aprovada__c}</leftValue>
                                     <operator>EQUAL</operator>
                                     <rightValue>true</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Elaboração de proposta</rightValue>
+                                    <rightValue
+                  >Elaboração de proposta</rightValue>
                                 </criteria>
                                 <criteria>
-                                    <leftValue>{!Record.RecordType.DeveloperName}</leftValue>
+                                    <leftValue
+                  >{!Record.RecordType.DeveloperName}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>MicroGrupoAElaboracao</rightValue>
+                                    <rightValue
+                  >MicroGrupoAElaboracao</rightValue>
                                 </criteria>
                                 <criteria>
-                                    <leftValue>{!Record.RecordType.DeveloperName}</leftValue>
+                                    <leftValue
+                  >{!Record.RecordType.DeveloperName}</leftValue>
                                     <operator>CONTAINS</operator>
-                                    <rightValue>MicroGrupoBElaboracao</rightValue>
+                                    <rightValue
+                  >MicroGrupoBElaboracao</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Readequação de Proposta</rightValue>
+                                    <rightValue
+                  >Readequação de Proposta</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -59,7 +70,8 @@
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Elaboração de proposta</rightValue>
+                                    <rightValue
+                  >Elaboração de proposta</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
@@ -75,17 +87,20 @@
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>System Administrator</rightValue>
+                                    <rightValue
+                  >System Administrator</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Administrador de sistema</rightValue>
+                                    <rightValue
+                  >Administrador de sistema</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Administrador do sistema</rightValue>
+                                    <rightValue
+                  >Administrador do sistema</rightValue>
                                 </criteria>
                                 <criteria>
                                     <leftValue>{!$User.Profile.Name}</leftValue>
@@ -95,12 +110,14 @@
                             </visibilityRule>
                         </valueListItems>
                         <valueListItems>
-                            <value>Opportunity.Enviar_Proposta_manualmente</value>
+                            <value
+              >Opportunity.Enviar_Proposta_manualmente</value>
                             <visibilityRule>
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Simulação de Proposta</rightValue>
+                                    <rightValue
+                  >Simulação de Proposta</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -110,7 +127,8 @@
                                 <criteria>
                                     <leftValue>{!Record.StageName}</leftValue>
                                     <operator>EQUAL</operator>
-                                    <rightValue>Validação do método de pagamento</rightValue>
+                                    <rightValue
+                  >Validação do método de pagamento</rightValue>
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
@@ -182,8 +200,10 @@
                     <name>variant</name>
                     <value>linear</value>
                 </componentInstanceProperties>
-                <componentName>runtime_sales_pathassistant:pathAssistant</componentName>
-                <identifier>runtime_sales_pathassistant_pathAssistant1</identifier>
+                <componentName
+        >runtime_sales_pathassistant:pathAssistant</componentName>
+                <identifier
+        >runtime_sales_pathassistant_pathAssistant1</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
@@ -379,6 +399,16 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Lead__c</fieldItem>
+                <identifier>RecordLead_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
                     <value>required</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Name</fieldItem>
@@ -471,8 +501,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ClientePossuiCreditoIncentivoICMS__c</fieldItem>
-                <identifier>RecordClientePossuiCreditoIncentivoICMS_cField</identifier>
+                <fieldItem
+        >Record.ClientePossuiCreditoIncentivoICMS__c</fieldItem>
+                <identifier
+        >RecordClientePossuiCreditoIncentivoICMS_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -511,8 +543,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ObservacaoSolicitacaoAprovacaoDesconto__c</fieldItem>
-                <identifier>RecordObservacaoSolicitacaoAprovacaoDesconto_cField</identifier>
+                <fieldItem
+        >Record.ObservacaoSolicitacaoAprovacaoDesconto__c</fieldItem>
+                <identifier
+        >RecordObservacaoSolicitacaoAprovacaoDesconto_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -607,16 +641,6 @@
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.SubGrupoTarifario__c</fieldItem>
-                <identifier>RecordSubGrupoTarifario_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -1262,7 +1286,8 @@
                     <name>showLegacyActivityComposer</name>
                     <value>false</value>
                 </componentInstanceProperties>
-                <componentName>runtime_sales_activities:activityPanel</componentName>
+                <componentName
+        >runtime_sales_activities:activityPanel</componentName>
                 <identifier>runtime_sales_activities_activityPanel</identifier>
             </componentInstance>
         </itemInstances>

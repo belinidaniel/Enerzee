@@ -7,8 +7,9 @@
  * @test              : ActivityDocumentControllerTest, AdditionalCoverageNewClassesTest, EngineeringDateStampFlowTest,
  *                       InstalacaoBOTest, InstalacaoFinalReportServiceTest, InstalacaoTaskBOTest,
  *                       InstallCompletionNotifyServiceTest, ProjetoBOCoverageTest, ProjetoStatusIntegrationServiceTest,
- *                       ProjetoTriggerTest, ProjetoUtilsTest, TaskBOTest, TaskCompletionServiceTest,
- *                       TaskTemplateFlowTest, WorkDeliveryReportPdfControllerTest, WorkDeliveryReportServiceTest
+ *                       ProjetoTriggerTest, ProjetoUtilsTest, ProposalServicePaymentSimulationTest, TaskBOTest,
+ *                       TaskCompletionServiceTest, TaskTemplateFlowTest, WorkDeliveryReportPdfControllerTest,
+ *                       WorkDeliveryReportServiceTest
  **/
 public class ProjetoUtils {
   public static Map<String, User> userEmailToUser = new Map<String, User>();

@@ -395,6 +395,155 @@ private class OpportunityBOCoverageTest {
   }
 
   @isTest
+  static void shouldDeleteStoredProposalFilesWhenOpportunityCloses() {
+    String uniqueSuffix = String.valueOf(DateTime.now().getTime());
+    Account acc = new Account(
+      Name = 'Account Proposal Cleanup ' + uniqueSuffix
+    );
+    Database.DMLOptions accountOptions = new Database.DMLOptions();
+    accountOptions.DuplicateRuleHeader.allowSave = true;
+    acc.setOptions(accountOptions);
+    insert acc;
+
+    Opportunity wonOpp = new Opportunity(
+      Name = 'Won Cleanup ' + uniqueSuffix,
+      AccountId = acc.Id,
+      CloseDate = Date.today(),
+      IdVirtualOffice__c = 'VO-WON-CLEANUP-' + uniqueSuffix,
+      StageName = OpportunityUtils.STATUS_NEGOCIACAO
+    );
+    insert wonOpp;
+    Opportunity lostOpp = new Opportunity(
+      Name = 'Lost Cleanup ' + uniqueSuffix,
+      AccountId = acc.Id,
+      CloseDate = Date.today(),
+      IdVirtualOffice__c = 'VO-LOST-CLEANUP-' + uniqueSuffix,
+      StageName = OpportunityUtils.STATUS_NEGOCIACAO
+    );
+    insert lostOpp;
+
+    ContentVersion wonVersion = new ContentVersion(
+      Title = 'P-100 Conta Won',
+      PathOnClient = 'P-100 Conta Won.pdf',
+      FirstPublishLocationId = wonOpp.Id,
+      VersionData = Blob.valueOf('pdf-won'),
+      IsProposal__c = true
+    );
+    insert wonVersion;
+    wonVersion = [
+      SELECT Id, ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :wonVersion.Id
+    ];
+
+    ContentVersion lostVersion = new ContentVersion(
+      Title = 'P-101 Conta Lost',
+      PathOnClient = 'P-101 Conta Lost.pdf',
+      FirstPublishLocationId = lostOpp.Id,
+      VersionData = Blob.valueOf('pdf-lost'),
+      IsProposal__c = true
+    );
+    insert lostVersion;
+    lostVersion = [
+      SELECT Id, ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :lostVersion.Id
+    ];
+
+    Opportunity wonOldSnapshot = wonOpp.clone(true, true, true, true);
+    Opportunity wonNewSnapshot = wonOpp.clone(true, true, true, true);
+    wonNewSnapshot.StageName = OpportunityUtils.STATUS_GANHO_FECHADO;
+
+    Opportunity lostOldSnapshot = lostOpp.clone(true, true, true, true);
+    Opportunity lostNewSnapshot = lostOpp.clone(true, true, true, true);
+    lostNewSnapshot.StageName = OpportunityUtils.STATUS_FECHADO_PERDIDO;
+
+    Test.startTest();
+    OpportunityBO.deleteStoredProposalFilesOnClosure(
+      new List<Opportunity>{ wonNewSnapshot, lostNewSnapshot },
+      new Map<Id, Opportunity>{
+        wonOpp.Id => wonOldSnapshot,
+        lostOpp.Id => lostOldSnapshot
+      }
+    );
+    Test.stopTest();
+
+    Assert.areEqual(
+      0,
+      [
+        SELECT COUNT()
+        FROM ContentDocument
+        WHERE
+          Id IN :new Set<Id>{
+            wonVersion.ContentDocumentId,
+            lostVersion.ContentDocumentId
+          }
+      ],
+      'Os ContentDocuments das propostas devem ser removidos quando a oportunidade for encerrada.'
+    );
+  }
+
+  @isTest
+  static void shouldDeleteProposalFilesByProposalNumberPrefixOnClosure() {
+    String uniqueSuffix = String.valueOf(DateTime.now().getTime());
+
+    Account acc = new Account(Name = 'Account Prefix Cleanup ' + uniqueSuffix);
+    Database.DMLOptions accountOptions = new Database.DMLOptions();
+    accountOptions.DuplicateRuleHeader.allowSave = true;
+    acc.setOptions(accountOptions);
+    insert acc;
+
+    Opportunity opp = new Opportunity(
+      Name = 'Prefix Cleanup ' + uniqueSuffix,
+      AccountId = acc.Id,
+      CloseDate = Date.today(),
+      IdVirtualOffice__c = 'VO-PREFIX-CLEANUP-' + uniqueSuffix,
+      StageName = OpportunityUtils.STATUS_NEGOCIACAO
+    );
+    insert opp;
+    opp = [
+      SELECT Id, StageName, Numeroproposta__c
+      FROM Opportunity
+      WHERE Id = :opp.Id
+    ];
+
+    ContentVersion fileWithPrefix = new ContentVersion(
+      Title = opp.Numeroproposta__c + ' Nome da Conta',
+      PathOnClient = opp.Numeroproposta__c + ' Nome da Conta.pdf',
+      FirstPublishLocationId = opp.Id,
+      VersionData = Blob.valueOf('pdf-prefix'),
+      IsProposal__c = false
+    );
+    insert fileWithPrefix;
+    fileWithPrefix = [
+      SELECT Id, ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :fileWithPrefix.Id
+    ];
+
+    Opportunity oldSnapshot = opp.clone(true, true, true, true);
+    Opportunity newSnapshot = opp.clone(true, true, true, true);
+    newSnapshot.StageName = OpportunityUtils.STATUS_FECHADO_PERDIDO;
+
+    Test.startTest();
+    OpportunityBO.deleteStoredProposalFilesOnClosure(
+      new List<Opportunity>{ newSnapshot },
+      new Map<Id, Opportunity>{ opp.Id => oldSnapshot }
+    );
+    Test.stopTest();
+
+    Assert.areEqual(
+      0,
+      [
+        SELECT COUNT()
+        FROM ContentDocument
+        WHERE Id = :fileWithPrefix.ContentDocumentId
+      ],
+      'Arquivos cujo titulo comeca com o numero da proposta devem ser removidos ao fechar a oportunidade.'
+    );
+  }
+
+  @isTest
   static void shouldCreateContractPaymentAndFinancingTasks() {
     TaskTriggerHandler.disableTrigger();
     OpportunityTriggerHandler.disableTrigger();

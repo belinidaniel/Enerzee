@@ -1987,12 +1987,22 @@ public class OpportunityBO {
     Map<Id, Opportunity> newMap,
     Map<Id, Opportunity> oldMap
   ) {
+    Map<Id, ProposalFileService.ProposalAvailability> proposalAvailabilityByOpportunityId = ProposalFileService.getProposalAvailability(
+      newMap != null ? new Set<Id>(newMap.keySet()) : null
+    );
+
     for (Opportunity opp : newMap.values()) {
       Opportunity oldOpp = oldMap.get(opp.Id);
+      ProposalFileService.ProposalAvailability availability = proposalAvailabilityByOpportunityId.get(
+        opp.Id
+      );
+      Boolean hasReadyProposal = availability != null && availability.isReady();
+
       // Se já gerada e não é readequação solicitada, não enfileira novamente
       if (
         opp.PropostaGerada__c == true &&
-        opp.ReadequacaoSolicitada__c != true
+        opp.ReadequacaoSolicitada__c != true &&
+        hasReadyProposal
       ) {
         continue;
       }
@@ -2864,6 +2874,41 @@ public class OpportunityBO {
       closedWonOpportunityIds,
       'Encerrado automaticamente - Oportunidade marcada como Ganho fechado.'
     );
+  }
+
+  public static void deleteStoredProposalFilesOnClosure(
+    List<Opportunity> newRecords,
+    Map<Id, Opportunity> oldRecordsMap
+  ) {
+    if (
+      newRecords == null ||
+      newRecords.isEmpty() ||
+      oldRecordsMap == null ||
+      oldRecordsMap.isEmpty()
+    ) {
+      return;
+    }
+
+    Set<Id> opportunityIdsToCleanup = new Set<Id>();
+    for (Opportunity opportunity : newRecords) {
+      Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
+      if (oldOpportunity == null) {
+        continue;
+      }
+
+      if (
+        OpportunityUtils.isChangingToClosedWon(opportunity, oldOpportunity) ||
+        OpportunityUtils.isChangingToClosedLost(opportunity, oldOpportunity)
+      ) {
+        opportunityIdsToCleanup.add(opportunity.Id);
+      }
+    }
+
+    if (opportunityIdsToCleanup.isEmpty()) {
+      return;
+    }
+
+    ProposalFileService.deleteStoredProposals(opportunityIdsToCleanup);
   }
 
   public static void closeActivitiesAndRelatedRecordsForClosedLost(

@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : IntegracaoNivelloTest
+ * @test              : ProposalServicePaymentSimulationTest
  **/
 public with sharing class IntegracaoNivelloProjetos {
   @future(callout=true)
@@ -33,10 +33,21 @@ public with sharing class IntegracaoNivelloProjetos {
         Projetista__r.Name,
         GestorObra__c,
         GestorObra__r.Name,
-        Oportunidade__r.RecordType.Name
+        Oportunidade__r.RecordType.Name,
+        Oportunidade__r.FinancingProcessDetails__c
       FROM Projeto__c
       WHERE Id IN :triggerIds
     ];
+
+    Set<Id> opportunityIds = new Set<Id>();
+    for (Projeto__c project : projectList) {
+      if (project.Oportunidade__c != null) {
+        opportunityIds.add(project.Oportunidade__c);
+      }
+    }
+    Map<Id, List<GORecordsTO.FinancingOptionTO>> optionsByOpportunityId = PaymentSimulationProposalStatusService.getOptionsByOpportunityIds(
+      opportunityIds
+    );
 
     Integer statusEnum;
     Integer substatusId;
@@ -58,6 +69,12 @@ public with sharing class IntegracaoNivelloProjetos {
       request.SubStatus = substatusId;
       request.StatusProjeto = project.Status__c;
       request.Category = project.RecordType.Name;
+      request.FinancingProcessDetail = project.Oportunidade__r.FinancingProcessDetails__c;
+      request.OptionsFinanciamentos = optionsByOpportunityId.containsKey(
+          project.Oportunidade__c
+        )
+        ? optionsByOpportunityId.get(project.Oportunidade__c)
+        : new List<GORecordsTO.FinancingOptionTO>();
       request.codigoRegistroProjetoSF = project.Id;
       request.numeroProjeto = project.NumeroProjeto__c;
       request.nomeProjeto = project.Name;

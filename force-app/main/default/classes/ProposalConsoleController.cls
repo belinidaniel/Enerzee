@@ -2,71 +2,11 @@
  * @description       : Apex controller that powers the LWC responsible for managing proposal generation.
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 04-10-2026
  * @last modified by  : Daniel Belini
- * @test              : ProposalConsoleControllerTest
+ * @test              : ProposalConsoleControllerApiTest, ProposalConsoleControllerTest, ProposalEngineSupportTest
  **/
 public with sharing class ProposalConsoleController {
-  public class ProposalTemplateDTO {
-    @AuraEnabled
-    public Id id;
-    @AuraEnabled
-    public String label;
-    @AuraEnabled
-    public String templateName;
-  }
-
-  public class ProposalFileDTO {
-    @AuraEnabled
-    public Id recordId;
-    @AuraEnabled
-    public String title;
-    @AuraEnabled
-    public String description;
-    @AuraEnabled
-    public DateTime createdDate;
-    @AuraEnabled
-    public String downloadUrl;
-    @AuraEnabled
-    public String fileType;
-  }
-
-  public class ProposalDataDTO {
-    @AuraEnabled
-    public List<ProposalTemplateDTO> templates;
-    @AuraEnabled
-    public Id defaultTemplateId;
-    @AuraEnabled
-    public List<ProposalFileDTO> proposalFiles;
-    @AuraEnabled
-    public List<ProposalFileDTO> otherFiles;
-    @AuraEnabled
-    public Boolean hasViability;
-    @AuraEnabled
-    public String batteryDescription;
-    @AuraEnabled
-    public String tipoKitPromocional;
-  }
-
-  public class ProposalActionResult {
-    @AuraEnabled
-    public Boolean success;
-    @AuraEnabled
-    public String message;
-    @AuraEnabled
-    public Id contentVersionId;
-  }
-
-  private static Boolean hasViabilityRecords(Id opportunityId) {
-    return [
-        SELECT Id
-        FROM ViabilityStudy__c
-        WHERE Opportunity__c = :opportunityId
-        LIMIT 1
-      ]
-      .size() > 0;
-  }
-
   @AuraEnabled(cacheable=true)
   public static ProposalDataDTO loadProposalData(Id opportunityId) {
     validateOpportunityId(opportunityId);
@@ -79,25 +19,30 @@ public with sharing class ProposalConsoleController {
         RecordTypeId,
         Parceiro__r.CapaProposta__c,
         Parceiro__r.CapaPromocional__c,
+        Parceiro__r.Name,
         ViabilityStudyFinished__c,
         TipoKitPromocional__c,
-        DescricaoBateria__c
+        DescricaoBateria__c,
+        isPromotional__c
       FROM Opportunity
       WHERE Id = :opportunityId
       LIMIT 1
     ];
+
+    Boolean isPromotional = ProposalContextResolver.determineIsPromotional(opp);
 
     Set<Id> coverIds = new Set<Id>();
     if (opp.Parceiro__r != null) {
       if (opp.Parceiro__r.CapaProposta__c != null) {
         coverIds.add(opp.Parceiro__r.CapaProposta__c);
       }
-      if (opp.Parceiro__r.CapaPromocional__c != null) {
+      if (isPromotional && opp.Parceiro__r.CapaPromocional__c != null) {
         coverIds.add(opp.Parceiro__r.CapaPromocional__c);
       }
     }
 
     List<ProposalTemplateDTO> templates = new List<ProposalTemplateDTO>();
+    Set<Id> availableTemplateIds = new Set<Id>();
     if (!coverIds.isEmpty()) {
       for (ProposalCover__c cover : [
         SELECT Id, Name, Template__c
@@ -110,6 +55,7 @@ public with sharing class ProposalConsoleController {
         dto.label = cover.Name;
         dto.templateName = cover.Template__c;
         templates.add(dto);
+        availableTemplateIds.add(cover.Id);
       }
     }
 
@@ -155,11 +101,40 @@ public with sharing class ProposalConsoleController {
     result.batteryDescription = opp.DescricaoBateria__c;
     result.tipoKitPromocional = opp.TipoKitPromocional__c;
     if (opp.Parceiro__r != null) {
-      result.defaultTemplateId = opp.Parceiro__r.CapaProposta__c;
+      result.defaultTemplateId = isPromotional
+        ? opp.Parceiro__r.CapaPromocional__c
+        : opp.Parceiro__r.CapaProposta__c;
+    }
+    if (
+      result.defaultTemplateId != null &&
+      !availableTemplateIds.contains(result.defaultTemplateId)
+    ) {
+      result.defaultTemplateId = null;
     }
     if (result.defaultTemplateId == null && !templates.isEmpty()) {
       result.defaultTemplateId = templates[0].id;
     }
+    return result;
+  }
+
+  @AuraEnabled
+  public static ProposalActionResult generatePreview(
+    Id opportunityId,
+    Id coverId
+  ) {
+    validateOpportunityId(opportunityId);
+    ProposalCover__c cover = resolveActiveCover(coverId);
+
+    if (isApiCover(cover)) {
+      return fromServiceResult(
+        ProposalGenerationService.generatePreview(opportunityId, cover.Id)
+      );
+    }
+
+    ProposalActionResult result = new ProposalActionResult();
+    result.success = true;
+    result.message = 'Pré-visualização preparada com sucesso.';
+    result.previewUrl = buildLegacyPreviewUrl(opportunityId, cover);
     return result;
   }
 
@@ -190,15 +165,24 @@ public with sharing class ProposalConsoleController {
       LIMIT 1
     ];
 
-    ProposalCover__c cover = [
-      SELECT Id, Template__c
-      FROM ProposalCover__c
-      WHERE Id = :coverId AND IsActive__c = TRUE
-      LIMIT 1
-    ];
+    ProposalCover__c cover = resolveActiveCover(coverId);
 
-    if (cover == null || String.isBlank(cover.Template__c)) {
-      throw new AuraHandledException('Modelo de proposta inválido.');
+    if (isApiCover(cover)) {
+      ProposalGenerationService.ProposalResult generatedProposal = ProposalGenerationService.generateProposal(
+        opp.Id,
+        cover.Id
+      );
+
+      IntegracaoNivelloProposta.ProposalIntegrationResult integrationResult = applyPostGenerationUpdates(
+        opp,
+        false,
+        generatedProposal.contentVersionId
+      );
+
+      ProposalActionResult result = fromServiceResult(generatedProposal);
+      result.success = true;
+      result.message = resolveSendMessage(false, integrationResult);
+      return result;
     }
 
     Blob pdfContent = PDFControllerExtension.generatePdfContent(
@@ -230,49 +214,75 @@ public with sharing class ProposalConsoleController {
 
     IntegracaoNivelloProposta.ProposalIntegrationResult integrationResult = applyPostGenerationUpdates(
       opp,
-      true,
+      false,
       contentVersionId
     );
 
     ProposalActionResult result = new ProposalActionResult();
-    result.success =
-      integrationResult == null ||
-      integrationResult.success == null ||
-      integrationResult.success;
+    result.success = true;
     result.contentVersionId = contentVersionId;
-    result.message = String.isNotBlank(
-        integrationResult != null ? integrationResult.message : null
-      )
-      ? integrationResult.message
-      : 'Proposta enviada para o aplicativo.';
+    result.message = resolveSendMessage(false, integrationResult);
     return result;
   }
 
-  private static String buildFilePrefix(Opportunity opp) {
-    String accountName = (opp.Account != null &&
-      !String.isBlank(opp.Account.Name))
-      ? opp.Account.Name
-      : opp.Name;
-    String numero = String.isBlank(opp.Numeroproposta__c)
-      ? ''
-      : opp.Numeroproposta__c + ' ';
-    String nomeRegistro = (numero + accountName).trim();
-    String parceiro = (opp.Parceiro__r != null) ? opp.Parceiro__r.Name : null;
-    String baseLabel = opp.ViabilityStudyFinished__c
-      ? 'Readequacao'
-      : 'Proposta';
+  private static ProposalActionResult fromServiceResult(
+    ProposalGenerationService.ProposalResult serviceResult
+  ) {
+    ProposalActionResult result = new ProposalActionResult();
+    result.success = serviceResult != null && serviceResult.success == true;
+    result.message = serviceResult != null ? serviceResult.message : null;
+    result.contentVersionId = serviceResult != null
+      ? serviceResult.contentVersionId
+      : null;
+    result.previewUrl = serviceResult != null ? serviceResult.previewUrl : null;
+    result.reusedExistingFile = serviceResult != null
+      ? serviceResult.reusedExistingFile
+      : false;
+    return result;
+  }
 
-    if (opp.GrupoTarifario__c == 'Grupo A' || parceiro == 'Enerzee - Grupo A') {
-      return baseLabel + ' A ' + nomeRegistro;
-    } else if (
-      opp.GrupoTarifario__c == 'Grupo B' ||
-      opp.GrupoTarifario__c == 'Grupo B Optante' ||
-      parceiro == 'Enerzee - Grupo B'
-    ) {
-      return baseLabel + ' B ' + nomeRegistro;
+  private static ProposalCover__c resolveActiveCover(Id coverId) {
+    if (coverId == null) {
+      throw new AuraHandledException('Selecione um modelo de proposta.');
     }
 
-    return baseLabel + ' ' + nomeRegistro;
+    List<ProposalCover__c> covers = [
+      SELECT Id, Template__c, IntegrationKey__c, IsActive__c, isPromotional__c
+      FROM ProposalCover__c
+      WHERE Id = :coverId
+      LIMIT 1
+    ];
+
+    if (covers.isEmpty() || covers[0].IsActive__c != true) {
+      throw new AuraHandledException('Modelo de proposta inválido.');
+    }
+
+    ProposalCover__c cover = covers[0];
+    if (!isApiCover(cover) && String.isBlank(cover.Template__c)) {
+      throw new AuraHandledException('Modelo de proposta inválido.');
+    }
+    return cover;
+  }
+
+  private static Boolean isApiCover(ProposalCover__c cover) {
+    return ProposalCoverRoutingService.usesApiFlow(cover);
+  }
+
+  private static String buildLegacyPreviewUrl(
+    Id opportunityId,
+    ProposalCover__c cover
+  ) {
+    return '/apex/' +
+      cover.Template__c +
+      '?id=' +
+      opportunityId +
+      '&selectedCoverId=' +
+      cover.Id +
+      '&isManual=true&skipAutoSave=true';
+  }
+
+  private static String buildFilePrefix(Opportunity opp) {
+    return ProposalFileService.buildProposalTitle(opp);
   }
 
   private static IntegracaoNivelloProposta.ProposalIntegrationResult applyPostGenerationUpdates(
@@ -321,10 +331,20 @@ public with sharing class ProposalConsoleController {
     try {
       if (waitForIntegration == true) {
         integrationResult = contentVersionId != null
-          ? IntegracaoNivelloProposta.gerandoPropostaSincrona(sourceOpp.Id)
+          ? IntegracaoNivelloProposta.gerandoPropostaSincrona(
+              sourceOpp.Id,
+              contentVersionId
+            )
           : IntegracaoNivelloProposta.gerandoPropostaSincrona(sourceOpp.Id);
       } else {
-        IntegracaoNivelloProposta.gerandoProposta(sourceOpp.Id);
+        if (contentVersionId != null) {
+          IntegracaoNivelloProposta.gerandoProposta(
+            sourceOpp.Id,
+            contentVersionId
+          );
+        } else {
+          IntegracaoNivelloProposta.gerandoProposta(sourceOpp.Id);
+        }
       }
     } catch (Exception integrationEx) {
       Utils.createLog(
@@ -345,11 +365,90 @@ public with sharing class ProposalConsoleController {
     return integrationResult;
   }
 
+  private static String resolveSendMessage(
+    Boolean waitForIntegration,
+    IntegracaoNivelloProposta.ProposalIntegrationResult integrationResult
+  ) {
+    if (
+      integrationResult != null && String.isNotBlank(integrationResult.message)
+    ) {
+      return integrationResult.message;
+    }
+
+    return waitForIntegration == true
+      ? 'Proposta enviada para o aplicativo.'
+      : 'Proposta gerada e envio para o aplicativo iniciado. Aguarde alguns instantes.';
+  }
+
   private static void validateOpportunityId(Id opportunityId) {
     if (opportunityId == null) {
       throw new AuraHandledException(
         'O registro da oportunidade é obrigatório.'
       );
     }
+  }
+
+  public class ProposalTemplateDTO {
+    @AuraEnabled
+    public Id id;
+    @AuraEnabled
+    public String label;
+    @AuraEnabled
+    public String templateName;
+  }
+
+  public class ProposalFileDTO {
+    @AuraEnabled
+    public Id recordId;
+    @AuraEnabled
+    public String title;
+    @AuraEnabled
+    public String description;
+    @AuraEnabled
+    public DateTime createdDate;
+    @AuraEnabled
+    public String downloadUrl;
+    @AuraEnabled
+    public String fileType;
+  }
+
+  public class ProposalDataDTO {
+    @AuraEnabled
+    public List<ProposalTemplateDTO> templates;
+    @AuraEnabled
+    public Id defaultTemplateId;
+    @AuraEnabled
+    public List<ProposalFileDTO> proposalFiles;
+    @AuraEnabled
+    public List<ProposalFileDTO> otherFiles;
+    @AuraEnabled
+    public Boolean hasViability;
+    @AuraEnabled
+    public String batteryDescription;
+    @AuraEnabled
+    public String tipoKitPromocional;
+  }
+
+  public class ProposalActionResult {
+    @AuraEnabled
+    public Boolean success;
+    @AuraEnabled
+    public String message;
+    @AuraEnabled
+    public Id contentVersionId;
+    @AuraEnabled
+    public String previewUrl;
+    @AuraEnabled
+    public Boolean reusedExistingFile;
+  }
+
+  private static Boolean hasViabilityRecords(Id opportunityId) {
+    return [
+        SELECT Id
+        FROM ViabilityStudy__c
+        WHERE Opportunity__c = :opportunityId
+        LIMIT 1
+      ]
+      .size() > 0;
   }
 }

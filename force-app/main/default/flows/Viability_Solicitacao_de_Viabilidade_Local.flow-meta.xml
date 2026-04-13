@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
         <name>Email_Enviar_solicitacao_de_viabilidade</name>
@@ -26,7 +26,7 @@
         <inputParameters>
             <name>contentDocumentId</name>
             <value>
-                <elementReference>ObtemPDF.Id</elementReference>
+                <elementReference>ObtemPDF.ContentDocumentId</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -55,7 +55,8 @@
             <assignToReference>EmailConsultor</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Oportunidade.ConsultorOportunidade__r.Email__c</elementReference>
+                <elementReference
+        >Oportunidade.ConsultorOportunidade__r.Email__c</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -94,21 +95,24 @@
             <name>Sim_Elegivel</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>Oportunidade.RecordType.DeveloperName</leftValueReference>
+                <leftValueReference
+        >Oportunidade.RecordType.DeveloperName</leftValueReference>
                 <operator>NotEqualTo</operator>
                 <rightValue>
                     <stringValue>Produtos</stringValue>
                 </rightValue>
             </conditions>
             <conditions>
-                <leftValueReference>Oportunidade.RecordType.DeveloperName</leftValueReference>
+                <leftValueReference
+        >Oportunidade.RecordType.DeveloperName</leftValueReference>
                 <operator>NotEqualTo</operator>
                 <rightValue>
                     <stringValue>EzeeSolarA</stringValue>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Potencia_Nominal_do_Sistema_kWp_Menor_que_10</targetReference>
+                <targetReference
+        >Potencia_Nominal_do_Sistema_kWp_Menor_que_10</targetReference>
             </connector>
             <label>Sim</label>
         </rules>
@@ -123,14 +127,16 @@
             <name>Sim</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>Oportunidade.PotenciaNominalSistema__c</leftValueReference>
+                <leftValueReference
+        >Oportunidade.PotenciaNominalSistema__c</leftValueReference>
                 <operator>LessThanOrEqualTo</operator>
                 <rightValue>
                     <numberValue>10.0</numberValue>
                 </rightValue>
             </conditions>
             <conditions>
-                <leftValueReference>Oportunidade.PotenciaNominalSistema__c</leftValueReference>
+                <leftValueReference
+        >Oportunidade.PotenciaNominalSistema__c</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -143,7 +149,8 @@
         </rules>
     </decisions>
     <environments>Default</environments>
-    <interviewLabel>Viability - Solicitação de Viabilidade Local {!$Flow.CurrentDateTime}</interviewLabel>
+    <interviewLabel
+  >Viability - Solicitação de Viabilidade Local {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Viability - Solicitação de Viabilidade Local</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -194,9 +201,11 @@
         <label>Obtém PDF</label>
         <locationX>50</locationX>
         <locationY>863</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Email_Enviar_solicitacao_de_viabilidade</targetReference>
+            <targetReference
+      >Email_Enviar_solicitacao_de_viabilidade</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -215,7 +224,8 @@
         <label>Oportunidade</label>
         <locationX>380</locationX>
         <locationY>323</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Oportunidade_Elegivel</targetReference>
         </connector>
@@ -253,7 +263,8 @@
         <connector>
             <targetReference>Oportunidade</targetReference>
         </connector>
-        <filterFormula>{!$User.Username} != &apos;integracao@lab065.com&apos;</filterFormula>
+        <filterFormula
+    >{!$User.Username} != &apos;integracao@lab065.com&apos;</filterFormula>
         <object>ViabilityStudy__c</object>
         <recordTriggerType>Create</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
@@ -262,12 +273,14 @@
     <textTemplates>
         <name>Body</name>
         <isViewedAsPlainText>false</isViewedAsPlainText>
-        <text>&lt;p&gt;Prezado(a) {!Oportunidade.ConsultorOportunidade__r.Name},&lt;/p&gt;&lt;p&gt;Gostaríamos de informar que a proposta &lt;strong&gt;{!Oportunidade.Numeroproposta__c} - {!Oportunidade.Name}&lt;/strong&gt; encontra-se atualmente na etapa &lt;strong&gt;{!Oportunidade.StageName}&lt;/strong&gt;.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Para darmos continuidade ao processo, solicitamos que nos envie os dados do local no formulário abaixo:&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://enrz.my.site.com/viabilidade/s/proposta/view?id={!$Record.Id}&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;Clique aqui para acessar o formulário&lt;/a&gt;.&lt;/p&gt;</text>
+        <text
+    >&lt;p&gt;Prezado(a) {!Oportunidade.ConsultorOportunidade__r.Name},&lt;/p&gt;&lt;p&gt;Gostaríamos de informar que a proposta &lt;strong&gt;{!Oportunidade.Numeroproposta__c} - {!Oportunidade.Name}&lt;/strong&gt; encontra-se atualmente na etapa &lt;strong&gt;{!Oportunidade.StageName}&lt;/strong&gt;.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Para darmos continuidade ao processo, solicitamos que nos envie os dados do local no formulário abaixo:&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://enrz.my.site.com/viabilidade/s/proposta/view?id={!$Record.Id}&quot; rel=&quot;noopener noreferrer&quot; target=&quot;_blank&quot;&gt;Clique aqui para acessar o formulário&lt;/a&gt;.&lt;/p&gt;</text>
     </textTemplates>
     <textTemplates>
         <name>ChatterMessage</name>
         <isViewedAsPlainText>false</isViewedAsPlainText>
-        <text>Fluxo &quot;Viability - Solicitação de Viabilidade Local&quot;: e-mail enviado para {!EmailConsultor} (cópia: {!EmailViabilidade}) em {!$Flow.CurrentDateTime}.</text>
+        <text
+    >Fluxo &quot;Viability - Solicitação de Viabilidade Local&quot;: e-mail enviado para {!EmailConsultor} (cópia: {!EmailViabilidade}) em {!$Flow.CurrentDateTime}.</text>
     </textTemplates>
     <textTemplates>
         <name>Subject</name>

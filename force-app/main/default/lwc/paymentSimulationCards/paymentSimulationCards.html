@@ -1,0 +1,102 @@
+<template>
+  <template if:true={hasCards}>
+    <div class="cards-container">
+      <template for:each={cards} for:item="card">
+        <c-payment-simulation-card
+          key={card.key}
+          card={card}
+          pending-simulation-id={pendingSimulationId}
+          onoptionselect={handleOptionSelect}
+        ></c-payment-simulation-card>
+      </template>
+    </div>
+    <template if:true={hasPendingSelection}>
+      <div class="footer-actions">
+        <button class="btn-cancel" onclick={handleCancel} disabled={isSaving}>
+          Cancelar
+        </button>
+        <button class="btn-save" onclick={handleSave} disabled={isSaving}>
+          <template if:true={isSaving}>Salvando...</template>
+          <template if:false={isSaving}>Salvar</template>
+        </button>
+      </div>
+    </template>
+    <template if:true={canSimulateProposal}>
+      <div class="simulation-actions">
+        <button
+          class="btn-simulate"
+          onclick={handleOpenSimulationModal}
+          disabled={isCreatingSimulation}
+        >
+          Simular proposta
+        </button>
+      </div>
+    </template>
+  </template>
+  <template if:false={hasCards}>
+    <div class="no-simulations">
+      <p>Nenhuma simulação de pagamento disponível.</p>
+    </div>
+  </template>
+
+  <template if:true={isSimulationModalOpen}>
+    <section
+      role="dialog"
+      tabindex="-1"
+      aria-modal="true"
+      class="slds-modal slds-fade-in-open"
+    >
+      <div class="slds-modal__container simulation-modal">
+        <header class="slds-modal__header">
+          <h2 class="slds-text-heading_medium">Simular proposta</h2>
+        </header>
+        <div class="slds-modal__content slds-p-around_medium">
+          <div class="simulation-modal__summary">
+            <p class="simulation-modal__label">{draftProposalLabel}</p>
+            <p class="simulation-modal__type">{draftPaymentTypeLabel}</p>
+          </div>
+
+          <lightning-input
+            type="number"
+            label="Quantidade de parcelas"
+            value={draftInstallmentCount}
+            min="1"
+            step="1"
+            onchange={handleInstallmentCountChange}
+          ></lightning-input>
+
+          <lightning-input
+            type="number"
+            label="Valor da parcela"
+            value={draftInstallmentAmount}
+            min="0.01"
+            step="0.01"
+            formatter="currency"
+            onchange={handleInstallmentAmountChange}
+            class="slds-m-top_medium"
+          ></lightning-input>
+
+          <p class="simulation-modal__hint">
+            Ao salvar, a oportunidade receberá uma nova simulação selecionada e
+            a proposta será gerada novamente.
+          </p>
+        </div>
+        <footer class="slds-modal__footer">
+          <lightning-button
+            label="Cancelar"
+            onclick={handleCloseSimulationModal}
+            disabled={isCreatingSimulation}
+          ></lightning-button>
+          <lightning-button
+            label={simulationModalPrimaryLabel}
+            variant="brand"
+            onclick={handleSaveSimulationProposal}
+            disabled={simulationModalSaveDisabled}
+            class="slds-m-left_small"
+          ></lightning-button>
+        </footer>
+      </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </template>
+</template>

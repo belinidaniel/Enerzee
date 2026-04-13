@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : AdditionalCoverageNewClassesTest
+ * @test              : AdditionalCoverageNewClassesTest, ProposalServicePaymentSimulationTest
  **/
 public class ProposalService {
   @future(callout=true)
@@ -17,6 +17,7 @@ public class ProposalService {
 
     List<Opportunity> opportunities = [
       SELECT
+        Id,
         IdVirtualOffice__c,
         StageName,
         Observacoes__c,
@@ -27,10 +28,19 @@ public class ProposalService {
         Rede__c,
         DataHoraAgendamento__c,
         Loss_Reason__c,
-        DescricaoMotivoPerda__c
+        DescricaoMotivoPerda__c,
+        FinancingProcessDetails__c
       FROM Opportunity
       WHERE Id IN :opportunityIds
     ];
+
+    Set<Id> queriedOpportunityIds = new Set<Id>();
+    for (Opportunity opportunityRecord : opportunities) {
+      queriedOpportunityIds.add(opportunityRecord.Id);
+    }
+    Map<Id, List<GORecordsTO.FinancingOptionTO>> optionsByOpportunityId = PaymentSimulationProposalStatusService.getOptionsByOpportunityIds(
+      queriedOpportunityIds
+    );
 
     Integer statusEnum;
     Integer substatusId;
@@ -55,6 +65,12 @@ public class ProposalService {
       );
       request.Category = opportunity.Categoria__c;
       request.AppointmentDateTime = opportunity.DataHoraAgendamento__c;
+      request.FinancingProcessDetail = opportunity.FinancingProcessDetails__c;
+      request.OptionsFinanciamentos = optionsByOpportunityId.containsKey(
+          opportunity.Id
+        )
+        ? optionsByOpportunityId.get(opportunity.Id)
+        : new List<GORecordsTO.FinancingOptionTO>();
       request.Value = opportunity.ValorTotalProposta__c;
 
       if (
