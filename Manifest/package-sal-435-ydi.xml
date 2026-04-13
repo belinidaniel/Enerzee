@@ -183,7 +183,19 @@
         <members>ProposalTagMapping.GRUPO_B_PADRAO_FinanciamentoMensal</members>
         <members
     >ProposalTagMapping.GRUPO_B_PADRAO_FinanciamentoPorcentagem</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_AluguelEconomiaMensal</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_ArvoresEquivalentes25Anos</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_Autossuficiencia</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_EconomiaMensalEstimada</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_FinanciamentoPorcentagem</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_GeracaoMensalEstimada</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_PotenciaNominalSistema</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_ReducaoNaConta</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_Retorno</members>
         <members>ProposalSectionRule.GB_PADRAO_FINANCING</members>
