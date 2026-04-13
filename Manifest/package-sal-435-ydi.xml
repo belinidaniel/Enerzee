@@ -61,6 +61,8 @@
     <types>
         <members>Account.CNPJ__c</members>
         <members>FinancingRate__c.Active__c</members>
+        <members>Opportunity.ArvoresEquivalentes25Anos__c</members>
+        <members>Opportunity.CO2Evitado25Anos__c</members>
         <members>FinancingRate__c.InstallmentRate1__c</members>
         <members>FinancingRate__c.InstallmentRate2__c</members>
         <members>FinancingRate__c.InstallmentRate3__c</members>
@@ -167,6 +169,20 @@
         <members>OpportunityFieldDefault.Observacoes</members>
         <members>OpportunityFieldDefault.Exclusoes</members>
         <members>OpportunityFieldDefault.CondicoesAdicionais</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_AluguelEconomiaMensal</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_ArvoresEquivalentes25Anos</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_CO2Evitado25Anos</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_AluguelPorcentagem</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_AluguelValor</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_Financiamento1</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_Financiamento2</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_Financiamento3</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_FinanciamentoMensal</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_FinanciamentoPorcentagem</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_Retorno</members>
         <members>ProposalSectionRule.GB_PADRAO_FINANCING</members>
         <members>ProposalSectionRule.GB_PADRAO_INITIAL</members>
         <members>ProposalSectionRule.GB_PADRAO_OTHERS</members>
