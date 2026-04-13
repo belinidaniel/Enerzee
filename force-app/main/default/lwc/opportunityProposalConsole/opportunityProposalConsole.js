@@ -231,12 +231,6 @@ export default class OpportunityProposalConsole extends LightningElement {
   }
 
   openModal() {
-    if (!this.selectedTemplateId) {
-      this.selectedTemplateId =
-        this.proposalData?.defaultTemplateId ||
-        this.proposalData?.templates?.[0]?.id ||
-        null;
-    }
     this.isModalOpen = true;
     this.updatePreviewUrl();
   }
@@ -352,6 +346,7 @@ export default class OpportunityProposalConsole extends LightningElement {
     this.filePreviewIsImage = false;
     this.filePreviewName = null;
     this.fileDownloadUrl = null;
+    this.isAttachmentPreviewLoading = false;
   }
 
   downloadCurrentFile() {
@@ -572,10 +567,28 @@ export default class OpportunityProposalConsole extends LightningElement {
       this.error = this.reduceError(error);
       this.filePreviewUrl = null;
     } finally {
-      this.isAttachmentPreviewLoading = false;
+      if (!previewSupported) {
+        this.isAttachmentPreviewLoading = false;
+      }
     }
 
     return previewSupported;
+  }
+
+  handleAttachmentPreviewLoad() {
+    this.isAttachmentPreviewLoading = false;
+  }
+
+  handleAttachmentPreviewError() {
+    this.isAttachmentPreviewLoading = false;
+    this.filePreviewUrl = null;
+    this.dispatchEvent(
+      new ShowToastEvent({
+        title: "Erro ao carregar arquivo",
+        message: "Não foi possível carregar a pré-visualização do arquivo.",
+        variant: "error"
+      })
+    );
   }
 
   get filePreviewIsUnsupported() {

@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 04-08-2026
  * @last modified by  : Daniel Belini
  * @test              : KitInstalacaoBOTest, KitInstalacaoTriggerTest
  **/
@@ -343,7 +343,7 @@ public without sharing class KitInstalacaoBO {
               Quantity,
               UnitPrice,
               product2.Family,
-              product2.ExternalId__c
+              PricebookEntry.ExternalId__c
             FROM OpportunityLineItems
           )
         FROM Opportunity
@@ -364,6 +364,12 @@ public without sharing class KitInstalacaoBO {
               opp.IdVirtualOffice__c +
               ' | request=' +
               JSON.serialize(requestBody)
+          );
+
+          Utils.createLog(
+            'IdVirtualOffice',
+            'IdVirtualOffice - response',
+            JSON.serialize(requestBody)
           );
           IntegracaoNivelloContrato.EnviarKitResponse response = IntegracaoNivelloContrato.enviarKit(
             requestBody
@@ -433,7 +439,7 @@ public without sharing class KitInstalacaoBO {
       product.valueUnity = oli.UnitPrice;
       product.productFamily = oli.Product2.Family;
 
-      product.externalId = oli.Product2.ExternalId__c;
+      product.externalId = oli.PricebookEntry.ExternalId__c;
       request.listProducts.add(product);
     }
     return request;
@@ -497,6 +503,15 @@ public without sharing class KitInstalacaoBO {
     oppToUpdate.ValorAnteriorRede3750__c = originalOpp.Rede3750__c;
     oppToUpdate.ValorAnteriorPontos__c = originalOpp.Pontos__c;
     oppToUpdate.ValorAnteriorDirect__c = originalOpp.Direct__c;
+    if (response == null) {
+      Utils.createLog(
+        CLASS_NAME,
+        'createOpportunityForUpdate',
+        'Response is null',
+        originalOpp.Id
+      );
+      return oppToUpdate;
+    }
 
     // Update with new values from the response
     oppToUpdate.BDI__c = response.Bdi;
