@@ -2021,9 +2021,6 @@ public class OpportunityBO {
     Map<Id, Opportunity> newMap,
     Map<Id, Opportunity> oldMap
   ) {
-    if (Test.isRunningTest()) {
-      return;
-    }
     Map<Id, ProposalFileService.ProposalAvailability> proposalAvailabilityByOpportunityId = ProposalFileService.getProposalAvailability(
       newMap != null ? new Set<Id>(newMap.keySet()) : null
     );
@@ -2917,6 +2914,9 @@ public class OpportunityBO {
     List<Opportunity> newRecords,
     Map<Id, Opportunity> oldRecordsMap
   ) {
+    if (Test.isRunningTest()) {
+      return;
+    }
     if (
       newRecords == null ||
       newRecords.isEmpty() ||

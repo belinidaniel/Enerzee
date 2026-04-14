@@ -481,6 +481,12 @@ private class ProposalEngineSupportTest {
     account.setOptions(accountOptions);
     insert account;
 
+    // Inserir contato antes da Opportunity para que o Flow "Opportunity - Insert
+    // Opportunity Contact" siga o caminho "conta possui contato" (só cria
+    // OpportunityContactRole), evitando a criação de Contact que aciona Flows
+    // de mensagem e causa FIELD_CUSTOM_VALIDATION_EXCEPTION em teste.
+    insert new Contact(LastName = 'Teste', AccountId = account.Id);
+
     ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(
       new ProposalCover__c(
         Name = TestFactory.nextUniqueValue('CapaTemplateUnico'),

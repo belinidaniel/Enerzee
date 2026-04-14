@@ -488,6 +488,13 @@ public class PaymentSimulationBOTest {
     }
 
     insert accountRecord;
+
+    // Inserir contato antes de criar Opportunities para que o Flow
+    // "Opportunity - Insert Opportunity Contact" siga o caminho "conta possui
+    // contato" e não tente criar um Contact, o que dispara Flows de mensagem
+    // que falham em contexto de teste (FIELD_CUSTOM_VALIDATION_EXCEPTION).
+    insert new Contact(LastName = 'Teste', AccountId = accountRecord.Id);
+
     return accountRecord;
   }
 
