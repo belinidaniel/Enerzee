@@ -797,7 +797,7 @@ public without sharing class PaymentSimulationBO {
       normalizedOptionIndex +
       ' - ' +
       normalizedInstallmentCount +
-      ' Parcelas de ' +
+      ' Parcelas de R$ ' +
       formatCurrencyBr(installmentAmount);
   }
 

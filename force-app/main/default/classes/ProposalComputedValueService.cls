@@ -101,17 +101,16 @@ public with sharing class ProposalComputedValueService {
       );
     }
 
-    // % diferenca entre custo mensal atual e pagamento facilitado do aluguel (parcela 60x)
-    // Formula: (CustoMedioEnergia - PagamentoFacilitado) / CustoMedioEnergia * 100
+    // EconomiaPercentual: EconomiaMensalEstimada / CustoMedioEnergia * 100
+    // Mesma base que ReducaoNaConta — usada no card de aluguel da proposta
     if (
-      rentalOption != null &&
-      rentalOption.InstallmentAmount__c != null &&
+      monthlySavings != null &&
       currentEnergyCost != null &&
       currentEnergyCost != 0
     ) {
       values.put(
         CALCULATED_PREFIX + 'EconomiaPercentual',
-        ((currentEnergyCost - rentalOption.InstallmentAmount__c) /
+        (monthlySavings /
           currentEnergyCost *
           100)
           .setScale(2, RoundingMode.HALF_UP)

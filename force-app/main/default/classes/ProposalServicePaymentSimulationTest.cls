@@ -248,7 +248,13 @@ private class ProposalServicePaymentSimulationTest {
     }
 
     return [
-      SELECT Id, AccountId, Amount, RecordTypeId, GrupoTarifario__c
+      SELECT
+        Id,
+        AccountId,
+        Amount,
+        RecordTypeId,
+        GrupoTarifario__c,
+        TipoKitPromocional__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
