@@ -49,7 +49,7 @@ public with sharing class PDFControllerExtensionTest {
       WHERE LinkedEntityId = :opp.Id
     ];
 
-    ContentVersion resultado = [
+    List<ContentVersion> resultados = [
       SELECT Id, FirstPublishLocationId, VersionData, NomePaginaPDF__c
       FROM ContentVersion
       WHERE FirstPublishLocationId = :opp.Id
@@ -95,7 +95,7 @@ public with sharing class PDFControllerExtensionTest {
       WHERE LinkedEntityId = :opp.Id
     ];
 
-    ContentVersion resultado = [
+    List<ContentVersion> resultados = [
       SELECT Id, FirstPublishLocationId, VersionData, NomePaginaPDF__c
       FROM ContentVersion
       WHERE FirstPublishLocationId = :opp.Id
@@ -141,7 +141,7 @@ public with sharing class PDFControllerExtensionTest {
       WHERE LinkedEntityId = :opp.Id
     ];
 
-    ContentVersion resultado = [
+    List<ContentVersion> resultados = [
       SELECT Id, FirstPublishLocationId, VersionData, NomePaginaPDF__c
       FROM ContentVersion
       WHERE FirstPublishLocationId = :opp.Id
@@ -187,7 +187,7 @@ public with sharing class PDFControllerExtensionTest {
       WHERE LinkedEntityId = :opp.Id
     ];
 
-    ContentVersion resultado = [
+    List<ContentVersion> resultados = [
       SELECT Id, FirstPublishLocationId, VersionData, NomePaginaPDF__c
       FROM ContentVersion
       WHERE FirstPublishLocationId = :opp.Id

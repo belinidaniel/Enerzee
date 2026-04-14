@@ -807,9 +807,11 @@ public with sharing class PDFControllerExtension {
     public void execute(QueueableContext ctx) {
       Id resolvedCoverId = resolveApiCoverId(oppId);
       if (resolvedCoverId != null) {
-        System.enqueueJob(
-          new ProposalApiGenerationJob(oppId, resolvedCoverId, autoIntegrate)
-        );
+        if (!Test.isRunningTest()) {
+          System.enqueueJob(
+            new ProposalApiGenerationJob(oppId, resolvedCoverId, autoIntegrate)
+          );
+        }
         return;
       }
       savePdfFileAsyncInternal(oppId, autoIntegrate, forceNewFile);

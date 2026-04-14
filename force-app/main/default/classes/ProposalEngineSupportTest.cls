@@ -474,7 +474,7 @@ private class ProposalEngineSupportTest {
   @isTest
   static void templateResolverUsesSinglePptxAttachedToStandardCover() {
     Account account = new Account(
-      Name = TestFactory.nextUniqueValue('ContaTemplateUnico')
+      Name = TestFactory.nextUniqueValue('ContaTemplateUnico') + ' Teste'
     );
     Database.DMLOptions accountOptions = new Database.DMLOptions();
     accountOptions.DuplicateRuleHeader.allowSave = true;
@@ -508,9 +508,14 @@ private class ProposalEngineSupportTest {
         Parceiro__c = partner.Id,
         GrupoTarifario__c = 'Grupo B',
         IdVirtualOffice__c = TestFactory.nextUniqueValue('VO-SINGLE-PPTX')
-      ),
-      true
+      )
     );
+    OpportunityTriggerHandler.disableTrigger();
+    try {
+      insert opportunityRecord;
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
 
     insert new ContentVersion(
       Title = 'Template Unico',

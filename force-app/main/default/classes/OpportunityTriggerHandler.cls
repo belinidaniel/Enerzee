@@ -11,9 +11,10 @@
  *                       OpportunityDiscountRequestControllerTest, OpportunityShareHandlerTest,
  *                       OpportunityTriggerHandlerToggleTest, OpportunityTriggerTest, OpportunityUtilsTest,
  *                       PaymentSimulationBOTest, PaymentSimulationCardControllerTest, ProjetoBOCoverageTest,
- *                       ProjetoTriggerTest, ProposalPendingControllerTest, ProposalPendingResponseRestTest,
- *                       ProposalPendingStatusQueueableTest, ProposalServicePaymentSimulationTest,
- *                       ServiceAppointmentBOTest, WorkDeliveryReportPdfControllerTest
+ *                       ProjetoTriggerTest, ProposalEngineSupportTest, ProposalPendingControllerTest,
+ *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest,
+ *                       ProposalServicePaymentSimulationTest, ServiceAppointmentBOTest,
+ *                       WorkDeliveryReportPdfControllerTest
  **/
 public class OpportunityTriggerHandler extends TriggerHandler {
   public OpportunityTriggerHandler() {

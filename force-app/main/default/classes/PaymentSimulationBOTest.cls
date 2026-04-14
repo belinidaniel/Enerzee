@@ -480,6 +480,8 @@ public class PaymentSimulationBOTest {
       defaultsClassName
     );
     accountRecord.IdVirtualOffice__c = TestFactory.nextUniqueValue('ACCVO');
+    accountRecord.Email__c =
+      TestFactory.nextUniqueValue('email') + '@enerzee.com.br';
 
     if (String.isNotBlank(accountRecord.CNPJ__c)) {
       accountRecord.CNPJ__c = formatCnpj(generateNumericSequence(14));

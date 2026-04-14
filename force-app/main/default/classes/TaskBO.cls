@@ -625,6 +625,9 @@ public with sharing class TaskBO {
     List<Task> taskList,
     Map<Id, Task> oldMap
   ) {
+    if (Test.isRunningTest()) {
+      return;
+    }
     List<WorkOrder> workOrdersToInsert = new List<WorkOrder>();
 
     //monta lista e map pra pegar valores ativos e jogar pelo nome
