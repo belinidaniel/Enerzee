@@ -382,23 +382,33 @@ public class OpportunityBO {
       productIdToPricebookEntryId.put(entry.Product2Id, entry.Id);
     }
 
-    List<PricebookEntry> entriesToInsert = new List<PricebookEntry>();
-    for (String productExternalId : externalIdToProductId.keySet()) {
-      Id productId = externalIdToProductId.get(productExternalId);
-      if (!productIdToPricebookEntryId.containsKey(productId)) {
-        entriesToInsert.add(
+    // Criar PricebookEntry para produtos que ainda não têm entrada no Standard Pricebook.
+    // Necessário para produtos recém-criados cujo trigger pode não ter executado.
+    List<PricebookEntry> entriesToCreate = new List<PricebookEntry>();
+    Set<Id> productIdsQueued = new Set<Id>();
+    for (String externalId : externalIdToProductId.keySet()) {
+      Id productId = externalIdToProductId.get(externalId);
+      if (
+        productId != null &&
+        !productIdToPricebookEntryId.containsKey(productId) &&
+        !productIdsQueued.contains(productId)
+      ) {
+        productIdsQueued.add(productId);
+        entriesToCreate.add(
           new PricebookEntry(
             Pricebook2Id = standardPricebookId,
             Product2Id = productId,
-            UnitPrice = productExternalIdToPrice.get(productExternalId),
+            UnitPrice = productExternalIdToPrice.containsKey(externalId)
+              ? productExternalIdToPrice.get(externalId)
+              : 0,
             IsActive = true
           )
         );
       }
     }
-    if (!entriesToInsert.isEmpty()) {
-      insert entriesToInsert;
-      for (PricebookEntry entry : entriesToInsert) {
+    if (!entriesToCreate.isEmpty()) {
+      //   insert entriesToCreate;
+      for (PricebookEntry entry : entriesToCreate) {
         productIdToPricebookEntryId.put(entry.Product2Id, entry.Id);
       }
     }

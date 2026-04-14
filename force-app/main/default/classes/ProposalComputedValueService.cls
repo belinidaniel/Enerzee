@@ -101,25 +101,25 @@ public with sharing class ProposalComputedValueService {
       );
     }
 
-    // EconomiaPercentual: EconomiaMensalEstimada / CustoMedioEnergia * 100
-    // Mesma base que ReducaoNaConta — usada no card de aluguel da proposta
+    // EconomiaPercentual (card Aluguel): (CustoMedioEnergia - ParcelaAluguel) / CustoMedioEnergia * 100
+    Decimal rentalAmount = toDecimal(
+      values.get(SIMULATION_PREFIX + 'Rental.InstallmentAmount1')
+    );
     if (
-      monthlySavings != null &&
+      rentalAmount != null &&
       currentEnergyCost != null &&
       currentEnergyCost != 0
     ) {
       values.put(
         CALCULATED_PREFIX + 'EconomiaPercentual',
-        (monthlySavings /
+        ((currentEnergyCost - rentalAmount) /
           currentEnergyCost *
           100)
           .setScale(2, RoundingMode.HALF_UP)
       );
     }
 
-    // % diferenca entre custo mensal atual e parcela 60x do financiamento (opcao 3)
-    // Formula: (CustoMedioEnergia - Financiamento3_60x) / CustoMedioEnergia * 100
-    // Retorna null quando parcela >= custo (economia negativa nao faz sentido na proposta)
+    // EconomiaPercentualFinanciamento (card Financiamento 60x): (ParcelaFinanciamento3 - CustoMedioEnergia) / CustoMedioEnergia * 100
     Decimal financing3Amount = toDecimal(
       values.get(SIMULATION_PREFIX + 'Financing.InstallmentAmount3')
     );

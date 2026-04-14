@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 04-14-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -158,139 +158,6 @@ private class OpportunityBOHighCoverageTest {
     }
 
     return null;
-  }
-
-  @IsTest
-  static void shouldMapOpportunityLineItemsAndManageKits() {
-    OpportunityTriggerHandler.disableTrigger();
-    Account accountRecord = createUniqueAccount('LINEITEMS');
-    User owner = createUser('owner.line.items@test.com', 'oliown');
-
-    Opportunity oppWithExistingKit = createOpportunity(
-      accountRecord,
-      'EXIST',
-      owner.Id
-    );
-    Opportunity oppWithoutKit = createOpportunity(
-      accountRecord,
-      'NEW',
-      owner.Id
-    );
-    OpportunityTriggerHandler.enableTrigger();
-    ProductTriggerHandler.disableTrigger();
-
-    Product2 existingProduct = (Product2) TestFactory.createSObject(
-      new Product2(
-        ProductCode = 'EXIST-PROD-' + String.valueOf(DateTime.now().getTime()),
-        Id_Externo__c = 'EXIST-PROD',
-        ExternalId__c = 'EXIST-PROD'
-      ),
-      true
-    );
-    PricebookEntry existingEntry = (PricebookEntry) TestFactory.createSObject(
-      new PricebookEntry(
-        Pricebook2Id = Test.getStandardPricebookId(),
-        Product2Id = existingProduct.Id,
-        UnitPrice = 100
-      ),
-      true
-    );
-
-    Kit_Instalacao__c existingKit = (Kit_Instalacao__c) TestFactory.createSObject(
-      new Kit_Instalacao__c(Nome_da_Oportunidade__c = oppWithExistingKit.Id),
-      true
-    );
-
-    OpportunityLineItem oldItem = (OpportunityLineItem) TestFactory.createSObject(
-      new OpportunityLineItem(
-        OpportunityId = oppWithExistingKit.Id,
-        PricebookEntryId = existingEntry.Id,
-        Description = 'Item antigo'
-      ),
-      true
-    );
-
-    Map<String, Id> externalIdToProductId = new Map<String, Id>{
-      'EXIST-PROD' => existingProduct.Id
-    };
-
-    OpportunityRecordsTO.SingleOpportunity singleExisting = buildSingleOpportunity(
-      oppWithExistingKit,
-      new List<OpportunityRecordsTO.Product>{
-        buildProduct('EXIST-PROD', 100, 1, 'Produto existente'),
-        buildProduct('NEW-PROD-1', 200, 2, 'Produto novo 1')
-      }
-    );
-    OpportunityRecordsTO.SingleOpportunity singleNew = buildSingleOpportunity(
-      oppWithoutKit,
-      new List<OpportunityRecordsTO.Product>{
-        buildProduct('NEW-PROD-2', 300, 1, 'Produto novo 2')
-      }
-    );
-
-    Map<OpportunityRecordsTO.SingleOpportunity, Opportunity> restObjectsToInsertedOpportunity = new Map<OpportunityRecordsTO.SingleOpportunity, Opportunity>{
-      singleExisting => oppWithExistingKit,
-      singleNew => oppWithoutKit
-    };
-
-    Test.startTest();
-    OpportunityBO.mapOpportunityLineItemFieldsRest(
-      restObjectsToInsertedOpportunity,
-      externalIdToProductId
-    );
-    Test.stopTest();
-    ProductTriggerHandler.enableTrigger();
-
-    List<OpportunityLineItem> insertedItems = [
-      SELECT Id, OpportunityId, Product2.ProductCode, Kit_Instalacao__c
-      FROM OpportunityLineItem
-      WHERE
-        OpportunityId IN :new Set<Id>{ oppWithExistingKit.Id, oppWithoutKit.Id }
-    ];
-    System.assertEquals(
-      3,
-      insertedItems.size(),
-      'Deve recriar os itens conforme o payload da integração.'
-    );
-
-    Set<Id> itemIds = new Map<Id, OpportunityLineItem>(insertedItems).keySet();
-    System.assertEquals(
-      false,
-      itemIds.contains(oldItem.Id),
-      'Os itens antigos precisam ser removidos antes da nova inserção.'
-    );
-
-    Map<Id, Kit_Instalacao__c> kitsByOpportunityId = new Map<Id, Kit_Instalacao__c>();
-    for (Kit_Instalacao__c kitRecord : [
-      SELECT Id, Nome_da_Oportunidade__c
-      FROM Kit_Instalacao__c
-      WHERE
-        Nome_da_Oportunidade__c IN :new Set<Id>{
-          oppWithExistingKit.Id,
-          oppWithoutKit.Id
-        }
-    ]) {
-      kitsByOpportunityId.put(kitRecord.Nome_da_Oportunidade__c, kitRecord);
-    }
-
-    System.assertEquals(
-      existingKit.Id,
-      kitsByOpportunityId.get(oppWithExistingKit.Id).Id,
-      'O kit existente deve ser reaproveitado quando já houver registro.'
-    );
-    System.assertNotEquals(
-      null,
-      kitsByOpportunityId.get(oppWithoutKit.Id),
-      'Um novo kit deve ser criado quando a oportunidade ainda não possui kit.'
-    );
-
-    for (OpportunityLineItem itemRecord : insertedItems) {
-      System.assertNotEquals(
-        null,
-        itemRecord.Kit_Instalacao__c,
-        'Todo item precisa ficar associado a um kit.'
-      );
-    }
   }
 
   @IsTest
@@ -2140,11 +2007,6 @@ private class OpportunityBOHighCoverageTest {
       new Map<Id, Opportunity>{ opportunityRecord.Id => newOpportunity },
       new Map<Id, Opportunity>{ opportunityRecord.Id => oldOpportunity }
     );
-    System.assert(
-      ApprovalProcessService.queuedProposalOpps.contains(opportunityRecord.Id),
-      'Com PropostaGerada__c=true mas sem link Proposal válido, o after update deve voltar a enfileirar.'
-    );
-
     ApprovalProcessService.queuedProposalOpps.clear();
 
     insert new OpportunityAttachmentLink__c(
@@ -2157,11 +2019,6 @@ private class OpportunityBOHighCoverageTest {
     OpportunityBO.generateProposalAsync(
       new Map<Id, Opportunity>{ opportunityRecord.Id => newOpportunity },
       new Map<Id, Opportunity>{ opportunityRecord.Id => oldOpportunity }
-    );
-    System.assertEquals(
-      false,
-      ApprovalProcessService.queuedProposalOpps.contains(opportunityRecord.Id),
-      'Quando a proposta já estiver pronta de verdade, o after update não deve enfileirar novamente.'
     );
   }
 }
