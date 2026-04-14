@@ -101,7 +101,7 @@
             </value>
         </inputAssignments>
         <inputAssignments>
-            <field>Observacoes__c</field>
+            <field>NotePaymentCondiiton__c</field>
             <value>
                 <elementReference
         >$Record.ProposalObservacoes__c</elementReference>
