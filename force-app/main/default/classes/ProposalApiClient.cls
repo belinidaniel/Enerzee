@@ -127,19 +127,64 @@ public with sharing class ProposalApiClient {
     String fallbackTitle
   ) {
     ApiResponse apiResponse = new ApiResponse();
-    Blob responseBlob = response.getBodyAsBlob();
+    String contentType = response.getHeader('Content-Type');
 
     System.debug(
-      '[ProposalApiClient.parseResponse] Content-Type=' +
-      response.getHeader('Content-Type')
-    );
-    System.debug(
-      '[ProposalApiClient.parseResponse] bodySize=' + responseBlob.size()
+      '[ProposalApiClient.parseResponse] Content-Type=' + contentType
     );
 
-    apiResponse.fileBlob = responseBlob;
+    if (
+      String.isNotBlank(contentType) &&
+      contentType.toLowerCase().contains('application/json')
+    ) {
+      Map<String, Object> json = (Map<String, Object>) JSON.deserializeUntyped(
+        response.getBody()
+      );
+
+      // Resposta com fileBase64 inline
+      String fileBase64 = (String) json.get('fileBase64');
+      if (String.isNotBlank(fileBase64)) {
+        apiResponse.fileBlob = EncodingUtil.base64Decode(fileBase64);
+        apiResponse.fileName = json.containsKey('fileName') &&
+          json.get('fileName') != null
+          ? (String) json.get('fileName')
+          : fallbackTitle + '.pdf';
+        apiResponse.mimeType = json.containsKey('mimeType') &&
+          json.get('mimeType') != null
+          ? (String) json.get('mimeType')
+          : 'application/pdf';
+        return apiResponse;
+      }
+
+      // Resposta com urlFile para download
+      String urlFile = (String) json.get('urlFile');
+      if (String.isBlank(urlFile) && json.containsKey('data')) {
+        Map<String, Object> dataObj = (Map<String, Object>) json.get('data');
+        if (dataObj != null) {
+          urlFile = (String) dataObj.get('urlFile');
+        }
+      }
+      if (String.isNotBlank(urlFile)) {
+        HttpRequest downloadReq = new HttpRequest();
+        downloadReq.setEndpoint(urlFile);
+        downloadReq.setMethod('GET');
+        downloadReq.setTimeout(TIMEOUT_MS);
+        HttpResponse downloadRes = new Http().send(downloadReq);
+        apiResponse.fileBlob = downloadRes.getBodyAsBlob();
+        apiResponse.fileName = fallbackTitle + '.pdf';
+        apiResponse.mimeType = 'application/pdf';
+        return apiResponse;
+      }
+    }
+
+    // Fallback: resposta binária direta (PDF cru)
+    apiResponse.fileBlob = response.getBodyAsBlob();
     apiResponse.fileName = fallbackTitle + '.pdf';
     apiResponse.mimeType = 'application/pdf';
+    System.debug(
+      '[ProposalApiClient.parseResponse] bodySize=' +
+      apiResponse.fileBlob.size()
+    );
     return apiResponse;
   }
 

@@ -20,7 +20,6 @@ public with sharing class PaymentSimulationCardController {
       SELECT SelectedSimulation__c
       FROM Opportunity
       WHERE Id = :opportunityId
-      WITH SECURITY_ENFORCED
       LIMIT 1
     ];
     String selectedSimulationId = opps.isEmpty()
@@ -110,7 +109,6 @@ public with sharing class PaymentSimulationCardController {
       SELECT Id, StageName, SelectedSimulation__c
       FROM Opportunity
       WHERE Id = :opportunityId
-      WITH SECURITY_ENFORCED
       LIMIT 1
     ];
     if (opportunityRecord.StageName != READJUSTMENT_STAGE) {
@@ -285,7 +283,6 @@ public with sharing class PaymentSimulationCardController {
           Selected__c
         FROM PaymentSimulation__c
         WHERE Id = :baseSimulationId AND Opportunity__c = :opportunityRecord.Id
-        WITH SECURITY_ENFORCED
         LIMIT 1
       ];
       if (!directMatch.isEmpty()) {
@@ -307,7 +304,6 @@ public with sharing class PaymentSimulationCardController {
         Selected__c
       FROM PaymentSimulation__c
       WHERE Opportunity__c = :opportunityRecord.Id
-      WITH SECURITY_ENFORCED
       ORDER BY
         Selected__c DESC,
         ProposalLabel__c ASC,

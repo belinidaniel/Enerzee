@@ -19,11 +19,20 @@ public with sharing class ProposalPayloadBuilder {
     public String payloadHash;
   }
 
+  // Campos exigidos pelo ProposalComputedValueService para calcular valores derivados
+  private static final Set<String> COMPUTED_DEPENDENCY_FIELDS = new Set<String>{
+    'CustoMedioEnergia__c',
+    'EconomiaMensalEstimada__c',
+    'GeracaoMensalEstimada__c',
+    'ConsumoInformadoB__c'
+  };
+
   public static Opportunity queryOpportunityForTags(
     Id opportunityId,
     List<ProposalConfigurationService.TagConfig> tagConfigs
   ) {
     Set<String> selectFields = new Set<String>{ 'Id' };
+    selectFields.addAll(COMPUTED_DEPENDENCY_FIELDS);
     if (tagConfigs != null) {
       for (ProposalConfigurationService.TagConfig config : tagConfigs) {
         if (String.isBlank(config.sourcePath)) {

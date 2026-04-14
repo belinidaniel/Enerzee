@@ -18,7 +18,7 @@ public without sharing class PaymentSimulationBO {
   @TestVisible
   private static final Decimal PJ_RENTAL_LIMIT = 250000;
   @TestVisible
-  private static final String HYBRID_KIT_VALUE = 'KIT SOLAR + BESS';
+  private static final String HYBRID_KIT_VALUE = '6';
   @TestVisible
   private static final Integer MAX_INSTALLMENT_OPTIONS = 4;
 
