@@ -1135,50 +1135,71 @@ public with sharing class TaskBO {
     List<Task> taskList,
     Map<Id, Task> oldMap
   ) {
-    Id closerUserId = [
+    List<User> closerUsers = [
       SELECT Id
       FROM User
       WHERE Email LIKE 'wagner.sampaio@enerzee.com.br%'
       LIMIT 1
-    ]
-    .Id;
+    ];
+    if (closerUsers.isEmpty()) {
+      return;
+    }
+    Id closerUserId = closerUsers[0].Id;
 
-    List<Messaging.SingleEmailMessage> messageList = new List<Messaging.SingleEmailMessage>();
+    Set<Id> relevantOpportunityIds = new Set<Id>();
     for (Task Tarefa : taskList) {
       if (
         TaskUtils.isTaskBeingConcluded(oldMap.get(Tarefa.Id), Tarefa) &&
-        (Tarefa.Subject.contains('Ligação de follow-up') &&
+        Tarefa.Subject.contains('Ligação de follow-up') &&
         Tarefa.OwnerId == closerUserId &&
         Tarefa.LastModifiedById == closerUserId &&
-        Tarefa.WhatId != null)
+        Tarefa.WhatId != null
       ) {
-        Opportunity opp = [
-          SELECT Name, Owner.Name, Owner.Email
-          FROM Opportunity
-          WHERE Id = :Tarefa.WhatId
-          LIMIT 1
-        ];
-        String ownerEmail = opp.Owner.Email;
-
-        messageList.add(
-          EmailUtils.createSingleEmailMessage(
-            'Alerta de interação do Closer - ' + opp.Name,
-            'Olá, ' +
-              opp.Owner.Name +
-              '!<br>' +
-              'Uma nova oportunidade foi efetivada no Salesforce pelo fechador.<br><br>' +
-              'Clique no link abaixo para conferir.<br>' +
-              (URL.getSalesforceBaseUrl().toExternalForm() +
-              '/lightning/r/Opportunity/' +
-              Tarefa.WhatId +
-              '/view'),
-            new List<String>{
-              ownerEmail != null ? ownerEmail : 'vitor.avancini@lab065.com'
-            },
-            new List<String>{ 'kaique.mathias@lab065.com' }
-          )
-        );
+        relevantOpportunityIds.add(Tarefa.WhatId);
       }
+    }
+
+    if (relevantOpportunityIds.isEmpty()) {
+      return;
+    }
+
+    Map<Id, Opportunity> opportunitiesById = new Map<Id, Opportunity>(
+      [
+        SELECT Id, Name, Owner.Name, Owner.Email
+        FROM Opportunity
+        WHERE Id IN :relevantOpportunityIds
+      ]
+    );
+
+    List<Messaging.SingleEmailMessage> messageList = new List<Messaging.SingleEmailMessage>();
+    for (Task Tarefa : taskList) {
+      if (!relevantOpportunityIds.contains(Tarefa.WhatId)) {
+        continue;
+      }
+      Opportunity opp = opportunitiesById.get(Tarefa.WhatId);
+      if (opp == null) {
+        continue;
+      }
+      String ownerEmail = opp.Owner.Email;
+
+      messageList.add(
+        EmailUtils.createSingleEmailMessage(
+          'Alerta de interação do Closer - ' + opp.Name,
+          'Olá, ' +
+            opp.Owner.Name +
+            '!<br>' +
+            'Uma nova oportunidade foi efetivada no Salesforce pelo fechador.<br><br>' +
+            'Clique no link abaixo para conferir.<br>' +
+            (URL.getSalesforceBaseUrl().toExternalForm() +
+            '/lightning/r/Opportunity/' +
+            Tarefa.WhatId +
+            '/view'),
+          new List<String>{
+            ownerEmail != null ? ownerEmail : 'vitor.avancini@lab065.com'
+          },
+          new List<String>{ 'kaique.mathias@lab065.com' }
+        )
+      );
     }
 
     if (!Test.isRunningTest() && messageList.size() > 0) {

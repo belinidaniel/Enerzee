@@ -34,9 +34,6 @@ public without sharing class PaymentSimulationBO {
     List<Opportunity> newList,
     Map<Id, Opportunity> oldMap
   ) {
-    if (Test.isRunningTest()) {
-      return;
-    }
     if (newList == null || newList.isEmpty()) {
       return;
     }

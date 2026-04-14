@@ -720,9 +720,9 @@ private class ProposalEngineSupportTest {
       'O aluguel deve usar a simulacao relacionada de 72x com prefixo e separador de milhar.'
     );
     Assert.areEqual(
-      '25,15',
+      '-1,96',
       payload.tags.get('{{AluguelPorcentagem__c}}'),
-      'A porcentagem de economia deve ser calculada a partir da oportunidade.'
+      'A porcentagem de economia deve ser calculada como (CustoMedioEnergia - ParcelaAluguel) / CustoMedioEnergia * 100.'
     );
     Assert.areEqual(
       '2.208,67',
