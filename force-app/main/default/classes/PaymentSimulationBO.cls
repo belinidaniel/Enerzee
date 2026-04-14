@@ -425,7 +425,7 @@ public without sharing class PaymentSimulationBO {
   }
 
   @TestVisible
-  private static Boolean isRentalEligible(
+  public static Boolean isRentalEligible(
     Decimal amount,
     String cnpj,
     String tipoKitPromocional

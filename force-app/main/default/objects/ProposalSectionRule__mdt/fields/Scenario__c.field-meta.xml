@@ -19,6 +19,11 @@
                 <default>false</default>
                 <label>Payment Selected</label>
             </value>
+            <value>
+                <fullName>INITIAL_FINANCING</fullName>
+                <default>false</default>
+                <label>Initial Financing</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

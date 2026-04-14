@@ -9,6 +9,7 @@
 public with sharing class ProposalConfigurationService {
   public static final String SCENARIO_ALL = 'ALL';
   public static final String SCENARIO_INITIAL = 'INITIAL';
+  public static final String SCENARIO_INITIAL_FINANCING = 'INITIAL_FINANCING';
   public static final String SCENARIO_PAYMENT_SELECTED = 'PAYMENT_SELECTED';
   public static final String FORMAT_RAW = 'RAW';
 
@@ -84,17 +85,23 @@ public with sharing class ProposalConfigurationService {
     String scenario,
     String paymentType
   ) {
-    String resolvedKey = String.isBlank(paymentType)
-      ? SCENARIO_INITIAL
-      : paymentType;
     Map<String, List<String>> sectionsByKey = loadSectionsByKey(coverKey);
-    if (sectionsByKey.containsKey(resolvedKey)) {
-      return sectionsByKey.get(resolvedKey);
+    if (String.isBlank(paymentType)) {
+      String scenarioKey = normalize(scenario) == SCENARIO_INITIAL_FINANCING
+        ? SCENARIO_INITIAL_FINANCING
+        : SCENARIO_INITIAL;
+      if (sectionsByKey.containsKey(scenarioKey)) {
+        return sectionsByKey.get(scenarioKey);
+      }
+      if (sectionsByKey.containsKey(SCENARIO_INITIAL)) {
+        return sectionsByKey.get(SCENARIO_INITIAL);
+      }
+      return new List<String>();
     }
-    if (
-      String.isNotBlank(paymentType) &&
-      sectionsByKey.containsKey(PAYMENT_TYPE_OTHERS)
-    ) {
+    if (sectionsByKey.containsKey(paymentType)) {
+      return sectionsByKey.get(paymentType);
+    }
+    if (sectionsByKey.containsKey(PAYMENT_TYPE_OTHERS)) {
       return sectionsByKey.get(PAYMENT_TYPE_OTHERS);
     }
     if (sectionsByKey.containsKey(SCENARIO_INITIAL)) {

@@ -126,8 +126,7 @@ public with sharing class ProposalComputedValueService {
     if (
       financing3Amount != null &&
       currentEnergyCost != null &&
-      currentEnergyCost != 0 &&
-      financing3Amount < currentEnergyCost
+      currentEnergyCost != 0
     ) {
       values.put(
         CALCULATED_PREFIX + 'EconomiaPercentualFinanciamento',

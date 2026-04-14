@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-10-2026
+ * @last modified on  : 04-14-2026
  * @last modified by  : Daniel Belini
  * @test              : ProposalEngineSupportTest
  **/
@@ -24,6 +24,28 @@ public with sharing class ProposalContextResolver {
     return String.isNotBlank(opportunityRecord.TipoKitPromocional__c);
   }
 
+  @TestVisible
+  static Boolean shouldShowFinancingInInitial(Opportunity opportunityRecord) {
+    if (opportunityRecord == null) {
+      return false;
+    }
+
+    Decimal amount = opportunityRecord.ValorTotalProposta__c != null &&
+      opportunityRecord.ValorTotalProposta__c > 0
+      ? opportunityRecord.ValorTotalProposta__c
+      : opportunityRecord.Amount;
+
+    String cnpj = opportunityRecord.Account != null
+      ? opportunityRecord.Account.CNPJ__c
+      : null;
+
+    return !PaymentSimulationBO.isRentalEligible(
+      amount,
+      cnpj,
+      opportunityRecord.TipoKitPromocional__c
+    );
+  }
+
   public static Context resolve(Id opportunityId, Id coverId) {
     if (opportunityId == null || coverId == null) {
       throw new AuraHandledException(
@@ -37,6 +59,7 @@ public with sharing class ProposalContextResolver {
         Name,
         AccountId,
         Account.Name,
+        Account.CNPJ__c,
         Numeroproposta__c,
         GrupoTarifario__c,
         StageName,
@@ -49,6 +72,8 @@ public with sharing class ProposalContextResolver {
         ViabilityStudyFinished__c,
         TipoKitPromocional__c,
         DescricaoBateria__c,
+        ValorTotalProposta__c,
+        Amount,
         SelectedSimulation__c,
         SelectedSimulation__r.PaymentType__c,
         isPromotional__c
@@ -84,9 +109,15 @@ public with sharing class ProposalContextResolver {
     context.paymentType = opportunityRecord.SelectedSimulation__r != null
       ? opportunityRecord.SelectedSimulation__r.PaymentType__c
       : null;
-    context.scenario = opportunityRecord.SelectedSimulation__c != null
-      ? ProposalConfigurationService.SCENARIO_PAYMENT_SELECTED
-      : ProposalConfigurationService.SCENARIO_INITIAL;
+
+    if (opportunityRecord.SelectedSimulation__c != null) {
+      context.scenario = ProposalConfigurationService.SCENARIO_PAYMENT_SELECTED;
+    } else if (shouldShowFinancingInInitial(opportunityRecord)) {
+      context.scenario = ProposalConfigurationService.SCENARIO_INITIAL_FINANCING;
+    } else {
+      context.scenario = ProposalConfigurationService.SCENARIO_INITIAL;
+    }
+
     context.isPromotional = determineIsPromotional(opportunityRecord);
 
     return context;
