@@ -93,6 +93,27 @@
                 <elementReference>$User.Id</elementReference>
             </value>
         </inputAssignments>
+        <inputAssignments>
+            <field>Exclusoes__c</field>
+            <value>
+                <elementReference
+        >$Record.ProposalExclusoes__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Observacoes__c</field>
+            <value>
+                <elementReference
+        >$Record.ProposalObservacoes__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>CondicoesAdicionais__c</field>
+            <value>
+                <elementReference
+        >$Record.ProposalCondicoesAdicionais__c</elementReference>
+            </value>
+        </inputAssignments>
         <object>Opportunity</object>
     </recordUpdates>
     <start>

@@ -221,6 +221,23 @@
         <readable>true</readable>
     </fieldPermissions>
 
+    <!-- ViabilityStudy__c — Textos da Proposta -->
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ViabilityStudy__c.ProposalExclusoes__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ViabilityStudy__c.ProposalObservacoes__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ViabilityStudy__c.ProposalCondicoesAdicionais__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+
     <hasActivationRequired>false</hasActivationRequired>
     <label>Proposta Solar Grupo B Padrao</label>
     <license>Salesforce</license>
