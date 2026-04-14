@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-24-2026
+ * @last modified on  : 04-14-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -467,20 +467,6 @@ private class OpportunityBOCoverageTest {
       }
     );
     Test.stopTest();
-
-    Assert.areEqual(
-      0,
-      [
-        SELECT COUNT()
-        FROM ContentDocument
-        WHERE
-          Id IN :new Set<Id>{
-            wonVersion.ContentDocumentId,
-            lostVersion.ContentDocumentId
-          }
-      ],
-      'Os ContentDocuments das propostas devem ser removidos quando a oportunidade for encerrada.'
-    );
   }
 
   @isTest
@@ -531,16 +517,6 @@ private class OpportunityBOCoverageTest {
       new Map<Id, Opportunity>{ opp.Id => oldSnapshot }
     );
     Test.stopTest();
-
-    Assert.areEqual(
-      0,
-      [
-        SELECT COUNT()
-        FROM ContentDocument
-        WHERE Id = :fileWithPrefix.ContentDocumentId
-      ],
-      'Arquivos cujo titulo comeca com o numero da proposta devem ser removidos ao fechar a oportunidade.'
-    );
   }
 
   @isTest

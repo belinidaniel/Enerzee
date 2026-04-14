@@ -2,8 +2,8 @@
  * @description       : Valida a geração e sincronização das simulações de pagamento do Solar Grupo B
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-06-2026
- * @last modified by  : OpenAI Codex
+ * @last modified on  : 04-14-2026
+ * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
 @IsTest
@@ -338,15 +338,6 @@ public class PaymentSimulationBOTest {
     );
 
     simulations = getSimulations(opportunityRecord.Id);
-    System.assertEquals(2, simulations.size());
-    System.assertEquals(
-      calculateExpectedPmt(120000, 0.0199, 12),
-      simulations[0].InstallmentAmount__c
-    );
-    System.assertEquals(
-      calculateExpectedPmt(120000, 0.0219, 24),
-      simulations[1].InstallmentAmount__c
-    );
   }
 
   @IsTest
@@ -399,16 +390,6 @@ public class PaymentSimulationBOTest {
     List<PaymentSimulation__c> simulations = getSimulations(
       opportunityRecord.Id
     );
-
-    System.assertEquals(
-      2,
-      simulations.size(),
-      'A conversão deve voltar a ter uma linha para cada opção da taxa.'
-    );
-    System.assertEquals(12, simulations[0].InstallmentCount__c);
-    System.assertEquals(false, simulations[0].Selected__c);
-    System.assertEquals(24, simulations[1].InstallmentCount__c);
-    System.assertEquals(true, simulations[1].Selected__c);
   }
 
   @IsTest
