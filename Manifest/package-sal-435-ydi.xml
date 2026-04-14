@@ -26,6 +26,7 @@
         <members>PaymentSimulationTriggerHandler</members>
         <members>ProposalApiClient</members>
         <members>ProposalComputedValueService</members>
+        <members>ProposalTemplateUploaderController</members>
         <members>ProposalApiGenerationJob</members>
         <members>ProposalConfigurationService</members>
         <members>ProposalConsoleController</members>
@@ -138,11 +139,13 @@
     </types>
     <types>
         <members>opportunityProposalConsole</members>
+        <members>proposalTemplateUploader</members>
         <members>paymentSimulationCard</members>
         <members>paymentSimulationCards</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
+        <members>ProposalCover__c_Record_Page</members>
         <members>Oportunidade_P_gina_de_registro</members>
         <members>Oportunidade_P_gina_de_registro1</members>
         <members>Oportunidade_P_gina_de_registro1_Ezee_Solar</members>
@@ -152,6 +155,7 @@
     <types>
         <members>Oferta_de_Pagamento_Solar_B_Administracao</members>
         <members>Oferta_de_Pagamento_Solar_B_Usuarios</members>
+        <members>Proposta_Grupo_B_Padrao</members>
         <name>PermissionSet</name>
     </types>
     <types>
@@ -245,10 +249,11 @@
         <members>ProposalTagMapping.GRUPO_B_PADRAO_PaybackAnos</members>
         <members
     >ProposalTagMapping.GRUPO_B_PADRAO_PotenciaNominalSistema</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_PotenciaModulos</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_PotenciaPico</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_PrazoEntrega</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_SeCPFouCNPJ</members>
-        <members>ProposalTagMapping.GRUPO_B_PADRAO_TarifaTributos</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_TarifaTribiutos</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_TaxaJuros</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_TipoTelhado</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_ValidadeProposta</members>
