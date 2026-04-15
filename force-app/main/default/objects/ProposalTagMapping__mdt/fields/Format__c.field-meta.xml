@@ -44,6 +44,16 @@
                 <default>false</default>
                 <label>Lower</label>
             </value>
+            <value>
+                <fullName>DECIMAL_BR_PCT</fullName>
+                <default>false</default>
+                <label>Decimal BR %</label>
+            </value>
+            <value>
+                <fullName>COUNT_X</fullName>
+                <default>false</default>
+                <label>Count X</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

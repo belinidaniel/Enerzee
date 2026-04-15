@@ -44,6 +44,6 @@
     </values>
     <values>
         <field>TagKey__c</field>
-        <value xsi:type="xsd:string">{{NumeroModulos}}</value>
+        <value xsi:type="xsd:string">{{NumeroModulos__c}}</value>
     </values>
 </CustomMetadata>

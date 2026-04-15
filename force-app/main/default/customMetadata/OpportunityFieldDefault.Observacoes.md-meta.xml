@@ -13,7 +13,7 @@
     <values>
         <field>FieldApiName__c</field>
         <value xsi:type="xsd:string">Observacao_Proposta__c</value>
-    </values>   
+    </values>
     <values>
         <field>DefaultValue__c</field>
         <value

@@ -4,7 +4,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 >
-    <label>GRUPO_B_PADRAO - AluguelEconomiaMensal</label>
+    <label>GRUPO_B_PADRAO - numeroParcela</label>
     <protected>false</protected>
     <values>
         <field>Active__c</field>
@@ -20,7 +20,7 @@
     </values>
     <values>
         <field>Format__c</field>
-        <value xsi:type="xsd:string">CURRENCY_BR</value>
+        <value xsi:type="xsd:string">COUNT_X</value>
     </values>
     <values>
         <field>PaymentType__c</field>
@@ -40,10 +40,12 @@
     </values>
     <values>
         <field>SourcePath__c</field>
-        <value xsi:type="xsd:string">Calculated.AluguelEconomiaMensal</value>
+        <value
+      xsi:type="xsd:string"
+    >SimulationSummary.Card.InstallmentCount1</value>
     </values>
     <values>
         <field>TagKey__c</field>
-        <value xsi:type="xsd:string">{{AluguelEconomiaMensal__c}}</value>
+        <value xsi:type="xsd:string">{{numeroParcela__c}}</value>
     </values>
 </CustomMetadata>

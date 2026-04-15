@@ -40,7 +40,7 @@
     </values>
     <values>
         <field>SourcePath__c</field>
-        <value xsi:type="xsd:string">EconomiaMensalEstimada__c</value>
+        <value xsi:type="xsd:string">Calculated.FinanciamentoMensal</value>
     </values>
     <values>
         <field>TagKey__c</field>

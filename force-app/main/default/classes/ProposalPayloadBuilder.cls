@@ -184,6 +184,15 @@ public with sharing class ProposalPayloadBuilder {
         return ((Datetime) value).format('dd/MM/yyyy');
       }
     }
+    if (normalizedFormat == 'COUNT_X') {
+      Decimal decimalValue = toDecimal(value);
+      if (decimalValue == null || decimalValue == 0) {
+        return '';
+      }
+      return String.valueOf(
+          decimalValue.setScale(0, RoundingMode.HALF_UP).intValue()
+        ) + 'x';
+    }
     if (normalizedFormat == 'INTEGER') {
       Decimal decimalValue = toDecimal(value);
       return decimalValue == null
@@ -196,6 +205,13 @@ public with sharing class ProposalPayloadBuilder {
         return String.valueOf(value);
       }
       return formatDecimalBR(decimalValue, 2);
+    }
+    if (normalizedFormat == 'DECIMAL_BR_PCT') {
+      Decimal decimalValue = toDecimal(value);
+      if (decimalValue == null) {
+        return String.valueOf(value);
+      }
+      return formatDecimalBR(decimalValue, 2) + '%';
     }
     if (normalizedFormat == 'CURRENCY_BR') {
       Decimal decimalValue = toDecimal(value);

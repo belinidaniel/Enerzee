@@ -39,6 +39,12 @@ public without sharing class PaymentSimulationProposalStatusService {
         );
       }
 
+      Integer optionType = resolveOptionType(simulationRecord);
+      if (optionType == null) {
+        // Tipos não suportados pelo backend (Card, ManualFinancing) são ignorados
+        continue;
+      }
+
       String optionTypeKey = buildOptionTypeKey(
         simulationRecord.Opportunity__c,
         simulationRecord.PaymentType__c
@@ -53,7 +59,7 @@ public without sharing class PaymentSimulationProposalStatusService {
           new GORecordsTO.FinancingOptionTO(
             buildOptionName(optionIndex, simulationRecord),
             String.valueOf(simulationRecord.Id),
-            resolveOptionType(simulationRecord),
+            optionType,
             simulationRecord.Selected__c == true
           )
         );

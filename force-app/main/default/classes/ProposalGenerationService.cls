@@ -74,6 +74,18 @@ public with sharing class ProposalGenerationService {
       context.opportunity.Id,
       tagConfigs
     );
+
+    // Adiciona a seção "Viabilidade" dinamicamente quando TextStudy__c estiver preenchido
+    String viabilityText = null;
+    if (dataOpportunity.MainViability__r != null) {
+      viabilityText = (String) dataOpportunity.MainViability__r.get(
+        'TextStudy__c'
+      );
+    }
+    if (String.isNotBlank(viabilityText)) {
+      sectionsToShow.add('Viabilidade');
+    }
+
     ProposalPayloadBuilder.Payload payload = ProposalPayloadBuilder.buildPayload(
       context,
       dataOpportunity,
