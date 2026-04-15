@@ -185,24 +185,18 @@ global with sharing class OpportunityEntryRest {
         );
       }
 
-      // Popular Map de todos os Produtos
-      for (Product2 product : [
-        SELECT Id, ProductCode, Id_Externo__c, ExternalId__c
-        FROM Product2
+      // Popular Map de todos os Produtos a partir do PricebookEntry (ExternalId__c = ID externo do produto no payload)
+      for (PricebookEntry entry : [
+        SELECT ExternalId__c, Product2Id
+        FROM PricebookEntry
         WHERE
-          ProductCode IN :productExternalIds
-          OR Id_Externo__c IN :productExternalIds
-          OR ExternalId__c IN :productExternalIds
+          ExternalId__c IN :productExternalIds
+          AND Pricebook2Id = :standardPricebookId
+          AND IsActive = TRUE
         WITH SECURITY_ENFORCED
       ]) {
-        if (String.isNotBlank(product.ProductCode)) {
-          externalIdToProductId.put(product.ProductCode, product.Id);
-        }
-        if (String.isNotBlank(product.Id_Externo__c)) {
-          externalIdToProductId.put(product.Id_Externo__c, product.Id);
-        }
-        if (String.isNotBlank(product.ExternalId__c)) {
-          externalIdToProductId.put(product.ExternalId__c, product.Id);
+        if (String.isNotBlank(entry.ExternalId__c)) {
+          externalIdToProductId.put(entry.ExternalId__c, entry.Product2Id);
         }
       }
 
