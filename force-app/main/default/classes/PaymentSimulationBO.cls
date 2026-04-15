@@ -42,9 +42,17 @@ public without sharing class PaymentSimulationBO {
       return;
     }
 
-    // On update we intentionally resync every eligible opportunity so a plain
-    // edit/save can backfill missing simulations or normalize legacy rows.
-    syncSimulationsForOpportunities(newList);
+    List<Opportunity> changed = new List<Opportunity>();
+    for (Opportunity opp : newList) {
+      if (didSimulationInputsChange(opp, oldMap?.get(opp.Id))) {
+        changed.add(opp);
+      }
+    }
+    if (changed.isEmpty()) {
+      return;
+    }
+
+    syncSimulationsForOpportunities(changed);
   }
 
   public static void normalizeSelectionDetails(

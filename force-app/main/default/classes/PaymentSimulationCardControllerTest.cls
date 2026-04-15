@@ -308,7 +308,7 @@ public class PaymentSimulationCardControllerTest {
       'A simulação retornada pela ação deve existir na base.'
     );
     Assert.areEqual('Simulação ajustada', createdSimulation.ProposalLabel__c);
-    Assert.areEqual('Financing', createdSimulation.PaymentType__c);
+    Assert.areEqual('ManualFinancing', createdSimulation.PaymentType__c);
     Assert.areEqual(72, createdSimulation.InstallmentCount__c);
     Assert.areEqual(1492.28, createdSimulation.InstallmentAmount__c);
     Assert.areEqual(0.02, createdSimulation.InterestRate__c);

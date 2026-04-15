@@ -2034,11 +2034,54 @@ public class OpportunityBO {
     Map<Id, Opportunity> newMap,
     Map<Id, Opportunity> oldMap
   ) {
+    if (newMap == null || newMap.isEmpty()) {
+      return;
+    }
+
+    Id ezeeConnectRtId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+      .get('EzeeConnect')
+      .getRecordTypeId();
+    Id solarRtId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+      .get('Solar')
+      .getRecordTypeId();
+
+    Set<Id> eligibleIds = new Set<Id>();
+    for (Opportunity opp : newMap.values()) {
+      Opportunity oldOpp = oldMap.get(opp.Id);
+      if (opp.GrupoTarifario__c == 'Grupo A') {
+        continue;
+      }
+      if (
+        opp.RecordTypeId != ezeeConnectRtId &&
+        opp.RecordTypeId != solarRtId
+      ) {
+        continue;
+      }
+      if (
+        opp.PropostaGerada__c !=
+        (oldOpp != null ? oldOpp.PropostaGerada__c : null) ||
+        opp.ReadequacaoSolicitada__c !=
+        (oldOpp != null ? oldOpp.ReadequacaoSolicitada__c : null) ||
+        opp.StatusAprovacaoDesconto__c !=
+        (oldOpp != null ? oldOpp.StatusAprovacaoDesconto__c : null) ||
+        (oldOpp != null && formulaFieldsChanged(oldOpp, opp))
+      ) {
+        eligibleIds.add(opp.Id);
+      }
+    }
+
+    if (eligibleIds.isEmpty()) {
+      return;
+    }
+
     Map<Id, ProposalFileService.ProposalAvailability> proposalAvailabilityByOpportunityId = ProposalFileService.getProposalAvailability(
-      newMap != null ? new Set<Id>(newMap.keySet()) : null
+      eligibleIds
     );
 
     for (Opportunity opp : newMap.values()) {
+      if (!eligibleIds.contains(opp.Id)) {
+        continue;
+      }
       Opportunity oldOpp = oldMap.get(opp.Id);
       ProposalFileService.ProposalAvailability availability = proposalAvailabilityByOpportunityId.get(
         opp.Id
