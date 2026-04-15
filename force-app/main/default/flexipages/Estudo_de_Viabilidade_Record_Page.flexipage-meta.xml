@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPageRegions>
         <itemInstances>
@@ -37,8 +37,10 @@
                     <name>variant</name>
                     <value>linear</value>
                 </componentInstanceProperties>
-                <componentName>runtime_sales_pathassistant:pathAssistant</componentName>
-                <identifier>runtime_sales_pathassistant_pathAssistant</identifier>
+                <componentName
+        >runtime_sales_pathassistant:pathAssistant</componentName>
+                <identifier
+        >runtime_sales_pathassistant_pathAssistant</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
@@ -58,8 +60,10 @@
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.Opportunity__r.ConsultorOportunidade__c</fieldItem>
-                <identifier>RecordOpportunity_rConsultorOportunidade_cField</identifier>
+                <fieldItem
+        >Record.Opportunity__r.ConsultorOportunidade__c</fieldItem>
+                <identifier
+        >RecordOpportunity_rConsultorOportunidade_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -108,8 +112,10 @@
         </itemInstances>
         <itemInstances>
             <fieldInstance>
-                <fieldItem>Record.Opportunity__r.ConsultorOportunidade__c</fieldItem>
-                <identifier>RecordOpportunity_rConsultorOportunidade_cField2</identifier>
+                <fieldItem
+        >Record.Opportunity__r.ConsultorOportunidade__c</fieldItem>
+                <identifier
+        >RecordOpportunity_rConsultorOportunidade_cField2</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -456,8 +462,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.InputCircuitBreakerNominalCurrent__c</fieldItem>
-                <identifier>RecordInputCircuitBreakerNominalCurrent_cField</identifier>
+                <fieldItem
+        >Record.InputCircuitBreakerNominalCurrent__c</fieldItem>
+                <identifier
+        >RecordInputCircuitBreakerNominalCurrent_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -477,7 +485,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.ThePatternShouldBeReadjusted__c</fieldItem>
-                <identifier>RecordThePatternShouldBeReadjusted_cField</identifier>
+                <identifier
+        >RecordThePatternShouldBeReadjusted_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -497,7 +506,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.FixationStructureVerifiedPlace__c</fieldItem>
-                <identifier>RecordFixationStructureVerifiedPlace_cField</identifier>
+                <identifier
+        >RecordFixationStructureVerifiedPlace_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -520,8 +530,10 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.StructuralReinforcementNecessary__c</fieldItem>
-                <identifier>RecordStructuralReinforcementNecessary_cField</identifier>
+                <fieldItem
+        >Record.StructuralReinforcementNecessary__c</fieldItem>
+                <identifier
+        >RecordStructuralReinforcementNecessary_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -531,7 +543,8 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.StationTransformationViability__c</fieldItem>
-                <identifier>RecordStationTransformationViability_cField</identifier>
+                <identifier
+        >RecordStationTransformationViability_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -765,6 +778,55 @@
     </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ProposalExclusoes__c</fieldItem>
+                <identifier>RecordProposalExclusoes_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ProposalCondicoesAdicionais__c</fieldItem>
+                <identifier
+        >RecordProposalCondicoesAdicionais_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ProposalObservacoes__c</fieldItem>
+                <identifier>RecordProposalObservacoes_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-c37aa349-d201-4cfd-84b4-046cef52c19c</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-c37aa349-d201-4cfd-84b4-046cef52c19c</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column9</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-324e1df9-5b33-4cce-a116-28ba443833cc</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>label</name>
@@ -775,6 +837,24 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tabset</componentName>
                 <identifier>flexipage_tabset</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>columns</name>
+                    <value>Facet-324e1df9-5b33-4cce-a116-28ba443833cc</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Proposta opções</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:fieldSection</componentName>
+                <identifier>flexipage_fieldSection5</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
@@ -788,7 +868,8 @@
                     <name>showLegacyActivityComposer</name>
                     <value>true</value>
                 </componentInstanceProperties>
-                <componentName>runtime_sales_activities:activityPanel</componentName>
+                <componentName
+        >runtime_sales_activities:activityPanel</componentName>
                 <identifier>runtime_sales_activities_activityPanel</identifier>
             </componentInstance>
         </itemInstances>

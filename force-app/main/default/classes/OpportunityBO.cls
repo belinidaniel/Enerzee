@@ -2313,13 +2313,7 @@ public class OpportunityBO {
     Map<Id, Opportunity> oldRecordsMap
   ) {
     try {
-      User runningUser = [
-        SELECT Id, Name, Profile.Name
-        FROM User
-        WHERE Id = :UserInfo.getUserId()
-      ];
-
-      if (!runningUser.Name.equalsIgnoreCase('Integrador SAP')) {
+      if (!UserInfo.getName().equalsIgnoreCase('Integrador SAP')) {
         Set<Id> accountIds = new Set<Id>();
 
         for (Opportunity opportunity : newRecords) {

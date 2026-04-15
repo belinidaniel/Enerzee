@@ -12,8 +12,8 @@
     </values>
     <values>
         <field>FieldApiName__c</field>
-        <value xsi:type="xsd:string">Observacoes__c</value>
-    </values>
+        <value xsi:type="xsd:string">Observacao_Proposta__c</value>
+    </values>   
     <values>
         <field>DefaultValue__c</field>
         <value

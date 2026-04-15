@@ -1135,10 +1135,30 @@ public with sharing class TaskBO {
     List<Task> taskList,
     Map<Id, Task> oldMap
   ) {
+    Set<Id> candidateTasks = new Set<Id>();
+    Set<Id> candidateOwnerIds = new Set<Id>();
+    for (Task Tarefa : taskList) {
+      if (
+        TaskUtils.isTaskBeingConcluded(oldMap.get(Tarefa.Id), Tarefa) &&
+        Tarefa.Subject != null &&
+        Tarefa.Subject.contains('Ligação de follow-up') &&
+        Tarefa.WhatId != null
+      ) {
+        candidateTasks.add(Tarefa.Id);
+        candidateOwnerIds.add(Tarefa.OwnerId);
+      }
+    }
+
+    if (candidateTasks.isEmpty()) {
+      return;
+    }
+
     List<User> closerUsers = [
       SELECT Id
       FROM User
-      WHERE Email LIKE 'wagner.sampaio@enerzee.com.br%'
+      WHERE
+        Email LIKE 'wagner.sampaio@enerzee.com.br%'
+        AND Id IN :candidateOwnerIds
       LIMIT 1
     ];
     if (closerUsers.isEmpty()) {
@@ -1149,14 +1169,13 @@ public with sharing class TaskBO {
     Set<Id> relevantOpportunityIds = new Set<Id>();
     for (Task Tarefa : taskList) {
       if (
-        TaskUtils.isTaskBeingConcluded(oldMap.get(Tarefa.Id), Tarefa) &&
-        Tarefa.Subject.contains('Ligação de follow-up') &&
-        Tarefa.OwnerId == closerUserId &&
-        Tarefa.LastModifiedById == closerUserId &&
-        Tarefa.WhatId != null
+        !candidateTasks.contains(Tarefa.Id) ||
+        Tarefa.OwnerId != closerUserId ||
+        Tarefa.LastModifiedById != closerUserId
       ) {
-        relevantOpportunityIds.add(Tarefa.WhatId);
+        continue;
       }
+      relevantOpportunityIds.add(Tarefa.WhatId);
     }
 
     if (relevantOpportunityIds.isEmpty()) {
