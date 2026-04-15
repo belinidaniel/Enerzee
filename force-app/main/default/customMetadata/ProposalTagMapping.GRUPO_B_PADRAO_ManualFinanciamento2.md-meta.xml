@@ -40,7 +40,7 @@
     </values>
     <values>
         <field>SourcePath__c</field>
-        <value xsi:nil="true" />
+        <value xsi:type="xsd:string" />
     </values>
     <values>
         <field>TagKey__c</field>
