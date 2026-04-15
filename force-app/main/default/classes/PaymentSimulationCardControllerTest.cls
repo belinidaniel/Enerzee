@@ -330,7 +330,7 @@ public class PaymentSimulationCardControllerTest {
       'A simulação manual deve aparecer em um card separado.'
     );
     Assert.areEqual(true, manualCard.isManual);
-    Assert.areEqual('Financing', manualCard.paymentType);
+    Assert.areEqual('ManualFinancing', manualCard.paymentType);
     Assert.areEqual(1, manualCard.options.size());
     Assert.areEqual(result.simulationId, manualCard.options[0].id);
   }
