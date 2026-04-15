@@ -3,14 +3,27 @@
     <types>
         <members>ProposalTagMapping__mdt.Format__c</members>
         <members>PaymentSimulation__c.PaymentType__c</members>
+        <members>ProposalCover__c.IntegrationKey__c</members>
         <name>CustomField</name>
     </types>
     <types>
+        <members>ProposalCover__c-Layout de Capa de Proposta</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>ProposalApiClient</members>
         <members>PaymentSimulationProposalStatusService</members>
+        <members>ProposalConsoleController</members>
+        <members>ProposalCoverRoutingService</members>
         <members>ProposalComputedValueService</members>
         <members>ProposalGenerationService</members>
         <members>ProposalPayloadBuilder</members>
+        <members>ProposalTemplateResolver</members>
         <name>ApexClass</name>
+    </types>
+    <types>
+        <members>opportunityProposalConsole</members>
+        <name>LightningComponentBundle</name>
     </types>
     <types>
         <members>OpportunityFieldDefault.Observacoes</members>

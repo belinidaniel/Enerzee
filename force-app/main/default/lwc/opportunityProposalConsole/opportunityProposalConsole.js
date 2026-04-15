@@ -232,7 +232,11 @@ export default class OpportunityProposalConsole extends LightningElement {
 
   openModal() {
     this.isModalOpen = true;
-    this.updatePreviewUrl();
+    // Só dispara preview automático se já houver um template selecionado.
+    // Para capas legado, updatePreviewUrl abrirá em nova aba e fechará o preview no modal.
+    if (this.selectedTemplateId) {
+      this.updatePreviewUrl();
+    }
   }
 
   closeModal() {
@@ -277,6 +281,13 @@ export default class OpportunityProposalConsole extends LightningElement {
           throw new Error(
             result?.message || "Não foi possível carregar a pré-visualização."
           );
+        }
+
+        // Capas legado (VF page) não renderizam em iframe — abre em nova aba.
+        if (this.isLegacyPreview) {
+          window.open(this.previewUrl, "_blank");
+          this.previewUrl = null;
+          this.isPreviewLoading = false;
         }
       })
       .catch((error) => {
@@ -584,6 +595,10 @@ export default class OpportunityProposalConsole extends LightningElement {
 
   get hasPreviewUrl() {
     return !!this.filePreviewUrl;
+  }
+
+  get isLegacyPreview() {
+    return (this.previewUrl || "").startsWith("/apex/");
   }
 
   reduceError(error) {

@@ -7,6 +7,9 @@
  * @test              : ProposalConsoleControllerApiTest, ProposalConsoleControllerTest, ProposalEngineSupportTest
  **/
 public with sharing class ProposalGenerationService {
+  public class ProposalGenerationException extends Exception {
+  }
+
   public class ProposalResult {
     @AuraEnabled
     public Boolean success;
@@ -34,7 +37,7 @@ public with sharing class ProposalGenerationService {
       coverId
     );
     if (String.isBlank(context.coverKey)) {
-      throw new AuraHandledException(
+      throw new ProposalGenerationException(
         'A capa selecionada nao possui configuracao valida para geracao via API.'
       );
     }
@@ -45,7 +48,7 @@ public with sharing class ProposalGenerationService {
       context.paymentType
     );
     if (tagConfigs.isEmpty()) {
-      throw new AuraHandledException(
+      throw new ProposalGenerationException(
         'Nenhuma tag configurada para a capa selecionada e o cenario atual.'
       );
     }
@@ -56,7 +59,7 @@ public with sharing class ProposalGenerationService {
       context.paymentType
     );
     if (sectionsToShow.isEmpty()) {
-      throw new AuraHandledException(
+      throw new ProposalGenerationException(
         'Nenhuma secao configurada para a capa selecionada e o cenario atual.'
       );
     }
@@ -65,7 +68,7 @@ public with sharing class ProposalGenerationService {
       context
     );
     if (templateVersion == null) {
-      throw new AuraHandledException(
+      throw new ProposalGenerationException(
         'Nenhum arquivo PPTX configurado para a capa e contexto selecionados.'
       );
     }

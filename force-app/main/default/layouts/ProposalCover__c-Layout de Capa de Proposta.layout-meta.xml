@@ -42,6 +42,10 @@
                 <behavior>Edit</behavior>
                 <field>TemplateUrl__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>IntegrationKey__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>

@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 04-15-2026
  * @last modified by  : Daniel Belini
  * @test              : PDFControllerExtensionExtraTest, PDFControllerExtensionTest
  **/
@@ -843,7 +843,13 @@ public with sharing class PDFControllerExtension {
         return null;
       }
       List<ProposalCover__c> covers = [
-        SELECT Id, IntegrationKey__c, Template__c, IsActive__c, isPromotional__c
+        SELECT
+          Id,
+          IntegrationKey__c,
+          Template__c,
+          IsActive__c,
+          isPromotional__c,
+          TemplateUrl__c
         FROM ProposalCover__c
         WHERE Id = :candidateCoverId AND IsActive__c = TRUE
         LIMIT 1

@@ -3,6 +3,8 @@
     <fullName>IntegrationKey__c</fullName>
     <caseSensitive>true</caseSensitive>
     <externalId>true</externalId>
+    <description
+  >Chave funcional que identifica o conjunto de tags e seções configuradas para esta capa no sistema de geração de propostas via API. Obrigatória quando "URL do Template" estiver preenchida. Valores conhecidos: GRUPO_B_PADRAO. Sem este campo, a geração via API falhará.</description>
     <label>Integration Key</label>
     <length>80</length>
     <required>false</required>

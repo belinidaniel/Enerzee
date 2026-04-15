@@ -2,7 +2,7 @@
  * @description       : Apex controller that powers the LWC responsible for managing proposal generation.
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-10-2026
+ * @last modified on  : 04-15-2026
  * @last modified by  : Daniel Belini
  * @test              : ProposalConsoleControllerApiTest, ProposalConsoleControllerTest, ProposalEngineSupportTest
  **/
@@ -126,9 +126,15 @@ public with sharing class ProposalConsoleController {
     ProposalCover__c cover = resolveActiveCover(coverId);
 
     if (isApiCover(cover)) {
-      return fromServiceResult(
-        ProposalGenerationService.generatePreview(opportunityId, cover.Id)
-      );
+      try {
+        return fromServiceResult(
+          ProposalGenerationService.generatePreview(opportunityId, cover.Id)
+        );
+      } catch (ProposalGenerationService.ProposalGenerationException e) {
+        throw new AuraHandledException(e.getMessage());
+      } catch (ProposalTemplateResolver.TemplateResolverException e) {
+        throw new AuraHandledException(e.getMessage());
+      }
     }
 
     ProposalActionResult result = new ProposalActionResult();
@@ -168,21 +174,27 @@ public with sharing class ProposalConsoleController {
     ProposalCover__c cover = resolveActiveCover(coverId);
 
     if (isApiCover(cover)) {
-      ProposalGenerationService.ProposalResult generatedProposal = ProposalGenerationService.generateProposal(
-        opp.Id,
-        cover.Id
-      );
+      try {
+        ProposalGenerationService.ProposalResult generatedProposal = ProposalGenerationService.generateProposal(
+          opp.Id,
+          cover.Id
+        );
 
-      IntegracaoNivelloProposta.ProposalIntegrationResult integrationResult = applyPostGenerationUpdates(
-        opp,
-        false,
-        generatedProposal.contentVersionId
-      );
+        IntegracaoNivelloProposta.ProposalIntegrationResult integrationResult = applyPostGenerationUpdates(
+          opp,
+          false,
+          generatedProposal.contentVersionId
+        );
 
-      ProposalActionResult result = fromServiceResult(generatedProposal);
-      result.success = true;
-      result.message = resolveSendMessage(false, integrationResult);
-      return result;
+        ProposalActionResult result = fromServiceResult(generatedProposal);
+        result.success = true;
+        result.message = resolveSendMessage(false, integrationResult);
+        return result;
+      } catch (ProposalGenerationService.ProposalGenerationException e) {
+        throw new AuraHandledException(e.getMessage());
+      } catch (ProposalTemplateResolver.TemplateResolverException e) {
+        throw new AuraHandledException(e.getMessage());
+      }
     }
 
     Blob pdfContent = PDFControllerExtension.generatePdfContent(
@@ -247,7 +259,13 @@ public with sharing class ProposalConsoleController {
     }
 
     List<ProposalCover__c> covers = [
-      SELECT Id, Template__c, IntegrationKey__c, IsActive__c, isPromotional__c
+      SELECT
+        Id,
+        Template__c,
+        IntegrationKey__c,
+        IsActive__c,
+        isPromotional__c,
+        TemplateUrl__c
       FROM ProposalCover__c
       WHERE Id = :coverId
       LIMIT 1
@@ -258,7 +276,11 @@ public with sharing class ProposalConsoleController {
     }
 
     ProposalCover__c cover = covers[0];
-    if (!isApiCover(cover) && String.isBlank(cover.Template__c)) {
+    if (
+      !isApiCover(cover) &&
+      String.isBlank(cover.Template__c) &&
+      String.isBlank(cover.TemplateUrl__c)
+    ) {
       throw new AuraHandledException('Modelo de proposta inválido.');
     }
     return cover;

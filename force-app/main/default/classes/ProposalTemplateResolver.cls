@@ -2,11 +2,14 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-10-2026
+ * @last modified on  : 04-15-2026
  * @last modified by  : Daniel Belini
  * @test              : ProposalEngineSupportTest
  **/
 public with sharing class ProposalTemplateResolver {
+  public class TemplateResolverException extends Exception {
+  }
+
   public static ContentVersion resolveTemplate(
     ProposalContextResolver.Context context
   ) {
@@ -15,7 +18,15 @@ public with sharing class ProposalTemplateResolver {
       context.opportunity == null ||
       context.cover == null
     ) {
-      throw new AuraHandledException('Contexto de proposta invalido.');
+      throw new TemplateResolverException('Contexto de proposta invalido.');
+    }
+
+    // No fluxo API o template é sempre resolvido por URL (TemplateUrl__c ou override fixo no ProposalApiClient).
+    // Nenhum arquivo PPTX físico é necessário — retorna template sintético com o nome da capa.
+    if (ProposalCoverRoutingService.usesApiFlow(context.cover)) {
+      ContentVersion urlTemplate = new ContentVersion();
+      urlTemplate.Title = context.cover.Name;
+      return urlTemplate;
     }
 
     Id coverId = context.cover.Id;
@@ -49,7 +60,7 @@ public with sharing class ProposalTemplateResolver {
     System.debug('[ProposalTemplateResolver] versionIds: ' + versionIds);
 
     if (versionIds.isEmpty()) {
-      throw new AuraHandledException(
+      throw new TemplateResolverException(
         'Nenhum arquivo encontrado na Capa de Proposta selecionada.'
       );
     }
@@ -136,13 +147,13 @@ public with sharing class ProposalTemplateResolver {
     );
 
     if (matches.size() > 1) {
-      throw new AuraHandledException(
+      throw new TemplateResolverException(
         'Configuracao ambigua: existe mais de um template PPTX valido para a Capa e kit selecionados.'
       );
     }
 
     if (matches.isEmpty()) {
-      throw new AuraHandledException(
+      throw new TemplateResolverException(
         'Nenhum arquivo PPTX configurado para a Capa e kit selecionados.'
       );
     }

@@ -111,7 +111,7 @@ public with sharing class ProposalApiClient {
     if (response.getStatusCode() < 200 || response.getStatusCode() >= 300) {
       String errorBody = response.getBody();
       System.debug('[ProposalApiClient] ERROR body=' + errorBody);
-      throw new AuraHandledException(
+      throw new ProposalGenerationService.ProposalGenerationException(
         'Falha ao gerar proposta na API. Status ' +
           response.getStatusCode() +
           ': ' +
