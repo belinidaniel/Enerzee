@@ -42,17 +42,9 @@ public without sharing class PaymentSimulationBO {
       return;
     }
 
-    List<Opportunity> changed = new List<Opportunity>();
-    for (Opportunity opp : newList) {
-      if (didSimulationInputsChange(opp, oldMap?.get(opp.Id))) {
-        changed.add(opp);
-      }
-    }
-    if (changed.isEmpty()) {
-      return;
-    }
-
-    syncSimulationsForOpportunities(changed);
+    // Resync every eligible opportunity on each update so that plain saves
+    // backfill missing simulations and normalize legacy rows.
+    syncSimulationsForOpportunities(newList);
   }
 
   public static void normalizeSelectionDetails(

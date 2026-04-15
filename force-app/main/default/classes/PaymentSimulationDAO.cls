@@ -38,25 +38,30 @@ public without sharing class PaymentSimulationDAO {
     ];
   }
 
+  private static List<FinancingRate__c> cachedActiveFinancingRates;
+
   public static List<FinancingRate__c> getActiveFinancingRates() {
-    return [
-      SELECT
-        Id,
-        Name,
-        ProposalLabel__c,
-        PaymentType__c,
-        Installments1__c,
-        Installments2__c,
-        Installments3__c,
-        Installments4__c,
-        InstallmentRate1__c,
-        InstallmentRate2__c,
-        InstallmentRate3__c,
-        InstallmentRate4__c
-      FROM FinancingRate__c
-      WHERE Active__c = TRUE
-      ORDER BY Name ASC
-    ];
+    if (cachedActiveFinancingRates == null) {
+      cachedActiveFinancingRates = [
+        SELECT
+          Id,
+          Name,
+          ProposalLabel__c,
+          PaymentType__c,
+          Installments1__c,
+          Installments2__c,
+          Installments3__c,
+          Installments4__c,
+          InstallmentRate1__c,
+          InstallmentRate2__c,
+          InstallmentRate3__c,
+          InstallmentRate4__c
+        FROM FinancingRate__c
+        WHERE Active__c = TRUE
+        ORDER BY Name ASC
+      ];
+    }
+    return cachedActiveFinancingRates;
   }
 
   public static Map<Id, Account> getAccountsByIds(Set<Id> accountIds) {
