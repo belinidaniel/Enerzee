@@ -246,7 +246,16 @@ export default class PaymentSimulationCards extends LightningElement {
           "A simulação foi salva, mas nenhum modelo padrão de proposta foi encontrado para regenerar o PDF.";
       }
 
-      await refreshApex(this._wiredResult);
+      // Recarrega os cards diretamente para garantir exibição do novo record
+      try {
+        const freshCards = await getSimulationCards({
+          opportunityId: this.recordId
+        });
+        this.cards = freshCards;
+      } catch {
+        await refreshApex(this._wiredResult);
+      }
+
       if (this._wiredProposalData) {
         await refreshApex(this._wiredProposalData);
       }

@@ -10,6 +10,10 @@ public without sharing class PaymentSimulationBO {
   @TestVisible
   private static final String SOLAR_RECORD_TYPE_DEVELOPER_NAME = 'Solar';
   @TestVisible
+  private static final String MANUAL_SIMULATION_LABEL = 'Simulação ajustada';
+  @TestVisible
+  private static final String MANUAL_PAYMENT_TYPE = 'ManualFinancing';
+  @TestVisible
   private static final String GROUP_B_VALUE = 'Grupo B';
   @TestVisible
   private static final String PAYMENT_TYPE_RENTAL = 'Rental';
@@ -281,6 +285,12 @@ public without sharing class PaymentSimulationBO {
         List<PaymentSimulation__c> orphanedSimulations : existingByKey.values()
       ) {
         for (PaymentSimulation__c orphanedSimulation : orphanedSimulations) {
+          if (
+            orphanedSimulation.ProposalLabel__c == MANUAL_SIMULATION_LABEL ||
+            orphanedSimulation.PaymentType__c == MANUAL_PAYMENT_TYPE
+          ) {
+            continue;
+          }
           syncPlan.simulationsToDelete.add(orphanedSimulation);
           syncPlan.affectedOpportunityIds.add(opportunityRecord.Id);
         }

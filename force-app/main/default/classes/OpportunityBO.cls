@@ -3201,7 +3201,8 @@ public class OpportunityBO {
       'BDI__c',
       'ValorTotalProdutos__c',
       'Direct__c',
-      'StatusAprovacaoDesconto__c'
+      'StatusAprovacaoDesconto__c',
+      'FormaPagamento__c'
     };
 
     for (String fieldName : sourceFields) {

@@ -2,13 +2,14 @@
  * @description       : Controller LWC para exibição das simulações de pagamento agrupadas por ProposalLabel
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-07-2026
+ * @last modified on  : 04-14-2026
  * @last modified by  : Daniel Belini
  * @test              : PaymentSimulationCardControllerTest
  **/
 public with sharing class PaymentSimulationCardController {
   private static final String READJUSTMENT_STAGE = 'Readequação de Proposta';
   private static final String MANUAL_SIMULATION_LABEL = 'Simulação ajustada';
+  private static final String MANUAL_PAYMENT_TYPE = 'ManualFinancing';
 
   @AuraEnabled(cacheable=true)
   public static List<ProposalCardWrapper> getSimulationCards(Id opportunityId) {
@@ -149,7 +150,7 @@ public with sharing class PaymentSimulationCardController {
     PaymentSimulation__c manualSimulation = new PaymentSimulation__c(
       Opportunity__c = opportunityRecord.Id,
       FinancingRate__c = baseSimulation.FinancingRate__c,
-      PaymentType__c = baseSimulation.PaymentType__c,
+      PaymentType__c = MANUAL_PAYMENT_TYPE,
       ProposalLabel__c = MANUAL_SIMULATION_LABEL,
       InstallmentCount__c = installmentCount,
       InstallmentAmount__c = normalizedInstallmentAmount,
