@@ -20,7 +20,7 @@
     </values>
     <values>
         <field>Format__c</field>
-        <value xsi:type="xsd:string">CURRENCY_BR</value>
+        <value xsi:type="xsd:string">CURRENCY_BR_PREFIX</value>
     </values>
     <values>
         <field>PaymentType__c</field>

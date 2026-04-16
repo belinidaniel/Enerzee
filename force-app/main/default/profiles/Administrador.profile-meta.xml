@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Profile xmlns="http://soap.sforce.com/2006/04/metadata">
     <applicationVisibilities>
         <application>ClickSign</application>
@@ -2030,7 +2030,8 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>AssignedResource.FSL__Estimated_Travel_Time_From_Source__c</field>
+        <field
+    >AssignedResource.FSL__Estimated_Travel_Time_From_Source__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -10830,7 +10831,8 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>ServiceAppointment.FSL__Prevent_Geocoding_For_Chatter_Actions__c</field>
+        <field
+    >ServiceAppointment.FSL__Prevent_Geocoding_For_Chatter_Actions__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -10855,7 +10857,8 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>ServiceAppointment.FSL__Schedule_over_lower_priority_appointment__c</field>
+        <field
+    >ServiceAppointment.FSL__Schedule_over_lower_priority_appointment__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -10880,7 +10883,8 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>ServiceAppointment.FSL__Virtual_Service_For_Chatter_Action__c</field>
+        <field
+    >ServiceAppointment.FSL__Virtual_Service_For_Chatter_Action__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -11315,7 +11319,8 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>ServiceTerritoryMember.FSL__Internal_SLR_HomeAddress_Geolocation__c</field>
+        <field
+    >ServiceTerritoryMember.FSL__Internal_SLR_HomeAddress_Geolocation__c</field>
         <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -12481,6 +12486,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>ViabilityStudy__c.TextStudy__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ViabilityStudy__c.TextStudy2__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -15435,531 +15445,795 @@
     </fieldPermissions>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>AccountAfterSave</flow>
+        <flow>
+AccountAfterSave;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>true</enabled>
-        <flow>AgentForce_Lead_Create_Lead_or_Update</flow>
+        <flow>
+AgentForce_Lead_Create_Lead_or_Update;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>AgentForce_Lead_Create_file</flow>
+        <flow>
+AgentForce_Lead_Create_file;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>AgentForce_Update_Lead_by_Lead_Interaction</flow>
+        <flow>
+AgentForce_Update_Lead_by_Lead_Interaction;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>AgenteforceObterUltimaConversa</flow>
+        <flow>
+AgenteforceObterUltimaConversa;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>true</enabled>
-        <flow>Agenteforce_Obter_Informacao_Message</flow>
+        <flow>
+Agenteforce_Obter_Informacao_Message;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Atribui_Direito</flow>
+        <flow>
+Atribui_Direito;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>AtualizaCampoNumeroIdentificacaoConsultor</flow>
+        <flow>
+AtualizaCampoNumeroIdentificacaoConsultor;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>AtualizaNumeroIndentificadorConta</flow>
+        <flow>
+AtualizaNumeroIndentificadorConta;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Atualiza_Percentual_de_Conclusao</flow>
+        <flow>
+Atualiza_Percentual_de_Conclusao;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Atualiza_Status_Apos_46_Horas</flow>
+        <flow>
+Atualiza_Status_Apos_46_Horas;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Atualiza_Tipo_de_Registro</flow>
+        <flow>
+Atualiza_Tipo_de_Registro;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>AutoLoginOmniChannelFlow</flow>
+        <flow>
+AutoLoginOmniChannelFlow;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>AutoLoginOmniChannelFlow_V1</flow>
+        <flow>
+AutoLoginOmniChannelFlow_V1;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Batch_Task_Project_Journey</flow>
+        <flow>
+Batch_Task_Project_Journey;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Bot_Confused_Decision</flow>
+        <flow>
+Bot_Confused_Decision;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Bot_Obter_Informa_o_Message</flow>
+        <flow>
+Bot_Obter_Informa_o_Message;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Bot_Verifica_CPF_CNPJ</flow>
+        <flow>
+Bot_Verifica_CPF_CNPJ;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Carregar_Arquivos_Para_Ordem_de_Servico</flow>
+        <flow>
+Carregar_Arquivos_Para_Ordem_de_Servico;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Case_After_Insert</flow>
+        <flow>
+Case_After_Insert;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Case_Atribuir_Caso</flow>
+        <flow>
+Case_Atribuir_Caso;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Case_Create_contract_to_Integrator</flow>
+        <flow>
+Case_Create_contract_to_Integrator;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Chats_Route_to_Bot</flow>
+        <flow>
+Chats_Route_to_Bot;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Consultant_State_Region_Assignment</flow>
+        <flow>
+Consultant_State_Region_Assignment;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Contact_After_Save</flow>
+        <flow>
+Contact_After_Save;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Copy_To_validate</flow>
+        <flow>
+Copy_To_validate;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Create_Viability_Study_Flow</flow>
+        <flow>
+Create_Viability_Study_Flow;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Enviar_Email_Nova_Oportunidade_Criada</flow>
+        <flow>
+Enviar_Email_Nova_Oportunidade_Criada;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Enviar_Email_Solicitacao_de_Simulacao_de_Financiamento</flow>
+        <flow>
+Enviar_Email_Solicitacao_de_Simulacao_de_Financiamento;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Enviar_Email_ap_s_7_dias_teis_do_envio_de_Contrato</flow>
+        <flow>
+Enviar_Email_ap_s_7_dias_teis_do_envio_de_Contrato;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Finish_Viability_Study_Flow</flow>
+        <flow>
+Finish_Viability_Study_Flow;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Flow_Atualiza_Status_do_Lead</flow>
+        <flow>
+Flow_Atualiza_Status_do_Lead;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Flow_Criar_um_Lead</flow>
+        <flow>
+Flow_Criar_um_Lead;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Flow_Obter_Lead_por_Id_do_Lead</flow>
+        <flow>
+Flow_Obter_Lead_por_Id_do_Lead;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>FluxoQualificacaoCliente</flow>
+        <flow>
+FluxoQualificacaoCliente;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Fluxo_Aceite_Proposta</flow>
+        <flow>
+Fluxo_Aceite_Proposta;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Fluxo_Qualificacao_Consultor</flow>
+        <flow>
+Fluxo_Qualificacao_Consultor;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Fluxo_Qualificacao_Integrador</flow>
+        <flow>
+Fluxo_Qualificacao_Integrador;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Fluxo_atualizar_Opp_concluida_em_Instalacao</flow>
+        <flow>
+Fluxo_atualizar_Opp_concluida_em_Instalacao;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>JBSystemFlow_Contact</flow>
+        <flow>
+JBSystemFlow_Contact;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Lab065LeadUpdateAfterIntegraLeadAtualizacao</flow>
+        <flow>
+Lab065LeadUpdateAfterIntegraLeadAtualizacao;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Lb065FlowBeforeUpdateLastLeadStatusModification</flow>
+        <flow>
+Lb065FlowBeforeUpdateLastLeadStatusModification;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>LeadBeforeSave</flow>
+        <flow>
+LeadBeforeSave;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>LeadOnCreateFlowAfterAtribuiPontuacaoParaLead</flow>
+        <flow>
+LeadOnCreateFlowAfterAtribuiPontuacaoParaLead;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Lead_After_Save</flow>
+        <flow>
+Lead_After_Save;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Lead_Qualification_Score</flow>
+        <flow>
+Lead_Qualification_Score;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Lead_Send_Email_Agent_Force</flow>
+        <flow>
+Lead_Send_Email_Agent_Force;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Lead_Update_After_Distribui_o_do_Lead</flow>
+        <flow>
+Lead_Update_After_Distribui_o_do_Lead;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Messaging_Session_Account_update</flow>
+        <flow>
+Messaging_Session_Account_update;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Messaging_Session_After_Update</flow>
+        <flow>
+Messaging_Session_After_Update;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Messaging_Session_Before_Save</flow>
+        <flow>
+Messaging_Session_Before_Save;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Messaging_Session_Conversation_Update</flow>
+        <flow>
+Messaging_Session_Conversation_Update;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Messaging_Session_SLA_Setup</flow>
+        <flow>
+Messaging_Session_SLA_Setup;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Messaging_Session_Trigger_Before</flow>
+        <flow>
+Messaging_Session_Trigger_Before;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Messaging_User_Account_update</flow>
+        <flow>
+Messaging_User_Account_update;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Notifica_o_Por_Email_para_o_Integrador</flow>
+        <flow>
+Notifica_o_Por_Email_para_o_Integrador;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Notificacao_Readequar_Proposta</flow>
+        <flow>
+Notificacao_Readequar_Proposta;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Notificar_Consultor</flow>
+        <flow>
+Notificar_Consultor;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Notificar_Proprietario_sobre_fases_da_proposta</flow>
+        <flow>
+Notificar_Proprietario_sobre_fases_da_proposta;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Notificar_fases_da_proposta_financeiro</flow>
+        <flow>
+Notificar_fases_da_proposta_financeiro;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>OpportunityAfterSave</flow>
+        <flow>
+OpportunityAfterSave;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>OpportunityUpdateOpportunityOwner</flow>
+        <flow>
+OpportunityUpdateOpportunityOwner;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Opportunity_Before_Insert</flow>
+        <flow>
+Opportunity_Before_Insert;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Opportunity_Bow_e_is_promotional</flow>
+        <flow>
+Opportunity_Bow_e_is_promotional;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Opportunity_Monitoramento_SLA</flow>
+        <flow>
+Opportunity_Monitoramento_SLA;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Opportunity_Send_Proposal_Manually</flow>
+        <flow>
+Opportunity_Send_Proposal_Manually;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Opportunity_Shipping_address</flow>
+        <flow>
+Opportunity_Shipping_address;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Opportunity_Update_Owner_Integracao</flow>
+        <flow>
+Opportunity_Update_Owner_Integracao;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Opportunity_Update_Viability_Approval</flow>
+        <flow>
+Opportunity_Update_Viability_Approval;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Opportunity_Update_economic_simulation_data</flow>
+        <flow>
+Opportunity_Update_economic_simulation_data;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Opportunity_close_Opportunity_with_Activitity</flow>
+        <flow>
+Opportunity_close_Opportunity_with_Activitity;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Project_After_Update</flow>
+        <flow>
+Project_After_Update;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Projeto_After_save</flow>
+        <flow>
+Projeto_After_save;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Readequacao_de_Propostas</flow>
+        <flow>
+Readequacao_de_Propostas;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Reatribuir_Messaging_Session</flow>
+        <flow>
+Reatribuir_Messaging_Session;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Agente</flow>
+        <flow>
+Rotear_de_EzeeBot_Agente;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Assistencia_Tecnica</flow>
+        <flow>
+Rotear_de_EzeeBot_Assistencia_Tecnica;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Assistencia_Tecnica_Pos_Venda_Consultor</flow>
+        <flow>
+Rotear_de_EzeeBot_Assistencia_Tecnica_Pos_Venda_Consultor;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Atendimento_ao_Consultor</flow>
+        <flow>
+Rotear_de_EzeeBot_Atendimento_ao_Consultor;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Atendimento_ao_cliente</flow>
+        <flow>
+Rotear_de_EzeeBot_Atendimento_ao_cliente;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Comercial</flow>
+        <flow>
+Rotear_de_EzeeBot_Comercial;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Comercial_BOT</flow>
+        <flow>
+Rotear_de_EzeeBot_Comercial_BOT;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Contratos_Consultor</flow>
+        <flow>
+Rotear_de_EzeeBot_Contratos_Consultor;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Ezee_Livre</flow>
+        <flow>
+Rotear_de_EzeeBot_Ezee_Livre;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Financiamento_Consultor</flow>
+        <flow>
+Rotear_de_EzeeBot_Financiamento_Consultor;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Jornada_do_Cliente_Pos_venda_consultor</flow>
+        <flow>
+Rotear_de_EzeeBot_Jornada_do_Cliente_Pos_venda_consultor;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Propostas_Connect</flow>
+        <flow>
+Rotear_de_EzeeBot_Propostas_Connect;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Propostas_Direct</flow>
+        <flow>
+Rotear_de_EzeeBot_Propostas_Direct;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Propostas_Ezee_Solar</flow>
+        <flow>
+Rotear_de_EzeeBot_Propostas_Ezee_Solar;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Propostas_Grupo_A</flow>
+        <flow>
+Rotear_de_EzeeBot_Propostas_Grupo_A;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Propostas_Suporte_ao_Consultor</flow>
+        <flow>
+Rotear_de_EzeeBot_Propostas_Suporte_ao_Consultor;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Quero_ser_um_consultor</flow>
+        <flow>
+Rotear_de_EzeeBot_Quero_ser_um_consultor;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Quero_ser_um_integrador</flow>
+        <flow>
+Rotear_de_EzeeBot_Quero_ser_um_integrador;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Recepcao</flow>
+        <flow>
+Rotear_de_EzeeBot_Recepcao;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Suporte_ao_Integrador</flow>
+        <flow>
+Rotear_de_EzeeBot_Suporte_ao_Integrador;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Viabilidade_Tecnica</flow>
+        <flow>
+Rotear_de_EzeeBot_Viabilidade_Tecnica;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_EzeeBot_Viabilidade_Tecnica_Consultor</flow>
+        <flow>
+Rotear_de_EzeeBot_Viabilidade_Tecnica_Consultor;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_de_Ezeebot_Propostas_Produtos_e_Servi_os</flow>
+        <flow>
+Rotear_de_Ezeebot_Propostas_Produtos_e_Servi_os;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>true</enabled>
-        <flow>Rotear_para_EzeeBot</flow>
+        <flow>
+Rotear_para_EzeeBot;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Rotear_para_EzeeBot_V3</flow>
+        <flow>
+Rotear_para_EzeeBot_V3;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Route_from_EzeeBot</flow>
+        <flow>
+Route_from_EzeeBot;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Route_to_Bot_Route</flow>
+        <flow>
+Route_to_Bot_Route;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Route_to_Enerzee_Aviso_n_mero_antigo</flow>
+        <flow>
+Route_to_Enerzee_Aviso_n_mero_antigo;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Route_to_EzeeBot</flow>
+        <flow>
+Route_to_EzeeBot;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>SLA_Setup_Message_Session</flow>
+        <flow>
+SLA_Setup_Message_Session;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Screen_Jornada_do_Projeto</flow>
+        <flow>
+Screen_Jornada_do_Projeto;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Send_Custom_Message</flow>
+        <flow>
+Send_Custom_Message;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Send_Custom_Message_Contact_Update</flow>
+        <flow>
+Send_Custom_Message_Contact_Update;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Send_Feedback_Email</flow>
+        <flow>
+Send_Feedback_Email;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Send_Message_Notification</flow>
+        <flow>
+Send_Message_Notification;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Start_Conversation_Opportunity</flow>
+        <flow>
+Start_Conversation_Opportunity;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Task</flow>
+        <flow>
+Task;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>TaskAfterSave</flow>
+        <flow>
+TaskAfterSave;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>TaskNotificarAtribuicaoAoFechador</flow>
+        <flow>
+TaskNotificarAtribuicaoAoFechador;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Task_Before_Insert</flow>
+        <flow>
+Task_Before_Insert;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Task_Jornada_do_Cliente</flow>
+        <flow>
+Task_Jornada_do_Cliente;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Task_Notifica_o_de_Tarefas_Di_rias_do_Fechador</flow>
+        <flow>
+Task_Notifica_o_de_Tarefas_Di_rias_do_Fechador;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Task_Notificacao_de_Tarefas_Atrasadas_do_Fechador</flow>
+        <flow>
+Task_Notificacao_de_Tarefas_Atrasadas_do_Fechador;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Task_Notificar_Tarefa_Concluida</flow>
+        <flow>
+Task_Notificar_Tarefa_Concluida;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Task_Send_custom_notification_to_queue</flow>
+        <flow>
+Task_Send_custom_notification_to_queue;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Transfer_Chat</flow>
+        <flow>
+Transfer_Chat;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Transfer_Chat_Assign_To_me</flow>
+        <flow>
+Transfer_Chat_Assign_To_me;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Transferir_chat</flow>
+        <flow>
+Transferir_chat;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Unlock_Chat</flow>
+        <flow>
+Unlock_Chat;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>UpdateStatusServiceAppointment</flow>
+        <flow>
+UpdateStatusServiceAppointment;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Update_contract_Number</flow>
+        <flow>
+Update_contract_Number;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>VarListaOpp</flow>
+        <flow>
+VarListaOpp;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>Viability_Solicitacao_de_Viabilidade_Local</flow>
+        <flow>
+Viability_Solicitacao_de_Viabilidade_Local;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>WaitFlow</flow>
+        <flow>
+WaitFlow;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>pontua_o_de_promotor_l_quida</flow>
+        <flow>
+pontua_o_de_promotor_l_quida;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>routing_agentSDR</flow>
+        <flow>
+routing_agentSDR;
+    </flow>
     </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
-        <flow>satisfa_o_do_cliente</flow>
+        <flow>
+satisfa_o_do_cliente;
+    </flow>
     </flowAccesses>
     <layoutAssignments>
         <layout>Account-Cliente Pessoa Física</layout>
@@ -15983,37 +16257,46 @@
         <layout>ActionPlan-Layout de Plano de ação</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ActionPlanItemDependency-Layout de Dependência do item do plano de ação</layout>
+        <layout
+    >ActionPlanItemDependency-Layout de Dependência do item do plano de ação</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ActionPlanTemplate-Layout de Modelo de plano de ação</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ActionPlanTemplateItem-Layout de Item do modelo de plano de ação</layout>
+        <layout
+    >ActionPlanTemplateItem-Layout de Item do modelo de plano de ação</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ActionPlanTemplateItemValue-Layout de Valor de item do modelo de plano de ação</layout>
+        <layout
+    >ActionPlanTemplateItemValue-Layout de Valor de item do modelo de plano de ação</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ActionPlanTemplateVersion-Layout de Versão do modelo de plano de ação</layout>
+        <layout
+    >ActionPlanTemplateVersion-Layout de Versão do modelo de plano de ação</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ActionPlnTmplItmDependency-Layout de Dependência do item do modelo de plano de ação</layout>
+        <layout
+    >ActionPlnTmplItmDependency-Layout de Dependência do item do modelo de plano de ação</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ActivityRequiredDocument__mdt-Documento por Atividade Layout</layout>
+        <layout
+    >ActivityRequiredDocument__mdt-Documento por Atividade Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Address-Layout de Endereço</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>AlternativePaymentMethod-Layout de Método de pagamento alternativo</layout>
+        <layout
+    >AlternativePaymentMethod-Layout de Método de pagamento alternativo</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ApptBundleConfig-Layout de Configuração do pacote do compromisso</layout>
+        <layout
+    >ApptBundleConfig-Layout de Configuração do pacote do compromisso</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ApptBundlePolicy-Layout de Política do pacote do compromisso</layout>
+        <layout
+    >ApptBundlePolicy-Layout de Política do pacote do compromisso</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Asset-Asset Layout</layout>
@@ -16031,10 +16314,12 @@
         <layout>AuthorizationForm-Authorization Form Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>AuthorizationFormConsent-Authorization Form Consent Layout</layout>
+        <layout
+    >AuthorizationFormConsent-Authorization Form Consent Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>AuthorizationFormDataUse-Authorization Form Data Use Layout</layout>
+        <layout
+    >AuthorizationFormDataUse-Authorization Form Data Use Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>AuthorizationFormText-Authorization Form Text Layout</layout>
@@ -16043,34 +16328,41 @@
         <layout>BusinessBrand-Layout de Marca de negócios</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>CalcMatrixColumnRange-Layout de Decision Matrix Column Range</layout>
+        <layout
+    >CalcMatrixColumnRange-Layout de Decision Matrix Column Range</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>CalcProcStepRelationship-Layout de Expression Set Step Relationship</layout>
+        <layout
+    >CalcProcStepRelationship-Layout de Expression Set Step Relationship</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>CalculationMatrix-Layout de Matriz de decisões</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>CalculationMatrixColumn-Layout de Decision Matrix Column</layout>
+        <layout
+    >CalculationMatrixColumn-Layout de Decision Matrix Column</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>CalculationMatrixRow-Layout de Decision Matrix Row</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>CalculationMatrixVersion-Layout de Decision Matrix Version</layout>
+        <layout
+    >CalculationMatrixVersion-Layout de Decision Matrix Version</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>CalculationProcedure-Layout de Calculation Procedure</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>CalculationProcedureStep-Layout de Calculation Procedure Step</layout>
+        <layout
+    >CalculationProcedureStep-Layout de Calculation Procedure Step</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>CalculationProcedureVariable-Layout de Calculation Procedure Variable</layout>
+        <layout
+    >CalculationProcedureVariable-Layout de Calculation Procedure Variable</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>CalculationProcedureVersion-Layout de Calculation Procedure Version</layout>
+        <layout
+    >CalculationProcedureVersion-Layout de Calculation Procedure Version</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Campaign-Campaign Layout</layout>
@@ -16079,7 +16371,8 @@
         <layout>CampaignMember-Campaign Member Page Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>CardPaymentMethod-Layout de Método de pagamento com cartão</layout>
+        <layout
+    >CardPaymentMethod-Layout de Método de pagamento com cartão</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Case-Case Layout</layout>
@@ -16094,11 +16387,13 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Case-Case Layout - Gestão de Faturas e Concessionarias</layout>
-        <recordType>Case.Assist_ncia_T_cnica_Gest_o_de_Faturas_e_Concession_rias_Interno</recordType>
+        <recordType
+    >Case.Assist_ncia_T_cnica_Gest_o_de_Faturas_e_Concession_rias_Interno</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Case-Case Layout - Gestão de Faturas e Concessionarias</layout>
-        <recordType>Case.Assistencia_Tecnica_Gestao_de_Faturas_e_Concessionarias</recordType>
+        <recordType
+    >Case.Assistencia_Tecnica_Gestao_de_Faturas_e_Concessionarias</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Case-Case Layout - Jornada do Cliente</layout>
@@ -16106,7 +16401,8 @@
     </layoutAssignments>
     <layoutAssignments>
         <layout>Case-Case Layout - Manutenções e Garantias</layout>
-        <recordType>Case.Assist_ncia_T_cnica_Manuten_es_e_Garantias_Servi_os</recordType>
+        <recordType
+    >Case.Assist_ncia_T_cnica_Manuten_es_e_Garantias_Servi_os</recordType>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Case-Case Layout - Manutenções e Garantias</layout>
@@ -16172,7 +16468,8 @@
         <layout>ContactPointPhone-Contact Point Phone Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ContactPointTypeConsent-Contact Point Type Consent Layout</layout>
+        <layout
+    >ContactPointTypeConsent-Contact Point Type Consent Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ContentAsset-Layout de Arquivo de ativo</layout>
@@ -16187,7 +16484,8 @@
         <layout>ContractLineItem-Layout de itens de linha do contrato</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ConvMessageSendRequest-Conversation Message Send Request Layout</layout>
+        <layout
+    >ConvMessageSendRequest-Conversation Message Send Request Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Conversation-Conversation Layout</layout>
@@ -16238,19 +16536,23 @@
         <layout>EmailMessage-Email Message Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>EmpUserProvisionProcessErr-Layout de Erro de processo de provisionamento de usuário de funcionário</layout>
+        <layout
+    >EmpUserProvisionProcessErr-Layout de Erro de processo de provisionamento de usuário de funcionário</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>EmpUserProvisioningProcess-Layout de Processo de provisionamento de usuário de funcionário</layout>
+        <layout
+    >EmpUserProvisioningProcess-Layout de Processo de provisionamento de usuário de funcionário</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Employee-Layout de Funcionário</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>EngagementAttendee-Layout de Participante do engajamento</layout>
+        <layout
+    >EngagementAttendee-Layout de Participante do engajamento</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>EngagementInteraction-Layout da Interação de engajamento</layout>
+        <layout
+    >EngagementInteraction-Layout da Interação de engajamento</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>EngagementTopic-Layout do Tópico do engajamento</layout>
@@ -16279,13 +16581,15 @@
         <layout>ExpenseReport-Layout de Relatório de despesas</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ExpenseReportEntry-Layout de Entrada do relatório de despesas</layout>
+        <layout
+    >ExpenseReportEntry-Layout de Entrada do relatório de despesas</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ExpressionSet-Layout de Conjunto de expressões</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ExpressionSetVersion-Layout de Versão do conjunto de expressões</layout>
+        <layout
+    >ExpressionSetVersion-Layout de Versão do conjunto de expressões</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Faturamento__c-Layout de Faturamento</layout>
@@ -16300,10 +16604,12 @@
         <layout>FieldSetMapping__mdt-Field Set Mapping Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>FldSvcObjChg-Layout de Alteração do objeto do serviço de campo</layout>
+        <layout
+    >FldSvcObjChg-Layout de Alteração do objeto do serviço de campo</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>FldSvcObjChgDtl-Layout de Detalhe da alteração do objeto do serviço de campo</layout>
+        <layout
+    >FldSvcObjChgDtl-Layout de Detalhe da alteração do objeto do serviço de campo</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>FlowInterview-Layout de Flow Interview</layout>
@@ -16334,7 +16640,8 @@
         <recordType>Integradores__c.Integrador</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>InternalOrganizationUnit-Layout de Unidade organizacional interna</layout>
+        <layout
+    >InternalOrganizationUnit-Layout de Unidade organizacional interna</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Invoice-Layout de Fatura</layout>
@@ -16387,13 +16694,16 @@
         <layout>LiveChatTranscript-Live Chat Transcript Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>LiveChatTranscriptActive-Live Chat Transcript %28In Progress%29 Layout</layout>
+        <layout
+    >LiveChatTranscriptActive-Live Chat Transcript %28In Progress%29 Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>LiveChatTranscriptEvent-Live Chat Transcript Event Layout</layout>
+        <layout
+    >LiveChatTranscriptEvent-Live Chat Transcript Event Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>LiveChatTranscriptWaiting-Live Chat Transcript %28Waiting%29 Layout</layout>
+        <layout
+    >LiveChatTranscriptWaiting-Live Chat Transcript %28Waiting%29 Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>LiveChatVisitor-Live Chat Visitor Layout</layout>
@@ -16414,7 +16724,8 @@
         <layout>MaintenancePlan-Layout de Plano de manutenção</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>MaintenanceWorkRule-Layout de Regra de trabalho de manutenção</layout>
+        <layout
+    >MaintenanceWorkRule-Layout de Regra de trabalho de manutenção</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>MessagingChannel-Layout de Canal do Messaging</layout>
@@ -16432,30 +16743,37 @@
         <layout>OperatingHours-Layout de Horário de funcionamento</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>OperatingHoursHoliday-Layout de Horário de funcionamento no feriado</layout>
+        <layout
+    >OperatingHoursHoliday-Layout de Horário de funcionamento no feriado</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Opportunity-Informe os dados da proposta - Grupo A -  Mini - Elaboração de proposta</layout>
+        <layout
+    >Opportunity-Informe os dados da proposta - Grupo A -  Mini - Elaboração de proposta</layout>
         <recordType>Opportunity.MiniGrupoAElaboracao</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Opportunity-Informe os dados da proposta - Grupo A - Micro - Elaboração de proposta</layout>
+        <layout
+    >Opportunity-Informe os dados da proposta - Grupo A - Micro - Elaboração de proposta</layout>
         <recordType>Opportunity.MicroGrupoAElaboracao</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Opportunity-Informe os dados da proposta - Grupo B - Micro - Elaboração de proposta</layout>
+        <layout
+    >Opportunity-Informe os dados da proposta - Grupo B - Micro - Elaboração de proposta</layout>
         <recordType>Opportunity.MicroGrupoBElaboracao</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Opportunity-Informe os dados da proposta - Grupo B - Mini - Elaboração de proposta</layout>
+        <layout
+    >Opportunity-Informe os dados da proposta - Grupo B - Mini - Elaboração de proposta</layout>
         <recordType>Opportunity.MiniGrupoBElaboracao</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Opportunity-Inserir dados da viabilidade - Micro - Análise viabilidade</layout>
+        <layout
+    >Opportunity-Inserir dados da viabilidade - Micro - Análise viabilidade</layout>
         <recordType>Opportunity.ViabilidadeMicroAnaliseViabilidade</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>Opportunity-Inserir dados da viabilidade - Mini - Análise viabilidade</layout>
+        <layout
+    >Opportunity-Inserir dados da viabilidade - Mini - Análise viabilidade</layout>
         <recordType>Opportunity.ViabilidadeMiniAnaliseViabilidade</recordType>
     </layoutAssignments>
     <layoutAssignments>
@@ -16546,10 +16864,12 @@
         <recordType>Opportunity.Solar</recordType>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>OpportunityAttachmentLink__c-Layout de Anexo Externo da Oportunidade</layout>
+        <layout
+    >OpportunityAttachmentLink__c-Layout de Anexo Externo da Oportunidade</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>OpportunityContactRole-Layout de Papel do contato da oportunidade</layout>
+        <layout
+    >OpportunityContactRole-Layout de Papel do contato da oportunidade</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>OpportunityLineItem-Opportunity Product Layout</layout>
@@ -16567,7 +16887,8 @@
         <layout>Payment-Layout de Pagamento</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>PaymentAuthAdjustment-Layout de Ajuste de autorização do pagamento</layout>
+        <layout
+    >PaymentAuthAdjustment-Layout de Ajuste de autorização do pagamento</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>PaymentAuthorization-Layout de Autorização do pagamento</layout>
@@ -16576,13 +16897,15 @@
         <layout>PaymentGateway-Layout de Gateway de pagamento</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>PaymentGatewayLog-Layout de Registro de gateway de pagamento</layout>
+        <layout
+    >PaymentGatewayLog-Layout de Registro de gateway de pagamento</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>PaymentGroup-Layout de Grupo de pagamento</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>PaymentLineInvoice-Layout de Fatura da linha de pagamento</layout>
+        <layout
+    >PaymentLineInvoice-Layout de Fatura da linha de pagamento</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Pricebook2-Price Book Layout</layout>
@@ -16600,34 +16923,40 @@
         <layout>ProductConsumed-Layout de Produto consumido</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ProductConsumedState-Layout de Estado de produto consumido</layout>
+        <layout
+    >ProductConsumedState-Layout de Estado de produto consumido</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ProductItem-Layout de Item do produto</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ProductItemTransaction-Layout de Transação de item do produto</layout>
+        <layout
+    >ProductItemTransaction-Layout de Transação de item do produto</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ProductRequest-Layout de Solicitação de produto</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ProductRequestLineItem-Layout de Item de linha da solicitação de produto</layout>
+        <layout
+    >ProductRequestLineItem-Layout de Item de linha da solicitação de produto</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ProductRequired-Layout de Produto obrigatório</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ProductServiceCampaign-Layout de Campanha de serviço do produto</layout>
+        <layout
+    >ProductServiceCampaign-Layout de Campanha de serviço do produto</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ProductServiceCampaignItem-Layout de Item de campanha de serviço do produto</layout>
+        <layout
+    >ProductServiceCampaignItem-Layout de Item de campanha de serviço do produto</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ProductTransfer-Layout de Transferência de produto</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ProductTransferState-Layout de Estado de transferência de produto</layout>
+        <layout
+    >ProductTransferState-Layout de Estado de transferência de produto</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ProfileSkill-Skill Layout</layout>
@@ -16728,16 +17057,19 @@
         <layout>RecordAlert-Layout de Alerta de registro</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>RecordsetFilterCriteria-Layout de Critério de filtro do conjunto de registro</layout>
+        <layout
+    >RecordsetFilterCriteria-Layout de Critério de filtro do conjunto de registro</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>RecordsetFilterCriteriaRule-Layout de Regra do critério de filtro do conjunto de registro</layout>
+        <layout
+    >RecordsetFilterCriteriaRule-Layout de Regra do critério de filtro do conjunto de registro</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Refund-Layout de Reembolso</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>RefundLinePayment-Layout de Pagamento da linha de reembolso</layout>
+        <layout
+    >RefundLinePayment-Layout de Pagamento da linha de reembolso</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ResourceAbsence-Layout de Ausência de recurso</layout>
@@ -16749,7 +17081,8 @@
         <layout>ReturnOrder-Layout de Pedido de retorno</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ReturnOrderLineItem-Layout de Item de linha do pedido de retorno</layout>
+        <layout
+    >ReturnOrderLineItem-Layout de Item de linha do pedido de retorno</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>SalesforceContract-Salesforce Contract Layout</layout>
@@ -16773,10 +17106,12 @@
         <layout>SchedulingRule-Layout de Regra de agendamento</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>SchedulingWorkspace-Layout de Espaço de trabalho de agendamento</layout>
+        <layout
+    >SchedulingWorkspace-Layout de Espaço de trabalho de agendamento</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>SchedulingWorkspaceTerritory-Layout de Território do espaço de trabalho de agendamento</layout>
+        <layout
+    >SchedulingWorkspaceTerritory-Layout de Território do espaço de trabalho de agendamento</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Scorecard-Scorecard Layout</layout>
@@ -16794,7 +17129,8 @@
         <layout>ServiceAppointment-Layout de Compromisso de serviço</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ServiceAppointmentCapacityUsage-Layout de Uso da capacidade de compromisso de serviço</layout>
+        <layout
+    >ServiceAppointmentCapacityUsage-Layout de Uso da capacidade de compromisso de serviço</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ServiceContract-Layout do contrato de serviço</layout>
@@ -16809,19 +17145,23 @@
         <layout>ServiceResourceCapacity-Layout de Capacidade do recurso</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ServiceResourcePreference-Layout de Preferência do recurso de serviço</layout>
+        <layout
+    >ServiceResourcePreference-Layout de Preferência do recurso de serviço</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ServiceResourceSkill-Layout de Habilidade do recurso de serviço</layout>
+        <layout
+    >ServiceResourceSkill-Layout de Habilidade do recurso de serviço</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ServiceTerritory-Layout de Território de serviço</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ServiceTerritoryMember-Layout de Membro de território de serviço</layout>
+        <layout
+    >ServiceTerritoryMember-Layout de Membro de território de serviço</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>SetupMessagingSession__c-Configuração Messaging Session Layout</layout>
+        <layout
+    >SetupMessagingSession__c-Configuração Messaging Session Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Shift-Layout de Turno</layout>
@@ -16833,7 +17173,8 @@
         <layout>ShiftPatternEntry-Layout de Entrada do padrão de turnos</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>ShiftSchedulingOperation-Layout de Operação de agendamento de turno</layout>
+        <layout
+    >ShiftSchedulingOperation-Layout de Operação de agendamento de turno</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ShiftTemplate-Layout de Modelo do turno</layout>
@@ -16901,7 +17242,8 @@
         <layout>UserProvisioningLog-User Provisioning Log Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>UserProvisioningRequest-User Provisioning Request Layout</layout>
+        <layout
+    >UserProvisioningRequest-User Provisioning Request Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>ViabilityStudy__c-Layout de Estudo de Viabilidade</layout>
@@ -16919,10 +17261,12 @@
         <layout>WorkBadgeDefinition-Badge Layout 192</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>WorkCapacityAvailability-Layout de Disponibilidade da capacidade de trabalho</layout>
+        <layout
+    >WorkCapacityAvailability-Layout de Disponibilidade da capacidade de trabalho</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>WorkCapacityLimit-Layout de Limite de capacidade de trabalho</layout>
+        <layout
+    >WorkCapacityLimit-Layout de Limite de capacidade de trabalho</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>WorkCapacityUsage-Layout de Uso da capacidade de tarefa</layout>
@@ -17017,13 +17361,15 @@
         <layout>WorkPlan-Layout de Plano de trabalho</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>WorkPlanSelectionRule-Layout de Regra de seleção do plano de trabalho</layout>
+        <layout
+    >WorkPlanSelectionRule-Layout de Regra de seleção do plano de trabalho</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>WorkPlanTemplate-Layout de Modelo de plano de trabalho</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>WorkPlanTemplateEntry-Layout de Entrada do modelo de plano de trabalho</layout>
+        <layout
+    >WorkPlanTemplateEntry-Layout de Entrada do modelo de plano de trabalho</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>WorkStep-Layout de Etapa de trabalho</layout>
@@ -18796,12 +19142,14 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
-        <recordType>Case.Assist_ncia_T_cnica_Gest_o_de_Faturas_e_Concession_rias_Interno</recordType>
+        <recordType
+    >Case.Assist_ncia_T_cnica_Gest_o_de_Faturas_e_Concession_rias_Interno</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
-        <recordType>Case.Assist_ncia_T_cnica_Manuten_es_e_Garantias_Servi_os</recordType>
+        <recordType
+    >Case.Assist_ncia_T_cnica_Manuten_es_e_Garantias_Servi_os</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
@@ -18812,7 +19160,8 @@
     </recordTypeVisibilities>
     <recordTypeVisibilities>
         <default>false</default>
-        <recordType>Case.Assistencia_Tecnica_Gestao_de_Faturas_e_Concessionarias</recordType>
+        <recordType
+    >Case.Assistencia_Tecnica_Gestao_de_Faturas_e_Concessionarias</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
@@ -19046,7 +19395,8 @@
     </servicePresenceStatusAccesses>
     <servicePresenceStatusAccesses>
         <enabled>false</enabled>
-        <servicePresenceStatus>Dispon_Bate_papo_Status_Based</servicePresenceStatus>
+        <servicePresenceStatus
+    >Dispon_Bate_papo_Status_Based</servicePresenceStatus>
     </servicePresenceStatusAccesses>
     <servicePresenceStatusAccesses>
         <enabled>false</enabled>

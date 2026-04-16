@@ -4,7 +4,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 >
-    <label>GRUPO_B_PADRAO - Financiamento2</label>
+    <label>GRUPO_B_PADRAO - CustosViabilidade</label>
     <protected>false</protected>
     <values>
         <field>Active__c</field>
@@ -20,7 +20,7 @@
     </values>
     <values>
         <field>Format__c</field>
-        <value xsi:type="xsd:string">CURRENCY_BR_PREFIX</value>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>PaymentType__c</field>
@@ -40,12 +40,10 @@
     </values>
     <values>
         <field>SourcePath__c</field>
-        <value
-      xsi:type="xsd:string"
-    >SimulationSummary.Financing.InstallmentAmount2</value>
+        <value xsi:type="xsd:string">Calculated.CustosViabilidade</value>
     </values>
     <values>
         <field>TagKey__c</field>
-        <value xsi:type="xsd:string">{{Financiamento2__c}}</value>
+        <value xsi:type="xsd:string">{{CustosViabilidade__c}}</value>
     </values>
 </CustomMetadata>
