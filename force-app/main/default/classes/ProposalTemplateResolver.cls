@@ -21,14 +21,6 @@ public with sharing class ProposalTemplateResolver {
       throw new TemplateResolverException('Contexto de proposta invalido.');
     }
 
-    // No fluxo API o template é sempre resolvido por URL (TemplateUrl__c ou override fixo no ProposalApiClient).
-    // Nenhum arquivo PPTX físico é necessário — retorna template sintético com o nome da capa.
-    if (ProposalCoverRoutingService.usesApiFlow(context.cover)) {
-      ContentVersion urlTemplate = new ContentVersion();
-      urlTemplate.Title = context.cover.Name;
-      return urlTemplate;
-    }
-
     Id coverId = context.cover.Id;
     String tipoKit = context.opportunity.TipoKitPromocional__c;
 
@@ -60,6 +52,12 @@ public with sharing class ProposalTemplateResolver {
     System.debug('[ProposalTemplateResolver] versionIds: ' + versionIds);
 
     if (versionIds.isEmpty()) {
+      // No fluxo API sem arquivos físicos: usa template sintético (a API resolve pelo TemplateUrl__c)
+      if (ProposalCoverRoutingService.usesApiFlow(context.cover)) {
+        ContentVersion urlTemplate = new ContentVersion();
+        urlTemplate.Title = context.cover.Name;
+        return urlTemplate;
+      }
       throw new TemplateResolverException(
         'Nenhum arquivo encontrado na Capa de Proposta selecionada.'
       );
