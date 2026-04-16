@@ -48,7 +48,7 @@ public with sharing class ProposalContextResolver {
 
   public static Context resolve(Id opportunityId, Id coverId) {
     if (opportunityId == null || coverId == null) {
-      throw new AuraHandledException(
+      throw new ProposalGenerationService.ProposalGenerationException(
         'O registro da oportunidade e a capa da proposta sao obrigatorios.'
       );
     }
@@ -97,7 +97,7 @@ public with sharing class ProposalContextResolver {
     ];
 
     if (coverRecord.IsActive__c != true) {
-      throw new AuraHandledException(
+      throw new ProposalGenerationService.ProposalGenerationException(
         'A capa de proposta selecionada esta inativa.'
       );
     }

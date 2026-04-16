@@ -65,7 +65,7 @@ public with sharing class ProposalPayloadBuilder {
     Id templateVersionId
   ) {
     if (context == null || opportunityRecord == null) {
-      throw new AuraHandledException(
+      throw new ProposalGenerationService.ProposalGenerationException(
         'Contexto insuficiente para montar o payload.'
       );
     }
@@ -123,7 +123,7 @@ public with sharing class ProposalPayloadBuilder {
       rawValue = config.defaultValue;
     }
     if (rawValue == null && config.required == true) {
-      throw new AuraHandledException(
+      throw new ProposalGenerationService.ProposalGenerationException(
         'Campo obrigatorio nao encontrado para a tag ' + config.tagKey + '.'
       );
     }
@@ -147,7 +147,7 @@ public with sharing class ProposalPayloadBuilder {
 
   private static void validatePath(String path) {
     if (!SAFE_PATH_PATTERN.matcher(path).matches()) {
-      throw new AuraHandledException(
+      throw new ProposalGenerationService.ProposalGenerationException(
         'SourcePath invalido para a configuracao de proposta: ' + path
       );
     }

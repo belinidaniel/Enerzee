@@ -44,6 +44,6 @@
     </values>
     <values>
         <field>TagKey__c</field>
-        <value xsi:type="xsd:string">{{Exclusoes}}</value>
+        <value xsi:type="xsd:string">{{Exclusoes__c}}</value>
     </values>
 </CustomMetadata>

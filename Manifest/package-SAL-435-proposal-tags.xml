@@ -11,9 +11,13 @@
         <name>Layout</name>
     </types>
     <types>
+        <members>OpportunityBO</members>
         <members>ProposalApiClient</members>
+        <members>ProposalFileService</members>
         <members>PaymentSimulationProposalStatusService</members>
+        <members>ProposalConfigurationService</members>
         <members>ProposalConsoleController</members>
+        <members>ProposalContextResolver</members>
         <members>ProposalCoverRoutingService</members>
         <members>ProposalComputedValueService</members>
         <members>ProposalGenerationService</members>
@@ -48,6 +52,10 @@
     >ProposalTagMapping.GRUPO_B_PADRAO_parcelaFinanciamento3</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_EstudoViabilidade</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_Autossuficiencia</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_Exclusoes</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_Observacoes</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_CondicoesAdicionais</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_ConsultorCelular</members>
         <name>CustomMetadata</name>
     </types>
     <version>62.0</version>

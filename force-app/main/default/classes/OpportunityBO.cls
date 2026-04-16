@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-14-2026
+ * @last modified on  : 04-15-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
  *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
@@ -41,11 +41,13 @@ public class OpportunityBO {
       return testProposalFieldDefaults;
     }
     Map<String, String> result = new Map<String, String>();
-    for (
-      OpportunityFieldDefault__mdt record : OpportunityFieldDefault__mdt.getAll()
-        .values()
-    ) {
-      if (record.Active__c != true || String.isBlank(record.FieldApiName__c)) {
+    // getAll() nao retorna campos LongTextArea (DefaultValue__c) — usar SOQL
+    for (OpportunityFieldDefault__mdt record : [
+      SELECT FieldApiName__c, DefaultValue__c
+      FROM OpportunityFieldDefault__mdt
+      WHERE Active__c = TRUE
+    ]) {
+      if (String.isBlank(record.FieldApiName__c)) {
         continue;
       }
       result.put(record.FieldApiName__c, record.DefaultValue__c);
@@ -2048,28 +2050,35 @@ public class OpportunityBO {
     Set<Id> eligibleIds = new Set<Id>();
     for (Opportunity opp : newMap.values()) {
       Opportunity oldOpp = oldMap.get(opp.Id);
-      if (opp.GrupoTarifario__c == 'Grupo A') {
-        continue;
-      }
-      if (
+      Boolean skippedGrupoA = opp.GrupoTarifario__c == 'Grupo A';
+      Boolean skippedRecordType =
         opp.RecordTypeId != ezeeConnectRtId &&
-        opp.RecordTypeId != solarRtId
-      ) {
+        opp.RecordTypeId != solarRtId;
+      Boolean propostaGeradaChanged =
+        opp.PropostaGerada__c !=
+        (oldOpp != null ? oldOpp.PropostaGerada__c : null);
+      Boolean propostaGeradaStillFalse = opp.PropostaGerada__c == false;
+      Boolean readequacaoChanged =
+        opp.ReadequacaoSolicitada__c !=
+        (oldOpp != null ? oldOpp.ReadequacaoSolicitada__c : null);
+      Boolean aprovacaoChanged =
+        opp.StatusAprovacaoDesconto__c !=
+        (oldOpp != null ? oldOpp.StatusAprovacaoDesconto__c : null);
+      Boolean formulaChanged =
+        oldOpp != null && formulaFieldsChanged(oldOpp, opp);
+      if (skippedGrupoA || skippedRecordType) {
         continue;
       }
       if (
-        opp.PropostaGerada__c !=
-        (oldOpp != null ? oldOpp.PropostaGerada__c : null) ||
-        opp.ReadequacaoSolicitada__c !=
-        (oldOpp != null ? oldOpp.ReadequacaoSolicitada__c : null) ||
-        opp.StatusAprovacaoDesconto__c !=
-        (oldOpp != null ? oldOpp.StatusAprovacaoDesconto__c : null) ||
-        (oldOpp != null && formulaFieldsChanged(oldOpp, opp))
+        propostaGeradaChanged ||
+        propostaGeradaStillFalse ||
+        readequacaoChanged ||
+        aprovacaoChanged ||
+        formulaChanged
       ) {
         eligibleIds.add(opp.Id);
       }
     }
-
     if (eligibleIds.isEmpty()) {
       return;
     }
@@ -2088,6 +2097,18 @@ public class OpportunityBO {
       );
       Boolean hasReadyProposal = availability != null && availability.isReady();
 
+      System.debug('generateProposalAsync - oppId: ' + opp.Id);
+      System.debug(
+        'generateProposalAsync - PropostaGerada__c: ' + opp.PropostaGerada__c
+      );
+      System.debug(
+        'generateProposalAsync - ReadequacaoSolicitada__c: ' +
+        opp.ReadequacaoSolicitada__c
+      );
+      System.debug(
+        'generateProposalAsync - StatusAprovacaoDesconto__c: ' +
+        opp.StatusAprovacaoDesconto__c
+      );
       // Se já gerada e não é readequação solicitada, não enfileira novamente
       if (
         opp.PropostaGerada__c == true &&

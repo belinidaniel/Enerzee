@@ -185,11 +185,7 @@ public with sharing class ProposalFileService {
     String proposalNumber = normalizeWhitespace(
       (String) opportunityRecord.get('Numeroproposta__c')
     );
-    String primaryName = normalizeWhitespace(
-      opportunityRecord.Account != null
-        ? opportunityRecord.Account.Name
-        : opportunityRecord.Name
-    );
+    String primaryName = normalizeWhitespace(opportunityRecord.Name);
 
     List<String> parts = new List<String>();
     if (String.isNotBlank(proposalNumber)) {
