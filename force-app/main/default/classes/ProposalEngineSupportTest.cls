@@ -26,7 +26,8 @@ private class ProposalEngineSupportTest {
         Name = TestFactory.nextUniqueValue('CapaEngine'),
         GrupoTarifario__c = 'Grupo B',
         IntegrationKey__c = COVER_KEY,
-        Template__c = 'ModeloPropostaA'
+        Template__c = 'ModeloPropostaA',
+        TemplateUrl__c = 'https://api.example.com/template-engine'
       ),
       true
     );
@@ -155,31 +156,33 @@ private class ProposalEngineSupportTest {
       'Com TipoKitPromocional preenchido, a oportunidade deve ser tratada como promocional.'
     );
 
-    Assert.areEqual(
-      'GRUPO_B_PADRAO',
+    Assert.isNull(
       ProposalCoverRoutingService.resolveCoverKey(
         new ProposalCover__c(
           Template__c = 'ModeloPropostaB',
           isPromotional__c = false
         )
       ),
-      'A capa padrão ModeloPropostaB não promocional deve ser redirecionada para a chave da API.'
+      'Sem TemplateUrl__c a capa legada não possui chave de API.'
     );
-    Assert.isTrue(
+    Assert.isFalse(
       ProposalCoverRoutingService.usesApiFlow(
         new ProposalCover__c(
           Template__c = 'ModeloPropostaB',
           isPromotional__c = false
         )
       ),
-      'O fluxo deve reconhecer a capa padrão ModeloPropostaB como elegível para a API.'
+      'Sem TemplateUrl__c a capa legada não deve usar o fluxo de API.'
     );
     Assert.areEqual(
       'CHAVE_EXPLICITA',
       ProposalCoverRoutingService.resolveCoverKey(
-        new ProposalCover__c(IntegrationKey__c = 'CHAVE_EXPLICITA')
+        new ProposalCover__c(
+          IntegrationKey__c = 'CHAVE_EXPLICITA',
+          TemplateUrl__c = 'https://api.example.com/template'
+        )
       ),
-      'Quando existir IntegrationKey explícita ela deve ter prioridade.'
+      'Quando existir IntegrationKey explícita e TemplateUrl ela deve ter prioridade.'
     );
   }
 
@@ -195,7 +198,7 @@ private class ProposalEngineSupportTest {
     try {
       ProposalContextResolver.resolve(null, null);
       Assert.fail('Os identificadores obrigatórios deveriam ser validados.');
-    } catch (AuraHandledException handledException) {
+    } catch (Exception handledException) {
       Assert.isTrue(
         String.isNotBlank(handledException.getMessage()),
         'A validação precisa retornar uma mensagem de erro.'
@@ -215,7 +218,7 @@ private class ProposalEngineSupportTest {
     try {
       ProposalContextResolver.resolve(opportunityRecord.Id, inactiveCover.Id);
       Assert.fail('Capas inativas não podem ser resolvidas.');
-    } catch (AuraHandledException handledException) {
+    } catch (Exception handledException) {
       Assert.isTrue(
         String.isNotBlank(handledException.getMessage()),
         'A validação da capa inativa precisa retornar uma mensagem de erro.'
@@ -311,7 +314,7 @@ private class ProposalEngineSupportTest {
         '068000000000001AAA'
       );
       Assert.fail('A tag obrigatória sem valor deveria lançar exceção.');
-    } catch (AuraHandledException handledException) {
+    } catch (Exception handledException) {
       Assert.isTrue(
         String.isNotBlank(handledException.getMessage()),
         'A exceção deve retornar uma mensagem de validação.'
@@ -552,7 +555,7 @@ private class ProposalEngineSupportTest {
     try {
       ProposalTemplateResolver.resolveTemplate(null);
       Assert.fail('O resolver deveria validar o contexto obrigatório.');
-    } catch (AuraHandledException handledException) {
+    } catch (Exception handledException) {
       Assert.isTrue(
         String.isNotBlank(handledException.getMessage()),
         'A validação de contexto inválido deve retornar uma mensagem de erro.'

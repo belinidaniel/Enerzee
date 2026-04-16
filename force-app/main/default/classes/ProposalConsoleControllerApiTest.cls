@@ -24,7 +24,8 @@ private class ProposalConsoleControllerApiTest {
         Name = 'Capa API Teste',
         GrupoTarifario__c = 'Grupo B',
         IntegrationKey__c = COVER_KEY,
-        Template__c = 'ModeloPropostaA'
+        Template__c = 'ModeloPropostaA',
+        TemplateUrl__c = 'https://api.example.com/template-api-teste'
       ),
       true
     );
@@ -63,7 +64,7 @@ private class ProposalConsoleControllerApiTest {
   @isTest
   static void generatePreviewAndSendProposalReuseGeneratedFile() {
     Opportunity opportunityRecord = [
-      SELECT Id, StageName, PropostaGerada__c
+      SELECT Id, Name, StageName, PropostaGerada__c
       FROM Opportunity
       WHERE IdVirtualOffice__c = 'VO-API-001'
       LIMIT 1
@@ -444,7 +445,9 @@ private class ProposalConsoleControllerApiTest {
       new ProposalCover__c(
         Name = TestFactory.nextUniqueValue('CapaFallbackApi'),
         GrupoTarifario__c = 'Grupo B',
-        Template__c = 'ModeloPropostaB'
+        Template__c = 'ModeloPropostaB',
+        IntegrationKey__c = 'GRUPO_B_PADRAO',
+        TemplateUrl__c = 'https://api.example.com/template-fallback'
       ),
       true
     );

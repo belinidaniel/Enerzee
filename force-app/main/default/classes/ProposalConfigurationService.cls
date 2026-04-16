@@ -116,9 +116,22 @@ public with sharing class ProposalConfigurationService {
     }
 
     List<TagConfig> results = new List<TagConfig>();
-    for (
-      ProposalTagMapping__mdt record : ProposalTagMapping__mdt.getAll().values()
-    ) {
+    // getAll() nao retorna campos LongTextArea (DefaultValue__c) — usar SOQL
+    for (ProposalTagMapping__mdt record : [
+      SELECT
+        CoverKey__c,
+        TagKey__c,
+        SourcePath__c,
+        Scenario__c,
+        PaymentType__c,
+        Format__c,
+        DefaultValue__c,
+        Required__c,
+        SortOrder__c,
+        Active__c
+      FROM ProposalTagMapping__mdt
+      WHERE Active__c = TRUE
+    ]) {
       TagConfig config = new TagConfig();
       config.coverKey = record.CoverKey__c;
       config.tagKey = record.TagKey__c;
@@ -143,16 +156,17 @@ public with sharing class ProposalConfigurationService {
     }
 
     Map<String, List<String>> result = new Map<String, List<String>>();
-    for (
-      ProposalSectionRule__mdt record : ProposalSectionRule__mdt.getAll()
-        .values()
-    ) {
-      if (record.Active__c != true) {
-        continue;
-      }
-      if (normalize(record.CoverKey__c) != normalize(coverKey)) {
-        continue;
-      }
+    // getAll() nao retorna campos LongTextArea (SectionsJson__c) — usar SOQL
+    for (ProposalSectionRule__mdt record : [
+      SELECT
+        CoverKey__c,
+        PaymentType__c,
+        Scenario__c,
+        SectionsJson__c,
+        Active__c
+      FROM ProposalSectionRule__mdt
+      WHERE Active__c = TRUE AND CoverKey__c = :coverKey
+    ]) {
       if (String.isBlank(record.SectionsJson__c)) {
         continue;
       }

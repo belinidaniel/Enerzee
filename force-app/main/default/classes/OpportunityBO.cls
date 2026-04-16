@@ -2057,7 +2057,6 @@ public class OpportunityBO {
       Boolean propostaGeradaChanged =
         opp.PropostaGerada__c !=
         (oldOpp != null ? oldOpp.PropostaGerada__c : null);
-      Boolean propostaGeradaStillFalse = opp.PropostaGerada__c == false;
       Boolean readequacaoChanged =
         opp.ReadequacaoSolicitada__c !=
         (oldOpp != null ? oldOpp.ReadequacaoSolicitada__c : null);
@@ -2066,6 +2065,11 @@ public class OpportunityBO {
         (oldOpp != null ? oldOpp.StatusAprovacaoDesconto__c : null);
       Boolean formulaChanged =
         oldOpp != null && formulaFieldsChanged(oldOpp, opp);
+      Boolean propostaGeradaStillFalse =
+        opp.PropostaGerada__c == false &&
+        (readequacaoChanged ||
+        aprovacaoChanged ||
+        formulaChanged);
       if (skippedGrupoA || skippedRecordType) {
         continue;
       }
@@ -2097,18 +2101,6 @@ public class OpportunityBO {
       );
       Boolean hasReadyProposal = availability != null && availability.isReady();
 
-      System.debug('generateProposalAsync - oppId: ' + opp.Id);
-      System.debug(
-        'generateProposalAsync - PropostaGerada__c: ' + opp.PropostaGerada__c
-      );
-      System.debug(
-        'generateProposalAsync - ReadequacaoSolicitada__c: ' +
-        opp.ReadequacaoSolicitada__c
-      );
-      System.debug(
-        'generateProposalAsync - StatusAprovacaoDesconto__c: ' +
-        opp.StatusAprovacaoDesconto__c
-      );
       // Se já gerada e não é readequação solicitada, não enfileira novamente
       if (
         opp.PropostaGerada__c == true &&

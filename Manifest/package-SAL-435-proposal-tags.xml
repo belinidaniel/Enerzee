@@ -13,6 +13,7 @@
     <types>
         <members>OpportunityBO</members>
         <members>ProposalApiClient</members>
+        <members>ProposalApiGenerationJob</members>
         <members>ProposalFileService</members>
         <members>PaymentSimulationProposalStatusService</members>
         <members>ProposalConfigurationService</members>

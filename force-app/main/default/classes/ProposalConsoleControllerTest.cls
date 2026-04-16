@@ -92,7 +92,7 @@ private class ProposalConsoleControllerTest {
   @isTest
   static void sendProposalCreatesContentVersionAndUpdatesOpportunity() {
     Opportunity opp = [
-      SELECT Id
+      SELECT Id, Name
       FROM Opportunity
       LIMIT 1
     ];
