@@ -38,7 +38,8 @@ private class ProposalConsoleControllerTest {
         AccountId = account.Id,
         StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
         Parceiro__c = parceiro.Id,
-        GrupoTarifario__c = 'Grupo B'
+        GrupoTarifario__c = 'Grupo B',
+        IdVirtualOffice__c = 'VO-LEGACY-001'
       ),
       true
     );
@@ -91,7 +92,7 @@ private class ProposalConsoleControllerTest {
   @isTest
   static void sendProposalCreatesContentVersionAndUpdatesOpportunity() {
     Opportunity opp = [
-      SELECT Id
+      SELECT Id, Name
       FROM Opportunity
       LIMIT 1
     ];
@@ -118,6 +119,11 @@ private class ProposalConsoleControllerTest {
       true,
       result.success,
       'A chamada deveria retornar sucesso.'
+    );
+    System.assert(
+      result.message != null &&
+      result.message.contains('envio para o aplicativo iniciado'),
+      'O retorno do botão enviar deve indicar que a integração foi iniciada em segundo plano.'
     );
     System.assertNotEquals(
       null,

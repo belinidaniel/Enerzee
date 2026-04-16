@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 04-08-2026
  * @last modified by  : Daniel Belini
  * @test              : KitInstalacaoBOTest, KitInstalacaoTriggerTest
  **/
@@ -365,6 +365,12 @@ public without sharing class KitInstalacaoBO {
               ' | request=' +
               JSON.serialize(requestBody)
           );
+
+          Utils.createLog(
+            'IdVirtualOffice',
+            'IdVirtualOffice - response',
+            JSON.serialize(requestBody)
+          );
           IntegracaoNivelloContrato.EnviarKitResponse response = IntegracaoNivelloContrato.enviarKit(
             requestBody
           );
@@ -497,6 +503,15 @@ public without sharing class KitInstalacaoBO {
     oppToUpdate.ValorAnteriorRede3750__c = originalOpp.Rede3750__c;
     oppToUpdate.ValorAnteriorPontos__c = originalOpp.Pontos__c;
     oppToUpdate.ValorAnteriorDirect__c = originalOpp.Direct__c;
+    if (response == null) {
+      Utils.createLog(
+        CLASS_NAME,
+        'createOpportunityForUpdate',
+        'Response is null',
+        originalOpp.Id
+      );
+      return oppToUpdate;
+    }
 
     // Update with new values from the response
     oppToUpdate.BDI__c = response.Bdi;

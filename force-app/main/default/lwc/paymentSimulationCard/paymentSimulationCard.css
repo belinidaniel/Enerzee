@@ -1,0 +1,152 @@
+.simulation-card {
+  background-color: #a8d08d;
+  border-radius: 16px;
+  padding: 16px 20px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: box-shadow 0.2s;
+}
+
+.simulation-card--manual {
+  box-shadow: 0 0 0 2px rgba(28, 58, 20, 0.12);
+}
+
+.simulation-card--inactive {
+  background-color: #d9d9d9;
+}
+
+.simulation-card--inactive .card-title,
+.simulation-card--inactive .card-subtitle,
+.simulation-card--inactive .installment-count,
+.simulation-card--inactive .installment-amount,
+.simulation-card--inactive .disclaimer {
+  color: #6b6b6b;
+}
+
+.simulation-card--inactive .option-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: #9e9e9e;
+}
+
+.simulation-card--inactive .option-btn--active {
+  background-color: rgba(0, 0, 0, 0.08);
+  border-color: #6b6b6b;
+}
+
+.card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.card-title {
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  color: #1c3a14;
+}
+
+.card-subtitle {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #2d5a1b;
+}
+
+.manual-badge {
+  background: rgba(28, 58, 20, 0.12);
+  border: 1px solid rgba(28, 58, 20, 0.18);
+  border-radius: 999px;
+  color: #1c3a14;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  text-transform: uppercase;
+}
+
+.manual-summary {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1c3a14;
+}
+
+.selected-summary {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #17370e;
+}
+
+.options-container {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+  align-items: baseline;
+  overflow: hidden;
+}
+
+.option-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 3px;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.option-btn:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+  border-color: #2e7d32;
+}
+
+.option-btn--active {
+  background-color: rgba(255, 255, 255, 0.6);
+  border-color: #1c3a14;
+}
+
+.option-btn--pending {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-color: #e65100;
+  border-style: dashed;
+}
+
+.installment-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1c3a14;
+}
+
+.installment-amount {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #1c3a14;
+  white-space: nowrap;
+}
+
+.card-footer {
+  margin-top: auto;
+}
+
+.disclaimer {
+  font-size: 0.6875rem;
+  color: #2d5a1b;
+  margin: 0;
+  line-height: 1.4;
+}

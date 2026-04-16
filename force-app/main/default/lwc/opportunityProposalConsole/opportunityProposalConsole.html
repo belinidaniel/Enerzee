@@ -2,7 +2,7 @@
   @description       : 
   @author            : Daniel Belini
   @group             : 
-  @last modified on  : 01-09-2026
+  @last modified on  : 04-13-2026
   @last modified by  : Daniel Belini
 -->
 <template>
@@ -125,9 +125,9 @@
                 <div class="file-actions">
                   <lightning-button-icon
                     icon-name="utility:new_window"
-                    alternative-text="Abrir"
-                    onclick={openFile}
-                    data-url={file.downloadUrl}
+                    alternative-text="Abrir registro"
+                    onclick={openAttachmentRecord}
+                    data-id={file.id}
                   ></lightning-button-icon>
                 </div>
               </article>
@@ -179,7 +179,7 @@
               name="template"
               label="Modelo de proposta"
               value={comboboxValue}
-              placeholder="Selecione"
+              placeholder="Selecione um modelo"
               options={templateOptions}
               onchange={handleTemplateChange}
               disabled={disablePaymentField}

@@ -1,0 +1,23 @@
+<template>
+  <lightning-card title="Gestão de Templates" icon-name="doctype:ppt">
+    <div class="slds-p-around_medium">
+      <div class="slds-m-bottom_small" style="max-width: 300px">
+        <lightning-combobox
+          label="Ambiente"
+          value={env}
+          options={envOptions}
+          onchange={handleEnvChange}
+        >
+        </lightning-combobox>
+      </div>
+      <iframe
+        lwc:ref="templateIframe"
+        width="100%"
+        height="700"
+        frameborder="0"
+        title="Gestão de Templates"
+      >
+      </iframe>
+    </div>
+  </lightning-card>
+</template>

@@ -4,30 +4,46 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : IntegracaoNivelloPropostaTest, IntegracaoNivelloTest
+ * @test              : IntegracaoNivelloPropostaTest, IntegracaoNivelloTest, ProposalEngineSupportTest
  **/
 public with sharing class IntegracaoNivelloProposta {
   //Por razões de tamanho de pilha, esta classe processa apenas uma Oportunidade por vez
 
   public static ProposalIntegrationResult gerandoPropostaSincrona(Id oppId) {
-    gerandoProposta(oppId);
-    ProposalIntegrationResult result = new ProposalIntegrationResult();
-    result.success = true;
-    result.message = 'Proposta gerada com sucesso';
-    return result;
+    return gerandoPropostaInterna(oppId, null);
+  }
+
+  public static ProposalIntegrationResult gerandoPropostaSincrona(
+    Id oppId,
+    Id contentVersionId
+  ) {
+    return gerandoPropostaInterna(oppId, contentVersionId);
   }
 
   @future(callout=true)
   public static void gerandoProposta(Id oppId) {
-    Set<Id> contentDocumentIds = new Set<Id>();
-    Map<Id, String> mapaArquivos = new Map<Id, String>();
+    gerandoPropostaInterna(oppId, null);
+  }
 
-    //Buscar os campos das Oportunidades a serem enviadas
+  @future(callout=true)
+  public static void gerandoProposta(Id oppId, Id contentVersionId) {
+    gerandoPropostaInterna(oppId, contentVersionId);
+  }
+
+  private static ProposalIntegrationResult gerandoPropostaInterna(
+    Id oppId,
+    Id contentVersionId
+  ) {
+    ProposalIntegrationResult result = new ProposalIntegrationResult();
+
     Opportunity opp = [
       SELECT
         Id,
+        Name,
+        Numeroproposta__c,
         IdVirtualOffice__c,
         OwnerId,
+        Account.Name,
         StatusBodyIntegracaoNivello__c,
         SucessoIntegracaoNivello__c,
         StageName,
@@ -35,133 +51,157 @@ public with sharing class IntegracaoNivelloProposta {
         recordType.name
       FROM Opportunity
       WHERE Id = :oppId
+      LIMIT 1
     ];
+
+    ContentVersion proposalVersion = resolveProposalVersion(
+      opp,
+      contentVersionId
+    );
+    if (proposalVersion == null || proposalVersion.VersionData == null) {
+      result.success = false;
+      result.message = 'Nenhum arquivo de proposta encontrado para envio.';
+      return result;
+    }
+
+    try {
+      JSONGenerator gen = JSON.createGenerator(true);
+      gen.writeStartObject();
+      gen.writeStringField('id', opp.IdVirtualOffice__c);
+      gen.writeBooleanField('approved', true);
+      gen.writeNumberField(
+        'opportunityPhase',
+        StatusEnumMap.getStatusEnum(opp.recordType.Name, opp.StageName)
+      );
+      gen.writeNumberField(
+        'proposalValue',
+        opp.ValorTotalProposta__c == null ? 0 : opp.ValorTotalProposta__c
+      );
+      gen.writeStringField(
+        'contract',
+        'data:application/pdf;base64,' +
+        EncodingUtil.base64Encode(proposalVersion.VersionData)
+      );
+      gen.writeEndObject();
+
+      HttpResponse response = chamadaIntegracao(
+        gen.getAsString(),
+        'Gerando_Proposta',
+        'POST',
+        oppId,
+        'gerandoProposta'
+      );
+
+      result.statusCode = response != null ? response.getStatusCode() : null;
+      result.responseBody = response != null ? response.getBody() : null;
+
+      if (response != null && response.getStatusCode() == 200) {
+        handleAttachmentResponse(opp, response);
+        opp.SucessoIntegracaoNivello__c = true;
+        opp.VerificarCamposElaboracao__c = false;
+        opp.PropostaGerada__c = true;
+        result.success = true;
+        result.message = 'Proposta enviada para o aplicativo.';
+      } else {
+        opp.SucessoIntegracaoNivello__c = false;
+        result.success = false;
+        result.message = 'Falha ao enviar a proposta para o aplicativo.';
+      }
+
+      opp.StatusBodyIntegracaoNivello__c = response == null
+        ? 'Sem resposta'
+        : response.getStatusCode() + ' ' + response.getBody();
+
+      OpportunityTriggerHandler.disableTrigger();
+      try {
+        update opp;
+      } finally {
+        OpportunityTriggerHandler.enableTrigger();
+      }
+    } catch (Exception e) {
+      Utils.createLog('IntegracaoNivelloProposta', 'gerandoProposta', e, oppId);
+      opp.SucessoIntegracaoNivello__c = false;
+      opp.StatusBodyIntegracaoNivello__c = e.getMessage();
+      OpportunityTriggerHandler.disableTrigger();
+      try {
+        update opp;
+      } catch (Exception updateEx) {
+        Utils.createLog(
+          'IntegracaoNivelloProposta',
+          'gerandoProposta.updateFailureStatus',
+          updateEx,
+          oppId
+        );
+      } finally {
+        OpportunityTriggerHandler.enableTrigger();
+      }
+      result.success = false;
+      result.message = 'Falha ao enviar a proposta para o aplicativo.';
+      result.responseBody = e.getMessage();
+    }
+
+    return result;
+  }
+
+  private static ContentVersion resolveProposalVersion(
+    Opportunity opp,
+    Id contentVersionId
+  ) {
+    if (contentVersionId != null) {
+      List<ContentVersion> explicitVersion = [
+        SELECT Id, VersionData, FileType, ContentSize, CreatedDate
+        FROM ContentVersion
+        WHERE Id = :contentVersionId
+        LIMIT 1
+      ];
+      return explicitVersion.isEmpty() ? null : explicitVersion[0];
+    }
 
     List<ContentDocumentLink> cdlList = [
       SELECT Id, ContentDocumentId
       FROM ContentDocumentLink
-      WHERE LinkedEntityId = :oppId
+      WHERE LinkedEntityId = :opp.Id
     ];
-
-    if (!cdlList.isEmpty()) {
-      List<Id> cdcIds = new List<Id>();
-
-      for (ContentDocumentLink cdl : cdlList) {
-        cdcIds.add(cdl.contentDocumentId);
-      }
-
-      List<ContentVersion> propostaPDFList;
-
-      if (
-        OpportunityUtils.isStatusAwaitingAcceptance(opp) &&
-        OpportunityUtils.hasProposalReadjustment(opp)
-      ) {
-        propostaPDFList = [
-          SELECT Id, VersionData, FileType, ContentSize, CreatedDate
-          FROM ContentVersion
-          WHERE
-            ContentDocumentId IN :cdcIds
-            AND FileType = 'PDF'
-            AND IsProposal__c = TRUE
-            AND (Title LIKE '%READEQUACAO%'
-            OR Title LIKE '%READEQUAÇÃO%')
-          ORDER BY CreatedDate DESC
-          LIMIT 1
-        ];
-      } else {
-        //Buscar o conteúdo dos arquivos - apenas a última versão dos mesmos
-        propostaPDFList = [
-          SELECT Id, VersionData, FileType, ContentSize, CreatedDate
-          FROM ContentVersion
-          WHERE
-            ContentDocumentId IN :cdcIds
-            AND FileType = 'PDF'
-            AND IsProposal__c = TRUE /*AND
-																															 (
-																																			 NomePaginaPDF__c = 'ModeloPropostaA' OR
-																																			 NomePaginaPDF__c = 'ModeloPropostaB'
-																															 )*/
-          ORDER BY CreatedDate DESC
-          LIMIT 1
-        ];
-      }
-
-      if (!propostaPDFList.isEmpty()) {
-        try {
-          //JSON esperado
-          //approved				 //true
-          //id				 // "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-          //description	 //	 "string"
-          //contract				 //	 'data:application/pdf;base64,' + base64 da proposta. O nome é "contract" mesmo pois a API foi criada assim
-
-          //É necessário usar JSON generator para garantir a ordem das propriedades
-          JSONGenerator gen = JSON.createGenerator(true);
-          gen.writeStartObject();
-          gen.writeStringField('id', opp.IdVirtualOffice__c);
-          gen.writeBooleanField('approved', true);
-          gen.writeNumberField(
-            'opportunityPhase',
-            StatusEnumMap.getStatusEnum(opp.recordType.Name, opp.StageName)
-          );
-          System.debug(
-            'StatusEnumMap.getStatusEnum(opp.recordType.Name, opp.StageName'
-          );
-          System.debug(
-            'integracaoNivelloProposta - opportunityPhase: ' +
-            opp.ValorTotalProposta__c
-          );
-          gen.writeNumberField('proposalValue', opp.ValorTotalProposta__c);
-          gen.writeStringField(
-            'contract',
-            'data:application/pdf;base64,' +
-            EncodingUtil.base64Encode(propostaPDFList[0].VersionData)
-          );
-          gen.writeEndObject();
-
-          //system.debug('json =>' + gen.getAsString());
-          HttpResponse response = chamadaIntegracao(
-            gen.getAsString(),
-            'Gerando_Proposta',
-            'POST',
-            oppId,
-            'gerandoProposta'
-          );
-
-          system.debug('response.getStatusCode(): ' + response.getStatusCode());
-          //Sucesso
-          if (response.getStatusCode() == 200) {
-            handleAttachmentResponse(opp.Id, response);
-            opp.SucessoIntegracaoNivello__c = true;
-            opp.VerificarCamposElaboracao__c = false;
-            opp.PropostaGerada__c = true;
-            //if(opp.StageName == OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA){
-            //opp.StageName = OpportunityUtils.STATUS_PROPOSTA_ENVIADA_AGUARDANDO_ACEITE;
-            //if (opp.StageName == OpportunityUtils.STATUS_READEQUACAO_DE_PROPOSTA){
-            //opp.StageName = OpportunityUtils.STATUS_GERACAO_DE_CONTRATO;
-            //}
-          } else {
-            // opp.StageName = 'Proposta enviada / Aguardando Aceite';
-            opp.SucessoIntegracaoNivello__c = false;
-          }
-
-          opp.StatusBodyIntegracaoNivello__c =
-            response.getStatusCode() +
-            ' ' +
-            response.getBody();
-
-          OpportunityTriggerHandler.disableTrigger();
-          update opp;
-          OpportunityTriggerHandler.enableTrigger();
-        } catch (Exception e) {
-          Utils.createLog(
-            'IntegracaoNivelloProposta',
-            'gerandoProposta',
-            e,
-            oppId
-          );
-        }
-      }
+    if (cdlList.isEmpty()) {
+      return null;
     }
+
+    List<Id> contentDocumentIds = new List<Id>();
+    for (ContentDocumentLink cdl : cdlList) {
+      contentDocumentIds.add(cdl.ContentDocumentId);
+    }
+
+    List<ContentVersion> proposalVersions;
+    if (
+      OpportunityUtils.isStatusAwaitingAcceptance(opp) &&
+      OpportunityUtils.hasProposalReadjustment(opp)
+    ) {
+      proposalVersions = [
+        SELECT Id, VersionData, FileType, ContentSize, CreatedDate
+        FROM ContentVersion
+        WHERE
+          ContentDocumentId IN :contentDocumentIds
+          AND FileType = 'PDF'
+          AND IsProposal__c = TRUE
+          AND (Title LIKE '%READEQUACAO%'
+          OR Title LIKE '%READEQUAÇÃO%')
+        ORDER BY CreatedDate DESC
+        LIMIT 1
+      ];
+    } else {
+      proposalVersions = [
+        SELECT Id, VersionData, FileType, ContentSize, CreatedDate
+        FROM ContentVersion
+        WHERE
+          ContentDocumentId IN :contentDocumentIds
+          AND FileType = 'PDF'
+          AND IsProposal__c = TRUE
+        ORDER BY CreatedDate DESC
+        LIMIT 1
+      ];
+    }
+
+    return proposalVersions.isEmpty() ? null : proposalVersions[0];
   }
 
   @future(callout=true)
@@ -389,7 +429,7 @@ public with sharing class IntegracaoNivelloProposta {
   }
 
   private static Id handleAttachmentResponse(
-    Id opportunityId,
+    Opportunity opportunityRecord,
     HttpResponse response
   ) {
     if (response == null || String.isBlank(response.getBody())) {
@@ -397,30 +437,45 @@ public with sharing class IntegracaoNivelloProposta {
     }
 
     try {
-      ProposalResponse proposalResponse = (ProposalResponse) JSON.deserialize(
-        response.getBody(),
-        ProposalResponse.class
+      Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(
+        response.getBody()
+      );
+      Map<String, Object> responseData = responseBody != null &&
+        responseBody.containsKey('data') &&
+        responseBody.get('data') instanceof Map<String, Object>
+        ? (Map<String, Object>) responseBody.get('data')
+        : null;
+
+      Boolean success = responseBody != null &&
+        responseBody.containsKey('success')
+        ? Boolean.valueOf(String.valueOf(responseBody.get('success')))
+        : true;
+      String attachmentUrl = coalesce(
+        getStringValue(responseData, 'urlFile'),
+        getStringValue(responseData, 'fileUrl'),
+        getStringValue(responseBody, 'urlFile')
+      );
+      String externalId = coalesce(
+        getStringValue(responseData, 'id'),
+        getStringValue(responseBody, 'id')
       );
 
-      if (
-        proposalResponse == null ||
-        proposalResponse.data == null ||
-        !proposalResponse.success ||
-        String.isBlank(proposalResponse.data.urlFile)
-      ) {
+      if (!success || String.isBlank(attachmentUrl)) {
         return null;
       }
 
       OpportunityAttachmentLinkService.AttachmentInput input = new OpportunityAttachmentLinkService.AttachmentInput();
-      input.opportunityId = opportunityId;
-      input.attachmentUrl = proposalResponse.data.urlFile;
-      input.externalId = proposalResponse.data.id;
+      input.opportunityId = opportunityRecord.Id;
+      input.attachmentUrl = attachmentUrl;
+      input.externalId = externalId;
       input.type = 'Proposal';
 
-      String decodedFileName = extractFileName(proposalResponse.data.urlFile);
-      if (String.isNotBlank(decodedFileName)) {
-        input.description = decodedFileName;
-      }
+      String decodedFileName = extractFileName(attachmentUrl);
+      input.description = String.isNotBlank(
+          ProposalFileService.buildProposalTitle(opportunityRecord)
+        )
+        ? ProposalFileService.buildProposalTitle(opportunityRecord)
+        : decodedFileName;
 
       OpportunityAttachmentLinkService.upsertAttachment(input);
       if (String.isNotBlank(input.externalId)) {
@@ -438,7 +493,7 @@ public with sharing class IntegracaoNivelloProposta {
         'IntegracaoNivelloProposta',
         'handleAttachmentResponse',
         e,
-        opportunityId
+        opportunityRecord != null ? opportunityRecord.Id : null
       );
       return null;
     }
@@ -460,5 +515,26 @@ public with sharing class IntegracaoNivelloProposta {
     } catch (Exception e) {
       return fileName;
     }
+  }
+
+  private static String getStringValue(Map<String, Object> source, String key) {
+    if (source == null || !source.containsKey(key) || source.get(key) == null) {
+      return null;
+    }
+    return String.valueOf(source.get(key));
+  }
+
+  private static String coalesce(String firstValue, String secondValue) {
+    return String.isNotBlank(firstValue) ? firstValue : secondValue;
+  }
+
+  private static String coalesce(
+    String firstValue,
+    String secondValue,
+    String thirdValue
+  ) {
+    return String.isNotBlank(firstValue)
+      ? firstValue
+      : String.isNotBlank(secondValue) ? secondValue : thirdValue;
   }
 }

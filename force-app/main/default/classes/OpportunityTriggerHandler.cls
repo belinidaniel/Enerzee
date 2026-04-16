@@ -10,8 +10,10 @@
  *                       OpportunityBOPaymentConfirmationTaskTest, OpportunityBOPaymentReminderTaskTest,
  *                       OpportunityDiscountRequestControllerTest, OpportunityShareHandlerTest,
  *                       OpportunityTriggerHandlerToggleTest, OpportunityTriggerTest, OpportunityUtilsTest,
- *                       ProjetoBOCoverageTest, ProjetoTriggerTest, ProposalPendingControllerTest,
- *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest, ServiceAppointmentBOTest,
+ *                       PaymentSimulationBOTest, PaymentSimulationCardControllerTest, ProjetoBOCoverageTest,
+ *                       ProjetoTriggerTest, ProposalEngineSupportTest, ProposalPendingControllerTest,
+ *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest,
+ *                       ProposalServicePaymentSimulationTest, ServiceAppointmentBOTest,
  *                       WorkDeliveryReportPdfControllerTest
  **/
 public class OpportunityTriggerHandler extends TriggerHandler {
@@ -40,6 +42,7 @@ public class OpportunityTriggerHandler extends TriggerHandler {
 
   public override void beforeInsert() {
     OpportunityBO.assignDefaultOwner((List<Opportunity>) Trigger.new);
+    OpportunityBO.setProposalFieldDefaults((List<Opportunity>) Trigger.new);
     OpportunityBO.calculateDataToProposalGraphic25Years(
       (List<Opportunity>) Trigger.new
     );
@@ -59,6 +62,9 @@ public class OpportunityTriggerHandler extends TriggerHandler {
     OpportunityCommentNotificationService.notifyOnConsultantCommentChange(
       (List<Opportunity>) Trigger.new,
       new Map<Id, Opportunity>()
+    );
+    PaymentSimulationBO.createSimulationsForOpportunities(
+      (List<Opportunity>) Trigger.new
     );
   }
 
@@ -223,6 +229,14 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (Map<Id, Opportunity>) Trigger.oldMap
     );
     OpportunityBO.sendKitUpdateOnProposalParamsChange(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
+    PaymentSimulationBO.recalculateOnAmountChange(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
+    OpportunityBO.deleteStoredProposalFilesOnClosure(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );

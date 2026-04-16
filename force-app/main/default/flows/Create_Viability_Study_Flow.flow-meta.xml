@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>62.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
@@ -28,7 +28,8 @@
         </rules>
     </decisions>
     <environments>Default</environments>
-    <interviewLabel>Create Viability Study {!$Flow.CurrentDateTime}</interviewLabel>
+    <interviewLabel
+  >Create Viability Study {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Create Viability Study</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -63,6 +64,26 @@
                 <elementReference>$Record.Id</elementReference>
             </value>
         </inputAssignments>
+        <inputAssignments>
+            <field>ProposalExclusoes__c</field>
+            <value>
+                <elementReference>$Record.Exclusoes__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ProposalCondicoesAdicionais__c</field>
+            <value>
+                <elementReference
+        >$Record.CondicoesAdicionais__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ProposalObservacoes__c</field>
+            <value>
+                <elementReference
+        >$Record.Observacao_Proposta__c</elementReference>
+            </value>
+        </inputAssignments>
         <object>ViabilityStudy__c</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordCreates>
@@ -83,13 +104,15 @@
         <inputAssignments>
             <field>City</field>
             <value>
-                <elementReference>$Record.MunicipioInstalacao__c</elementReference>
+                <elementReference
+        >$Record.MunicipioInstalacao__c</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <field>Consultor__c</field>
             <value>
-                <elementReference>$Record.ConsultorOportunidade__c</elementReference>
+                <elementReference
+        >$Record.ConsultorOportunidade__c</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -178,7 +201,8 @@
         <label>get Viability Study</label>
         <locationX>182</locationX>
         <locationY>323</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>have_Viability_Study</targetReference>
         </connector>
@@ -201,7 +225,8 @@
         <label>get  RecordTypeId</label>
         <locationX>314</locationX>
         <locationY>863</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Create_Work_Order</targetReference>
         </connector>
@@ -222,7 +247,8 @@
         <label>get Territory</label>
         <locationX>314</locationX>
         <locationY>647</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>getWorkType</targetReference>
         </connector>
@@ -231,7 +257,8 @@
             <field>Name</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference>$Record.MunicipioInstalacao__c</elementReference>
+                <elementReference
+        >$Record.MunicipioInstalacao__c</elementReference>
             </value>
         </filters>
         <filters>
@@ -257,7 +284,8 @@
         <label>get workType</label>
         <locationX>314</locationX>
         <locationY>755</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>getRecordTypeId</targetReference>
         </connector>

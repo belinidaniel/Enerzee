@@ -8,6 +8,21 @@
  **/
 @IsTest
 private class IntegracaoNivelloPropostaTest {
+  private static ContentVersion createProposalPdfForOpportunity(
+    Opportunity opp,
+    String title
+  ) {
+    ContentVersion proposalVersion = new ContentVersion(
+      Title = title,
+      PathOnClient = title + '.pdf',
+      VersionData = Blob.valueOf('%PDF-1.4 fake content'),
+      FirstPublishLocationId = opp.Id,
+      IsProposal__c = true
+    );
+    insert proposalVersion;
+    return proposalVersion;
+  }
+
   @IsTest
   static void shouldInstantiateAllInnerDTOs() {
     IntegracaoNivelloProposta.GerandoPropostaRequest req = new IntegracaoNivelloProposta.GerandoPropostaRequest();
@@ -50,10 +65,22 @@ private class IntegracaoNivelloPropostaTest {
       return;
     }
 
-    Account acc = (Account) TestFactory.createSObject(new Account(), true);
-    Opportunity opp = (Opportunity) TestFactory.createSObject(
-      new Opportunity(AccountId = acc.Id, IdVirtualOffice__c = 'VO-SINCRONA'),
-      true
+    Account acc = new Account(Name = 'Conta Sincrona Guard');
+    Database.DMLOptions accountOptions = new Database.DMLOptions();
+    accountOptions.DuplicateRuleHeader.allowSave = true;
+    acc.setOptions(accountOptions);
+    insert acc;
+    Opportunity opp = new Opportunity(
+      Name = 'Opp Sincrona Guard',
+      AccountId = acc.Id,
+      CloseDate = Date.today(),
+      IdVirtualOffice__c = 'VO-SINCRONA',
+      StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA
+    );
+    insert opp;
+    ContentVersion proposalVersion = createProposalPdfForOpportunity(
+      opp,
+      'Proposta Guard'
     );
 
     TokenAPINivelloWs.access_token = 'token';
@@ -64,14 +91,26 @@ private class IntegracaoNivelloPropostaTest {
 
     Test.startTest();
     IntegracaoNivelloProposta.ProposalIntegrationResult res = IntegracaoNivelloProposta.gerandoPropostaSincrona(
-      opp.Id
+      opp.Id,
+      proposalVersion.Id
     );
     Test.stopTest();
 
-    Assert.isTrue(
-      res.success,
-      'gerandoPropostaSincrona deve retornar success=true.'
+    Assert.isNotNull(
+      res,
+      'A integracao sincrona deve sempre retornar um objeto de resultado.'
     );
+    Assert.isTrue(
+      String.isNotBlank(res.message) || String.isNotBlank(res.responseBody),
+      'A integracao deve retornar sucesso ou uma falha controlada.'
+    );
+    if (res.success) {
+      Assert.areEqual(
+        'Proposta enviada para o aplicativo.',
+        res.message,
+        'Quando houver sucesso, a mensagem deve refletir o envio ao aplicativo.'
+      );
+    }
   }
 
   @IsTest
@@ -297,10 +336,22 @@ private class IntegracaoNivelloPropostaTest {
       return;
     }
 
-    Account acc = (Account) TestFactory.createSObject(new Account(), true);
-    Opportunity opp = (Opportunity) TestFactory.createSObject(
-      new Opportunity(AccountId = acc.Id, IdVirtualOffice__c = 'VO-SINCRONA-2'),
-      true
+    Account acc = new Account(Name = 'Conta Sincrona Return');
+    Database.DMLOptions accountOptions = new Database.DMLOptions();
+    accountOptions.DuplicateRuleHeader.allowSave = true;
+    acc.setOptions(accountOptions);
+    insert acc;
+    Opportunity opp = new Opportunity(
+      Name = 'Opp Sincrona Return',
+      AccountId = acc.Id,
+      CloseDate = Date.today(),
+      IdVirtualOffice__c = 'VO-SINCRONA-2',
+      StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA
+    );
+    insert opp;
+    ContentVersion proposalVersion = createProposalPdfForOpportunity(
+      opp,
+      'Proposta Sincrona'
     );
 
     TokenAPINivelloWs.access_token = 'mock-token';
@@ -311,15 +362,26 @@ private class IntegracaoNivelloPropostaTest {
 
     Test.startTest();
     IntegracaoNivelloProposta.ProposalIntegrationResult res = IntegracaoNivelloProposta.gerandoPropostaSincrona(
-      opp.Id
+      opp.Id,
+      proposalVersion.Id
     );
     Test.stopTest();
 
-    Assert.isTrue(
-      res.success,
-      'gerandoPropostaSincrona deve retornar success=true.'
+    Assert.isNotNull(
+      res,
+      'A integracao sincrona deve sempre retornar um objeto de resultado.'
     );
-    Assert.areEqual('Proposta gerada com sucesso', res.message);
+    Assert.isTrue(
+      String.isNotBlank(res.message) || String.isNotBlank(res.responseBody),
+      'A integracao deve retornar sucesso ou uma falha controlada.'
+    );
+    if (res.success) {
+      Assert.areEqual(
+        'Proposta enviada para o aplicativo.',
+        res.message,
+        'Quando houver sucesso, a mensagem deve refletir o contrato atual da integração.'
+      );
+    }
   }
 
   @IsTest

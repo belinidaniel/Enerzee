@@ -1110,27 +1110,6 @@
                     <name>uiBehavior</name>
                     <value>readonly</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Observacoes_pos_sombreamento__c</fieldItem>
-                <identifier
-        >RecordObservacoes_pos_sombreamento_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>readonly</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Observacoes_pos_visita__c</fieldItem>
-                <identifier>RecordObservacoes_pos_visita_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>readonly</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.Custos_adicionais_levantados__c</fieldItem>
                 <identifier
         >RecordCustos_adicionais_levantados_cField</identifier>

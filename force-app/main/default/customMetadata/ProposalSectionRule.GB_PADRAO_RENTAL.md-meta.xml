@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomMetadata
+  xmlns="http://soap.sforce.com/2006/04/metadata"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+    <label>GB Padrao - Rental</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>CoverKey__c</field>
+        <value xsi:type="xsd:string">GRUPO_B_PADRAO</value>
+    </values>
+    <values>
+        <field>PaymentType__c</field>
+        <value xsi:type="xsd:string">Rental</value>
+    </values>
+    <values>
+        <field>Scenario__c</field>
+        <value xsi:type="xsd:string">INITIAL</value>
+    </values>
+    <values>
+        <field>SectionName__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>SectionsJson__c</field>
+        <value
+      xsi:type="xsd:string"
+    >[&quot;Proposta&quot;,&quot;Aluguel Solar&quot;,&quot;Rodape da proposta&quot;]</value>
+    </values>
+    <values>
+        <field>SortOrder__c</field>
+        <value xsi:nil="true" />
+    </values>
+</CustomMetadata>

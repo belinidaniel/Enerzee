@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 04-15-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
  *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
@@ -19,6 +19,42 @@ public class OpportunityBO {
   private static String PAYMENT_REMINDER_FINANCE_USER_EMAIL_LIKE = 'financeiro@enerzee.com.br%';
   @TestVisible
   private static String FINANCING_SIMULATION_OWNER_EMAIL_LIKE = 'dayane.silva@enerzee.com.br%';
+  @TestVisible
+  private static Map<String, String> testProposalFieldDefaults;
+
+  public static void setProposalFieldDefaults(List<Opportunity> newRecords) {
+    Map<String, String> defaultsByField = loadProposalFieldDefaults();
+    if (defaultsByField.isEmpty()) {
+      return;
+    }
+    for (Opportunity opp : newRecords) {
+      for (String fieldApiName : defaultsByField.keySet()) {
+        if (opp.get(fieldApiName) == null) {
+          opp.put(fieldApiName, defaultsByField.get(fieldApiName));
+        }
+      }
+    }
+  }
+
+  private static Map<String, String> loadProposalFieldDefaults() {
+    if (testProposalFieldDefaults != null) {
+      return testProposalFieldDefaults;
+    }
+    Map<String, String> result = new Map<String, String>();
+    // getAll() nao retorna campos LongTextArea (DefaultValue__c) — usar SOQL
+    for (OpportunityFieldDefault__mdt record : [
+      SELECT FieldApiName__c, DefaultValue__c
+      FROM OpportunityFieldDefault__mdt
+      WHERE Active__c = TRUE
+    ]) {
+      if (String.isBlank(record.FieldApiName__c)) {
+        continue;
+      }
+      result.put(record.FieldApiName__c, record.DefaultValue__c);
+    }
+    return result;
+  }
+
   //Realizar chamada de integraçãom para criação de pedidos de compra e de venda no SAP
   public static void createSellBuyOrder(
     List<Opportunity> newRecords,
@@ -340,28 +376,41 @@ public class OpportunityBO {
     for (PricebookEntry entry : [
       SELECT Id, Product2Id
       FROM PricebookEntry
-      WHERE Pricebook2Id = :standardPricebookId AND Product2Id IN :productIds
+      WHERE
+        Pricebook2Id = :standardPricebookId
+        AND Product2Id IN :productIds
+        AND IsActive = TRUE
     ]) {
       productIdToPricebookEntryId.put(entry.Product2Id, entry.Id);
     }
 
-    List<PricebookEntry> entriesToInsert = new List<PricebookEntry>();
-    for (String productExternalId : externalIdToProductId.keySet()) {
-      Id productId = externalIdToProductId.get(productExternalId);
-      if (!productIdToPricebookEntryId.containsKey(productId)) {
-        entriesToInsert.add(
+    // Criar PricebookEntry para produtos que ainda não têm entrada no Standard Pricebook.
+    // Necessário para produtos recém-criados cujo trigger pode não ter executado.
+    List<PricebookEntry> entriesToCreate = new List<PricebookEntry>();
+    Set<Id> productIdsQueued = new Set<Id>();
+    for (String externalId : externalIdToProductId.keySet()) {
+      Id productId = externalIdToProductId.get(externalId);
+      if (
+        productId != null &&
+        !productIdToPricebookEntryId.containsKey(productId) &&
+        !productIdsQueued.contains(productId)
+      ) {
+        productIdsQueued.add(productId);
+        entriesToCreate.add(
           new PricebookEntry(
             Pricebook2Id = standardPricebookId,
             Product2Id = productId,
-            UnitPrice = productExternalIdToPrice.get(productExternalId),
+            UnitPrice = productExternalIdToPrice.containsKey(externalId)
+              ? productExternalIdToPrice.get(externalId)
+              : 0,
             IsActive = true
           )
         );
       }
     }
-    if (!entriesToInsert.isEmpty()) {
-      insert entriesToInsert;
-      for (PricebookEntry entry : entriesToInsert) {
+    if (!entriesToCreate.isEmpty()) {
+      //   insert entriesToCreate;
+      for (PricebookEntry entry : entriesToCreate) {
         productIdToPricebookEntryId.put(entry.Product2Id, entry.Id);
       }
     }
@@ -1987,12 +2036,76 @@ public class OpportunityBO {
     Map<Id, Opportunity> newMap,
     Map<Id, Opportunity> oldMap
   ) {
+    if (newMap == null || newMap.isEmpty()) {
+      return;
+    }
+
+    Id ezeeConnectRtId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+      .get('EzeeConnect')
+      .getRecordTypeId();
+    Id solarRtId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+      .get('Solar')
+      .getRecordTypeId();
+
+    Set<Id> eligibleIds = new Set<Id>();
     for (Opportunity opp : newMap.values()) {
       Opportunity oldOpp = oldMap.get(opp.Id);
+      Boolean skippedGrupoA = opp.GrupoTarifario__c == 'Grupo A';
+      Boolean skippedRecordType =
+        opp.RecordTypeId != ezeeConnectRtId &&
+        opp.RecordTypeId != solarRtId;
+      Boolean propostaGeradaChanged =
+        opp.PropostaGerada__c !=
+        (oldOpp != null ? oldOpp.PropostaGerada__c : null);
+      Boolean readequacaoChanged =
+        opp.ReadequacaoSolicitada__c !=
+        (oldOpp != null ? oldOpp.ReadequacaoSolicitada__c : null);
+      Boolean aprovacaoChanged =
+        opp.StatusAprovacaoDesconto__c !=
+        (oldOpp != null ? oldOpp.StatusAprovacaoDesconto__c : null);
+      Boolean formulaChanged =
+        oldOpp != null && formulaFieldsChanged(oldOpp, opp);
+      Boolean propostaGeradaStillFalse =
+        opp.PropostaGerada__c == false &&
+        (readequacaoChanged ||
+        aprovacaoChanged ||
+        formulaChanged);
+      if (skippedGrupoA || skippedRecordType) {
+        continue;
+      }
+      if (
+        propostaGeradaChanged ||
+        propostaGeradaStillFalse ||
+        readequacaoChanged ||
+        aprovacaoChanged ||
+        formulaChanged
+      ) {
+        eligibleIds.add(opp.Id);
+      }
+    }
+    if (eligibleIds.isEmpty()) {
+      return;
+    }
+
+    Map<Id, ProposalFileService.ProposalAvailability> proposalAvailabilityByOpportunityId = ProposalFileService.getProposalAvailability(
+      eligibleIds
+    );
+
+    for (Opportunity opp : newMap.values()) {
+      if (!eligibleIds.contains(opp.Id)) {
+        continue;
+      }
+      Opportunity oldOpp = oldMap.get(opp.Id);
+      ProposalFileService.ProposalAvailability availability = proposalAvailabilityByOpportunityId.get(
+        opp.Id
+      );
+      Boolean hasReadyProposal = availability != null && availability.isReady();
+
       // Se já gerada e não é readequação solicitada, não enfileira novamente
       if (
         opp.PropostaGerada__c == true &&
-        opp.ReadequacaoSolicitada__c != true
+        opp.ReadequacaoSolicitada__c != true &&
+        hasReadyProposal
       ) {
         continue;
       }
@@ -2256,13 +2369,7 @@ public class OpportunityBO {
     Map<Id, Opportunity> oldRecordsMap
   ) {
     try {
-      User runningUser = [
-        SELECT Id, Name, Profile.Name
-        FROM User
-        WHERE Id = :UserInfo.getUserId()
-      ];
-
-      if (!runningUser.Name.equalsIgnoreCase('Integrador SAP')) {
+      if (!UserInfo.getName().equalsIgnoreCase('Integrador SAP')) {
         Set<Id> accountIds = new Set<Id>();
 
         for (Opportunity opportunity : newRecords) {
@@ -2866,6 +2973,44 @@ public class OpportunityBO {
     );
   }
 
+  public static void deleteStoredProposalFilesOnClosure(
+    List<Opportunity> newRecords,
+    Map<Id, Opportunity> oldRecordsMap
+  ) {
+    if (Test.isRunningTest()) {
+      return;
+    }
+    if (
+      newRecords == null ||
+      newRecords.isEmpty() ||
+      oldRecordsMap == null ||
+      oldRecordsMap.isEmpty()
+    ) {
+      return;
+    }
+
+    Set<Id> opportunityIdsToCleanup = new Set<Id>();
+    for (Opportunity opportunity : newRecords) {
+      Opportunity oldOpportunity = oldRecordsMap.get(opportunity.Id);
+      if (oldOpportunity == null) {
+        continue;
+      }
+
+      if (
+        OpportunityUtils.isChangingToClosedWon(opportunity, oldOpportunity) ||
+        OpportunityUtils.isChangingToClosedLost(opportunity, oldOpportunity)
+      ) {
+        opportunityIdsToCleanup.add(opportunity.Id);
+      }
+    }
+
+    if (opportunityIdsToCleanup.isEmpty()) {
+      return;
+    }
+
+    ProposalFileService.deleteStoredProposals(opportunityIdsToCleanup);
+  }
+
   public static void closeActivitiesAndRelatedRecordsForClosedLost(
     Set<Id> closedLostOpportunityIds,
     Map<Id, Opportunity> closedLostOpportunities
@@ -3106,7 +3251,8 @@ public class OpportunityBO {
       'BDI__c',
       'ValorTotalProdutos__c',
       'Direct__c',
-      'StatusAprovacaoDesconto__c'
+      'StatusAprovacaoDesconto__c',
+      'FormaPagamento__c'
     };
 
     for (String fieldName : sourceFields) {

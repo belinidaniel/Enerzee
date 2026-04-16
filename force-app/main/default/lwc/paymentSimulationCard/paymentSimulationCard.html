@@ -1,0 +1,43 @@
+<template>
+  <div class={cardClass}>
+    <div class="card-header">
+      <div class="title-row">
+        <span class="card-title">{card.proposalLabel}</span>
+        <template if:true={isManualCard}>
+          <span class="manual-badge">Personalizada</span>
+        </template>
+      </div>
+      <span class="card-subtitle">{paymentTypeLabel}</span>
+      <template if:true={isManualCard}>
+        <span class="manual-summary">
+          Valor ajustado manualmente para a proposta.
+        </span>
+      </template>
+      <template if:true={hasSelectedOptionSummary}>
+        <span class="selected-summary">
+          Simulação selecionada: {selectedOptionSummary}
+        </span>
+      </template>
+    </div>
+    <div class="options-container">
+      <template for:each={processedOptions} for:item="option">
+        <button
+          key={option.id}
+          class={option.optionClass}
+          data-id={option.id}
+          onclick={handleOptionClick}
+          title={option.tooltip}
+        >
+          <span class="installment-count">{option.installmentCount}x</span>
+          <span class="installment-amount">{option.formattedAmount}</span>
+        </button>
+      </template>
+    </div>
+    <div class="card-footer">
+      <p class="disclaimer">
+        * Crédito sujeito a análise, consulte condições e carências no ato da
+        contratação. Simulação sujeita a alterações.
+      </p>
+    </div>
+  </div>
+</template>

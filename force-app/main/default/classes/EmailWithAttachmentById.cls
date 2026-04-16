@@ -48,51 +48,9 @@ public class EmailWithAttachmentById {
         );
       }
 
-      if (String.isEmpty(req.contentDocumentId)) {
-        if (Test.isRunningTest()) {
-          continue;
-        }
-        throw new IllegalArgumentException('ContentDocumentId é obrigatório.');
-      }
-
-      ContentVersion contentVersion = null;
-      if (req.contentDocumentId.startsWith('069')) {
-        List<ContentVersion> versions = [
-          SELECT Id, Title, VersionData, FileExtension
-          FROM ContentVersion
-          WHERE ContentDocumentId = :req.contentDocumentId AND IsLatest = TRUE
-          LIMIT 1
-        ];
-        if (!versions.isEmpty()) {
-          contentVersion = versions[0];
-        }
-      } else if (req.contentDocumentId.startsWith('068')) {
-        contentVersion = [
-          SELECT Id, Title, VersionData, FileExtension
-          FROM ContentVersion
-          WHERE Id = :req.contentDocumentId
-          LIMIT 1
-        ];
-      }
-
-      if (contentVersion == null) {
-        if (Test.isRunningTest()) {
-          continue;
-        }
-        throw new IllegalArgumentException(
-          'Arquivo não encontrado para o ID fornecido: ' + req.contentDocumentId
-        );
-      }
-
-      Messaging.EmailFileAttachment attachment = new Messaging.EmailFileAttachment();
-      String fileName = String.isNotBlank(contentVersion.Title)
-        ? contentVersion.Title
-        : 'anexo';
-      if (!String.isBlank(contentVersion.FileExtension)) {
-        fileName += '.' + contentVersion.FileExtension;
-      }
-      attachment.setFileName(fileName);
-      attachment.setBody(contentVersion.VersionData);
+      ContentVersion contentVersion = resolveContentVersion(
+        req.contentDocumentId
+      );
 
       Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
       email.setToAddresses(new List<String>{ req.recipientEmail });
@@ -111,9 +69,23 @@ public class EmailWithAttachmentById {
       email.setSubject(req.subject);
       email.setHtmlBody(req.body);
       email.setPlainTextBody(convertToPlainText(req.body));
-      email.setFileAttachments(
-        new List<Messaging.EmailFileAttachment>{ attachment }
-      );
+
+      if (contentVersion != null) {
+        email.setFileAttachments(
+          new List<Messaging.EmailFileAttachment>{
+            buildAttachment(contentVersion)
+          }
+        );
+      } else if (String.isNotBlank(req.contentDocumentId)) {
+        System.debug(
+          'EmailWithAttachmentById: arquivo não encontrado para o ID informado. E-mail será enviado sem anexo. ID=' +
+          req.contentDocumentId
+        );
+      } else {
+        System.debug(
+          'EmailWithAttachmentById: contentDocumentId não informado. E-mail será enviado sem anexo.'
+        );
+      }
 
       try {
         Messaging.SendEmailResult[] results = Messaging.sendEmail(
@@ -134,6 +106,50 @@ public class EmailWithAttachmentById {
         throw e;
       }
     }
+  }
+
+  @TestVisible
+  private static ContentVersion resolveContentVersion(String fileId) {
+    if (String.isBlank(fileId)) {
+      return null;
+    }
+
+    if (fileId.startsWith('069')) {
+      List<ContentVersion> versions = [
+        SELECT Id, Title, VersionData, FileExtension
+        FROM ContentVersion
+        WHERE ContentDocumentId = :fileId AND IsLatest = TRUE
+        LIMIT 1
+      ];
+      return versions.isEmpty() ? null : versions[0];
+    }
+
+    if (fileId.startsWith('068')) {
+      List<ContentVersion> versions = [
+        SELECT Id, Title, VersionData, FileExtension
+        FROM ContentVersion
+        WHERE Id = :fileId
+        LIMIT 1
+      ];
+      return versions.isEmpty() ? null : versions[0];
+    }
+
+    return null;
+  }
+
+  private static Messaging.EmailFileAttachment buildAttachment(
+    ContentVersion contentVersion
+  ) {
+    Messaging.EmailFileAttachment attachment = new Messaging.EmailFileAttachment();
+    String fileName = String.isNotBlank(contentVersion.Title)
+      ? contentVersion.Title
+      : 'anexo';
+    if (!String.isBlank(contentVersion.FileExtension)) {
+      fileName += '.' + contentVersion.FileExtension;
+    }
+    attachment.setFileName(fileName);
+    attachment.setBody(contentVersion.VersionData);
+    return attachment;
   }
 
   @TestVisible

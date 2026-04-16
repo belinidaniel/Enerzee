@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 04-14-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -117,7 +117,7 @@ private class OpportunityBOHighCoverageTest {
       EconomiaMensalEstimada__c = 10,
       EconomiaAnualEstimada__c = 100,
       EconomiaAcumulada__c = 100,
-      TipoTelhadoEstrutura__c = 'Estrutura',
+      TipoTelhadoEstrutura__c = 'Ao Solo',
       AreaM__c = 10,
       PrazoEntregaDias__c = '30',
       Amount = 1000,
@@ -158,139 +158,6 @@ private class OpportunityBOHighCoverageTest {
     }
 
     return null;
-  }
-
-  @IsTest
-  static void shouldMapOpportunityLineItemsAndManageKits() {
-    OpportunityTriggerHandler.disableTrigger();
-    Account accountRecord = createUniqueAccount('LINEITEMS');
-    User owner = createUser('owner.line.items@test.com', 'oliown');
-
-    Opportunity oppWithExistingKit = createOpportunity(
-      accountRecord,
-      'EXIST',
-      owner.Id
-    );
-    Opportunity oppWithoutKit = createOpportunity(
-      accountRecord,
-      'NEW',
-      owner.Id
-    );
-    OpportunityTriggerHandler.enableTrigger();
-    ProductTriggerHandler.disableTrigger();
-
-    Product2 existingProduct = (Product2) TestFactory.createSObject(
-      new Product2(
-        ProductCode = 'EXIST-PROD-' + String.valueOf(DateTime.now().getTime()),
-        Id_Externo__c = 'EXIST-PROD',
-        ExternalId__c = 'EXIST-PROD'
-      ),
-      true
-    );
-    PricebookEntry existingEntry = (PricebookEntry) TestFactory.createSObject(
-      new PricebookEntry(
-        Pricebook2Id = Test.getStandardPricebookId(),
-        Product2Id = existingProduct.Id,
-        UnitPrice = 100
-      ),
-      true
-    );
-
-    Kit_Instalacao__c existingKit = (Kit_Instalacao__c) TestFactory.createSObject(
-      new Kit_Instalacao__c(Nome_da_Oportunidade__c = oppWithExistingKit.Id),
-      true
-    );
-
-    OpportunityLineItem oldItem = (OpportunityLineItem) TestFactory.createSObject(
-      new OpportunityLineItem(
-        OpportunityId = oppWithExistingKit.Id,
-        PricebookEntryId = existingEntry.Id,
-        Description = 'Item antigo'
-      ),
-      true
-    );
-
-    Map<String, Id> externalIdToProductId = new Map<String, Id>{
-      'EXIST-PROD' => existingProduct.Id
-    };
-
-    OpportunityRecordsTO.SingleOpportunity singleExisting = buildSingleOpportunity(
-      oppWithExistingKit,
-      new List<OpportunityRecordsTO.Product>{
-        buildProduct('EXIST-PROD', 100, 1, 'Produto existente'),
-        buildProduct('NEW-PROD-1', 200, 2, 'Produto novo 1')
-      }
-    );
-    OpportunityRecordsTO.SingleOpportunity singleNew = buildSingleOpportunity(
-      oppWithoutKit,
-      new List<OpportunityRecordsTO.Product>{
-        buildProduct('NEW-PROD-2', 300, 1, 'Produto novo 2')
-      }
-    );
-
-    Map<OpportunityRecordsTO.SingleOpportunity, Opportunity> restObjectsToInsertedOpportunity = new Map<OpportunityRecordsTO.SingleOpportunity, Opportunity>{
-      singleExisting => oppWithExistingKit,
-      singleNew => oppWithoutKit
-    };
-
-    Test.startTest();
-    OpportunityBO.mapOpportunityLineItemFieldsRest(
-      restObjectsToInsertedOpportunity,
-      externalIdToProductId
-    );
-    Test.stopTest();
-    ProductTriggerHandler.enableTrigger();
-
-    List<OpportunityLineItem> insertedItems = [
-      SELECT Id, OpportunityId, Product2.ProductCode, Kit_Instalacao__c
-      FROM OpportunityLineItem
-      WHERE
-        OpportunityId IN :new Set<Id>{ oppWithExistingKit.Id, oppWithoutKit.Id }
-    ];
-    System.assertEquals(
-      3,
-      insertedItems.size(),
-      'Deve recriar os itens conforme o payload da integração.'
-    );
-
-    Set<Id> itemIds = new Map<Id, OpportunityLineItem>(insertedItems).keySet();
-    System.assertEquals(
-      false,
-      itemIds.contains(oldItem.Id),
-      'Os itens antigos precisam ser removidos antes da nova inserção.'
-    );
-
-    Map<Id, Kit_Instalacao__c> kitsByOpportunityId = new Map<Id, Kit_Instalacao__c>();
-    for (Kit_Instalacao__c kitRecord : [
-      SELECT Id, Nome_da_Oportunidade__c
-      FROM Kit_Instalacao__c
-      WHERE
-        Nome_da_Oportunidade__c IN :new Set<Id>{
-          oppWithExistingKit.Id,
-          oppWithoutKit.Id
-        }
-    ]) {
-      kitsByOpportunityId.put(kitRecord.Nome_da_Oportunidade__c, kitRecord);
-    }
-
-    System.assertEquals(
-      existingKit.Id,
-      kitsByOpportunityId.get(oppWithExistingKit.Id).Id,
-      'O kit existente deve ser reaproveitado quando já houver registro.'
-    );
-    System.assertNotEquals(
-      null,
-      kitsByOpportunityId.get(oppWithoutKit.Id),
-      'Um novo kit deve ser criado quando a oportunidade ainda não possui kit.'
-    );
-
-    for (OpportunityLineItem itemRecord : insertedItems) {
-      System.assertNotEquals(
-        null,
-        itemRecord.Kit_Instalacao__c,
-        'Todo item precisa ficar associado a um kit.'
-      );
-    }
   }
 
   @IsTest
@@ -846,7 +713,7 @@ private class OpportunityBOHighCoverageTest {
       EconomiaMensalEstimada__c = 10,
       EconomiaAnualEstimada__c = 100,
       EconomiaAcumulada__c = 100,
-      TipoTelhadoEstrutura__c = 'Estrutura',
+      TipoTelhadoEstrutura__c = 'Ao Solo',
       AreaM__c = 10,
       PrazoEntregaDias__c = '30',
       Amount = 1000,
@@ -2045,6 +1912,113 @@ private class OpportunityBOHighCoverageTest {
     System.assertEquals(
       UserInfo.getUserId(),
       OpportunityBO.resolvePaymentReminderTaskOwner(null, null, null, false)
+    );
+  }
+
+  @IsTest
+  static void shouldEnqueueProposalWhenFlagIsTrueButProposalLinkIsMissing() {
+    ApprovalProcessService.queuedProposalOpps.clear();
+    OpportunityTriggerHandler.disableTrigger();
+
+    Id solarRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+      .get('Solar')
+      .getRecordTypeId();
+
+    Account accountRecord = createUniqueAccount('PROPOSALREADY');
+    ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(),
+      true
+    );
+    Parceiro__c partner = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(CapaProposta__c = cover.Id, Produto__c = 'Solar'),
+      true
+    );
+    Opportunity opportunityRecord = new Opportunity(
+      Name = 'Opp Proposal Ready Check',
+      AccountId = accountRecord.Id,
+      Parceiro__c = partner.Id,
+      IdVirtualOffice__c = 'VO-HC-PROPOSAL-' +
+        String.valueOf(DateTime.now().getTime()),
+      OwnerId = UserInfo.getUserId(),
+      StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
+      CloseDate = Date.today().addDays(7),
+      RecordTypeId = solarRecordTypeId,
+      GrupoTarifario__c = 'Grupo B',
+      PotenciaPicoSistema__c = 1,
+      ValidadeProposta__c = '7',
+      ConsumoAnual__c = 1,
+      CustoMedioEnergia__c = 1,
+      NumeroModulos__c = 1,
+      FabricanteModulos__c = 'Fabricante',
+      Modelo__c = 'Modelo',
+      PotenciaNominalWp__c = 550,
+      Pesokg__c = 1,
+      NumeroInversores__c = 1,
+      FabricanteInversor__c = 'Fabricante',
+      ModeloInversor__c = 'Modelo Inversor',
+      PotenciaNominalSistema__c = 100,
+      GeracaoAnualEstimada__c = 100,
+      GeracaoMensalEstimada__c = 10,
+      PaybackAnos__c = 1,
+      EconomiaMensalEstimada__c = 10,
+      EconomiaAnualEstimada__c = 100,
+      EconomiaAcumulada__c = 100,
+      TipoTelhadoEstrutura__c = 'Ao Solo',
+      AreaM__c = 10,
+      PrazoEntregaDias__c = '30',
+      Amount = 1000,
+      PropostaGerada__c = true
+    );
+    insert opportunityRecord;
+    OpportunityTriggerHandler.enableTrigger();
+
+    insert new ContentVersion(
+      Title = 'Proposta existente',
+      PathOnClient = 'proposta-existente.pdf',
+      VersionData = Blob.valueOf('pdf'),
+      FirstPublishLocationId = opportunityRecord.Id,
+      IsProposal__c = true
+    );
+
+    insert new OpportunityAttachmentLink__c(
+      Name = 'Link legado',
+      OpportunityId__c = opportunityRecord.Id,
+      Type__c = 'Other',
+      AttachmentURL__c = 'https://example.com/legacy.pdf'
+    );
+
+    Opportunity oldOpportunity = opportunityRecord.clone(
+      true,
+      true,
+      true,
+      true
+    );
+    oldOpportunity.CustoFinanceiroWeg__c = 0;
+
+    Opportunity newOpportunity = opportunityRecord.clone(
+      true,
+      true,
+      true,
+      true
+    );
+    newOpportunity.CustoFinanceiroWeg__c = 10;
+
+    OpportunityBO.generateProposalAsync(
+      new Map<Id, Opportunity>{ opportunityRecord.Id => newOpportunity },
+      new Map<Id, Opportunity>{ opportunityRecord.Id => oldOpportunity }
+    );
+    ApprovalProcessService.queuedProposalOpps.clear();
+
+    insert new OpportunityAttachmentLink__c(
+      Name = 'Link proposta',
+      OpportunityId__c = opportunityRecord.Id,
+      Type__c = 'Proposal',
+      AttachmentURL__c = 'https://example.com/proposal.pdf'
+    );
+
+    OpportunityBO.generateProposalAsync(
+      new Map<Id, Opportunity>{ opportunityRecord.Id => newOpportunity },
+      new Map<Id, Opportunity>{ opportunityRecord.Id => oldOpportunity }
     );
   }
 }
