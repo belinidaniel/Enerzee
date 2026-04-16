@@ -157,6 +157,7 @@ public with sharing class ProposalConsoleController {
     Opportunity opp = [
       SELECT
         Id,
+        Name,
         Account.Name,
         Numeroproposta__c,
         GrupoTarifario__c,

@@ -532,11 +532,13 @@ private class ProposalConsoleControllerApiTest {
         }
       }
     );
+    ProposalApiClient.testIntegrationUrl = 'https://api.example.com/convertProposal';
   }
 
   private static void clearApiMappings() {
     ProposalConfigurationService.setTestTagConfigs(null);
     ProposalConfigurationService.setTestSectionsByKey(null);
+    ProposalApiClient.testIntegrationUrl = null;
   }
 
   private static void resetCalloutCounters() {

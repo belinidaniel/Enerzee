@@ -31,7 +31,10 @@ public with sharing class ProposalPayloadBuilder {
     Id opportunityId,
     List<ProposalConfigurationService.TagConfig> tagConfigs
   ) {
-    Set<String> selectFields = new Set<String>{ 'Id' };
+    Set<String> selectFields = new Set<String>{
+      'Id',
+      'MainViability__r.TextStudy__c'
+    };
     selectFields.addAll(COMPUTED_DEPENDENCY_FIELDS);
     if (tagConfigs != null) {
       for (ProposalConfigurationService.TagConfig config : tagConfigs) {

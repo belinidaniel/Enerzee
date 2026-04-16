@@ -1336,11 +1336,13 @@ private class ProposalEngineSupportTest {
         }
       }
     );
+    ProposalApiClient.testIntegrationUrl = 'https://api.example.com/convertProposal';
   }
 
   private static void clearProposalMappingsForGeneration() {
     ProposalConfigurationService.setTestTagConfigs(null);
     ProposalConfigurationService.setTestSectionsByKey(null);
+    ProposalApiClient.testIntegrationUrl = null;
   }
 
   @isTest

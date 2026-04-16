@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 04-13-2026
  * @last modified by  : Daniel Belini
- * @test              : ProposalEngineSupportTest
+ * @test              : ProposalConsoleControllerApiTest, ProposalEngineSupportTest
  **/
 public with sharing class ProposalApiClient {
   private static final String INTEGRADOR_DEV_NAME = 'EnerzeeProposalApi';
@@ -15,6 +15,9 @@ public with sharing class ProposalApiClient {
   // Temporaria: quando ProposalCover__c.Template__c estiver populado, usar esse campo.
   @TestVisible
   private static final String TEMPLATE_URL_OVERRIDE = 'https://gerenciadorblobhomolog.blob.core.windows.net/publicresources/proposal/proposal/Proposta_valores.pptx';
+
+  @TestVisible
+  private static String testIntegrationUrl;
 
   public class ApiResponse {
     public Blob fileBlob;
@@ -189,6 +192,9 @@ public with sharing class ProposalApiClient {
   }
 
   private static String loadIntegrationUrl() {
+    if (testIntegrationUrl != null) {
+      return testIntegrationUrl;
+    }
     Integrador__mdt integrador = [
       SELECT URL__c
       FROM Integrador__mdt
