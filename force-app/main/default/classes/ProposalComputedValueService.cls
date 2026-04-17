@@ -83,22 +83,19 @@ public with sharing class ProposalComputedValueService {
     }
 
     ViabilityStudy__c viability = viabilityList[0];
-    List<String> allEntries = new List<String>();
 
-    for (
-      String entry : buildViabilityCostEntries(
-        viability.AdequacyCostEnerzee__c,
-        viability
-      )
-    ) {
-      allEntries.add(entry);
-    }
-    for (
-      String entry : buildViabilityCostEntries(
-        viability.AdequacyCostClient__c,
-        viability
-      )
-    ) {
+    List<String> enerzeeEntries = buildViabilityCostEntries(
+      viability.AdequacyCostEnerzee__c,
+      viability
+    );
+    List<String> clientEntries = buildViabilityCostEntries(
+      viability.AdequacyCostClient__c,
+      viability
+    );
+
+    List<String> allEntries = new List<String>();
+    allEntries.addAll(enerzeeEntries);
+    for (String entry : clientEntries) {
       if (!allEntries.contains(entry)) {
         allEntries.add(entry);
       }
@@ -107,6 +104,14 @@ public with sharing class ProposalComputedValueService {
     values.put(
       CALCULATED_PREFIX + 'CustosViabilidade',
       allEntries.isEmpty() ? '' : String.join(allEntries, '\n')
+    );
+    values.put(
+      CALCULATED_PREFIX + 'CustosEnerzee',
+      enerzeeEntries.isEmpty() ? '' : String.join(enerzeeEntries, '\n')
+    );
+    values.put(
+      CALCULATED_PREFIX + 'CustosCliente',
+      clientEntries.isEmpty() ? '' : String.join(clientEntries, '\n')
     );
   }
 
