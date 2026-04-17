@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : ClickSignInboundDTOTest
+ * @test              : ClickSignInboundDTOCoverageTest, ClickSignInboundDTOTest
  **/
 public class ClickSignInboundDTO {
   public Event event { get; set; }

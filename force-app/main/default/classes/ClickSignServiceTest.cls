@@ -98,7 +98,8 @@ public class ClickSignServiceTest {
       Name = 'Test Signer',
       Email__c = 'test@example.com',
       Role__c = 'Signer',
-      ClickSign__c = clickSign.Id
+      ClickSign__c = clickSign.Id,
+      ExternalId__c = 'signer-external-123'
     );
     insert signer;
 

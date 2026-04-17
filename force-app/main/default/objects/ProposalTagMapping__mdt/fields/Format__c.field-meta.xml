@@ -59,6 +59,11 @@
                 <default>false</default>
                 <label>Currency BR (R$)</label>
             </value>
+            <value>
+                <fullName>STRIP_HTML</fullName>
+                <default>false</default>
+                <label>Strip HTML</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

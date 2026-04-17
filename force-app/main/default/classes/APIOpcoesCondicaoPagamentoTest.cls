@@ -1,10 +1,18 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 04-17-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
 @isTest
 public with sharing class APIOpcoesCondicaoPagamentoTest {
   /* 
-		Autor: Bruno Peixoto, JFOX
-		Data: 18/10/2022
-		Objetivo: testes da classe APIOpcoesCondicaoPagamento
-	*/
+        Autor: Bruno Peixoto, JFOX
+        Data: 18/10/2022
+        Objetivo: testes da classe APIOpcoesCondicaoPagamento
+    */
 
   //Teste positivo, com os parâmetros corretos
   @isTest

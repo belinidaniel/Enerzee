@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-10-2026
+ * @last modified on  : 04-17-2026
  * @last modified by  : Daniel Belini
  * @test              : ProposalConsoleControllerApiTest, ProposalConsoleControllerTest, ProposalEngineSupportTest
  **/
@@ -78,11 +78,11 @@ public with sharing class ProposalGenerationService {
       tagConfigs
     );
 
-    // Adiciona a seção "Viabilidade" dinamicamente quando TextStudy__c estiver preenchido
+    // Adiciona a seção "Viabilidade" dinamicamente quando TextStudy2__c estiver preenchido
     String viabilityText = null;
     if (dataOpportunity.MainViability__r != null) {
       viabilityText = (String) dataOpportunity.MainViability__r.get(
-        'TextStudy__c'
+        'TextStudy2__c'
       );
     }
     if (String.isNotBlank(viabilityText)) {
@@ -96,6 +96,15 @@ public with sharing class ProposalGenerationService {
       sectionsToShow,
       templateVersion.Id
     );
+
+    // Extrai imagens do Rich Text e injeta como tags de imagem (_img)
+    if (String.isNotBlank(viabilityText)) {
+      String imagesBase64 = extractImagesFromRichText(viabilityText);
+      if (String.isNotBlank(imagesBase64)) {
+        payload.tags.put('{{estudoViabilidade_img__c}}', imagesBase64);
+        payload.tagsJson = JSON.serialize(payload.tags);
+      }
+    }
 
     ContentVersion existingProposal = ProposalFileService.findExistingProposal(
       context.opportunity.Id,
@@ -132,5 +141,46 @@ public with sharing class ProposalGenerationService {
     result.previewUrl = ProposalFileService.buildPreviewUrl(contentVersionId);
     result.reusedExistingFile = false;
     return result;
+  }
+
+  /**
+   * Extrai URLs de imagens do Rich Text e retorna como JSON com as URLs absolutas
+   * e o session token para que a API Python faça o download autenticado.
+   * Formato retornado: {"sessionToken":"...","urls":["https://...","https://..."]}
+   * A API Python usa essas informacoes para baixar as imagens e injetar no PPTX.
+   */
+  @TestVisible
+  private static String extractImagesFromRichText(String richTextHtml) {
+    if (String.isBlank(richTextHtml)) {
+      return null;
+    }
+
+    Pattern imgPattern = Pattern.compile(
+      '<img[^>]+src=["\']([^"\']+)["\'][^>]*>'
+    );
+    Matcher imgMatcher = imgPattern.matcher(richTextHtml);
+
+    String orgBaseUrl = URL.getOrgDomainUrl().toExternalForm();
+    List<String> imageUrls = new List<String>();
+    while (imgMatcher.find()) {
+      String imgUrl = imgMatcher.group(1);
+      if (String.isBlank(imgUrl)) {
+        continue;
+      }
+      if (imgUrl.startsWith('/')) {
+        imgUrl = orgBaseUrl + imgUrl;
+      }
+      imageUrls.add(imgUrl);
+    }
+
+    if (imageUrls.isEmpty()) {
+      return null;
+    }
+
+    Map<String, Object> payload = new Map<String, Object>{
+      'sessionToken' => UserInfo.getSessionId(),
+      'urls' => imageUrls
+    };
+    return JSON.serialize(payload);
   }
 }

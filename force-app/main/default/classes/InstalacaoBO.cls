@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-23-2026
  * @last modified by  : Daniel Belini
- * @test              : InstalacaoBOTest, InstalacaoTriggerHandlerTest, OpportunityTriggerTest, ProjetoTriggerTest
+ * @test              : InstalacaoBOTest, InstalacaoTriggerHandlerTest, ProjetoTriggerTest
  **/
 public with sharing class InstalacaoBO {
   private static final Integer INSTALLATION_NAME_MAX_LENGTH = Schema.SObjectType.Instalacao__c.fields.Name.getLength();

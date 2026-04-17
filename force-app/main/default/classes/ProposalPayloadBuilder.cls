@@ -231,6 +231,18 @@ public with sharing class ProposalPayloadBuilder {
       }
       return 'R$ ' + formatDecimalBR(decimalValue, 2);
     }
+    if (normalizedFormat == 'STRIP_HTML') {
+      String stripped = String.valueOf(value);
+      stripped = stripped.replaceAll('<[^>]+>', '');
+      stripped = stripped.replace('&amp;', '&');
+      stripped = stripped.replace('&lt;', '<');
+      stripped = stripped.replace('&gt;', '>');
+      stripped = stripped.replace('&quot;', '"');
+      stripped = stripped.replace('&#39;', '\'');
+      stripped = stripped.replace('&nbsp;', ' ');
+      stripped = stripped.replaceAll('\\s+', ' ');
+      return stripped.trim();
+    }
 
     return String.valueOf(value);
   }

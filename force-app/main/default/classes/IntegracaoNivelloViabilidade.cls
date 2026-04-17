@@ -4,7 +4,8 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : IntegracaoNivelloAdditionalTest, IntegracaoNivelloViabilidadeTest
+ * @test              : IntegracaoNivelloAdditionalTest, IntegracaoNivelloViabilidadeCoverageTest,
+ *                       IntegracaoNivelloViabilidadeTest
  **/
 public with sharing class IntegracaoNivelloViabilidade {
   @future(callout=true)
