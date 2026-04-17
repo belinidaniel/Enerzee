@@ -854,6 +854,20 @@
                 <identifier>RecordTextStudy2_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <name>Facet-TextStudy2Fields</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-TextStudy2Fields</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_columnTextStudy2</identifier>
+            </componentInstance>
+        </itemInstances>
         <name>Facet-TextStudy2Section</name>
         <type>Facet</type>
     </flexiPageRegions>
