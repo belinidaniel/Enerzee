@@ -8386,11 +8386,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Opportunity.Observacoes_pos_sombreamento__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>Opportunity.Observacoes_pos_visita__c</field>
         <readable>false</readable>
     </fieldPermissions>
