@@ -8386,6 +8386,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Opportunity.Observacoes_pos_sombreamento__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Opportunity.Observacoes_pos_visita__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Opportunity.ObterNumeroContrato__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -12480,11 +12490,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.TextStudy2__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>ViabilityStudy__c.ThePatternShouldBeReadjusted__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -15433,6 +15438,18 @@
         <field>lb065_Project__c.Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <flowAccesses>
+        <enabled>false</enabled>
+        <flow>
+AccountAfterSave;
+    </flow>
+    </flowAccesses>
+    <flowAccesses>
+        <enabled>true</enabled>
+        <flow>
+AgentForce_Lead_Create_Lead_or_Update;
+    </flow>
+    </flowAccesses>
     <flowAccesses>
         <enabled>false</enabled>
         <flow>
