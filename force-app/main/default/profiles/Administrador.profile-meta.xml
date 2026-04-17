@@ -15434,12 +15434,6 @@
         <readable>true</readable>
     </fieldPermissions>
     <flowAccesses>
-        <enabled>true</enabled>
-        <flow>
-AgentForce_Lead_Create_Lead_or_Update;
-    </flow>
-    </flowAccesses>
-    <flowAccesses>
         <enabled>false</enabled>
         <flow>
 AgentForce_Lead_Create_file;
