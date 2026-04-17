@@ -54,6 +54,11 @@
                 <default>false</default>
                 <label>Count X</label>
             </value>
+            <value>
+                <fullName>CURRENCY_BR_PREFIX</fullName>
+                <default>false</default>
+                <label>Currency BR (R$)</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

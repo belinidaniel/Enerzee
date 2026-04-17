@@ -2047,6 +2047,9 @@ public class OpportunityBO {
       .get('Solar')
       .getRecordTypeId();
 
+    // Primeira passagem: identifica opps elegíveis para verificação de disponibilidade de proposta.
+    // Um opp é elegível quando há alguma mudança relevante OU quando PropostaGerada__c ainda é falsa
+    // e os campos obrigatórios já estão preenchidos (caso de nova opp na primeira atualização).
     Set<Id> eligibleIds = new Set<Id>();
     for (Opportunity opp : newMap.values()) {
       Opportunity oldOpp = oldMap.get(opp.Id);
@@ -2054,6 +2057,9 @@ public class OpportunityBO {
       Boolean skippedRecordType =
         opp.RecordTypeId != ezeeConnectRtId &&
         opp.RecordTypeId != solarRtId;
+      if (skippedGrupoA || skippedRecordType) {
+        continue;
+      }
       Boolean propostaGeradaChanged =
         opp.PropostaGerada__c !=
         (oldOpp != null ? oldOpp.PropostaGerada__c : null);
@@ -2065,14 +2071,13 @@ public class OpportunityBO {
         (oldOpp != null ? oldOpp.StatusAprovacaoDesconto__c : null);
       Boolean formulaChanged =
         oldOpp != null && formulaFieldsChanged(oldOpp, opp);
+      // Nova opp com campos preenchidos: PropostaGerada__c ainda falsa mas já pronta para gerar
+      Boolean isEzeeConnect = opp.RecordTypeId == ezeeConnectRtId;
       Boolean propostaGeradaStillFalse =
         opp.PropostaGerada__c == false &&
-        (readequacaoChanged ||
-        aprovacaoChanged ||
-        formulaChanged);
-      if (skippedGrupoA || skippedRecordType) {
-        continue;
-      }
+        (isEzeeConnect
+          ? areRequiredFieldsFilledConnect(opp)
+          : areRequiredFieldsFilled(opp));
       if (
         propostaGeradaChanged ||
         propostaGeradaStillFalse ||

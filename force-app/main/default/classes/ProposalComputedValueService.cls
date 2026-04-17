@@ -46,8 +46,169 @@ public with sharing class ProposalComputedValueService {
       opportunityId
     );
     addCalculatedValues(values, opportunityRecord, rentalOption);
+    addViabilityCostValues(values, opportunityId);
 
     return values;
+  }
+
+  private static void addViabilityCostValues(
+    Map<String, Object> values,
+    Id opportunityId
+  ) {
+    if (opportunityId == null) {
+      return;
+    }
+
+    List<ViabilityStudy__c> viabilityList = [
+      SELECT
+        AdequacyCostEnerzee__c,
+        AdequacyCostClient__c,
+        AcBranchCost__c,
+        DcBranchCost__c,
+        StandardAdequacyCost__c,
+        AdditionalCost__c,
+        OtherCosts__c,
+        OtherCostsDescription__c,
+        CoberturaCost__c,
+        StruturalReport__c
+      FROM ViabilityStudy__c
+      WHERE Opportunity__c = :opportunityId
+      ORDER BY CreatedDate DESC
+      LIMIT 1
+    ];
+
+    if (viabilityList.isEmpty()) {
+      values.put(CALCULATED_PREFIX + 'CustosViabilidade', '');
+      return;
+    }
+
+    ViabilityStudy__c viability = viabilityList[0];
+    List<String> allEntries = new List<String>();
+
+    for (
+      String entry : buildViabilityCostEntries(
+        viability.AdequacyCostEnerzee__c,
+        viability
+      )
+    ) {
+      allEntries.add(entry);
+    }
+    for (
+      String entry : buildViabilityCostEntries(
+        viability.AdequacyCostClient__c,
+        viability
+      )
+    ) {
+      if (!allEntries.contains(entry)) {
+        allEntries.add(entry);
+      }
+    }
+
+    values.put(
+      CALCULATED_PREFIX + 'CustosViabilidade',
+      allEntries.isEmpty() ? '' : String.join(allEntries, '\n')
+    );
+  }
+
+  private static List<String> buildViabilityCostEntries(
+    String multiSelectValues,
+    ViabilityStudy__c viability
+  ) {
+    List<String> entries = new List<String>();
+    if (String.isBlank(multiSelectValues)) {
+      return entries;
+    }
+    for (String rawLabel : multiSelectValues.split(';')) {
+      String label = rawLabel.trim();
+      if (String.isBlank(label)) {
+        continue;
+      }
+      String displayLabel = resolveViabilityCostLabel(label, viability);
+      Decimal amount = resolveViabilityCostAmount(label, viability);
+      if (amount != null) {
+        entries.add(displayLabel + ' (R$ ' + formatDecimalBR(amount, 2) + ')');
+      } else {
+        entries.add(displayLabel);
+      }
+    }
+    return entries;
+  }
+
+  private static String resolveViabilityCostLabel(
+    String label,
+    ViabilityStudy__c viability
+  ) {
+    if (String.isBlank(label)) {
+      return label;
+    }
+    String normalized = label.trim().toLowerCase();
+    if (
+      (normalized == 'outros custos' ||
+      normalized == 'outros custo') &&
+      viability != null &&
+      !String.isBlank(viability.OtherCostsDescription__c)
+    ) {
+      return viability.OtherCostsDescription__c.trim();
+    }
+    return label;
+  }
+
+  private static Decimal resolveViabilityCostAmount(
+    String label,
+    ViabilityStudy__c viability
+  ) {
+    if (viability == null || String.isBlank(label)) {
+      return null;
+    }
+    String normalized = label.trim().toLowerCase();
+    Decimal amount;
+    if (normalized == 'ramal cc') {
+      amount = viability.DcBranchCost__c;
+    } else if (normalized == 'ramal ca') {
+      amount = viability.AcBranchCost__c;
+    } else if (
+      normalized == 'adequação padrão' ||
+      normalized == 'adequacao padrao'
+    ) {
+      amount = viability.StandardAdequacyCost__c;
+    } else if (normalized == 'cobertura') {
+      amount = viability.CoberturaCost__c;
+    } else if (normalized == 'laudo estrutural') {
+      amount = viability.StruturalReport__c;
+    } else if (normalized == 'outros custos' || normalized == 'outros custo') {
+      amount = viability.OtherCosts__c;
+    } else if (normalized == 'custos adicionais') {
+      amount = viability.AdditionalCost__c;
+    }
+    return (amount != null && amount != 0) ? amount : null;
+  }
+
+  private static String formatDecimalBR(Decimal value, Integer scale) {
+    Decimal scaled = value.setScale(scale, RoundingMode.HALF_UP);
+    Long integerPart = scaled.longValue();
+    Decimal fractionalPart = (scaled - integerPart)
+      .abs()
+      .setScale(scale, RoundingMode.HALF_UP);
+
+    String intStr = String.valueOf(
+      integerPart < 0 ? -integerPart : integerPart
+    );
+    String intFormatted = '';
+    Integer remainder = Math.mod(intStr.length(), 3);
+    for (Integer i = 0; i < intStr.length(); i++) {
+      if (i > 0 && Math.mod(i - remainder, 3) == 0 && i >= remainder) {
+        intFormatted += '.';
+      }
+      intFormatted += intStr.substring(i, i + 1);
+    }
+
+    String fracStr = String.valueOf(fractionalPart).replace('0.', '');
+    while (fracStr.length() < scale) {
+      fracStr += '0';
+    }
+
+    String result = intFormatted + ',' + fracStr;
+    return integerPart < 0 ? '-' + result : result;
   }
 
   private static void addCalculatedValues(

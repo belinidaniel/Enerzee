@@ -223,6 +223,13 @@ public with sharing class ProposalPayloadBuilder {
       }
       return formatDecimalBR(decimalValue, 2);
     }
+    if (normalizedFormat == 'CURRENCY_BR_PREFIX') {
+      Decimal decimalValue = toDecimal(value);
+      if (decimalValue == null) {
+        return String.valueOf(value);
+      }
+      return 'R$ ' + formatDecimalBR(decimalValue, 2);
+    }
 
     return String.valueOf(value);
   }

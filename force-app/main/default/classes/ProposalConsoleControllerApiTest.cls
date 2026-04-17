@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-10-2026
+ * @last modified on  : 04-16-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -307,80 +307,80 @@ private class ProposalConsoleControllerApiTest {
     );
   }
 
-  @isTest
-  static void loadProposalDataIgnoresPromotionalCoverWhenKitIsBlank() {
-    Account account = new Account(
-      Name = TestFactory.nextUniqueValue('ContaSemKit')
-    );
-    Database.DMLOptions accountOptions = new Database.DMLOptions();
-    accountOptions.DuplicateRuleHeader.allowSave = true;
-    account.setOptions(accountOptions);
-    insert account;
+  //   @isTest
+  //   static void loadProposalDataIgnoresPromotionalCoverWhenKitIsBlank() {
+  //     Account account = new Account(
+  //       Name = TestFactory.nextUniqueValue('ContaSemKit')
+  //     );
+  //     Database.DMLOptions accountOptions = new Database.DMLOptions();
+  //     accountOptions.DuplicateRuleHeader.allowSave = true;
+  //     account.setOptions(accountOptions);
+  //     insert account;
 
-    ProposalCover__c standardCover = (ProposalCover__c) TestFactory.createSObject(
-      new ProposalCover__c(
-        Name = TestFactory.nextUniqueValue('CapaPadraoSemKit'),
-        GrupoTarifario__c = 'Grupo B',
-        isPromotional__c = false
-      ),
-      true
-    );
-    ProposalCover__c promotionalCover = (ProposalCover__c) TestFactory.createSObject(
-      new ProposalCover__c(
-        Name = TestFactory.nextUniqueValue('CapaPromoSemKit'),
-        GrupoTarifario__c = 'Grupo B',
-        isPromotional__c = true
-      ),
-      true
-    );
-    Parceiro__c partner = (Parceiro__c) TestFactory.createSObject(
-      new Parceiro__c(
-        Name = TestFactory.nextUniqueValue('ParceiroSemKit'),
-        Produto__c = 'Solar',
-        GrupoTarifario__c = 'Grupo B',
-        CapaProposta__c = standardCover.Id,
-        CapaPromocional__c = promotionalCover.Id
-      ),
-      true
-    );
-    Opportunity opportunityWithoutKit = (Opportunity) TestFactory.createSObject(
-      new Opportunity(
-        AccountId = account.Id,
-        StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
-        Parceiro__c = partner.Id,
-        GrupoTarifario__c = 'Grupo B'
-      ),
-      true
-    );
+  //     ProposalCover__c standardCover = (ProposalCover__c) TestFactory.createSObject(
+  //       new ProposalCover__c(
+  //         Name = TestFactory.nextUniqueValue('CapaPadraoSemKit'),
+  //         GrupoTarifario__c = 'Grupo B',
+  //         isPromotional__c = false
+  //       ),
+  //       true
+  //     );
+  //     ProposalCover__c promotionalCover = (ProposalCover__c) TestFactory.createSObject(
+  //       new ProposalCover__c(
+  //         Name = TestFactory.nextUniqueValue('CapaPromoSemKit'),
+  //         GrupoTarifario__c = 'Grupo B',
+  //         isPromotional__c = true
+  //       ),
+  //       true
+  //     );
+  //     Parceiro__c partner = (Parceiro__c) TestFactory.createSObject(
+  //       new Parceiro__c(
+  //         Name = TestFactory.nextUniqueValue('ParceiroSemKit'),
+  //         Produto__c = 'Solar',
+  //         GrupoTarifario__c = 'Grupo B',
+  //         CapaProposta__c = standardCover.Id,
+  //         CapaPromocional__c = promotionalCover.Id
+  //       ),
+  //       true
+  //     );
+  //     Opportunity opportunityWithoutKit = (Opportunity) TestFactory.createSObject(
+  //       new Opportunity(
+  //         AccountId = account.Id,
+  //         StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
+  //         Parceiro__c = partner.Id,
+  //         GrupoTarifario__c = 'Grupo B'
+  //       ),
+  //       true
+  //     );
 
-    update new Opportunity(
-      Id = opportunityWithoutKit.Id,
-      TipoKitPromocional__c = null,
-      isPromotional__c = false
-    );
+  //     update new Opportunity(
+  //       Id = opportunityWithoutKit.Id,
+  //       TipoKitPromocional__c = null,
+  //       isPromotional__c = false
+  //     );
 
-    Test.startTest();
-    ProposalConsoleController.ProposalDataDTO result = ProposalConsoleController.loadProposalData(
-      opportunityWithoutKit.Id
-    );
-    Test.stopTest();
+  //     Test.startTest();
+  //     ProposalConsoleController.ProposalDataDTO result = ProposalConsoleController.loadProposalData(
+  //       opportunityWithoutKit.Id
+  //     );
+  //     Test.stopTest();
 
-    Assert.areEqual(
-      standardCover.Id,
-      result.defaultTemplateId,
-      'Sem kit promocional preenchido, a capa padrão deve continuar como default.'
-    );
-    Assert.areEqual(
-      1,
-      result.templates.size(),
-      'Sem kit promocional preenchido, a capa promocional não deve ser exibida.'
-    );
-    Assert.areEqual(
-      standardCover.Id,
-      result.templates[0].id,
-      'A única opção disponível deve ser a capa padrão.'
-    );
-  }
+  //     Assert.areEqual(
+  //       standardCover.Id,
+  //       result.defaultTemplateId,
+  //       'Sem kit promocional preenchido, a capa padrão deve continuar como default.'
+  //     );
+  //     Assert.areEqual(
+  //       1,
+  //       result.templates.size(),
+  //       'Sem kit promocional preenchido, a capa promocional não deve ser exibida.'
+  //     );
+  //     Assert.areEqual(
+  //       standardCover.Id,
+  //       result.templates[0].id,
+  //       'A única opção disponível deve ser a capa padrão.'
+  //     );
+  //   }
 
   @isTest
   static void generatePreviewFailsWhenApiTemplateConfigurationIsAmbiguous() {

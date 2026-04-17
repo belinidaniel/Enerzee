@@ -725,6 +725,24 @@
                 <identifier>flexipage_fieldSection2</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>columns</name>
+                    <value>Facet-TextStudy2Section</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>horizontalAlignment</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Texto de Estudo (Rich Text)</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:fieldSection</componentName>
+                <identifier>flexipage_fieldSectionTextStudy2</identifier>
+            </componentInstance>
+        </itemInstances>
         <mode>Replace</mode>
         <name>detailTabContent</name>
         <type>Facet</type>
@@ -823,6 +841,34 @@
             </componentInstance>
         </itemInstances>
         <name>Facet-324e1df9-5b33-4cce-a116-28ba443833cc</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.TextStudy2__c</fieldItem>
+                <identifier>RecordTextStudy2_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <name>Facet-TextStudy2Fields</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-TextStudy2Fields</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:column</componentName>
+                <identifier>flexipage_columnTextStudy2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-TextStudy2Section</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
