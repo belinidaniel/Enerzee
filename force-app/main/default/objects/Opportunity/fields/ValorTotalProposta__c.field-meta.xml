@@ -16,7 +16,7 @@
     Acoplamento__c +
     BDI__c +
     ValorTotalProdutos__c +
-    Direct__c + ClientTotalCost__c + ClientAdequacyCostTotal__c,
+    Direct__c + ClientTotalCost__c,
 				
     ValorTotalProdutos__c
 )</formula>

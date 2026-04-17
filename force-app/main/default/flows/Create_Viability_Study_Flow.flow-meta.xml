@@ -84,6 +84,13 @@
         >$Record.Observacao_Proposta__c</elementReference>
             </value>
         </inputAssignments>
+        <inputAssignments>
+            <field>EstimatedAnnualGeneration__c</field>
+            <value>
+                <elementReference
+        >$Record.GeracaoAnualEstimada__c</elementReference>
+            </value>
+        </inputAssignments>
         <object>ViabilityStudy__c</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordCreates>

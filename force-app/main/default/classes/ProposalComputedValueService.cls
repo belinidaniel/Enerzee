@@ -94,24 +94,18 @@ public with sharing class ProposalComputedValueService {
     );
 
     List<String> allEntries = new List<String>();
-    allEntries.addAll(enerzeeEntries);
-    for (String entry : clientEntries) {
-      if (!allEntries.contains(entry)) {
-        allEntries.add(entry);
-      }
+    if (!enerzeeEntries.isEmpty()) {
+      allEntries.add('Custo Enerzee');
+      allEntries.addAll(enerzeeEntries);
+    }
+    if (!clientEntries.isEmpty()) {
+      allEntries.add('Custo Cliente');
+      allEntries.addAll(clientEntries);
     }
 
     values.put(
       CALCULATED_PREFIX + 'CustosViabilidade',
       allEntries.isEmpty() ? '' : String.join(allEntries, '\n')
-    );
-    values.put(
-      CALCULATED_PREFIX + 'CustosEnerzee',
-      enerzeeEntries.isEmpty() ? '' : String.join(enerzeeEntries, '\n')
-    );
-    values.put(
-      CALCULATED_PREFIX + 'CustosCliente',
-      clientEntries.isEmpty() ? '' : String.join(clientEntries, '\n')
     );
   }
 

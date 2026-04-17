@@ -61,6 +61,11 @@
         <field>Opportunity.SelectedSimulation__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Opportunity.ClientAdequacyCostTotal__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
 
     <!-- ═══════════════════════════════════════════════
          PaymentSimulation__c — todos os campos
