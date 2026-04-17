@@ -340,9 +340,9 @@ public with sharing class ProposalComputedValueService {
         .setScale(2, RoundingMode.HALF_UP);
       if (rentalPct < 0) {
         // Seção de aluguel fica em branco quando porcentagem é negativa
-        // EconomiaPercentual mantém o valor calculado (mesmo negativo) para exibição
         values.put(CALCULATED_PREFIX + 'AluguelEconomiaMensal', '');
         values.put(CALCULATED_PREFIX + 'EconomiaMensal', '');
+        values.put(CALCULATED_PREFIX + 'EconomiaPercentual', '');
       } else {
         // Propaga o valor de EconomiaMensalEstimada para o path calculado do aluguel
         values.put(CALCULATED_PREFIX + 'AluguelEconomiaMensal', monthlySavings);
