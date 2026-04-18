@@ -24,7 +24,8 @@ public with sharing class ProposalPayloadBuilder {
     'CustoMedioEnergia__c',
     'EconomiaMensalEstimada__c',
     'GeracaoMensalEstimada__c',
-    'ConsumoInformadoB__c'
+    'ConsumoInformadoB__c',
+    'TarifaComTributosB__c'
   };
 
   public static Opportunity queryOpportunityForTags(
@@ -33,8 +34,7 @@ public with sharing class ProposalPayloadBuilder {
   ) {
     Set<String> selectFields = new Set<String>{
       'Id',
-      'MainViability__r.TextStudy__c',
-      'MainViability__r.TextStudy2__c'
+      'MainViability__r.TextStudy__c'
     };
     selectFields.addAll(COMPUTED_DEPENDENCY_FIELDS);
     if (tagConfigs != null) {

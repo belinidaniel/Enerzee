@@ -78,11 +78,11 @@ public with sharing class ProposalGenerationService {
       tagConfigs
     );
 
-    // Adiciona a seção "Viabilidade" dinamicamente quando TextStudy2__c estiver preenchido
+    // Adiciona a seção "Viabilidade" dinamicamente quando TextStudy__c estiver preenchido
     String viabilityText = null;
     if (dataOpportunity.MainViability__r != null) {
       viabilityText = (String) dataOpportunity.MainViability__r.get(
-        'TextStudy2__c'
+        'TextStudy__c'
       );
     }
     if (String.isNotBlank(viabilityText)) {
@@ -106,6 +106,9 @@ public with sharing class ProposalGenerationService {
       }
     }
 
+    // Busca imagem "Layout" anexada à Opportunity para enviar à API
+    String layoutBase64 = fetchLayoutAttachment(context.opportunity.Id);
+
     ContentVersion existingProposal = ProposalFileService.findExistingProposal(
       context.opportunity.Id,
       payload.payloadHash
@@ -126,7 +129,8 @@ public with sharing class ProposalGenerationService {
       templateVersion,
       payload.tagsJson,
       payload.sectionsJson,
-      context.cover
+      context.cover,
+      layoutBase64
     );
     Id contentVersionId = ProposalFileService.saveGeneratedProposal(
       context,
@@ -182,5 +186,35 @@ public with sharing class ProposalGenerationService {
       'urls' => imageUrls
     };
     return JSON.serialize(payload);
+  }
+
+  @TestVisible
+  private static String fetchLayoutAttachment(Id opportunityId) {
+    List<ContentDocumentLink> links = [
+      SELECT ContentDocumentId
+      FROM ContentDocumentLink
+      WHERE LinkedEntityId = :opportunityId AND ContentDocument.Title = 'Layout'
+      ORDER BY ContentDocument.CreatedDate DESC
+      LIMIT 1
+    ];
+    if (links.isEmpty()) {
+      return null;
+    }
+    List<ContentVersion> versions = [
+      SELECT VersionData, FileType
+      FROM ContentVersion
+      WHERE ContentDocumentId = :links[0].ContentDocumentId AND IsLatest = TRUE
+      LIMIT 1
+    ];
+    if (versions.isEmpty()) {
+      return null;
+    }
+    String mimeType = versions[0].FileType != null
+      ? 'image/' + versions[0].FileType.toLowerCase()
+      : 'image/png';
+    return 'data:' +
+      mimeType +
+      ';base64,' +
+      EncodingUtil.base64Encode(versions[0].VersionData);
   }
 }

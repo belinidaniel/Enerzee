@@ -44,6 +44,22 @@ public with sharing class ProposalApiClient {
     String sectionsJson,
     ProposalCover__c cover
   ) {
+    return convertProposal(
+      templateVersion,
+      tagsJson,
+      sectionsJson,
+      cover,
+      null
+    );
+  }
+
+  public static ApiResponse convertProposal(
+    ContentVersion templateVersion,
+    String tagsJson,
+    String sectionsJson,
+    ProposalCover__c cover,
+    String layoutBase64
+  ) {
     String tagsResolved = (String.isBlank(tagsJson) || tagsJson == 'null')
       ? '{}'
       : tagsJson;
@@ -85,10 +101,21 @@ public with sharing class ProposalApiClient {
       crlf +
       crlf +
       sectionsResolved +
-      crlf +
-      '--' +
-      BOUNDARY +
-      '--';
+      crlf;
+
+    if (String.isNotBlank(layoutBase64)) {
+      body +=
+        '--' +
+        BOUNDARY +
+        crlf +
+        'Content-Disposition: form-data; name="layout"' +
+        crlf +
+        crlf +
+        layoutBase64 +
+        crlf;
+    }
+
+    body += '--' + BOUNDARY + '--';
 
     System.debug('[ProposalApiClient] endpoint=' + integrationUrl);
     System.debug('[ProposalApiClient] templateUrl=' + templateUrl);
