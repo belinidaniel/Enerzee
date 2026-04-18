@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-10-2026
+ * @last modified on  : 04-17-2026
  * @last modified by  : Daniel Belini
  * @test              : ProposalConsoleControllerApiTest, ProposalConsoleControllerTest, ProposalEngineSupportTest
  **/
@@ -97,6 +97,18 @@ public with sharing class ProposalGenerationService {
       templateVersion.Id
     );
 
+    // Extrai imagens do Rich Text e injeta como tags de imagem (_img)
+    if (String.isNotBlank(viabilityText)) {
+      String imagesBase64 = extractImagesFromRichText(viabilityText);
+      if (String.isNotBlank(imagesBase64)) {
+        payload.tags.put('{{estudoViabilidade_img__c}}', imagesBase64);
+        payload.tagsJson = JSON.serialize(payload.tags);
+      }
+    }
+
+    // Busca imagem "Layout" anexada à Opportunity para enviar à API
+    String layoutBase64 = fetchLayoutAttachment(context.opportunity.Id);
+
     ContentVersion existingProposal = ProposalFileService.findExistingProposal(
       context.opportunity.Id,
       payload.payloadHash
@@ -117,7 +129,8 @@ public with sharing class ProposalGenerationService {
       templateVersion,
       payload.tagsJson,
       payload.sectionsJson,
-      context.cover
+      context.cover,
+      layoutBase64
     );
     Id contentVersionId = ProposalFileService.saveGeneratedProposal(
       context,
@@ -132,5 +145,76 @@ public with sharing class ProposalGenerationService {
     result.previewUrl = ProposalFileService.buildPreviewUrl(contentVersionId);
     result.reusedExistingFile = false;
     return result;
+  }
+
+  /**
+   * Extrai URLs de imagens do Rich Text e retorna como JSON com as URLs absolutas
+   * e o session token para que a API Python faça o download autenticado.
+   * Formato retornado: {"sessionToken":"...","urls":["https://...","https://..."]}
+   * A API Python usa essas informacoes para baixar as imagens e injetar no PPTX.
+   */
+  @TestVisible
+  private static String extractImagesFromRichText(String richTextHtml) {
+    if (String.isBlank(richTextHtml)) {
+      return null;
+    }
+
+    Pattern imgPattern = Pattern.compile(
+      '<img[^>]+src=["\']([^"\']+)["\'][^>]*>'
+    );
+    Matcher imgMatcher = imgPattern.matcher(richTextHtml);
+
+    String orgBaseUrl = URL.getOrgDomainUrl().toExternalForm();
+    List<String> imageUrls = new List<String>();
+    while (imgMatcher.find()) {
+      String imgUrl = imgMatcher.group(1);
+      if (String.isBlank(imgUrl)) {
+        continue;
+      }
+      if (imgUrl.startsWith('/')) {
+        imgUrl = orgBaseUrl + imgUrl;
+      }
+      imageUrls.add(imgUrl);
+    }
+
+    if (imageUrls.isEmpty()) {
+      return null;
+    }
+
+    Map<String, Object> payload = new Map<String, Object>{
+      'sessionToken' => UserInfo.getSessionId(),
+      'urls' => imageUrls
+    };
+    return JSON.serialize(payload);
+  }
+
+  @TestVisible
+  private static String fetchLayoutAttachment(Id opportunityId) {
+    List<ContentDocumentLink> links = [
+      SELECT ContentDocumentId
+      FROM ContentDocumentLink
+      WHERE LinkedEntityId = :opportunityId AND ContentDocument.Title = 'Layout'
+      ORDER BY ContentDocument.CreatedDate DESC
+      LIMIT 1
+    ];
+    if (links.isEmpty()) {
+      return null;
+    }
+    List<ContentVersion> versions = [
+      SELECT VersionData, FileType
+      FROM ContentVersion
+      WHERE ContentDocumentId = :links[0].ContentDocumentId AND IsLatest = TRUE
+      LIMIT 1
+    ];
+    if (versions.isEmpty()) {
+      return null;
+    }
+    String mimeType = versions[0].FileType != null
+      ? 'image/' + versions[0].FileType.toLowerCase()
+      : 'image/png';
+    return 'data:' +
+      mimeType +
+      ';base64,' +
+      EncodingUtil.base64Encode(versions[0].VersionData);
   }
 }

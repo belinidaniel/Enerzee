@@ -182,6 +182,32 @@ public with sharing class ClickSignService {
       envelopeInput.clickSignId
     );
 
+    if (docs == null || docs.isEmpty()) {
+      throw new ClickSignServiceException(
+        'Nenhum documento encontrado para o envelope. Volte ao passo de documentos e tente novamente.'
+      );
+    }
+
+    for (ClickSignService.Document doc : docs) {
+      if (String.isBlank(doc.externalId)) {
+        throw new ClickSignServiceException(
+          'Documento "' +
+            doc.filename +
+            '" não foi enviado corretamente para a ClickSign (ExternalId vazio). Volte ao passo de documentos e tente novamente.'
+        );
+      }
+    }
+
+    for (ClickSignSigner__c signer : signers) {
+      if (String.isBlank(signer.ExternalId__c)) {
+        throw new ClickSignServiceException(
+          'Signatário "' +
+            signer.Name +
+            '" não foi registrado corretamente na ClickSign. Volte ao passo de destinatários e tente novamente.'
+        );
+      }
+    }
+
     for (ClickSignService.Document doc : docs) {
       System.debug('doc requirement: ' + doc);
       for (ClickSignSigner__c signer : signers) {

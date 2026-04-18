@@ -439,7 +439,9 @@ public without sharing class KitInstalacaoBO {
       product.valueUnity = oli.UnitPrice;
       product.productFamily = oli.Product2.Family;
 
-      product.externalId = oli.PricebookEntry.ExternalId__c;
+      product.externalId = oli.PricebookEntry != null
+        ? oli.PricebookEntry.ExternalId__c
+        : null;
       request.listProducts.add(product);
     }
     return request;

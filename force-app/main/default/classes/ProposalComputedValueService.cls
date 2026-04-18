@@ -83,25 +83,24 @@ public with sharing class ProposalComputedValueService {
     }
 
     ViabilityStudy__c viability = viabilityList[0];
-    List<String> allEntries = new List<String>();
 
-    for (
-      String entry : buildViabilityCostEntries(
-        viability.AdequacyCostEnerzee__c,
-        viability
-      )
-    ) {
-      allEntries.add(entry);
+    List<String> enerzeeEntries = buildViabilityCostEntries(
+      viability.AdequacyCostEnerzee__c,
+      viability
+    );
+    List<String> clientEntries = buildViabilityCostEntries(
+      viability.AdequacyCostClient__c,
+      viability
+    );
+
+    List<String> allEntries = new List<String>();
+    if (!enerzeeEntries.isEmpty()) {
+      allEntries.add('Custo Enerzee');
+      allEntries.addAll(enerzeeEntries);
     }
-    for (
-      String entry : buildViabilityCostEntries(
-        viability.AdequacyCostClient__c,
-        viability
-      )
-    ) {
-      if (!allEntries.contains(entry)) {
-        allEntries.add(entry);
-      }
+    if (!clientEntries.isEmpty()) {
+      allEntries.add('Custo Cliente');
+      allEntries.addAll(clientEntries);
     }
 
     values.put(
@@ -226,6 +225,9 @@ public with sharing class ProposalComputedValueService {
     Decimal monthlySavings = toDecimal(
       opportunityRecord.get('EconomiaMensalEstimada__c')
     );
+    Decimal tarifaComTributos = toDecimal(
+      opportunityRecord.get('TarifaComTributosB__c')
+    );
     Decimal monthlyGeneration = toDecimal(
       opportunityRecord.get('GeracaoMensalEstimada__c')
     );
@@ -263,7 +265,7 @@ public with sharing class ProposalComputedValueService {
       );
     }
 
-    // EconomiaPercentual (card Aluguel): (CustoMedioEnergia - ParcelaAluguel) / CustoMedioEnergia * 100
+    // EconomiaPercentual (card Aluguel): (CustoMedioEnergia - (ParcelaAluguel + (30 * TarifaComTributosB))) / CustoMedioEnergia * 100
     // Calculado antes do bloco de negatividade (que pode sobrescrever para null)
     Decimal rentalAmountPct = toDecimal(
       values.get(SIMULATION_PREFIX + 'Rental.InstallmentAmount1')
@@ -273,9 +275,12 @@ public with sharing class ProposalComputedValueService {
       currentEnergyCost != null &&
       currentEnergyCost != 0
     ) {
+      Decimal taxaMinima = (tarifaComTributos != null)
+        ? 30 * tarifaComTributos
+        : 0;
       values.put(
         CALCULATED_PREFIX + 'EconomiaPercentual',
-        ((currentEnergyCost - rentalAmountPct) /
+        ((currentEnergyCost - (rentalAmountPct + taxaMinima)) /
           currentEnergyCost *
           100)
           .setScale(2, RoundingMode.HALF_UP)
@@ -334,7 +339,10 @@ public with sharing class ProposalComputedValueService {
       currentEnergyCost != null &&
       currentEnergyCost != 0
     ) {
-      Decimal rentalPct = ((currentEnergyCost - rentalAmount) /
+      Decimal taxaMinima = (tarifaComTributos != null)
+        ? 30 * tarifaComTributos
+        : 0;
+      Decimal rentalPct = ((currentEnergyCost - (rentalAmount + taxaMinima)) /
         currentEnergyCost *
         100)
         .setScale(2, RoundingMode.HALF_UP);

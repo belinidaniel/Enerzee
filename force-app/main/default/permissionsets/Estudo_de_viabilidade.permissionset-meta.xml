@@ -285,7 +285,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>ViabilityStudy__c.TextStudy2__c</field>
+    <field>ViabilityStudy__c.TextStudy2__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
