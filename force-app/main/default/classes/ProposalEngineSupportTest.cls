@@ -756,7 +756,9 @@ private class ProposalEngineSupportTest {
         Id,
         CustoMedioEnergia__c,
         EconomiaMensalEstimada__c,
-        TarifaComTributosB__c
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c
       FROM Opportunity
       WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
       LIMIT 1
@@ -878,7 +880,9 @@ private class ProposalEngineSupportTest {
         Id,
         CustoMedioEnergia__c,
         EconomiaMensalEstimada__c,
-        TarifaComTributosB__c
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c
       FROM Opportunity
       WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
       LIMIT 1
