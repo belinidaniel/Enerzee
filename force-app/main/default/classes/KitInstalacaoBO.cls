@@ -366,11 +366,6 @@ public without sharing class KitInstalacaoBO {
               JSON.serialize(requestBody)
           );
 
-          Utils.createLog(
-            'IdVirtualOffice',
-            'IdVirtualOffice - response',
-            JSON.serialize(requestBody)
-          );
           IntegracaoNivelloContrato.EnviarKitResponse response = IntegracaoNivelloContrato.enviarKit(
             requestBody
           );

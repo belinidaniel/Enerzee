@@ -750,6 +750,187 @@ private class ProposalEngineSupportTest {
   }
 
   @isTest
+  static void computedValueServiceHandlesNullInputs() {
+    Assert.isFalse(
+      ProposalComputedValueService.isComputedPath(null),
+      'Path nulo nao deve ser tratado como calculado.'
+    );
+    Assert.isFalse(
+      ProposalComputedValueService.isComputedPath(''),
+      'Path vazio nao deve ser tratado como calculado.'
+    );
+    Assert.isTrue(
+      ProposalComputedValueService.isComputedPath('Calculated.Teste'),
+      'Paths calculados devem ser reconhecidos.'
+    );
+    Assert.isTrue(
+      ProposalComputedValueService.isComputedPath('SimulationSummary.Teste'),
+      'Paths de resumo de simulacao devem ser reconhecidos.'
+    );
+
+    Assert.isNull(
+      ProposalComputedValueService.resolveValue(
+        null,
+        new Map<String, Object>()
+      ),
+      'Path nulo deve retornar null.'
+    );
+    Assert.isNull(
+      ProposalComputedValueService.resolveValue('Calculated.Teste', null),
+      'Mapa nulo deve retornar null.'
+    );
+
+    Map<String, Object> values = ProposalComputedValueService.build(null, null);
+    Assert.areEqual(
+      0,
+      values.size(),
+      'Sem oportunidade e sem simulacoes, o mapa deve permanecer vazio.'
+    );
+  }
+
+  @isTest
+  static void computedValueServiceBuildIncludesViabilityCostsAndCardSummary() {
+    Opportunity opportunityRecord = [
+      SELECT
+        Id,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    opportunityRecord.CustoMedioEnergia__c = 3000;
+    opportunityRecord.EconomiaMensalEstimada__c = 2000;
+    opportunityRecord.TarifaComTributosB__c = 0;
+    opportunityRecord.GeracaoMensalEstimada__c = 1200;
+    opportunityRecord.ConsumoInformadoB__c = 1500;
+
+    insert new ViabilityStudy__c(
+      Opportunity__c = opportunityRecord.Id,
+      AdequacyCostEnerzee__c = 'Ramal CC;Outros Custos',
+      AdequacyCostClient__c = 'Ramal CA;Adequação Padrão;Cobertura;Laudo Estrutural',
+      DcBranchCost__c = 100,
+      OtherCosts__c = 250,
+      OtherCostsDescription__c = 'Transformador',
+      AcBranchCost__c = 200,
+      StandardAdequacyCost__c = 300,
+      CoberturaCost__c = 400,
+      StruturalReport__c = 500,
+      AdditionalCost__c = 600
+    );
+
+    insert new List<PaymentSimulation__c>{
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Rental',
+        ProposalLabel__c = 'Solar Aluguel',
+        InstallmentCount__c = 48,
+        InstallmentAmount__c = 800
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Rental',
+        ProposalLabel__c = 'Solar Aluguel',
+        InstallmentCount__c = 60,
+        InstallmentAmount__c = 700
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Rental',
+        ProposalLabel__c = 'ZZ Outra Opção',
+        InstallmentCount__c = 84,
+        InstallmentAmount__c = 650
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Card',
+        ProposalLabel__c = 'Cartão',
+        InstallmentCount__c = 6,
+        InstallmentAmount__c = 900
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Card',
+        ProposalLabel__c = 'Cartão',
+        InstallmentCount__c = 12,
+        InstallmentAmount__c = 1000
+      )
+    };
+
+    Map<String, Object> values = ProposalComputedValueService.build(
+      opportunityRecord.Id,
+      opportunityRecord
+    );
+
+    String viabilityCosts = (String) values.get('Calculated.CustosViabilidade');
+    Assert.isTrue(
+      viabilityCosts.contains('Custo Enerzee'),
+      'Deve incluir o cabecalho de custos Enerzee.'
+    );
+    Assert.isTrue(
+      viabilityCosts.contains('Ramal CC (R$ 100,00)'),
+      'Deve formatar o custo de ramal CC.'
+    );
+    Assert.isTrue(
+      viabilityCosts.contains('Transformador (R$ 250,00)'),
+      'Deve usar a descricao personalizada para outros custos.'
+    );
+    Assert.isTrue(
+      viabilityCosts.contains('Custo Cliente'),
+      'Deve incluir o cabecalho de custos do cliente.'
+    );
+    Assert.isTrue(
+      viabilityCosts.contains('Ramal CA (R$ 200,00)'),
+      'Deve formatar o custo de ramal CA.'
+    );
+    Assert.isTrue(
+      viabilityCosts.contains('Adequação Padrão (R$ 300,00)'),
+      'Deve formatar o custo de adequacao padrao.'
+    );
+    Assert.isTrue(
+      viabilityCosts.contains('Cobertura (R$ 400,00)'),
+      'Deve formatar o custo de cobertura.'
+    );
+    Assert.isTrue(
+      viabilityCosts.contains('Laudo Estrutural (R$ 500,00)'),
+      'Deve formatar o custo de laudo estrutural.'
+    );
+    Assert.areEqual(
+      700,
+      values.get('SimulationSummary.Rental.InstallmentAmount1'),
+      'O aluguel deve priorizar a opcao de 60x no grupo principal.'
+    );
+    Assert.areEqual(
+      60,
+      values.get('Calculated.AlugelParcelas'),
+      'A quantidade de parcelas do aluguel deve refletir a opcao escolhida.'
+    );
+    Assert.areEqual(
+      1000,
+      values.get('SimulationSummary.Card.InstallmentAmount1'),
+      'O cartao deve usar a maior parcela do grupo principal.'
+    );
+    Assert.areEqual(
+      12,
+      values.get('SimulationSummary.Card.InstallmentCount1'),
+      'O cartao deve armazenar a contagem da maior parcela.'
+    );
+    Assert.areEqual(
+      80.00,
+      values.get('Calculated.Autossuficiencia'),
+      'Autossuficiencia deve considerar geracao sobre consumo.'
+    );
+    Assert.areEqual(
+      66.67,
+      values.get('Calculated.ReducaoNaConta'),
+      'Reducao na conta deve considerar economia sobre custo medio.'
+    );
+  }
+
+  @isTest
   static void payloadBuilderPopulatesEconomiaMensalLabels() {
     Opportunity opportunityRecord = [
       SELECT
@@ -838,6 +1019,18 @@ private class ProposalEngineSupportTest {
     aluguelEconomiaMensal.formatValue = 'CURRENCY_BR_PREFIX';
     configs.add(aluguelEconomiaMensal);
 
+    ProposalConfigurationService.TagConfig aluguelPorcentagem = new ProposalConfigurationService.TagConfig();
+    aluguelPorcentagem.tagKey = '{{AluguelPorcentagem__c}}';
+    aluguelPorcentagem.sourcePath = 'Calculated.EconomiaPercentual';
+    aluguelPorcentagem.formatValue = 'DECIMAL_BR_PCT';
+    configs.add(aluguelPorcentagem);
+
+    ProposalConfigurationService.TagConfig financiamentoPorcentagem = new ProposalConfigurationService.TagConfig();
+    financiamentoPorcentagem.tagKey = '{{FinanciamentoPorcentagem__c}}';
+    financiamentoPorcentagem.sourcePath = 'Calculated.EconomiaPercentualFinanciamento';
+    financiamentoPorcentagem.formatValue = 'DECIMAL_BR_PCT';
+    configs.add(financiamentoPorcentagem);
+
     ProposalPayloadBuilder.Payload payload = ProposalPayloadBuilder.buildPayload(
       context,
       opportunityRecord,
@@ -871,6 +1064,16 @@ private class ProposalEngineSupportTest {
       payload.tags.get('{{AluguelEconomiaMensal__c}}'),
       'O valor do aluguel deve ser a economia mensal estimada menos a parcela de aluguel.'
     );
+    Assert.areEqual(
+      '80,00%',
+      payload.tags.get('{{AluguelPorcentagem__c}}'),
+      'O percentual do aluguel deve ser a economia liquida dividida pela economia mensal estimada.'
+    );
+    Assert.areEqual(
+      '60,00%',
+      payload.tags.get('{{FinanciamentoPorcentagem__c}}'),
+      'O percentual do financiamento deve ser a economia liquida dividida pela economia mensal estimada.'
+    );
   }
 
   @isTest
@@ -888,7 +1091,7 @@ private class ProposalEngineSupportTest {
       LIMIT 1
     ];
     opportunityRecord.CustoMedioEnergia__c = 1000;
-    opportunityRecord.EconomiaMensalEstimada__c = 2500;
+    opportunityRecord.EconomiaMensalEstimada__c = 1000;
     opportunityRecord.TarifaComTributosB__c = 0;
 
     insert new List<PaymentSimulation__c>{
@@ -962,6 +1165,18 @@ private class ProposalEngineSupportTest {
     aluguelEconomiaMensal.formatValue = 'CURRENCY_BR_PREFIX';
     configs.add(aluguelEconomiaMensal);
 
+    ProposalConfigurationService.TagConfig aluguelPorcentagem = new ProposalConfigurationService.TagConfig();
+    aluguelPorcentagem.tagKey = '{{AluguelPorcentagem__c}}';
+    aluguelPorcentagem.sourcePath = 'Calculated.EconomiaPercentual';
+    aluguelPorcentagem.formatValue = 'DECIMAL_BR_PCT';
+    configs.add(aluguelPorcentagem);
+
+    ProposalConfigurationService.TagConfig financiamentoPorcentagem = new ProposalConfigurationService.TagConfig();
+    financiamentoPorcentagem.tagKey = '{{FinanciamentoPorcentagem__c}}';
+    financiamentoPorcentagem.sourcePath = 'Calculated.EconomiaPercentualFinanciamento';
+    financiamentoPorcentagem.formatValue = 'DECIMAL_BR_PCT';
+    configs.add(financiamentoPorcentagem);
+
     ProposalPayloadBuilder.Payload payload = ProposalPayloadBuilder.buildPayload(
       context,
       opportunityRecord,
@@ -994,6 +1209,16 @@ private class ProposalEngineSupportTest {
       '',
       payload.tags.get('{{AluguelEconomiaMensal__c}}'),
       'A economia mensal do aluguel deve ser zerada quando a porcentagem for negativa.'
+    );
+    Assert.areEqual(
+      '',
+      payload.tags.get('{{AluguelPorcentagem__c}}'),
+      'O percentual do aluguel deve ser zerado quando a economia liquida for negativa.'
+    );
+    Assert.areEqual(
+      '',
+      payload.tags.get('{{FinanciamentoPorcentagem__c}}'),
+      'O percentual do financiamento deve ser zerado quando a economia liquida for negativa.'
     );
   }
 
