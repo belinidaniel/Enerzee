@@ -763,8 +763,7 @@ private class ProposalEngineSupportTest {
     ];
     opportunityRecord.CustoMedioEnergia__c = 3000;
     opportunityRecord.EconomiaMensalEstimada__c = 450;
-    opportunityRecord.TarifaComTributosB__c = 1;
-    update opportunityRecord;
+    opportunityRecord.TarifaComTributosB__c = 0;
 
     insert new List<PaymentSimulation__c>{
       new PaymentSimulation__c(
@@ -837,13 +836,9 @@ private class ProposalEngineSupportTest {
     aluguelEconomiaMensal.formatValue = 'CURRENCY_BR_PREFIX';
     configs.add(aluguelEconomiaMensal);
 
-    Opportunity queriedOpportunity = ProposalPayloadBuilder.queryOpportunityForTags(
-      opportunityRecord.Id,
-      configs
-    );
     ProposalPayloadBuilder.Payload payload = ProposalPayloadBuilder.buildPayload(
       context,
-      queriedOpportunity,
+      opportunityRecord,
       configs,
       new List<String>{ 'Proposta de valores' },
       '068000000000009AAA'
@@ -890,8 +885,7 @@ private class ProposalEngineSupportTest {
     ];
     opportunityRecord.CustoMedioEnergia__c = 1000;
     opportunityRecord.EconomiaMensalEstimada__c = 450;
-    opportunityRecord.TarifaComTributosB__c = 1;
-    update opportunityRecord;
+    opportunityRecord.TarifaComTributosB__c = 0;
 
     insert new List<PaymentSimulation__c>{
       new PaymentSimulation__c(
@@ -964,13 +958,9 @@ private class ProposalEngineSupportTest {
     aluguelEconomiaMensal.formatValue = 'CURRENCY_BR_PREFIX';
     configs.add(aluguelEconomiaMensal);
 
-    Opportunity queriedOpportunity = ProposalPayloadBuilder.queryOpportunityForTags(
-      opportunityRecord.Id,
-      configs
-    );
     ProposalPayloadBuilder.Payload payload = ProposalPayloadBuilder.buildPayload(
       context,
-      queriedOpportunity,
+      opportunityRecord,
       configs,
       new List<String>{ 'Proposta de valores' },
       '068000000000009AAA'
