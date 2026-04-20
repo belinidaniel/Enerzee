@@ -764,7 +764,7 @@ private class ProposalEngineSupportTest {
       LIMIT 1
     ];
     opportunityRecord.CustoMedioEnergia__c = 3000;
-    opportunityRecord.EconomiaMensalEstimada__c = 450;
+    opportunityRecord.EconomiaMensalEstimada__c = 2500;
     opportunityRecord.TarifaComTributosB__c = 0;
 
     insert new List<PaymentSimulation__c>{
@@ -862,14 +862,14 @@ private class ProposalEngineSupportTest {
       'A tag final do texto deve repetir o mesmo rótulo com a quantidade de parcelas.'
     );
     Assert.areEqual(
-      'R$ 450,00',
+      'R$ 1.500,00',
       payload.tags.get('{{FinanciamentoMensal__c}}'),
-      'A economia mensal do financiamento deve permanecer disponível quando a porcentagem for positiva.'
+      'O valor do financiamento deve ser a economia mensal estimada menos a parcela de 60x.'
     );
     Assert.areEqual(
-      'R$ 450,00',
+      'R$ 2.000,00',
       payload.tags.get('{{AluguelEconomiaMensal__c}}'),
-      'A economia mensal do aluguel deve permanecer disponível quando a porcentagem for positiva.'
+      'O valor do aluguel deve ser a economia mensal estimada menos a parcela de aluguel.'
     );
   }
 
@@ -888,7 +888,7 @@ private class ProposalEngineSupportTest {
       LIMIT 1
     ];
     opportunityRecord.CustoMedioEnergia__c = 1000;
-    opportunityRecord.EconomiaMensalEstimada__c = 450;
+    opportunityRecord.EconomiaMensalEstimada__c = 2500;
     opportunityRecord.TarifaComTributosB__c = 0;
 
     insert new List<PaymentSimulation__c>{

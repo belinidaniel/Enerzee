@@ -289,6 +289,7 @@ public with sharing class ProposalComputedValueService {
     }
 
     // EconomiaPercentualFinanciamento (card Financiamento 60x): (CustoMedioEnergia - ParcelaFinanciamento3) / CustoMedioEnergia * 100
+    // FinanciamentoMensal (card Financiamento 60x): EconomiaMensalEstimada - ParcelaFinanciamento3
     // Se negativo, zera os campos da seção de financiamento
     Decimal financing3Amount = toDecimal(
       values.get(SIMULATION_PREFIX + 'Financing.InstallmentAmount3')
@@ -314,7 +315,10 @@ public with sharing class ProposalComputedValueService {
           CALCULATED_PREFIX + 'EconomiaPercentualFinanciamento',
           financingPct
         );
-        values.put(CALCULATED_PREFIX + 'FinanciamentoMensal', monthlySavings);
+        values.put(
+          CALCULATED_PREFIX + 'FinanciamentoMensal',
+          monthlySavings == null ? null : monthlySavings - financing3Amount
+        );
         Decimal count3 = toDecimal(
           values.get(SIMULATION_PREFIX + 'Financing.InstallmentCount3')
         );
@@ -327,6 +331,8 @@ public with sharing class ProposalComputedValueService {
       }
     }
 
+    // EconomiaPercentual (card Aluguel): mantém o cálculo atual do percentual
+    // AluguelEconomiaMensal: EconomiaMensalEstimada - ParcelaAluguel
     // EconomiaPercentual negativo → zera seção aluguel
     Decimal rentalAmount = toDecimal(
       values.get(SIMULATION_PREFIX + 'Rental.InstallmentAmount1')
@@ -349,8 +355,10 @@ public with sharing class ProposalComputedValueService {
         values.put(CALCULATED_PREFIX + 'EconomiaMensal', '');
         values.put(CALCULATED_PREFIX + 'EconomiaPercentual', '');
       } else {
-        // Propaga o valor de EconomiaMensalEstimada para o path calculado do aluguel
-        values.put(CALCULATED_PREFIX + 'AluguelEconomiaMensal', monthlySavings);
+        values.put(
+          CALCULATED_PREFIX + 'AluguelEconomiaMensal',
+          monthlySavings == null ? null : monthlySavings - rentalAmount
+        );
         values.put(
           CALCULATED_PREFIX + 'EconomiaMensal',
           buildEconomiaMensalLabel()
