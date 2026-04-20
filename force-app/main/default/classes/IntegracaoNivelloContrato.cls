@@ -93,42 +93,112 @@ public without sharing class IntegracaoNivelloContrato {
   }
 
   public static EnviarKitResponse enviarKit(EnviarKitRequest requestBody) {
-    System.debug('Enviando kit para Nivello: ' + JSON.serialize(requestBody));
+    System.debug(
+      '[enviarKit] requestId=' +
+        requestBody.Id +
+        ' | request=' +
+        JSON.serialize(requestBody)
+    );
 
     try {
       HttpResponse response = chamadaIntegracao(
         JSON.serialize(requestBody),
         'updateInfosKit'
       );
+
+      if (response == null) {
+        System.debug(
+          '[enviarKit] requestId=' +
+            requestBody.Id +
+            ' | response is null after chamadaIntegracao.'
+        );
+        return null;
+      }
+
       Utils.createLog(
         'IntegracaoNivelloContrato',
         'enviarKit ' + requestBody.Id,
         response
       );
 
+      Integer statusCode = response.getStatusCode();
+      String status = response.getStatus();
+      String responseBody = response.getBody();
       System.debug(
-        '[enviarKit] status=' +
-          response.getStatusCode() +
+        '[enviarKit] requestId=' +
+          requestBody.Id +
+          ' | statusCode=' +
+          statusCode +
+          ' | status=' +
+          status +
           ' | body=' +
-          response.getBody()
+          responseBody
       );
 
-      //Sucesso
-      if (response.getStatusCode() == 200) {
-        KitResponseWrapper responseWrapper = (KitResponseWrapper) JSON.deserialize(
-          response.getBody(),
-          KitResponseWrapper.class
-        );
+      if (statusCode != 200) {
         System.debug(
-          '[enviarKit] parsed response=' + JSON.serialize(responseWrapper.data)
+          '[enviarKit] requestId=' +
+            requestBody.Id +
+            ' | returning null because statusCode != 200.'
         );
-        return responseWrapper.data;
-      }
-      //Erro
-      else {
         return null;
       }
+
+      if (String.isBlank(responseBody)) {
+        System.debug(
+          '[enviarKit] requestId=' +
+            requestBody.Id +
+            ' | returning null because response body is blank.'
+        );
+        return null;
+      }
+
+      KitResponseWrapper responseWrapper = (KitResponseWrapper) JSON.deserialize(
+        responseBody,
+        KitResponseWrapper.class
+      );
+
+      if (responseWrapper == null) {
+        System.debug(
+          '[enviarKit] requestId=' +
+            requestBody.Id +
+            ' | returning null because responseWrapper is null.'
+        );
+        return null;
+      }
+
+      System.debug(
+        '[enviarKit] requestId=' +
+          requestBody.Id +
+          ' | wrapperSuccess=' +
+          responseWrapper.success +
+          ' | wrapperData=' +
+          JSON.serialize(responseWrapper.data)
+      );
+
+      if (responseWrapper.data == null) {
+        System.debug(
+          '[enviarKit] requestId=' +
+            requestBody.Id +
+            ' | returning null because wrapper.data is null.'
+        );
+        return null;
+      }
+
+      return responseWrapper.data;
     } catch (Exception e) {
+      System.debug(
+        '[enviarKit] requestId=' +
+          requestBody.Id +
+          ' | exceptionType=' +
+          e.getTypeName() +
+          ' | line=' +
+          e.getLineNumber() +
+          ' | message=' +
+          e.getMessage() +
+          ' | stack=' +
+          e.getStackTraceString()
+      );
       Utils.createLog(
         'IntegracaoNivelloContrato',
         'enviarKit ' + requestBody.Id,
@@ -149,19 +219,52 @@ public without sharing class IntegracaoNivelloContrato {
       WHERE DeveloperName = :endpointName
     ];
 
-    System.debug('Chamada de integração Nivello: ' + endpointName);
-    System.debug('Chamada de integração Nivello: ' + parametrosIntegracao);
-    Http httpObj = new Http();
+    System.debug(
+      '[chamadaIntegracao] endpointName=' +
+        endpointName +
+        ' | metadata=' +
+        JSON.serialize(parametrosIntegracao)
+    );
     HttpRequest request = new HttpRequest();
 
     request.setEndpoint(parametrosIntegracao.URL__c);
-    System.debug('Endpoint: ' + request.getEndpoint());
     request.setMethod('POST');
     request.setHeader('Content-Type', 'application/json');
     request.setBody(body);
-    System.debug('body: ' + request.getBody());
 
-    return Utils.callIntegrationNivello(request);
+    System.debug(
+      '[chamadaIntegracao] endpointName=' +
+        endpointName +
+        ' | endpoint=' +
+        request.getEndpoint() +
+        ' | method=' +
+        request.getMethod() +
+        ' | body=' +
+        request.getBody()
+    );
+
+    HttpResponse response = Utils.callIntegrationNivello(request);
+    if (response == null) {
+      System.debug(
+        '[chamadaIntegracao] endpointName=' +
+          endpointName +
+          ' | response is null.'
+      );
+      return null;
+    }
+
+    System.debug(
+      '[chamadaIntegracao] endpointName=' +
+        endpointName +
+        ' | responseStatusCode=' +
+        response.getStatusCode() +
+        ' | responseStatus=' +
+        response.getStatus() +
+        ' | responseBody=' +
+        response.getBody()
+    );
+
+    return response;
   }
 
   public class EnviarKitRequest {

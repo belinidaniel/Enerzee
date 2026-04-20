@@ -2,7 +2,7 @@
  * @description       : Resolve valores calculados e resumos de simulacoes para tags de proposta
  * @author            : OpenAI Codex
  * @group             :
- * @last modified on  : 04-15-2026
+ * @last modified on  : 04-20-2026
  * @last modified by  : Daniel Belini
  * @test              : ProposalEngineSupportTest
  **/
@@ -13,6 +13,7 @@ public with sharing class ProposalComputedValueService {
   private static final String PAYMENT_TYPE_RENTAL = 'RENTAL';
   private static final String PAYMENT_TYPE_CARD = 'CARD';
   private static final Integer RENTAL_TARGET_INSTALLMENTS = 60;
+  private static final String ECONOMIA_MENSAL_LABEL = 'Economia mensal';
 
   public static Boolean isComputedPath(String sourcePath) {
     if (String.isBlank(sourcePath)) {
@@ -288,6 +289,7 @@ public with sharing class ProposalComputedValueService {
     }
 
     // EconomiaPercentualFinanciamento (card Financiamento 60x): (CustoMedioEnergia - ParcelaFinanciamento3) / CustoMedioEnergia * 100
+    // FinanciamentoMensal (card Financiamento 60x): EconomiaMensalEstimada - ParcelaFinanciamento3
     // Se negativo, zera os campos da seção de financiamento
     Decimal financing3Amount = toDecimal(
       values.get(SIMULATION_PREFIX + 'Financing.InstallmentAmount3')
@@ -313,23 +315,24 @@ public with sharing class ProposalComputedValueService {
           CALCULATED_PREFIX + 'EconomiaPercentualFinanciamento',
           financingPct
         );
-        values.put(CALCULATED_PREFIX + 'FinanciamentoMensal', monthlySavings);
-        // Monta o texto "Economia Mensal Nx" com a quantidade da 3ª opção de financiamento
+        values.put(
+          CALCULATED_PREFIX + 'FinanciamentoMensal',
+          monthlySavings == null ? null : monthlySavings - financing3Amount
+        );
         Decimal count3 = toDecimal(
           values.get(SIMULATION_PREFIX + 'Financing.InstallmentCount3')
         );
-        String countLabel = count3 == null
-          ? ''
-          : String.valueOf(
-              count3.setScale(0, RoundingMode.HALF_UP).intValue()
-            ) + 'x';
+        String financingLabel = buildEconomiaMensalFinancingLabel(count3);
+        values.put(CALCULATED_PREFIX + 'EconomiaMensalTxt', financingLabel);
         values.put(
-          CALCULATED_PREFIX + 'EconomiaMensalTxt',
-          'Economia Mensal ' + countLabel
+          CALCULATED_PREFIX + 'EconomiaMensalFinalTxt',
+          financingLabel
         );
       }
     }
 
+    // EconomiaPercentual (card Aluguel): mantém o cálculo atual do percentual
+    // AluguelEconomiaMensal: EconomiaMensalEstimada - ParcelaAluguel
     // EconomiaPercentual negativo → zera seção aluguel
     Decimal rentalAmount = toDecimal(
       values.get(SIMULATION_PREFIX + 'Rental.InstallmentAmount1')
@@ -352,8 +355,14 @@ public with sharing class ProposalComputedValueService {
         values.put(CALCULATED_PREFIX + 'EconomiaMensal', '');
         values.put(CALCULATED_PREFIX + 'EconomiaPercentual', '');
       } else {
-        // Propaga o valor de EconomiaMensalEstimada para o path calculado do aluguel
-        values.put(CALCULATED_PREFIX + 'AluguelEconomiaMensal', monthlySavings);
+        values.put(
+          CALCULATED_PREFIX + 'AluguelEconomiaMensal',
+          monthlySavings == null ? null : monthlySavings - rentalAmount
+        );
+        values.put(
+          CALCULATED_PREFIX + 'EconomiaMensal',
+          buildEconomiaMensalLabel()
+        );
       }
     }
 
@@ -503,6 +512,25 @@ public with sharing class ProposalComputedValueService {
     }
 
     return bestMatch;
+  }
+
+  private static String buildEconomiaMensalLabel() {
+    return ECONOMIA_MENSAL_LABEL;
+  }
+
+  private static String buildEconomiaMensalFinancingLabel(
+    Decimal installmentCount
+  ) {
+    if (installmentCount == null || installmentCount == 0) {
+      return buildEconomiaMensalLabel();
+    }
+
+    return buildEconomiaMensalLabel() +
+      ' ' +
+      String.valueOf(
+        installmentCount.setScale(0, RoundingMode.HALF_UP).intValue()
+      ) +
+      ' x';
   }
 
   private static Decimal toDecimal(Object value) {

@@ -4,7 +4,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 >
-    <label>GRUPO_B_PADRAO - EconomiaMensalFinalTxt</label>
+    <label>GRUPO_B_PADRAO - EconomiaMensal</label>
     <protected>false</protected>
     <values>
         <field>Active__c</field>
@@ -40,10 +40,10 @@
     </values>
     <values>
         <field>SourcePath__c</field>
-        <value xsi:type="xsd:string">Calculated.EconomiaMensalFinalTxt</value>
+        <value xsi:type="xsd:string">Calculated.EconomiaMensal</value>
     </values>
     <values>
         <field>TagKey__c</field>
-        <value xsi:type="xsd:string">{{EconomiaMensalFinalTxt__c}}</value>
+        <value xsi:type="xsd:string">{{EconomiaMensal__c}}</value>
     </values>
 </CustomMetadata>

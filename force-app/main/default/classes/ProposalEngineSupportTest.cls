@@ -750,6 +750,254 @@ private class ProposalEngineSupportTest {
   }
 
   @isTest
+  static void payloadBuilderPopulatesEconomiaMensalLabels() {
+    Opportunity opportunityRecord = [
+      SELECT
+        Id,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    opportunityRecord.CustoMedioEnergia__c = 3000;
+    opportunityRecord.EconomiaMensalEstimada__c = 2500;
+    opportunityRecord.TarifaComTributosB__c = 0;
+
+    insert new List<PaymentSimulation__c>{
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Financing',
+        ProposalLabel__c = 'Opção 1',
+        InstallmentCount__c = 36,
+        InstallmentAmount__c = 1400
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Financing',
+        ProposalLabel__c = 'Opção 1',
+        InstallmentCount__c = 48,
+        InstallmentAmount__c = 1200
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Financing',
+        ProposalLabel__c = 'Opção 1',
+        InstallmentCount__c = 60,
+        InstallmentAmount__c = 1000
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Rental',
+        ProposalLabel__c = 'Solar Aluguel',
+        InstallmentCount__c = 72,
+        InstallmentAmount__c = 500
+      )
+    };
+
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+    ProposalContextResolver.Context context = ProposalContextResolver.resolve(
+      opportunityRecord.Id,
+      cover.Id
+    );
+
+    List<ProposalConfigurationService.TagConfig> configs = new List<ProposalConfigurationService.TagConfig>();
+
+    ProposalConfigurationService.TagConfig economiaMensal = new ProposalConfigurationService.TagConfig();
+    economiaMensal.tagKey = '{{EconomiaMensal__c}}';
+    economiaMensal.sourcePath = 'Calculated.EconomiaMensal';
+    configs.add(economiaMensal);
+
+    ProposalConfigurationService.TagConfig economiaMensalTxt = new ProposalConfigurationService.TagConfig();
+    economiaMensalTxt.tagKey = '{{EconomiaMensalTxt__c}}';
+    economiaMensalTxt.sourcePath = 'Calculated.EconomiaMensalTxt';
+    configs.add(economiaMensalTxt);
+
+    ProposalConfigurationService.TagConfig economiaMensalFinalTxt = new ProposalConfigurationService.TagConfig();
+    economiaMensalFinalTxt.tagKey = '{{EconomiaMensalFinalTxt__c}}';
+    economiaMensalFinalTxt.sourcePath = 'Calculated.EconomiaMensalFinalTxt';
+    configs.add(economiaMensalFinalTxt);
+
+    ProposalConfigurationService.TagConfig financiamentoMensal = new ProposalConfigurationService.TagConfig();
+    financiamentoMensal.tagKey = '{{FinanciamentoMensal__c}}';
+    financiamentoMensal.sourcePath = 'Calculated.FinanciamentoMensal';
+    financiamentoMensal.formatValue = 'CURRENCY_BR_PREFIX';
+    configs.add(financiamentoMensal);
+
+    ProposalConfigurationService.TagConfig aluguelEconomiaMensal = new ProposalConfigurationService.TagConfig();
+    aluguelEconomiaMensal.tagKey = '{{AluguelEconomiaMensal__c}}';
+    aluguelEconomiaMensal.sourcePath = 'Calculated.AluguelEconomiaMensal';
+    aluguelEconomiaMensal.formatValue = 'CURRENCY_BR_PREFIX';
+    configs.add(aluguelEconomiaMensal);
+
+    ProposalPayloadBuilder.Payload payload = ProposalPayloadBuilder.buildPayload(
+      context,
+      opportunityRecord,
+      configs,
+      new List<String>{ 'Proposta de valores' },
+      '068000000000009AAA'
+    );
+
+    Assert.areEqual(
+      'Economia mensal',
+      payload.tags.get('{{EconomiaMensal__c}}'),
+      'O rótulo do aluguel deve ser preenchido quando a economia percentual for positiva.'
+    );
+    Assert.areEqual(
+      'Economia mensal 60 x',
+      payload.tags.get('{{EconomiaMensalTxt__c}}'),
+      'O rótulo do financiamento deve incluir a quantidade de parcelas.'
+    );
+    Assert.areEqual(
+      'Economia mensal 60 x',
+      payload.tags.get('{{EconomiaMensalFinalTxt__c}}'),
+      'A tag final do texto deve repetir o mesmo rótulo com a quantidade de parcelas.'
+    );
+    Assert.areEqual(
+      'R$ 1.500,00',
+      payload.tags.get('{{FinanciamentoMensal__c}}'),
+      'O valor do financiamento deve ser a economia mensal estimada menos a parcela de 60x.'
+    );
+    Assert.areEqual(
+      'R$ 2.000,00',
+      payload.tags.get('{{AluguelEconomiaMensal__c}}'),
+      'O valor do aluguel deve ser a economia mensal estimada menos a parcela de aluguel.'
+    );
+  }
+
+  @isTest
+  static void payloadBuilderClearsEconomiaMensalLabelsWhenPercentageIsNegative() {
+    Opportunity opportunityRecord = [
+      SELECT
+        Id,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    opportunityRecord.CustoMedioEnergia__c = 1000;
+    opportunityRecord.EconomiaMensalEstimada__c = 2500;
+    opportunityRecord.TarifaComTributosB__c = 0;
+
+    insert new List<PaymentSimulation__c>{
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Financing',
+        ProposalLabel__c = 'Opção 1',
+        InstallmentCount__c = 36,
+        InstallmentAmount__c = 1300
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Financing',
+        ProposalLabel__c = 'Opção 1',
+        InstallmentCount__c = 48,
+        InstallmentAmount__c = 1400
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Financing',
+        ProposalLabel__c = 'Opção 1',
+        InstallmentCount__c = 60,
+        InstallmentAmount__c = 1500
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Rental',
+        ProposalLabel__c = 'Solar Aluguel',
+        InstallmentCount__c = 72,
+        InstallmentAmount__c = 1200
+      )
+    };
+
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+    ProposalContextResolver.Context context = ProposalContextResolver.resolve(
+      opportunityRecord.Id,
+      cover.Id
+    );
+
+    List<ProposalConfigurationService.TagConfig> configs = new List<ProposalConfigurationService.TagConfig>();
+
+    ProposalConfigurationService.TagConfig economiaMensal = new ProposalConfigurationService.TagConfig();
+    economiaMensal.tagKey = '{{EconomiaMensal__c}}';
+    economiaMensal.sourcePath = 'Calculated.EconomiaMensal';
+    configs.add(economiaMensal);
+
+    ProposalConfigurationService.TagConfig economiaMensalTxt = new ProposalConfigurationService.TagConfig();
+    economiaMensalTxt.tagKey = '{{EconomiaMensalTxt__c}}';
+    economiaMensalTxt.sourcePath = 'Calculated.EconomiaMensalTxt';
+    configs.add(economiaMensalTxt);
+
+    ProposalConfigurationService.TagConfig economiaMensalFinalTxt = new ProposalConfigurationService.TagConfig();
+    economiaMensalFinalTxt.tagKey = '{{EconomiaMensalFinalTxt__c}}';
+    economiaMensalFinalTxt.sourcePath = 'Calculated.EconomiaMensalFinalTxt';
+    configs.add(economiaMensalFinalTxt);
+
+    ProposalConfigurationService.TagConfig financiamentoMensal = new ProposalConfigurationService.TagConfig();
+    financiamentoMensal.tagKey = '{{FinanciamentoMensal__c}}';
+    financiamentoMensal.sourcePath = 'Calculated.FinanciamentoMensal';
+    financiamentoMensal.formatValue = 'CURRENCY_BR_PREFIX';
+    configs.add(financiamentoMensal);
+
+    ProposalConfigurationService.TagConfig aluguelEconomiaMensal = new ProposalConfigurationService.TagConfig();
+    aluguelEconomiaMensal.tagKey = '{{AluguelEconomiaMensal__c}}';
+    aluguelEconomiaMensal.sourcePath = 'Calculated.AluguelEconomiaMensal';
+    aluguelEconomiaMensal.formatValue = 'CURRENCY_BR_PREFIX';
+    configs.add(aluguelEconomiaMensal);
+
+    ProposalPayloadBuilder.Payload payload = ProposalPayloadBuilder.buildPayload(
+      context,
+      opportunityRecord,
+      configs,
+      new List<String>{ 'Proposta de valores' },
+      '068000000000009AAA'
+    );
+
+    Assert.areEqual(
+      '',
+      payload.tags.get('{{EconomiaMensal__c}}'),
+      'O rótulo do aluguel deve ser limpo quando a economia percentual for negativa.'
+    );
+    Assert.areEqual(
+      '',
+      payload.tags.get('{{EconomiaMensalTxt__c}}'),
+      'O rótulo do financiamento deve ser limpo quando a economia percentual for negativa.'
+    );
+    Assert.areEqual(
+      '',
+      payload.tags.get('{{EconomiaMensalFinalTxt__c}}'),
+      'A tag final do texto deve ser limpa quando a economia percentual for negativa.'
+    );
+    Assert.areEqual(
+      '',
+      payload.tags.get('{{FinanciamentoMensal__c}}'),
+      'A economia mensal do financiamento deve ser zerada quando a porcentagem for negativa.'
+    );
+    Assert.areEqual(
+      '',
+      payload.tags.get('{{AluguelEconomiaMensal__c}}'),
+      'A economia mensal do aluguel deve ser zerada quando a porcentagem for negativa.'
+    );
+  }
+
+  @isTest
   static void integracaoNivelloHandlesEmptyAndExplicitProposal() {
     Opportunity opportunityRecord = [
       SELECT Id, SucessoIntegracaoNivello__c

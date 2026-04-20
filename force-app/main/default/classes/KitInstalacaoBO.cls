@@ -377,9 +377,16 @@ public without sharing class KitInstalacaoBO {
           System.debug(
             '[SendKitUpdate] oppId=' +
               opp.Id +
-              ' | responseresponse=' +
+              ' | response=' +
               JSON.serialize(response)
           );
+          if (response == null) {
+            System.debug(
+              '[SendKitUpdate] oppId=' +
+                opp.Id +
+                ' | response is null after enviarKit. Check [chamadaIntegracao] and [enviarKit] logs for endpoint, statusCode, status, body, and exception details.'
+            );
+          }
 
           Id relatedKitId = oppIdToKitIdMap.get(opp.Id);
           opportunitiesToUpdate.add(

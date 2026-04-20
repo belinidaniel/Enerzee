@@ -3,7 +3,7 @@
  *                       Consultor, Fornecedor, Integrador.
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-18-2026
+ * @last modified on  : 04-20-2026
  * @last modified by  : Daniel Belini
  * @test              : SAPBusinessPartnerMapperTest
  **/
@@ -133,9 +133,9 @@ public with sharing class SAPBusinessPartnerMapper {
     String seCPFouCNPJ
   ) {
     BPFiscalTaxID taxId = new BPFiscalTaxID();
-    if (cpf != null) {
+    if (String.isNotBlank(cpf)) {
       taxId.TaxID0 = seCPFouCNPJ;
-    } else if (cnpj != null) {
+    } else if (String.isNotBlank(cnpj)) {
       taxId.TaxID4 = seCPFouCNPJ;
     }
     return taxId;
