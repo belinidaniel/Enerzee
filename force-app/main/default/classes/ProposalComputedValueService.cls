@@ -266,29 +266,23 @@ public with sharing class ProposalComputedValueService {
       );
     }
 
-    // EconomiaPercentual (card Aluguel): (CustoMedioEnergia - (ParcelaAluguel + (30 * TarifaComTributosB))) / CustoMedioEnergia * 100
-    // Calculado antes do bloco de negatividade (que pode sobrescrever para null)
+    // EconomiaPercentual (card Aluguel): (EconomiaMensalEstimada - ParcelaAluguel) / EconomiaMensalEstimada * 100
     Decimal rentalAmountPct = toDecimal(
       values.get(SIMULATION_PREFIX + 'Rental.InstallmentAmount1')
     );
     if (
       rentalAmountPct != null &&
-      currentEnergyCost != null &&
-      currentEnergyCost != 0
+      monthlySavings != null &&
+      monthlySavings != 0
     ) {
-      Decimal taxaMinima = (tarifaComTributos != null)
-        ? 30 * tarifaComTributos
-        : 0;
+      Decimal rentalSavings = monthlySavings - rentalAmountPct;
       values.put(
         CALCULATED_PREFIX + 'EconomiaPercentual',
-        ((currentEnergyCost - (rentalAmountPct + taxaMinima)) /
-          currentEnergyCost *
-          100)
-          .setScale(2, RoundingMode.HALF_UP)
+        (rentalSavings / monthlySavings * 100).setScale(2, RoundingMode.HALF_UP)
       );
     }
 
-    // EconomiaPercentualFinanciamento (card Financiamento 60x): (CustoMedioEnergia - ParcelaFinanciamento3) / CustoMedioEnergia * 100
+    // EconomiaPercentualFinanciamento (card Financiamento 60x): (EconomiaMensalEstimada - ParcelaFinanciamento3) / EconomiaMensalEstimada * 100
     // FinanciamentoMensal (card Financiamento 60x): EconomiaMensalEstimada - ParcelaFinanciamento3
     // Se negativo, zera os campos da seção de financiamento
     Decimal financing3Amount = toDecimal(
@@ -296,11 +290,12 @@ public with sharing class ProposalComputedValueService {
     );
     if (
       financing3Amount != null &&
-      currentEnergyCost != null &&
-      currentEnergyCost != 0
+      monthlySavings != null &&
+      monthlySavings != 0
     ) {
-      Decimal financingPct = ((currentEnergyCost - financing3Amount) /
-        currentEnergyCost *
+      Decimal financingSavings = monthlySavings - financing3Amount;
+      Decimal financingPct = (financingSavings /
+        monthlySavings *
         100)
         .setScale(2, RoundingMode.HALF_UP);
       if (financingPct < 0) {
@@ -315,10 +310,7 @@ public with sharing class ProposalComputedValueService {
           CALCULATED_PREFIX + 'EconomiaPercentualFinanciamento',
           financingPct
         );
-        values.put(
-          CALCULATED_PREFIX + 'FinanciamentoMensal',
-          monthlySavings == null ? null : monthlySavings - financing3Amount
-        );
+        values.put(CALCULATED_PREFIX + 'FinanciamentoMensal', financingSavings);
         Decimal count3 = toDecimal(
           values.get(SIMULATION_PREFIX + 'Financing.InstallmentCount3')
         );
@@ -331,22 +323,16 @@ public with sharing class ProposalComputedValueService {
       }
     }
 
-    // EconomiaPercentual (card Aluguel): mantém o cálculo atual do percentual
+    // EconomiaPercentual (card Aluguel): usa economia líquida / economia mensal estimada
     // AluguelEconomiaMensal: EconomiaMensalEstimada - ParcelaAluguel
     // EconomiaPercentual negativo → zera seção aluguel
     Decimal rentalAmount = toDecimal(
       values.get(SIMULATION_PREFIX + 'Rental.InstallmentAmount1')
     );
-    if (
-      rentalAmount != null &&
-      currentEnergyCost != null &&
-      currentEnergyCost != 0
-    ) {
-      Decimal taxaMinima = (tarifaComTributos != null)
-        ? 30 * tarifaComTributos
-        : 0;
-      Decimal rentalPct = ((currentEnergyCost - (rentalAmount + taxaMinima)) /
-        currentEnergyCost *
+    if (rentalAmount != null && monthlySavings != null && monthlySavings != 0) {
+      Decimal rentalSavings = monthlySavings - rentalAmount;
+      Decimal rentalPct = (rentalSavings /
+        monthlySavings *
         100)
         .setScale(2, RoundingMode.HALF_UP);
       if (rentalPct < 0) {
@@ -355,10 +341,7 @@ public with sharing class ProposalComputedValueService {
         values.put(CALCULATED_PREFIX + 'EconomiaMensal', '');
         values.put(CALCULATED_PREFIX + 'EconomiaPercentual', '');
       } else {
-        values.put(
-          CALCULATED_PREFIX + 'AluguelEconomiaMensal',
-          monthlySavings == null ? null : monthlySavings - rentalAmount
-        );
+        values.put(CALCULATED_PREFIX + 'AluguelEconomiaMensal', rentalSavings);
         values.put(
           CALCULATED_PREFIX + 'EconomiaMensal',
           buildEconomiaMensalLabel()

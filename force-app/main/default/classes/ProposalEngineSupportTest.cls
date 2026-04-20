@@ -838,6 +838,18 @@ private class ProposalEngineSupportTest {
     aluguelEconomiaMensal.formatValue = 'CURRENCY_BR_PREFIX';
     configs.add(aluguelEconomiaMensal);
 
+    ProposalConfigurationService.TagConfig aluguelPorcentagem = new ProposalConfigurationService.TagConfig();
+    aluguelPorcentagem.tagKey = '{{AluguelPorcentagem__c}}';
+    aluguelPorcentagem.sourcePath = 'Calculated.EconomiaPercentual';
+    aluguelPorcentagem.formatValue = 'DECIMAL_BR_PCT';
+    configs.add(aluguelPorcentagem);
+
+    ProposalConfigurationService.TagConfig financiamentoPorcentagem = new ProposalConfigurationService.TagConfig();
+    financiamentoPorcentagem.tagKey = '{{FinanciamentoPorcentagem__c}}';
+    financiamentoPorcentagem.sourcePath = 'Calculated.EconomiaPercentualFinanciamento';
+    financiamentoPorcentagem.formatValue = 'DECIMAL_BR_PCT';
+    configs.add(financiamentoPorcentagem);
+
     ProposalPayloadBuilder.Payload payload = ProposalPayloadBuilder.buildPayload(
       context,
       opportunityRecord,
@@ -870,6 +882,16 @@ private class ProposalEngineSupportTest {
       'R$ 2.000,00',
       payload.tags.get('{{AluguelEconomiaMensal__c}}'),
       'O valor do aluguel deve ser a economia mensal estimada menos a parcela de aluguel.'
+    );
+    Assert.areEqual(
+      '80,00%',
+      payload.tags.get('{{AluguelPorcentagem__c}}'),
+      'O percentual do aluguel deve ser a economia liquida dividida pela economia mensal estimada.'
+    );
+    Assert.areEqual(
+      '60,00%',
+      payload.tags.get('{{FinanciamentoPorcentagem__c}}'),
+      'O percentual do financiamento deve ser a economia liquida dividida pela economia mensal estimada.'
     );
   }
 
@@ -962,6 +984,18 @@ private class ProposalEngineSupportTest {
     aluguelEconomiaMensal.formatValue = 'CURRENCY_BR_PREFIX';
     configs.add(aluguelEconomiaMensal);
 
+    ProposalConfigurationService.TagConfig aluguelPorcentagem = new ProposalConfigurationService.TagConfig();
+    aluguelPorcentagem.tagKey = '{{AluguelPorcentagem__c}}';
+    aluguelPorcentagem.sourcePath = 'Calculated.EconomiaPercentual';
+    aluguelPorcentagem.formatValue = 'DECIMAL_BR_PCT';
+    configs.add(aluguelPorcentagem);
+
+    ProposalConfigurationService.TagConfig financiamentoPorcentagem = new ProposalConfigurationService.TagConfig();
+    financiamentoPorcentagem.tagKey = '{{FinanciamentoPorcentagem__c}}';
+    financiamentoPorcentagem.sourcePath = 'Calculated.EconomiaPercentualFinanciamento';
+    financiamentoPorcentagem.formatValue = 'DECIMAL_BR_PCT';
+    configs.add(financiamentoPorcentagem);
+
     ProposalPayloadBuilder.Payload payload = ProposalPayloadBuilder.buildPayload(
       context,
       opportunityRecord,
@@ -994,6 +1028,16 @@ private class ProposalEngineSupportTest {
       '',
       payload.tags.get('{{AluguelEconomiaMensal__c}}'),
       'A economia mensal do aluguel deve ser zerada quando a porcentagem for negativa.'
+    );
+    Assert.areEqual(
+      '',
+      payload.tags.get('{{AluguelPorcentagem__c}}'),
+      'O percentual do aluguel deve ser zerado quando a economia liquida for negativa.'
+    );
+    Assert.areEqual(
+      '',
+      payload.tags.get('{{FinanciamentoPorcentagem__c}}'),
+      'O percentual do financiamento deve ser zerado quando a economia liquida for negativa.'
     );
   }
 
