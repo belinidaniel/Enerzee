@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-23-2026
+ * @last modified on  : 04-20-2026
  * @last modified by  : Daniel Belini
  * @test              : InstalacaoBOTest, InstalacaoTriggerHandlerTest, ProjetoTriggerTest
  **/
@@ -104,7 +104,7 @@ public with sharing class InstalacaoBO {
 
     // Load required field set names from Custom Metadata (CMDT query — cheap)
     List<FieldSetMapping__mdt> requiredMappings = [
-      SELECT FieldSetName__c, SectionLabel__c
+      SELECT FieldSetName__c, SectionLabel__c, Subject__c
       FROM FieldSetMapping__mdt
       WHERE ObjectApiName__c = 'Instalacao__c' AND IsSectionRequired__c = TRUE
     ];
@@ -113,10 +113,42 @@ public with sharing class InstalacaoBO {
       return;
     }
 
+    // Collect subjects that require a linked Task to exist before validating
+    Set<String> subjectsRequiringTask = new Set<String>();
+    for (FieldSetMapping__mdt mapping : requiredMappings) {
+      if (String.isNotBlank(mapping.Subject__c)) {
+        subjectsRequiringTask.add(mapping.Subject__c.trim().toLowerCase());
+      }
+    }
+
+    // Query once for all installations: which task subjects actually exist
+    Set<Id> instIds = new Set<Id>();
+    for (Instalacao__c inst : toValidate) {
+      instIds.add(inst.Id);
+    }
+    Map<Id, Set<String>> existingSubjectsByInst = new Map<Id, Set<String>>();
+    if (!subjectsRequiringTask.isEmpty()) {
+      for (Task t : [
+        SELECT WhatId, Subject
+        FROM Task
+        WHERE WhatId IN :instIds AND IsDeleted = FALSE
+      ]) {
+        if (!existingSubjectsByInst.containsKey(t.WhatId)) {
+          existingSubjectsByInst.put(t.WhatId, new Set<String>());
+        }
+        if (String.isNotBlank(t.Subject)) {
+          existingSubjectsByInst.get(t.WhatId)
+            .add(t.Subject.trim().toLowerCase());
+        }
+      }
+    }
+
     // Resolve updateable fields from each required FieldSet via Schema API (no SOQL)
     Map<String, Schema.FieldSet> fieldSetMap = Schema.SObjectType.Instalacao__c.fieldSets.getMap();
     // fieldApiName → section label for user-friendly error messages
+    // fieldApiName → required subject (null = always required)
     Map<String, String> requiredFieldToSection = new Map<String, String>();
+    Map<String, String> requiredFieldToSubject = new Map<String, String>();
 
     for (FieldSetMapping__mdt mapping : requiredMappings) {
       if (String.isBlank(mapping.FieldSetName__c)) {
@@ -135,9 +167,14 @@ public with sharing class InstalacaoBO {
         ? mapping.SectionLabel__c
         : mapping.FieldSetName__c;
 
+      String subjectKey = String.isNotBlank(mapping.Subject__c)
+        ? mapping.Subject__c.trim().toLowerCase()
+        : null;
+
       for (Schema.FieldSetMember member : fs.getFields()) {
         if (member.getSObjectField().getDescribe().isUpdateable()) {
           requiredFieldToSection.put(member.getFieldPath(), sectionLabel);
+          requiredFieldToSubject.put(member.getFieldPath(), subjectKey);
         }
       }
     }
@@ -149,8 +186,17 @@ public with sharing class InstalacaoBO {
     Map<String, Schema.SObjectField> fieldMap = Schema.SObjectType.Instalacao__c.fields.getMap();
 
     for (Instalacao__c inst : toValidate) {
+      Set<String> presentSubjects = existingSubjectsByInst.containsKey(inst.Id)
+        ? existingSubjectsByInst.get(inst.Id)
+        : new Set<String>();
+
       List<String> missingLabels = new List<String>();
       for (String fieldApiName : requiredFieldToSection.keySet()) {
+        String subjectKey = requiredFieldToSubject.get(fieldApiName);
+        // Se o fieldset exige que exista uma Task com determinado Subject e ela não existe, ignora
+        if (subjectKey != null && !presentSubjects.contains(subjectKey)) {
+          continue;
+        }
         Object value = inst.get(fieldApiName);
         Boolean isEmpty = value == null || String.valueOf(value).trim() == '';
         if (isEmpty) {
