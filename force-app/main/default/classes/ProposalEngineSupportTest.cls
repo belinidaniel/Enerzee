@@ -764,7 +764,7 @@ private class ProposalEngineSupportTest {
       LIMIT 1
     ];
     opportunityRecord.CustoMedioEnergia__c = 3000;
-    opportunityRecord.EconomiaMensalEstimada__c = 2500;
+    opportunityRecord.EconomiaMensalEstimada__c = 1000;
     opportunityRecord.TarifaComTributosB__c = 0;
 
     insert new List<PaymentSimulation__c>{
