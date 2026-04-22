@@ -95,8 +95,9 @@ private class SAPBusinessPartnerMapperTest {
 
     Assert.areEqual('Endereço cobrança', addr.AddressName);
     Assert.areEqual('bo_BillTo', addr.AddressType);
+    Assert.areEqual(null, addr.TypeOfAddress);
     Assert.areEqual(0, addr.RowNum);
-    Assert.areEqual('12345678000100', addr.BPCode);
+    Assert.areEqual('', addr.BPCode);
     Assert.areEqual('Rua das Flores', addr.Street);
     Assert.areEqual('100', addr.StreetNo);
     Assert.areEqual('Centro', addr.Block);
@@ -122,7 +123,7 @@ private class SAPBusinessPartnerMapperTest {
       'SP',
       null
     );
-    Assert.areEqual('', addr.BuildingFloorRoom);
+    Assert.areEqual(null, addr.BuildingFloorRoom);
   }
 
   // ── buildShippingAddress ────────────────────────────────────────────────────
@@ -144,8 +145,9 @@ private class SAPBusinessPartnerMapperTest {
 
     Assert.areEqual('Endereço entrega', addr.AddressName);
     Assert.areEqual('bo_ShipTo', addr.AddressType);
+    Assert.areEqual(null, addr.TypeOfAddress);
     Assert.areEqual(1, addr.RowNum);
-    Assert.areEqual('12345678000100', addr.BPCode);
+    Assert.areEqual('', addr.BPCode);
     Assert.areEqual('Av. Brasil', addr.Street);
     Assert.areEqual('500', addr.StreetNo);
     Assert.areEqual('Jardins', addr.Block);
@@ -170,31 +172,35 @@ private class SAPBusinessPartnerMapperTest {
       'SP',
       null
     );
-    Assert.areEqual('', addr.BuildingFloorRoom);
+    Assert.areEqual(null, addr.BuildingFloorRoom);
   }
 
   // ── buildFiscalTaxId ────────────────────────────────────────────────────────
 
   @IsTest
-  static void buildFiscalTaxId_givenCPF_thenTaxID0IsSet() {
+  static void buildFiscalTaxId_givenCPF_thenTaxId4IsSet() {
     SAPBusinessPartnerMapper.BPFiscalTaxID taxId = SAPBusinessPartnerMapper.buildFiscalTaxId(
-      '12345678901',
+      '123.456.789-01',
       null,
       '12345678901'
     );
-    Assert.areEqual('12345678901', taxId.TaxID0);
-    Assert.areEqual(null, taxId.TaxID4);
+    Assert.areEqual('', taxId.address);
+    Assert.areEqual('', taxId.bpCode);
+    Assert.areEqual(null, taxId.taxId0);
+    Assert.areEqual('123.456.789-01', taxId.taxId4);
   }
 
   @IsTest
-  static void buildFiscalTaxId_givenCNPJ_thenTaxID4IsSet() {
+  static void buildFiscalTaxId_givenCNPJ_thenTaxId0IsSet() {
     SAPBusinessPartnerMapper.BPFiscalTaxID taxId = SAPBusinessPartnerMapper.buildFiscalTaxId(
       null,
-      '12345678000100',
+      '12.345.678/0001-00',
       '12345678000100'
     );
-    Assert.areEqual(null, taxId.TaxID0);
-    Assert.areEqual('12345678000100', taxId.TaxID4);
+    Assert.areEqual('', taxId.address);
+    Assert.areEqual('', taxId.bpCode);
+    Assert.areEqual('12.345.678/0001-00', taxId.taxId0);
+    Assert.areEqual(null, taxId.taxId4);
   }
 
   @IsTest
@@ -204,18 +210,22 @@ private class SAPBusinessPartnerMapperTest {
       null,
       null
     );
-    Assert.areEqual(null, taxId.TaxID0);
-    Assert.areEqual(null, taxId.TaxID4);
+    Assert.areEqual('', taxId.address);
+    Assert.areEqual('', taxId.bpCode);
+    Assert.areEqual(null, taxId.taxId0);
+    Assert.areEqual(null, taxId.taxId4);
   }
 
   @IsTest
-  static void buildFiscalTaxId_givenCPFTakesPrecedenceOverCNPJ_thenTaxID0IsSet() {
+  static void buildFiscalTaxId_givenCPFTakesPrecedenceOverCNPJ_thenTaxId4IsSet() {
     SAPBusinessPartnerMapper.BPFiscalTaxID taxId = SAPBusinessPartnerMapper.buildFiscalTaxId(
-      '12345678901',
-      '12345678000100',
+      '123.456.789-01',
+      '12.345.678/0001-00',
       '12345678901'
     );
-    Assert.areEqual('12345678901', taxId.TaxID0);
-    Assert.areEqual(null, taxId.TaxID4);
+    Assert.areEqual('', taxId.address);
+    Assert.areEqual('', taxId.bpCode);
+    Assert.areEqual(null, taxId.taxId0);
+    Assert.areEqual('123.456.789-01', taxId.taxId4);
   }
 }

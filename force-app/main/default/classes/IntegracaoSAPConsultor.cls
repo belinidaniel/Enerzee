@@ -107,8 +107,13 @@ public without sharing class IntegracaoSAPConsultor implements Queueable, Databa
       );
 
       try {
+        String requestBody = JSON.serialize(corpoRequisicao);
+        System.debug(
+          LoggingLevel.ERROR,
+          'IntegracaoSAPConsultor request body: ' + requestBody
+        );
         HttpResponse response = SAPIntegrationService.post(
-          JSON.serialize(corpoRequisicao),
+          requestBody,
           sapConfig,
           null
         );

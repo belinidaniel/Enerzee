@@ -112,9 +112,13 @@ public with sharing class IntegracaoSAPCliente implements Queueable, Database.Al
       );
 
       try {
-        System.debug('Corpo Requisicao: ' + JSON.serialize(corpoRequisicao));
+        String requestBody = JSON.serialize(corpoRequisicao);
+        System.debug(
+          LoggingLevel.ERROR,
+          'IntegracaoSAPCliente request body: ' + requestBody
+        );
         HttpResponse response = SAPIntegrationService.post(
-          JSON.serialize(corpoRequisicao),
+          requestBody,
           sapConfig,
           null
         );

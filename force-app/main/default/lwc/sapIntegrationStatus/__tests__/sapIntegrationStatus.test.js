@@ -106,30 +106,32 @@ describe("failure state", () => {
     expect(badge.textContent).toBe("ERRO");
   });
 
-  it("renders accordion with error details", async () => {
+  it("renders error card with error details", async () => {
     const element = createComponent();
     mockGetRecord.emit(buildRecord(false, errorBody));
     await Promise.resolve();
 
-    const accordion = element.shadowRoot.querySelector("lightning-accordion");
-    expect(accordion).not.toBeNull();
+    const errorCard = element.shadowRoot.querySelector(".error-card");
+    expect(errorCard).not.toBeNull();
   });
 
-  it("displays error body text inside pre", async () => {
+  it("displays parsed error message inside error card", async () => {
     const element = createComponent();
     mockGetRecord.emit(buildRecord(false, errorBody));
     await Promise.resolve();
 
-    const pre = element.shadowRoot.querySelector(".error-pre");
-    expect(pre.textContent).toBe(errorBody);
+    const mensagem = element.shadowRoot.querySelector(".error-mensagem");
+    expect(mensagem.textContent).toBe("Internal Server Error");
   });
 });
 
 // ── Pending state ─────────────────────────────────────────────────────────────
 describe("pending state", () => {
+  const pendingStatusBody = "Aguardando envio";
+
   it("renders pending banner when SucessoIntegracaoSAP__c is null", async () => {
     const element = createComponent();
-    mockGetRecord.emit(buildRecord(null, null));
+    mockGetRecord.emit(buildRecord(null, pendingStatusBody));
     await Promise.resolve();
 
     const banner = element.shadowRoot.querySelector(".sap-banner_pending");
@@ -138,7 +140,7 @@ describe("pending state", () => {
 
   it('displays "Não integrado" label', async () => {
     const element = createComponent();
-    mockGetRecord.emit(buildRecord(null, null));
+    mockGetRecord.emit(buildRecord(null, pendingStatusBody));
     await Promise.resolve();
 
     const label = element.shadowRoot.querySelector(".banner-label");
@@ -147,7 +149,7 @@ describe("pending state", () => {
 
   it("shows PENDENTE badge", async () => {
     const element = createComponent();
-    mockGetRecord.emit(buildRecord(null, null));
+    mockGetRecord.emit(buildRecord(null, pendingStatusBody));
     await Promise.resolve();
 
     const badge = element.shadowRoot.querySelector(".status-badge");
@@ -156,7 +158,7 @@ describe("pending state", () => {
 
   it("renders pulse ring animation element", async () => {
     const element = createComponent();
-    mockGetRecord.emit(buildRecord(null, null));
+    mockGetRecord.emit(buildRecord(null, pendingStatusBody));
     await Promise.resolve();
 
     const pulse = element.shadowRoot.querySelector(".pulse-ring");

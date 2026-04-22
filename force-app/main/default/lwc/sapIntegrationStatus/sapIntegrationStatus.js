@@ -1,5 +1,5 @@
 import { LightningElement, api, wire, track } from "lwc";
-import { getRecord, refreshApex } from "lightning/uiRecordApi";
+import { getRecord } from "lightning/uiRecordApi";
 import retryIntegration from "@salesforce/apex/SapIntegrationRetryController.retryIntegration";
 
 const FIELD_SUCESSO = "SucessoIntegracaoSAP__c";
@@ -165,7 +165,7 @@ export default class SapIntegrationStatus extends LightningElement {
       });
       this.modalResult = result;
       this.isModalOpen = true;
-      await refreshApex(this._wiredResult);
+      // await refreshApex(this._wiredResult);
     } catch (e) {
       this.modalResult = {
         success: false,
@@ -195,20 +195,22 @@ export default class SapIntegrationStatus extends LightningElement {
         return {
           codigoHttp: parsed.codigoHttp ?? null,
           mensagem: parsed.mensagem ?? raw,
-          resultado:
-            parsed.resultado != null ? String(parsed.resultado) : null
+          resultado: parsed.resultado != null ? String(parsed.resultado) : null
         };
       }
-    } catch (_) {
+    } catch {
       // fallback para raw string
     }
     return { codigoHttp: null, mensagem: raw, resultado: null };
   }
 
   _reduceError(error) {
+    if (typeof error === "string" && error.trim()) return error;
+    if (error?.message) return error.message;
     if (error?.body?.message) return error.body.message;
     if (Array.isArray(error?.body))
       return error.body.map((e) => e.message).join(", ");
+    if (typeof error?.body === "string" && error.body.trim()) return error.body;
     return "Erro ao carregar dados de integração.";
   }
 }

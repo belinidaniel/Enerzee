@@ -78,8 +78,9 @@ public with sharing class SAPBusinessPartnerMapper {
     BPAddress addr = new BPAddress();
     addr.AddressName = 'Endereço cobrança';
     addr.AddressType = 'bo_BillTo';
+    addr.TypeOfAddress = null;
     addr.RowNum = 0;
-    addr.BPCode = bpCode;
+    addr.BPCode = '';
     addr.Street = street;
     addr.StreetNo = streetNo;
     addr.Block = block;
@@ -88,7 +89,7 @@ public with sharing class SAPBusinessPartnerMapper {
     addr.County = county;
     addr.Country = country;
     addr.State = state;
-    addr.BuildingFloorRoom = complement != null ? complement : '';
+    addr.BuildingFloorRoom = complement;
     return addr;
   }
 
@@ -110,8 +111,9 @@ public with sharing class SAPBusinessPartnerMapper {
     BPAddress addr = new BPAddress();
     addr.AddressName = 'Endereço entrega';
     addr.AddressType = 'bo_ShipTo';
+    addr.TypeOfAddress = null;
     addr.RowNum = 1;
-    addr.BPCode = bpCode;
+    addr.BPCode = '';
     addr.Street = street;
     addr.StreetNo = streetNo;
     addr.Block = block;
@@ -120,12 +122,13 @@ public with sharing class SAPBusinessPartnerMapper {
     addr.County = county;
     addr.Country = country;
     addr.State = state;
-    addr.BuildingFloorRoom = complement != null ? complement : '';
+    addr.BuildingFloorRoom = complement;
     return addr;
   }
 
   /**
-   * Builds the fiscal tax ID entry. Uses TaxID0 for CPF holders, TaxID4 for CNPJ holders.
+   * Builds the fiscal tax ID entry using the formatted document values expected by SAP.
+   * Uses TaxId4 for CPF holders and TaxId0 for CNPJ holders.
    */
   public static BPFiscalTaxID buildFiscalTaxId(
     String cpf,
@@ -133,16 +136,19 @@ public with sharing class SAPBusinessPartnerMapper {
     String seCPFouCNPJ
   ) {
     BPFiscalTaxID taxId = new BPFiscalTaxID();
+    taxId.address = '';
+    taxId.bpCode = '';
     if (String.isNotBlank(cpf)) {
-      taxId.TaxID0 = seCPFouCNPJ;
+      taxId.taxId4 = cpf;
     } else if (String.isNotBlank(cnpj)) {
-      taxId.TaxID4 = seCPFouCNPJ;
+      taxId.taxId0 = cnpj;
     }
     return taxId;
   }
 
   public class BPAddress {
     public String AddressName;
+    public String TypeOfAddress;
     public String Street;
     public String Block;
     public String ZipCode;
@@ -158,7 +164,9 @@ public with sharing class SAPBusinessPartnerMapper {
   }
 
   public class BPFiscalTaxID {
-    public String TaxID0;
-    public String TaxID4;
+    public String address;
+    public String bpCode;
+    public String taxId0;
+    public String taxId4;
   }
 }
