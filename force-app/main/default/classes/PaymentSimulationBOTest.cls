@@ -76,15 +76,23 @@ public class PaymentSimulationBOTest {
     System.assertEquals(10, simulations[0].InstallmentCount__c);
     System.assertEquals(0.0200, simulations[0].InterestRate__c);
     System.assertEquals(
-      calculateExpectedPmt(100000, 0.0200, 10),
+      calculateExpectedSimpleInterest(100000, 0.0200),
       simulations[0].InstallmentAmount__c
     );
     System.assertEquals(financingRate.Id, simulations[3].FinancingRate__c);
     System.assertEquals(60, simulations[3].InstallmentCount__c);
     System.assertEquals(rentalRate.Id, simulations[4].FinancingRate__c);
     System.assertEquals(12, simulations[4].InstallmentCount__c);
+    System.assertEquals(
+      calculateExpectedSimpleInterest(100000, 0.0100),
+      simulations[4].InstallmentAmount__c
+    );
     System.assertEquals(rentalRate.Id, simulations[5].FinancingRate__c);
     System.assertEquals(24, simulations[5].InstallmentCount__c);
+    System.assertEquals(
+      calculateExpectedSimpleInterest(100000, 0.0150),
+      simulations[5].InstallmentAmount__c
+    );
   }
 
   @IsTest
@@ -122,9 +130,9 @@ public class PaymentSimulationBOTest {
     System.assertEquals(1, simulations.size());
     System.assertEquals(2, simulations[0].InterestRate__c);
     System.assertEquals(
-      calculateExpectedPmt(60195, 0.02, 25),
+      calculateExpectedSimpleInterest(60195, 0.02),
       simulations[0].InstallmentAmount__c,
-      'O PMT deve tratar 2 no cadastro como 2% e não como 200%.'
+      'O cálculo deve tratar 2 no cadastro como 2% e não como 200%.'
     );
   }
 
@@ -371,7 +379,7 @@ public class PaymentSimulationBOTest {
         ProposalLabel__c = financingRate.Name,
         InstallmentCount__c = 24,
         InterestRate__c = 0.0219,
-        InstallmentAmount__c = calculateExpectedPmt(100000, 0.0219, 24),
+        InstallmentAmount__c = calculateExpectedSimpleInterest(100000, 0.0219),
         Selected__c = true
       );
     } finally {
@@ -594,6 +602,13 @@ public class PaymentSimulationBOTest {
       digitsOnly.substring(8, 12) +
       '-' +
       digitsOnly.substring(12, 14);
+  }
+
+  private static Decimal calculateExpectedSimpleInterest(
+    Decimal principalValue,
+    Decimal interestRate
+  ) {
+    return (principalValue * interestRate).setScale(2, RoundingMode.HALF_UP);
   }
 
   private static Decimal calculateExpectedPmt(

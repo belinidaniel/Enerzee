@@ -345,10 +345,9 @@ public without sharing class PaymentSimulationBO {
           continue;
         }
 
-        Decimal installmentAmount = calculatePMT(
+        Decimal installmentAmount = calculateSimpleInterest(
           simulationAmount,
-          interestRate,
-          installmentCount
+          interestRate
         );
         if (installmentAmount == null) {
           continue;
@@ -417,6 +416,21 @@ public without sharing class PaymentSimulationBO {
     Double paymentAmount = (principalAsDouble * rateAsDouble) / denominator;
     return Decimal.valueOf(String.valueOf(paymentAmount))
       .setScale(2, RoundingMode.HALF_UP);
+  }
+
+  @TestVisible
+  private static Decimal calculateSimpleInterest(
+    Decimal principalValue,
+    Decimal interestRate
+  ) {
+    if (principalValue == null || interestRate == null) {
+      return null;
+    }
+    Decimal normalizedRate = normalizeInterestRateForPmt(interestRate);
+    if (normalizedRate == null) {
+      return null;
+    }
+    return (principalValue * normalizedRate).setScale(2, RoundingMode.HALF_UP);
   }
 
   @TestVisible
