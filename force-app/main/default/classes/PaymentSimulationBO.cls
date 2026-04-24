@@ -327,67 +327,68 @@ public without sharing class PaymentSimulationBO {
       selectedSimulationKeys.clear();
     }
 
-    for (FinancingRate__c financingRate : activeFinancingRates) {
-      if (String.isBlank(financingRate.PaymentType__c)) {
-        continue;
-      }
-      if (
-        isRentalPaymentType(financingRate.PaymentType__c) &&
-        !isRentalEligible(
-          simulationAmount,
-          cnpj,
-          opportunityRecord.TipoKitPromocional__c
-        )
-      ) {
-        continue;
-      }
-
-      for (
-        Integer optionIndex = 1;
-        optionIndex <= MAX_INSTALLMENT_OPTIONS;
-        optionIndex++
-      ) {
-        Integer installmentCount = getInstallmentCount(
-          financingRate,
-          optionIndex
-        );
-        Decimal interestRate = getInstallmentRate(financingRate, optionIndex);
+    if (!isPixPayment) {
+      for (FinancingRate__c financingRate : activeFinancingRates) {
+        if (String.isBlank(financingRate.PaymentType__c)) {
+          continue;
+        }
         if (
-          installmentCount == null ||
-          installmentCount <= 0 ||
-          interestRate == null
+          isRentalPaymentType(financingRate.PaymentType__c) &&
+          !isRentalEligible(
+            simulationAmount,
+            cnpj,
+            opportunityRecord.TipoKitPromocional__c
+          )
         ) {
           continue;
         }
 
-        Decimal installmentAmount = calculateInstallmentAmount(
-          financingRate.PaymentType__c,
-          simulationAmount,
-          interestRate,
-          installmentCount
-        );
-        if (installmentAmount == null) {
-          continue;
-        }
+        for (
+          Integer optionIndex = 1;
+          optionIndex <= MAX_INSTALLMENT_OPTIONS;
+          optionIndex++
+        ) {
+          Integer installmentCount = getInstallmentCount(
+            financingRate,
+            optionIndex
+          );
+          Decimal interestRate = getInstallmentRate(financingRate, optionIndex);
+          if (
+            installmentCount == null ||
+            installmentCount <= 0 ||
+            interestRate == null
+          ) {
+            continue;
+          }
 
-        String simulationKey = buildSimulationKey(
-          financingRate.Id,
-          installmentCount,
-          interestRate
-        );
-        desiredSimulations.add(
-          new PaymentSimulation__c(
-            Opportunity__c = opportunityRecord.Id,
-            FinancingRate__c = financingRate.Id,
-            PaymentType__c = financingRate.PaymentType__c,
-            ProposalLabel__c = resolveProposalLabel(financingRate),
-            InstallmentCount__c = installmentCount,
-            InterestRate__c = interestRate,
-            InstallmentAmount__c = installmentAmount,
-            Selected__c = !isPixPayment &&
-              selectedSimulationKeys.contains(simulationKey)
-          )
-        );
+          Decimal installmentAmount = calculateInstallmentAmount(
+            financingRate.PaymentType__c,
+            simulationAmount,
+            interestRate,
+            installmentCount
+          );
+          if (installmentAmount == null) {
+            continue;
+          }
+
+          String simulationKey = buildSimulationKey(
+            financingRate.Id,
+            installmentCount,
+            interestRate
+          );
+          desiredSimulations.add(
+            new PaymentSimulation__c(
+              Opportunity__c = opportunityRecord.Id,
+              FinancingRate__c = financingRate.Id,
+              PaymentType__c = financingRate.PaymentType__c,
+              ProposalLabel__c = resolveProposalLabel(financingRate),
+              InstallmentCount__c = installmentCount,
+              InterestRate__c = interestRate,
+              InstallmentAmount__c = installmentAmount,
+              Selected__c = selectedSimulationKeys.contains(simulationKey)
+            )
+          );
+        }
       }
     }
 

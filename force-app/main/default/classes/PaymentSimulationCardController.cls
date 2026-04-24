@@ -104,7 +104,12 @@ public with sharing class PaymentSimulationCardController {
       );
     }
     Opportunity opportunityRecord = [
-      SELECT Id, SelectedSimulation__c
+      SELECT
+        Id,
+        StageName,
+        Status__c,
+        SelectedSimulation__c,
+        RecordType.DeveloperName
       FROM Opportunity
       WHERE Id = :opportunityId
       LIMIT 1
@@ -133,7 +138,12 @@ public with sharing class PaymentSimulationCardController {
     validateManualSimulationPermissions();
 
     Opportunity opportunityRecord = [
-      SELECT Id, StageName, SelectedSimulation__c
+      SELECT
+        Id,
+        StageName,
+        Status__c,
+        SelectedSimulation__c,
+        RecordType.DeveloperName
       FROM Opportunity
       WHERE Id = :opportunityId
       LIMIT 1
@@ -383,6 +393,16 @@ public with sharing class PaymentSimulationCardController {
         if (mappedFormaPagamento != null) {
           oppToUpdate.FormaPagamento__c = mappedFormaPagamento;
         }
+        if (
+          RENTAL_PAYMENT_TYPE.equalsIgnoreCase(
+            simulationRecord.PaymentType__c
+          ) &&
+          opportunityRecord.RecordType?.DeveloperName == 'Solar' &&
+          opportunityRecord.StageName != CREDIT_ANALYSIS_STAGE
+        ) {
+          oppToUpdate.StageName = CREDIT_ANALYSIS_STAGE;
+          oppToUpdate.Status__c = OpportunityUtils.SUB_STATUS_ANALISE_CREDITO;
+        }
         update oppToUpdate;
       } finally {
         OpportunityTriggerHandler.enableTrigger();
@@ -421,7 +441,9 @@ public with sharing class PaymentSimulationCardController {
     List<PaymentSimulation__c> simulationsToDelete = [
       SELECT Id
       FROM PaymentSimulation__c
-      WHERE Opportunity__c = :opportunityId
+      WHERE
+        Opportunity__c = :opportunityId
+        AND ProposalLabel__c != :MANUAL_SIMULATION_LABEL
     ];
     if (!simulationsToDelete.isEmpty()) {
       delete simulationsToDelete;

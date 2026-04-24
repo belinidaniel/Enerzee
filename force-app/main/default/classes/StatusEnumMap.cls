@@ -209,6 +209,11 @@ public class StatusEnumMap {
       'Análise' => 75,
       'Aprovado' => 76,
       'Reprovado' => 77
+    },
+    60 => new Map<String, Integer>{
+      'Análise' => 80,
+      'Aprovado' => 81,
+      'Reprovado' => 82
     }
   };
 
