@@ -11,6 +11,7 @@ public class StatusEnumMap {
     'Elaboração de proposta' => 1,
     'Proposta Gerada' => 2,
     'Confirmação de pagamento sinal' => 3,
+    'Análise de Crédito' => 60,
     'Viabilidade Técnica' => 4,
     'Readequação de Proposta' => 5,
     'Aguardando aceite' => 6,

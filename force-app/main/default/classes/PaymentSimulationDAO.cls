@@ -87,7 +87,7 @@ public without sharing class PaymentSimulationDAO {
 
     return new Map<Id, Opportunity>(
       [
-        SELECT Id, FinancingProcessDetails__c
+        SELECT Id, SelectedSimulation__c, FinancingProcessDetails__c
         FROM Opportunity
         WHERE Id IN :opportunityIds
       ]

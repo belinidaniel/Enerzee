@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>KitInstalacaoBO</members>
+        <members>OpportunityBO</members>
+        <members>PaymentSimulationBO</members>
+        <members>PaymentSimulationBOTest</members>
+        <members>PaymentSimulationCardController</members>
+        <members>PaymentSimulationCardControllerTest</members>
+        <members>PaymentSimulationDAO</members>
+        <members>ProposalComputedValueService</members>
+        <members>ProposalEngineSupportTest</members>
+        <members>ProposalPayloadBuilder</members>
+        <members>StatusEnumMap</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_ValorOutros</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_fPagOutroSelecionado</members>
+        <members
+    >ProposalTagMapping.GRUPO_B_PADRAO_textoOutrosPagamento</members>
+        <name>CustomMetadata</name>
+    </types>
+    <types>
+        <members>paymentSimulationCard</members>
+        <members>paymentSimulationCards</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>FinancingRate__c.PaymentType__c</members>
+        <members>PaymentSimulation__c.PaymentType__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Opportunity.Processo de Vendas Solar</members>
+        <name>BusinessProcess</name>
+    </types>
+    <version>63.0</version>
+</Package>

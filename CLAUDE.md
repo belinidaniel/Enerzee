@@ -69,12 +69,13 @@ Key architectural risks (from docs/):
 
 ### GitHub Actions (automated)
 
-| Workflow | Trigger | Action |
-|---|---|---|
-| `pr-validate.yml` | PR aberto/atualizado → `main` | Dry-run + Code Analyzer + comment no PR |
-| `merge-deploy.yml` | Push em `main` (após merge) | Deploy real + testes + commit status |
+| Workflow           | Trigger                       | Action                                  |
+| ------------------ | ----------------------------- | --------------------------------------- |
+| `pr-validate.yml`  | PR aberto/atualizado → `main` | Dry-run + Code Analyzer + comment no PR |
+| `merge-deploy.yml` | Push em `main` (após merge)   | Deploy real + testes + commit status    |
 
 **Secrets necessários no repositório:**
+
 - `SFDX_AUTH_URL_SANDBOX` — para validação no sandbox
 - `SFDX_AUTH_URL_PROD` — para deploy em produção
 
@@ -142,18 +143,18 @@ docs/               # Architecture docs, Jira drafts, analysis
 
 Run these with `/command-name` in Claude Code:
 
-| Command        | What it does                                                                        |
-| -------------- | ----------------------------------------------------------------------------------- |
-| `/analyst`     | Activate Salesforce Analyst mode — translate raw input into structured requirements |
-| `/architect`   | Activate Salesforce Architect mode — design, review, and improve architecture       |
-| `/developer`   | Activate Salesforce Developer mode — write and review production-ready Apex/LWC     |
-| `/jira`        | Generate a structured Jira ticket from a description or conversation                |
-| `/deploy`      | Generate a deployment package (package.xml) from changed/specified files            |
-| `/impact`      | Analyze the blast radius of a change across the data model and automations          |
-| `/apex-review`    | Deep review of an Apex class against Enerzee standards                              |
-| `/flow-review`    | Review a Flow for correctness, performance, and best practices                      |
-| `/pr-validate`    | Full PR validation: apex review + dry-run deploy + test mapping                     |
-| `/merge-deploy`   | Deploy after merge: changed files → package.xml → deploy with tests                 |
+| Command         | What it does                                                                        |
+| --------------- | ----------------------------------------------------------------------------------- |
+| `/analyst`      | Activate Salesforce Analyst mode — translate raw input into structured requirements |
+| `/architect`    | Activate Salesforce Architect mode — design, review, and improve architecture       |
+| `/developer`    | Activate Salesforce Developer mode — write and review production-ready Apex/LWC     |
+| `/jira`         | Generate a structured Jira ticket from a description or conversation                |
+| `/deploy`       | Generate a deployment package (package.xml) from changed/specified files            |
+| `/impact`       | Analyze the blast radius of a change across the data model and automations          |
+| `/apex-review`  | Deep review of an Apex class against Enerzee standards                              |
+| `/flow-review`  | Review a Flow for correctness, performance, and best practices                      |
+| `/pr-validate`  | Full PR validation: apex review + dry-run deploy + test mapping                     |
+| `/merge-deploy` | Deploy after merge: changed files → package.xml → deploy with tests                 |
 
 ---
 
@@ -173,3 +174,30 @@ Run these with `/command-name` in Claude Code:
 - SAP token must come from `Integrador__mdt` — never from hardcoded strings
 - All critical Lookup fields in the Opportunity chain are currently `required=false` — do not assume data integrity without validation rules
 - When touching `OpportunityBO` or `OpportunityTriggerHandler`, verify all 31 Opportunity Flows before proceeding
+
+---
+
+## Obsidian Knowledge Base
+
+The project has a full knowledge base in Obsidian at:
+`/Users/danielbelini/Documents/_Workspace/Obsidian/claude/Projects/Enerzee/`
+
+**Rule: always link to relevant Obsidian pages when referencing architecture, tickets, or decisions.**
+
+Key pages:
+
+- `INDEX.md` — navigation hub
+- `Architecture/Data-Model.md` — data model chain
+- `Architecture/Apex-Patterns.md` — mandatory code patterns
+- `Architecture/Integrations.md` — SAP, Nivello, ClickSign, VO
+- `Architecture/Payment-Simulation.md` — payment simulation logic
+- `Architecture/PDF-Proposals.md` — how Bow-e/EzeeConnect PDFs work (image-based!)
+- `Architecture/TabelaEzeeConnect.md` — discount table fields and partner IDs
+- `Architecture/Clockify.md` — Clockify workspace/project IDs and Jira Cloud ID
+- `Tickets/SAL-435.md` — payment simulation ticket
+
+When generating session logs (`/compress`), always cross-link:
+
+- Session logs → Architecture pages
+- Architecture pages → relevant tickets
+- Tickets → architecture pages they touch

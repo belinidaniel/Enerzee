@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-08-2026
+ * @last modified on  : 04-23-2026
  * @last modified by  : Daniel Belini
  * @test              : KitInstalacaoBOTest, KitInstalacaoTriggerTest
  **/

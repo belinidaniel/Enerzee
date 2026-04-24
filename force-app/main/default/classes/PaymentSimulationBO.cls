@@ -18,6 +18,12 @@ public without sharing class PaymentSimulationBO {
   @TestVisible
   private static final String PAYMENT_TYPE_RENTAL = 'Rental';
   @TestVisible
+  private static final String PAYMENT_TYPE_PIX = 'Pix';
+  @TestVisible
+  private static final String PIX_PAYMENT_METHOD = 'R0002';
+  @TestVisible
+  private static final String PIX_PROPOSAL_LABEL = 'PIX';
+  @TestVisible
   private static final Decimal PF_RENTAL_LIMIT = 70000;
   @TestVisible
   private static final Decimal PJ_RENTAL_LIMIT = 250000;
@@ -25,6 +31,8 @@ public without sharing class PaymentSimulationBO {
   private static final String HYBRID_KIT_VALUE = '6';
   @TestVisible
   private static final Integer MAX_INSTALLMENT_OPTIONS = 4;
+  @TestVisible
+  private static final Decimal CARD_MIN_INSTALLMENT_AMOUNT = 29.90;
 
   private static Id solarRecordTypeId;
 
@@ -45,6 +53,7 @@ public without sharing class PaymentSimulationBO {
     // Resync every eligible opportunity on each update so that plain saves
     // backfill missing simulations and normalize legacy rows.
     syncSimulationsForOpportunities(newList);
+    enqueueProposalGenerationOnPaymentMethodChange(newList, oldMap);
   }
 
   public static void normalizeSelectionDetails(
@@ -308,9 +317,15 @@ public without sharing class PaymentSimulationBO {
     List<PaymentSimulation__c> existingSimulations
   ) {
     List<PaymentSimulation__c> desiredSimulations = new List<PaymentSimulation__c>();
+    Boolean isPixPayment = isPixPaymentMethod(
+      opportunityRecord.FormaPagamento__c
+    );
     Set<String> selectedSimulationKeys = collectSelectedSimulationKeys(
       existingSimulations
     );
+    if (isPixPayment) {
+      selectedSimulationKeys.clear();
+    }
 
     for (FinancingRate__c financingRate : activeFinancingRates) {
       if (String.isBlank(financingRate.PaymentType__c)) {
@@ -345,9 +360,11 @@ public without sharing class PaymentSimulationBO {
           continue;
         }
 
-        Decimal installmentAmount = calculateSimpleInterest(
+        Decimal installmentAmount = calculateInstallmentAmount(
+          financingRate.PaymentType__c,
           simulationAmount,
-          interestRate
+          interestRate,
+          installmentCount
         );
         if (installmentAmount == null) {
           continue;
@@ -367,10 +384,27 @@ public without sharing class PaymentSimulationBO {
             InstallmentCount__c = installmentCount,
             InterestRate__c = interestRate,
             InstallmentAmount__c = installmentAmount,
-            Selected__c = selectedSimulationKeys.contains(simulationKey)
+            Selected__c = !isPixPayment &&
+              selectedSimulationKeys.contains(simulationKey)
           )
         );
       }
+    }
+
+    if (isPixPayment) {
+      desiredSimulations.add(
+        new PaymentSimulation__c(
+          Opportunity__c = opportunityRecord.Id,
+          PaymentType__c = PAYMENT_TYPE_PIX,
+          ProposalLabel__c = PIX_PROPOSAL_LABEL,
+          InstallmentCount__c = 1,
+          InstallmentAmount__c = simulationAmount.setScale(
+            2,
+            RoundingMode.HALF_UP
+          ),
+          Selected__c = true
+        )
+      );
     }
 
     return desiredSimulations;
@@ -419,6 +453,54 @@ public without sharing class PaymentSimulationBO {
   }
 
   @TestVisible
+  private static Decimal calculateInstallmentAmount(
+    String paymentType,
+    Decimal principalValue,
+    Decimal interestRate,
+    Integer installments
+  ) {
+    if (isCardPaymentType(paymentType)) {
+      return calculateCardInstallmentAmount(
+        principalValue,
+        interestRate,
+        installments
+      );
+    }
+    return calculateSimpleInterest(principalValue, interestRate);
+  }
+
+  @TestVisible
+  private static Decimal calculateCardInstallmentAmount(
+    Decimal principalValue,
+    Decimal interestRate,
+    Integer installments
+  ) {
+    if (
+      principalValue == null ||
+      interestRate == null ||
+      installments == null ||
+      installments <= 0
+    ) {
+      return null;
+    }
+
+    Decimal percentage = installments <= 1
+      ? 0
+      : normalizeInterestRatePercent(interestRate);
+    if (percentage == null) {
+      return null;
+    }
+    Decimal totalPercent = percentage * installments;
+    Decimal totalWithInterest =
+      principalValue + (principalValue * (totalPercent / 100));
+    Decimal installmentAmount = (totalWithInterest / installments)
+      .setScale(2, RoundingMode.HALF_UP);
+    return installmentAmount < CARD_MIN_INSTALLMENT_AMOUNT
+      ? null
+      : installmentAmount;
+  }
+
+  @TestVisible
   private static Decimal calculateSimpleInterest(
     Decimal principalValue,
     Decimal interestRate
@@ -443,6 +525,18 @@ public without sharing class PaymentSimulationBO {
     return absInterestRate >= 0.1
       ? (interestRate / 100).setScale(6, RoundingMode.HALF_UP)
       : interestRate;
+  }
+
+  @TestVisible
+  private static Decimal normalizeInterestRatePercent(Decimal interestRate) {
+    if (interestRate == null) {
+      return null;
+    }
+
+    Decimal absInterestRate = interestRate.abs();
+    return absInterestRate >= 0.1
+      ? interestRate.setScale(6, RoundingMode.HALF_UP)
+      : (interestRate * 100).setScale(6, RoundingMode.HALF_UP);
   }
 
   @TestVisible
@@ -533,6 +627,7 @@ public without sharing class PaymentSimulationBO {
             optionNameBySimulationId.get(selectedSimulation.Id)
           );
       if (
+        currentOpportunity.SelectedSimulation__c == selectedSimulation?.Id &&
         currentOpportunity.FinancingProcessDetails__c ==
         serializedPaymentDetails
       ) {
@@ -542,6 +637,9 @@ public without sharing class PaymentSimulationBO {
       opportunitiesToUpdate.add(
         new Opportunity(
           Id = opportunityId,
+          SelectedSimulation__c = selectedSimulation == null
+            ? null
+            : selectedSimulation.Id,
           FinancingProcessDetails__c = serializedPaymentDetails
         )
       );
@@ -755,6 +853,46 @@ public without sharing class PaymentSimulationBO {
     Integer optionIndex
   ) {
     return (Decimal) financingRate.get('InstallmentRate' + optionIndex + '__c');
+  }
+
+  private static Boolean isCardPaymentType(String paymentType) {
+    return String.isNotBlank(paymentType) &&
+      paymentType.trim().toUpperCase() == 'CARD';
+  }
+
+  private static Boolean isPixPaymentMethod(String paymentMethod) {
+    return String.isNotBlank(paymentMethod) &&
+      paymentMethod.trim().toUpperCase() == PIX_PAYMENT_METHOD;
+  }
+
+  private static void enqueueProposalGenerationOnPaymentMethodChange(
+    List<Opportunity> newList,
+    Map<Id, Opportunity> oldMap
+  ) {
+    if (newList == null || newList.isEmpty() || oldMap == null) {
+      return;
+    }
+
+    for (Opportunity opportunityRecord : newList) {
+      if (opportunityRecord == null || opportunityRecord.Id == null) {
+        continue;
+      }
+
+      Opportunity previousOpportunity = oldMap.get(opportunityRecord.Id);
+      if (
+        previousOpportunity == null ||
+        previousOpportunity.FormaPagamento__c ==
+        opportunityRecord.FormaPagamento__c
+      ) {
+        continue;
+      }
+
+      ApprovalProcessService.enqueueProposalSavePdfJobIfAbsent(
+        opportunityRecord.Id,
+        true,
+        false
+      );
+    }
   }
 
   private static String resolveProposalLabel(FinancingRate__c financingRate) {

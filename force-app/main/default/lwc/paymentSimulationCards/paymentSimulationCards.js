@@ -2,20 +2,22 @@ import { LightningElement, api, wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { RefreshEvent } from "lightning/refresh";
 import { refreshApex } from "@salesforce/apex";
-import { getFieldValue, getRecord, updateRecord } from "lightning/uiRecordApi";
-import SELECTED_FIELD from "@salesforce/schema/PaymentSimulation__c.Selected__c";
-import SELECTED_SIMULATION_FIELD from "@salesforce/schema/Opportunity.SelectedSimulation__c";
+import { getFieldValue, getRecord } from "lightning/uiRecordApi";
 import STAGE_NAME_FIELD from "@salesforce/schema/Opportunity.StageName";
 import getSimulationCards from "@salesforce/apex/PaymentSimulationCardController.getSimulationCards";
+import saveSimulationSelection from "@salesforce/apex/PaymentSimulationCardController.saveSimulationSelection";
 import createManualSimulation from "@salesforce/apex/PaymentSimulationCardController.createManualSimulation";
 import loadProposalData from "@salesforce/apex/ProposalConsoleController.loadProposalData";
 import sendProposal from "@salesforce/apex/ProposalConsoleController.sendProposal";
 
 const OPPORTUNITY_FIELDS = [STAGE_NAME_FIELD];
 const READJUSTMENT_STAGE = "Readequação de Proposta";
+const CREDIT_ANALYSIS_STAGE = "Análise de Crédito";
 const PAYMENT_TYPE_LABELS = {
   Financing: "Financiamento",
-  Rental: "Aluguel Solar"
+  Rental: "Aluguel Solar",
+  Card: "Cartão de Crédito",
+  Pix: "PIX Via Link"
 };
 
 export default class PaymentSimulationCards extends LightningElement {
@@ -76,7 +78,10 @@ export default class PaymentSimulationCards extends LightningElement {
   }
 
   get canSimulateProposal() {
-    return this.hasCards && this.stageName === READJUSTMENT_STAGE;
+    return (
+      this.hasCards &&
+      [READJUSTMENT_STAGE, CREDIT_ANALYSIS_STAGE].includes(this.stageName)
+    );
   }
 
   get stageName() {
@@ -103,6 +108,21 @@ export default class PaymentSimulationCards extends LightningElement {
     return PAYMENT_TYPE_LABELS[this.draftPaymentType] || this.draftPaymentType;
   }
 
+  get draftDisplayProposalLabel() {
+    if (this.draftProposalLabel === "Simulação ajustada") {
+      if (this.draftPaymentType === "Rental") {
+        return "Aluguel";
+      }
+      if (this.draftPaymentType === "Financing") {
+        return "Financiamento";
+      }
+      if (this.draftPaymentType === "Pix") {
+        return "PIX";
+      }
+    }
+    return this.draftProposalLabel;
+  }
+
   handleOptionSelect(event) {
     const simulationId = event.detail.simulationId;
     const currentSelectedId = this._getCurrentSelectedSimulationId();
@@ -121,19 +141,10 @@ export default class PaymentSimulationCards extends LightningElement {
       return;
     }
     this.isSaving = true;
-    const opportunityUpdate = updateRecord({
-      fields: {
-        Id: this.recordId,
-        [SELECTED_SIMULATION_FIELD.fieldApiName]: this.pendingSimulationId
-      }
-    });
-    const simulationUpdate = updateRecord({
-      fields: {
-        Id: this.pendingSimulationId,
-        [SELECTED_FIELD.fieldApiName]: true
-      }
-    });
-    Promise.all([opportunityUpdate, simulationUpdate])
+    saveSimulationSelection({
+      opportunityId: this.recordId,
+      simulationId: this.pendingSimulationId
+    })
       .then(() => refreshApex(this._wiredResult))
       .then(() => {
         this.pendingSimulationId = null;
@@ -246,21 +257,14 @@ export default class PaymentSimulationCards extends LightningElement {
           "A simulação foi salva, mas nenhum modelo padrão de proposta foi encontrado para regenerar o PDF.";
       }
 
-      // Recarrega os cards diretamente para garantir exibição do novo record
-      try {
-        const freshCards = await getSimulationCards({
-          opportunityId: this.recordId
-        });
-        this.cards = freshCards;
-      } catch {
-        await refreshApex(this._wiredResult);
-      }
+      this.pendingSimulationId = null;
+      this.handleCloseSimulationModal(true);
+
+      await refreshApex(this._wiredResult);
 
       if (this._wiredProposalData) {
         await refreshApex(this._wiredProposalData);
       }
-      this.pendingSimulationId = null;
-      this.handleCloseSimulationModal(true);
       this.dispatchEvent(new RefreshEvent());
       this._showToast(toastTitle, toastMessage, toastVariant);
     } catch (error) {
@@ -293,7 +297,14 @@ export default class PaymentSimulationCards extends LightningElement {
       for (const option of card.options || []) {
         const decoratedOption = {
           ...option,
-          proposalLabel: card.proposalLabel,
+          proposalLabel:
+            card.isManual && card.paymentType === "Rental"
+              ? "Aluguel"
+              : card.isManual && card.paymentType === "Financing"
+                ? "Financiamento"
+                : card.isManual && card.paymentType === "Pix"
+                  ? "PIX"
+                  : card.proposalLabel,
           paymentType: card.paymentType
         };
         if (!fallbackOption) {

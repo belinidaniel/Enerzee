@@ -8,8 +8,9 @@
  **/
 public with sharing class PaymentSimulationCardController {
   private static final String READJUSTMENT_STAGE = 'Readequação de Proposta';
+  private static final String CREDIT_ANALYSIS_STAGE = 'Análise de Crédito';
   private static final String MANUAL_SIMULATION_LABEL = 'Simulação ajustada';
-  private static final String MANUAL_PAYMENT_TYPE = 'ManualFinancing';
+  private static final String RENTAL_PAYMENT_TYPE = 'Rental';
 
   @AuraEnabled(cacheable=true)
   public static List<ProposalCardWrapper> getSimulationCards(Id opportunityId) {
@@ -93,6 +94,31 @@ public with sharing class PaymentSimulationCardController {
   }
 
   @AuraEnabled
+  public static void saveSimulationSelection(
+    Id opportunityId,
+    Id simulationId
+  ) {
+    if (opportunityId == null || simulationId == null) {
+      throw new AuraHandledException(
+        'opportunityId e simulationId são obrigatórios.'
+      );
+    }
+    Opportunity opportunityRecord = [
+      SELECT Id, SelectedSimulation__c
+      FROM Opportunity
+      WHERE Id = :opportunityId
+      LIMIT 1
+    ];
+    PaymentSimulation__c simulationRecord = [
+      SELECT Id, Selected__c, PaymentType__c
+      FROM PaymentSimulation__c
+      WHERE Id = :simulationId
+      LIMIT 1
+    ];
+    selectSimulation(simulationRecord, opportunityRecord);
+  }
+
+  @AuraEnabled
   public static ManualSimulationResult createManualSimulation(
     Id opportunityId,
     Id baseSimulationId,
@@ -112,9 +138,9 @@ public with sharing class PaymentSimulationCardController {
       WHERE Id = :opportunityId
       LIMIT 1
     ];
-    if (opportunityRecord.StageName != READJUSTMENT_STAGE) {
+    if (!isManualSimulationAllowedStage(opportunityRecord.StageName)) {
       throw new AuraHandledException(
-        'A simulação manual só pode ser criada na fase Readequação de Proposta.'
+        'A simulação manual só pode ser criada nas fases Readequação de Proposta ou Análise de Crédito.'
       );
     }
 
@@ -147,20 +173,24 @@ public with sharing class PaymentSimulationCardController {
       return result;
     }
 
+    String manualPaymentType = baseSimulation.PaymentType__c;
     PaymentSimulation__c manualSimulation = new PaymentSimulation__c(
       Opportunity__c = opportunityRecord.Id,
-      FinancingRate__c = baseSimulation.FinancingRate__c,
-      PaymentType__c = MANUAL_PAYMENT_TYPE,
+      FinancingRate__c = null,
+      PaymentType__c = manualPaymentType,
       ProposalLabel__c = MANUAL_SIMULATION_LABEL,
       InstallmentCount__c = installmentCount,
       InstallmentAmount__c = normalizedInstallmentAmount,
-      InterestRate__c = baseSimulation.InterestRate__c,
+      InterestRate__c = null,
       Selected__c = false
     );
+
+    deleteExistingSimulations(opportunityRecord.Id);
+
     insert manualSimulation;
 
     manualSimulation = [
-      SELECT Id, Name, Selected__c
+      SELECT Id, Name, Selected__c, PaymentType__c
       FROM PaymentSimulation__c
       WHERE Id = :manualSimulation.Id
       LIMIT 1
@@ -315,6 +345,18 @@ public with sharing class PaymentSimulationCardController {
     return fallback.isEmpty() ? null : fallback[0];
   }
 
+  private static final Map<String, String> PAYMENT_TYPE_TO_FORMA_PAGAMENTO = new Map<String, String>{
+    'Financing' => 'REC FINANCIAMEN',
+    'Card' => 'REC CARTAO',
+    'Pix' => 'R0002'
+  };
+
+  private static String mapPaymentTypeToFormaPagamento(String paymentType) {
+    if (String.isBlank(paymentType))
+      return null;
+    return PAYMENT_TYPE_TO_FORMA_PAGAMENTO.get(paymentType);
+  }
+
   private static void selectSimulation(
     PaymentSimulation__c simulationRecord,
     Opportunity opportunityRecord
@@ -331,10 +373,17 @@ public with sharing class PaymentSimulationCardController {
     if (opportunityRecord.SelectedSimulation__c != simulationRecord.Id) {
       OpportunityTriggerHandler.disableTrigger();
       try {
-        update new Opportunity(
+        Opportunity oppToUpdate = new Opportunity(
           Id = opportunityRecord.Id,
           SelectedSimulation__c = simulationRecord.Id
         );
+        String mappedFormaPagamento = mapPaymentTypeToFormaPagamento(
+          simulationRecord.PaymentType__c
+        );
+        if (mappedFormaPagamento != null) {
+          oppToUpdate.FormaPagamento__c = mappedFormaPagamento;
+        }
+        update oppToUpdate;
       } finally {
         OpportunityTriggerHandler.enableTrigger();
       }
@@ -357,5 +406,25 @@ public with sharing class PaymentSimulationCardController {
 
     return currentAmount.setScale(2, RoundingMode.HALF_UP) ==
       desiredAmount.setScale(2, RoundingMode.HALF_UP);
+  }
+
+  private static Boolean isManualSimulationAllowedStage(String stageName) {
+    return stageName == READJUSTMENT_STAGE ||
+      stageName == CREDIT_ANALYSIS_STAGE;
+  }
+
+  private static void deleteExistingSimulations(Id opportunityId) {
+    if (opportunityId == null) {
+      return;
+    }
+
+    List<PaymentSimulation__c> simulationsToDelete = [
+      SELECT Id
+      FROM PaymentSimulation__c
+      WHERE Opportunity__c = :opportunityId
+    ];
+    if (!simulationsToDelete.isEmpty()) {
+      delete simulationsToDelete;
+    }
   }
 }

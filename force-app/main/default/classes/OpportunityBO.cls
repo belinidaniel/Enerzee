@@ -2757,7 +2757,8 @@ public class OpportunityBO {
       if (OpportunityUtils.isStatusChanging(opportunity, oldOpportunity)) {
         if (
           OpportunityUtils.isStatusCreditAnalysis(opportunity) &&
-          OpportunityUtils.isRecordTypeEzeeSolarB(opportunity)
+          (OpportunityUtils.isRecordTypeEzeeSolarB(opportunity) ||
+          OpportunityUtils.isRecordTypeSolar(opportunity))
         ) {
           opportunity.Status__c = OpportunityUtils.SUB_STATUS_ANALISE_CREDITO;
         } else if (
