@@ -96,6 +96,105 @@ public class PaymentSimulationBOTest {
   }
 
   @IsTest
+  static void createSimulationsUsesCardRateFromFinancingRate() {
+    FinancingRate__c cardRate = createFinancingRate(
+      'Taxa Cartao de Credito',
+      'Card',
+      true,
+      12,
+      4.13,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    );
+
+    Opportunity opportunityRecord = createOpportunity(
+      createAccount('TestFactoryDefaults.LegalPersonAccount').Id,
+      12495,
+      'Solar',
+      'Grupo B'
+    );
+
+    Test.startTest();
+    PaymentSimulationBO.createSimulationsForOpportunities(
+      new List<Opportunity>{ opportunityRecord }
+    );
+    Test.stopTest();
+
+    List<PaymentSimulation__c> simulations = getSimulations(
+      opportunityRecord.Id
+    );
+
+    Assert.areEqual(1, simulations.size());
+    Assert.areEqual(cardRate.Id, simulations[0].FinancingRate__c);
+    Assert.areEqual('Card', simulations[0].PaymentType__c);
+    Assert.areEqual(12, simulations[0].InstallmentCount__c);
+    Assert.areEqual(
+      calculateExpectedCardInstallment(12495, 4.13, 12),
+      simulations[0].InstallmentAmount__c,
+      'Cartao deve usar a taxa configurada na taxa de financiamento.'
+    );
+  }
+
+  @IsTest
+  static void createSimulationsCreatesPixOptionWhenPaymentMethodIsPix() {
+    createFinancingRate(
+      'Banco Ignorado',
+      'Financing',
+      true,
+      12,
+      0.0199,
+      24,
+      0.0219,
+      null,
+      null,
+      null,
+      null
+    );
+
+    Opportunity opportunityRecord = createOpportunity(
+      createAccount('TestFactoryDefaults.LegalPersonAccount').Id,
+      66144.88,
+      'Solar',
+      'Grupo B'
+    );
+
+    OpportunityTriggerHandler.disableTrigger();
+    try {
+      update new Opportunity(
+        Id = opportunityRecord.Id,
+        FormaPagamento__c = 'R0002'
+      );
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
+    opportunityRecord = getOpportunity(opportunityRecord.Id);
+
+    Test.startTest();
+    PaymentSimulationBO.createSimulationsForOpportunities(
+      new List<Opportunity>{ opportunityRecord }
+    );
+    Test.stopTest();
+
+    List<PaymentSimulation__c> simulations = getSimulations(
+      opportunityRecord.Id
+    );
+    Opportunity syncedOpportunity = getOpportunity(opportunityRecord.Id);
+
+    Assert.areEqual(1, simulations.size());
+    Assert.areEqual('Pix', simulations[0].PaymentType__c);
+    Assert.areEqual('PIX', simulations[0].ProposalLabel__c);
+    Assert.areEqual(1, simulations[0].InstallmentCount__c);
+    Assert.areEqual(66144.88, simulations[0].InstallmentAmount__c);
+    Assert.areEqual(true, simulations[0].Selected__c);
+    Assert.areEqual(null, simulations[0].FinancingRate__c);
+    Assert.areEqual(simulations[0].Id, syncedOpportunity.SelectedSimulation__c);
+  }
+
+  @IsTest
   static void createSimulationsNormalizesWholePercentRatesForPmt() {
     createFinancingRate(
       'Banco Percentual',
@@ -523,7 +622,9 @@ public class PaymentSimulationBOTest {
         Amount,
         RecordTypeId,
         GrupoTarifario__c,
-        TipoKitPromocional__c
+        TipoKitPromocional__c,
+        FormaPagamento__c,
+        SelectedSimulation__c
       FROM Opportunity
       WHERE Id = :opportunityId
     ];
@@ -609,6 +710,20 @@ public class PaymentSimulationBOTest {
     Decimal interestRate
   ) {
     return (principalValue * interestRate).setScale(2, RoundingMode.HALF_UP);
+  }
+
+  private static Decimal calculateExpectedCardInstallment(
+    Decimal principalValue,
+    Decimal interestRate,
+    Integer installments
+  ) {
+    Decimal percentage = installments <= 1
+      ? 0
+      : (interestRate.abs() >= 0.1 ? interestRate : interestRate * 100);
+    Decimal totalPercent = percentage * installments;
+    Decimal totalWithInterest =
+      principalValue + (principalValue * (totalPercent / 100));
+    return (totalWithInterest / installments).setScale(2, RoundingMode.HALF_UP);
   }
 
   private static Decimal calculateExpectedPmt(

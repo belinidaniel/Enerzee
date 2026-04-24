@@ -2,18 +2,49 @@ import { LightningElement, api } from "lwc";
 
 const PAYMENT_TYPE_LABELS = {
   Financing: "Financiamento",
-  Rental: "Aluguel Solar"
+  Rental: "Aluguel Solar",
+  Card: "Cartão de Crédito",
+  Pix: "PIX Via Link"
 };
 
-const BRL_FORMATTER = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-  minimumFractionDigits: 2
-});
+function formatBRL(value) {
+  const num = Number(value);
+  if (isNaN(num)) return "R$ 0,00";
+  try {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2
+    }).format(num);
+  } catch {
+    return (
+      "R$ " +
+      num
+        .toFixed(2)
+        .replace(".", ",")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+    );
+  }
+}
 
 export default class PaymentSimulationCard extends LightningElement {
   @api card;
   @api pendingSimulationId;
+
+  get cardTitle() {
+    if (this.isManualCard) {
+      if (this.card?.paymentType === "Rental") {
+        return "ALUGUEL";
+      }
+      if (this.card?.paymentType === "Financing") {
+        return "FINANCIAMENTO";
+      }
+      if (this.card?.paymentType === "Pix") {
+        return "PIX";
+      }
+    }
+    return this.card?.proposalLabel || "";
+  }
 
   get cardClass() {
     const classes = ["simulation-card"];
@@ -29,6 +60,10 @@ export default class PaymentSimulationCard extends LightningElement {
 
   get isManualCard() {
     return this.card?.isManual === true;
+  }
+
+  get isManualRentalCard() {
+    return this.isManualCard && this.card?.paymentType === "Rental";
   }
 
   get paymentTypeLabel() {
@@ -50,7 +85,7 @@ export default class PaymentSimulationCard extends LightningElement {
       return "";
     }
 
-    return `${selectedOption.installmentCount}x ${BRL_FORMATTER.format(
+    return `${selectedOption.installmentCount}x ${formatBRL(
       selectedOption.installmentAmount || 0
     )}`;
   }
@@ -67,7 +102,7 @@ export default class PaymentSimulationCard extends LightningElement {
       return {
         id: opt.id,
         installmentCount: opt.installmentCount,
-        formattedAmount: BRL_FORMATTER.format(opt.installmentAmount || 0),
+        formattedAmount: formatBRL(opt.installmentAmount || 0),
         optionClass,
         tooltip: opt.name
       };

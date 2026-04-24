@@ -12,6 +12,10 @@ public with sharing class ProposalComputedValueService {
   private static final String PAYMENT_TYPE_FINANCING = 'FINANCING';
   private static final String PAYMENT_TYPE_RENTAL = 'RENTAL';
   private static final String PAYMENT_TYPE_CARD = 'CARD';
+  private static final String OTHER_PAYMENT_PIX_LABEL = 'PIX VIA LINK';
+  private static final String OTHER_PAYMENT_CARD_LABEL = 'CARTÃO DE CRÉDITO';
+  private static final String OTHER_PAYMENT_PIX_TEXT = '² com até 10% de desconto.';
+  private static final String OTHER_PAYMENT_CARD_TEXT = '³ Juros aplicados no valor total da proposta.';
   private static final Integer RENTAL_TARGET_INSTALLMENTS = 60;
   private static final String ECONOMIA_MENSAL_LABEL = 'Economia mensal';
 
@@ -47,6 +51,7 @@ public with sharing class ProposalComputedValueService {
       opportunityId
     );
     addCalculatedValues(values, opportunityRecord, rentalOption);
+    addOtherPaymentValues(values, opportunityId, opportunityRecord);
     addViabilityCostValues(values, opportunityId);
 
     return values;
@@ -516,6 +521,91 @@ public with sharing class ProposalComputedValueService {
 
   private static String buildEconomiaMensalLabel() {
     return ECONOMIA_MENSAL_LABEL;
+  }
+
+  private static void addOtherPaymentValues(
+    Map<String, Object> values,
+    Id opportunityId,
+    Opportunity opportunityRecord
+  ) {
+    List<PaymentSimulation__c> simulations = opportunityId == null
+      ? new List<PaymentSimulation__c>()
+      : PaymentSimulationDAO.getByOpportunityIds(new Set<Id>{ opportunityId });
+    PaymentSimulation__c selectedSimulation = selectSelectedSimulation(
+      simulations
+    );
+
+    if (
+      selectedSimulation != null &&
+      normalize(selectedSimulation.PaymentType__c) == PAYMENT_TYPE_CARD
+    ) {
+      values.put(
+        CALCULATED_PREFIX + 'formaPagamentoOutroSelecionado',
+        OTHER_PAYMENT_CARD_LABEL
+      );
+      Integer installmentCount = selectedSimulation.InstallmentCount__c == null
+        ? 0
+        : Integer.valueOf(
+            String.valueOf(selectedSimulation.InstallmentCount__c)
+          );
+      String installmentsPrefix = installmentCount > 0
+        ? 'até ' + installmentCount + 'x '
+        : '';
+      values.put(
+        CALCULATED_PREFIX + 'ValorOutros',
+        installmentsPrefix +
+          'R$ ' +
+          formatDecimalBR(
+            selectedSimulation.InstallmentAmount__c == null
+              ? 0
+              : selectedSimulation.InstallmentAmount__c,
+            2
+          )
+      );
+      values.put(
+        CALCULATED_PREFIX + 'textoOutrosPagamento',
+        OTHER_PAYMENT_CARD_TEXT
+      );
+      return;
+    }
+
+    Decimal totalProposalValue = null;
+    if (opportunityRecord != null) {
+      Map<String, Object> populatedFields = opportunityRecord.getPopulatedFieldsAsMap();
+      totalProposalValue = populatedFields.containsKey('ValorTotalProposta__c')
+        ? toDecimal(populatedFields.get('ValorTotalProposta__c'))
+        : null;
+    }
+    values.put(
+      CALCULATED_PREFIX + 'formaPagamentoOutroSelecionado',
+      OTHER_PAYMENT_PIX_LABEL
+    );
+    values.put(
+      CALCULATED_PREFIX + 'ValorOutros',
+      totalProposalValue == null
+        ? null
+        : 'R$ ' + formatDecimalBR(totalProposalValue, 2)
+    );
+    values.put(
+      CALCULATED_PREFIX + 'textoOutrosPagamento',
+      OTHER_PAYMENT_PIX_TEXT
+    );
+  }
+
+  private static PaymentSimulation__c selectSelectedSimulation(
+    List<PaymentSimulation__c> simulations
+  ) {
+    if (simulations == null || simulations.isEmpty()) {
+      return null;
+    }
+
+    for (PaymentSimulation__c simulationRecord : simulations) {
+      if (simulationRecord.Selected__c == true) {
+        return simulationRecord;
+      }
+    }
+
+    return null;
   }
 
   private static String buildEconomiaMensalFinancingLabel(

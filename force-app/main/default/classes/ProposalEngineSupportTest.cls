@@ -750,6 +750,117 @@ private class ProposalEngineSupportTest {
   }
 
   @isTest
+  static void payloadBuilderPopulatesOtherPaymentTagsForPixAndCard() {
+    Opportunity opportunityRecord = [
+      SELECT Id, ValorTotalProdutos__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    opportunityRecord.ValorTotalProdutos__c = 66144.88;
+    update opportunityRecord;
+
+    insert new PaymentSimulation__c(
+      Opportunity__c = opportunityRecord.Id,
+      PaymentType__c = 'Pix',
+      ProposalLabel__c = 'PIX',
+      InstallmentCount__c = 1,
+      InstallmentAmount__c = 66144.88,
+      Selected__c = true
+    );
+
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+    ProposalContextResolver.Context context = ProposalContextResolver.resolve(
+      opportunityRecord.Id,
+      cover.Id
+    );
+
+    List<ProposalConfigurationService.TagConfig> pixConfigs = new List<ProposalConfigurationService.TagConfig>();
+    ProposalConfigurationService.TagConfig pixLabel = new ProposalConfigurationService.TagConfig();
+    pixLabel.tagKey = '{{formaPagamentoOutroSelecionado}}';
+    pixLabel.sourcePath = 'Calculated.formaPagamentoOutroSelecionado';
+    pixLabel.formatValue = 'RAW';
+    pixConfigs.add(pixLabel);
+
+    ProposalConfigurationService.TagConfig pixValue = new ProposalConfigurationService.TagConfig();
+    pixValue.tagKey = '{{ValorOutros}}';
+    pixValue.sourcePath = 'Calculated.ValorOutros';
+    pixValue.formatValue = 'CURRENCY_BR_PREFIX';
+    pixConfigs.add(pixValue);
+
+    ProposalConfigurationService.TagConfig pixText = new ProposalConfigurationService.TagConfig();
+    pixText.tagKey = '{{textoOutrosPagamento}}';
+    pixText.sourcePath = 'Calculated.textoOutrosPagamento';
+    pixText.formatValue = 'RAW';
+    pixConfigs.add(pixText);
+
+    ProposalPayloadBuilder.Payload pixPayload = ProposalPayloadBuilder.buildPayload(
+      context,
+      ProposalPayloadBuilder.queryOpportunityForTags(
+        opportunityRecord.Id,
+        pixConfigs
+      ),
+      pixConfigs,
+      new List<String>{ 'Outros' },
+      '068000000000009AAA'
+    );
+
+    Assert.areEqual(
+      'PIX VIA LINK',
+      pixPayload.tags.get('{{formaPagamentoOutroSelecionado}}')
+    );
+    Assert.areEqual('R$ 66.144,88', pixPayload.tags.get('{{ValorOutros}}'));
+    Assert.areEqual(
+      '² com até 10% de desconto.',
+      pixPayload.tags.get('{{textoOutrosPagamento}}')
+    );
+
+    delete [
+      SELECT Id
+      FROM PaymentSimulation__c
+      WHERE Opportunity__c = :opportunityRecord.Id
+    ];
+
+    insert new PaymentSimulation__c(
+      Opportunity__c = opportunityRecord.Id,
+      PaymentType__c = 'Card',
+      ProposalLabel__c = 'Taxa cartão de credito',
+      InstallmentCount__c = 12,
+      InstallmentAmount__c = 6000,
+      Selected__c = true
+    );
+
+    ProposalPayloadBuilder.Payload cardPayload = ProposalPayloadBuilder.buildPayload(
+      context,
+      ProposalPayloadBuilder.queryOpportunityForTags(
+        opportunityRecord.Id,
+        pixConfigs
+      ),
+      pixConfigs,
+      new List<String>{ 'Outros' },
+      '068000000000009AAA'
+    );
+
+    Assert.areEqual(
+      'CARTÃO DE CRÉDITO',
+      cardPayload.tags.get('{{formaPagamentoOutroSelecionado}}')
+    );
+    Assert.areEqual(
+      'até 12x R$ 6.000,00',
+      cardPayload.tags.get('{{ValorOutros}}')
+    );
+    Assert.areEqual(
+      '³ Juros aplicados no valor total da proposta.',
+      cardPayload.tags.get('{{textoOutrosPagamento}}')
+    );
+  }
+
+  @isTest
   static void payloadBuilderPopulatesEconomiaMensalLabels() {
     Opportunity opportunityRecord = [
       SELECT

@@ -254,7 +254,8 @@ private class ProposalServicePaymentSimulationTest {
         Amount,
         RecordTypeId,
         GrupoTarifario__c,
-        TipoKitPromocional__c
+        TipoKitPromocional__c,
+        FormaPagamento__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];

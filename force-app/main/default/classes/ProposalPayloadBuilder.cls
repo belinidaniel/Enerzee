@@ -25,7 +25,8 @@ public with sharing class ProposalPayloadBuilder {
     'EconomiaMensalEstimada__c',
     'GeracaoMensalEstimada__c',
     'ConsumoInformadoB__c',
-    'TarifaComTributosB__c'
+    'TarifaComTributosB__c',
+    'ValorTotalProposta__c'
   };
 
   public static Opportunity queryOpportunityForTags(

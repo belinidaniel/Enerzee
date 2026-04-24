@@ -19,6 +19,11 @@
                 <default>false</default>
                 <label>Financing</label>
             </value>
+            <value>
+                <fullName>Card</fullName>
+                <default>false</default>
+                <label>Card</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

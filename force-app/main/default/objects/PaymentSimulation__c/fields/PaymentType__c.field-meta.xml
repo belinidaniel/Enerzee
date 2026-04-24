@@ -29,6 +29,11 @@
                 <default>false</default>
                 <label>Card</label>
             </value>
+            <value>
+                <fullName>Pix</fullName>
+                <default>false</default>
+                <label>Pix</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

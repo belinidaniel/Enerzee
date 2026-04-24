@@ -261,6 +261,7 @@ public class PaymentSimulationCardControllerTest {
         Name,
         ProposalLabel__c,
         PaymentType__c,
+        FinancingRate__c,
         InstallmentCount__c,
         InstallmentAmount__c,
         InterestRate__c,
@@ -277,9 +278,9 @@ public class PaymentSimulationCardControllerTest {
       'Ao informar novos valores, deve criar uma nova simulação.'
     );
     Assert.areEqual(
-      3,
+      1,
       updatedSimulations.size(),
-      'Deve ter criado uma nova linha.'
+      'Ao recriar financiamento, as opções antigas devem ser removidas e apenas a nova deve permanecer.'
     );
     Assert.areEqual(
       result.simulationId,
@@ -308,10 +309,11 @@ public class PaymentSimulationCardControllerTest {
       'A simulação retornada pela ação deve existir na base.'
     );
     Assert.areEqual('Simulação ajustada', createdSimulation.ProposalLabel__c);
-    Assert.areEqual('ManualFinancing', createdSimulation.PaymentType__c);
+    Assert.areEqual('Financing', createdSimulation.PaymentType__c);
     Assert.areEqual(72, createdSimulation.InstallmentCount__c);
     Assert.areEqual(1492.28, createdSimulation.InstallmentAmount__c);
-    Assert.areEqual(0.02, createdSimulation.InterestRate__c);
+    Assert.areEqual(null, createdSimulation.InterestRate__c);
+    Assert.areEqual(null, createdSimulation.FinancingRate__c);
     Assert.areEqual(true, createdSimulation.Selected__c);
 
     List<PaymentSimulationCardController.ProposalCardWrapper> cards = PaymentSimulationCardController.getSimulationCards(
@@ -330,9 +332,62 @@ public class PaymentSimulationCardControllerTest {
       'A simulação manual deve aparecer em um card separado.'
     );
     Assert.areEqual(true, manualCard.isManual);
-    Assert.areEqual('ManualFinancing', manualCard.paymentType);
+    Assert.areEqual('Financing', manualCard.paymentType);
     Assert.areEqual(1, manualCard.options.size());
     Assert.areEqual(result.simulationId, manualCard.options[0].id);
+  }
+
+  @IsTest
+  static void createManualSimulationAllowsCreditAnalysisStage() {
+    Account acc = createAccount();
+    Opportunity opp = createOpportunity(acc.Id);
+    setOpportunityStage(opp.Id, 'Análise de Crédito');
+
+    FinancingRate__c fr = createFinancingRate(
+      'Opção 1',
+      'Financing',
+      true,
+      25,
+      0.02,
+      38,
+      0.03,
+      null,
+      null,
+      null,
+      null
+    );
+    List<PaymentSimulation__c> sims = insertSimulations(opp.Id, fr);
+    setSelectedSimulation(opp.Id, sims[0].Id);
+
+    Test.startTest();
+    PaymentSimulationCardController.ManualSimulationResult result = PaymentSimulationCardController.createManualSimulation(
+      opp.Id,
+      sims[0].Id,
+      72,
+      1492.28
+    );
+    Test.stopTest();
+
+    Opportunity updatedOpportunity = getOpportunity(opp.Id);
+    PaymentSimulation__c createdSimulation = [
+      SELECT Id, ProposalLabel__c, PaymentType__c, Selected__c
+      FROM PaymentSimulation__c
+      WHERE Id = :result.simulationId
+      LIMIT 1
+    ];
+
+    Assert.areEqual(
+      true,
+      result.createdNewSimulation,
+      'Em Análise de Crédito também deve permitir criar nova simulação.'
+    );
+    Assert.areEqual(
+      result.simulationId,
+      updatedOpportunity.SelectedSimulation__c
+    );
+    Assert.areEqual('Simulação ajustada', createdSimulation.ProposalLabel__c);
+    Assert.areEqual('Financing', createdSimulation.PaymentType__c);
+    Assert.areEqual(true, createdSimulation.Selected__c);
   }
 
   @IsTest
@@ -399,6 +454,100 @@ public class PaymentSimulationCardControllerTest {
       selectedSimulation.Selected__c,
       'A simulação base deve ficar marcada como selecionada.'
     );
+  }
+
+  @IsTest
+  static void createManualSimulationForRentalReplacesExistingOptionsAndKeepsRentalType() {
+    Account acc = createAccount();
+    Opportunity opp = createOpportunity(acc.Id);
+    setOpportunityStage(opp.Id, 'Readequação de Proposta');
+
+    FinancingRate__c fr = createFinancingRate(
+      'Solar Aluguel',
+      'Rental',
+      true,
+      72,
+      0.01,
+      84,
+      0.02,
+      null,
+      null,
+      null,
+      null
+    );
+    List<PaymentSimulation__c> sims = insertSimulations(opp.Id, fr);
+    setSelectedSimulation(opp.Id, sims[0].Id);
+
+    Test.startTest();
+    PaymentSimulationCardController.ManualSimulationResult result = PaymentSimulationCardController.createManualSimulation(
+      opp.Id,
+      sims[0].Id,
+      72,
+      509.46
+    );
+    Test.stopTest();
+
+    List<PaymentSimulation__c> updatedSimulations = [
+      SELECT
+        Id,
+        ProposalLabel__c,
+        PaymentType__c,
+        FinancingRate__c,
+        InstallmentCount__c,
+        InstallmentAmount__c,
+        Selected__c
+      FROM PaymentSimulation__c
+      WHERE Opportunity__c = :opp.Id
+      ORDER BY CreatedDate ASC, Name ASC
+    ];
+    Opportunity updatedOpportunity = getOpportunity(opp.Id);
+
+    Assert.areEqual(
+      true,
+      result.createdNewSimulation,
+      'Ao alterar uma simulação de aluguel, deve criar um novo registro.'
+    );
+    Assert.areEqual(
+      1,
+      updatedSimulations.size(),
+      'Ao recriar aluguel, as opções antigas devem ser removidas e apenas a nova deve permanecer.'
+    );
+    Assert.areEqual(
+      result.simulationId,
+      updatedOpportunity.SelectedSimulation__c,
+      'A oportunidade deve apontar para a nova simulação de aluguel.'
+    );
+    Assert.areEqual(
+      'Rental',
+      updatedSimulations[0].PaymentType__c,
+      'A nova simulação deve preservar o tipo aluguel.'
+    );
+    Assert.areEqual(
+      'Simulação ajustada',
+      updatedSimulations[0].ProposalLabel__c,
+      'A nova simulação de aluguel deve continuar marcada como manual para não ser recalculada.'
+    );
+    Assert.areEqual(72, updatedSimulations[0].InstallmentCount__c);
+    Assert.areEqual(509.46, updatedSimulations[0].InstallmentAmount__c);
+    Assert.areEqual(true, updatedSimulations[0].Selected__c);
+    Assert.areEqual(
+      null,
+      updatedSimulations[0].FinancingRate__c,
+      'A simulação manual de aluguel não deve ficar vinculada a uma taxa padrão.'
+    );
+
+    List<PaymentSimulationCardController.ProposalCardWrapper> cards = PaymentSimulationCardController.getSimulationCards(
+      opp.Id
+    );
+    Assert.areEqual(
+      1,
+      cards.size(),
+      'Após ajustar aluguel, deve restar apenas um card de simulação.'
+    );
+    Assert.areEqual('Rental', cards[0].paymentType);
+    Assert.areEqual('Simulação ajustada', cards[0].proposalLabel);
+    Assert.areEqual(1, cards[0].options.size());
+    Assert.areEqual(result.simulationId, cards[0].options[0].id);
   }
 
   @IsTest
