@@ -654,7 +654,10 @@ public with sharing class ProposalComputedValueService {
       return;
     }
 
-    String raw = (String) opportunityRecord.get('DescricaoBateria__c');
+    Map<String, Object> populated = opportunityRecord.getPopulatedFieldsAsMap();
+    String raw = populated.containsKey('DescricaoBateria__c')
+      ? (String) opportunityRecord.get('DescricaoBateria__c')
+      : null;
 
     // Fallback: usa Product2.Description do primeiro line item com descrição preenchida
     if (String.isBlank(raw) && opportunityId != null) {
