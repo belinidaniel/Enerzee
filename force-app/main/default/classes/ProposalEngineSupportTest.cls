@@ -949,6 +949,18 @@ private class ProposalEngineSupportTest {
     aluguelEconomiaMensal.formatValue = 'CURRENCY_BR_PREFIX';
     configs.add(aluguelEconomiaMensal);
 
+    ProposalConfigurationService.TagConfig diferencaMedioMensal = new ProposalConfigurationService.TagConfig();
+    diferencaMedioMensal.tagKey = '{{DiferencaMedioMensal}}';
+    diferencaMedioMensal.sourcePath = 'Calculated.DiferencaMedioMensal';
+    diferencaMedioMensal.formatValue = 'CURRENCY_BR_PREFIX';
+    configs.add(diferencaMedioMensal);
+
+    ProposalConfigurationService.TagConfig diferencaMedioAnual = new ProposalConfigurationService.TagConfig();
+    diferencaMedioAnual.tagKey = '{{DiferencaMedioAnual}}';
+    diferencaMedioAnual.sourcePath = 'Calculated.DiferencaMedioAnual';
+    diferencaMedioAnual.formatValue = 'CURRENCY_BR_PREFIX';
+    configs.add(diferencaMedioAnual);
+
     ProposalPayloadBuilder.Payload payload = ProposalPayloadBuilder.buildPayload(
       context,
       opportunityRecord,
@@ -981,6 +993,16 @@ private class ProposalEngineSupportTest {
       'R$ 2.000,00',
       payload.tags.get('{{AluguelEconomiaMensal__c}}'),
       'O valor do aluguel deve ser a economia mensal estimada menos a parcela de aluguel.'
+    );
+    Assert.areEqual(
+      'R$ 500,00',
+      payload.tags.get('{{DiferencaMedioMensal}}'),
+      'A diferenca mensal deve ser o custo medio mensal menos a economia mensal estimada.'
+    );
+    Assert.areEqual(
+      'R$ 6.000,00',
+      payload.tags.get('{{DiferencaMedioAnual}}'),
+      'A diferenca anual deve ser a diferenca mensal multiplicada por 12.'
     );
   }
 

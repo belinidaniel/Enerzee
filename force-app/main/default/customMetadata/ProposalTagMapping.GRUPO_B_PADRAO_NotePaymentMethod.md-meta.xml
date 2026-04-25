@@ -4,7 +4,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 >
-    <label>GB Padrao - Manual Financing</label>
+    <label>GRUPO_B_PADRAO - NotePaymentMethod</label>
     <protected>false</protected>
     <values>
         <field>Active__c</field>
@@ -15,25 +15,35 @@
         <value xsi:type="xsd:string">GRUPO_B_PADRAO</value>
     </values>
     <values>
-        <field>PaymentType__c</field>
-        <value xsi:type="xsd:string">ManualFinancing</value>
-    </values>
-    <values>
-        <field>Scenario__c</field>
-        <value xsi:type="xsd:string">INITIAL</value>
-    </values>
-    <values>
-        <field>SectionName__c</field>
+        <field>DefaultValue__c</field>
         <value xsi:nil="true" />
     </values>
     <values>
-        <field>SectionsJson__c</field>
-        <value
-      xsi:type="xsd:string"
-    >[&quot;Capa Solar&quot;,&quot;Proposta&quot;,&quot;Projecao&quot;,&quot;Valor Financiamento&quot;,&quot;Rodape da proposta&quot;]</value>
+        <field>Format__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>PaymentType__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>Required__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Scenario__c</field>
+        <value xsi:type="xsd:string">ALL</value>
     </values>
     <values>
         <field>SortOrder__c</field>
         <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>SourcePath__c</field>
+        <value xsi:type="xsd:string">NotePaymentMethod__c</value>
+    </values>
+    <values>
+        <field>TagKey__c</field>
+        <value xsi:type="xsd:string">{{NotePaymentMethod__c}}</value>
     </values>
 </CustomMetadata>

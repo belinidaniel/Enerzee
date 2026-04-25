@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>63.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
@@ -41,14 +41,17 @@
             <assignToReference>v_DisponibilidadeDescontoFixo</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>f_DisponibilidadeDescontoFixo</elementReference>
+                <elementReference
+        >f_DisponibilidadeDescontoFixo</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference>v_DisponibilidadeDescontoPromocional</assignToReference>
+            <assignToReference
+      >v_DisponibilidadeDescontoPromocional</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>f_DisponibilidadeDescontoPromocional</elementReference>
+                <elementReference
+        >f_DisponibilidadeDescontoPromocional</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -108,7 +111,8 @@
             <assignToReference>v_Tarifa</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>GetEzeeConnectCalculations.Tarifa__c</elementReference>
+                <elementReference
+        >GetEzeeConnectCalculations.Tarifa__c</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
@@ -142,17 +146,17 @@
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference>v_Economia2MesesPromocional</assignToReference>
+            <assignToReference>v_Economia1MesPromocional</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>f_Economia2MesesPromocional</elementReference>
+                <elementReference>f_Economia1MesPromocional</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference>v_Economia10MesesFixo</assignToReference>
+            <assignToReference>v_Economia11MesesFixo</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>f_Economia10MesesFixo</elementReference>
+                <elementReference>f_Economia11MesesFixo</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -169,7 +173,8 @@
             <name>Yes2</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>GetEzeeConnectCalculations</leftValueReference>
+                <leftValueReference
+        >GetEzeeConnectCalculations</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -191,7 +196,8 @@
             <name>Yes</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>f_RecordTypeIsEzeeConnect</leftValueReference>
+                <leftValueReference
+        >f_RecordTypeIsEzeeConnect</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <booleanValue>true</booleanValue>
@@ -207,7 +213,8 @@
     <formulas>
         <name>f_CustoMensalAproximado</name>
         <dataType>Currency</dataType>
-        <expression>{!$Record.Kwh__c} * {!GetEzeeConnectCalculations.Tarifa__c}</expression>
+        <expression
+    >{!$Record.Kwh__c} * {!GetEzeeConnectCalculations.Tarifa__c}</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
@@ -283,15 +290,15 @@
         <scale>2</scale>
     </formulas>
     <formulas>
-        <name>f_Economia10MesesFixo</name>
+        <name>f_Economia11MesesFixo</name>
         <dataType>Currency</dataType>
-        <expression>{!v_EconomiaFixo} * 10</expression>
+        <expression>{!v_EconomiaFixo} * 11</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
-        <name>f_Economia2MesesPromocional</name>
+        <name>f_Economia1MesPromocional</name>
         <dataType>Currency</dataType>
-        <expression>{!v_EconomiaPromocional} * 2</expression>
+        <expression>{!v_EconomiaPromocional} * 1</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
@@ -313,43 +320,60 @@
     <formulas>
         <name>f_EconomiaAnualEstimadaAtualizada</name>
         <dataType>Currency</dataType>
-        <expression>((BLANKVALUE({!$Record.GeracaoAnualEstimada__c}, 0) / 2) * BLANKVALUE({!f_TarifaFinal}, 0) * 0.7) + ((BLANKVALUE({!$Record.GeracaoAnualEstimada__c}, 0) / 2) * BLANKVALUE({!f_TarifaFinal}, 0))</expression>
+        <expression
+    >((BLANKVALUE({!$Record.GeracaoAnualEstimada__c}, 0) / 2) * BLANKVALUE({!f_TarifaFinal}, 0) * 0.7) + ((BLANKVALUE({!$Record.GeracaoAnualEstimada__c}, 0) / 2) * BLANKVALUE({!f_TarifaFinal}, 0))</expression>
+        <scale>2</scale>
+    </formulas>
+    <formulas>
+        <name>f_EconomiaAnualEstimadaFinal</name>
+        <dataType>Currency</dataType>
+        <expression>IF(
+    {!$Record.RecordType.DeveloperName} = &quot;BowE&quot;,
+    {!f_EconomiaAnualPromocional},
+    {!f_EconomiaAnualEstimadaAtualizada}
+)</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
         <name>f_EconomiaAnualPromocional</name>
         <dataType>Currency</dataType>
-        <expression>{!v_Economia2MesesPromocional} + {!v_Economia10MesesFixo}</expression>
+        <expression
+    >{!v_Economia1MesPromocional} + {!v_Economia11MesesFixo}</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
         <name>f_EconomiaMensalEstimadaAtualizada</name>
         <dataType>Currency</dataType>
-        <expression>IF({!f_EconomiaAnualEstimadaAtualizada} &gt; 0, {!f_EconomiaAnualEstimadaAtualizada} / 12, 0)</expression>
+        <expression
+    >IF({!f_EconomiaAnualEstimadaAtualizada} &gt; 0, {!f_EconomiaAnualEstimadaAtualizada} / 12, 0)</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
         <name>f_EconomiaAcumuladaAtualizada</name>
         <dataType>Currency</dataType>
-        <expression>IF({!f_EconomiaAnualEstimadaAtualizada} &gt; 0, ({!f_EconomiaAnualEstimadaAtualizada} * 25) - BLANKVALUE({!$Record.ValorTotalProposta__c}, 0), 0)</expression>
+        <expression
+    >IF({!f_EconomiaAnualEstimadaAtualizada} &gt; 0, ({!f_EconomiaAnualEstimadaAtualizada} * 25) - BLANKVALUE({!$Record.ValorTotalProposta__c}, 0), 0)</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
         <name>f_PaybackAnosAtualizado</name>
         <dataType>Number</dataType>
-        <expression>IF({!f_EconomiaAnualEstimadaAtualizada} &gt; 0, BLANKVALUE({!$Record.ValorTotalProposta__c}, 0) / {!f_EconomiaAnualEstimadaAtualizada}, 0)</expression>
+        <expression
+    >IF({!f_EconomiaAnualEstimadaAtualizada} &gt; 0, BLANKVALUE({!$Record.ValorTotalProposta__c}, 0) / {!f_EconomiaAnualEstimadaAtualizada}, 0)</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
         <name>f_EconomiaFixo</name>
         <dataType>Currency</dataType>
-        <expression>{!v_CustoMensalAproximado} - {!v_Disponibilidade} - {!v_DisponibilidadeDescontoFixo}</expression>
+        <expression
+    >{!v_CustoMensalAproximado} - {!v_Disponibilidade} - {!v_DisponibilidadeDescontoFixo}</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
         <name>f_EconomiaPromocional</name>
         <dataType>Currency</dataType>
-        <expression>{!v_CustoMensalAproximado} - {!v_Disponibilidade} - {!v_DisponibilidadeDescontoPromocional}</expression>
+        <expression
+    >{!v_CustoMensalAproximado} - {!v_Disponibilidade} - {!v_DisponibilidadeDescontoPromocional}</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
@@ -361,7 +385,8 @@
     <formulas>
         <name>f_FaturaPromocional</name>
         <dataType>Currency</dataType>
-        <expression>{!v_CustoMensalAproximado} - {!v_EconomiaPromocional}</expression>
+        <expression
+    >{!v_CustoMensalAproximado} - {!v_EconomiaPromocional}</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
@@ -406,7 +431,8 @@
         <expression>{!GetEzeeConnectCalculations.Tarifa__c}</expression>
         <scale>2</scale>
     </formulas>
-    <interviewLabel>Opportunity - Update economic simulation data {!$Flow.CurrentDateTime}</interviewLabel>
+    <interviewLabel
+  >Opportunity - Update economic simulation data {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Opportunity - Update economic simulation data</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -432,7 +458,8 @@
         <label>Get Ezee Connect calculations</label>
         <locationX>182</locationX>
         <locationY>431</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>DidYouFindADealership</targetReference>
         </connector>
@@ -441,7 +468,8 @@
             <field>ConcessionariaEnergia__c</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference>$Record.ConcessionariaEnergia__c</elementReference>
+                <elementReference
+        >$Record.ConcessionariaEnergia__c</elementReference>
             </value>
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
@@ -474,25 +502,29 @@
         <inputAssignments>
             <field>Distribuidora__c</field>
             <value>
-                <elementReference>GetEzeeConnectCalculations.Distribuidora__c</elementReference>
+                <elementReference
+        >GetEzeeConnectCalculations.Distribuidora__c</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <field>EconomiaAnualEstimada__c</field>
             <value>
-                <elementReference>f_EconomiaAnualEstimadaAtualizada</elementReference>
+                <elementReference
+        >f_EconomiaAnualEstimadaFinal</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <field>EconomiaMensalEstimada__c</field>
             <value>
-                <elementReference>f_EconomiaMensalEstimadaAtualizada</elementReference>
+                <elementReference
+        >f_EconomiaMensalEstimadaAtualizada</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <field>EconomiaAcumulada__c</field>
             <value>
-                <elementReference>f_EconomiaAcumuladaAtualizada</elementReference>
+                <elementReference
+        >f_EconomiaAcumuladaAtualizada</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -522,13 +554,13 @@
         <inputAssignments>
             <field>EconomiaXMesesFixa__c</field>
             <value>
-                <elementReference>f_Economia10MesesFixo</elementReference>
+                <elementReference>f_Economia11MesesFixo</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <field>EconomiaXMesesPromocional__c</field>
             <value>
-                <elementReference>f_Economia2MesesPromocional</elementReference>
+                <elementReference>f_Economia1MesPromocional</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -563,7 +595,8 @@
         <connector>
             <targetReference>RecordTypeIsEzeeConnect</targetReference>
         </connector>
-        <filterLogic>(1 AND 2 AND 3) AND (4 OR 5 OR 6 OR 7 OR 8 OR 9)</filterLogic>
+        <filterLogic
+    >(1 AND 2 AND 3) AND (4 OR 5 OR 6 OR 7 OR 8 OR 9)</filterLogic>
         <filters>
             <field>ConcessionariaEnergia__c</field>
             <operator>IsNull</operator>
@@ -681,7 +714,7 @@
         <scale>2</scale>
     </variables>
     <variables>
-        <name>v_Economia10MesesFixo</name>
+        <name>v_Economia11MesesFixo</name>
         <dataType>Currency</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
@@ -689,7 +722,7 @@
         <scale>2</scale>
     </variables>
     <variables>
-        <name>v_Economia2MesesPromocional</name>
+        <name>v_Economia1MesPromocional</name>
         <dataType>Currency</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>

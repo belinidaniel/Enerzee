@@ -53,6 +53,7 @@ public with sharing class ProposalComputedValueService {
     addCalculatedValues(values, opportunityRecord, rentalOption);
     addOtherPaymentValues(values, opportunityId, opportunityRecord);
     addViabilityCostValues(values, opportunityId);
+    addBateriaValues(values, opportunityRecord, opportunityId);
 
     return values;
   }
@@ -240,6 +241,16 @@ public with sharing class ProposalComputedValueService {
     Decimal monthlyConsumption = toDecimal(
       opportunityRecord.get('ConsumoInformadoB__c')
     );
+
+    if (currentEnergyCost != null && monthlySavings != null) {
+      Decimal monthlyDifference = (currentEnergyCost - monthlySavings)
+        .setScale(2, RoundingMode.HALF_UP);
+      values.put(CALCULATED_PREFIX + 'DiferencaMedioMensal', monthlyDifference);
+      values.put(
+        CALCULATED_PREFIX + 'DiferencaMedioAnual',
+        (monthlyDifference * 12).setScale(2, RoundingMode.HALF_UP)
+      );
+    }
 
     // Reducao na conta: EconomiaMensalEstimada / CustoMedioEnergia * 100
     if (
@@ -632,6 +643,65 @@ public with sharing class ProposalComputedValueService {
     } catch (Exception e) {
       return null;
     }
+  }
+
+  private static void addBateriaValues(
+    Map<String, Object> values,
+    Opportunity opportunityRecord,
+    Id opportunityId
+  ) {
+    if (opportunityRecord == null) {
+      return;
+    }
+
+    String raw = (String) opportunityRecord.get('DescricaoBateria__c');
+
+    // Fallback: usa Product2.Description do primeiro line item com descrição preenchida
+    if (String.isBlank(raw) && opportunityId != null) {
+      for (OpportunityLineItem item : [
+        SELECT Product2.Description
+        FROM OpportunityLineItem
+        WHERE OpportunityId = :opportunityId AND Product2.Description != NULL
+        LIMIT 1
+      ]) {
+        raw = item.Product2.Description;
+      }
+    }
+
+    if (String.isBlank(raw)) {
+      values.put(CALCULATED_PREFIX + 'BateriaDescricao', '');
+      values.put(CALCULATED_PREFIX + 'bateriaKwh', '');
+      values.put(CALCULATED_PREFIX + 'BateriaIncluso', '');
+      return;
+    }
+
+    List<String> lines = raw.split('\n');
+    String firstLine = lines[0].trim();
+    if (firstLine.startsWith('- ')) {
+      firstLine = firstLine.substring(2).trim();
+    }
+
+    String kwh = '';
+    Pattern p = Pattern.compile('(\\d+(?:[,.]\\d+)?)\\s*kWh');
+    Matcher m = p.matcher(firstLine);
+    if (m.find()) {
+      kwh = m.group(1);
+    }
+
+    List<String> includedLines = new List<String>();
+    for (Integer i = 1; i < lines.size(); i++) {
+      String line = lines[i].trim();
+      if (String.isNotBlank(line)) {
+        includedLines.add(line);
+      }
+    }
+
+    values.put(CALCULATED_PREFIX + 'BateriaDescricao', firstLine);
+    values.put(CALCULATED_PREFIX + 'bateriaKwh', kwh);
+    values.put(
+      CALCULATED_PREFIX + 'BateriaIncluso',
+      String.join(includedLines, '\n')
+    );
   }
 
   private static String normalize(String value) {

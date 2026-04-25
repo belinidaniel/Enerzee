@@ -717,13 +717,35 @@ public class PaymentSimulationBOTest {
     Decimal interestRate,
     Integer installments
   ) {
+    return calculateExpectedCardInstallment(
+      principalValue,
+      interestRate,
+      installments,
+      null
+    );
+  }
+
+  private static Decimal calculateExpectedCardInstallment(
+    Decimal principalValue,
+    Decimal interestRate,
+    Integer installments,
+    Decimal anticipationRate
+  ) {
     Decimal percentage = installments <= 1
       ? 0
       : (interestRate.abs() >= 0.1 ? interestRate : interestRate * 100);
-    Decimal totalPercent = percentage * installments;
-    Decimal totalWithInterest =
-      principalValue + (principalValue * (totalPercent / 100));
-    return (totalWithInterest / installments).setScale(2, RoundingMode.HALF_UP);
+    Decimal installmentWithoutInterest = principalValue / installments;
+    Decimal installmentWithInterest =
+      installmentWithoutInterest * (1 + percentage / 100);
+    Decimal totalWithInterest = installmentWithInterest * installments;
+    Decimal anticipationPercent = anticipationRate == null
+      ? 0
+      : (anticipationRate.abs() >= 0.1
+          ? anticipationRate
+          : anticipationRate * 100);
+    Decimal anticipationAmount = principalValue * (anticipationPercent / 100);
+    return ((totalWithInterest + anticipationAmount) / installments)
+      .setScale(2, RoundingMode.HALF_UP);
   }
 
   private static Decimal calculateExpectedPmt(

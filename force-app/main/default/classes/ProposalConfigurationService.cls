@@ -85,11 +85,26 @@ public with sharing class ProposalConfigurationService {
     String scenario,
     String paymentType
   ) {
+    return getSectionsToShow(coverKey, scenario, paymentType, null);
+  }
+
+  public static List<String> getSectionsToShow(
+    String coverKey,
+    String scenario,
+    String paymentType,
+    String kitType
+  ) {
     Map<String, List<String>> sectionsByKey = loadSectionsByKey(coverKey);
     if (String.isBlank(paymentType)) {
       String scenarioKey = normalize(scenario) == SCENARIO_INITIAL_FINANCING
         ? SCENARIO_INITIAL_FINANCING
         : SCENARIO_INITIAL;
+      if (String.isNotBlank(kitType)) {
+        String compositeKey = scenarioKey + '|' + normalize(kitType);
+        if (sectionsByKey.containsKey(compositeKey)) {
+          return sectionsByKey.get(compositeKey);
+        }
+      }
       if (sectionsByKey.containsKey(scenarioKey)) {
         return sectionsByKey.get(scenarioKey);
       }
@@ -97,6 +112,12 @@ public with sharing class ProposalConfigurationService {
         return sectionsByKey.get(SCENARIO_INITIAL);
       }
       return new List<String>();
+    }
+    if (String.isNotBlank(kitType)) {
+      String compositeKey = paymentType + '|' + normalize(kitType);
+      if (sectionsByKey.containsKey(compositeKey)) {
+        return sectionsByKey.get(compositeKey);
+      }
     }
     if (sectionsByKey.containsKey(paymentType)) {
       return sectionsByKey.get(paymentType);
@@ -161,6 +182,7 @@ public with sharing class ProposalConfigurationService {
       SELECT
         CoverKey__c,
         PaymentType__c,
+        KitType__c,
         Scenario__c,
         SectionsJson__c,
         Active__c
@@ -170,9 +192,12 @@ public with sharing class ProposalConfigurationService {
       if (String.isBlank(record.SectionsJson__c)) {
         continue;
       }
-      String key = String.isBlank(record.PaymentType__c)
+      String baseKey = String.isBlank(record.PaymentType__c)
         ? SCENARIO_INITIAL
         : record.PaymentType__c.trim();
+      String key = String.isNotBlank(record.KitType__c)
+        ? baseKey + '|' + normalize(record.KitType__c)
+        : baseKey;
       List<String> sections = (List<String>) JSON.deserialize(
         record.SectionsJson__c,
         List<String>.class
