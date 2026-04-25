@@ -55,7 +55,8 @@ public without sharing class PaymentSimulationDAO {
           InstallmentRate1__c,
           InstallmentRate2__c,
           InstallmentRate3__c,
-          InstallmentRate4__c
+          InstallmentRate4__c,
+          AnticipationRate__c
         FROM FinancingRate__c
         WHERE Active__c = TRUE
         ORDER BY Name ASC

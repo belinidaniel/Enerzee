@@ -4,7 +4,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 >
-    <label>GB Padrao - Manual Financing</label>
+    <label>GB Padrao - Manual Financing BESS</label>
     <protected>false</protected>
     <values>
         <field>Active__c</field>
@@ -13,6 +13,10 @@
     <values>
         <field>CoverKey__c</field>
         <value xsi:type="xsd:string">GRUPO_B_PADRAO</value>
+    </values>
+    <values>
+        <field>KitType__c</field>
+        <value xsi:type="xsd:string">6</value>
     </values>
     <values>
         <field>PaymentType__c</field>
@@ -30,7 +34,7 @@
         <field>SectionsJson__c</field>
         <value
       xsi:type="xsd:string"
-    >[&quot;Capa Solar&quot;,&quot;Proposta&quot;,&quot;Projecao&quot;,&quot;Valor Financiamento&quot;,&quot;Rodape da proposta&quot;]</value>
+    >[&quot;Capa Hibrido&quot;,&quot;Proposta&quot;,&quot;Proposta Bateria&quot;,&quot;Projecao&quot;,&quot;Valor Financiamento&quot;,&quot;Rodape da proposta&quot;]</value>
     </values>
     <values>
         <field>SortOrder__c</field>

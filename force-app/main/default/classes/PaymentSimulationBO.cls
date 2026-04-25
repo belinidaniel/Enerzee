@@ -365,7 +365,8 @@ public without sharing class PaymentSimulationBO {
             financingRate.PaymentType__c,
             simulationAmount,
             interestRate,
-            installmentCount
+            installmentCount,
+            financingRate.AnticipationRate__c
           );
           if (installmentAmount == null) {
             continue;
@@ -458,13 +459,15 @@ public without sharing class PaymentSimulationBO {
     String paymentType,
     Decimal principalValue,
     Decimal interestRate,
-    Integer installments
+    Integer installments,
+    Decimal anticipationRate
   ) {
     if (isCardPaymentType(paymentType)) {
       return calculateCardInstallmentAmount(
         principalValue,
         interestRate,
-        installments
+        installments,
+        anticipationRate
       );
     }
     return calculateSimpleInterest(principalValue, interestRate);
@@ -474,7 +477,8 @@ public without sharing class PaymentSimulationBO {
   private static Decimal calculateCardInstallmentAmount(
     Decimal principalValue,
     Decimal interestRate,
-    Integer installments
+    Integer installments,
+    Decimal anticipationRate
   ) {
     if (
       principalValue == null ||
@@ -491,10 +495,23 @@ public without sharing class PaymentSimulationBO {
     if (percentage == null) {
       return null;
     }
-    Decimal totalPercent = percentage * installments;
-    Decimal totalWithInterest =
-      principalValue + (principalValue * (totalPercent / 100));
-    Decimal installmentAmount = (totalWithInterest / installments)
+
+    Decimal installmentWithoutInterest = principalValue / installments;
+    Decimal interestPerInstallment =
+      installmentWithoutInterest * (percentage / 100);
+    Decimal installmentWithInterest =
+      installmentWithoutInterest + interestPerInstallment;
+    Decimal totalWithInterest = installmentWithInterest * installments;
+
+    Decimal anticipationPercent = anticipationRate == null
+      ? 0
+      : normalizeInterestRatePercent(anticipationRate);
+    Decimal anticipationAmount = anticipationPercent == null
+      ? 0
+      : principalValue * (anticipationPercent / 100);
+
+    Decimal installmentAmount = ((totalWithInterest + anticipationAmount) /
+      installments)
       .setScale(2, RoundingMode.HALF_UP);
     return installmentAmount < CARD_MIN_INSTALLMENT_AMOUNT
       ? null

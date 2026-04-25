@@ -56,7 +56,8 @@ public with sharing class ProposalGenerationService {
     List<String> sectionsToShow = ProposalConfigurationService.getSectionsToShow(
       context.coverKey,
       context.scenario,
-      context.paymentType
+      context.paymentType,
+      context.opportunity.TipoKitPromocional__c
     );
     if (sectionsToShow.isEmpty()) {
       throw new ProposalGenerationException(
@@ -106,8 +107,9 @@ public with sharing class ProposalGenerationService {
       }
     }
 
-    // Busca imagem "Layout" anexada à Opportunity para enviar à API
-    String layoutBase64 = fetchLayoutAttachment(context.opportunity.Id);
+    // Busca imagem "Layout" anexada à ViabilityStudy__c principal para enviar à API
+    Id mainViabilityId = (Id) dataOpportunity.get('MainViability__c');
+    String layoutBase64 = fetchLayoutAttachment(mainViabilityId);
 
     ContentVersion existingProposal = ProposalFileService.findExistingProposal(
       context.opportunity.Id,
@@ -189,32 +191,81 @@ public with sharing class ProposalGenerationService {
   }
 
   @TestVisible
-  private static String fetchLayoutAttachment(Id opportunityId) {
+  private static String fetchLayoutAttachment(Id viabilityId) {
+    if (viabilityId == null) {
+      return null;
+    }
+
     List<ContentDocumentLink> links = [
-      SELECT ContentDocumentId
+      SELECT
+        ContentDocumentId,
+        ContentDocument.Title,
+        ContentDocument.LatestPublishedVersionId,
+        ContentDocument.CreatedDate
       FROM ContentDocumentLink
-      WHERE LinkedEntityId = :opportunityId AND ContentDocument.Title = 'Layout'
+      WHERE LinkedEntityId = :viabilityId
       ORDER BY ContentDocument.CreatedDate DESC
-      LIMIT 1
+      LIMIT 50
     ];
-    if (links.isEmpty()) {
-      return null;
+
+    Id latestVersionId = null;
+    for (ContentDocumentLink link : links) {
+      ContentDocument doc = link.ContentDocument;
+      if (
+        doc == null ||
+        String.isBlank(doc.Title) ||
+        doc.LatestPublishedVersionId == null
+      ) {
+        continue;
+      }
+      if (doc.Title.trim().toLowerCase().contains('layout')) {
+        latestVersionId = doc.LatestPublishedVersionId;
+        break;
+      }
     }
-    List<ContentVersion> versions = [
-      SELECT VersionData, FileType
-      FROM ContentVersion
-      WHERE ContentDocumentId = :links[0].ContentDocumentId AND IsLatest = TRUE
-      LIMIT 1
+
+    if (latestVersionId != null) {
+      List<ContentVersion> versions = [
+        SELECT VersionData, FileType
+        FROM ContentVersion
+        WHERE Id = :latestVersionId
+        LIMIT 1
+      ];
+      if (!versions.isEmpty()) {
+        String mimeType = String.isNotBlank(versions[0].FileType)
+          ? 'image/' + versions[0].FileType.toLowerCase()
+          : 'image/png';
+        return 'data:' +
+          mimeType +
+          ';base64,' +
+          EncodingUtil.base64Encode(versions[0].VersionData);
+      }
+    }
+
+    // Fallback: Attachments legados
+    List<Attachment> legacyAttachments = [
+      SELECT Id, Name, Body, ContentType
+      FROM Attachment
+      WHERE ParentId = :viabilityId
+      ORDER BY CreatedDate DESC
+      LIMIT 50
     ];
-    if (versions.isEmpty()) {
-      return null;
+    for (Attachment att : legacyAttachments) {
+      if (
+        String.isBlank(att.Name) ||
+        !att.Name.trim().toLowerCase().contains('layout')
+      ) {
+        continue;
+      }
+      String mimeType = String.isNotBlank(att.ContentType)
+        ? att.ContentType
+        : 'image/png';
+      return 'data:' +
+        mimeType +
+        ';base64,' +
+        EncodingUtil.base64Encode(att.Body);
     }
-    String mimeType = versions[0].FileType != null
-      ? 'image/' + versions[0].FileType.toLowerCase()
-      : 'image/png';
-    return 'data:' +
-      mimeType +
-      ';base64,' +
-      EncodingUtil.base64Encode(versions[0].VersionData);
+
+    return null;
   }
 }

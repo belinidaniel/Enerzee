@@ -26,7 +26,8 @@ public with sharing class ProposalPayloadBuilder {
     'GeracaoMensalEstimada__c',
     'ConsumoInformadoB__c',
     'TarifaComTributosB__c',
-    'ValorTotalProposta__c'
+    'ValorTotalProposta__c',
+    'DescricaoBateria__c'
   };
 
   public static Opportunity queryOpportunityForTags(
@@ -35,6 +36,7 @@ public with sharing class ProposalPayloadBuilder {
   ) {
     Set<String> selectFields = new Set<String>{
       'Id',
+      'MainViability__c',
       'MainViability__r.TextStudy__c'
     };
     selectFields.addAll(COMPUTED_DEPENDENCY_FIELDS);

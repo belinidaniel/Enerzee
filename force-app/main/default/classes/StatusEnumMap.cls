@@ -11,7 +11,7 @@ public class StatusEnumMap {
     'Elaboração de proposta' => 1,
     'Proposta Gerada' => 2,
     'Confirmação de pagamento sinal' => 3,
-    'Análise de Crédito' => 60,
+    'Análise de Crédito' => 55,
     'Viabilidade Técnica' => 4,
     'Readequação de Proposta' => 5,
     'Aguardando aceite' => 6,
@@ -210,7 +210,7 @@ public class StatusEnumMap {
       'Aprovado' => 76,
       'Reprovado' => 77
     },
-    60 => new Map<String, Integer>{
+    55 => new Map<String, Integer>{
       'Análise' => 80,
       'Aprovado' => 81,
       'Reprovado' => 82
