@@ -60,6 +60,7 @@ public with sharing class PDFControllerExtension {
         EconomiaXMesesFixa__c,
         EconomiaXMesesPromocional__c,
         EconomiaAnualEstimada__c,
+        EconomiaAnual__c,
         PrazoContratoParceiro__c,
         GrupoTarifario__c,
         isPromotional__c,
@@ -975,7 +976,11 @@ public with sharing class PDFControllerExtension {
   }
 
   public String getEconomiaAnualFormatada() {
-    return formatCurrencyBR(this.opportunity.EconomiaAnualEstimada__c);
+    Decimal val = this.opportunity.EconomiaAnual__c != null &&
+      this.opportunity.EconomiaAnual__c > 0
+      ? this.opportunity.EconomiaAnual__c
+      : this.opportunity.EconomiaAnualEstimada__c;
+    return formatCurrencyBR(val);
   }
 
   @TestVisible

@@ -34,7 +34,7 @@
         <field>SectionsJson__c</field>
         <value
       xsi:type="xsd:string"
-    >[&quot;Capa Hibrido&quot;,&quot;Proposta&quot;,&quot;Proposta Bateria&quot;,&quot;Projecao&quot;,&quot;Outros&quot;,&quot;Rodape da proposta&quot;]</value>
+    >[&quot;Capa Hibrido&quot;,&quot;Proposta&quot;,&quot;Proposta Bateria&quot;,&quot;Projeção&quot;,&quot;Outros&quot;,&quot;Rodape da proposta&quot;]</value>
     </values>
     <values>
         <field>SortOrder__c</field>

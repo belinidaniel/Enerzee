@@ -27,6 +27,7 @@
         <members>ProposalSectionRule.GB_PADRAO_RENTAL_BESS</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_BateriaDescricao</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_BateriaIncluso</members>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_CustomEnegiaSolar</members>
         <members>ProposalTagMapping.GRUPO_B_PADRAO_DiferencaMedioAnual</members>
         <members
     >ProposalTagMapping.GRUPO_B_PADRAO_DiferencaMedioMensal</members>

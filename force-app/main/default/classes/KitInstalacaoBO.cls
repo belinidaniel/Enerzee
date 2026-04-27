@@ -8,6 +8,14 @@
  **/
 public without sharing class KitInstalacaoBO {
   private static final String CLASS_NAME = 'KitInstalacaoBO';
+  private static final Set<String> EZEECONNECT_RECORD_TYPES = new Set<String>{
+    'BowE',
+    'Ultragaz',
+    'EzeeConnect_Solled',
+    'Simplifica',
+    'Nextron',
+    'Origo'
+  };
   private class SendKitUpdateException extends Exception {
   }
 
@@ -154,9 +162,11 @@ public without sharing class KitInstalacaoBO {
     }
 
     // Re-query to get ValorTotalProposta__c after the previous DML (formula field now recalculated)
+    // BowE/EzeeConnect RecordTypes use a separate Flow for financial calculations — skip them here
     List<Opportunity> opportunities = [
       SELECT
         Id,
+        RecordType.DeveloperName,
         GeracaoAnualEstimada__c,
         TarifaEnergia__c,
         TarifaForaPonta__c,
@@ -176,6 +186,9 @@ public without sharing class KitInstalacaoBO {
 
     List<Opportunity> toUpdate = new List<Opportunity>();
     for (Opportunity opp : opportunities) {
+      if (EZEECONNECT_RECORD_TYPES.contains(opp.RecordType?.DeveloperName)) {
+        continue;
+      }
       Decimal geracaoAnual = opp.GeracaoAnualEstimada__c;
 
       // TarifaEnergia__c is set by EzeeConnect Flow; Solar opps use group-specific tariff fields

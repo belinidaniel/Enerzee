@@ -328,7 +328,10 @@
         <name>f_EconomiaAnualEstimadaFinal</name>
         <dataType>Currency</dataType>
         <expression>IF(
-    {!$Record.RecordType.DeveloperName} = &quot;BowE&quot;,
+    OR(
+        {!$Record.RecordType.DeveloperName} = &quot;BowE&quot;,
+        {!$Record.RecordType.DeveloperName} = &quot;EzeeConnect&quot;
+    ),
     {!f_EconomiaAnualPromocional},
     {!f_EconomiaAnualEstimadaAtualizada}
 )</expression>
@@ -345,21 +348,21 @@
         <name>f_EconomiaMensalEstimadaAtualizada</name>
         <dataType>Currency</dataType>
         <expression
-    >IF({!f_EconomiaAnualEstimadaAtualizada} &gt; 0, {!f_EconomiaAnualEstimadaAtualizada} / 12, 0)</expression>
+    >IF({!f_EconomiaAnualEstimadaFinal} &gt; 0, {!f_EconomiaAnualEstimadaFinal} / 12, 0)</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
         <name>f_EconomiaAcumuladaAtualizada</name>
         <dataType>Currency</dataType>
         <expression
-    >IF({!f_EconomiaAnualEstimadaAtualizada} &gt; 0, ({!f_EconomiaAnualEstimadaAtualizada} * 25) - BLANKVALUE({!$Record.ValorTotalProposta__c}, 0), 0)</expression>
+    >IF({!f_EconomiaAnualEstimadaFinal} &gt; 0, ({!f_EconomiaAnualEstimadaFinal} * 25) - BLANKVALUE({!$Record.ValorTotalProposta__c}, 0), 0)</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
         <name>f_PaybackAnosAtualizado</name>
         <dataType>Number</dataType>
         <expression
-    >IF({!f_EconomiaAnualEstimadaAtualizada} &gt; 0, BLANKVALUE({!$Record.ValorTotalProposta__c}, 0) / {!f_EconomiaAnualEstimadaAtualizada}, 0)</expression>
+    >IF({!f_EconomiaAnualEstimadaFinal} &gt; 0, BLANKVALUE({!$Record.ValorTotalProposta__c}, 0) / {!f_EconomiaAnualEstimadaFinal}, 0)</expression>
         <scale>2</scale>
     </formulas>
     <formulas>
