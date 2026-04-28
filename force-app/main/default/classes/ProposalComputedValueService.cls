@@ -73,6 +73,12 @@ public with sharing class ProposalComputedValueService {
     Id opportunityId,
     Id mainViabilityId
   ) {
+    System.debug(
+      '[CustosViabilidade] opportunityId=' +
+        opportunityId +
+        ' mainViabilityId=' +
+        mainViabilityId
+    );
     if (opportunityId == null) {
       return;
     }
@@ -115,12 +121,25 @@ public with sharing class ProposalComputedValueService {
       ];
     }
 
+    System.debug(
+      '[CustosViabilidade] viabilityList.size=' + viabilityList.size()
+    );
+
     if (viabilityList.isEmpty()) {
+      System.debug(
+        '[CustosViabilidade] nenhuma viabilidade encontrada, retornando vazio'
+      );
       values.put(CALCULATED_PREFIX + 'CustosViabilidade', '');
       return;
     }
 
     ViabilityStudy__c viability = viabilityList[0];
+    System.debug(
+      '[CustosViabilidade] AdequacyCostEnerzee__c=' +
+        viability.AdequacyCostEnerzee__c +
+        ' AdequacyCostClient__c=' +
+        viability.AdequacyCostClient__c
+    );
 
     List<String> enerzeeEntries = buildViabilityCostEntries(
       viability.AdequacyCostEnerzee__c,
@@ -129,6 +148,13 @@ public with sharing class ProposalComputedValueService {
     List<String> clientEntries = buildViabilityCostEntries(
       viability.AdequacyCostClient__c,
       viability
+    );
+
+    System.debug(
+      '[CustosViabilidade] enerzeeEntries=' +
+        enerzeeEntries +
+        ' clientEntries=' +
+        clientEntries
     );
 
     List<String> allEntries = new List<String>();
@@ -141,10 +167,12 @@ public with sharing class ProposalComputedValueService {
       allEntries.addAll(clientEntries);
     }
 
-    values.put(
-      CALCULATED_PREFIX + 'CustosViabilidade',
-      allEntries.isEmpty() ? '' : String.join(allEntries, '\n')
-    );
+    String finalValue = allEntries.isEmpty()
+      ? ''
+      : String.join(allEntries, '\n');
+    System.debug('[CustosViabilidade] finalValue=' + finalValue);
+
+    values.put(CALCULATED_PREFIX + 'CustosViabilidade', finalValue);
   }
 
   private static List<String> buildViabilityCostEntries(
