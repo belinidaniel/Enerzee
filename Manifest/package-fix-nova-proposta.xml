@@ -1,62 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>OpportunityBO</members>
         <members>PaymentSimulationBO</members>
         <members>PaymentSimulationBOTest</members>
+        <members>PaymentSimulationCardController</members>
         <members>PaymentSimulationDAO</members>
         <members>ProposalComputedValueService</members>
-        <members>ProposalConfigurationService</members>
         <members>ProposalEngineSupportTest</members>
         <members>ProposalGenerationService</members>
-        <members>ProposalPayloadBuilder</members>
-        <members>StatusEnumMap</members>
-        <members>ViabilityStudyBO</members>
-        <members>VOIntegrationService</members>
         <name>ApexClass</name>
     </types>
     <types>
-        <members>ProposalSectionRule.GB_PADRAO_FINANCING</members>
-        <members>ProposalSectionRule.GB_PADRAO_FINANCING_BESS</members>
-        <members>ProposalSectionRule.GB_PADRAO_INITIAL</members>
-        <members>ProposalSectionRule.GB_PADRAO_INITIAL_BESS</members>
-        <members>ProposalSectionRule.GB_PADRAO_INITIAL_FINANCING</members>
-        <members>ProposalSectionRule.GB_PADRAO_INITIAL_FINANCING_BESS</members>
-        <members>ProposalSectionRule.GB_PADRAO_MANUAL_FINANCING</members>
-        <members>ProposalSectionRule.GB_PADRAO_MANUAL_FINANCING_BESS</members>
-        <members>ProposalSectionRule.GB_PADRAO_OTHERS</members>
-        <members>ProposalSectionRule.GB_PADRAO_OTHERS_BESS</members>
-        <members>ProposalSectionRule.GB_PADRAO_RENTAL</members>
-        <members>ProposalSectionRule.GB_PADRAO_RENTAL_BESS</members>
-        <members>ProposalTagMapping.GRUPO_B_PADRAO_BateriaDescricao</members>
-        <members>ProposalTagMapping.GRUPO_B_PADRAO_BateriaIncluso</members>
-        <members>ProposalTagMapping.GRUPO_B_PADRAO_CustomEnegiaSolar</members>
-        <members>ProposalTagMapping.GRUPO_B_PADRAO_DataProposta</members>
-        <members>ProposalTagMapping.GRUPO_B_PADRAO_DiferencaMedioAnual</members>
-        <members
-    >ProposalTagMapping.GRUPO_B_PADRAO_DiferencaMedioMensal</members>
-        <members>ProposalTagMapping.GRUPO_B_PADRAO_NotePaymentMethod</members>
-        <members>ProposalTagMapping.GRUPO_B_PADRAO_bateriaKwh</members>
-        <name>CustomMetadata</name>
-    </types>
-    <types>
-        <members>Opportunity_Update_economic_simulation_data</members>
-        <name>Flow</name>
-    </types>
-    <types>
-        <members>Opportunity.ViabilityShouldFinished</members>
-        <members>Projeto__c.Require_Opp_and_Viability</members>
-        <members>Projeto__c.Viability_Must_Belong_to_Opportunity</members>
-        <members
-    >ViabilityStudy__c.Valida_preenchimento_TipoObraProjeto</members>
-        <name>ValidationRule</name>
-    </types>
-    <types>
-        <members>FinancingRate__c.AnticipationRate__c</members>
-        <members>Opportunity.EconomiaXMesesFixa__c</members>
-        <members>Opportunity.EconomiaXMesesPromocional__c</members>
-        <members>ProposalSectionRule__mdt.KitType__c</members>
-        <name>CustomField</name>
+        <members>paymentSimulationCards</members>
+        <name>LightningComponentBundle</name>
     </types>
     <version>62.0</version>
 </Package>

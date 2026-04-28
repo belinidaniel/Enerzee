@@ -107,7 +107,9 @@ public with sharing class ProposalGenerationService {
     );
 
     // Injeta TextStudy__c e imagens do Rich Text (LongTextArea não é resolvível via sourcePath em relacionamento pai)
+    // Normaliza line endings: remove \r para evitar _x000D_ no XML mantendo quebras de linha (\n)
     if (String.isNotBlank(viabilityText)) {
+      viabilityText = viabilityText.replace('\r\n', '\n').replace('\r', '\n');
       payload.tags.put('{{estudoViabilidade__c}}', viabilityText);
       String imagesBase64 = extractImagesFromRichText(viabilityText);
       if (String.isNotBlank(imagesBase64)) {

@@ -133,7 +133,7 @@ public class PaymentSimulationBOTest {
     Assert.areEqual('Card', simulations[0].PaymentType__c);
     Assert.areEqual(12, simulations[0].InstallmentCount__c);
     Assert.areEqual(
-      calculateExpectedCardInstallment(12495, 4.13, 12),
+      calculateExpectedPmt(12495, 0.0413, 12),
       simulations[0].InstallmentAmount__c,
       'Cartao deve usar a taxa configurada na taxa de financiamento.'
     );

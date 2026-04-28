@@ -19,7 +19,7 @@ public with sharing class PaymentSimulationCardController {
     }
 
     List<Opportunity> opps = [
-      SELECT SelectedSimulation__c
+      SELECT SelectedSimulation__c, ValorTotalProposta__c
       FROM Opportunity
       WHERE Id = :opportunityId
       LIMIT 1
@@ -27,6 +27,9 @@ public with sharing class PaymentSimulationCardController {
     String selectedSimulationId = opps.isEmpty()
       ? null
       : opps[0].SelectedSimulation__c;
+    Decimal opportunityPrincipalValue = opps.isEmpty()
+      ? null
+      : opps[0].ValorTotalProposta__c;
 
     List<PaymentSimulation__c> simulations = PaymentSimulationDAO.getByOpportunityIds(
       new Set<Id>{ opportunityId }
@@ -56,6 +59,8 @@ public with sharing class PaymentSimulationCardController {
         card.key = cardKey;
         card.proposalLabel = label;
         card.paymentType = sim.PaymentType__c;
+        card.anticipationRate = sim.FinancingRate__r?.AnticipationRate__c;
+        card.principalValue = opportunityPrincipalValue;
         card.isManual = isManualProposalLabel(label);
         card.hasSelected = false;
         card.selectedSimulationId = selectedSimulationId;
@@ -220,6 +225,10 @@ public with sharing class PaymentSimulationCardController {
     public String proposalLabel;
     @AuraEnabled
     public String paymentType;
+    @AuraEnabled
+    public Decimal anticipationRate;
+    @AuraEnabled
+    public Decimal principalValue;
     @AuraEnabled
     public Boolean isManual;
     @AuraEnabled

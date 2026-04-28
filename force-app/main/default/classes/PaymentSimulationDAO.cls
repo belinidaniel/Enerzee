@@ -26,6 +26,7 @@ public without sharing class PaymentSimulationDAO {
         InterestRate__c,
         Selected__c,
         FinancingRate__c,
+        FinancingRate__r.AnticipationRate__c,
         ProposalLabel__c
       FROM PaymentSimulation__c
       WHERE Opportunity__c IN :opportunityIds

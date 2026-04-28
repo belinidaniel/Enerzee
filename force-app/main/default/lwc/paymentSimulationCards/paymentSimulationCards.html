@@ -56,25 +56,35 @@
             <p class="simulation-modal__type">{draftPaymentTypeLabel}</p>
           </div>
 
-          <lightning-input
-            type="number"
-            label="Quantidade de parcelas"
-            value={draftInstallmentCount}
-            min="1"
-            step="1"
-            onchange={handleInstallmentCountChange}
-          ></lightning-input>
+          <template if:true={isCardModal}>
+            <lightning-combobox
+              label="Selecione o parcelamento"
+              value={draftInstallmentCount}
+              options={cardInstallmentOptions}
+              onchange={handleCardInstallmentChange}
+            ></lightning-combobox>
+          </template>
+          <template if:false={isCardModal}>
+            <lightning-input
+              type="number"
+              label="Quantidade de parcelas"
+              value={draftInstallmentCount}
+              min="1"
+              step="1"
+              onchange={handleInstallmentCountChange}
+            ></lightning-input>
 
-          <lightning-input
-            type="number"
-            label="Valor da parcela"
-            value={draftInstallmentAmount}
-            min="0.01"
-            step="0.01"
-            formatter="currency"
-            onchange={handleInstallmentAmountChange}
-            class="slds-m-top_medium"
-          ></lightning-input>
+            <lightning-input
+              type="number"
+              label="Valor da parcela"
+              value={draftInstallmentAmount}
+              min="0.01"
+              step="0.01"
+              formatter="currency"
+              onchange={handleInstallmentAmountChange}
+              class="slds-m-top_medium"
+            ></lightning-input>
+          </template>
 
           <p class="simulation-modal__hint">
             Ao salvar, a oportunidade receberá uma nova simulação selecionada e
