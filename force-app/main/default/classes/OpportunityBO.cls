@@ -3143,6 +3143,9 @@ public class OpportunityBO {
       }
     }
 
+    Boolean hasIgnorarValidacao = Schema.sObjectType.Task.fields.getMap()
+      .containsKey('IgnorarValidacao__c');
+
     for (Task task : TaskDAO.findOpenTasksByWhatIds(recordIdsToCloseTasks)) {
       task.Status = TaskUtils.STATUS_CONCLUIDO;
       task.Description = appendAutomationNote(
@@ -3150,6 +3153,9 @@ public class OpportunityBO {
         AUTOMATION_NOTE,
         32000
       );
+      if (hasIgnorarValidacao) {
+        task.put('IgnorarValidacao__c', true);
+      }
       tasksToUpdate.add(task);
 
       if (task.OwnerId != null) {

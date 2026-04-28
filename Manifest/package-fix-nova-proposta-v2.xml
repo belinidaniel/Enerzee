@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>OpportunityBO</members>
+        <members>ProposalComputedValueService</members>
+        <members>ProposalEngineSupportTest</members>
+        <members>ProposalPayloadBuilder</members>
+        <members>ViabilityStudyBO</members>
+        <members>VOIntegrationService</members>
+        <members>VOIntegrationServiceTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>ProposalTagMapping.GRUPO_B_PADRAO_DataProposta</members>
+        <name>CustomMetadata</name>
+    </types>
+    <types>
+        <members>Opportunity.ViabilityShouldFinished</members>
+        <members>Projeto__c.Require_Opp_and_Viability</members>
+        <members>Projeto__c.Viability_Must_Belong_to_Opportunity</members>
+        <members
+    >ViabilityStudy__c.Valida_preenchimento_TipoObraProjeto</members>
+        <name>ValidationRule</name>
+    </types>
+    <version>62.0</version>
+</Package>

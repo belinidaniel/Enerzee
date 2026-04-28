@@ -54,6 +54,12 @@ public with sharing class ProposalComputedValueService {
     addOtherPaymentValues(values, opportunityId, opportunityRecord);
     addViabilityCostValues(values, opportunityId);
     addBateriaValues(values, opportunityRecord, opportunityId);
+    values.put(
+      CALCULATED_PREFIX + 'DataHoje',
+      opportunityRecord?.CreatedDate != null
+        ? opportunityRecord.CreatedDate.date()
+        : Date.today()
+    );
 
     return values;
   }
@@ -244,6 +250,7 @@ public with sharing class ProposalComputedValueService {
 
     if (currentEnergyCost != null && monthlySavings != null) {
       Decimal monthlyDifference = (currentEnergyCost - monthlySavings)
+        .abs()
         .setScale(2, RoundingMode.HALF_UP);
       values.put(CALCULATED_PREFIX + 'DiferencaMedioMensal', monthlyDifference);
       values.put(
@@ -373,7 +380,7 @@ public with sharing class ProposalComputedValueService {
       } else {
         values.put(
           CALCULATED_PREFIX + 'AluguelEconomiaMensal',
-          monthlySavings == null ? null : monthlySavings - rentalAmount
+          monthlySavings == null ? null : (monthlySavings - rentalAmount).abs()
         );
         values.put(
           CALCULATED_PREFIX + 'EconomiaMensal',

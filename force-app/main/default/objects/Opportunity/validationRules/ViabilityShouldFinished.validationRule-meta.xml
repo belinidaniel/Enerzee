@@ -2,14 +2,17 @@
 <ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ViabilityShouldFinished</fullName>
     <active>true</active>
-    <errorConditionFormula>AND( ViabilityStudyFinished__c == false,
+    <errorConditionFormula>AND(
+    ViabilityStudyFinished__c == false,
     OR(
         TEXT(PRIORVALUE(StageName)) == &apos;Viabilidade Técnica&apos;,
         TEXT(PRIORVALUE(StageName)) == &apos;Viabilidade Tecnica&apos;
     ),
     ISCHANGED(StageName),
+    NOT(ISPICKVAL(StageName, &apos;Ganho Fechado&apos;)),
+    NOT(ISPICKVAL(StageName, &apos;Fechado Perdido&apos;)),
     $UserRole.DeveloperName != &apos;Gerente_Administrativo&apos;,
-    $UserRole.DeveloperName != &apos;GerenteEngenharia&apos;				
+    $UserRole.DeveloperName != &apos;GerenteEngenharia&apos;
 )</errorConditionFormula>
     <errorMessage
   >Para mudar de fazer é necessario finalizar o estudo de viabilidade em Aberto!</errorMessage>

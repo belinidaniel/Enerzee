@@ -869,7 +869,8 @@ private class ProposalEngineSupportTest {
         EconomiaMensalEstimada__c,
         TarifaComTributosB__c,
         GeracaoMensalEstimada__c,
-        ConsumoInformadoB__c
+        ConsumoInformadoB__c,
+        CreatedDate
       FROM Opportunity
       WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
       LIMIT 1
@@ -1015,7 +1016,8 @@ private class ProposalEngineSupportTest {
         EconomiaMensalEstimada__c,
         TarifaComTributosB__c,
         GeracaoMensalEstimada__c,
-        ConsumoInformadoB__c
+        ConsumoInformadoB__c,
+        CreatedDate
       FROM Opportunity
       WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
       LIMIT 1
@@ -1861,5 +1863,77 @@ private class ProposalEngineSupportTest {
       );
       return response;
     }
+  }
+
+  @isTest
+  static void deleteStoredProposalsSkipsClicksignFiles() {
+    Opportunity opportunityRecord = [
+      SELECT Id, Numeroproposta__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+
+    String proposalNumber = 'P-TEST-001';
+    opportunityRecord.Numeroproposta__c = proposalNumber;
+    update opportunityRecord;
+
+    // Arquivo de proposta normal — deve ser deletado
+    ContentVersion normalVersion = new ContentVersion(
+      Title = proposalNumber + ' Cliente Teste 2026-04-27',
+      PathOnClient = proposalNumber + '-proposta.pdf',
+      VersionData = Blob.valueOf('pdf-normal'),
+      FirstPublishLocationId = opportunityRecord.Id
+    );
+    insert normalVersion;
+    Id normalDocId = [
+      SELECT ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :normalVersion.Id
+    ]
+    .ContentDocumentId;
+
+    // Arquivo ClickSign — NÃO deve ser deletado
+    ContentVersion clicksignVersion = new ContentVersion(
+      Title = proposalNumber + ' Cliente Teste 2026-03-27 01-10-19 - Clicksign',
+      PathOnClient = proposalNumber + '-clicksign.pdf',
+      VersionData = Blob.valueOf('pdf-clicksign'),
+      FirstPublishLocationId = opportunityRecord.Id
+    );
+    insert clicksignVersion;
+    Id clicksignDocId = [
+      SELECT ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :clicksignVersion.Id
+    ]
+    .ContentDocumentId;
+
+    Test.startTest();
+    ProposalFileService.deleteStoredProposals(
+      new Set<Id>{ opportunityRecord.Id }
+    );
+    Test.stopTest();
+
+    List<ContentDocument> remainingNormal = [
+      SELECT Id
+      FROM ContentDocument
+      WHERE Id = :normalDocId
+    ];
+    List<ContentDocument> remainingClicksign = [
+      SELECT Id
+      FROM ContentDocument
+      WHERE Id = :clicksignDocId
+    ];
+
+    Assert.areEqual(
+      0,
+      remainingNormal.size(),
+      'O arquivo de proposta normal deve ser deletado no close.'
+    );
+    Assert.areEqual(
+      1,
+      remainingClicksign.size(),
+      'O arquivo com Clicksign no título não deve ser deletado.'
+    );
   }
 }

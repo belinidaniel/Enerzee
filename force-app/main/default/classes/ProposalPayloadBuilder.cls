@@ -27,7 +27,8 @@ public with sharing class ProposalPayloadBuilder {
     'ConsumoInformadoB__c',
     'TarifaComTributosB__c',
     'ValorTotalProposta__c',
-    'DescricaoBateria__c'
+    'DescricaoBateria__c',
+    'CreatedDate'
   };
 
   public static Opportunity queryOpportunityForTags(
