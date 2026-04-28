@@ -4,6 +4,7 @@
         <members>OpportunityBO</members>
         <members>ProposalComputedValueService</members>
         <members>ProposalEngineSupportTest</members>
+        <members>ProposalFileService</members>
         <members>ProposalPayloadBuilder</members>
         <members>ViabilityStudyBO</members>
         <members>VOIntegrationService</members>

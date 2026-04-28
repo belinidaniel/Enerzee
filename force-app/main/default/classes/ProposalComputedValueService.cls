@@ -52,7 +52,11 @@ public with sharing class ProposalComputedValueService {
     );
     addCalculatedValues(values, opportunityRecord, rentalOption);
     addOtherPaymentValues(values, opportunityId, opportunityRecord);
-    addViabilityCostValues(values, opportunityId);
+    addViabilityCostValues(
+      values,
+      opportunityId,
+      opportunityRecord?.MainViability__c
+    );
     addBateriaValues(values, opportunityRecord, opportunityId);
     values.put(
       CALCULATED_PREFIX + 'DataHoje',
@@ -66,29 +70,50 @@ public with sharing class ProposalComputedValueService {
 
   private static void addViabilityCostValues(
     Map<String, Object> values,
-    Id opportunityId
+    Id opportunityId,
+    Id mainViabilityId
   ) {
     if (opportunityId == null) {
       return;
     }
 
-    List<ViabilityStudy__c> viabilityList = [
-      SELECT
-        AdequacyCostEnerzee__c,
-        AdequacyCostClient__c,
-        AcBranchCost__c,
-        DcBranchCost__c,
-        StandardAdequacyCost__c,
-        AdditionalCost__c,
-        OtherCosts__c,
-        OtherCostsDescription__c,
-        CoberturaCost__c,
-        StruturalReport__c
-      FROM ViabilityStudy__c
-      WHERE Opportunity__c = :opportunityId
-      ORDER BY CreatedDate DESC
-      LIMIT 1
-    ];
+    List<ViabilityStudy__c> viabilityList;
+    if (mainViabilityId != null) {
+      viabilityList = [
+        SELECT
+          AdequacyCostEnerzee__c,
+          AdequacyCostClient__c,
+          AcBranchCost__c,
+          DcBranchCost__c,
+          StandardAdequacyCost__c,
+          AdditionalCost__c,
+          OtherCosts__c,
+          OtherCostsDescription__c,
+          CoberturaCost__c,
+          StruturalReport__c
+        FROM ViabilityStudy__c
+        WHERE Id = :mainViabilityId
+        LIMIT 1
+      ];
+    } else {
+      viabilityList = [
+        SELECT
+          AdequacyCostEnerzee__c,
+          AdequacyCostClient__c,
+          AcBranchCost__c,
+          DcBranchCost__c,
+          StandardAdequacyCost__c,
+          AdditionalCost__c,
+          OtherCosts__c,
+          OtherCostsDescription__c,
+          CoberturaCost__c,
+          StruturalReport__c
+        FROM ViabilityStudy__c
+        WHERE Opportunity__c = :opportunityId
+        ORDER BY CreatedDate DESC
+        LIMIT 1
+      ];
+    }
 
     if (viabilityList.isEmpty()) {
       values.put(CALCULATED_PREFIX + 'CustosViabilidade', '');

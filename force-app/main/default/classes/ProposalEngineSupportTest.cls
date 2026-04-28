@@ -870,6 +870,7 @@ private class ProposalEngineSupportTest {
         TarifaComTributosB__c,
         GeracaoMensalEstimada__c,
         ConsumoInformadoB__c,
+        MainViability__c,
         CreatedDate
       FROM Opportunity
       WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
@@ -1017,6 +1018,7 @@ private class ProposalEngineSupportTest {
         TarifaComTributosB__c,
         GeracaoMensalEstimada__c,
         ConsumoInformadoB__c,
+        MainViability__c,
         CreatedDate
       FROM Opportunity
       WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
@@ -1874,16 +1876,15 @@ private class ProposalEngineSupportTest {
       LIMIT 1
     ];
 
-    String proposalNumber = 'P-TEST-001';
-    opportunityRecord.Numeroproposta__c = proposalNumber;
-    update opportunityRecord;
+    String proposalNumber = opportunityRecord.Numeroproposta__c;
 
     // Arquivo de proposta normal — deve ser deletado
     ContentVersion normalVersion = new ContentVersion(
       Title = proposalNumber + ' Cliente Teste 2026-04-27',
       PathOnClient = proposalNumber + '-proposta.pdf',
       VersionData = Blob.valueOf('pdf-normal'),
-      FirstPublishLocationId = opportunityRecord.Id
+      FirstPublishLocationId = opportunityRecord.Id,
+      IsProposal__c = true
     );
     insert normalVersion;
     Id normalDocId = [
