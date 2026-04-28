@@ -2,7 +2,7 @@
  * @description       : Centraliza regras de Approval Process da Opportunity
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-15-2026
+ * @last modified on  : 04-28-2026
  * @last modified by  : Daniel Belini
  * @test              : ApprovalProcessServiceTest, OpportunityBOHighCoverageTest, OpportunityTriggerTest
  **/

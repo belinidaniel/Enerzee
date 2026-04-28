@@ -5,7 +5,7 @@
  * @last modified on  : 04-06-2026
  * @last modified by  : OpenAI Codex
  * @test              : OpportunityTriggerTest, PaymentSimulationBOTest, PaymentSimulationCardControllerTest,
- *                       ProposalServicePaymentSimulationTest
+ *                       ProposalEngineSupportTest, ProposalServicePaymentSimulationTest
  **/
 public without sharing class PaymentSimulationDAO {
   public static List<PaymentSimulation__c> getByOpportunityIds(

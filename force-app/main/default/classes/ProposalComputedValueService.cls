@@ -378,8 +378,8 @@ public with sharing class ProposalComputedValueService {
         financing3Amount *
         100)
         .setScale(2, RoundingMode.HALF_UP);
-      if (financingPct < 0) {
-        // Seção de financiamento fica em branco quando porcentagem é negativa
+      if (financingMensal < 0 || financingPct < 0) {
+        // Seção de financiamento fica em branco quando economia é negativa
         // parcelaFinanciamento3 nunca é zerada — sempre exibe o número de parcelas
         values.put(CALCULATED_PREFIX + 'EconomiaPercentualFinanciamento', '');
         values.put(CALCULATED_PREFIX + 'FinanciamentoMensal', '');
@@ -625,10 +625,15 @@ public with sharing class ProposalComputedValueService {
       return;
     }
 
-    Decimal totalProposalValue = null;
-    if (opportunityRecord != null) {
+    Decimal pixValue = null;
+    if (
+      selectedSimulation != null &&
+      selectedSimulation.InstallmentAmount__c != null
+    ) {
+      pixValue = selectedSimulation.InstallmentAmount__c;
+    } else if (opportunityRecord != null) {
       Map<String, Object> populatedFields = opportunityRecord.getPopulatedFieldsAsMap();
-      totalProposalValue = populatedFields.containsKey('ValorTotalProposta__c')
+      pixValue = populatedFields.containsKey('ValorTotalProposta__c')
         ? toDecimal(populatedFields.get('ValorTotalProposta__c'))
         : null;
     }
@@ -638,9 +643,7 @@ public with sharing class ProposalComputedValueService {
     );
     values.put(
       CALCULATED_PREFIX + 'ValorOutros',
-      totalProposalValue == null
-        ? null
-        : 'R$ ' + formatDecimalBR(totalProposalValue, 2)
+      pixValue == null ? null : 'R$ ' + formatDecimalBR(pixValue, 2)
     );
     values.put(
       CALCULATED_PREFIX + 'textoOutrosPagamento',
