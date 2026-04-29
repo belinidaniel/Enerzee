@@ -18,6 +18,7 @@ public with sharing class ProposalComputedValueService {
   private static final String OTHER_PAYMENT_CARD_TEXT = '³ Juros aplicados no valor total da proposta.';
   private static final Integer RENTAL_TARGET_INSTALLMENTS = 60;
   private static final String ECONOMIA_MENSAL_LABEL = 'Economia mensal';
+  private static final String MANUAL_SIMULATION_LABEL = 'Simulação ajustada';
 
   public static Boolean isComputedPath(String sourcePath) {
     if (String.isBlank(sourcePath)) {
@@ -521,6 +522,18 @@ public with sharing class ProposalComputedValueService {
     List<PaymentSimulation__c> simulations,
     String paymentType
   ) {
+    // If a manual simulation is selected for this payment type, it overrides the
+    // standard group — show only it so the PDF reflects the adjusted value.
+    for (PaymentSimulation__c simulationRecord : simulations) {
+      if (
+        normalize(simulationRecord.PaymentType__c) == paymentType &&
+        simulationRecord.Selected__c == true &&
+        MANUAL_SIMULATION_LABEL.equals(simulationRecord.ProposalLabel__c)
+      ) {
+        return new List<PaymentSimulation__c>{ simulationRecord };
+      }
+    }
+
     List<PaymentSimulation__c> matches = new List<PaymentSimulation__c>();
     String primaryLabel;
 

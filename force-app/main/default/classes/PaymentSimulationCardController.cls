@@ -34,6 +34,18 @@ public with sharing class PaymentSimulationCardController {
     List<PaymentSimulation__c> simulations = PaymentSimulationDAO.getByOpportunityIds(
       new Set<Id>{ opportunityId }
     );
+
+    Set<Id> existingSimulationIds = new Set<Id>();
+    for (PaymentSimulation__c simulationRecord : simulations) {
+      existingSimulationIds.add(simulationRecord.Id);
+    }
+    if (
+      String.isNotBlank(selectedSimulationId) &&
+      !existingSimulationIds.contains((Id) selectedSimulationId)
+    ) {
+      selectedSimulationId = null;
+    }
+
     if (String.isBlank(selectedSimulationId)) {
       for (PaymentSimulation__c simulationRecord : simulations) {
         if (simulationRecord.Selected__c == true) {
@@ -114,13 +126,14 @@ public with sharing class PaymentSimulationCardController {
         StageName,
         Status__c,
         SelectedSimulation__c,
+        FormaPagamento__c,
         RecordType.DeveloperName
       FROM Opportunity
       WHERE Id = :opportunityId
       LIMIT 1
     ];
     PaymentSimulation__c simulationRecord = [
-      SELECT Id, Selected__c, PaymentType__c
+      SELECT Id, Selected__c, PaymentType__c, ProposalLabel__c
       FROM PaymentSimulation__c
       WHERE Id = :simulationId
       LIMIT 1
@@ -133,7 +146,8 @@ public with sharing class PaymentSimulationCardController {
     Id opportunityId,
     Id baseSimulationId,
     Integer installmentCount,
-    Decimal installmentAmount
+    Decimal installmentAmount,
+    String paymentType
   ) {
     validateManualSimulationRequest(
       opportunityId,
@@ -148,6 +162,7 @@ public with sharing class PaymentSimulationCardController {
         StageName,
         Status__c,
         SelectedSimulation__c,
+        FormaPagamento__c,
         RecordType.DeveloperName
       FROM Opportunity
       WHERE Id = :opportunityId
@@ -188,7 +203,9 @@ public with sharing class PaymentSimulationCardController {
       return result;
     }
 
-    String manualPaymentType = baseSimulation.PaymentType__c;
+    String manualPaymentType = String.isNotBlank(paymentType)
+      ? paymentType
+      : baseSimulation.PaymentType__c;
     PaymentSimulation__c manualSimulation = new PaymentSimulation__c(
       Opportunity__c = opportunityRecord.Id,
       FinancingRate__c = null,
@@ -205,7 +222,7 @@ public with sharing class PaymentSimulationCardController {
     insert manualSimulation;
 
     manualSimulation = [
-      SELECT Id, Name, Selected__c, PaymentType__c
+      SELECT Id, Name, Selected__c, PaymentType__c, ProposalLabel__c
       FROM PaymentSimulation__c
       WHERE Id = :manualSimulation.Id
       LIMIT 1
@@ -367,7 +384,9 @@ public with sharing class PaymentSimulationCardController {
   private static final Map<String, String> PAYMENT_TYPE_TO_FORMA_PAGAMENTO = new Map<String, String>{
     'Financing' => 'REC FINANCIAMEN',
     'Card' => 'REC CARTAO',
-    'Pix' => 'R0002'
+    'Pix' => 'R0002',
+    'Boleto' => 'R001',
+    'Negociacao' => 'Negociação'
   };
 
   private static String mapPaymentTypeToFormaPagamento(String paymentType) {
@@ -380,47 +399,55 @@ public with sharing class PaymentSimulationCardController {
     PaymentSimulation__c simulationRecord,
     Opportunity opportunityRecord
   ) {
-    Boolean updatedSimulationSelection = false;
     if (simulationRecord.Selected__c != true) {
       update new PaymentSimulation__c(
         Id = simulationRecord.Id,
         Selected__c = true
       );
-      updatedSimulationSelection = true;
+      // PaymentSimulationBO.syncSelectedToOpportunity (afterUpdate trigger) handles
+      // SelectedSimulation__c sync automatically after this DML.
     }
 
-    if (opportunityRecord.SelectedSimulation__c != simulationRecord.Id) {
+    // Manual simulations don't change FormaPagamento__c or StageName on the opportunity —
+    // only selecting a standard simulation should drive those fields.
+    Boolean isManualSimulation = MANUAL_SIMULATION_LABEL.equals(
+      simulationRecord.ProposalLabel__c
+    );
+    if (isManualSimulation) {
+      return;
+    }
+
+    // FormaPagamento__c and StageName are not managed by the trigger — update them here.
+    Opportunity oppToUpdate = new Opportunity(Id = opportunityRecord.Id);
+    Boolean needsOppUpdate = false;
+
+    String mappedFormaPagamento = mapPaymentTypeToFormaPagamento(
+      simulationRecord.PaymentType__c
+    );
+    if (
+      mappedFormaPagamento != null &&
+      opportunityRecord.FormaPagamento__c != mappedFormaPagamento
+    ) {
+      oppToUpdate.FormaPagamento__c = mappedFormaPagamento;
+      needsOppUpdate = true;
+    }
+
+    if (
+      RENTAL_PAYMENT_TYPE.equalsIgnoreCase(simulationRecord.PaymentType__c) &&
+      opportunityRecord.RecordType?.DeveloperName == 'Solar' &&
+      opportunityRecord.StageName != CREDIT_ANALYSIS_STAGE
+    ) {
+      oppToUpdate.StageName = CREDIT_ANALYSIS_STAGE;
+      oppToUpdate.Status__c = OpportunityUtils.SUB_STATUS_ANALISE_CREDITO;
+      needsOppUpdate = true;
+    }
+
+    if (needsOppUpdate) {
       OpportunityTriggerHandler.disableTrigger();
       try {
-        Opportunity oppToUpdate = new Opportunity(
-          Id = opportunityRecord.Id,
-          SelectedSimulation__c = simulationRecord.Id
-        );
-        String mappedFormaPagamento = mapPaymentTypeToFormaPagamento(
-          simulationRecord.PaymentType__c
-        );
-        if (mappedFormaPagamento != null) {
-          oppToUpdate.FormaPagamento__c = mappedFormaPagamento;
-        }
-        if (
-          RENTAL_PAYMENT_TYPE.equalsIgnoreCase(
-            simulationRecord.PaymentType__c
-          ) &&
-          opportunityRecord.RecordType?.DeveloperName == 'Solar' &&
-          opportunityRecord.StageName != CREDIT_ANALYSIS_STAGE
-        ) {
-          oppToUpdate.StageName = CREDIT_ANALYSIS_STAGE;
-          oppToUpdate.Status__c = OpportunityUtils.SUB_STATUS_ANALISE_CREDITO;
-        }
         update oppToUpdate;
       } finally {
         OpportunityTriggerHandler.enableTrigger();
-      }
-
-      if (!updatedSimulationSelection) {
-        PaymentSimulationProposalStatusService.enqueueOpportunityStatusSync(
-          new Set<Id>{ opportunityRecord.Id }
-        );
       }
     }
   }
@@ -452,7 +479,7 @@ public with sharing class PaymentSimulationCardController {
       FROM PaymentSimulation__c
       WHERE
         Opportunity__c = :opportunityId
-        AND ProposalLabel__c != :MANUAL_SIMULATION_LABEL
+        AND ProposalLabel__c = :MANUAL_SIMULATION_LABEL
     ];
     if (!simulationsToDelete.isEmpty()) {
       delete simulationsToDelete;

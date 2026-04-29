@@ -51,20 +51,64 @@
           <h2 class="slds-text-heading_medium">Simular proposta</h2>
         </header>
         <div class="slds-modal__content slds-p-around_medium">
-          <div class="simulation-modal__summary">
-            <p class="simulation-modal__label">{draftDisplayProposalLabel}</p>
-            <p class="simulation-modal__type">{draftPaymentTypeLabel}</p>
+          <div class="simulation-modal__manual-toggle">
+            <label class="manual-toggle__label">
+              <input
+                type="checkbox"
+                class="manual-toggle__checkbox"
+                checked={isManualMode}
+                onchange={handleToggleManualMode}
+              />
+              Preencher manualmente
+            </label>
           </div>
 
-          <template if:true={isCardModal}>
-            <lightning-combobox
-              label="Selecione o parcelamento"
-              value={draftInstallmentCount}
-              options={cardInstallmentOptions}
-              onchange={handleCardInstallmentChange}
-            ></lightning-combobox>
+          <template if:false={isManualMode}>
+            <div class="simulation-modal__summary">
+              <p class="simulation-modal__label">{draftDisplayProposalLabel}</p>
+              <p class="simulation-modal__type">{draftPaymentTypeLabel}</p>
+            </div>
+
+            <template if:true={isCardModal}>
+              <lightning-combobox
+                label="Selecione o parcelamento"
+                value={draftInstallmentCount}
+                options={cardInstallmentOptions}
+                onchange={handleCardInstallmentChange}
+              ></lightning-combobox>
+            </template>
+            <template if:false={isCardModal}>
+              <lightning-input
+                type="number"
+                label="Quantidade de parcelas"
+                value={draftInstallmentCount}
+                min="1"
+                step="1"
+                onchange={handleInstallmentCountChange}
+              ></lightning-input>
+
+              <lightning-input
+                type="number"
+                label="Valor da parcela"
+                value={draftInstallmentAmount}
+                min="0.01"
+                step="0.01"
+                formatter="currency"
+                onchange={handleInstallmentAmountChange}
+                class="slds-m-top_medium"
+              ></lightning-input>
+            </template>
           </template>
-          <template if:false={isCardModal}>
+
+          <template if:true={isManualMode}>
+            <lightning-combobox
+              label="Forma de pagamento"
+              value={manualFormaPagamento}
+              options={formaPagamentoOptions}
+              placeholder="Selecione..."
+              onchange={handleManualFormaPagamentoChange}
+            ></lightning-combobox>
+
             <lightning-input
               type="number"
               label="Quantidade de parcelas"
@@ -72,6 +116,7 @@
               min="1"
               step="1"
               onchange={handleInstallmentCountChange}
+              class="slds-m-top_medium"
             ></lightning-input>
 
             <lightning-input

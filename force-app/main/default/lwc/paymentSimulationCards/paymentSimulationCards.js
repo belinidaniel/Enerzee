@@ -39,8 +39,22 @@ const PAYMENT_TYPE_LABELS = {
   Financing: "Financiamento",
   Rental: "Aluguel Solar",
   Card: "Cartão de Crédito",
-  Pix: "PIX Via Link"
+  Pix: "PIX Via Link",
+  Boleto: "Boleto",
+  Negociacao: "Negociação"
 };
+
+const FORMA_PAGAMENTO_OPTIONS = [
+  { label: "Cartão de crédito", value: "REC CARTAO", paymentType: "Card" },
+  {
+    label: "Financiamento",
+    value: "REC FINANCIAMEN",
+    paymentType: "Financing"
+  },
+  { label: "Boleto", value: "R001", paymentType: "Boleto" },
+  { label: "Transferencia PIX", value: "R0002", paymentType: "Pix" },
+  { label: "Negociação", value: "Negociação", paymentType: "Negociacao" }
+];
 
 export default class PaymentSimulationCards extends LightningElement {
   @api recordId;
@@ -62,6 +76,8 @@ export default class PaymentSimulationCards extends LightningElement {
   draftAnticipationRate = null;
   draftPrincipalValue = null;
   defaultTemplateId = null;
+  isManualMode = false;
+  manualFormaPagamento = null;
 
   @wire(getRecord, { recordId: "$recordId", fields: OPPORTUNITY_FIELDS })
   wiredOpportunity({ data }) {
@@ -136,7 +152,21 @@ export default class PaymentSimulationCards extends LightningElement {
     return options;
   }
 
+  get formaPagamentoOptions() {
+    return FORMA_PAGAMENTO_OPTIONS;
+  }
+
   get simulationModalSaveDisabled() {
+    if (this.isManualMode) {
+      return (
+        this.isCreatingSimulation ||
+        !this.manualFormaPagamento ||
+        !this.draftInstallmentCount ||
+        !this.draftInstallmentAmount ||
+        Number(this.draftInstallmentCount) <= 0 ||
+        Number(this.draftInstallmentAmount) <= 0
+      );
+    }
     return (
       this.isCreatingSimulation ||
       !this.draftInstallmentCount ||
@@ -258,6 +288,30 @@ export default class PaymentSimulationCards extends LightningElement {
     this.draftInterestRate = null;
     this.draftAnticipationRate = null;
     this.draftPrincipalValue = null;
+    this.isManualMode = false;
+    this.manualFormaPagamento = null;
+  }
+
+  handleToggleManualMode() {
+    this.isManualMode = !this.isManualMode;
+    this.draftInstallmentCount = null;
+    this.draftInstallmentAmount = null;
+    if (!this.isManualMode) {
+      this.manualFormaPagamento = null;
+    }
+  }
+
+  handleManualFormaPagamentoChange(event) {
+    this.manualFormaPagamento = event.detail.value;
+    const option = FORMA_PAGAMENTO_OPTIONS.find(
+      (o) => o.value === this.manualFormaPagamento
+    );
+    if (option) {
+      this.draftPaymentType = option.paymentType;
+      this.draftProposalLabel = option.label;
+    }
+    this.draftInstallmentCount = null;
+    this.draftInstallmentAmount = null;
   }
 
   handleCardInstallmentChange(event) {
@@ -291,7 +345,8 @@ export default class PaymentSimulationCards extends LightningElement {
         opportunityId: this.recordId,
         baseSimulationId: this.baseSimulationId,
         installmentCount: Number(this.draftInstallmentCount),
-        installmentAmount: Number(this.draftInstallmentAmount)
+        installmentAmount: Number(this.draftInstallmentAmount),
+        paymentType: this.isManualMode ? this.draftPaymentType : null
       });
 
       let toastTitle = "Simulação atualizada";
