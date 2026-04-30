@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>ClickSignTemplateQueueable</members>
+        <members>EngineeringDateBackfillBatch</members>
+        <members>KitInstalacaoBO</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityBOCoverageTest</members>
+        <members>OpportunityTriggerHandler</members>
+        <members>PDFControllerExtension</members>
+        <members>PaymentSimulationBO</members>
+        <members>PaymentSimulationBOTest</members>
+        <members>PaymentSimulationCardController</members>
+        <members>PaymentSimulationCardControllerTest</members>
+        <members>PaymentSimulationDAO</members>
+        <members>Permissions</members>
+        <members>ProductDAO</members>
+        <members>ProposalComputedValueService</members>
+        <members>ProposalEngineSupportTest</members>
+        <members>ProposalFileService</members>
+        <members>ProposalGenerationService</members>
+        <members>ProposalPayloadBuilder</members>
+        <members>RecordTypes</members>
+        <members>VOIntegrationEmailAlert</members>
+        <members>VOIntegrationEmailAlertTest</members>
+        <members>VOIntegrationService</members>
+        <members>VOIntegrationServiceTest</members>
+        <members>ViabilityStudyBO</members>
+        <name>ApexClass</name>
+    </types>
+    <version>62.0</version>
+</Package>

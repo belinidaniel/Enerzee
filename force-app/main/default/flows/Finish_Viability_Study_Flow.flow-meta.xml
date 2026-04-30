@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <environments>Default</environments>
     <formulas>
         <name>f_GeracaoMensal</name>
@@ -8,8 +9,7 @@
         <expression>{!$Record.EstimatedAnnualGeneration__c} / 12</expression>
         <scale>2</scale>
     </formulas>
-    <interviewLabel
-  >Finish Viability study {!$Flow.CurrentDateTime}</interviewLabel>
+    <interviewLabel>Finish Viability study {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Finish Viability Study</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -44,10 +44,21 @@
             </value>
         </filters>
         <inputAssignments>
+            <field>CondicoesAdicionais__c</field>
+            <value>
+                <elementReference>$Record.ProposalCondicoesAdicionais__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Exclusoes__c</field>
+            <value>
+                <elementReference>$Record.ProposalExclusoes__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <field>GeracaoAnualEstimada__c</field>
             <value>
-                <elementReference
-        >$Record.EstimatedAnnualGeneration__c</elementReference>
+                <elementReference>$Record.EstimatedAnnualGeneration__c</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -69,10 +80,15 @@
             </value>
         </inputAssignments>
         <inputAssignments>
+            <field>Observacao_Proposta__c</field>
+            <value>
+                <elementReference>$Record.ProposalObservacoes__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <field>PotenciaPicoSistema__c</field>
             <value>
-                <elementReference
-        >$Record.InstalledPowerKwp__c</elementReference>
+                <elementReference>$Record.InstalledPowerKwp__c</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -91,27 +107,6 @@
             <field>ViabilityStudyOwner__c</field>
             <value>
                 <elementReference>$User.Id</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Exclusoes__c</field>
-            <value>
-                <elementReference
-        >$Record.ProposalExclusoes__c</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Observacao_Proposta__c</field>
-            <value>
-                <elementReference
-        >$Record.ProposalObservacoes__c</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>CondicoesAdicionais__c</field>
-            <value>
-                <elementReference
-        >$Record.ProposalCondicoesAdicionais__c</elementReference>
             </value>
         </inputAssignments>
         <object>Opportunity</object>

@@ -12,10 +12,5 @@
     <columns>PrazoContratoPar1__c</columns>
     <columns>LAST_UPDATE</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>Parceiro01__c</field>
-        <operation>equals</operation>
-        <value>Bow-e</value>
-    </filters>
     <label>All</label>
 </ListView>

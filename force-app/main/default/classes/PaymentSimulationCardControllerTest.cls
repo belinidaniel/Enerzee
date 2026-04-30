@@ -251,7 +251,8 @@ public class PaymentSimulationCardControllerTest {
       opp.Id,
       sims[0].Id,
       72,
-      1492.28
+      1492.28,
+      null
     );
     Test.stopTest();
 
@@ -278,9 +279,9 @@ public class PaymentSimulationCardControllerTest {
       'Ao informar novos valores, deve criar uma nova simulação.'
     );
     Assert.areEqual(
-      1,
+      3,
       updatedSimulations.size(),
-      'Ao recriar financiamento, as opções antigas devem ser removidas e apenas a nova deve permanecer.'
+      'As simulações originais devem ser mantidas e apenas a personalizada anterior deve ser substituída.'
     );
     Assert.areEqual(
       result.simulationId,
@@ -364,7 +365,8 @@ public class PaymentSimulationCardControllerTest {
       opp.Id,
       sims[0].Id,
       72,
-      1492.28
+      1492.28,
+      null
     );
     Test.stopTest();
 
@@ -416,7 +418,8 @@ public class PaymentSimulationCardControllerTest {
       opp.Id,
       sims[0].Id,
       12,
-      1000
+      1000,
+      null
     );
     Test.stopTest();
 
@@ -483,7 +486,8 @@ public class PaymentSimulationCardControllerTest {
       opp.Id,
       sims[0].Id,
       72,
-      509.46
+      509.46,
+      null
     );
     Test.stopTest();
 
@@ -508,31 +512,39 @@ public class PaymentSimulationCardControllerTest {
       'Ao alterar uma simulação de aluguel, deve criar um novo registro.'
     );
     Assert.areEqual(
-      1,
+      3,
       updatedSimulations.size(),
-      'Ao recriar aluguel, as opções antigas devem ser removidas e apenas a nova deve permanecer.'
+      'As simulações originais devem ser mantidas e apenas a personalizada anterior deve ser substituída.'
     );
     Assert.areEqual(
       result.simulationId,
       updatedOpportunity.SelectedSimulation__c,
       'A oportunidade deve apontar para a nova simulação de aluguel.'
     );
+    PaymentSimulation__c manualSimulation = null;
+    for (PaymentSimulation__c sim : updatedSimulations) {
+      if (sim.Id == result.simulationId) {
+        manualSimulation = sim;
+        break;
+      }
+    }
+    Assert.isNotNull(manualSimulation, 'A simulação manual criada deve existir no banco.');
     Assert.areEqual(
       'Rental',
-      updatedSimulations[0].PaymentType__c,
+      manualSimulation.PaymentType__c,
       'A nova simulação deve preservar o tipo aluguel.'
     );
     Assert.areEqual(
       'Simulação ajustada',
-      updatedSimulations[0].ProposalLabel__c,
+      manualSimulation.ProposalLabel__c,
       'A nova simulação de aluguel deve continuar marcada como manual para não ser recalculada.'
     );
-    Assert.areEqual(72, updatedSimulations[0].InstallmentCount__c);
-    Assert.areEqual(509.46, updatedSimulations[0].InstallmentAmount__c);
-    Assert.areEqual(true, updatedSimulations[0].Selected__c);
+    Assert.areEqual(72, manualSimulation.InstallmentCount__c);
+    Assert.areEqual(509.46, manualSimulation.InstallmentAmount__c);
+    Assert.areEqual(true, manualSimulation.Selected__c);
     Assert.areEqual(
       null,
-      updatedSimulations[0].FinancingRate__c,
+      manualSimulation.FinancingRate__c,
       'A simulação manual de aluguel não deve ficar vinculada a uma taxa padrão.'
     );
 
@@ -540,14 +552,20 @@ public class PaymentSimulationCardControllerTest {
       opp.Id
     );
     Assert.areEqual(
-      1,
+      2,
       cards.size(),
-      'Após ajustar aluguel, deve restar apenas um card de simulação.'
+      'Deve haver o card original de aluguel e o card personalizado.'
     );
-    Assert.areEqual('Rental', cards[0].paymentType);
-    Assert.areEqual('Simulação ajustada', cards[0].proposalLabel);
-    Assert.areEqual(1, cards[0].options.size());
-    Assert.areEqual(result.simulationId, cards[0].options[0].id);
+    PaymentSimulationCardController.ProposalCardWrapper manualCard = null;
+    for (PaymentSimulationCardController.ProposalCardWrapper card : cards) {
+      if (card.proposalLabel == 'Simulação ajustada') {
+        manualCard = card;
+      }
+    }
+    Assert.isNotNull(manualCard, 'O card personalizado deve existir.');
+    Assert.areEqual('Rental', manualCard.paymentType);
+    Assert.areEqual(1, manualCard.options.size());
+    Assert.areEqual(result.simulationId, manualCard.options[0].id);
   }
 
   @IsTest
@@ -577,13 +595,15 @@ public class PaymentSimulationCardControllerTest {
       opp.Id,
       sims[0].Id,
       72,
-      1492.28
+      1492.28,
+      null
     );
     PaymentSimulationCardController.ManualSimulationResult secondResult = PaymentSimulationCardController.createManualSimulation(
       opp.Id,
       firstResult.simulationId,
       84,
-      1325.45
+      1325.45,
+      null
     );
     Test.stopTest();
 
@@ -591,37 +611,32 @@ public class PaymentSimulationCardControllerTest {
       opp.Id
     );
     Integer manualCardCount = 0;
-    Integer selectedManualCardCount = 0;
     for (PaymentSimulationCardController.ProposalCardWrapper card : cards) {
       if (card.proposalLabel != 'Simulação ajustada') {
         continue;
       }
-
       manualCardCount++;
       Assert.areEqual(
         1,
         card.options.size(),
-        'Cada simulação manual deve aparecer em seu próprio card.'
+        'A simulação personalizada deve ter exatamente uma opção.'
       );
-      if (card.hasSelected) {
-        selectedManualCardCount++;
-        Assert.areEqual(
-          secondResult.simulationId,
-          card.options[0].id,
-          'O card manual selecionado deve apontar para a última simulação criada.'
-        );
-      }
+      Assert.areEqual(
+        true,
+        card.hasSelected,
+        'O card manual deve estar selecionado.'
+      );
+      Assert.areEqual(
+        secondResult.simulationId,
+        card.options[0].id,
+        'O card manual deve apontar para a última simulação criada.'
+      );
     }
 
     Assert.areEqual(
-      2,
-      manualCardCount,
-      'Duas simulações manuais devem resultar em dois cards distintos.'
-    );
-    Assert.areEqual(
       1,
-      selectedManualCardCount,
-      'Apenas o card da última simulação manual deve ficar selecionado.'
+      manualCardCount,
+      'A segunda simulação manual deve substituir a primeira, resultando em apenas um card personalizado.'
     );
   }
 

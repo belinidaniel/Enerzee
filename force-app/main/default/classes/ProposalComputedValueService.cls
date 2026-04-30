@@ -2,7 +2,7 @@
  * @description       : Resolve valores calculados e resumos de simulacoes para tags de proposta
  * @author            : OpenAI Codex
  * @group             :
- * @last modified on  : 04-20-2026
+ * @last modified on  : 04-30-2026
  * @last modified by  : Daniel Belini
  * @test              : ProposalEngineSupportTest
  **/
@@ -18,6 +18,7 @@ public with sharing class ProposalComputedValueService {
   private static final String OTHER_PAYMENT_CARD_TEXT = '³ Juros aplicados no valor total da proposta.';
   private static final Integer RENTAL_TARGET_INSTALLMENTS = 60;
   private static final String ECONOMIA_MENSAL_LABEL = 'Economia mensal';
+  private static final String MANUAL_SIMULATION_LABEL = 'Simulação ajustada';
 
   public static Boolean isComputedPath(String sourcePath) {
     if (String.isBlank(sourcePath)) {
@@ -52,44 +53,94 @@ public with sharing class ProposalComputedValueService {
     );
     addCalculatedValues(values, opportunityRecord, rentalOption);
     addOtherPaymentValues(values, opportunityId, opportunityRecord);
-    addViabilityCostValues(values, opportunityId);
+    addViabilityCostValues(
+      values,
+      opportunityId,
+      opportunityRecord?.MainViability__c
+    );
     addBateriaValues(values, opportunityRecord, opportunityId);
+    values.put(
+      CALCULATED_PREFIX + 'DataHoje',
+      opportunityRecord?.CreatedDate != null
+        ? opportunityRecord.CreatedDate.date()
+        : Date.today()
+    );
 
     return values;
   }
 
   private static void addViabilityCostValues(
     Map<String, Object> values,
-    Id opportunityId
+    Id opportunityId,
+    Id mainViabilityId
   ) {
+    System.debug(
+      '[CustosViabilidade] opportunityId=' +
+        opportunityId +
+        ' mainViabilityId=' +
+        mainViabilityId
+    );
     if (opportunityId == null) {
       return;
     }
 
-    List<ViabilityStudy__c> viabilityList = [
-      SELECT
-        AdequacyCostEnerzee__c,
-        AdequacyCostClient__c,
-        AcBranchCost__c,
-        DcBranchCost__c,
-        StandardAdequacyCost__c,
-        AdditionalCost__c,
-        OtherCosts__c,
-        OtherCostsDescription__c,
-        CoberturaCost__c,
-        StruturalReport__c
-      FROM ViabilityStudy__c
-      WHERE Opportunity__c = :opportunityId
-      ORDER BY CreatedDate DESC
-      LIMIT 1
-    ];
+    List<ViabilityStudy__c> viabilityList;
+    if (mainViabilityId != null) {
+      viabilityList = [
+        SELECT
+          AdequacyCostEnerzee__c,
+          AdequacyCostClient__c,
+          AcBranchCost__c,
+          DcBranchCost__c,
+          StandardAdequacyCost__c,
+          AdditionalCost__c,
+          OtherCosts__c,
+          OtherCostsDescription__c,
+          CoberturaCost__c,
+          StruturalReport__c
+        FROM ViabilityStudy__c
+        WHERE Id = :mainViabilityId
+        LIMIT 1
+      ];
+    } else {
+      viabilityList = [
+        SELECT
+          AdequacyCostEnerzee__c,
+          AdequacyCostClient__c,
+          AcBranchCost__c,
+          DcBranchCost__c,
+          StandardAdequacyCost__c,
+          AdditionalCost__c,
+          OtherCosts__c,
+          OtherCostsDescription__c,
+          CoberturaCost__c,
+          StruturalReport__c
+        FROM ViabilityStudy__c
+        WHERE Opportunity__c = :opportunityId
+        ORDER BY CreatedDate DESC
+        LIMIT 1
+      ];
+    }
+
+    System.debug(
+      '[CustosViabilidade] viabilityList.size=' + viabilityList.size()
+    );
 
     if (viabilityList.isEmpty()) {
+      System.debug(
+        '[CustosViabilidade] nenhuma viabilidade encontrada, retornando vazio'
+      );
       values.put(CALCULATED_PREFIX + 'CustosViabilidade', '');
       return;
     }
 
     ViabilityStudy__c viability = viabilityList[0];
+    System.debug(
+      '[CustosViabilidade] AdequacyCostEnerzee__c=' +
+        viability.AdequacyCostEnerzee__c +
+        ' AdequacyCostClient__c=' +
+        viability.AdequacyCostClient__c
+    );
 
     List<String> enerzeeEntries = buildViabilityCostEntries(
       viability.AdequacyCostEnerzee__c,
@@ -100,20 +151,32 @@ public with sharing class ProposalComputedValueService {
       viability
     );
 
+    System.debug(
+      '[CustosViabilidade] enerzeeEntries=' +
+        enerzeeEntries +
+        ' clientEntries=' +
+        clientEntries
+    );
+
     List<String> allEntries = new List<String>();
     if (!enerzeeEntries.isEmpty()) {
-      allEntries.add('Custo Enerzee');
+      allEntries.add('Itens incluso no valor:');
       allEntries.addAll(enerzeeEntries);
     }
     if (!clientEntries.isEmpty()) {
-      allEntries.add('Custo Cliente');
+      if (!allEntries.isEmpty()) {
+        allEntries.add('');
+      }
+      allEntries.add('Neste valor não está incluso:');
       allEntries.addAll(clientEntries);
     }
 
-    values.put(
-      CALCULATED_PREFIX + 'CustosViabilidade',
-      allEntries.isEmpty() ? '' : String.join(allEntries, '\n')
-    );
+    String finalValue = allEntries.isEmpty()
+      ? ''
+      : String.join(allEntries, '\n');
+    System.debug('[CustosViabilidade] finalValue=' + finalValue);
+
+    values.put(CALCULATED_PREFIX + 'CustosViabilidade', finalValue);
   }
 
   private static List<String> buildViabilityCostEntries(
@@ -244,6 +307,7 @@ public with sharing class ProposalComputedValueService {
 
     if (currentEnergyCost != null && monthlySavings != null) {
       Decimal monthlyDifference = (currentEnergyCost - monthlySavings)
+        .abs()
         .setScale(2, RoundingMode.HALF_UP);
       values.put(CALCULATED_PREFIX + 'DiferencaMedioMensal', monthlyDifference);
       values.put(
@@ -282,29 +346,27 @@ public with sharing class ProposalComputedValueService {
       );
     }
 
-    // EconomiaPercentual (card Aluguel): (CustoMedioEnergia - (ParcelaAluguel + (30 * TarifaComTributosB))) / CustoMedioEnergia * 100
+    // EconomiaPercentual (card Aluguel): AluguelEconomiaMensal / ParcelaAluguel * 100
     // Calculado antes do bloco de negatividade (que pode sobrescrever para null)
     Decimal rentalAmountPct = toDecimal(
       values.get(SIMULATION_PREFIX + 'Rental.InstallmentAmount1')
     );
     if (
       rentalAmountPct != null &&
-      currentEnergyCost != null &&
-      currentEnergyCost != 0
+      rentalAmountPct != 0 &&
+      monthlySavings != null
     ) {
-      Decimal taxaMinima = (tarifaComTributos != null)
-        ? 30 * tarifaComTributos
-        : 0;
+      Decimal aluguelEconomiaMensal = (monthlySavings - rentalAmountPct).abs();
       values.put(
         CALCULATED_PREFIX + 'EconomiaPercentual',
-        ((currentEnergyCost - (rentalAmountPct + taxaMinima)) /
-          currentEnergyCost *
+        (aluguelEconomiaMensal /
+          rentalAmountPct *
           100)
           .setScale(2, RoundingMode.HALF_UP)
       );
     }
 
-    // EconomiaPercentualFinanciamento (card Financiamento 60x): (CustoMedioEnergia - ParcelaFinanciamento3) / CustoMedioEnergia * 100
+    // EconomiaPercentualFinanciamento (card Financiamento 60x): FinanciamentoMensal / ParcelaFinanciamento3 * 100
     // FinanciamentoMensal (card Financiamento 60x): EconomiaMensalEstimada - ParcelaFinanciamento3
     // Se negativo, zera os campos da seção de financiamento
     Decimal financing3Amount = toDecimal(
@@ -312,15 +374,16 @@ public with sharing class ProposalComputedValueService {
     );
     if (
       financing3Amount != null &&
-      currentEnergyCost != null &&
-      currentEnergyCost != 0
+      financing3Amount != 0 &&
+      monthlySavings != null
     ) {
-      Decimal financingPct = ((currentEnergyCost - financing3Amount) /
-        currentEnergyCost *
+      Decimal financingMensal = monthlySavings - financing3Amount;
+      Decimal financingPct = (financingMensal /
+        financing3Amount *
         100)
         .setScale(2, RoundingMode.HALF_UP);
-      if (financingPct < 0) {
-        // Seção de financiamento fica em branco quando porcentagem é negativa
+      if (financingMensal < 0 || financingPct < 0) {
+        // Seção de financiamento fica em branco quando economia é negativa
         // parcelaFinanciamento3 nunca é zerada — sempre exibe o número de parcelas
         values.put(CALCULATED_PREFIX + 'EconomiaPercentualFinanciamento', '');
         values.put(CALCULATED_PREFIX + 'FinanciamentoMensal', '');
@@ -331,10 +394,7 @@ public with sharing class ProposalComputedValueService {
           CALCULATED_PREFIX + 'EconomiaPercentualFinanciamento',
           financingPct
         );
-        values.put(
-          CALCULATED_PREFIX + 'FinanciamentoMensal',
-          monthlySavings == null ? null : monthlySavings - financing3Amount
-        );
+        values.put(CALCULATED_PREFIX + 'FinanciamentoMensal', financingMensal);
         Decimal count3 = toDecimal(
           values.get(SIMULATION_PREFIX + 'Financing.InstallmentCount3')
         );
@@ -347,33 +407,22 @@ public with sharing class ProposalComputedValueService {
       }
     }
 
-    // EconomiaPercentual (card Aluguel): mantém o cálculo atual do percentual
     // AluguelEconomiaMensal: EconomiaMensalEstimada - ParcelaAluguel
-    // EconomiaPercentual negativo → zera seção aluguel
+    // EconomiaMensal negativo → zera seção aluguel
     Decimal rentalAmount = toDecimal(
       values.get(SIMULATION_PREFIX + 'Rental.InstallmentAmount1')
     );
-    if (
-      rentalAmount != null &&
-      currentEnergyCost != null &&
-      currentEnergyCost != 0
-    ) {
-      Decimal taxaMinima = (tarifaComTributos != null)
-        ? 30 * tarifaComTributos
-        : 0;
-      Decimal rentalPct = ((currentEnergyCost - (rentalAmount + taxaMinima)) /
-        currentEnergyCost *
-        100)
-        .setScale(2, RoundingMode.HALF_UP);
-      if (rentalPct < 0) {
-        // Seção de aluguel fica em branco quando porcentagem é negativa
+    if (rentalAmount != null && monthlySavings != null) {
+      Decimal aluguelEconomiaMensal = monthlySavings - rentalAmount;
+      if (aluguelEconomiaMensal < 0) {
+        // Seção de aluguel fica em branco quando economia é negativa
         values.put(CALCULATED_PREFIX + 'AluguelEconomiaMensal', '');
         values.put(CALCULATED_PREFIX + 'EconomiaMensal', '');
         values.put(CALCULATED_PREFIX + 'EconomiaPercentual', '');
       } else {
         values.put(
           CALCULATED_PREFIX + 'AluguelEconomiaMensal',
-          monthlySavings == null ? null : monthlySavings - rentalAmount
+          aluguelEconomiaMensal.abs()
         );
         values.put(
           CALCULATED_PREFIX + 'EconomiaMensal',
@@ -476,6 +525,18 @@ public with sharing class ProposalComputedValueService {
     List<PaymentSimulation__c> simulations,
     String paymentType
   ) {
+    // If a manual simulation is selected for this payment type, it overrides the
+    // standard group — show only it so the PDF reflects the adjusted value.
+    for (PaymentSimulation__c simulationRecord : simulations) {
+      if (
+        normalize(simulationRecord.PaymentType__c) == paymentType &&
+        simulationRecord.Selected__c == true &&
+        MANUAL_SIMULATION_LABEL.equals(simulationRecord.ProposalLabel__c)
+      ) {
+        return new List<PaymentSimulation__c>{ simulationRecord };
+      }
+    }
+
     List<PaymentSimulation__c> matches = new List<PaymentSimulation__c>();
     String primaryLabel;
 
@@ -580,10 +641,15 @@ public with sharing class ProposalComputedValueService {
       return;
     }
 
-    Decimal totalProposalValue = null;
-    if (opportunityRecord != null) {
+    Decimal pixValue = null;
+    if (
+      selectedSimulation != null &&
+      selectedSimulation.InstallmentAmount__c != null
+    ) {
+      pixValue = selectedSimulation.InstallmentAmount__c;
+    } else if (opportunityRecord != null) {
       Map<String, Object> populatedFields = opportunityRecord.getPopulatedFieldsAsMap();
-      totalProposalValue = populatedFields.containsKey('ValorTotalProposta__c')
+      pixValue = populatedFields.containsKey('ValorTotalProposta__c')
         ? toDecimal(populatedFields.get('ValorTotalProposta__c'))
         : null;
     }
@@ -593,9 +659,7 @@ public with sharing class ProposalComputedValueService {
     );
     values.put(
       CALCULATED_PREFIX + 'ValorOutros',
-      totalProposalValue == null
-        ? null
-        : 'R$ ' + formatDecimalBR(totalProposalValue, 2)
+      pixValue == null ? null : 'R$ ' + formatDecimalBR(pixValue, 2)
     );
     values.put(
       CALCULATED_PREFIX + 'textoOutrosPagamento',

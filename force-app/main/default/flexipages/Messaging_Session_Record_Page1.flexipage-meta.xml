@@ -97,6 +97,10 @@
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>hideQuickTextRecommendations</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>hideRichContentPickerButton</name>
                     <value>false</value>
                 </componentInstanceProperties>
@@ -110,6 +114,10 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>newLineOnEnter</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showEndOrLeaveChatConfirmation</name>
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentName>scrt:conversationBody</componentName>

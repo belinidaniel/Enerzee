@@ -7,6 +7,7 @@
     <relationshipLabel>Tabelas Ezee Connect (Parceiro02)</relationshipLabel>
     <relationshipName>Tabelas_Ezee_Connect1</relationshipName>
     <required>false</required>
+    <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Lookup</type>
 </CustomField>

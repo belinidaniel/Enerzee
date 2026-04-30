@@ -847,12 +847,10 @@ public with sharing class VOIntegrationService {
         '### valor (Ezee Livre - Rede__c): ' + opportunityRecord.Rede__c
       );
     } else {
-      Decimal valor = opportunityRecord.ValorTotalProposta__c;
-      if (hasDiscount) {
-        valor = (valor != null ? valor : 0) - opportunityRecord.DescontoUFV__c;
-      }
-      payload.put('valor', valor);
-      System.debug('### valor enviado: ' + valor);
+      payload.put('valor', opportunityRecord.ValorTotalProposta__c);
+      System.debug(
+        '### valor enviado: ' + opportunityRecord.ValorTotalProposta__c
+      );
     }
 
     if (planoName == 'Direct') {

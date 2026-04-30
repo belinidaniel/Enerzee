@@ -617,6 +617,82 @@ private class OpportunityBOCoverageTest {
   }
 
   @isTest
+  static void resetDiscountOnViabilityChange_clearsDiscountWhenNewViabilityHasCosts() {
+    OpportunityTriggerHandler.disableTrigger();
+    Opportunity opp;
+    ViabilityStudy__c oldViability;
+    ViabilityStudy__c newViability;
+    try {
+      opp = (Opportunity) TestFactory.createSObject(
+        new Opportunity(DescontoUFV__c = 500),
+        true
+      );
+
+      oldViability = new ViabilityStudy__c(Opportunity__c = opp.Id);
+      insert oldViability;
+
+      newViability = new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        AdequacyCostEnerzee__c = 'Ramal CC',
+        DcBranchCost__c = 1000
+      );
+      insert newViability;
+
+      opp.MainViability__c = oldViability.Id;
+      update opp;
+
+      OpportunityTriggerHandler.enableTrigger();
+
+      Opportunity toUpdate = opp.clone(true, true, true, true);
+      toUpdate.MainViability__c = newViability.Id;
+      OpportunityBO.resetDiscountOnViabilityChange(
+        new List<Opportunity>{ toUpdate },
+        new Map<Id, Opportunity>{ opp.Id => opp }
+      );
+
+      Assert.areEqual(null, toUpdate.DescontoUFV__c, 'Desconto deve ser zerado quando nova viabilidade tem custos');
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
+  }
+
+  @isTest
+  static void resetDiscountOnViabilityChange_keepsDiscountWhenNewViabilityHasNoCosts() {
+    OpportunityTriggerHandler.disableTrigger();
+    Opportunity opp;
+    ViabilityStudy__c oldViability;
+    ViabilityStudy__c newViability;
+    try {
+      opp = (Opportunity) TestFactory.createSObject(
+        new Opportunity(DescontoUFV__c = 500),
+        true
+      );
+
+      oldViability = new ViabilityStudy__c(Opportunity__c = opp.Id);
+      insert oldViability;
+
+      newViability = new ViabilityStudy__c(Opportunity__c = opp.Id);
+      insert newViability;
+
+      opp.MainViability__c = oldViability.Id;
+      update opp;
+
+      OpportunityTriggerHandler.enableTrigger();
+
+      Opportunity toUpdate = opp.clone(true, true, true, true);
+      toUpdate.MainViability__c = newViability.Id;
+      OpportunityBO.resetDiscountOnViabilityChange(
+        new List<Opportunity>{ toUpdate },
+        new Map<Id, Opportunity>{ opp.Id => opp }
+      );
+
+      Assert.areEqual(500, toUpdate.DescontoUFV__c, 'Desconto deve ser mantido quando nova viabilidade não tem custos');
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
+  }
+
+  @isTest
   static void shouldApplyDiscountAndSetProposedValues() {
     OpportunityTriggerHandler.disableTrigger();
     try {

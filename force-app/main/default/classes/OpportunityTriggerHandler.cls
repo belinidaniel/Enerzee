@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 04-29-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, ClickSignUtilsCoverageTest, IntegracaoNivelloPropostaTest,
  *                       IntegracaoSAPCoverageTest, KitInstalacaoBOTest, OppClosedLostFlowActionTest,
@@ -104,6 +104,10 @@ public class OpportunityTriggerHandler extends TriggerHandler {
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap
     );
+    // OpportunityBO.resetDiscountOnViabilityChange(
+    //   (List<Opportunity>) Trigger.new,
+    //   (Map<Id, Opportunity>) Trigger.oldMap
+    // );
   }
 
   public override void afterUpdate() {

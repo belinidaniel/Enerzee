@@ -5,7 +5,6 @@
     <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Status de Conclusão</label>
     <length>32768</length>
-    <required>false</required>
     <type>LongTextArea</type>
     <visibleLines>3</visibleLines>
 </CustomField>

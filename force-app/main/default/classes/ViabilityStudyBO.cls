@@ -100,6 +100,7 @@ public with sharing class ViabilityStudyBO {
           Id,
           RecordType.DeveloperName,
           RecordType.Name,
+          StageName,
           ViabilityStudyOwner__c
         FROM Opportunity
         WHERE Id IN :opportunityIds
@@ -135,6 +136,13 @@ public with sharing class ViabilityStudyBO {
       // (a duplicidade é evitada pelos controles de assunto).
 
       Opportunity opportunity = opportunityById.get(viability.Opportunity__c);
+
+      if (
+        opportunity != null && OpportunityUtils.isStatusClosedLost(opportunity)
+      ) {
+        continue;
+      }
+
       String typeKey = resolveViabilityTypeKey(viability, opportunity);
       if (String.isBlank(typeKey)) {
         typeKey = 'Solar';

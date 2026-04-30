@@ -556,10 +556,7 @@ private class VOIntegrationServiceTest {
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
-    Decimal expectedValor =
-      (queried.ValorTotalProposta__c != null
-        ? queried.ValorTotalProposta__c
-        : 0) - 354.38;
+    Decimal expectedValor = queried.ValorTotalProposta__c;
 
     Test.startTest();
     System.enqueueJob(
@@ -589,7 +586,7 @@ private class VOIntegrationServiceTest {
     Assert.areEqual(
       expectedValor.setScale(2),
       ((Decimal) payload.get('valor')).setScale(2),
-      'valor deve descontar DescontoUFV__c de ValorTotalProposta__c quando desconto está pendente.'
+      'valor deve ser ValorTotalProposta__c sem desconto aplicado.'
     );
     Assert.areEqual(
       354.38,

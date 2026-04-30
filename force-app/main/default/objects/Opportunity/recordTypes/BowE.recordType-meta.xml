@@ -992,6 +992,13 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>PerfilVisualizacao__c</picklist>
+        <values>
+            <fullName>Comercial</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Posto_de_transforma_o_ou_disponibilidad__c</picklist>
         <values>
             <fullName>Não</fullName>

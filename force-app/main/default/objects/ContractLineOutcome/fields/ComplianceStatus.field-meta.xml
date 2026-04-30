@@ -3,12 +3,12 @@
     <fullName>ComplianceStatus</fullName>
     <inlineHelpText>Select a status:
 
-        Compliant–The outcome is compliant with the contract. 
+            Compliant–The outcome is compliant with the contract. 
 
-        Not Compliant–The outcome isn’t compliant with the contract. 
+            Not Compliant–The outcome isn’t compliant with the contract. 
 
-        Not Available–The outcome’s compliance information isn’t available yet. 
+            Not Available–The outcome’s compliance information isn’t available yet. 
 
-        Invalid–The outcome isn’t valid because the option selected for the Criteria Field of the recordset filter criteria was deleted. To restart the calculation, create a new contract line outcome.</inlineHelpText>
+            Invalid–The outcome isn’t valid because the option selected for the Criteria Field of the recordset filter criteria was deleted. To restart the calculation, create a new contract line outcome.</inlineHelpText>
     <trackHistory>false</trackHistory>
 </CustomField>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
     <layoutSections>
         <customLabel>false</customLabel>
@@ -445,8 +445,7 @@
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
-        <label
-    >Características do Gerador Fotovoltáico - Dados técnicos dos módulos</label>
+        <label>Características do Gerador Fotovoltáico - Dados técnicos dos módulos</label>
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -481,8 +480,7 @@
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
-        <label
-    >Características do Gerador Fotovoltáico - Dados Técnicos dos Inversores</label>
+        <label>Características do Gerador Fotovoltáico - Dados Técnicos dos Inversores</label>
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -686,14 +684,6 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Observacoes_pos_sombreamento__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Observacoes_pos_visita__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>Custos_adicionais_levantados__c</field>
             </layoutItems>
             <layoutItems>
@@ -701,7 +691,7 @@
                 <field>Aumento_da_potencia_nominal_do_sistema__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns />
+        <layoutColumns/>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -797,7 +787,7 @@
                 <field>PrazoObraDias__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns />
+        <layoutColumns/>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -854,7 +844,7 @@
                 <field>PrecoCustosAdicionais__c</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns />
+        <layoutColumns/>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -922,7 +912,7 @@
                 <field>Description</field>
             </layoutItems>
         </layoutColumns>
-        <layoutColumns />
+        <layoutColumns/>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -949,9 +939,9 @@
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
         <label>Custom Links</label>
-        <layoutColumns />
-        <layoutColumns />
-        <layoutColumns />
+        <layoutColumns/>
+        <layoutColumns/>
+        <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
     <platformActionList>

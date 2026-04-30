@@ -27,7 +27,8 @@ public with sharing class ProposalPayloadBuilder {
     'ConsumoInformadoB__c',
     'TarifaComTributosB__c',
     'ValorTotalProposta__c',
-    'DescricaoBateria__c'
+    'DescricaoBateria__c',
+    'CreatedDate'
   };
 
   public static Opportunity queryOpportunityForTags(
@@ -93,11 +94,15 @@ public with sharing class ProposalPayloadBuilder {
           config,
           computedValues
         );
+        if (config.tagKey != null && config.tagKey.containsIgnoreCase('CustosViabilidade')) {
+          System.debug('[ProposalPayloadBuilder] TAG=' + config.tagKey + ' VALUE=' + resolvedValue);
+        }
         payload.tags.put(config.tagKey, resolvedValue);
       }
     }
 
     payload.tagsJson = JSON.serialize(payload.tags);
+    System.debug('[ProposalPayloadBuilder] tagsJson=' + payload.tagsJson);
     payload.sectionsJson = JSON.serialize(payload.sectionsToShow);
     payload.payloadHash = generateHash(
       String.join(

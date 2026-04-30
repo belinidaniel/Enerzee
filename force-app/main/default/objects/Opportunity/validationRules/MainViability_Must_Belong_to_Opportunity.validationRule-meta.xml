@@ -6,8 +6,8 @@
     <errorConditionFormula>AND(
 NOT(
 OR(
-LOWER($Profile.Name) = "system administrator",
-LOWER($Profile.Name) = "administrador do sistema"
+LOWER($Profile.Name) = &quot;system administrator&quot;,
+LOWER($Profile.Name) = &quot;administrador do sistema&quot;
 )
 ),
 AND(

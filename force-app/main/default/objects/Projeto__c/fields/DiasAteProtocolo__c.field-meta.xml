@@ -1,16 +1,15 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-	<fullName>DiasAteProtocolo__c</fullName>
-	<description
-  >Tempo em dias corridos entre a criação do Projeto e a Data de Protocolo. Usado no indicador Tempo Médio de Execução de Projetos (Engenharia).</description>
-	<externalId>false</externalId>
-	<formula
-  >IF(!ISBLANK(DataProtocoloProjeto__c), DataProtocoloProjeto__c - DATEVALUE(CreatedDate), NULL)</formula>
-	<label>Dias até Protocolo</label>
-	<precision>18</precision>
-	<required>false</required>
-	<scale>0</scale>
-	<trackTrending>false</trackTrending>
-	<type>Number</type>
-	<unique>false</unique>
+    <fullName>DiasAteProtocolo__c</fullName>
+    <description>Tempo em dias corridos entre a criação do Projeto e a Data de Protocolo. Usado no indicador Tempo Médio de Execução de Projetos (Engenharia).</description>
+    <externalId>false</externalId>
+    <formula>IF(!ISBLANK(DataProtocoloProjeto__c), DataProtocoloProjeto__c - DATEVALUE(CreatedDate), NULL)</formula>
+    <label>Dias até Protocolo</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
 </CustomField>

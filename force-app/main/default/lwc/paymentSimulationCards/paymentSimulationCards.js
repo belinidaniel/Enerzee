@@ -10,6 +10,28 @@ import createManualSimulation from "@salesforce/apex/PaymentSimulationCardContro
 import loadProposalData from "@salesforce/apex/ProposalConsoleController.loadProposalData";
 import sendProposal from "@salesforce/apex/ProposalConsoleController.sendProposal";
 
+function calculatePMT(principal, interestRatePct, anticipationRatePct, n) {
+  if (!principal || !n || n <= 0) return null;
+  const antecipacao = principal * ((anticipationRatePct || 0) / 100);
+  const pv = principal + antecipacao;
+  if (!interestRatePct || interestRatePct === 0 || n === 1) {
+    return Math.round((pv / n) * 100) / 100;
+  }
+  const i = interestRatePct / 100;
+  const factor = 1 - Math.pow(1 + i, -n);
+  return Math.round(((pv * i) / factor) * 100) / 100;
+}
+
+function formatBRL(value) {
+  const num = Number(value);
+  if (isNaN(num)) return "R$ 0,00";
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2
+  }).format(num);
+}
+
 const OPPORTUNITY_FIELDS = [STAGE_NAME_FIELD];
 const READJUSTMENT_STAGE = "Readequação de Proposta";
 const CREDIT_ANALYSIS_STAGE = "Análise de Crédito";
@@ -17,8 +39,18 @@ const PAYMENT_TYPE_LABELS = {
   Financing: "Financiamento",
   Rental: "Aluguel Solar",
   Card: "Cartão de Crédito",
-  Pix: "PIX Via Link"
+  Pix: "PIX Via Link",
+  Boleto: "Boleto",
+  Negociacao: "Negociação"
 };
+
+const FORMA_PAGAMENTO_OPTIONS = [
+  { label: "Cartão de crédito", value: "REC CARTAO", paymentType: "Card" },
+  { label: "Financiamento", value: "REC FINANCIAMEN", paymentType: "Financing" },
+  { label: "Boleto", value: "R001", paymentType: "Boleto" },
+  { label: "Transferencia PIX", value: "R0002", paymentType: "Pix" },
+  { label: "Negociação", value: "Negociação", paymentType: "Negociacao" }
+];
 
 export default class PaymentSimulationCards extends LightningElement {
   @api recordId;
@@ -36,7 +68,12 @@ export default class PaymentSimulationCards extends LightningElement {
   draftInstallmentAmount = null;
   draftProposalLabel = "";
   draftPaymentType = "";
+  draftInterestRate = null;
+  draftAnticipationRate = null;
+  draftPrincipalValue = null;
   defaultTemplateId = null;
+  isManualMode = false;
+  manualFormaPagamento = null;
 
   @wire(getRecord, { recordId: "$recordId", fields: OPPORTUNITY_FIELDS })
   wiredOpportunity({ data }) {
@@ -88,7 +125,44 @@ export default class PaymentSimulationCards extends LightningElement {
     return getFieldValue(this.opportunityRecord, STAGE_NAME_FIELD);
   }
 
+  get isCardModal() {
+    return this.draftPaymentType === "Card";
+  }
+
+  get cardInstallmentOptions() {
+    if (!this.isCardModal || !this.draftPrincipalValue) return [];
+    const options = [];
+    for (let n = 1; n <= 12; n++) {
+      const pmt = calculatePMT(
+        this.draftPrincipalValue,
+        this.draftInterestRate,
+        this.draftAnticipationRate,
+        n
+      );
+      if (pmt == null) continue;
+      options.push({
+        label: `${n}x de ${formatBRL(pmt)}`,
+        value: String(n)
+      });
+    }
+    return options;
+  }
+
+  get formaPagamentoOptions() {
+    return FORMA_PAGAMENTO_OPTIONS;
+  }
+
   get simulationModalSaveDisabled() {
+    if (this.isManualMode) {
+      return (
+        this.isCreatingSimulation ||
+        !this.manualFormaPagamento ||
+        !this.draftInstallmentCount ||
+        !this.draftInstallmentAmount ||
+        Number(this.draftInstallmentCount) <= 0 ||
+        Number(this.draftInstallmentAmount) <= 0
+      );
+    }
     return (
       this.isCreatingSimulation ||
       !this.draftInstallmentCount ||
@@ -182,10 +256,17 @@ export default class PaymentSimulationCards extends LightningElement {
 
     this.pendingSimulationId = null;
     this.baseSimulationId = selectedOption.id;
-    this.draftInstallmentCount = selectedOption.installmentCount;
-    this.draftInstallmentAmount = selectedOption.installmentAmount;
     this.draftProposalLabel = selectedOption.proposalLabel;
     this.draftPaymentType = selectedOption.paymentType;
+    this.draftInterestRate = selectedOption.interestRate || null;
+    this.draftAnticipationRate = selectedOption.anticipationRate || null;
+    this.draftPrincipalValue = selectedOption.principalValue || null;
+    // Para cartão: pré-seleciona a opção salva; combobox usa string
+    this.draftInstallmentCount =
+      selectedOption.paymentType === "Card"
+        ? String(selectedOption.installmentCount || 12)
+        : selectedOption.installmentCount;
+    this.draftInstallmentAmount = selectedOption.installmentAmount;
     this.isSimulationModalOpen = true;
   }
 
@@ -200,6 +281,45 @@ export default class PaymentSimulationCards extends LightningElement {
     this.draftInstallmentAmount = null;
     this.draftProposalLabel = "";
     this.draftPaymentType = "";
+    this.draftInterestRate = null;
+    this.draftAnticipationRate = null;
+    this.draftPrincipalValue = null;
+    this.isManualMode = false;
+    this.manualFormaPagamento = null;
+  }
+
+  handleToggleManualMode() {
+    this.isManualMode = !this.isManualMode;
+    this.draftInstallmentCount = null;
+    this.draftInstallmentAmount = null;
+    if (!this.isManualMode) {
+      this.manualFormaPagamento = null;
+    }
+  }
+
+  handleManualFormaPagamentoChange(event) {
+    this.manualFormaPagamento = event.detail.value;
+    const option = FORMA_PAGAMENTO_OPTIONS.find(
+      (o) => o.value === this.manualFormaPagamento
+    );
+    if (option) {
+      this.draftPaymentType = option.paymentType;
+      this.draftProposalLabel = option.label;
+    }
+    this.draftInstallmentCount = null;
+    this.draftInstallmentAmount = null;
+  }
+
+  handleCardInstallmentChange(event) {
+    const n = Number(event.detail.value);
+    const pmt = calculatePMT(
+      this.draftPrincipalValue,
+      this.draftInterestRate,
+      this.draftAnticipationRate,
+      n
+    );
+    this.draftInstallmentCount = String(n); // combobox precisa de string
+    this.draftInstallmentAmount = pmt;
   }
 
   handleInstallmentCountChange(event) {
@@ -221,7 +341,8 @@ export default class PaymentSimulationCards extends LightningElement {
         opportunityId: this.recordId,
         baseSimulationId: this.baseSimulationId,
         installmentCount: Number(this.draftInstallmentCount),
-        installmentAmount: Number(this.draftInstallmentAmount)
+        installmentAmount: Number(this.draftInstallmentAmount),
+        paymentType: this.isManualMode ? this.draftPaymentType : null
       });
 
       let toastTitle = "Simulação atualizada";
@@ -305,7 +426,9 @@ export default class PaymentSimulationCards extends LightningElement {
                 : card.isManual && card.paymentType === "Pix"
                   ? "PIX"
                   : card.proposalLabel,
-          paymentType: card.paymentType
+          paymentType: card.paymentType,
+          anticipationRate: card.anticipationRate,
+          principalValue: card.principalValue
         };
         if (!fallbackOption) {
           fallbackOption = decoratedOption;

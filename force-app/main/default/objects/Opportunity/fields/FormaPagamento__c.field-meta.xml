@@ -37,6 +37,11 @@
                 <label>Negociação</label>
             </value>
             <value>
+                <fullName>Ezee Solar Aluguel</fullName>
+                <default>false</default>
+                <label>Ezee Solar Aluguel</label>
+            </value>
+            <value>
                 <fullName>Cartão de débito</fullName>
                 <default>false</default>
                 <isActive>false</isActive>

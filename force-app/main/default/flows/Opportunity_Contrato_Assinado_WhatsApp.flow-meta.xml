@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
         <name>Send_WhatsApp_to_Client</name>
         <label>Send WhatsApp to Client</label>
-        <locationX>50</locationX>
-        <locationY>1862</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <actionName>sendConversationMessages</actionName>
         <actionType>sendConversationMessages</actionType>
         <connector>
@@ -14,8 +14,7 @@
         <inputParameters>
             <name>messageDefinitionName</name>
             <value>
-                <stringValue
-        >Notificacao_da_assinatura_do_contrato_Consultor_e_cliente</stringValue>
+                <stringValue>Notificacao_da_assinatura_do_contrato_Consultor_e_cliente</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -76,16 +75,15 @@
     <actionCalls>
         <name>Send_WhatsApp_to_Consultant</name>
         <label>Send WhatsApp to Consultant</label>
-        <locationX>50</locationX>
-        <locationY>1970</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <actionName>sendConversationMessages</actionName>
         <actionType>sendConversationMessages</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>messageDefinitionName</name>
             <value>
-                <stringValue
-        >Notificacao_da_assinatura_do_contrato_Consultor_e_cliente</stringValue>
+                <stringValue>Notificacao_da_assinatura_do_contrato_Consultor_e_cliente</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -130,8 +128,7 @@
         <inputParameters>
             <name>messagingEndUserIds</name>
             <value>
-                <elementReference
-        >vConsultantMessagingEndUserIds</elementReference>
+                <elementReference>vConsultantMessagingEndUserIds</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -149,8 +146,8 @@
     <assignments>
         <name>Assign_Client_MEU_Created</name>
         <label>Assign Client Messaging User Created</label>
-        <locationX>578</locationX>
-        <locationY>1214</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <assignmentItems>
             <assignToReference>vClientMessagingEndUserIds</assignToReference>
             <operator>Add</operator>
@@ -165,22 +162,20 @@
     <assignments>
         <name>Assign_Client_MEU_Existing</name>
         <label>Assign Client Messaging User Existing</label>
-        <locationX>314</locationX>
-        <locationY>1214</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <assignmentItems>
             <assignToReference>vClientMessagingEndUserId</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference
-        >Get_Client_Messaging_User.Id</elementReference>
+                <elementReference>Get_Client_Messaging_User.Id</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
             <assignToReference>vClientMessagingEndUserIds</assignToReference>
             <operator>Add</operator>
             <value>
-                <elementReference
-        >Get_Client_Messaging_User.Id</elementReference>
+                <elementReference>Get_Client_Messaging_User.Id</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -190,15 +185,13 @@
     <assignments>
         <name>Assign_Consultant_MEU_Created</name>
         <label>Assign Consultant Messaging User Created</label>
-        <locationX>578</locationX>
-        <locationY>1754</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <assignmentItems>
-            <assignToReference
-      >vConsultantMessagingEndUserIds</assignToReference>
+            <assignToReference>vConsultantMessagingEndUserIds</assignToReference>
             <operator>Add</operator>
             <value>
-                <elementReference
-        >vConsultantMessagingEndUserId</elementReference>
+                <elementReference>vConsultantMessagingEndUserId</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -208,23 +201,20 @@
     <assignments>
         <name>Assign_Consultant_MEU_Existing</name>
         <label>Assign Consultant Messaging User Existing</label>
-        <locationX>314</locationX>
-        <locationY>1754</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <assignmentItems>
             <assignToReference>vConsultantMessagingEndUserId</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference
-        >Get_Consultant_Messaging_User.Id</elementReference>
+                <elementReference>Get_Consultant_Messaging_User.Id</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference
-      >vConsultantMessagingEndUserIds</assignToReference>
+            <assignToReference>vConsultantMessagingEndUserIds</assignToReference>
             <operator>Add</operator>
             <value>
-                <elementReference
-        >Get_Consultant_Messaging_User.Id</elementReference>
+                <elementReference>Get_Consultant_Messaging_User.Id</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -234,8 +224,8 @@
     <decisions>
         <name>Base_Data_Ready</name>
         <label>Base Data Ready</label>
-        <locationX>314</locationX>
-        <locationY>566</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Yes</name>
@@ -256,8 +246,8 @@
     <decisions>
         <name>Client_Messaging_User_Found</name>
         <label>Client Messaging User Found</label>
-        <locationX>314</locationX>
-        <locationY>1026</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <defaultConnector>
             <targetReference>Create_Client_Messaging_User</targetReference>
         </defaultConnector>
@@ -266,8 +256,7 @@
             <name>Found_Client</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference
-        >Get_Client_Messaging_User.Id</leftValueReference>
+                <leftValueReference>Get_Client_Messaging_User.Id</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -282,8 +271,8 @@
     <decisions>
         <name>Consultant_Messaging_User_Found</name>
         <label>Consultant Messaging User Found</label>
-        <locationX>314</locationX>
-        <locationY>1566</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <defaultConnector>
             <targetReference>Create_Consultant_Messaging_User</targetReference>
         </defaultConnector>
@@ -292,16 +281,14 @@
             <name>Found_Consultant</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference
-        >Get_Consultant_Messaging_User.Id</leftValueReference>
+                <leftValueReference>Get_Consultant_Messaging_User.Id</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference
-        >Assign_Consultant_MEU_Existing</targetReference>
+                <targetReference>Assign_Consultant_MEU_Existing</targetReference>
             </connector>
             <label>Found</label>
         </rules>
@@ -345,8 +332,7 @@ ISBLANK({!$Record.Numeroproposta__c}),
 {!$Record.Numeroproposta__c} + &quot; - &quot; + {!$Record.Name}
 )</expression>
     </formulas>
-    <interviewLabel
-  >Opportunity - Contract Signed WhatsApp Notification {!$Flow.CurrentDateTime}</interviewLabel>
+    <interviewLabel>Opportunity - Contract Signed WhatsApp Notification {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Opportunity - Contract Signed WhatsApp Notification</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -370,10 +356,9 @@ ISBLANK({!$Record.Numeroproposta__c}),
     <recordCreates>
         <name>Create_Client_Messaging_User</name>
         <label>Create Client Messaging User</label>
-        <locationX>578</locationX>
-        <locationY>1106</locationY>
-        <assignRecordIdToReference
-    >vClientMessagingEndUserId</assignRecordIdToReference>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignRecordIdToReference>vClientMessagingEndUserId</assignRecordIdToReference>
         <connector>
             <targetReference>Assign_Client_MEU_Created</targetReference>
         </connector>
@@ -398,8 +383,7 @@ ISBLANK({!$Record.Numeroproposta__c}),
         <inputAssignments>
             <field>MessagingChannelId</field>
             <value>
-                <elementReference
-        >Get_Messaging_Channel_Pos_Vendas.Id</elementReference>
+                <elementReference>Get_Messaging_Channel_Pos_Vendas.Id</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -431,18 +415,16 @@ ISBLANK({!$Record.Numeroproposta__c}),
     <recordCreates>
         <name>Create_Consultant_Messaging_User</name>
         <label>Create Consultant Messaging User</label>
-        <locationX>578</locationX>
-        <locationY>1646</locationY>
-        <assignRecordIdToReference
-    >vConsultantMessagingEndUserId</assignRecordIdToReference>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignRecordIdToReference>vConsultantMessagingEndUserId</assignRecordIdToReference>
         <connector>
             <targetReference>Assign_Consultant_MEU_Created</targetReference>
         </connector>
         <inputAssignments>
             <field>Consultor__c</field>
             <value>
-                <elementReference
-        >$Record.ConsultorOportunidade__c</elementReference>
+                <elementReference>$Record.ConsultorOportunidade__c</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -454,8 +436,7 @@ ISBLANK({!$Record.Numeroproposta__c}),
         <inputAssignments>
             <field>MessagingChannelId</field>
             <value>
-                <elementReference
-        >Get_Messaging_Channel_Pos_Vendas.Id</elementReference>
+                <elementReference>Get_Messaging_Channel_Pos_Vendas.Id</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -487,10 +468,9 @@ ISBLANK({!$Record.Numeroproposta__c}),
     <recordLookups>
         <name>Get_Client_Contact</name>
         <label>Get Client Contact</label>
-        <locationX>314</locationX>
-        <locationY>350</locationY>
-        <assignNullValuesIfNoRecordsFound
-    >false</assignNullValuesIfNoRecordsFound>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Consultor</targetReference>
         </connector>
@@ -499,8 +479,7 @@ ISBLANK({!$Record.Numeroproposta__c}),
             <field>Id</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference
-        >Get_Primary_Opp_Contact_Role.ContactId</elementReference>
+                <elementReference>Get_Primary_Opp_Contact_Role.ContactId</elementReference>
             </value>
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
@@ -510,10 +489,9 @@ ISBLANK({!$Record.Numeroproposta__c}),
     <recordLookups>
         <name>Get_Client_Messaging_User</name>
         <label>Get Client Messaging User</label>
-        <locationX>314</locationX>
-        <locationY>918</locationY>
-        <assignNullValuesIfNoRecordsFound
-    >false</assignNullValuesIfNoRecordsFound>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Client_Messaging_User_Found</targetReference>
         </connector>
@@ -522,8 +500,7 @@ ISBLANK({!$Record.Numeroproposta__c}),
             <field>MessagingChannelId</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference
-        >Get_Messaging_Channel_Pos_Vendas.Id</elementReference>
+                <elementReference>Get_Messaging_Channel_Pos_Vendas.Id</elementReference>
             </value>
         </filters>
         <filters>
@@ -547,10 +524,9 @@ ISBLANK({!$Record.Numeroproposta__c}),
     <recordLookups>
         <name>Get_Consultant_Messaging_User</name>
         <label>Get Consultant Messaging User</label>
-        <locationX>314</locationX>
-        <locationY>1458</locationY>
-        <assignNullValuesIfNoRecordsFound
-    >false</assignNullValuesIfNoRecordsFound>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Consultant_Messaging_User_Found</targetReference>
         </connector>
@@ -559,16 +535,14 @@ ISBLANK({!$Record.Numeroproposta__c}),
             <field>MessagingChannelId</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference
-        >Get_Messaging_Channel_Pos_Vendas.Id</elementReference>
+                <elementReference>Get_Messaging_Channel_Pos_Vendas.Id</elementReference>
             </value>
         </filters>
         <filters>
             <field>Consultor__c</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference
-        >$Record.ConsultorOportunidade__c</elementReference>
+                <elementReference>$Record.ConsultorOportunidade__c</elementReference>
             </value>
         </filters>
         <filters>
@@ -585,10 +559,9 @@ ISBLANK({!$Record.Numeroproposta__c}),
     <recordLookups>
         <name>Get_Consultor</name>
         <label>Get Consultant Linked to Opportunity</label>
-        <locationX>314</locationX>
-        <locationY>458</locationY>
-        <assignNullValuesIfNoRecordsFound
-    >false</assignNullValuesIfNoRecordsFound>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Base_Data_Ready</targetReference>
         </connector>
@@ -597,8 +570,7 @@ ISBLANK({!$Record.Numeroproposta__c}),
             <field>Id</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference
-        >$Record.ConsultorOportunidade__c</elementReference>
+                <elementReference>$Record.ConsultorOportunidade__c</elementReference>
             </value>
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
@@ -608,10 +580,9 @@ ISBLANK({!$Record.Numeroproposta__c}),
     <recordLookups>
         <name>Get_Messaging_Channel_Pos_Vendas</name>
         <label>Get Messaging Channel - Post Sales 8852</label>
-        <locationX>314</locationX>
-        <locationY>134</locationY>
-        <assignNullValuesIfNoRecordsFound
-    >false</assignNullValuesIfNoRecordsFound>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Primary_Opp_Contact_Role</targetReference>
         </connector>
@@ -630,10 +601,9 @@ ISBLANK({!$Record.Numeroproposta__c}),
     <recordLookups>
         <name>Get_Primary_Opp_Contact_Role</name>
         <label>Get Primary Opportunity Contact Role</label>
-        <locationX>314</locationX>
-        <locationY>242</locationY>
-        <assignNullValuesIfNoRecordsFound
-    >false</assignNullValuesIfNoRecordsFound>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Client_Contact</targetReference>
         </connector>
@@ -659,7 +629,7 @@ ISBLANK({!$Record.Numeroproposta__c}),
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <start>
-        <locationX>50</locationX>
+        <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Get_Messaging_Channel_Pos_Vendas</targetReference>
@@ -675,39 +645,35 @@ NOT(ISBLANK({!$Record.UrlSimulation__c}))
         <recordTriggerType>Update</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Draft</status>
     <variables>
+        <description>Id do MessagingEndUser do cliente para envio da notificacao automatica.</description>
         <name>vClientMessagingEndUserId</name>
         <dataType>String</dataType>
-        <description
-    >Id do MessagingEndUser do cliente para envio da notificacao automatica.</description>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
     </variables>
     <variables>
+        <description>Colecao de destinatarios (MessagingEndUser) para envio ao cliente.</description>
         <name>vClientMessagingEndUserIds</name>
         <dataType>String</dataType>
-        <description
-    >Colecao de destinatarios (MessagingEndUser) para envio ao cliente.</description>
         <isCollection>true</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
     </variables>
     <variables>
+        <description>Id do MessagingEndUser do consultor para envio da notificacao automatica.</description>
         <name>vConsultantMessagingEndUserId</name>
         <dataType>String</dataType>
-        <description
-    >Id do MessagingEndUser do consultor para envio da notificacao automatica.</description>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
     </variables>
     <variables>
+        <description>Colecao de destinatarios (MessagingEndUser) para envio ao consultor.</description>
         <name>vConsultantMessagingEndUserIds</name>
         <dataType>String</dataType>
-        <description
-    >Colecao de destinatarios (MessagingEndUser) para envio ao consultor.</description>
         <isCollection>true</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>

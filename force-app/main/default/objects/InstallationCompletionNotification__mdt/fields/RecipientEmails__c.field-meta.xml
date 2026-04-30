@@ -5,7 +5,6 @@
     <fieldManageability>DeveloperControlled</fieldManageability>
     <label>E-mails Destinatários</label>
     <length>32768</length>
-    <required>false</required>
     <type>LongTextArea</type>
     <visibleLines>4</visibleLines>
 </CustomField>

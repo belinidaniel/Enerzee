@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>TypeProfile</name>
+        <label>TypeProfile</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Comercial</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.ConsultorOportunidade__r.Usuario__r.Profile.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Comercial</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Visualizacao_Comercail</targetReference>
+            </connector>
+            <label>Is Comercial</label>
+        </rules>
+        <rules>
+            <name>Is_Not_Comercial_and_Visualizacao_Not_null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.ConsultorOportunidade__r.Usuario__r.Profile.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Comercial</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.PerfilVisualizacao__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+            </conditions>
+            <connector>
+                <targetReference>Remove_Perfil_Comercial</targetReference>
+            </connector>
+            <label>Is Not Comercial and Visualizacao Not null</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>[Opportunity] - Visualization Sales user {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>[Opportunity] - Visualization Sales user</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Remove_Perfil_Comercial</name>
+        <label>Remove Perfil Comercial</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <inputAssignments>
+            <field>PerfilVisualizacao__c</field>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_Visualizacao_Comercail</name>
+        <label>Update Visualizacao Comercail</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <inputAssignments>
+            <field>PerfilVisualizacao__c</field>
+            <value>
+                <stringValue>Comercial</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterFormula>OR(
+AND (ISNEW(), !ISNULL({!$Record.ConsultorOportunidade__c})),
+ISCHANGED({!$Record.ConsultorOportunidade__c})
+)</filterFormula>
+        <object>Opportunity</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>after_create_update</name>
+            <connector>
+                <targetReference>TypeProfile</targetReference>
+            </connector>
+            <label>after create/update</label>
+            <offsetNumber>2</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <recordField>LastModifiedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

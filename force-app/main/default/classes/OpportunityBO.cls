@@ -1262,6 +1262,95 @@ public class OpportunityBO {
     }
   }
 
+  public static void resetDiscountOnViabilityChange(
+    List<Opportunity> newList,
+    Map<Id, Opportunity> oldMap
+  ) {
+    Set<Id> newViabilityIds = new Set<Id>();
+    for (Opportunity opp : newList) {
+      Opportunity oldOpp = oldMap.get(opp.Id);
+      if (
+        opp.MainViability__c != null &&
+        opp.MainViability__c != oldOpp.MainViability__c &&
+        opp.DescontoUFV__c != null
+      ) {
+        newViabilityIds.add(opp.MainViability__c);
+      }
+    }
+
+    if (newViabilityIds.isEmpty()) {
+      return;
+    }
+
+    Map<Id, ViabilityStudy__c> viabilityMap = new Map<Id, ViabilityStudy__c>(
+      [
+        SELECT
+          Id,
+          AdequacyCostEnerzee__c,
+          DcBranchCost__c,
+          AcBranchCost__c,
+          StandardAdequacyCost__c,
+          CoberturaCost__c,
+          StruturalReport__c,
+          OtherCosts__c,
+          AdditionalCost__c,
+          TechnicalVisitCost__c
+        FROM ViabilityStudy__c
+        WHERE Id IN :newViabilityIds
+        WITH SECURITY_ENFORCED
+      ]
+    );
+
+    for (Opportunity opp : newList) {
+      Opportunity oldOpp = oldMap.get(opp.Id);
+      if (
+        opp.MainViability__c == null ||
+        opp.MainViability__c == oldOpp.MainViability__c ||
+        opp.DescontoUFV__c == null
+      ) {
+        continue;
+      }
+
+      ViabilityStudy__c vs = viabilityMap.get(opp.MainViability__c);
+      if (vs == null) {
+        continue;
+      }
+
+      Decimal clientTotalCost = 0;
+      String adequacy = vs.AdequacyCostEnerzee__c;
+      if (String.isNotBlank(adequacy)) {
+        if (adequacy.contains('Ramal CC') && vs.DcBranchCost__c != null) {
+          clientTotalCost += vs.DcBranchCost__c;
+        }
+        if (adequacy.contains('Ramal CA') && vs.AcBranchCost__c != null) {
+          clientTotalCost += vs.AcBranchCost__c;
+        }
+        if (adequacy.contains('Adequação Padrão') && vs.StandardAdequacyCost__c != null) {
+          clientTotalCost += vs.StandardAdequacyCost__c;
+        }
+        if (adequacy.contains('Cobertura') && vs.CoberturaCost__c != null) {
+          clientTotalCost += vs.CoberturaCost__c;
+        }
+        if (adequacy.contains('Laudo Estrutural') && vs.StruturalReport__c != null) {
+          clientTotalCost += vs.StruturalReport__c;
+        }
+        if (adequacy.contains('Outros Custos') && vs.OtherCosts__c != null) {
+          clientTotalCost += vs.OtherCosts__c;
+        }
+        if (adequacy.contains('Custos Adicionais') && vs.AdditionalCost__c != null) {
+          clientTotalCost += vs.AdditionalCost__c;
+        }
+        if (adequacy.contains('Visita Técnica') && vs.TechnicalVisitCost__c != null) {
+          clientTotalCost += vs.TechnicalVisitCost__c;
+        }
+      }
+
+      if (clientTotalCost > 0) {
+        opp.DescontoUFV__c = null;
+      }
+    }
+  }
+
   public static void createRequiredFieldsReminderTasks(
     List<Opportunity> newList,
     Map<Id, Opportunity> oldMap
@@ -3143,6 +3232,9 @@ public class OpportunityBO {
       }
     }
 
+    Boolean hasIgnorarValidacao = Schema.sObjectType.Task.fields.getMap()
+      .containsKey('IgnorarValidacao__c');
+
     for (Task task : TaskDAO.findOpenTasksByWhatIds(recordIdsToCloseTasks)) {
       task.Status = TaskUtils.STATUS_CONCLUIDO;
       task.Description = appendAutomationNote(
@@ -3150,6 +3242,9 @@ public class OpportunityBO {
         AUTOMATION_NOTE,
         32000
       );
+      if (hasIgnorarValidacao) {
+        task.put('IgnorarValidacao__c', true);
+      }
       tasksToUpdate.add(task);
 
       if (task.OwnerId != null) {

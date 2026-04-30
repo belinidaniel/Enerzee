@@ -219,6 +219,9 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentInstanceProperties>
+                    <name>recordTypeFilter</name>
+                </componentInstanceProperties>
                 <componentName>clickSignTemplateButton</componentName>
                 <identifier>c_clickSignTemplateButton</identifier>
                 <visibilityRule>

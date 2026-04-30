@@ -486,6 +486,25 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>TipoErroIntegracaoSAP__c</picklist>
+        <values>
+            <fullName>Dados</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Disponibilidade_SAP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Outros</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Permissao</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>paymentMethod__c</picklist>
         <values>
             <fullName>Aguardando Pagamento</fullName>

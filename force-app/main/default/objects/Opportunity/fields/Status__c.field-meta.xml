@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Status__c</fullName>
     <label>Status</label>
@@ -172,17 +172,14 @@
             <controllingFieldValue>Contrato</controllingFieldValue>
             <controllingFieldValue>Validação</controllingFieldValue>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
-            <controllingFieldValue
-      >Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Parecer de acesso</controllingFieldValue>
             <controllingFieldValue>Equipamento</controllingFieldValue>
             <controllingFieldValue>Finalizado</controllingFieldValue>
             <controllingFieldValue>Ganho fechado</controllingFieldValue>
             <controllingFieldValue>Fechado Perdido</controllingFieldValue>
-            <controllingFieldValue
-      >Apresentação Comercial</controllingFieldValue>
-            <controllingFieldValue
-      >Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
             <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Aguardando aceite</controllingFieldValue>
             <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
@@ -193,17 +190,14 @@
             <controllingFieldValue>Contrato</controllingFieldValue>
             <controllingFieldValue>Validação</controllingFieldValue>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
-            <controllingFieldValue
-      >Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Parecer de acesso</controllingFieldValue>
             <controllingFieldValue>Equipamento</controllingFieldValue>
             <controllingFieldValue>Finalizado</controllingFieldValue>
             <controllingFieldValue>Ganho fechado</controllingFieldValue>
             <controllingFieldValue>Fechado Perdido</controllingFieldValue>
-            <controllingFieldValue
-      >Apresentação Comercial</controllingFieldValue>
-            <controllingFieldValue
-      >Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
             <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Aguardando aceite</controllingFieldValue>
             <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
@@ -214,17 +208,14 @@
             <controllingFieldValue>Contrato</controllingFieldValue>
             <controllingFieldValue>Validação</controllingFieldValue>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
-            <controllingFieldValue
-      >Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Parecer de acesso</controllingFieldValue>
             <controllingFieldValue>Equipamento</controllingFieldValue>
             <controllingFieldValue>Finalizado</controllingFieldValue>
             <controllingFieldValue>Ganho fechado</controllingFieldValue>
             <controllingFieldValue>Fechado Perdido</controllingFieldValue>
-            <controllingFieldValue
-      >Apresentação Comercial</controllingFieldValue>
-            <controllingFieldValue
-      >Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
             <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Aguardando aceite</controllingFieldValue>
             <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
@@ -235,17 +226,14 @@
             <controllingFieldValue>Contrato</controllingFieldValue>
             <controllingFieldValue>Validação</controllingFieldValue>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
-            <controllingFieldValue
-      >Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Parecer de acesso</controllingFieldValue>
             <controllingFieldValue>Equipamento</controllingFieldValue>
             <controllingFieldValue>Finalizado</controllingFieldValue>
             <controllingFieldValue>Ganho fechado</controllingFieldValue>
             <controllingFieldValue>Fechado Perdido</controllingFieldValue>
-            <controllingFieldValue
-      >Apresentação Comercial</controllingFieldValue>
-            <controllingFieldValue
-      >Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
             <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Aguardando aceite</controllingFieldValue>
             <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
@@ -256,17 +244,14 @@
             <controllingFieldValue>Contrato</controllingFieldValue>
             <controllingFieldValue>Validação</controllingFieldValue>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
-            <controllingFieldValue
-      >Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Parecer de acesso</controllingFieldValue>
             <controllingFieldValue>Equipamento</controllingFieldValue>
             <controllingFieldValue>Finalizado</controllingFieldValue>
             <controllingFieldValue>Ganho fechado</controllingFieldValue>
             <controllingFieldValue>Fechado Perdido</controllingFieldValue>
-            <controllingFieldValue
-      >Apresentação Comercial</controllingFieldValue>
-            <controllingFieldValue
-      >Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
             <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Aguardando aceite</controllingFieldValue>
             <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
@@ -277,17 +262,14 @@
             <controllingFieldValue>Contrato</controllingFieldValue>
             <controllingFieldValue>Validação</controllingFieldValue>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
-            <controllingFieldValue
-      >Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Parecer de acesso</controllingFieldValue>
             <controllingFieldValue>Equipamento</controllingFieldValue>
             <controllingFieldValue>Finalizado</controllingFieldValue>
             <controllingFieldValue>Ganho fechado</controllingFieldValue>
             <controllingFieldValue>Fechado Perdido</controllingFieldValue>
-            <controllingFieldValue
-      >Apresentação Comercial</controllingFieldValue>
-            <controllingFieldValue
-      >Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
             <controllingFieldValue>Instalação</controllingFieldValue>
             <controllingFieldValue>Aguardando aceite</controllingFieldValue>
             <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
@@ -304,24 +286,20 @@
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
-            <controllingFieldValue
-      >Análise de viabilidade</controllingFieldValue>
-            <controllingFieldValue
-      >Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
             <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
             <valueName>Aguardando Pagamento</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
-            <controllingFieldValue
-      >Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
             <valueName>Agendamento de Visita</valueName>
         </valueSettings>
         <valueSettings>
             <controllingFieldValue>Viabilidade Técnica</controllingFieldValue>
-            <controllingFieldValue
-      >Análise de viabilidade</controllingFieldValue>
+            <controllingFieldValue>Análise de viabilidade</controllingFieldValue>
             <controllingFieldValue>Viabilidade Tecnica</controllingFieldValue>
             <valueName>Estudo de Viabilidade</valueName>
         </valueSettings>
@@ -351,18 +329,15 @@
             <valueName>Perdido</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue
-      >Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
             <valueName>Em Agendamento</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue
-      >Apresentação Comercial</controllingFieldValue>
+            <controllingFieldValue>Apresentação Comercial</controllingFieldValue>
             <valueName>Agendado</valueName>
         </valueSettings>
         <valueSettings>
-            <controllingFieldValue
-      >Confirmação de pagamento sinal</controllingFieldValue>
+            <controllingFieldValue>Confirmação de pagamento sinal</controllingFieldValue>
             <valueName>Pago</valueName>
         </valueSettings>
         <valueSettings>

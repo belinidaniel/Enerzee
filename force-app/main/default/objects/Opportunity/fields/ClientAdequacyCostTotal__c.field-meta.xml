@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ClientAdequacyCostTotal__c</fullName>
-    <description
-  >Total de custos de adequação atribuídos ao cliente conforme estudo de viabilidade vinculado.</description>
+    <description>Total de custos de adequação atribuídos ao cliente conforme estudo de viabilidade vinculado.</description>
     <formula>IF(
         ISBLANK(MainViability__c),
         0,
@@ -20,8 +19,7 @@
         BLANKVALUE(MainViability__r.OtherCosts__c, 0), 0)
         )</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-    <inlineHelpText
-  >Total de custos de adequação atribuídos ao cliente conforme estudo de viabilidade vinculado.</inlineHelpText>
+    <inlineHelpText>Total de custos de adequação atribuídos ao cliente conforme estudo de viabilidade vinculado.</inlineHelpText>
     <label>Custo Total Adequação Cliente</label>
     <precision>18</precision>
     <required>false</required>

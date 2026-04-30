@@ -1,13 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-	<fullName>DataObraEmExecucao__c</fullName>
-	<description
-  >Data em que o Status da Instalação foi alterado para "Obra em execução". Populado automaticamente por Flow. Usado no indicador Tempo Médio de Execução de Instalações (Engenharia).</description>
-	<externalId>false</externalId>
-	<label>Data Início Obra em Execução</label>
-	<required>false</required>
-	<trackFeedHistory>false</trackFeedHistory>
-	<trackHistory>false</trackHistory>
-	<trackTrending>false</trackTrending>
-	<type>Date</type>
+    <fullName>DataObraEmExecucao__c</fullName>
+    <description>Data em que o Status da Instalação foi alterado para &quot;Obra em execução&quot;. Populado automaticamente por Flow. Usado no indicador Tempo Médio de Execução de Instalações (Engenharia).</description>
+    <label>Data Início Obra em Execução</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
 </CustomField>

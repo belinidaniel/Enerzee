@@ -322,14 +322,14 @@
             <assignToReference>messagingUserIds</assignToReference>
             <operator>Add</operator>
             <value>
-                <elementReference>Get_MessagingUser_By_Phone.Id</elementReference>
+                <elementReference>Create_message_user</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
             <assignToReference>messagingUserId</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Get_MessagingUser_By_Phone.Id</elementReference>
+                <elementReference>Create_message_user</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -493,7 +493,7 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Get_MessagingUser_By_Phone</targetReference>
+                <targetReference>Create_message_user</targetReference>
             </connector>
             <label>Não</label>
         </rules>
@@ -525,6 +525,41 @@
         </value>
     </processMetadataValues>
     <processType>Flow</processType>
+    <recordCreates>
+        <name>Create_message_user</name>
+        <label>Create message user</label>
+        <locationX>578</locationX>
+        <locationY>674</locationY>
+        <connector>
+            <targetReference>Assign_MessagingUserId_by_phone</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>MessageType</field>
+            <value>
+                <stringValue>WhatsApp</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>MessagingChannelId</field>
+            <value>
+                <elementReference>Obter_Messaging_Channel.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>MessagingPlatformKey</field>
+            <value>
+                <elementReference>Get_Opportunity.ConsultorOportunidade__r.Telefone_Formatado__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Name</field>
+            <value>
+                <elementReference>Get_Opportunity.ConsultorOportunidade__r.Name</elementReference>
+            </value>
+        </inputAssignments>
+        <object>MessagingEndUser</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
     <recordLookups>
         <name>Get_Last_Messaging_Session</name>
         <label>Get Last Messaging Session</label>
@@ -556,34 +591,6 @@
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Messaging_User_Encontrado</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Consultor__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>Get_Opportunity.ConsultorOportunidade__c</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>MessagingChannelId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>Obter_Messaging_Channel.Id</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>MessagingEndUser</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
-        <name>Get_MessagingUser_By_Phone</name>
-        <label>Get MessagingUser By Phone</label>
-        <locationX>578</locationX>
-        <locationY>674</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Assign_MessagingUserId_by_phone</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -837,7 +844,7 @@
             <targetReference>Get_Opportunity</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <variables>
         <name>consultantName</name>
         <dataType>String</dataType>

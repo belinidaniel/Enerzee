@@ -285,6 +285,16 @@ public with sharing class ProposalFileService {
       byFlag.size()
     );
     for (ContentVersion version : byFlag) {
+      if (
+        version.Title != null &&
+        version.Title.containsIgnoreCase('Clicksign')
+      ) {
+        System.debug(
+          '[ProposalFileService.deleteStoredProposals] SKIP Clicksign (byFlag): Title=' +
+          version.Title
+        );
+        continue;
+      }
       System.debug(
         '[ProposalFileService.deleteStoredProposals] byFlag hit: Title=' +
           version.Title +
@@ -332,6 +342,16 @@ public with sharing class ProposalFileService {
           byPrefix.size()
         );
         for (ContentVersion version : byPrefix) {
+          if (
+            version.Title != null &&
+            version.Title.containsIgnoreCase('Clicksign')
+          ) {
+            System.debug(
+              '[ProposalFileService.deleteStoredProposals] SKIP Clicksign: Title=' +
+              version.Title
+            );
+            continue;
+          }
           System.debug(
             '[ProposalFileService.deleteStoredProposals] byPrefix hit: Title=' +
               version.Title +

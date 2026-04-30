@@ -3,6 +3,7 @@
     <fullName>Estado__c</fullName>
     <label>UF da Concessionária de Energia</label>
     <required>true</required>
+    <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>

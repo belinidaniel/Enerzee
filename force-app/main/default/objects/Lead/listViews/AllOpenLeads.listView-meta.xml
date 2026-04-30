@@ -13,6 +13,9 @@
     <columns>Lb065_ProdutoInteresse__c</columns>
     <columns>LEAD.RATING</columns>
     <columns>LEAD.RECORDTYPE</columns>
+    <columns>Nome_da_Campanha_Meta__c</columns>
+    <columns>Nome_do_Conjunto_de_An_ncios_Meta__c</columns>
+    <columns>Nome_do_An_ncio_Meta__c</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>LEAD.STATUS</field>

@@ -8,6 +8,7 @@
     <columns>CASES.PRIORITY</columns>
     <columns>CASES.CREATED_DATE</columns>
     <columns>CORE.USERS.ALIAS</columns>
-    <filterScope>Everything</filterScope>
+    <filterScope>Queue</filterScope>
     <label>Todos os Casos Qualificação Integradores</label>
+    <queue>QualificacaoDeIntegradores</queue>
 </ListView>

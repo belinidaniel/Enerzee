@@ -80,11 +80,19 @@ public with sharing class ProposalGenerationService {
     );
 
     // Adiciona a seção "Viabilidade" dinamicamente quando TextStudy__c estiver preenchido
+    // LongTextArea em relacionamento pai não é suportado em SOQL — query separada obrigatória
     String viabilityText = null;
-    if (dataOpportunity.MainViability__r != null) {
-      viabilityText = (String) dataOpportunity.MainViability__r.get(
-        'TextStudy__c'
-      );
+    Id mainViabilityIdForText = (Id) dataOpportunity.get('MainViability__c');
+    if (mainViabilityIdForText != null) {
+      List<ViabilityStudy__c> vsRecords = [
+        SELECT TextStudy__c
+        FROM ViabilityStudy__c
+        WHERE Id = :mainViabilityIdForText
+        LIMIT 1
+      ];
+      if (!vsRecords.isEmpty()) {
+        viabilityText = vsRecords[0].TextStudy__c;
+      }
     }
     if (String.isNotBlank(viabilityText)) {
       sectionsToShow.add('Viabilidade');
@@ -98,13 +106,16 @@ public with sharing class ProposalGenerationService {
       templateVersion.Id
     );
 
-    // Extrai imagens do Rich Text e injeta como tags de imagem (_img)
+    // Injeta TextStudy__c e imagens do Rich Text (LongTextArea não é resolvível via sourcePath em relacionamento pai)
+    // Normaliza line endings: remove \r para evitar _x000D_ no XML mantendo quebras de linha (\n)
     if (String.isNotBlank(viabilityText)) {
+      viabilityText = viabilityText.replace('\r\n', '\n').replace('\r', '\n');
+      payload.tags.put('{{estudoViabilidade__c}}', viabilityText);
       String imagesBase64 = extractImagesFromRichText(viabilityText);
       if (String.isNotBlank(imagesBase64)) {
         payload.tags.put('{{estudoViabilidade_img__c}}', imagesBase64);
-        payload.tagsJson = JSON.serialize(payload.tags);
       }
+      payload.tagsJson = JSON.serialize(payload.tags);
     }
 
     // Busca imagem "Layout" anexada à ViabilityStudy__c principal para enviar à API

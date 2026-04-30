@@ -4,6 +4,5 @@
     <defaultValue>true</defaultValue>
     <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Ativo</label>
-    <required>false</required>
     <type>Checkbox</type>
 </CustomField>

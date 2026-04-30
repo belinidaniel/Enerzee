@@ -496,23 +496,25 @@ public without sharing class PaymentSimulationBO {
       return null;
     }
 
-    Decimal installmentWithoutInterest = principalValue / installments;
-    Decimal interestPerInstallment =
-      installmentWithoutInterest * (percentage / 100);
-    Decimal installmentWithInterest =
-      installmentWithoutInterest + interestPerInstallment;
-    Decimal totalWithInterest = installmentWithInterest * installments;
-
+    // Antecipação entra como custo adicional sobre o principal (CET)
     Decimal anticipationPercent = anticipationRate == null
       ? 0
       : normalizeInterestRatePercent(anticipationRate);
     Decimal anticipationAmount = anticipationPercent == null
       ? 0
       : principalValue * (anticipationPercent / 100);
+    Decimal pv = principalValue + anticipationAmount;
 
-    Decimal installmentAmount = ((totalWithInterest + anticipationAmount) /
-      installments)
-      .setScale(2, RoundingMode.HALF_UP);
+    Decimal installmentAmount;
+    if (percentage == 0) {
+      installmentAmount = (pv / installments).setScale(2, RoundingMode.HALF_UP);
+    } else {
+      // Tabela Price: PMT = PV * i / (1 - (1+i)^-n)
+      Decimal i = percentage / 100;
+      Decimal factor = 1 - Math.pow(1 + i.doubleValue(), -installments);
+      installmentAmount = (pv * i / factor).setScale(2, RoundingMode.HALF_UP);
+    }
+
     return installmentAmount < CARD_MIN_INSTALLMENT_AMOUNT
       ? null
       : installmentAmount;

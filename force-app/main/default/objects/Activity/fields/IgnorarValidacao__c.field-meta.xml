@@ -1,12 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>IgnorarValidacao__c</fullName>
     <defaultValue>false</defaultValue>
-    <description
-  >Indica se esta tarefa deve ser ignorada na validação de bloqueio de avanço de status (ex: tarefas paralelas ao fluxo de viabilidade).</description>
-    <externalId>false</externalId>
+    <description>Indica se esta tarefa deve ser ignorada na validação de bloqueio de avanço de status (ex: tarefas paralelas ao fluxo de viabilidade).</description>
     <label>Ignorar Validação de Bloqueio</label>
-    <trackHistory>false</trackHistory>
-    <trackTrending>false</trackTrending>
     <type>Checkbox</type>
 </CustomField>

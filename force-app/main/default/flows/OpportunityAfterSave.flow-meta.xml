@@ -158,6 +158,12 @@
             </value>
         </inputAssignments>
         <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>ObterDadosConta.OwnerId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <field>Phone</field>
             <value>
                 <elementReference>ObterDadosConta.Phone</elementReference>

@@ -1,90 +1,89 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
-	<apiVersion>62.0</apiVersion>
-	<decisions>
-		<name>Projeto_Protocolado</name>
-		<label>Projeto Protocolado?</label>
-		<locationX>182</locationX>
-		<locationY>269</locationY>
-		<defaultConnectorLabel>Não</defaultConnectorLabel>
-		<rules>
-			<name>Sim_Projeto_Protocolado</name>
-			<conditionLogic>and</conditionLogic>
-			<conditions>
-				<leftValueReference>$Record.Status__c</leftValueReference>
-				<operator>EqualTo</operator>
-				<rightValue>
-					<stringValue>Projeto protocolado</stringValue>
-				</rightValue>
-			</conditions>
-			<conditions>
-				<leftValueReference>$Record__Prior.Status__c</leftValueReference>
-				<operator>NotEqualTo</operator>
-				<rightValue>
-					<stringValue>Projeto protocolado</stringValue>
-				</rightValue>
-			</conditions>
-			<conditions>
-				<leftValueReference>$Record.DataProtocoloProjeto__c</leftValueReference>
-				<operator>IsNull</operator>
-				<rightValue>
-					<booleanValue>true</booleanValue>
-				</rightValue>
-			</conditions>
-			<connector>
-				<targetReference>Setar_DataProtocoloProjeto</targetReference>
-			</connector>
-			<label>Sim</label>
-		</rules>
-	</decisions>
-	<description
-  >Before-save Flow em Projeto__c. Quando o Status muda para "Projeto protocolado", registra a data atual em DataProtocoloProjeto__c. Usado no indicador Tempo Médio de Aprovação (Dias Protocolo → Aprovação) no painel de Engenharia.</description>
-	<interviewLabel
-  >Projeto — Stamp Datas Engenharia {!$Flow.CurrentDateTime}</interviewLabel>
-	<label>Projeto — Stamp Datas Engenharia</label>
-	<processMetadataValues>
-		<name>BuilderType</name>
-		<value>
-			<stringValue>LightningFlowBuilder</stringValue>
-		</value>
-	</processMetadataValues>
-	<processMetadataValues>
-		<name>CanvasMode</name>
-		<value>
-			<stringValue>AUTO_LAYOUT_CANVAS</stringValue>
-		</value>
-	</processMetadataValues>
-	<processType>AutoLaunchedFlow</processType>
-	<recordUpdates>
-		<name>Setar_DataProtocoloProjeto</name>
-		<label>Setar DataProtocoloProjeto</label>
-		<locationX>50</locationX>
-		<locationY>377</locationY>
-		<inputAssignments>
-			<field>DataProtocoloProjeto__c</field>
-			<value>
-				<elementReference>$Flow.CurrentDate</elementReference>
-			</value>
-		</inputAssignments>
-		<inputReference>$Record</inputReference>
-	</recordUpdates>
-	<start>
-		<locationX>56</locationX>
-		<locationY>0</locationY>
-		<connector>
-			<targetReference>Projeto_Protocolado</targetReference>
-		</connector>
-		<filterLogic>and</filterLogic>
-		<filters>
-			<field>Status__c</field>
-			<operator>EqualTo</operator>
-			<value>
-				<stringValue>Projeto protocolado</stringValue>
-			</value>
-		</filters>
-		<object>Projeto__c</object>
-		<recordTriggerType>Update</recordTriggerType>
-		<triggerType>RecordBeforeSave</triggerType>
-	</start>
-	<status>Active</status>
+    <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>Projeto_Protocolado</name>
+        <label>Projeto Protocolado?</label>
+        <locationX>182</locationX>
+        <locationY>269</locationY>
+        <defaultConnectorLabel>Não</defaultConnectorLabel>
+        <rules>
+            <name>Sim_Projeto_Protocolado</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Projeto protocolado</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Projeto protocolado</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.DataProtocoloProjeto__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Setar_DataProtocoloProjeto</targetReference>
+            </connector>
+            <label>Sim</label>
+        </rules>
+    </decisions>
+    <description>Before-save Flow em Projeto__c. Quando o Status muda para &quot;Projeto protocolado&quot;, registra a data atual em DataProtocoloProjeto__c. Usado no indicador Tempo Médio de Aprovação (Dias Protocolo → Aprovação) no painel de Engenharia.</description>
+    <interviewLabel>Projeto — Stamp Datas Engenharia {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Projeto — Stamp Datas Engenharia</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Setar_DataProtocoloProjeto</name>
+        <label>Setar DataProtocoloProjeto</label>
+        <locationX>50</locationX>
+        <locationY>377</locationY>
+        <inputAssignments>
+            <field>DataProtocoloProjeto__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Projeto_Protocolado</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Projeto protocolado</stringValue>
+            </value>
+        </filters>
+        <object>Projeto__c</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
 </Flow>

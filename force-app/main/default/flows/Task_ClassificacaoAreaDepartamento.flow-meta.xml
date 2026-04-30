@@ -1,183 +1,86 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>61.0</apiVersion>
-    <description>Classifica Area e Departamento da Task.
-AREA: Role pai do usuario responsavel (OQ-01 default).
-DEPARTAMENTO: campo padrao User.Department do usuario responsavel (obtido via Get Records).
-Buckets de excecao: sem Role = "Nao Classificada". Department vazio = "Departamento nao informado".</description>
-    <interviewLabel
-  >Task Classificação Área e Departamento {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>Task Classificação Área e Departamento</label>
-    <processType>AutoLaunchedFlow</processType>
-    <status>Active</status>
-
-    <!-- ==================== VARIABLES ==================== -->
-    <variables>
-        <name>varOwnerUser</name>
-        <dataType>SObject</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>false</isOutput>
-        <objectType>User</objectType>
-    </variables>
-    <variables>
-        <name>varOwnerRole</name>
-        <dataType>SObject</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>false</isOutput>
-        <objectType>UserRole</objectType>
-    </variables>
-    <variables>
-        <name>varParentRole</name>
-        <dataType>SObject</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>false</isOutput>
-        <objectType>UserRole</objectType>
-    </variables>
-
-    <!-- ==================== RECORD LOOKUPS (agrupados) ==================== -->
-
-    <!-- 1: Busca User para capturar Department e UserRoleId -->
-    <recordLookups>
-        <name>getOwnerUser</name>
-        <label>Get Owner User</label>
-        <locationX>176</locationX>
-        <locationY>120</locationY>
-        <assignNullValuesIfNoRecordsFound
-    >true</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>getOwnerRole</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Id</field>
-            <operator>EqualTo</operator>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>assignAreaFromParent</name>
+        <label>Area = Role Pai</label>
+        <locationX>143</locationX>
+        <locationY>816</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Area_Classificacao__c</assignToReference>
+            <operator>Assign</operator>
             <value>
-                <elementReference>$Record.OwnerId</elementReference>
+                <elementReference>varParentRole.Name</elementReference>
             </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>User</object>
-        <outputReference>varOwnerUser</outputReference>
-        <queriedFields>Id</queriedFields>
-        <queriedFields>Department</queriedFields>
-        <queriedFields>UserRoleId</queriedFields>
-    </recordLookups>
-
-    <!-- 2: Busca Role do usuario (para Area) -->
-    <recordLookups>
-        <name>getOwnerRole</name>
-        <label>Get Owner Role (para Área)</label>
-        <locationX>176</locationX>
-        <locationY>240</locationY>
-        <assignNullValuesIfNoRecordsFound
-    >true</assignNullValuesIfNoRecordsFound>
+        </assignmentItems>
         <connector>
-            <targetReference>decisionOwnerHasRole</targetReference>
+            <targetReference>decisionDeptBlank</targetReference>
         </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Id</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>varOwnerUser.UserRoleId</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>UserRole</object>
-        <outputReference>varOwnerRole</outputReference>
-        <queriedFields>Id</queriedFields>
-        <queriedFields>Name</queriedFields>
-        <queriedFields>ParentRoleId</queriedFields>
-    </recordLookups>
-
-    <!-- 3: Busca Role pai (nivel de Area) -->
-    <recordLookups>
-        <name>getParentRole</name>
-        <label>Get Parent Role (Área)</label>
-        <locationX>0</locationX>
-        <locationY>480</locationY>
-        <assignNullValuesIfNoRecordsFound
-    >true</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>decisionParentRoleFound</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Id</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>varOwnerRole.ParentRoleId</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>UserRole</object>
-        <outputReference>varParentRole</outputReference>
-        <queriedFields>Id</queriedFields>
-        <queriedFields>Name</queriedFields>
-    </recordLookups>
-
-    <!-- ==================== DECISIONS (agrupados) ==================== -->
-
-    <decisions>
-        <name>decisionOwnerHasRole</name>
-        <label>Owner Has Role?</label>
-        <locationX>176</locationX>
-        <locationY>360</locationY>
-        <defaultConnector>
-            <targetReference>assignAreaNoRole</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Sem Role</defaultConnectorLabel>
-        <rules>
-            <name>outcomeOwnerHasRole</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>varOwnerRole.Id</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>getParentRole</targetReference>
-            </connector>
-            <label>Tem Role</label>
-        </rules>
-    </decisions>
-
-    <decisions>
-        <name>decisionParentRoleFound</name>
-        <label>Parent Role Found?</label>
-        <locationX>0</locationX>
+    </assignments>
+    <assignments>
+        <name>assignAreaNoRole</name>
+        <label>Area = Não Classificada</label>
+        <locationX>671</locationX>
         <locationY>600</locationY>
-        <defaultConnector>
-            <targetReference>assignAreaTopLevel</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Sem Role Pai</defaultConnectorLabel>
-        <rules>
-            <name>outcomeParentFound</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>varParentRole.Id</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>assignAreaFromParent</targetReference>
-            </connector>
-            <label>Tem Role Pai</label>
-        </rules>
-    </decisions>
-
+        <assignmentItems>
+            <assignToReference>$Record.Area_Classificacao__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Não Classificada</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>decisionDeptBlank</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>assignAreaTopLevel</name>
+        <label>Area = Role Top-Level</label>
+        <locationX>407</locationX>
+        <locationY>816</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Area_Classificacao__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varOwnerRole.Name</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>decisionDeptBlank</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>assignDeptFallback</name>
+        <label>Departamento = Não informado</label>
+        <locationX>341</locationX>
+        <locationY>1200</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Departamento_Classificacao__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Departamento não informado</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>assignDeptFromOwner</name>
+        <label>Departamento = User.Department</label>
+        <locationX>605</locationX>
+        <locationY>1200</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Departamento_Classificacao__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varOwnerUser.Department</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
     <decisions>
         <name>decisionDeptBlank</name>
         <label>User.Department está vazio?</label>
-        <locationX>176</locationX>
-        <locationY>840</locationY>
+        <locationX>473</locationX>
+        <locationY>1092</locationY>
         <defaultConnector>
             <targetReference>assignDeptFromOwner</targetReference>
         </defaultConnector>
@@ -198,97 +101,147 @@ Buckets de excecao: sem Role = "Nao Classificada". Department vazio = "Departame
             <label>Department Vazio</label>
         </rules>
     </decisions>
-
-    <!-- ==================== ASSIGNMENTS (agrupados) ==================== -->
-
-    <assignments>
-        <name>assignAreaFromParent</name>
-        <label>Area = Role Pai</label>
-        <locationX>0</locationX>
-        <locationY>720</locationY>
-        <assignmentItems>
-            <assignToReference>$Record.Area_Classificacao__c</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>varParentRole.Name</elementReference>
-            </value>
-        </assignmentItems>
+    <decisions>
+        <name>decisionOwnerHasRole</name>
+        <label>Owner Has Role?</label>
+        <locationX>473</locationX>
+        <locationY>492</locationY>
+        <defaultConnector>
+            <targetReference>assignAreaNoRole</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Sem Role</defaultConnectorLabel>
+        <rules>
+            <name>outcomeOwnerHasRole</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varOwnerRole.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>getParentRole</targetReference>
+            </connector>
+            <label>Tem Role</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>decisionParentRoleFound</name>
+        <label>Parent Role Found?</label>
+        <locationX>275</locationX>
+        <locationY>708</locationY>
+        <defaultConnector>
+            <targetReference>assignAreaTopLevel</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Sem Role Pai</defaultConnectorLabel>
+        <rules>
+            <name>outcomeParentFound</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varParentRole.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>assignAreaFromParent</targetReference>
+            </connector>
+            <label>Tem Role Pai</label>
+        </rules>
+    </decisions>
+    <description>Classifica Area e Departamento da Task.
+AREA: Role pai do usuario responsavel (OQ-01 default).
+DEPARTAMENTO: campo padrao User.Department do usuario responsavel (obtido via Get Records).
+Buckets de excecao: sem Role = &quot;Nao Classificada&quot;. Department vazio = &quot;Departamento nao informado&quot;.</description>
+    <environments>Default</environments>
+    <interviewLabel>Task Classificação Área e Departamento {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Task Classificação Área e Departamento</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>getOwnerRole</name>
+        <label>Get Owner Role (para Área)</label>
+        <locationX>473</locationX>
+        <locationY>384</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>decisionDeptBlank</targetReference>
+            <targetReference>decisionOwnerHasRole</targetReference>
         </connector>
-    </assignments>
-
-    <assignments>
-        <name>assignAreaTopLevel</name>
-        <label>Area = Role Top-Level</label>
-        <locationX>176</locationX>
-        <locationY>720</locationY>
-        <assignmentItems>
-            <assignToReference>$Record.Area_Classificacao__c</assignToReference>
-            <operator>Assign</operator>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
             <value>
-                <elementReference>varOwnerRole.Name</elementReference>
+                <elementReference>varOwnerUser.UserRoleId</elementReference>
             </value>
-        </assignmentItems>
+        </filters>
+        <object>UserRole</object>
+        <outputReference>varOwnerRole</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <queriedFields>ParentRoleId</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <name>getOwnerUser</name>
+        <label>Get Owner User</label>
+        <locationX>473</locationX>
+        <locationY>276</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>decisionDeptBlank</targetReference>
+            <targetReference>getOwnerRole</targetReference>
         </connector>
-    </assignments>
-
-    <assignments>
-        <name>assignAreaNoRole</name>
-        <label>Area = Não Classificada</label>
-        <locationX>352</locationX>
-        <locationY>480</locationY>
-        <assignmentItems>
-            <assignToReference>$Record.Area_Classificacao__c</assignToReference>
-            <operator>Assign</operator>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
             <value>
-                <stringValue>Não Classificada</stringValue>
+                <elementReference>$Record.OwnerId</elementReference>
             </value>
-        </assignmentItems>
+        </filters>
+        <object>User</object>
+        <outputReference>varOwnerUser</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Department</queriedFields>
+        <queriedFields>UserRoleId</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <name>getParentRole</name>
+        <label>Get Parent Role (Área)</label>
+        <locationX>275</locationX>
+        <locationY>600</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>decisionDeptBlank</targetReference>
+            <targetReference>decisionParentRoleFound</targetReference>
         </connector>
-    </assignments>
-
-    <assignments>
-        <name>assignDeptFromOwner</name>
-        <label>Departamento = User.Department</label>
-        <locationX>0</locationX>
-        <locationY>960</locationY>
-        <assignmentItems>
-            <assignToReference
-      >$Record.Departamento_Classificacao__c</assignToReference>
-            <operator>Assign</operator>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
             <value>
-                <elementReference>varOwnerUser.Department</elementReference>
+                <elementReference>varOwnerRole.ParentRoleId</elementReference>
             </value>
-        </assignmentItems>
-    </assignments>
-
-    <assignments>
-        <name>assignDeptFallback</name>
-        <label>Departamento = Não informado</label>
-        <locationX>352</locationX>
-        <locationY>960</locationY>
-        <assignmentItems>
-            <assignToReference
-      >$Record.Departamento_Classificacao__c</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <stringValue>Departamento não informado</stringValue>
-            </value>
-        </assignmentItems>
-    </assignments>
-
-    <!-- ==================== START ==================== -->
+        </filters>
+        <object>UserRole</object>
+        <outputReference>varParentRole</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+    </recordLookups>
     <start>
-        <locationX>176</locationX>
+        <locationX>50</locationX>
         <locationY>0</locationY>
-        <connector>
-            <targetReference>getOwnerUser</targetReference>
-        </connector>
         <filterLogic>or</filterLogic>
         <filters>
             <field>OwnerId</field>
@@ -297,16 +250,44 @@ Buckets de excecao: sem Role = "Nao Classificada". Department vazio = "Departame
                 <booleanValue>true</booleanValue>
             </value>
         </filters>
-        <filters>
-            <field>Area_Classificacao__c</field>
-            <operator>IsNull</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
         <object>Task</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
-        <triggerType>RecordBeforeSave</triggerType>
+        <scheduledPaths>
+            <name>X1</name>
+            <connector>
+                <targetReference>getOwnerUser</targetReference>
+            </connector>
+            <label>1 minute after</label>
+            <offsetNumber>1</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <recordField>LastModifiedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
     </start>
-
+    <status>InvalidDraft</status>
+    <variables>
+        <name>varOwnerRole</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>UserRole</objectType>
+    </variables>
+    <variables>
+        <name>varOwnerUser</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>User</objectType>
+    </variables>
+    <variables>
+        <name>varParentRole</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>UserRole</objectType>
+    </variables>
 </Flow>

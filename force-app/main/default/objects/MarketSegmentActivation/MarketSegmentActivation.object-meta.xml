@@ -37,11 +37,15 @@
         <customTabListAdditionalFields>ActivationTarget</customTabListAdditionalFields>
         <customTabListAdditionalFields>ActivationStatus</customTabListAdditionalFields>
         <customTabListAdditionalFields>ActivationObjectName</customTabListAdditionalFields>
+        <customTabListAdditionalFields>ActivationFlowType</customTabListAdditionalFields>
+        <customTabListAdditionalFields>PlatformName</customTabListAdditionalFields>
         <searchResultsAdditionalFields>DataSpace</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>MarketSegment</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>ActivationTarget</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>ActivationStatus</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>ActivationObjectName</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>ActivationFlowType</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>PlatformName</searchResultsAdditionalFields>
     </searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

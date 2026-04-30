@@ -1,90 +1,89 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
-	<apiVersion>62.0</apiVersion>
-	<decisions>
-		<name>Viabilidade_Finalizada</name>
-		<label>Viabilidade Finalizada?</label>
-		<locationX>182</locationX>
-		<locationY>269</locationY>
-		<defaultConnectorLabel>Não</defaultConnectorLabel>
-		<rules>
-			<name>Sim_Viabilidade_Finalizada</name>
-			<conditionLogic>and</conditionLogic>
-			<conditions>
-				<leftValueReference>$Record.StatusFeasibility__c</leftValueReference>
-				<operator>EqualTo</operator>
-				<rightValue>
-					<stringValue>Viabilidade Finalizada</stringValue>
-				</rightValue>
-			</conditions>
-			<conditions>
-				<leftValueReference>$Record__Prior.StatusFeasibility__c</leftValueReference>
-				<operator>NotEqualTo</operator>
-				<rightValue>
-					<stringValue>Viabilidade Finalizada</stringValue>
-				</rightValue>
-			</conditions>
-			<conditions>
-				<leftValueReference>$Record.DataConclusaoViabilidade__c</leftValueReference>
-				<operator>IsNull</operator>
-				<rightValue>
-					<booleanValue>true</booleanValue>
-				</rightValue>
-			</conditions>
-			<connector>
-				<targetReference>Setar_DataConclusaoViabilidade</targetReference>
-			</connector>
-			<label>Sim</label>
-		</rules>
-	</decisions>
-	<description
-  >Before-save Flow em ViabilityStudy__c. Quando StatusFeasibility__c muda para "Viabilidade Finalizada", registra a data atual em DataConclusaoViabilidade__c. Usado no indicador Tempo Médio da Operação de Viabilidade (Engenharia).</description>
-	<interviewLabel
-  >ViabilityStudy — Stamp Datas Engenharia {!$Flow.CurrentDateTime}</interviewLabel>
-	<label>ViabilityStudy — Stamp Datas Engenharia</label>
-	<processMetadataValues>
-		<name>BuilderType</name>
-		<value>
-			<stringValue>LightningFlowBuilder</stringValue>
-		</value>
-	</processMetadataValues>
-	<processMetadataValues>
-		<name>CanvasMode</name>
-		<value>
-			<stringValue>AUTO_LAYOUT_CANVAS</stringValue>
-		</value>
-	</processMetadataValues>
-	<processType>AutoLaunchedFlow</processType>
-	<recordUpdates>
-		<name>Setar_DataConclusaoViabilidade</name>
-		<label>Setar DataConclusaoViabilidade</label>
-		<locationX>50</locationX>
-		<locationY>377</locationY>
-		<inputAssignments>
-			<field>DataConclusaoViabilidade__c</field>
-			<value>
-				<elementReference>$Flow.CurrentDate</elementReference>
-			</value>
-		</inputAssignments>
-		<inputReference>$Record</inputReference>
-	</recordUpdates>
-	<start>
-		<locationX>56</locationX>
-		<locationY>0</locationY>
-		<connector>
-			<targetReference>Viabilidade_Finalizada</targetReference>
-		</connector>
-		<filterLogic>and</filterLogic>
-		<filters>
-			<field>StatusFeasibility__c</field>
-			<operator>EqualTo</operator>
-			<value>
-				<stringValue>Viabilidade Finalizada</stringValue>
-			</value>
-		</filters>
-		<object>ViabilityStudy__c</object>
-		<recordTriggerType>Update</recordTriggerType>
-		<triggerType>RecordBeforeSave</triggerType>
-	</start>
-	<status>Active</status>
+    <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>Viabilidade_Finalizada</name>
+        <label>Viabilidade Finalizada?</label>
+        <locationX>182</locationX>
+        <locationY>269</locationY>
+        <defaultConnectorLabel>Não</defaultConnectorLabel>
+        <rules>
+            <name>Sim_Viabilidade_Finalizada</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.StatusFeasibility__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Viabilidade Finalizada</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.StatusFeasibility__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Viabilidade Finalizada</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.DataConclusaoViabilidade__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Setar_DataConclusaoViabilidade</targetReference>
+            </connector>
+            <label>Sim</label>
+        </rules>
+    </decisions>
+    <description>Before-save Flow em ViabilityStudy__c. Quando StatusFeasibility__c muda para &quot;Viabilidade Finalizada&quot;, registra a data atual em DataConclusaoViabilidade__c. Usado no indicador Tempo Médio da Operação de Viabilidade (Engenharia).</description>
+    <interviewLabel>ViabilityStudy — Stamp Datas Engenharia {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>ViabilityStudy — Stamp Datas Engenharia</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Setar_DataConclusaoViabilidade</name>
+        <label>Setar DataConclusaoViabilidade</label>
+        <locationX>50</locationX>
+        <locationY>377</locationY>
+        <inputAssignments>
+            <field>DataConclusaoViabilidade__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Viabilidade_Finalizada</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>StatusFeasibility__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Viabilidade Finalizada</stringValue>
+            </value>
+        </filters>
+        <object>ViabilityStudy__c</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
 </Flow>

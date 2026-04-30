@@ -869,7 +869,9 @@ private class ProposalEngineSupportTest {
         EconomiaMensalEstimada__c,
         TarifaComTributosB__c,
         GeracaoMensalEstimada__c,
-        ConsumoInformadoB__c
+        ConsumoInformadoB__c,
+        MainViability__c,
+        CreatedDate
       FROM Opportunity
       WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
       LIMIT 1
@@ -1015,13 +1017,15 @@ private class ProposalEngineSupportTest {
         EconomiaMensalEstimada__c,
         TarifaComTributosB__c,
         GeracaoMensalEstimada__c,
-        ConsumoInformadoB__c
+        ConsumoInformadoB__c,
+        MainViability__c,
+        CreatedDate
       FROM Opportunity
       WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
       LIMIT 1
     ];
     opportunityRecord.CustoMedioEnergia__c = 1000;
-    opportunityRecord.EconomiaMensalEstimada__c = 2500;
+    opportunityRecord.EconomiaMensalEstimada__c = 500;
     opportunityRecord.TarifaComTributosB__c = 0;
 
     insert new List<PaymentSimulation__c>{
@@ -1798,6 +1802,262 @@ private class ProposalEngineSupportTest {
     );
   }
 
+  @isTest
+  static void computedValueServiceCoversViabilityCostPaths() {
+    Opportunity opportunityRecord = [
+      SELECT Id, MainViability__c, CustoMedioEnergia__c, EconomiaMensalEstimada__c,
+             TarifaComTributosB__c, GeracaoMensalEstimada__c, ConsumoInformadoB__c,
+             CreatedDate, ValorTotalProposta__c, DescricaoBateria__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+
+    // Sem viabilidade — deve retornar vazio sem erro
+    Map<String, Object> valuesNoViability = ProposalComputedValueService.build(
+      opportunityRecord.Id,
+      opportunityRecord
+    );
+    Assert.isNotNull(
+      valuesNoViability,
+      'build deve retornar mapa mesmo sem viabilidade.'
+    );
+
+    // Com viabilidade que tem todos os custos preenchidos
+    ViabilityStudy__c viability = new ViabilityStudy__c(
+      Opportunity__c = opportunityRecord.Id,
+      AdequacyCostEnerzee__c = 'Ramal CC;Ramal CA;Adequação Padrão;Cobertura;Laudo Estrutural;Outros Custos',
+      AdequacyCostClient__c = 'Ramal CC',
+      DcBranchCost__c = 100,
+      AcBranchCost__c = 200,
+      StandardAdequacyCost__c = 300,
+      CoberturaCost__c = 400,
+      StruturalReport__c = 500,
+      OtherCosts__c = 600,
+      OtherCostsDescription__c = 'Custo personalizado',
+      AdditionalCost__c = 700
+    );
+    insert viability;
+
+    update new Opportunity(Id = opportunityRecord.Id, MainViability__c = viability.Id);
+
+    Opportunity oppWithViability = [
+      SELECT Id, MainViability__c, CustoMedioEnergia__c, EconomiaMensalEstimada__c,
+             TarifaComTributosB__c, GeracaoMensalEstimada__c, ConsumoInformadoB__c,
+             CreatedDate, ValorTotalProposta__c, DescricaoBateria__c
+      FROM Opportunity
+      WHERE Id = :opportunityRecord.Id
+    ];
+    oppWithViability.CustoMedioEnergia__c = 1000;
+    oppWithViability.EconomiaMensalEstimada__c = 800;
+    oppWithViability.GeracaoMensalEstimada__c = 500;
+    oppWithViability.ConsumoInformadoB__c = 600;
+
+    Map<String, Object> valuesWithViability = ProposalComputedValueService.build(
+      oppWithViability.Id,
+      oppWithViability
+    );
+
+    String custos = (String) valuesWithViability.get('Calculated.CustosViabilidade');
+    Assert.isTrue(
+      String.isNotBlank(custos),
+      'CustosViabilidade deve ser preenchido quando há viabilidade com custos.'
+    );
+    Assert.isTrue(
+      custos.contains('100'),
+      'Ramal CC deve aparecer com valor formatado.'
+    );
+    Assert.isTrue(
+      custos.contains('Custo personalizado'),
+      'OtherCostsDescription deve substituir o label padrão.'
+    );
+  }
+
+  @isTest
+  static void computedValueServiceCoversViabilityCostWithoutMainViability() {
+    Opportunity opportunityRecord = [
+      SELECT Id
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+
+    ViabilityStudy__c viability = new ViabilityStudy__c(
+      Opportunity__c = opportunityRecord.Id,
+      AdequacyCostEnerzee__c = 'Ramal CC',
+      DcBranchCost__c = 150
+    );
+    insert viability;
+
+    // Sem MainViability__c — cai no branch de busca por Opportunity__c
+    Opportunity opp = [
+      SELECT Id, MainViability__c, CreatedDate, ValorTotalProposta__c, DescricaoBateria__c,
+             CustoMedioEnergia__c, EconomiaMensalEstimada__c, TarifaComTributosB__c,
+             GeracaoMensalEstimada__c, ConsumoInformadoB__c
+      FROM Opportunity
+      WHERE Id = :opportunityRecord.Id
+    ];
+
+    Map<String, Object> values = ProposalComputedValueService.build(opp.Id, opp);
+    String custos = (String) values.get('Calculated.CustosViabilidade');
+    Assert.isTrue(
+      String.isNotBlank(custos),
+      'CustosViabilidade deve funcionar com fallback por Opportunity__c.'
+    );
+  }
+
+  @isTest
+  static void computedValueServiceCoversRental60xAndPixFallback() {
+    Opportunity opportunityRecord = [
+      SELECT Id
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    opportunityRecord.ValorTotalProdutos__c = 50000;
+    update opportunityRecord;
+
+    // Aluguel com exatamente 60 parcelas — deve ser selecionado diretamente
+    insert new List<PaymentSimulation__c>{
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Rental',
+        ProposalLabel__c = 'Aluguel',
+        InstallmentCount__c = 48,
+        InstallmentAmount__c = 800
+      ),
+      new PaymentSimulation__c(
+        Opportunity__c = opportunityRecord.Id,
+        PaymentType__c = 'Rental',
+        ProposalLabel__c = 'Aluguel',
+        InstallmentCount__c = 60,
+        InstallmentAmount__c = 700
+      )
+    };
+
+    Opportunity opp = [
+      SELECT Id, MainViability__c, CreatedDate, ValorTotalProposta__c, DescricaoBateria__c,
+             CustoMedioEnergia__c, EconomiaMensalEstimada__c, TarifaComTributosB__c,
+             GeracaoMensalEstimada__c, ConsumoInformadoB__c
+      FROM Opportunity
+      WHERE Id = :opportunityRecord.Id
+    ];
+
+    // Sem simulação selecionada (PIX) — fallback para ValorTotalProposta__c
+    Map<String, Object> values = ProposalComputedValueService.build(opp.Id, opp);
+
+    Assert.areEqual(
+      'PIX VIA LINK',
+      values.get('Calculated.formaPagamentoOutroSelecionado'),
+      'Sem simulação selecionada, deve cair no caminho PIX.'
+    );
+    Assert.isTrue(
+      String.valueOf(values.get('Calculated.ValorOutros')).contains('50.000'),
+      'Sem simulação selecionada, PIX deve usar ValorTotalProposta__c como fallback.'
+    );
+    Assert.areEqual(
+      700,
+      ((Decimal) values.get('SimulationSummary.Rental.InstallmentAmount1')).intValue(),
+      'Deve selecionar o aluguel de 60 parcelas exatas.'
+    );
+  }
+
+  @isTest
+  static void computedValueServiceCoversBateriaValues() {
+    Opportunity opportunityRecord = [
+      SELECT Id
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+
+    // Bateria via DescricaoBateria__c
+    opportunityRecord.DescricaoBateria__c = '- Bateria 10,5 kWh\n- Inclui instalação\n- Garantia 10 anos';
+    update opportunityRecord;
+
+    Opportunity opp = [
+      SELECT Id, MainViability__c, CreatedDate, ValorTotalProposta__c, DescricaoBateria__c,
+             CustoMedioEnergia__c, EconomiaMensalEstimada__c, TarifaComTributosB__c,
+             GeracaoMensalEstimada__c, ConsumoInformadoB__c
+      FROM Opportunity
+      WHERE Id = :opportunityRecord.Id
+    ];
+
+    Map<String, Object> values = ProposalComputedValueService.build(opp.Id, opp);
+
+    Assert.areEqual(
+      'Bateria 10,5 kWh',
+      values.get('Calculated.BateriaDescricao'),
+      'Deve remover o prefixo "- " e retornar a primeira linha.'
+    );
+    Assert.areEqual(
+      '10,5',
+      values.get('Calculated.bateriaKwh'),
+      'Deve extrair o valor de kWh da descrição.'
+    );
+    Assert.isTrue(
+      String.valueOf(values.get('Calculated.BateriaIncluso')).contains('Inclui instalação'),
+      'Deve capturar as linhas de inclusões.'
+    );
+  }
+
+  @isTest
+  static void computedValueServiceCoversBateriaFallbackToLineItem() {
+    Opportunity opportunityRecord = [
+      SELECT Id, AccountId
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+
+    // Sem DescricaoBateria__c — fallback para Product2.Description
+    String productCode = TestFactory.nextUniqueValue('BAT');
+    Product2 product = new Product2(
+      Name = 'Kit Bateria',
+      Description = '- Bateria 7,5 kWh\n- Inclui suporte',
+      IsActive = true,
+      ProductCode = productCode,
+      Id_Externo__c = productCode
+    );
+    insert product;
+
+    PricebookEntry pbe = new PricebookEntry(
+      Pricebook2Id = Test.getStandardPricebookId(),
+      Product2Id = product.Id,
+      UnitPrice = 10000,
+      IsActive = true
+    );
+    insert pbe;
+
+    insert new OpportunityLineItem(
+      OpportunityId = opportunityRecord.Id,
+      PricebookEntryId = pbe.Id,
+      Quantity = 1,
+      UnitPrice = 10000
+    );
+
+    Opportunity opp = [
+      SELECT Id, MainViability__c, CreatedDate, ValorTotalProposta__c, DescricaoBateria__c,
+             CustoMedioEnergia__c, EconomiaMensalEstimada__c, TarifaComTributosB__c,
+             GeracaoMensalEstimada__c, ConsumoInformadoB__c
+      FROM Opportunity
+      WHERE Id = :opportunityRecord.Id
+    ];
+
+    Map<String, Object> values = ProposalComputedValueService.build(opp.Id, opp);
+
+    Assert.areEqual(
+      'Bateria 7,5 kWh',
+      values.get('Calculated.BateriaDescricao'),
+      'Deve usar Product2.Description como fallback quando DescricaoBateria__c estiver vazio.'
+    );
+    Assert.areEqual(
+      '7,5',
+      values.get('Calculated.bateriaKwh'),
+      'Deve extrair kWh do fallback de Product2.'
+    );
+  }
+
   private class ProposalApiClientMock implements HttpCalloutMock {
     public HttpResponse respond(HttpRequest request) {
       HttpResponse response = new HttpResponse();
@@ -1861,5 +2121,76 @@ private class ProposalEngineSupportTest {
       );
       return response;
     }
+  }
+
+  @isTest
+  static void deleteStoredProposalsSkipsClicksignFiles() {
+    Opportunity opportunityRecord = [
+      SELECT Id, Numeroproposta__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+
+    String proposalNumber = opportunityRecord.Numeroproposta__c;
+
+    // Arquivo de proposta normal — deve ser deletado
+    ContentVersion normalVersion = new ContentVersion(
+      Title = proposalNumber + ' Cliente Teste 2026-04-27',
+      PathOnClient = proposalNumber + '-proposta.pdf',
+      VersionData = Blob.valueOf('pdf-normal'),
+      FirstPublishLocationId = opportunityRecord.Id,
+      IsProposal__c = true
+    );
+    insert normalVersion;
+    Id normalDocId = [
+      SELECT ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :normalVersion.Id
+    ]
+    .ContentDocumentId;
+
+    // Arquivo ClickSign — NÃO deve ser deletado
+    ContentVersion clicksignVersion = new ContentVersion(
+      Title = proposalNumber + ' Cliente Teste 2026-03-27 01-10-19 - Clicksign',
+      PathOnClient = proposalNumber + '-clicksign.pdf',
+      VersionData = Blob.valueOf('pdf-clicksign'),
+      FirstPublishLocationId = opportunityRecord.Id
+    );
+    insert clicksignVersion;
+    Id clicksignDocId = [
+      SELECT ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :clicksignVersion.Id
+    ]
+    .ContentDocumentId;
+
+    Test.startTest();
+    ProposalFileService.deleteStoredProposals(
+      new Set<Id>{ opportunityRecord.Id }
+    );
+    Test.stopTest();
+
+    List<ContentDocument> remainingNormal = [
+      SELECT Id
+      FROM ContentDocument
+      WHERE Id = :normalDocId
+    ];
+    List<ContentDocument> remainingClicksign = [
+      SELECT Id
+      FROM ContentDocument
+      WHERE Id = :clicksignDocId
+    ];
+
+    Assert.areEqual(
+      0,
+      remainingNormal.size(),
+      'O arquivo de proposta normal deve ser deletado no close.'
+    );
+    Assert.areEqual(
+      1,
+      remainingClicksign.size(),
+      'O arquivo com Clicksign no título não deve ser deletado.'
+    );
   }
 }

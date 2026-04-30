@@ -206,6 +206,7 @@
         <fields>CASEMILESTONE.TIME_REMAIN_MINS</fields>
         <fields>CASEMILESTONE.IS_VIOLATED_IN</fields>
         <fields>CASEMILESTONE.IS_COMPLETED_IN</fields>
+        <fields>CASEMILESTONE.IS_PAUSED_IN</fields>
         <relatedList>RelatedCaseMilestoneList</relatedList>
     </relatedLists>
     <relatedLists>

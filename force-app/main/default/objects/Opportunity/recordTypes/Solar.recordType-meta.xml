@@ -549,6 +549,18 @@
     <picklistValues>
         <picklist>CondicaoPagamento2__c</picklist>
         <values>
+            <fullName>1</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>3</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>30 dias</fullName>
             <default>false</default>
         </values>
@@ -860,6 +872,10 @@
     <picklistValues>
         <picklist>FormaPagamento__c</picklist>
         <values>
+            <fullName>Ezee Solar Aluguel</fullName>
+            <default>false</default>
+        </values>
+        <values>
             <fullName>Negociação</fullName>
             <default>false</default>
         </values>
@@ -1079,6 +1095,13 @@
         </values>
         <values>
             <fullName>Revo</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>PerfilVisualizacao__c</picklist>
+        <values>
+            <fullName>Comercial</fullName>
             <default>false</default>
         </values>
     </picklistValues>
