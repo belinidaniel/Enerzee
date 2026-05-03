@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>MetaAdEnrichmentQueueable</members>
+        <members>MetaAdsRepository</members>
+        <members>MetaGraphApiService</members>
+        <members>MetaGraphApiServiceTest</members>
+        <members>MetaInsightsRefreshBatch</members>
+        <members>MetaInsightsRefreshSchedulable</members>
+        <members>MetaLeadAttributionService</members>
+        <members>MetaLeadAttributionServiceTest</members>
+        <members>MetaWebhookPayloadParser</members>
+        <members>WhatsAppWebhookHandler</members>
+        <members>WhatsAppWebhookHandlerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <version>62.0</version>
+</Package>

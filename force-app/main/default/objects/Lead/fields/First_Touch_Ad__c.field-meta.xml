@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>First_Touch_Ad__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>Primeiro Anúncio de Origem</label>
+    <referenceTo>Meta_Ad__c</referenceTo>
+    <relationshipLabel>Leads First Touch</relationshipLabel>
+    <relationshipName>Leads_First_Touch</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Lookup</type>
+</CustomField>

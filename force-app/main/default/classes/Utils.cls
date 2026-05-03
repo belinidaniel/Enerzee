@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-03-2026
  * @last modified by  : Daniel Belini
  * @test              : ClickSignUtilsCoverageTest, OpportunityUtilsTest, UtilsTest
  **/
@@ -45,8 +45,11 @@ public without sharing class Utils {
     );
 
     //Set additional log fields based on source type
+    if (source instanceof String) {
+      lg.Message__c = (String) source;
+    }
     //General exceptions
-    if (source instanceof Exception) {
+    else if (source instanceof Exception) {
       Exception e = (Exception) source;
 
       lg.Message__c = e.getMessage();
@@ -90,6 +93,9 @@ public without sharing class Utils {
       Method__c = dto.methodName,
       RelatedId__c = dto.relatedId
     );
+    if (String.isNotBlank(dto.relatedId) && dto.relatedId.startsWith('00Q')) {
+      lg.Lab065_LeadRelated__c = dto.relatedId;
+    }
 
     lg.HTTPMethod__c = dto.httpMethod;
     lg.RequestBody__c = trimToBodyLimit(dto.requestBody);

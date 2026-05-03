@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description
+  >Página de registro de Campanha Meta Ads — exibe KPIs de funil, métricas agregadas, anúncios vinculados e histórico diário de insights.</description>
+    <masterLabel>Meta Ads — Campanha (Funil)</masterLabel>
+    <sobjectType>Campaign</sobjectType>
+    <template>
+        <name>flexipage:recordHomeWithSubheaderTemplateDesktop</name>
+    </template>
+    <type>RecordPage</type>
+
+    <!-- Coluna principal -->
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>heading</name>
+                    <value>Métricas Agregadas</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showHeading</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>columns</name>
+                    <value>3</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fields</name>
+                    <value
+          >Total_Spend__c,Total_Impressions__c,Total_Reach__c,Total_Clicks__c,Total_CTR__c,Total_CPC__c,Total_CPM__c,Total_Frequency__c,Total_Leads__c,Cost_Per_Lead__c,Insights_Last_Refreshed__c</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:fieldSection</componentName>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>heading</name>
+                    <value>Configuração Meta Ads</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showHeading</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>columns</name>
+                    <value>2</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fields</name>
+                    <value
+          >Meta_Campaign_ID__c,Meta_Account_ID__c,Meta_Objective__c,Meta_Buying_Type__c,Meta_Bid_Strategy__c,Meta_Effective_Status__c,Meta_Daily_Budget__c,Meta_Lifetime_Budget__c,Meta_Spend_Cap__c,Meta_Created_Time__c,Meta_Updated_Time__c</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:fieldSection</componentName>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>relatedListId</name>
+                    <value>Meta_AdSets__r</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListSingleContainer</componentName>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>relatedListId</name>
+                    <value>Meta_Ads__r</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListSingleContainer</componentName>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>relatedListId</name>
+                    <value>Meta_Insights_Daily__r</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListSingleContainer</componentName>
+            </componentInstance>
+        </itemInstances>
+        <mode>Replace</mode>
+        <name>main</name>
+        <type>Region</type>
+    </flexiPageRegions>
+
+    <!-- Coluna lateral -->
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>heading</name>
+                    <value>Detalhes Salesforce</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showHeading</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>columns</name>
+                    <value>1</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fields</name>
+                    <value
+          >Name,Type,Status,StartDate,EndDate,Description,OwnerId</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:fieldSection</componentName>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>relatedListId</name>
+                    <value>CampaignMembers</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListSingleContainer</componentName>
+            </componentInstance>
+        </itemInstances>
+        <mode>Replace</mode>
+        <name>sidebar</name>
+        <type>Region</type>
+    </flexiPageRegions>
+
+</FlexiPage>
