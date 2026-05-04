@@ -60,6 +60,11 @@ public class TokenAPINivelloWs {
       if (response.getStatusCode() == 200) {
         tokenResponse = NivelloTokenResponse.parse(response.getBody());
 
+        if (tokenResponse == null || tokenResponse.data == null) {
+          erro = 'Token response inválido';
+          return false;
+        }
+
         String tokenAux = tokenResponse.data.token;
         access_token = tokenResponse.data.token;
       } else {

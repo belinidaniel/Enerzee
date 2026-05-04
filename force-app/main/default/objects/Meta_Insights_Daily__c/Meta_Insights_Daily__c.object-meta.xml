@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <externalSharingModel>Private</externalSharingModel>
+    <label>Insight Diário Meta</label>
+    <nameField>
+        <displayFormat>MID-{000000}</displayFormat>
+        <label>Número do Insight</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Insights Diários Meta</pluralLabel>
+    <searchLayouts />
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

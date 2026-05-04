@@ -9,3 +9,6 @@
 .vscode
 
 coverage/
+
+# Managed package fields — cannot be modified via API, keep exact content from org
+force-app/main/default/objects/Lead/fields/sfleadcaphfprod__External_Lead_ID__c.field-meta.xml
