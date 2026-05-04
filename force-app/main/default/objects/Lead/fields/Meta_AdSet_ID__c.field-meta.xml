@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Source_URL__c</fullName>
-    <label>URL de Origem</label>
-    <length>1024</length>
+    <fullName>Meta_AdSet_ID__c</fullName>
+    <label>ID do Conjunto de Anúncios Meta</label>
+    <length>50</length>
     <required>false</required>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
-    <type>LongTextArea</type>
-    <visibleLines>2</visibleLines>
+    <type>Text</type>
+    <unique>false</unique>
 </CustomField>

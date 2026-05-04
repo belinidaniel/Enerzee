@@ -10,7 +10,7 @@
  * @description Enriquece o anúncio CTWA com Campaign, AdSet e Creative da Meta Graph API.
  * @test : MetaGraphApiServiceTest
  */
-public with sharing class MetaAdEnrichmentQueueable implements Queueable, Database.AllowsCallouts {
+public without sharing class MetaAdEnrichmentQueueable implements Queueable, Database.AllowsCallouts {
   @TestVisible
   static String lastErrorMessage;
 
@@ -58,6 +58,7 @@ public with sharing class MetaAdEnrichmentQueueable implements Queueable, Databa
           campaign.Id,
           adSet != null ? adSet.Id : null
         );
+        updateLeadMetaIds(adEnvelope, campaign, adSet);
       }
 
       Utils.createLog(
@@ -70,7 +71,7 @@ public with sharing class MetaAdEnrichmentQueueable implements Queueable, Databa
       );
     } catch (Exception e) {
       lastErrorMessage = e.getMessage();
-      Utils.createLog('MetaAdEnrichmentQueueable', 'execute', e.getMessage());
+      Utils.createLog('MetaAdEnrichmentQueueable', 'execute', e);
     }
   }
 
@@ -236,6 +237,31 @@ public with sharing class MetaAdEnrichmentQueueable implements Queueable, Databa
     touch.Campaign__c = campaignId;
     touch.Meta_AdSet__c = adSetId;
     update touch;
+  }
+
+  private void updateLeadMetaIds(
+    MetaGraphApiService.AdEnvelope adEnvelope,
+    Campaign campaign,
+    Meta_AdSet__c adSet
+  ) {
+    Lead leadRecord = new Lead(Id = leadId);
+    leadRecord.Meta_Ad_ID__c = adEnvelope.id;
+    leadRecord.Nome_do_An_ncio_Meta__c = truncate(adEnvelope.name, 255);
+    if (campaign != null && adEnvelope.campaign != null) {
+      leadRecord.Meta_Campaign_ID__c = adEnvelope.campaign.id;
+      leadRecord.Nome_da_Campanha_Meta__c = truncate(
+        adEnvelope.campaign.name,
+        255
+      );
+    }
+    if (adSet != null && adEnvelope.adSet != null) {
+      leadRecord.Meta_AdSet_ID__c = adEnvelope.adSet.id;
+      leadRecord.Nome_do_Conjunto_de_An_ncios_Meta__c = truncate(
+        adEnvelope.adSet.name,
+        255
+      );
+    }
+    update leadRecord;
   }
 
   private static String firstNonBlank(String preferred, String fallbackValue) {

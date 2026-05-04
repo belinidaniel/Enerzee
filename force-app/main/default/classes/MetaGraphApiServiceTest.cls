@@ -116,6 +116,60 @@ private class MetaGraphApiServiceTest {
   }
 
   @IsTest
+  static void enrichmentPlatformEventRunsQueueableOutsidePublisherContext() {
+    Test.setMock(HttpCalloutMock.class, new MetaMock());
+
+    Lead leadRecord = new Lead(
+      LastName = 'Cliente Evento',
+      Company = 'N/A',
+      MobilePhone = '5511999993333',
+      LeadSource = 'Anúncio'
+    );
+    insert leadRecord;
+
+    Meta_Ad__c adRecord = new Meta_Ad__c(
+      Name = 'Placeholder Evento',
+      Meta_Ad_ID__c = '120247934274870536',
+      Enrichment_Status__c = 'Pending'
+    );
+    insert adRecord;
+
+    Test.startTest();
+    EventBus.publish(
+      new Meta_Ad_Enrichment_Request__e(
+        Meta_Ad_ID__c = '120247934274870536',
+        Lead_ID__c = String.valueOf(leadRecord.Id),
+        CTWA_CLID__c = 'CTWA_EVENT'
+      )
+    );
+    Test.getEventBus().deliver();
+    Test.stopTest();
+
+    Meta_Ad__c enriched = [
+      SELECT Campaign__c, Meta_AdSet__c, Enrichment_Status__c
+      FROM Meta_Ad__c
+      WHERE Id = :adRecord.Id
+    ];
+    Assert.areEqual(
+      'Enriched',
+      enriched.Enrichment_Status__c,
+      'Erro no Queueable via Platform Event: ' +
+      MetaAdEnrichmentQueueable.lastErrorMessage
+    );
+    Assert.isNotNull(enriched.Campaign__c);
+    Assert.isNotNull(enriched.Meta_AdSet__c);
+
+    Assert.areEqual(
+      1,
+      [
+        SELECT COUNT()
+        FROM CampaignMember
+        WHERE LeadId = :leadRecord.Id AND Meta_Ad__c = :adRecord.Id
+      ]
+    );
+  }
+
+  @IsTest
   static void insightsBatchUpdatesAdAndCampaignTotals() {
     Test.setMock(HttpCalloutMock.class, new MetaMock());
 

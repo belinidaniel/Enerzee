@@ -9,7 +9,7 @@
 /**
  * @description Orquestra a criação normalizada de Lead, Anúncio, CampaignMember e histórico de touch.
  */
-public with sharing class MetaLeadAttributionService {
+public without sharing class MetaLeadAttributionService {
   private static final String LEAD_SOURCE_AD = 'Anúncio';
   private static final String META_LEAD_YES = 'Sim';
   private static final String PLACEHOLDER_COMPANY = 'N/A';
@@ -45,12 +45,11 @@ public with sharing class MetaLeadAttributionService {
 
   @TestVisible
   static void processContext(MetaWebhookPayloadParser.MessageContext context) {
-    Lead leadRecord = upsertLead(context);
-
-    // sem referral (mensagem orgânica): apenas garante o Lead, sem Ad/Campaign
     if (!context.hasReferral()) {
       return;
     }
+
+    Lead leadRecord = upsertLead(context);
 
     Meta_Ad__c adRecord = upsertAdPlaceholder(context);
 
@@ -65,15 +64,42 @@ public with sharing class MetaLeadAttributionService {
           adRecord.Id,
           context.ctwaClid
         );
-      } else if (!Test.isRunningTest()) {
-        System.enqueueJob(
-          new MetaAdEnrichmentQueueable(
-            adRecord.Meta_Ad_ID__c,
-            leadRecord.Id,
-            context.ctwaClid
-          )
+      } else {
+        publishEnrichmentRequest(
+          adRecord.Meta_Ad_ID__c,
+          leadRecord.Id,
+          context.ctwaClid
         );
       }
+    }
+  }
+
+  private static void publishEnrichmentRequest(
+    String metaAdId,
+    Id leadId,
+    String ctwaClid
+  ) {
+    if (String.isBlank(metaAdId)) {
+      return;
+    }
+
+    Database.SaveResult result = EventBus.publish(
+      new Meta_Ad_Enrichment_Request__e(
+        Meta_Ad_ID__c = metaAdId,
+        Lead_ID__c = leadId != null ? String.valueOf(leadId) : null,
+        CTWA_CLID__c = ctwaClid
+      )
+    );
+
+    if (!result.isSuccess()) {
+      Database.Error error = result.getErrors()[0];
+      Utils.createLog(
+        'MetaLeadAttributionService',
+        'publishEnrichmentRequest',
+        'Falha ao publicar evento de enriquecimento Meta Ads: ' +
+        error.getMessage(),
+        leadId != null ? String.valueOf(leadId) : null
+      );
     }
   }
 
@@ -124,6 +150,14 @@ public with sharing class MetaLeadAttributionService {
     leadRecord.Welcome_Message__c = firstNonBlank(
       context.welcomeMessage,
       leadRecord.Welcome_Message__c
+    );
+    leadRecord.Meta_Ad_ID__c = firstNonBlank(
+      context.sourceId,
+      leadRecord.Meta_Ad_ID__c
+    );
+    leadRecord.Nome_do_An_ncio_Meta__c = firstNonBlank(
+      context.headline,
+      leadRecord.Nome_do_An_ncio_Meta__c
     );
 
     if (isNew) {

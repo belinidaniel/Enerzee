@@ -211,9 +211,9 @@ private class WhatsAppWebhookHandlerTest {
     Assert.areEqual('CTWA_CLID_ABC123', touches[0].CTWA_CLID__c);
   }
 
-  // ─── POST — mensagem orgânica (sem ctwa_clid) → cria Lead, não cria Meta_Ad__c ─
+  // ─── POST — mensagem orgânica (sem ctwa_clid) → não cria Lead nem Meta_Ad__c ──
   @isTest
-  static void testPostOrganicMessageCreatesLeadOnly() {
+  static void testPostOrganicMessageIgnored() {
     String payload = JSON.serialize(
       new Map<String, Object>{
         'object' => 'whatsapp_business_account',
@@ -256,16 +256,10 @@ private class WhatsAppWebhookHandlerTest {
     Test.stopTest();
 
     Assert.areEqual(200, RestContext.response.statusCode);
-
-    List<Lead> leads = [
-      SELECT Id, MobilePhone
-      FROM Lead
-      WHERE WhatsApp_User_ID__c = 'BR.ORGANIC_USER'
-    ];
     Assert.areEqual(
-      1,
-      leads.size(),
-      'Lead orgânico deve ser criado mesmo sem referral'
+      0,
+      [SELECT COUNT() FROM Lead],
+      'Mensagem orgânica sem referral não deve criar Lead'
     );
     Assert.areEqual(
       0,
