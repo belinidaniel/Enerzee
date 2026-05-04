@@ -227,7 +227,13 @@ public class UtilsTest {
         res.setStatusCode(401);
         res.setStatus('Unauthorized');
         res.setBody('{"error":"unauthorized"}');
+      } else if (callCount == 2) {
+        // token renewal POST — must return a valid NivelloTokenResponse shape
+        res.setStatusCode(200);
+        res.setStatus('OK');
+        res.setBody('{"data":{"token":"novo-token"}}');
       } else {
+        // retry of the original request after token renewal
         res.setStatusCode(200);
         res.setStatus('OK');
         res.setBody('{"ok":true}');
