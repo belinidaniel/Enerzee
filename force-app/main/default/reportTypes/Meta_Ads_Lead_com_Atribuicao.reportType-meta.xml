@@ -7,23 +7,23 @@
   >Lead com atribuição de anúncio Meta Ads (First Touch, Last Touch e histórico de toques).</description>
     <join>
         <outerJoin>true</outerJoin>
-        <relationship>Lead_Touches</relationship>
+        <relationship>Lead_Touches__r</relationship>
     </join>
     <label>Meta Ads — Lead com Atribuição</label>
     <sections>
         <columns>
             <checkedByDefault>true</checkedByDefault>
-            <field>NAME</field>
+            <field>Name</field>
             <table>Lead</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
-            <field>PHONE</field>
+            <field>Phone</field>
             <table>Lead</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
-            <field>LEAD_SOURCE</field>
+            <field>LeadSource</field>
             <table>Lead</table>
         </columns>
         <columns>
@@ -58,22 +58,22 @@
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
-            <field>CREATED_DATE</field>
+            <field>CreatedDate</field>
             <table>Lead</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
-            <field>STATUS</field>
+            <field>Status</field>
             <table>Lead</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
-            <field>CONVERTED</field>
+            <field>IsConverted</field>
             <table>Lead</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
-            <field>CONVERTED_DATE</field>
+            <field>ConvertedDate</field>
             <table>Lead</table>
         </columns>
         <masterLabel>Lead</masterLabel>
@@ -82,27 +82,27 @@
         <columns>
             <checkedByDefault>true</checkedByDefault>
             <field>Touch_Date__c</field>
-            <table>Lead.Lead_Touches</table>
+            <table>Lead.Lead_Touches__r</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
             <field>CTWA_CLID__c</field>
-            <table>Lead.Lead_Touches</table>
+            <table>Lead.Lead_Touches__r</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
             <field>Source__c</field>
-            <table>Lead.Lead_Touches</table>
+            <table>Lead.Lead_Touches__r</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
             <field>Meta_Ad__c</field>
-            <table>Lead.Lead_Touches</table>
+            <table>Lead.Lead_Touches__r</table>
         </columns>
         <columns>
             <checkedByDefault>true</checkedByDefault>
             <field>Campaign__c</field>
-            <table>Lead.Lead_Touches</table>
+            <table>Lead.Lead_Touches__r</table>
         </columns>
         <masterLabel>Toques de Anúncio</masterLabel>
     </sections>
