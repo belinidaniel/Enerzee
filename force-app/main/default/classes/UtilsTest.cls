@@ -215,4 +215,119 @@ public class UtilsTest {
       return res;
     }
   }
+
+  public class Mock401ThenOk implements HttpCalloutMock {
+    private Integer callCount = 0;
+
+    public HTTPResponse respond(HTTPRequest req) {
+      callCount++;
+      HttpResponse res = new HttpResponse();
+      res.setHeader('Content-Type', 'application/json');
+      if (callCount == 1) {
+        res.setStatusCode(401);
+        res.setStatus('Unauthorized');
+        res.setBody('{"error":"unauthorized"}');
+      } else {
+        res.setStatusCode(200);
+        res.setStatus('OK');
+        res.setBody('{"ok":true}');
+      }
+      return res;
+    }
+  }
+
+  @isTest
+  static void callIntegrationNivello401Test() {
+    Test.setMock(HttpCalloutMock.class, new Mock401ThenOk());
+
+    TokenAPINivelloWs.access_token = 'token-inicial';
+
+    HttpRequest req = new HttpRequest();
+    req.setMethod('GET');
+    req.setEndpoint('https://nivello.example.com/api');
+
+    Test.startTest();
+    HttpResponse res = Utils.callIntegrationNivello(req);
+    Test.stopTest();
+
+    Assert.isNotNull(res);
+  }
+
+  @isTest
+  static void callIntegrationNivelloNoTokenTest() {
+    Test.setMock(HttpCalloutMock.class, new IntegracaoSAPExemploMock());
+
+    TokenAPINivelloWs.access_token = null;
+
+    HttpRequest req = new HttpRequest();
+    req.setMethod('GET');
+    req.setEndpoint('https://nivello.example.com/api');
+
+    Test.startTest();
+    HttpResponse res = Utils.callIntegrationNivello(req);
+    Test.stopTest();
+
+    Assert.isNotNull(res);
+  }
+
+  @isTest
+  static void callIntegrationVONoTokenTest() {
+    Test.setMock(HttpCalloutMock.class, new IntegracaoSAPExemploMock());
+
+    TokenAPIVOWs.access_token = null;
+
+    HttpRequest req = new HttpRequest();
+    req.setMethod('GET');
+    req.setEndpoint('https://vo.example.com/api');
+
+    Test.startTest();
+    HttpResponse res = Utils.callIntegrationVO(req);
+    Test.stopTest();
+
+    Assert.isNotNull(res);
+  }
+
+  @isTest
+  static void callIntegrationVOTest() {
+    Test.setMock(HttpCalloutMock.class, new IntegracaoSAPExemploMock());
+
+    TokenAPIVOWs.access_token = 'token-vo-teste';
+
+    HttpRequest req = new HttpRequest();
+    req.setMethod('GET');
+    req.setEndpoint('https://vo.example.com/api');
+
+    Test.startTest();
+    HttpResponse res = Utils.callIntegrationVO(req);
+    Test.stopTest();
+
+    Assert.isNotNull(res);
+    Assert.areEqual(200, res.getStatusCode());
+  }
+
+  @isTest
+  static void callIntegrationVO401Test() {
+    Test.setMock(HttpCalloutMock.class, new Mock401ThenOk());
+
+    TokenAPIVOWs.access_token = 'token-vo-inicial';
+
+    HttpRequest req = new HttpRequest();
+    req.setMethod('GET');
+    req.setEndpoint('https://vo.example.com/api');
+
+    Test.startTest();
+    HttpResponse res = Utils.callIntegrationVO(req);
+    Test.stopTest();
+
+    Assert.isNotNull(res);
+  }
+
+  @isTest
+  static void removeNonNumericCharactersTest() {
+    Assert.areEqual('12345', Utils.removeNonNumericCharacters('(12) 3-45'));
+    Assert.areEqual('55119', Utils.removeNonNumericCharacters('55119'));
+    Assert.isNull(Utils.removeNonNumericCharacters(null));
+    Assert.isNull(Utils.removeNonNumericCharacters(''));
+    Assert.isNull(Utils.removeNonNumericCharacters('   '));
+  }
 }

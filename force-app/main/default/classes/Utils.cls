@@ -170,11 +170,15 @@ public without sharing class Utils {
     }
     //depois verifica nos parâmetros
     else {
-      Integrador__mdt token = [
+      List<Integrador__mdt> tokens = [
         SELECT Id, URL__c, login__c, senha__c, LastToken__c, validade_token__c
         FROM Integrador__mdt
         WHERE DeveloperName = 'Login_Nivello'
+        LIMIT 1
       ];
+      Integrador__mdt token = tokens.isEmpty()
+        ? new Integrador__mdt()
+        : tokens[0];
 
       if (token.LastToken__c != null && token.LastToken__c != '') {
         request.setHeader('Authorization', 'Bearer ' + token.LastToken__c);
@@ -249,11 +253,15 @@ public without sharing class Utils {
     if (TokenAPIVOWs.access_token != null && TokenAPIVOWs.access_token != '') {
       request.setHeader('Bearer', TokenAPIVOWs.access_token);
     } else {
-      Integrador__mdt token = [
+      List<Integrador__mdt> tokens = [
         SELECT Id, URL__c, login__c, senha__c, LastToken__c, validade_token__c
         FROM Integrador__mdt
         WHERE DeveloperName = 'Login_VO'
+        LIMIT 1
       ];
+      Integrador__mdt token = tokens.isEmpty()
+        ? new Integrador__mdt()
+        : tokens[0];
 
       if (token.LastToken__c != null && token.LastToken__c != '') {
         request.setHeader('Bearer', token.LastToken__c);
