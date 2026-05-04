@@ -5,11 +5,9 @@
     <masterLabel>Meta Ads — Campanha (Funil)</masterLabel>
     <sobjectType>Campaign</sobjectType>
     <template>
-        <name>flexipage:recordHomeTemplateDesktop</name>
+        <name>flexipage:recordHomeFlexiColumnTemplate</name>
     </template>
     <type>RecordPage</type>
-
-    <!-- Header com highlights panel -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -40,8 +38,6 @@
         <name>header</name>
         <type>Region</type>
     </flexiPageRegions>
-
-    <!-- Coluna principal -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -118,8 +114,6 @@
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
-
-    <!-- Coluna lateral -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -156,5 +150,4 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-
 </FlexiPage>
