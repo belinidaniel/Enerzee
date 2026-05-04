@@ -5,7 +5,7 @@
     <masterLabel>Meta Ads — Campanha (Funil)</masterLabel>
     <sobjectType>Campaign</sobjectType>
     <template>
-        <name>flexipage:recordHomeWithSubheaderTemplateDesktop</name>
+        <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
     <type>RecordPage</type>
 
