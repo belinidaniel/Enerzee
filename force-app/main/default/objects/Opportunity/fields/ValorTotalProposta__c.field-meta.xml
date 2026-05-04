@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ValorTotalProposta__c</fullName>
-    <description>Campo que indica o valor total da proposta, incluindo o custo adicional somado ao valor da proposta.</description>
+    <description
+  >Campo que indica o valor total da proposta, incluindo o custo adicional somado ao valor da proposta.</description>
     <formula>IF(
     AND(
         RecordType.DeveloperName = &quot;Solar&quot;,
@@ -16,11 +17,25 @@
     BDI__c +
     ValorTotalProdutos__c +
     Direct__c + ClientTotalCost__c,
-				
-    ValorTotalProdutos__c
+    IF(
+        OR(
+            RecordType.DeveloperName = &quot;EzeeConnect&quot;,
+            RecordType.DeveloperName = &quot;EzeeConnect_Solled&quot;,
+            RecordType.DeveloperName = &quot;BowE&quot;,
+            RecordType.DeveloperName = &quot;Ultragaz&quot;,
+            RecordType.DeveloperName = &quot;Simplifica&quot;,
+            RecordType.DeveloperName = &quot;Nextron&quot;,
+            RecordType.DeveloperName = &quot;Origo&quot;,
+            RecordType.DeveloperName = &quot;Raizen&quot;,
+            RecordType.DeveloperName = &quot;Plin&quot;
+        ),
+        FaturaDescontoFixo__c,
+        ValorTotalProdutos__c
+    )
 )</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-    <inlineHelpText>Campo que indica o valor total da proposta, incluindo o custo adicional somado ao valor da proposta.</inlineHelpText>
+    <inlineHelpText
+  >Campo que indica o valor total da proposta, incluindo o custo adicional somado ao valor da proposta.</inlineHelpText>
     <label>Valor Total da Proposta</label>
     <precision>18</precision>
     <required>false</required>
