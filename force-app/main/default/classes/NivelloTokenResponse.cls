@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : NivelloTokenTest
+ * @test              : UtilsTest
  **/
 public class NivelloTokenResponse {
   public Boolean success;

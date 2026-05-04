@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <externalSharingModel>Private</externalSharingModel>
+    <label>Toque do Lead</label>
+    <nameField>
+        <displayFormat>LT-{000000}</displayFormat>
+        <label>Número do Touch</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Toques do Lead</pluralLabel>
+    <searchLayouts />
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

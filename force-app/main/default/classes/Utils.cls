@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-03-2026
  * @last modified by  : Daniel Belini
  * @test              : ClickSignUtilsCoverageTest, OpportunityUtilsTest, UtilsTest
  **/
@@ -45,8 +45,11 @@ public without sharing class Utils {
     );
 
     //Set additional log fields based on source type
+    if (source instanceof String) {
+      lg.Message__c = (String) source;
+    }
     //General exceptions
-    if (source instanceof Exception) {
+    else if (source instanceof Exception) {
       Exception e = (Exception) source;
 
       lg.Message__c = e.getMessage();
@@ -90,6 +93,9 @@ public without sharing class Utils {
       Method__c = dto.methodName,
       RelatedId__c = dto.relatedId
     );
+    if (String.isNotBlank(dto.relatedId) && dto.relatedId.startsWith('00Q')) {
+      lg.Lab065_LeadRelated__c = dto.relatedId;
+    }
 
     lg.HTTPMethod__c = dto.httpMethod;
     lg.RequestBody__c = trimToBodyLimit(dto.requestBody);
@@ -164,11 +170,15 @@ public without sharing class Utils {
     }
     //depois verifica nos parâmetros
     else {
-      Integrador__mdt token = [
+      List<Integrador__mdt> tokens = [
         SELECT Id, URL__c, login__c, senha__c, LastToken__c, validade_token__c
         FROM Integrador__mdt
         WHERE DeveloperName = 'Login_Nivello'
+        LIMIT 1
       ];
+      Integrador__mdt token = tokens.isEmpty()
+        ? new Integrador__mdt()
+        : tokens[0];
 
       if (token.LastToken__c != null && token.LastToken__c != '') {
         request.setHeader('Authorization', 'Bearer ' + token.LastToken__c);
@@ -243,11 +253,15 @@ public without sharing class Utils {
     if (TokenAPIVOWs.access_token != null && TokenAPIVOWs.access_token != '') {
       request.setHeader('Bearer', TokenAPIVOWs.access_token);
     } else {
-      Integrador__mdt token = [
+      List<Integrador__mdt> tokens = [
         SELECT Id, URL__c, login__c, senha__c, LastToken__c, validade_token__c
         FROM Integrador__mdt
         WHERE DeveloperName = 'Login_VO'
+        LIMIT 1
       ];
+      Integrador__mdt token = tokens.isEmpty()
+        ? new Integrador__mdt()
+        : tokens[0];
 
       if (token.LastToken__c != null && token.LastToken__c != '') {
         request.setHeader('Bearer', token.LastToken__c);
