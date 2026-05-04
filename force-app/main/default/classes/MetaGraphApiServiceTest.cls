@@ -8,6 +8,14 @@
  **/
 @IsTest
 private class MetaGraphApiServiceTest {
+  private static void stubMetaConfig() {
+    MetaGraphApiService.testConfig = new Integrador__mdt(
+      URL__c = 'https://graph.facebook.com/v25.0',
+      LastToken__c = 'TEST_TOKEN',
+      TokenLong__c = null
+    );
+  }
+
   private class MetaMock implements HttpCalloutMock {
     public HttpResponse respond(HttpRequest request) {
       HttpResponse response = new HttpResponse();
@@ -31,6 +39,7 @@ private class MetaGraphApiServiceTest {
 
   @IsTest
   static void parsesAdAndInsightsResponses() {
+    stubMetaConfig();
     Test.setMock(HttpCalloutMock.class, new MetaMock());
 
     Test.startTest();
@@ -55,6 +64,7 @@ private class MetaGraphApiServiceTest {
 
   @IsTest
   static void enrichmentQueueableCreatesHierarchyAndMember() {
+    stubMetaConfig();
     Test.setMock(HttpCalloutMock.class, new MetaMock());
 
     Lead leadRecord = new Lead(
@@ -117,6 +127,7 @@ private class MetaGraphApiServiceTest {
 
   @IsTest
   static void enrichmentPlatformEventRunsQueueableOutsidePublisherContext() {
+    stubMetaConfig();
     Test.setMock(HttpCalloutMock.class, new MetaMock());
 
     Lead leadRecord = new Lead(
@@ -171,6 +182,7 @@ private class MetaGraphApiServiceTest {
 
   @IsTest
   static void insightsBatchUpdatesAdAndCampaignTotals() {
+    stubMetaConfig();
     Test.setMock(HttpCalloutMock.class, new MetaMock());
 
     Campaign campaign = new Campaign(Name = 'Campanha Batch Test');
@@ -240,6 +252,7 @@ private class MetaGraphApiServiceTest {
 
   @IsTest
   static void schedulableStartsBatch() {
+    stubMetaConfig();
     Test.setMock(HttpCalloutMock.class, new MetaMock());
     insert new Meta_Ad__c(
       Name = 'Ad agendado',

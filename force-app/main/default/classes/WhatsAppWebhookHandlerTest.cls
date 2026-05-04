@@ -35,8 +35,15 @@ private class WhatsAppWebhookHandlerTest {
     return req;
   }
 
+  private static Integrador__mdt stubConfig() {
+    Integrador__mdt config = new Integrador__mdt();
+    config.Verify_Token__c = 'TEST_VERIFY_TOKEN';
+    return config;
+  }
+
   private static String validVerifyToken() {
-    return WhatsAppWebhookHandler.getConfig().Verify_Token__c;
+    WhatsAppWebhookHandler.testConfig = stubConfig();
+    return WhatsAppWebhookHandler.testConfig.Verify_Token__c;
   }
 
   private static String buildMessagePayload(

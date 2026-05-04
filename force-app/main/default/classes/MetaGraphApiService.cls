@@ -125,13 +125,20 @@ public with sharing class MetaGraphApiService {
   }
 
   @TestVisible
+  static Integrador__mdt testConfig;
+
+  @TestVisible
   static HttpResponse send(String method, String path) {
-    Integrador__mdt config = [
-      SELECT URL__c, LastToken__c, TokenLong__c
-      FROM Integrador__mdt
-      WHERE DeveloperName = :INTEGRATION_DEV_NAME
-      LIMIT 1
-    ];
+    Integrador__mdt config = testConfig;
+    if (config == null) {
+      List<Integrador__mdt> records = [
+        SELECT URL__c, LastToken__c, TokenLong__c
+        FROM Integrador__mdt
+        WHERE DeveloperName = :INTEGRATION_DEV_NAME
+        LIMIT 1
+      ];
+      config = records.isEmpty() ? new Integrador__mdt() : records[0];
+    }
 
     String baseUrl = String.isBlank(config.URL__c)
       ? DEFAULT_GRAPH_URL

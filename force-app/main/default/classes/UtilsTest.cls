@@ -83,6 +83,107 @@ public class UtilsTest {
     );
   }
 
+  @isTest
+  static void createLogDtoTest() {
+    Lead ld = new Lead(LastName = 'DTO Test', Company = 'N/A');
+    insert ld;
+
+    Utils.LogDTO dto = new Utils.LogDTO();
+    dto.className = 'UtilsTest';
+    dto.methodName = 'createLogDtoTest';
+    dto.httpMethod = 'POST';
+    dto.requestBody = '{"test":true}';
+    dto.requestURI = '/test/uri';
+    dto.responseBody = '{"ok":true}';
+    dto.statusCode = 200;
+    dto.status = 'OK';
+    dto.message = 'teste';
+    dto.typeName = 'System.DmlException';
+    dto.stackTraceString = 'line 1';
+    dto.lineNumber = '1';
+    dto.relatedId = ld.Id;
+
+    Test.startTest();
+    Log__c lg = Utils.createLogNoInsert(dto);
+    Assert.isNotNull(lg);
+    Assert.areEqual('UtilsTest', lg.Class__c);
+    Assert.areEqual(String.valueOf(ld.Id), lg.RelatedId__c);
+
+    Utils.createLog(dto);
+
+    Utils.createLog((Utils.LogDTO) null);
+    Test.stopTest();
+  }
+
+  @isTest
+  static void createLogFromJsonTest() {
+    Utils.LogDTO dto = new Utils.LogDTO();
+    dto.className = 'UtilsTest';
+    dto.methodName = 'createLogFromJsonTest';
+    dto.message = 'via json';
+
+    String json = JSON.serialize(dto);
+
+    Test.startTest();
+    Utils.createLogFromJson(json);
+    Utils.createLogFromJson('');
+    Utils.createLogFromJson(null);
+    Test.stopTest();
+
+    Assert.areEqual(
+      1,
+      [SELECT COUNT() FROM Log__c WHERE Method__c = 'createLogFromJsonTest']
+    );
+  }
+
+  @isTest
+  static void createLogNoInsertHttpRequestTest() {
+    HttpRequest req = new HttpRequest();
+    req.setMethod('GET');
+    req.setEndpoint('https://example.com/api');
+    req.setBody('body-content');
+
+    Test.startTest();
+    Log__c lg = Utils.createLogNoInsert('UtilsTest', 'httpRequestBranch', req);
+    Test.stopTest();
+
+    Assert.isNotNull(lg);
+    Assert.areEqual('GET', lg.HTTPMethod__c);
+    Assert.areEqual('https://example.com/api', lg.RequestURI__c);
+  }
+
+  @isTest
+  static void getSAPMetadataNameTest() {
+    Test.startTest();
+    String result = Utils.getSAPMetadataName('SAP_Cliente');
+    Test.stopTest();
+
+    Assert.isNotNull(result);
+    Assert.isTrue(
+      result == 'SAP_Cliente' || result == 'SAP_Cliente_QA',
+      'Nome deve ser base ou base_QA'
+    );
+  }
+
+  @isTest
+  static void createLogNoInsertWithRelatedIdTest() {
+    Lead ld = new Lead(LastName = 'Teste', Company = 'N/A');
+    insert ld;
+
+    Test.startTest();
+    Utils.createLog('UtilsTest', 'relatedIdBranch', 'msg', ld.Id);
+    Test.stopTest();
+
+    Assert.areEqual(
+      1,
+      [
+        SELECT COUNT()
+        FROM Log__c
+        WHERE Method__c = 'relatedIdBranch' AND RelatedId__c = :ld.Id
+      ]
+    );
+  }
+
   public class IntegracaoSAPExemploMock implements HttpCalloutMock {
     public HTTPResponse respond(HTTPRequest req) {
       HttpResponse res = new HttpResponse();

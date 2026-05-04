@@ -122,7 +122,13 @@ global without sharing class WhatsAppWebhookHandler {
   }
 
   @TestVisible
+  static Integrador__mdt testConfig;
+
+  @TestVisible
   static Integrador__mdt getConfig() {
+    if (testConfig != null) {
+      return testConfig;
+    }
     List<Integrador__mdt> records = [
       SELECT
         URL__c,
