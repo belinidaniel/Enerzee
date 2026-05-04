@@ -127,10 +127,7 @@
                 <behavior>Readonly</behavior>
                 <field>Meta_CTWA_CLID__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>CtwaClid__c</field>
-            </layoutItems>
+
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>AdSourceUrl__c</field>

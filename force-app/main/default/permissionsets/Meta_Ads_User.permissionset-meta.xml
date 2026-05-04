@@ -394,11 +394,7 @@
         <field>Lead.ConsultorRegional__c</field>
         <readable>true</readable>
     </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Lead.CtwaClid__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
+
     <fieldPermissions>
         <editable>true</editable>
         <field>Lead.CustoEnergiaMes__c</field>

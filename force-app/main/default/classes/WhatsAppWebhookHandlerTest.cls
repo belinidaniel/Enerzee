@@ -179,13 +179,13 @@ private class WhatsAppWebhookHandlerTest {
       SELECT
         Id,
         MobilePhone,
-        CtwaClid__c,
+        Meta_CTWA_CLID__c,
         WhatsApp_User_ID__c,
         WhatsApp_ID__c,
         First_Touch_Ad__c,
         Last_Touch_Ad__c
       FROM Lead
-      WHERE CtwaClid__c = 'CTWA_CLID_ABC123'
+      WHERE Meta_CTWA_CLID__c = 'CTWA_CLID_ABC123'
     ];
     Assert.areEqual(1, leads.size());
     Assert.areEqual('5511999990000', leads[0].MobilePhone);

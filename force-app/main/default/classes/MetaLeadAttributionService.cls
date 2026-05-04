@@ -135,10 +135,6 @@ public without sharing class MetaLeadAttributionService {
       context.waId,
       leadRecord.WhatsApp_ID__c
     );
-    leadRecord.CtwaClid__c = firstNonBlank(
-      context.ctwaClid,
-      leadRecord.CtwaClid__c
-    );
     leadRecord.Meta_CTWA_CLID__c = firstNonBlank(
       context.ctwaClid,
       leadRecord.Meta_CTWA_CLID__c
