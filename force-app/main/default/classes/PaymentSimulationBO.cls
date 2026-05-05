@@ -249,7 +249,15 @@ public without sharing class PaymentSimulationBO {
         : new List<PaymentSimulation__c>();
 
       Decimal simulationAmount = getSimulationAmount(opportunityRecord);
-      if (simulationAmount == null || activeFinancingRates.isEmpty()) {
+      if (simulationAmount == null) {
+        markForDeletion(existingSimulations, syncPlan);
+        continue;
+      }
+
+      if (
+        activeFinancingRates.isEmpty() &&
+        !isPixPaymentMethod(opportunityRecord.FormaPagamento__c)
+      ) {
         markForDeletion(existingSimulations, syncPlan);
         continue;
       }
@@ -319,6 +327,10 @@ public without sharing class PaymentSimulationBO {
     List<PaymentSimulation__c> desiredSimulations = new List<PaymentSimulation__c>();
     Boolean isPixPayment = isPixPaymentMethod(
       opportunityRecord.FormaPagamento__c
+    );
+    Boolean hasSelectedManualPix = hasSelectedManualSimulation(
+      existingSimulations,
+      PAYMENT_TYPE_PIX
     );
     Set<String> selectedSimulationKeys = collectSelectedSimulationKeys(
       existingSimulations
@@ -404,7 +416,7 @@ public without sharing class PaymentSimulationBO {
             2,
             RoundingMode.HALF_UP
           ),
-          Selected__c = true
+          Selected__c = !hasSelectedManualPix
         )
       );
     }
@@ -794,6 +806,31 @@ public without sharing class PaymentSimulationBO {
       }
     }
     return selectedSimulationKeys;
+  }
+
+  private static Boolean hasSelectedManualSimulation(
+    List<PaymentSimulation__c> simulations,
+    String paymentType
+  ) {
+    if (simulations == null || simulations.isEmpty()) {
+      return false;
+    }
+
+    String normalizedPaymentType = String.isBlank(paymentType)
+      ? null
+      : paymentType.trim().toUpperCase();
+    for (PaymentSimulation__c simulationRecord : simulations) {
+      if (
+        simulationRecord.Selected__c == true &&
+        MANUAL_SIMULATION_LABEL.equals(simulationRecord.ProposalLabel__c) &&
+        String.isNotBlank(simulationRecord.PaymentType__c) &&
+        simulationRecord.PaymentType__c.trim().toUpperCase() ==
+        normalizedPaymentType
+      ) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private static PaymentSimulation__c buildSimulationUpdate(
