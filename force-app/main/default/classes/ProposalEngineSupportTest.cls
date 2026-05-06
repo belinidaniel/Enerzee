@@ -59,6 +59,7 @@ private class ProposalEngineSupportTest {
       VersionData = Blob.valueOf('pptx-engine'),
       FirstPublishLocationId = apiCover.Id,
       IsTemplate__c = true,
+      ExternalId__c = 'template-engine',
       ProposalTemplateRole__c = 'API_PPTX_TEMPLATE'
     );
   }
@@ -532,6 +533,7 @@ private class ProposalEngineSupportTest {
       VersionData = Blob.valueOf('pptx-single-template'),
       FirstPublishLocationId = cover.Id,
       IsTemplate__c = true,
+      ExternalId__c = 'template-unico',
       TipoKitPromocional__c = '6'
     );
 
@@ -1154,6 +1156,7 @@ private class ProposalEngineSupportTest {
       PathOnClient = 'proposta-engine.pdf',
       VersionData = Blob.valueOf('pdf'),
       FirstPublishLocationId = opportunityRecord.Id,
+      ExternalId__c = 'proposta-engine-success',
       IsProposal__c = true
     );
     insert proposalVersion;
@@ -1201,6 +1204,7 @@ private class ProposalEngineSupportTest {
       PathOnClient = 'proposta-engine-failure.pdf',
       VersionData = Blob.valueOf('pdf-failure'),
       FirstPublishLocationId = opportunityRecord.Id,
+      ExternalId__c = 'proposta-engine-failure',
       IsProposal__c = true
     );
     insert proposalVersion;
@@ -1260,6 +1264,7 @@ private class ProposalEngineSupportTest {
       PathOnClient = 'proposal-availability.pdf',
       VersionData = Blob.valueOf('pdf-availability'),
       FirstPublishLocationId = opportunityRecord.Id,
+      ExternalId__c = 'proposal-availability',
       IsProposal__c = true
     );
 
@@ -1267,6 +1272,7 @@ private class ProposalEngineSupportTest {
       Name = 'Link antigo',
       OpportunityId__c = opportunityRecord.Id,
       Type__c = 'Other',
+      ExternalId__c = 'proposal-availability-old-link',
       AttachmentURL__c = 'https://example.com/old-proposal.pdf'
     );
 
@@ -1292,6 +1298,7 @@ private class ProposalEngineSupportTest {
       Name = 'Link proposta',
       OpportunityId__c = opportunityRecord.Id,
       Type__c = 'Proposal',
+      ExternalId__c = 'proposal-availability-ready-link',
       AttachmentURL__c = 'https://example.com/proposal-ready.pdf'
     );
 
@@ -2203,6 +2210,7 @@ private class ProposalEngineSupportTest {
       PathOnClient = 'proposta-normal-engine.pdf',
       VersionData = Blob.valueOf('pdf-normal'),
       FirstPublishLocationId = opportunityRecord.Id,
+      ExternalId__c = 'proposta-normal-engine-delete',
       IsProposal__c = true
     );
     insert normalVersion;
@@ -2219,6 +2227,7 @@ private class ProposalEngineSupportTest {
       PathOnClient = 'proposta-clicksign-engine.pdf',
       VersionData = Blob.valueOf('pdf-clicksign'),
       FirstPublishLocationId = opportunityRecord.Id,
+      ExternalId__c = 'proposta-clicksign-engine-keep',
       IsProposal__c = true
     );
     insert clicksignVersion;

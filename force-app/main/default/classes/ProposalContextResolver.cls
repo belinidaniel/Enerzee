@@ -57,6 +57,7 @@ public with sharing class ProposalContextResolver {
       SELECT
         Id,
         Name,
+        CreatedDate,
         AccountId,
         Account.Name,
         Account.CNPJ__c,

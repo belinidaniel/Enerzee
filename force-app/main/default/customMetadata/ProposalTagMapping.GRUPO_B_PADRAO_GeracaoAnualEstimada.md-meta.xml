@@ -4,11 +4,11 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 >
-    <label>GRUPO_B_PADRAO - GeracaoMensalC</label>
+    <label>GRUPO_B_PADRAO - GeracaoAnualEstimada</label>
     <protected>false</protected>
     <values>
         <field>Active__c</field>
-        <value xsi:type="xsd:boolean">false</value>
+        <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
         <field>CoverKey__c</field>
@@ -36,14 +36,14 @@
     </values>
     <values>
         <field>SortOrder__c</field>
-        <value xsi:type="xsd:double">12.0</value>
+        <value xsi:nil="true" />
     </values>
     <values>
         <field>SourcePath__c</field>
-        <value xsi:type="xsd:string">Kwh__c</value>
+        <value xsi:type="xsd:string">GeracaoAnualEstimada__c</value>
     </values>
     <values>
         <field>TagKey__c</field>
-        <value xsi:type="xsd:string">{{GeracaoMensalEstimada__c}}</value>
+        <value xsi:type="xsd:string">{{GeracaoAnualEstimada__c}}</value>
     </values>
 </CustomMetadata>
