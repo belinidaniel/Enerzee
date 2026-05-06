@@ -2,7 +2,7 @@
  * @description       : Resolve valores calculados e resumos de simulacoes para tags de proposta
  * @author            : OpenAI Codex
  * @group             :
- * @last modified on  : 04-30-2026
+ * @last modified on  : 05-05-2026
  * @last modified by  : Daniel Belini
  * @test              : ProposalEngineSupportTest
  **/
@@ -14,7 +14,7 @@ public with sharing class ProposalComputedValueService {
   private static final String PAYMENT_TYPE_CARD = 'CARD';
   private static final String OTHER_PAYMENT_PIX_LABEL = 'PIX VIA LINK';
   private static final String OTHER_PAYMENT_CARD_LABEL = 'CARTÃO DE CRÉDITO';
-  private static final String OTHER_PAYMENT_PIX_TEXT = '² com até 10% de desconto.';
+  private static final String OTHER_PAYMENT_PIX_TEXT = '';
   private static final String OTHER_PAYMENT_CARD_TEXT = '³ Juros aplicados no valor total da proposta.';
   private static final Integer RENTAL_TARGET_INSTALLMENTS = 60;
   private static final String ECONOMIA_MENSAL_LABEL = 'Economia mensal';
@@ -59,11 +59,12 @@ public with sharing class ProposalComputedValueService {
       opportunityRecord?.MainViability__c
     );
     addBateriaValues(values, opportunityRecord, opportunityId);
+    Object createdDateObj = opportunityRecord != null
+      ? opportunityRecord.getPopulatedFieldsAsMap().get('CreatedDate')
+      : null;
     values.put(
       CALCULATED_PREFIX + 'DataHoje',
-      opportunityRecord?.CreatedDate != null
-        ? opportunityRecord.CreatedDate.date()
-        : Date.today()
+      createdDateObj != null ? ((Datetime) createdDateObj).date() : Date.today()
     );
 
     return values;

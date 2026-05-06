@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-15-2026
+ * @last modified on  : 05-05-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
  *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
@@ -1325,22 +1325,32 @@ public class OpportunityBO {
         if (adequacy.contains('Ramal CA') && vs.AcBranchCost__c != null) {
           clientTotalCost += vs.AcBranchCost__c;
         }
-        if (adequacy.contains('Adequação Padrão') && vs.StandardAdequacyCost__c != null) {
+        if (
+          adequacy.contains('Adequação Padrão') &&
+          vs.StandardAdequacyCost__c != null
+        ) {
           clientTotalCost += vs.StandardAdequacyCost__c;
         }
         if (adequacy.contains('Cobertura') && vs.CoberturaCost__c != null) {
           clientTotalCost += vs.CoberturaCost__c;
         }
-        if (adequacy.contains('Laudo Estrutural') && vs.StruturalReport__c != null) {
+        if (
+          adequacy.contains('Laudo Estrutural') && vs.StruturalReport__c != null
+        ) {
           clientTotalCost += vs.StruturalReport__c;
         }
         if (adequacy.contains('Outros Custos') && vs.OtherCosts__c != null) {
           clientTotalCost += vs.OtherCosts__c;
         }
-        if (adequacy.contains('Custos Adicionais') && vs.AdditionalCost__c != null) {
+        if (
+          adequacy.contains('Custos Adicionais') && vs.AdditionalCost__c != null
+        ) {
           clientTotalCost += vs.AdditionalCost__c;
         }
-        if (adequacy.contains('Visita Técnica') && vs.TechnicalVisitCost__c != null) {
+        if (
+          adequacy.contains('Visita Técnica') &&
+          vs.TechnicalVisitCost__c != null
+        ) {
           clientTotalCost += vs.TechnicalVisitCost__c;
         }
       }
@@ -3481,7 +3491,7 @@ public class OpportunityBO {
 
   /**
    * @description Triggers SendKitUpdate to Nivello when any proposal parameter changes.
-   *              Currently watches: ConsumoInformadoB__c, TipoTelhadoEstrutura__c.
+   *              Currently watches: ConsumoInformadoB__c, TipoTelhadoEstrutura__c, IsRSD__c.
    *              Collects all affected Opportunity IDs, queries their related Kit_Instalacao__c
    *              records and dispatches a single async callout to /api/Proposal/updateInfosKit.
    * @param newList Updated Opportunity records
@@ -3497,7 +3507,8 @@ public class OpportunityBO {
       Opportunity oldOpp = oldMap.get(newOpp.Id);
       if (
         newOpp.ConsumoInformadoB__c != oldOpp.ConsumoInformadoB__c ||
-        newOpp.TipoTelhadoEstrutura__c != oldOpp.TipoTelhadoEstrutura__c
+        newOpp.TipoTelhadoEstrutura__c != oldOpp.TipoTelhadoEstrutura__c ||
+        newOpp.IsRSD__c != oldOpp.IsRSD__c
       ) {
         opportunityIds.add(newOpp.Id);
       }

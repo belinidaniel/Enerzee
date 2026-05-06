@@ -40,10 +40,10 @@
     </values>
     <values>
         <field>SourcePath__c</field>
-        <value xsi:type="xsd:string">PotenciaModulos__c</value>
+        <value xsi:type="xsd:string">PotenciaNominalWp__c</value>
     </values>
     <values>
         <field>TagKey__c</field>
-        <value xsi:type="xsd:string">{{PotenciaModulos__c}}</value>
+        <value xsi:type="xsd:string">{{PotenciaNominalWp__c}}</value>
     </values>
 </CustomMetadata>

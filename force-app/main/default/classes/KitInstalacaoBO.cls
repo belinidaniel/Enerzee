@@ -2,14 +2,19 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-23-2026
+ * @last modified on  : 05-05-2026
  * @last modified by  : Daniel Belini
  * @test              : KitInstalacaoBOTest, KitInstalacaoTriggerTest
  **/
 public without sharing class KitInstalacaoBO {
   private static final String CLASS_NAME = 'KitInstalacaoBO';
   private static final Set<String> EZEECONNECT_RECORD_TYPES = new Set<String>{
-    'BowE', 'Ultragaz', 'EzeeConnect_Solled', 'Simplifica', 'Nextron', 'Origo'
+    'BowE',
+    'Ultragaz',
+    'EzeeConnect_Solled',
+    'Simplifica',
+    'Nextron',
+    'Origo'
   };
   private class SendKitUpdateException extends Exception {
   }
@@ -344,6 +349,7 @@ public without sharing class KitInstalacaoBO {
           CustoFinanceiroWeg__c,
           ConsumoInformadoB__c,
           TipoTelhadoEstrutura__c,
+          IsRSD__c,
           (
             SELECT
               ID,
@@ -445,6 +451,7 @@ public without sharing class KitInstalacaoBO {
       ? (Integer) opp.NumeroModulos__c
       : 0;
     request.StructureType = getStructureType(opp.TipoTelhadoEstrutura__c);
+    request.IsRSD = opp.IsRSD__c;
 
     request.listProducts = new List<IntegracaoNivelloContrato.Product>();
     for (OpportunityLineItem oli : opp.OpportunityLineItems) {
