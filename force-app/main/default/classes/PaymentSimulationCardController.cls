@@ -39,7 +39,10 @@ public with sharing class PaymentSimulationCardController {
     for (PaymentSimulation__c simulationRecord : simulations) {
       existingSimulationIds.add(simulationRecord.Id);
     }
-    if (String.isNotBlank(selectedSimulationId) && !existingSimulationIds.contains((Id) selectedSimulationId)) {
+    if (
+      String.isNotBlank(selectedSimulationId) &&
+      !existingSimulationIds.contains((Id) selectedSimulationId)
+    ) {
       selectedSimulationId = null;
     }
 
@@ -68,7 +71,10 @@ public with sharing class PaymentSimulationCardController {
         card.key = cardKey;
         card.proposalLabel = label;
         card.paymentType = sim.PaymentType__c;
-        card.anticipationRate = sim.FinancingRate__r?.AnticipationRate__c;
+        card.anticipationRate = sim.FinancingRate__c != null &&
+          sim.getPopulatedFieldsAsMap().containsKey('FinancingRate__r')
+          ? sim.FinancingRate__r.AnticipationRate__c
+          : null;
         card.principalValue = opportunityPrincipalValue;
         card.isManual = isManualProposalLabel(label);
         card.hasSelected = false;
@@ -200,7 +206,9 @@ public with sharing class PaymentSimulationCardController {
       return result;
     }
 
-    String manualPaymentType = String.isNotBlank(paymentType) ? paymentType : baseSimulation.PaymentType__c;
+    String manualPaymentType = String.isNotBlank(paymentType)
+      ? paymentType
+      : baseSimulation.PaymentType__c;
     PaymentSimulation__c manualSimulation = new PaymentSimulation__c(
       Opportunity__c = opportunityRecord.Id,
       FinancingRate__c = null,
@@ -403,14 +411,11 @@ public with sharing class PaymentSimulationCardController {
       // SelectedSimulation__c sync automatically after this DML.
     }
 
-    // Manual simulations don't change FormaPagamento__c or StageName on the opportunity —
-    // only selecting a standard simulation should drive those fields.
+    // Manual simulations still drive the selected payment method, but they do
+    // not move stages automatically.
     Boolean isManualSimulation = MANUAL_SIMULATION_LABEL.equals(
       simulationRecord.ProposalLabel__c
     );
-    if (isManualSimulation) {
-      return;
-    }
 
     // FormaPagamento__c and StageName are not managed by the trigger — update them here.
     Opportunity oppToUpdate = new Opportunity(Id = opportunityRecord.Id);
@@ -428,6 +433,7 @@ public with sharing class PaymentSimulationCardController {
     }
 
     if (
+      !isManualSimulation &&
       RENTAL_PAYMENT_TYPE.equalsIgnoreCase(simulationRecord.PaymentType__c) &&
       opportunityRecord.RecordType?.DeveloperName == 'Solar' &&
       opportunityRecord.StageName != CREDIT_ANALYSIS_STAGE

@@ -35,11 +35,7 @@ public with sharing class ProposalPayloadBuilder {
     Id opportunityId,
     List<ProposalConfigurationService.TagConfig> tagConfigs
   ) {
-    Set<String> selectFields = new Set<String>{
-      'Id',
-      'MainViability__c',
-      'MainViability__r.TextStudy__c'
-    };
+    Set<String> selectFields = new Set<String>{ 'Id', 'MainViability__c' };
     selectFields.addAll(COMPUTED_DEPENDENCY_FIELDS);
     if (tagConfigs != null) {
       for (ProposalConfigurationService.TagConfig config : tagConfigs) {
@@ -94,8 +90,16 @@ public with sharing class ProposalPayloadBuilder {
           config,
           computedValues
         );
-        if (config.tagKey != null && config.tagKey.containsIgnoreCase('CustosViabilidade')) {
-          System.debug('[ProposalPayloadBuilder] TAG=' + config.tagKey + ' VALUE=' + resolvedValue);
+        if (
+          config.tagKey != null &&
+          config.tagKey.containsIgnoreCase('CustosViabilidade')
+        ) {
+          System.debug(
+            '[ProposalPayloadBuilder] TAG=' +
+              config.tagKey +
+              ' VALUE=' +
+              resolvedValue
+          );
         }
         payload.tags.put(config.tagKey, resolvedValue);
       }
