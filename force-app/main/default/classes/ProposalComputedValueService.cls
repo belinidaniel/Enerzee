@@ -56,7 +56,7 @@ public with sharing class ProposalComputedValueService {
     addViabilityCostValues(
       values,
       opportunityId,
-      opportunityRecord?.MainViability__c
+      getIdValue(opportunityRecord, 'MainViability__c')
     );
     addBateriaValues(values, opportunityRecord, opportunityId);
     Object createdDateObj = opportunityRecord != null
@@ -68,6 +68,14 @@ public with sharing class ProposalComputedValueService {
     );
 
     return values;
+  }
+
+  private static Id getIdValue(SObject record, String fieldName) {
+    if (record == null || String.isBlank(fieldName)) {
+      return null;
+    }
+    Object rawValue = record.getPopulatedFieldsAsMap().get(fieldName);
+    return rawValue instanceof Id ? (Id) rawValue : null;
   }
 
   private static void addViabilityCostValues(

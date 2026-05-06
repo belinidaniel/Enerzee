@@ -2266,4 +2266,95 @@ private class ProposalEngineSupportTest {
       'O arquivo com Clicksign no título não deve ser deletado.'
     );
   }
+
+  @isTest
+  static void proposalGenerationExtractsRichTextImageUrls() {
+    Assert.areEqual(
+      null,
+      ProposalGenerationService.extractImagesFromRichText(null),
+      'HTML vazio não deve gerar payload de imagens.'
+    );
+
+    String imagesJson = ProposalGenerationService.extractImagesFromRichText(
+      '<p>Texto</p><img src="/servlet/rtaImage?id=1"/><img src="https://cdn.example.com/layout.png"/>'
+    );
+
+    Assert.isNotNull(imagesJson, 'HTML com imagens deve gerar payload JSON.');
+    Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(
+      imagesJson
+    );
+    List<Object> urls = (List<Object>) payload.get('urls');
+    Assert.areEqual(2, urls.size(), 'Deve retornar as duas URLs encontradas.');
+    Assert.isTrue(
+      String.valueOf(urls[0])
+        .startsWith(URL.getOrgDomainUrl().toExternalForm()),
+      'URL relativa deve ser transformada em URL absoluta da org.'
+    );
+    Assert.areEqual(
+      'https://cdn.example.com/layout.png',
+      String.valueOf(urls[1]),
+      'URL absoluta deve ser preservada.'
+    );
+  }
+
+  @isTest
+  static void proposalGenerationFetchesLayoutFromFilesAndLegacyAttachments() {
+    Assert.areEqual(
+      null,
+      ProposalGenerationService.fetchLayoutAttachment(null),
+      'Viabilidade nula não deve retornar layout.'
+    );
+
+    Opportunity opportunityRecord = [
+      SELECT Id
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    ViabilityStudy__c fileViability = new ViabilityStudy__c(
+      Opportunity__c = opportunityRecord.Id
+    );
+    ViabilityStudy__c legacyViability = new ViabilityStudy__c(
+      Opportunity__c = opportunityRecord.Id
+    );
+    insert new List<ViabilityStudy__c>{ fileViability, legacyViability };
+
+    insert new ContentVersion(
+      Title = 'Layout API Engine',
+      PathOnClient = 'layout-api-engine.png',
+      VersionData = Blob.valueOf('layout-file'),
+      FirstPublishLocationId = fileViability.Id
+    );
+
+    String fileLayout = ProposalGenerationService.fetchLayoutAttachment(
+      fileViability.Id
+    );
+    Assert.isTrue(
+      fileLayout.startsWith('data:image/'),
+      'Arquivo com Layout no título deve retornar data URI.'
+    );
+    Assert.isTrue(
+      fileLayout.contains(
+        EncodingUtil.base64Encode(Blob.valueOf('layout-file'))
+      ),
+      'Data URI deve conter o conteúdo do arquivo em base64.'
+    );
+
+    insert new Attachment(
+      Name = 'layout-legado.png',
+      ParentId = legacyViability.Id,
+      Body = Blob.valueOf('layout-legacy'),
+      ContentType = 'image/png'
+    );
+
+    String legacyLayout = ProposalGenerationService.fetchLayoutAttachment(
+      legacyViability.Id
+    );
+    Assert.areEqual(
+      'data:image/png;base64,' +
+      EncodingUtil.base64Encode(Blob.valueOf('layout-legacy')),
+      legacyLayout,
+      'Attachment legado com Layout no nome deve retornar data URI.'
+    );
+  }
 }

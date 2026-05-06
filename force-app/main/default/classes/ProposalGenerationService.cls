@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 04-17-2026
  * @last modified by  : Daniel Belini
- * @test              : ProposalConsoleControllerApiTest, ProposalConsoleControllerTest, ProposalEngineSupportTest
+ * @test              : ProposalEngineSupportTest
  **/
 public with sharing class ProposalGenerationService {
   public class ProposalGenerationException extends Exception {
