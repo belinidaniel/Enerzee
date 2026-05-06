@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-06-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de apoio a testes
  **/
@@ -419,16 +419,17 @@ public class TestFactoryDefaults {
         Opportunity.Pontos__c => 1,
         Opportunity.PontosRS__c => 1,
         Opportunity.PorcentagemAumentoConsumo__c => 1,
-        Opportunity.PotenciaModulos__c => '1',
-        Opportunity.PotenciaNominalSistema__c => 1,
-        Opportunity.PotenciaNominalWp__c => 1,
-        Opportunity.PotenciaPicoSistema__c => 1,
-        Opportunity.PrazoAprovacaoViabilidade__c => System.now().addDays(10),
-        Opportunity.PrazoEntregaDias__c => '3 dias',
-        Opportunity.PrazoObraDias__c => 1,
-        Opportunity.PrecoCA__c => 1,
-        Opportunity.PrecoCustosAdicionais__c => 1,
-        Opportunity.PrecoUFV__c => 1,
+        PotenciaNominalWp__cPotenciaModulos__c => '1',
+        PotenciaNominalWp__cPotenciaNominalSistema__c => 1,
+        PotenciaNominalWp__cPotenciaNominalWp__c => 1,
+        PotenciaNominalWp__cPotenciaPicoSistema__c => 1,
+        PotenciaNominalWp__cPrazoAprovacaoViabilidade__c => System.now()
+          .addDays(10),
+        PotenciaNominalWp__cPrazoEntregaDias__c => '3 dias',
+        PotenciaNominalWp__cPrazoObraDias__c => 1,
+        PotenciaNominalWp__cPrecoCA__c => 1,
+        PotenciaNominalWp__cPrecoCustosAdicionais__c => 1,
+        PotenciaNominalWp__cPrecoUFV__c => 1,
         Opportunity.Probability => 1,
         Opportunity.Proposta_aprovada__c => false,
         Opportunity.PropostaGerada__c => false,

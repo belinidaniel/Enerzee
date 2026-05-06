@@ -2070,7 +2070,8 @@ private class ProposalEngineSupportTest {
       Description = '- Bateria 7,5 kWh\n- Inclui suporte',
       IsActive = true,
       ProductCode = productCode,
-      Id_Externo__c = productCode
+      Id_Externo__c = productCode,
+      ExternalId__c = productCode
     );
     insert product;
 
@@ -2196,12 +2197,10 @@ private class ProposalEngineSupportTest {
       LIMIT 1
     ];
 
-    String proposalNumber = opportunityRecord.Numeroproposta__c;
-
-    // Arquivo de proposta normal — deve ser deletado
+    // Arquivo de proposta normal — deve ser deletado (via byFlag: IsProposal__c = true)
     ContentVersion normalVersion = new ContentVersion(
-      Title = proposalNumber + ' Cliente Teste 2026-04-27',
-      PathOnClient = proposalNumber + '-proposta.pdf',
+      Title = 'Proposta Normal Engine Test 2026-04-27',
+      PathOnClient = 'proposta-normal-engine.pdf',
       VersionData = Blob.valueOf('pdf-normal'),
       FirstPublishLocationId = opportunityRecord.Id,
       IsProposal__c = true
@@ -2214,12 +2213,13 @@ private class ProposalEngineSupportTest {
     ]
     .ContentDocumentId;
 
-    // Arquivo ClickSign — NÃO deve ser deletado
+    // Arquivo ClickSign — NÃO deve ser deletado (IsProposal__c = true mas título contém 'Clicksign')
     ContentVersion clicksignVersion = new ContentVersion(
-      Title = proposalNumber + ' Cliente Teste 2026-03-27 01-10-19 - Clicksign',
-      PathOnClient = proposalNumber + '-clicksign.pdf',
+      Title = 'Proposta Normal Engine Test 2026-03-27 - Clicksign',
+      PathOnClient = 'proposta-clicksign-engine.pdf',
       VersionData = Blob.valueOf('pdf-clicksign'),
-      FirstPublishLocationId = opportunityRecord.Id
+      FirstPublishLocationId = opportunityRecord.Id,
+      IsProposal__c = true
     );
     insert clicksignVersion;
     Id clicksignDocId = [

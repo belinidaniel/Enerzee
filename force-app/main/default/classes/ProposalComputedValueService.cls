@@ -59,11 +59,12 @@ public with sharing class ProposalComputedValueService {
       opportunityRecord?.MainViability__c
     );
     addBateriaValues(values, opportunityRecord, opportunityId);
+    Object createdDateObj = opportunityRecord != null
+      ? opportunityRecord.getPopulatedFieldsAsMap().get('CreatedDate')
+      : null;
     values.put(
       CALCULATED_PREFIX + 'DataHoje',
-      opportunityRecord?.CreatedDate != null
-        ? opportunityRecord.CreatedDate.date()
-        : Date.today()
+      createdDateObj != null ? ((Datetime) createdDateObj).date() : Date.today()
     );
 
     return values;
