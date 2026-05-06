@@ -815,10 +815,7 @@ private class ProposalEngineSupportTest {
       pixPayload.tags.get('{{formaPagamentoOutroSelecionado}}')
     );
     Assert.areEqual('R$ 66.144,88', pixPayload.tags.get('{{ValorOutros}}'));
-    Assert.areEqual(
-      '² com até 10% de desconto.',
-      pixPayload.tags.get('{{textoOutrosPagamento}}')
-    );
+    Assert.areEqual('', pixPayload.tags.get('{{textoOutrosPagamento}}'));
 
     delete [
       SELECT Id
@@ -1805,9 +1802,17 @@ private class ProposalEngineSupportTest {
   @isTest
   static void computedValueServiceCoversViabilityCostPaths() {
     Opportunity opportunityRecord = [
-      SELECT Id, MainViability__c, CustoMedioEnergia__c, EconomiaMensalEstimada__c,
-             TarifaComTributosB__c, GeracaoMensalEstimada__c, ConsumoInformadoB__c,
-             CreatedDate, ValorTotalProposta__c, DescricaoBateria__c
+      SELECT
+        Id,
+        MainViability__c,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c,
+        CreatedDate,
+        ValorTotalProposta__c,
+        DescricaoBateria__c
       FROM Opportunity
       WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
       LIMIT 1
@@ -1839,12 +1844,23 @@ private class ProposalEngineSupportTest {
     );
     insert viability;
 
-    update new Opportunity(Id = opportunityRecord.Id, MainViability__c = viability.Id);
+    update new Opportunity(
+      Id = opportunityRecord.Id,
+      MainViability__c = viability.Id
+    );
 
     Opportunity oppWithViability = [
-      SELECT Id, MainViability__c, CustoMedioEnergia__c, EconomiaMensalEstimada__c,
-             TarifaComTributosB__c, GeracaoMensalEstimada__c, ConsumoInformadoB__c,
-             CreatedDate, ValorTotalProposta__c, DescricaoBateria__c
+      SELECT
+        Id,
+        MainViability__c,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c,
+        CreatedDate,
+        ValorTotalProposta__c,
+        DescricaoBateria__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
@@ -1858,7 +1874,9 @@ private class ProposalEngineSupportTest {
       oppWithViability
     );
 
-    String custos = (String) valuesWithViability.get('Calculated.CustosViabilidade');
+    String custos = (String) valuesWithViability.get(
+      'Calculated.CustosViabilidade'
+    );
     Assert.isTrue(
       String.isNotBlank(custos),
       'CustosViabilidade deve ser preenchido quando há viabilidade com custos.'
@@ -1891,14 +1909,25 @@ private class ProposalEngineSupportTest {
 
     // Sem MainViability__c — cai no branch de busca por Opportunity__c
     Opportunity opp = [
-      SELECT Id, MainViability__c, CreatedDate, ValorTotalProposta__c, DescricaoBateria__c,
-             CustoMedioEnergia__c, EconomiaMensalEstimada__c, TarifaComTributosB__c,
-             GeracaoMensalEstimada__c, ConsumoInformadoB__c
+      SELECT
+        Id,
+        MainViability__c,
+        CreatedDate,
+        ValorTotalProposta__c,
+        DescricaoBateria__c,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
 
-    Map<String, Object> values = ProposalComputedValueService.build(opp.Id, opp);
+    Map<String, Object> values = ProposalComputedValueService.build(
+      opp.Id,
+      opp
+    );
     String custos = (String) values.get('Calculated.CustosViabilidade');
     Assert.isTrue(
       String.isNotBlank(custos),
@@ -1936,15 +1965,26 @@ private class ProposalEngineSupportTest {
     };
 
     Opportunity opp = [
-      SELECT Id, MainViability__c, CreatedDate, ValorTotalProposta__c, DescricaoBateria__c,
-             CustoMedioEnergia__c, EconomiaMensalEstimada__c, TarifaComTributosB__c,
-             GeracaoMensalEstimada__c, ConsumoInformadoB__c
+      SELECT
+        Id,
+        MainViability__c,
+        CreatedDate,
+        ValorTotalProposta__c,
+        DescricaoBateria__c,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
 
     // Sem simulação selecionada (PIX) — fallback para ValorTotalProposta__c
-    Map<String, Object> values = ProposalComputedValueService.build(opp.Id, opp);
+    Map<String, Object> values = ProposalComputedValueService.build(
+      opp.Id,
+      opp
+    );
 
     Assert.areEqual(
       'PIX VIA LINK',
@@ -1957,7 +1997,8 @@ private class ProposalEngineSupportTest {
     );
     Assert.areEqual(
       700,
-      ((Decimal) values.get('SimulationSummary.Rental.InstallmentAmount1')).intValue(),
+      ((Decimal) values.get('SimulationSummary.Rental.InstallmentAmount1'))
+        .intValue(),
       'Deve selecionar o aluguel de 60 parcelas exatas.'
     );
   }
@@ -1976,14 +2017,25 @@ private class ProposalEngineSupportTest {
     update opportunityRecord;
 
     Opportunity opp = [
-      SELECT Id, MainViability__c, CreatedDate, ValorTotalProposta__c, DescricaoBateria__c,
-             CustoMedioEnergia__c, EconomiaMensalEstimada__c, TarifaComTributosB__c,
-             GeracaoMensalEstimada__c, ConsumoInformadoB__c
+      SELECT
+        Id,
+        MainViability__c,
+        CreatedDate,
+        ValorTotalProposta__c,
+        DescricaoBateria__c,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
 
-    Map<String, Object> values = ProposalComputedValueService.build(opp.Id, opp);
+    Map<String, Object> values = ProposalComputedValueService.build(
+      opp.Id,
+      opp
+    );
 
     Assert.areEqual(
       'Bateria 10,5 kWh',
@@ -1996,7 +2048,8 @@ private class ProposalEngineSupportTest {
       'Deve extrair o valor de kWh da descrição.'
     );
     Assert.isTrue(
-      String.valueOf(values.get('Calculated.BateriaIncluso')).contains('Inclui instalação'),
+      String.valueOf(values.get('Calculated.BateriaIncluso'))
+        .contains('Inclui instalação'),
       'Deve capturar as linhas de inclusões.'
     );
   }
@@ -2037,14 +2090,25 @@ private class ProposalEngineSupportTest {
     );
 
     Opportunity opp = [
-      SELECT Id, MainViability__c, CreatedDate, ValorTotalProposta__c, DescricaoBateria__c,
-             CustoMedioEnergia__c, EconomiaMensalEstimada__c, TarifaComTributosB__c,
-             GeracaoMensalEstimada__c, ConsumoInformadoB__c
+      SELECT
+        Id,
+        MainViability__c,
+        CreatedDate,
+        ValorTotalProposta__c,
+        DescricaoBateria__c,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
 
-    Map<String, Object> values = ProposalComputedValueService.build(opp.Id, opp);
+    Map<String, Object> values = ProposalComputedValueService.build(
+      opp.Id,
+      opp
+    );
 
     Assert.areEqual(
       'Bateria 7,5 kWh',

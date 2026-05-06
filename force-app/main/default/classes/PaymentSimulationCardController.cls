@@ -71,7 +71,10 @@ public with sharing class PaymentSimulationCardController {
         card.key = cardKey;
         card.proposalLabel = label;
         card.paymentType = sim.PaymentType__c;
-        card.anticipationRate = sim.FinancingRate__r?.AnticipationRate__c;
+        card.anticipationRate = sim.FinancingRate__c != null &&
+          sim.getPopulatedFieldsAsMap().containsKey('FinancingRate__r')
+          ? sim.FinancingRate__r.AnticipationRate__c
+          : null;
         card.principalValue = opportunityPrincipalValue;
         card.isManual = isManualProposalLabel(label);
         card.hasSelected = false;
