@@ -7,6 +7,7 @@
  * @test              : ProposalEngineSupportTest
  **/
 public with sharing class ProposalPayloadBuilder {
+  private static final String VIABILITY_STUDY_TEXT_PATH = 'MainViability__r.TextStudy__c';
   private static final Pattern SAFE_PATH_PATTERN = Pattern.compile(
     '^[A-Za-z0-9_]+(\\.[A-Za-z0-9_]+)*$'
   );
@@ -43,6 +44,9 @@ public with sharing class ProposalPayloadBuilder {
           continue;
         }
         if (ProposalComputedValueService.isComputedPath(config.sourcePath)) {
+          continue;
+        }
+        if (config.sourcePath == VIABILITY_STUDY_TEXT_PATH) {
           continue;
         }
         validatePath(config.sourcePath);
@@ -134,7 +138,9 @@ public with sharing class ProposalPayloadBuilder {
           config.sourcePath,
           computedValues
         )
-      : extractValue(opportunityRecord, config.sourcePath);
+      : config.sourcePath == VIABILITY_STUDY_TEXT_PATH
+          ? null
+          : extractValue(opportunityRecord, config.sourcePath);
     if (rawValue == null) {
       rawValue = config.defaultValue;
     }
