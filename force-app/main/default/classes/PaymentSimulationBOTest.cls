@@ -195,6 +195,82 @@ public class PaymentSimulationBOTest {
   }
 
   @IsTest
+  static void createSimulationsKeepsSelectedManualPixWhenPaymentMethodIsPix() {
+    Opportunity opportunityRecord = createOpportunity(
+      createAccount('TestFactoryDefaults.LegalPersonAccount').Id,
+      29456.35,
+      'Solar',
+      'Grupo B'
+    );
+
+    OpportunityTriggerHandler.disableTrigger();
+    try {
+      update new Opportunity(
+        Id = opportunityRecord.Id,
+        FormaPagamento__c = 'R0002'
+      );
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
+    opportunityRecord = getOpportunity(opportunityRecord.Id);
+    PaymentSimulationBO.createSimulationsForOpportunities(
+      new List<Opportunity>{ opportunityRecord }
+    );
+
+    insert new PaymentSimulation__c(
+      Opportunity__c = opportunityRecord.Id,
+      PaymentType__c = 'Pix',
+      ProposalLabel__c = PaymentSimulationBO.MANUAL_SIMULATION_LABEL,
+      InstallmentCount__c = 1,
+      InstallmentAmount__c = 28706.35,
+      Selected__c = true
+    );
+    PaymentSimulation__c manualPix = [
+      SELECT Id
+      FROM PaymentSimulation__c
+      WHERE
+        Opportunity__c = :opportunityRecord.Id
+        AND ProposalLabel__c = :PaymentSimulationBO.MANUAL_SIMULATION_LABEL
+      LIMIT 1
+    ];
+
+    Test.startTest();
+    PaymentSimulationBO.createSimulationsForOpportunities(
+      new List<Opportunity>{ getOpportunity(opportunityRecord.Id) }
+    );
+    Test.stopTest();
+
+    List<PaymentSimulation__c> simulations = getSimulations(
+      opportunityRecord.Id
+    );
+    Opportunity syncedOpportunity = getOpportunity(opportunityRecord.Id);
+    Integer selectedCount = 0;
+    for (PaymentSimulation__c simulationRecord : simulations) {
+      if (simulationRecord.Selected__c == true) {
+        selectedCount++;
+        Assert.areEqual(
+          manualPix.Id,
+          simulationRecord.Id,
+          'O recálculo não deve voltar a seleção para o PIX padrão.'
+        );
+        Assert.areEqual(28706.35, simulationRecord.InstallmentAmount__c);
+      }
+    }
+
+    Assert.areEqual(
+      2,
+      simulations.size(),
+      'Deve manter o PIX padrão e o personalizado.'
+    );
+    Assert.areEqual(
+      1,
+      selectedCount,
+      'Apenas uma simulação deve ficar selecionada.'
+    );
+    Assert.areEqual(manualPix.Id, syncedOpportunity.SelectedSimulation__c);
+  }
+
+  @IsTest
   static void createSimulationsNormalizesWholePercentRatesForPmt() {
     createFinancingRate(
       'Banco Percentual',

@@ -2,17 +2,10 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 05-03-2026
+ * @last modified on  : 05-06-2026
  * @last modified by  : Daniel Belini
  * @test              : WhatsAppWebhookHandlerTest
  **/
-/**
- * @description REST endpoint para receber eventos do webhook da WhatsApp Cloud API.
- *              GET  → verificação do webhook (hub.challenge handshake com o Meta).
- *              POST → recebimento de eventos (mensagens, status etc.).
- *              Log__c só é criado quando há pelo menos uma mensagem no payload (ignora status updates).
- * @test : WhatsAppWebhookHandlerTest
- */
 @RestResource(urlMapping='/api/whatsapp/*')
 global without sharing class WhatsAppWebhookHandler {
   private static final String CMT_DEVELOPER_NAME = 'WhatsApp_Cloud_API';

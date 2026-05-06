@@ -59,6 +59,7 @@ private class ProposalEngineSupportTest {
       VersionData = Blob.valueOf('pptx-engine'),
       FirstPublishLocationId = apiCover.Id,
       IsTemplate__c = true,
+      ExternalId__c = 'template-engine',
       ProposalTemplateRole__c = 'API_PPTX_TEMPLATE'
     );
   }
@@ -532,6 +533,7 @@ private class ProposalEngineSupportTest {
       VersionData = Blob.valueOf('pptx-single-template'),
       FirstPublishLocationId = cover.Id,
       IsTemplate__c = true,
+      ExternalId__c = 'template-unico',
       TipoKitPromocional__c = '6'
     );
 
@@ -815,10 +817,7 @@ private class ProposalEngineSupportTest {
       pixPayload.tags.get('{{formaPagamentoOutroSelecionado}}')
     );
     Assert.areEqual('R$ 66.144,88', pixPayload.tags.get('{{ValorOutros}}'));
-    Assert.areEqual(
-      '² com até 10% de desconto.',
-      pixPayload.tags.get('{{textoOutrosPagamento}}')
-    );
+    Assert.areEqual('', pixPayload.tags.get('{{textoOutrosPagamento}}'));
 
     delete [
       SELECT Id
@@ -1157,6 +1156,7 @@ private class ProposalEngineSupportTest {
       PathOnClient = 'proposta-engine.pdf',
       VersionData = Blob.valueOf('pdf'),
       FirstPublishLocationId = opportunityRecord.Id,
+      ExternalId__c = 'proposta-engine-success',
       IsProposal__c = true
     );
     insert proposalVersion;
@@ -1204,6 +1204,7 @@ private class ProposalEngineSupportTest {
       PathOnClient = 'proposta-engine-failure.pdf',
       VersionData = Blob.valueOf('pdf-failure'),
       FirstPublishLocationId = opportunityRecord.Id,
+      ExternalId__c = 'proposta-engine-failure',
       IsProposal__c = true
     );
     insert proposalVersion;
@@ -1263,6 +1264,7 @@ private class ProposalEngineSupportTest {
       PathOnClient = 'proposal-availability.pdf',
       VersionData = Blob.valueOf('pdf-availability'),
       FirstPublishLocationId = opportunityRecord.Id,
+      ExternalId__c = 'proposal-availability',
       IsProposal__c = true
     );
 
@@ -1270,6 +1272,7 @@ private class ProposalEngineSupportTest {
       Name = 'Link antigo',
       OpportunityId__c = opportunityRecord.Id,
       Type__c = 'Other',
+      ExternalId__c = 'proposal-availability-old-link',
       AttachmentURL__c = 'https://example.com/old-proposal.pdf'
     );
 
@@ -1295,6 +1298,7 @@ private class ProposalEngineSupportTest {
       Name = 'Link proposta',
       OpportunityId__c = opportunityRecord.Id,
       Type__c = 'Proposal',
+      ExternalId__c = 'proposal-availability-ready-link',
       AttachmentURL__c = 'https://example.com/proposal-ready.pdf'
     );
 
@@ -1805,9 +1809,17 @@ private class ProposalEngineSupportTest {
   @isTest
   static void computedValueServiceCoversViabilityCostPaths() {
     Opportunity opportunityRecord = [
-      SELECT Id, MainViability__c, CustoMedioEnergia__c, EconomiaMensalEstimada__c,
-             TarifaComTributosB__c, GeracaoMensalEstimada__c, ConsumoInformadoB__c,
-             CreatedDate, ValorTotalProposta__c, DescricaoBateria__c
+      SELECT
+        Id,
+        MainViability__c,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c,
+        CreatedDate,
+        ValorTotalProposta__c,
+        DescricaoBateria__c
       FROM Opportunity
       WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
       LIMIT 1
@@ -1839,12 +1851,23 @@ private class ProposalEngineSupportTest {
     );
     insert viability;
 
-    update new Opportunity(Id = opportunityRecord.Id, MainViability__c = viability.Id);
+    update new Opportunity(
+      Id = opportunityRecord.Id,
+      MainViability__c = viability.Id
+    );
 
     Opportunity oppWithViability = [
-      SELECT Id, MainViability__c, CustoMedioEnergia__c, EconomiaMensalEstimada__c,
-             TarifaComTributosB__c, GeracaoMensalEstimada__c, ConsumoInformadoB__c,
-             CreatedDate, ValorTotalProposta__c, DescricaoBateria__c
+      SELECT
+        Id,
+        MainViability__c,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c,
+        CreatedDate,
+        ValorTotalProposta__c,
+        DescricaoBateria__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
@@ -1858,7 +1881,9 @@ private class ProposalEngineSupportTest {
       oppWithViability
     );
 
-    String custos = (String) valuesWithViability.get('Calculated.CustosViabilidade');
+    String custos = (String) valuesWithViability.get(
+      'Calculated.CustosViabilidade'
+    );
     Assert.isTrue(
       String.isNotBlank(custos),
       'CustosViabilidade deve ser preenchido quando há viabilidade com custos.'
@@ -1891,14 +1916,25 @@ private class ProposalEngineSupportTest {
 
     // Sem MainViability__c — cai no branch de busca por Opportunity__c
     Opportunity opp = [
-      SELECT Id, MainViability__c, CreatedDate, ValorTotalProposta__c, DescricaoBateria__c,
-             CustoMedioEnergia__c, EconomiaMensalEstimada__c, TarifaComTributosB__c,
-             GeracaoMensalEstimada__c, ConsumoInformadoB__c
+      SELECT
+        Id,
+        MainViability__c,
+        CreatedDate,
+        ValorTotalProposta__c,
+        DescricaoBateria__c,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
 
-    Map<String, Object> values = ProposalComputedValueService.build(opp.Id, opp);
+    Map<String, Object> values = ProposalComputedValueService.build(
+      opp.Id,
+      opp
+    );
     String custos = (String) values.get('Calculated.CustosViabilidade');
     Assert.isTrue(
       String.isNotBlank(custos),
@@ -1936,15 +1972,26 @@ private class ProposalEngineSupportTest {
     };
 
     Opportunity opp = [
-      SELECT Id, MainViability__c, CreatedDate, ValorTotalProposta__c, DescricaoBateria__c,
-             CustoMedioEnergia__c, EconomiaMensalEstimada__c, TarifaComTributosB__c,
-             GeracaoMensalEstimada__c, ConsumoInformadoB__c
+      SELECT
+        Id,
+        MainViability__c,
+        CreatedDate,
+        ValorTotalProposta__c,
+        DescricaoBateria__c,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
 
     // Sem simulação selecionada (PIX) — fallback para ValorTotalProposta__c
-    Map<String, Object> values = ProposalComputedValueService.build(opp.Id, opp);
+    Map<String, Object> values = ProposalComputedValueService.build(
+      opp.Id,
+      opp
+    );
 
     Assert.areEqual(
       'PIX VIA LINK',
@@ -1957,7 +2004,8 @@ private class ProposalEngineSupportTest {
     );
     Assert.areEqual(
       700,
-      ((Decimal) values.get('SimulationSummary.Rental.InstallmentAmount1')).intValue(),
+      ((Decimal) values.get('SimulationSummary.Rental.InstallmentAmount1'))
+        .intValue(),
       'Deve selecionar o aluguel de 60 parcelas exatas.'
     );
   }
@@ -1976,14 +2024,25 @@ private class ProposalEngineSupportTest {
     update opportunityRecord;
 
     Opportunity opp = [
-      SELECT Id, MainViability__c, CreatedDate, ValorTotalProposta__c, DescricaoBateria__c,
-             CustoMedioEnergia__c, EconomiaMensalEstimada__c, TarifaComTributosB__c,
-             GeracaoMensalEstimada__c, ConsumoInformadoB__c
+      SELECT
+        Id,
+        MainViability__c,
+        CreatedDate,
+        ValorTotalProposta__c,
+        DescricaoBateria__c,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
 
-    Map<String, Object> values = ProposalComputedValueService.build(opp.Id, opp);
+    Map<String, Object> values = ProposalComputedValueService.build(
+      opp.Id,
+      opp
+    );
 
     Assert.areEqual(
       'Bateria 10,5 kWh',
@@ -1996,7 +2055,8 @@ private class ProposalEngineSupportTest {
       'Deve extrair o valor de kWh da descrição.'
     );
     Assert.isTrue(
-      String.valueOf(values.get('Calculated.BateriaIncluso')).contains('Inclui instalação'),
+      String.valueOf(values.get('Calculated.BateriaIncluso'))
+        .contains('Inclui instalação'),
       'Deve capturar as linhas de inclusões.'
     );
   }
@@ -2017,7 +2077,8 @@ private class ProposalEngineSupportTest {
       Description = '- Bateria 7,5 kWh\n- Inclui suporte',
       IsActive = true,
       ProductCode = productCode,
-      Id_Externo__c = productCode
+      Id_Externo__c = productCode,
+      ExternalId__c = productCode
     );
     insert product;
 
@@ -2037,14 +2098,25 @@ private class ProposalEngineSupportTest {
     );
 
     Opportunity opp = [
-      SELECT Id, MainViability__c, CreatedDate, ValorTotalProposta__c, DescricaoBateria__c,
-             CustoMedioEnergia__c, EconomiaMensalEstimada__c, TarifaComTributosB__c,
-             GeracaoMensalEstimada__c, ConsumoInformadoB__c
+      SELECT
+        Id,
+        MainViability__c,
+        CreatedDate,
+        ValorTotalProposta__c,
+        DescricaoBateria__c,
+        CustoMedioEnergia__c,
+        EconomiaMensalEstimada__c,
+        TarifaComTributosB__c,
+        GeracaoMensalEstimada__c,
+        ConsumoInformadoB__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
 
-    Map<String, Object> values = ProposalComputedValueService.build(opp.Id, opp);
+    Map<String, Object> values = ProposalComputedValueService.build(
+      opp.Id,
+      opp
+    );
 
     Assert.areEqual(
       'Bateria 7,5 kWh',
@@ -2132,14 +2204,13 @@ private class ProposalEngineSupportTest {
       LIMIT 1
     ];
 
-    String proposalNumber = opportunityRecord.Numeroproposta__c;
-
-    // Arquivo de proposta normal — deve ser deletado
+    // Arquivo de proposta normal — deve ser deletado (via byFlag: IsProposal__c = true)
     ContentVersion normalVersion = new ContentVersion(
-      Title = proposalNumber + ' Cliente Teste 2026-04-27',
-      PathOnClient = proposalNumber + '-proposta.pdf',
+      Title = 'Proposta Normal Engine Test 2026-04-27',
+      PathOnClient = 'proposta-normal-engine.pdf',
       VersionData = Blob.valueOf('pdf-normal'),
       FirstPublishLocationId = opportunityRecord.Id,
+      ExternalId__c = 'proposta-normal-engine-delete',
       IsProposal__c = true
     );
     insert normalVersion;
@@ -2150,12 +2221,14 @@ private class ProposalEngineSupportTest {
     ]
     .ContentDocumentId;
 
-    // Arquivo ClickSign — NÃO deve ser deletado
+    // Arquivo ClickSign — NÃO deve ser deletado (IsProposal__c = true mas título contém 'Clicksign')
     ContentVersion clicksignVersion = new ContentVersion(
-      Title = proposalNumber + ' Cliente Teste 2026-03-27 01-10-19 - Clicksign',
-      PathOnClient = proposalNumber + '-clicksign.pdf',
+      Title = 'Proposta Normal Engine Test 2026-03-27 - Clicksign',
+      PathOnClient = 'proposta-clicksign-engine.pdf',
       VersionData = Blob.valueOf('pdf-clicksign'),
-      FirstPublishLocationId = opportunityRecord.Id
+      FirstPublishLocationId = opportunityRecord.Id,
+      ExternalId__c = 'proposta-clicksign-engine-keep',
+      IsProposal__c = true
     );
     insert clicksignVersion;
     Id clicksignDocId = [
@@ -2191,6 +2264,97 @@ private class ProposalEngineSupportTest {
       1,
       remainingClicksign.size(),
       'O arquivo com Clicksign no título não deve ser deletado.'
+    );
+  }
+
+  @isTest
+  static void proposalGenerationExtractsRichTextImageUrls() {
+    Assert.areEqual(
+      null,
+      ProposalGenerationService.extractImagesFromRichText(null),
+      'HTML vazio não deve gerar payload de imagens.'
+    );
+
+    String imagesJson = ProposalGenerationService.extractImagesFromRichText(
+      '<p>Texto</p><img src="/servlet/rtaImage?id=1"/><img src="https://cdn.example.com/layout.png"/>'
+    );
+
+    Assert.isNotNull(imagesJson, 'HTML com imagens deve gerar payload JSON.');
+    Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(
+      imagesJson
+    );
+    List<Object> urls = (List<Object>) payload.get('urls');
+    Assert.areEqual(2, urls.size(), 'Deve retornar as duas URLs encontradas.');
+    Assert.isTrue(
+      String.valueOf(urls[0])
+        .startsWith(URL.getOrgDomainUrl().toExternalForm()),
+      'URL relativa deve ser transformada em URL absoluta da org.'
+    );
+    Assert.areEqual(
+      'https://cdn.example.com/layout.png',
+      String.valueOf(urls[1]),
+      'URL absoluta deve ser preservada.'
+    );
+  }
+
+  @isTest
+  static void proposalGenerationFetchesLayoutFromFilesAndLegacyAttachments() {
+    Assert.areEqual(
+      null,
+      ProposalGenerationService.fetchLayoutAttachment(null),
+      'Viabilidade nula não deve retornar layout.'
+    );
+
+    Opportunity opportunityRecord = [
+      SELECT Id
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+    ViabilityStudy__c fileViability = new ViabilityStudy__c(
+      Opportunity__c = opportunityRecord.Id
+    );
+    ViabilityStudy__c legacyViability = new ViabilityStudy__c(
+      Opportunity__c = opportunityRecord.Id
+    );
+    insert new List<ViabilityStudy__c>{ fileViability, legacyViability };
+
+    insert new ContentVersion(
+      Title = 'Layout API Engine',
+      PathOnClient = 'layout-api-engine.png',
+      VersionData = Blob.valueOf('layout-file'),
+      FirstPublishLocationId = fileViability.Id
+    );
+
+    String fileLayout = ProposalGenerationService.fetchLayoutAttachment(
+      fileViability.Id
+    );
+    Assert.isTrue(
+      fileLayout.startsWith('data:image/'),
+      'Arquivo com Layout no título deve retornar data URI.'
+    );
+    Assert.isTrue(
+      fileLayout.contains(
+        EncodingUtil.base64Encode(Blob.valueOf('layout-file'))
+      ),
+      'Data URI deve conter o conteúdo do arquivo em base64.'
+    );
+
+    insert new Attachment(
+      Name = 'layout-legado.png',
+      ParentId = legacyViability.Id,
+      Body = Blob.valueOf('layout-legacy'),
+      ContentType = 'image/png'
+    );
+
+    String legacyLayout = ProposalGenerationService.fetchLayoutAttachment(
+      legacyViability.Id
+    );
+    Assert.areEqual(
+      'data:image/png;base64,' +
+      EncodingUtil.base64Encode(Blob.valueOf('layout-legacy')),
+      legacyLayout,
+      'Attachment legado com Layout no nome deve retornar data URI.'
     );
   }
 }

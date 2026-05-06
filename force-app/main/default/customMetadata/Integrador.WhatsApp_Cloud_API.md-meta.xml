@@ -4,7 +4,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 >
-    <label>Atualizar Pendência de Proposta</label>
+    <label>WhatsApp Cloud API</label>
     <protected>false</protected>
     <values>
         <field>Client_Id__c</field>
@@ -20,21 +20,23 @@
     </values>
     <values>
         <field>LastToken__c</field>
-        <value xsi:nil="true" />
+        <value
+      xsi:type="xsd:string"
+    >EAAb5mQBWCOgBRVZBzNYJZAz6e7X7v8z1J8VMZCiRVdpylTKRunpZAQShq8AQ82eIqSCPWyRSMWfcYZA3BLNN2nWQqRvHDuUrZBLCsTxeJvhsu2ZC94oMdCSEEHDxFWZBshgWNieF5cb82hgabSNA0VU6r3RRgPZB150U7EWGwWEZAlCK8m7xsarpZCGQBFERdzyngZDZD</value>
     </values>
     <values>
         <field>Method__c</field>
-        <value xsi:type="xsd:string">PUT</value>
+        <value xsi:type="xsd:string">POST</value>
     </values>
     <values>
         <field>TokenLong__c</field>
-        <value xsi:nil="true" />
+        <value
+      xsi:type="xsd:string"
+    >EAAb5mQBWCOgBRVZBzNYJZAz6e7X7v8z1J8VMZCiRVdpylTKRunpZAQShq8AQ82eIqSCPWyRSMWfcYZA3BLNN2nWQqRvHDuUrZBLCsTxeJvhsu2ZC94oMdCSEEHDxFWZBshgWNieF5cb82hgabSNA0VU6r3RRgPZB150U7EWGwWEZAlCK8m7xsarpZCGQBFERdzyngZDZD</value>
     </values>
     <values>
         <field>URL__c</field>
-        <value
-      xsi:type="xsd:string"
-    >https://geradorpropostas.azurewebsites.net/api/Proposal/ProposalPending</value>
+        <value xsi:type="xsd:string">https://graph.facebook.com/v19.0</value>
     </values>
     <values>
         <field>Validade_token__c</field>
@@ -42,7 +44,9 @@
     </values>
     <values>
         <field>Verify_Token__c</field>
-        <value xsi:nil="true" />
+        <value
+      xsi:type="xsd:string"
+    >a765fa70ad2d93b94e6469c2f9ca303457f4209a1536b57f</value>
     </values>
     <values>
         <field>login__c</field>

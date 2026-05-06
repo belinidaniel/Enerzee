@@ -155,6 +155,10 @@ public with sharing class ProposalFileService {
     version.ProposalScenario__c = context.scenario;
     version.ProposalPaymentType__c = context.paymentType;
     version.ProposalCoverKey__c = context.coverKey;
+    version.ExternalId__c = buildGeneratedProposalExternalId(
+      context.opportunity.Id,
+      payloadHash
+    );
 
     List<ContentVersion> sanitized = (List<ContentVersion>) Security.stripInaccessible(
         AccessType.CREATABLE,
@@ -271,6 +275,7 @@ public with sharing class ProposalFileService {
     );
 
     Set<Id> documentIdsToDelete = new Set<Id>();
+    Set<Id> protectedDocumentIds = new Set<Id>();
 
     List<ContentVersion> byFlag = [
       SELECT ContentDocumentId, Title, IsProposal__c
@@ -286,9 +291,9 @@ public with sharing class ProposalFileService {
     );
     for (ContentVersion version : byFlag) {
       if (
-        version.Title != null &&
-        version.Title.containsIgnoreCase('Clicksign')
+        version.Title != null && version.Title.containsIgnoreCase('Clicksign')
       ) {
+        protectedDocumentIds.add(version.ContentDocumentId);
         System.debug(
           '[ProposalFileService.deleteStoredProposals] SKIP Clicksign (byFlag): Title=' +
           version.Title
@@ -346,6 +351,7 @@ public with sharing class ProposalFileService {
             version.Title != null &&
             version.Title.containsIgnoreCase('Clicksign')
           ) {
+            protectedDocumentIds.add(version.ContentDocumentId);
             System.debug(
               '[ProposalFileService.deleteStoredProposals] SKIP Clicksign: Title=' +
               version.Title
@@ -367,6 +373,22 @@ public with sharing class ProposalFileService {
       '[ProposalFileService.deleteStoredProposals] documentIdsToDelete=' +
       documentIdsToDelete
     );
+
+    if (!documentIdsToDelete.isEmpty()) {
+      for (ContentVersion latestVersion : [
+        SELECT ContentDocumentId, Title
+        FROM ContentVersion
+        WHERE ContentDocumentId IN :documentIdsToDelete AND IsLatest = TRUE
+      ]) {
+        if (
+          latestVersion.Title != null &&
+          latestVersion.Title.containsIgnoreCase('Clicksign')
+        ) {
+          protectedDocumentIds.add(latestVersion.ContentDocumentId);
+        }
+      }
+      documentIdsToDelete.removeAll(protectedDocumentIds);
+    }
 
     if (documentIdsToDelete.isEmpty()) {
       System.debug(
@@ -401,6 +423,17 @@ public with sharing class ProposalFileService {
 
   private static String buildCacheKey(Id opportunityId, String payloadHash) {
     return String.valueOf(opportunityId) + '|' + payloadHash;
+  }
+
+  private static String buildGeneratedProposalExternalId(
+    Id opportunityId,
+    String payloadHash
+  ) {
+    String source = buildCacheKey(opportunityId, payloadHash);
+    String digest = EncodingUtil.convertToHex(
+      Crypto.generateDigest('SHA-256', Blob.valueOf(source))
+    );
+    return 'PROPOSAL-' + digest;
   }
 
   @TestVisible
