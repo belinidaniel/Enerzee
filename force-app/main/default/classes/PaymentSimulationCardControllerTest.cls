@@ -393,6 +393,59 @@ public class PaymentSimulationCardControllerTest {
   }
 
   @IsTest
+  static void createManualSimulationUpdatesPaymentMethodForManualPix() {
+    Account acc = createAccount();
+    Opportunity opp = createOpportunity(acc.Id);
+    setOpportunityStage(opp.Id, 'Readequação de Proposta');
+
+    FinancingRate__c fr = createFinancingRate(
+      'Opção 1',
+      'Financing',
+      true,
+      25,
+      0.02,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    );
+    List<PaymentSimulation__c> sims = insertSimulations(opp.Id, fr);
+    setSelectedSimulation(opp.Id, sims[0].Id);
+
+    Test.startTest();
+    PaymentSimulationCardController.ManualSimulationResult result = PaymentSimulationCardController.createManualSimulation(
+      opp.Id,
+      sims[0].Id,
+      1,
+      28706.35,
+      'Pix'
+    );
+    Test.stopTest();
+
+    Opportunity updatedOpportunity = getOpportunity(opp.Id);
+    PaymentSimulation__c manualSimulation = [
+      SELECT Id, PaymentType__c, Selected__c
+      FROM PaymentSimulation__c
+      WHERE Id = :result.simulationId
+      LIMIT 1
+    ];
+
+    Assert.areEqual('Pix', manualSimulation.PaymentType__c);
+    Assert.areEqual(true, manualSimulation.Selected__c);
+    Assert.areEqual(
+      'R0002',
+      updatedOpportunity.FormaPagamento__c,
+      'Ao escolher PIX personalizado, a forma de pagamento da oportunidade deve ser PIX.'
+    );
+    Assert.areEqual(
+      result.simulationId,
+      updatedOpportunity.SelectedSimulation__c
+    );
+  }
+
+  @IsTest
   static void createManualSimulationReusesBaseSimulationWhenValuesMatch() {
     Account acc = createAccount();
     Opportunity opp = createOpportunity(acc.Id);
@@ -528,7 +581,10 @@ public class PaymentSimulationCardControllerTest {
         break;
       }
     }
-    Assert.isNotNull(manualSimulation, 'A simulação manual criada deve existir no banco.');
+    Assert.isNotNull(
+      manualSimulation,
+      'A simulação manual criada deve existir no banco.'
+    );
     Assert.areEqual(
       'Rental',
       manualSimulation.PaymentType__c,
@@ -676,7 +732,7 @@ public class PaymentSimulationCardControllerTest {
 
   private static Opportunity getOpportunity(Id opportunityId) {
     return [
-      SELECT Id, StageName, SelectedSimulation__c
+      SELECT Id, StageName, SelectedSimulation__c, FormaPagamento__c
       FROM Opportunity
       WHERE Id = :opportunityId
       LIMIT 1

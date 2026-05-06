@@ -4,7 +4,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 >
-    <label>GRUPO_B_PADRAO - PotenciaModulos</label>
+    <label>GRUPO_B_PADRAO - GeracaoAnualEstimada</label>
     <protected>false</protected>
     <values>
         <field>Active__c</field>
@@ -20,7 +20,7 @@
     </values>
     <values>
         <field>Format__c</field>
-        <value xsi:type="xsd:string">RAW</value>
+        <value xsi:type="xsd:string">DECIMAL_BR</value>
     </values>
     <values>
         <field>PaymentType__c</field>
@@ -40,10 +40,10 @@
     </values>
     <values>
         <field>SourcePath__c</field>
-        <value xsi:type="xsd:string">PotenciaNominalWp__c</value>
+        <value xsi:type="xsd:string">GeracaoAnualEstimada__c</value>
     </values>
     <values>
         <field>TagKey__c</field>
-        <value xsi:type="xsd:string">{{PotenciaNominalWp__c}}</value>
+        <value xsi:type="xsd:string">{{GeracaoAnualEstimada__c}}</value>
     </values>
 </CustomMetadata>

@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-05-2026
  * @last modified by  : Daniel Belini
  * @test              : IntegracaoNivelloContratoCoverageTest, IntegracaoNivelloContratoTest
  **/
@@ -273,6 +273,7 @@ public without sharing class IntegracaoNivelloContrato {
     public Decimal ConsumoDesejado;
     public Integer QtdModulos;
     public Integer StructureType;
+    public Boolean IsRSD;
     public List<Product> listProducts;
   }
 
