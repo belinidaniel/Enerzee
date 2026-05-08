@@ -229,6 +229,14 @@
                 <behavior>Edit</behavior>
                 <field>Lab065_IntegracaoDistribuicaoLead__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>IntegracaoDistribuicaoLeadDataHora__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>IntegracaoDistribuicaoLeadErro__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>

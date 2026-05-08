@@ -351,9 +351,10 @@ public with sharing class LeadIntegrationService {
         Map<String, Object> dataMap = (Map<String, Object>) bodyMap.get('data');
         String externalId = (String) dataMap.get('id');
 
-        // Atualiza o campo de integração no Lead
         leadRecord.Lab065_IntegracaoDistribuicaoLead__c = true;
         leadRecord.ExternalId__c = externalId;
+        leadRecord.IntegracaoDistribuicaoLeadDataHora__c = System.now();
+        leadRecord.IntegracaoDistribuicaoLeadErro__c = null;
         update leadRecord;
       } else {
         Utils.createLog(
@@ -362,6 +363,15 @@ public with sharing class LeadIntegrationService {
           res
         );
         System.debug('Request failed: ' + res.getStatus());
+
+        leadRecord.Lab065_IntegracaoDistribuicaoLead__c = false;
+        leadRecord.IntegracaoDistribuicaoLeadDataHora__c = System.now();
+        leadRecord.IntegracaoDistribuicaoLeadErro__c =
+          'HTTP ' +
+          res.getStatusCode() +
+          ': ' +
+          res.getStatus();
+        update leadRecord;
       }
     } catch (Exception e) {
       createLog(
@@ -370,6 +380,11 @@ public with sharing class LeadIntegrationService {
         e.getMessage(),
         leadRecord.Id
       );
+
+      leadRecord.Lab065_IntegracaoDistribuicaoLead__c = false;
+      leadRecord.IntegracaoDistribuicaoLeadDataHora__c = System.now();
+      leadRecord.IntegracaoDistribuicaoLeadErro__c = e.getMessage();
+      update leadRecord;
     }
   }
 

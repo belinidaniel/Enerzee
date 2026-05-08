@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-18-2026
+ * @last modified on  : 05-08-2026
  * @last modified by  : Daniel Belini
  * @test              : LeadBOTest, LeadTriggerTest
  **/
@@ -282,6 +282,47 @@ public with sharing class LeadBO {
       System.debug('##Erro ao criar Messaging user: ' + ex.getMessage());
       System.debug('##Stack: ' + ex.getStackTraceString());
       System.debug('##Line: ' + ex.getLineNumber());
+    }
+  }
+
+  /**
+   * Detecta troca manual de consultor e reenvia o lead ao app externo via Queueable.
+   * A flag Lab065_IntegracaoDistribuicaoLead__c é resetada para false imediatamente,
+   * sinalizando "pendente de reintegração" — o Queueable a marca true ao concluir com sucesso.
+   */
+  public static void handleConsultorChange(
+    List<Lead> newRecordList,
+    Map<Id, Lead> oldMap
+  ) {
+    Set<Id> leadsToReintegrate = new Set<Id>();
+    List<Lead> flagResets = new List<Lead>();
+
+    for (Lead lead : newRecordList) {
+      Lead oldLead = oldMap.get(lead.Id);
+      if (
+        oldLead != null &&
+        lead.ConsultorRegional__c != oldLead.ConsultorRegional__c &&
+        lead.ConsultorRegional__c != null
+      ) {
+        leadsToReintegrate.add(lead.Id);
+        flagResets.add(
+          new Lead(
+            Id = lead.Id,
+            Lab065_IntegracaoDistribuicaoLead__c = false,
+            IntegracaoDistribuicaoLeadErro__c = null
+          )
+        );
+      }
+    }
+
+    if (flagResets.isEmpty()) {
+      return;
+    }
+
+    update flagResets;
+
+    if (!System.isBatch() && !System.isFuture() && !System.isQueueable()) {
+      System.enqueueJob(new LeadDistribuicaoQueueable(leadsToReintegrate));
     }
   }
 
