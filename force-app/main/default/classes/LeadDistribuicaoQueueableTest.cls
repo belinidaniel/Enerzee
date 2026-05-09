@@ -194,9 +194,14 @@ private class LeadDistribuicaoQueueableTest {
     Set<Id> leadIds = new Map<Id, Lead>(leads).keySet();
 
     Test.setMock(HttpCalloutMock.class, new SuccessMock());
-    Test.startTest();
-    System.enqueueJob(new LeadDistribuicaoQueueable(leadIds));
-    Test.stopTest();
+
+    // O Queueable processa 1 lead por execução com chaining.
+    // Em contexto de teste, chaining é bloqueado — enfileira um job por lead.
+    for (Id leadId : leadIds) {
+      Test.startTest();
+      System.enqueueJob(new LeadDistribuicaoQueueable(new Set<Id>{ leadId }));
+      Test.stopTest();
+    }
 
     List<Lead> updated = [
       SELECT Lab065_IntegracaoDistribuicaoLead__c

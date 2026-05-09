@@ -237,6 +237,8 @@ private class LeadDistributionSelectorTest {
       return;
     }
 
+    freezeAllConsultors();
+
     // regional consultor excluded via Id != consultorRegionalId
     Consultor__c regional = createConsultor(
       'Builder',
@@ -671,6 +673,8 @@ private class LeadDistributionSelectorTest {
       return;
     }
 
+    freezeAllConsultors();
+
     // Consultor com ES — com LIKE '%SP%' bateria erroneamente em 'ESP'
     // Com INCLUDES o match é exato: 'ES' != 'SP'
     Consultor__c esConsultor = createConsultor(
@@ -738,6 +742,20 @@ private class LeadDistributionSelectorTest {
       res[0].consultantId,
       'Consultor com múltiplos estados deve ser elegível para qualquer estado listado.'
     );
+  }
+
+  private static void freezeAllConsultors() {
+    List<Consultor__c> existing = [
+      SELECT Id, FreezeConsult__c
+      FROM Consultor__c
+      WHERE FreezeConsult__c = FALSE
+    ];
+    for (Consultor__c c : existing) {
+      c.FreezeConsult__c = true;
+    }
+    if (!existing.isEmpty()) {
+      update existing;
+    }
   }
 
   private static String getNonNovoStatus() {

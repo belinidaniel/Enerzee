@@ -6,7 +6,7 @@
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
-@isTest(seeAllData=true)
+@isTest
 private class LeadIntegrationServiceTest {
   private class SuccessMock implements HttpCalloutMock {
     public HTTPResponse respond(HTTPRequest req) {
@@ -333,7 +333,7 @@ private class LeadIntegrationServiceTest {
     );
     Assert.isTrue(
       capturingMock.capturedBody != null &&
-        capturingMock.capturedBody.contains('TypeRegisterLead'),
+      capturingMock.capturedBody.contains('TypeRegisterLead'),
       'Payload must include TypeRegisterLead field.'
     );
   }

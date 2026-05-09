@@ -7,18 +7,26 @@
  * @test              : LeadDistribuicaoQueueableTest
  **/
 public with sharing class LeadDistribuicaoQueueable implements Queueable, Database.AllowsCallouts {
-  private Set<Id> leadIds;
+  private List<Id> leadIds;
 
   public LeadDistribuicaoQueueable(Set<Id> leadIds) {
+    this.leadIds = new List<Id>(leadIds);
+  }
+
+  private LeadDistribuicaoQueueable(List<Id> leadIds) {
     this.leadIds = leadIds;
   }
 
   public void execute(QueueableContext ctx) {
-    for (Id leadId : leadIds) {
-      // integrateLead é autossuficiente: faz callout, DML e popula
-      // Lab065_IntegracaoDistribuicaoLead__c, IntegracaoDistribuicaoLeadDataHora__c
-      // e IntegracaoDistribuicaoLeadErro__c independente do resultado
-      LeadIntegrationService.integrateLead(leadId);
+    if (leadIds == null || leadIds.isEmpty()) {
+      return;
+    }
+
+    Id current = leadIds.remove(0);
+    LeadIntegrationService.integrateLead(current);
+
+    if (!leadIds.isEmpty() && !Test.isRunningTest()) {
+      System.enqueueJob(new LeadDistribuicaoQueueable(leadIds));
     }
   }
 }
