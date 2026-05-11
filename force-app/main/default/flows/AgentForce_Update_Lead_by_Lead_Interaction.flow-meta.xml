@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>64.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
@@ -56,7 +56,8 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <assignmentItems>
-            <assignToReference>Get_Lead.Lb065_HistoricoLead__c</assignToReference>
+            <assignToReference
+      >Get_Lead.Lb065_HistoricoLead__c</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>$Record.ResumoInteracao__c</elementReference>
@@ -79,7 +80,8 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <assignmentItems>
-            <assignToReference>Get_Lead.Lb065_ProdutoInteresse__c</assignToReference>
+            <assignToReference
+      >Get_Lead.Lb065_ProdutoInteresse__c</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>$Record.Produtinteresse__c</elementReference>
@@ -95,7 +97,8 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <assignmentItems>
-            <assignToReference>Get_Lead.Lab065_IntegracaoDistribuicaoLead__c</assignToReference>
+            <assignToReference
+      >Get_Lead.Lab065_IntegracaoDistribuicaoLead__c</assignToReference>
             <operator>Assign</operator>
             <value>
                 <booleanValue>false</booleanValue>
@@ -188,7 +191,8 @@
             <name>update_Produtinteresse_c</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.Produtinteresse__c</leftValueReference>
+                <leftValueReference
+        >$Record.Produtinteresse__c</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -213,7 +217,8 @@
             <name>updateResumoInteracao</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.ResumoInteracao__c</leftValueReference>
+                <leftValueReference
+        >$Record.ResumoInteracao__c</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -301,7 +306,8 @@
         </rules>
     </decisions>
     <environments>Default</environments>
-    <interviewLabel>[AgentForce] - Update Lead by Lead Interaction {!$Flow.CurrentDateTime}</interviewLabel>
+    <interviewLabel
+  >[AgentForce] - Update Lead by Lead Interaction {!$Flow.CurrentDateTime}</interviewLabel>
     <label>[AgentForce] - Update Lead by Lead Interaction</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -327,7 +333,8 @@
         <label>Get Lead</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Copy_5_of_set_value</targetReference>
         </connector>
@@ -348,7 +355,66 @@
         <label>Atualizar registros 1</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
-        <inputReference>Get_Lead</inputReference>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Lead.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>City</field>
+            <value>
+                <elementReference>Get_Lead.City</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>State</field>
+            <value>
+                <elementReference>Get_Lead.State</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lb065_HistoricoLead__c</field>
+            <value>
+                <elementReference
+        >Get_Lead.Lb065_HistoricoLead__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ResumoInteracao__c</field>
+            <value>
+                <elementReference>Get_Lead.ResumoInteracao__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lb065_ProdutoInteresse__c</field>
+            <value>
+                <elementReference
+        >Get_Lead.Lb065_ProdutoInteresse__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>TipoDeImovel__c</field>
+            <value>
+                <elementReference>Get_Lead.TipoDeImovel__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lab065_IntegracaoDistribuicaoLead__c</field>
+            <value>
+                <elementReference
+        >Get_Lead.Lab065_IntegracaoDistribuicaoLead__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>SDRAgent__c</field>
+            <value>
+                <elementReference>Get_Lead.SDRAgent__c</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Lead</object>
     </recordUpdates>
     <start>
         <locationX>0</locationX>
