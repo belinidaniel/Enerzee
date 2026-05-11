@@ -334,7 +334,7 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <assignNullValuesIfNoRecordsFound
-    >false</assignNullValuesIfNoRecordsFound>
+    >true</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Copy_5_of_set_value</targetReference>
         </connector>

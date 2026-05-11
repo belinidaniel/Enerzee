@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>64.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
@@ -47,7 +47,8 @@
     <formulas>
         <name>MessagingSessionIdForm</name>
         <dataType>String</dataType>
-        <expression>IF(BEGINS({!varPhone},&quot;0Mw&quot;), {!varPhone},null)</expression>
+        <expression
+    >IF(BEGINS({!varPhone},&quot;0Mw&quot;), {!varPhone},null)</expression>
     </formulas>
     <formulas>
         <name>TelLEFT</name>
@@ -59,8 +60,10 @@
         <dataType>String</dataType>
         <expression>RIGHT( {!get_messaging.Telefone__c} , 8)</expression>
     </formulas>
-    <interviewLabel>[AgentForce Lead] - Create Lead or Update {!$Flow.CurrentDateTime}</interviewLabel>
-    <isAdditionalPermissionRequiredToRun>true</isAdditionalPermissionRequiredToRun>
+    <interviewLabel
+  >[AgentForce Lead] - Create Lead or Update {!$Flow.CurrentDateTime}</interviewLabel>
+    <isAdditionalPermissionRequiredToRun
+  >true</isAdditionalPermissionRequiredToRun>
     <label>[AgentForce Lead] - Create Lead Interaction</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -129,7 +132,8 @@
         <inputAssignments>
             <field>Messaging_User__c</field>
             <value>
-                <elementReference>get_messaging.MessagingEndUserId</elementReference>
+                <elementReference
+        >get_messaging.MessagingEndUserId</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -306,7 +310,8 @@
         <label>Get Lead</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>has_Lead</targetReference>
         </connector>
@@ -345,7 +350,8 @@
         <label>get messaging</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Create_Interaction</targetReference>
         </connector>
@@ -380,7 +386,7 @@
             <field>Id</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>interactionId</stringValue>
+                <elementReference>varInteractionId</elementReference>
             </value>
         </filters>
         <inputAssignments>
@@ -435,7 +441,7 @@
             <targetReference>get_messaging</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Draft</status>
     <variables>
         <name>varAvgConsumption</name>
         <dataType>Number</dataType>
