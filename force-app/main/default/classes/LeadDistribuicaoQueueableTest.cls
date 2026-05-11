@@ -11,11 +11,17 @@ private class LeadDistribuicaoQueueableTest {
   private static Integer consultantCounter = 0;
 
   private class SuccessMock implements HttpCalloutMock {
+    private Integer callCount = 0;
     public HTTPResponse respond(HTTPRequest req) {
+      callCount++;
       HttpResponse res = new HttpResponse();
       res.setHeader('Content-Type', 'application/json');
       res.setStatusCode(200);
-      res.setBody('{"data":{"id":"EXT-DIST-001"}}');
+      res.setBody(
+        '{"data":{"id":"EXT-DIST-' +
+          String.valueOf(callCount).leftPad(3, '0') +
+          '"}}'
+      );
       return res;
     }
   }

@@ -759,7 +759,12 @@ private class LeadDistributionSelectorTest {
       c.FreezeConsult__c = true;
     }
     if (!existing.isEmpty()) {
-      update existing;
+      ConsultorTriggerHandler.disableTrigger();
+      try {
+        update existing;
+      } finally {
+        ConsultorTriggerHandler.enableTrigger();
+      }
     }
   }
 
