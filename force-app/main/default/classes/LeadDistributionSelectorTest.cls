@@ -35,8 +35,22 @@ private class LeadDistributionSelectorTest {
         String.valueOf(consultantCounter).leftPad(2, '0'),
       Lb065_UltimoLeadRecebido__c = lastLeadReceived
     );
-    setIfExists(consultor, 'Ativo__c', active);
-    setIfExists(consultor, 'EstadosAtendidos__c', region);
+    if (
+      consultor.getSObjectType()
+        .getDescribe()
+        .fields.getMap()
+        .containsKey('Ativo__c')
+    ) {
+      consultor.put('Ativo__c', active);
+    }
+    if (
+      consultor.getSObjectType()
+        .getDescribe()
+        .fields.getMap()
+        .containsKey('EstadosAtendidos__c') && region != null
+    ) {
+      consultor.put('EstadosAtendidos__c', region);
+    }
     ConsultorTriggerHandler.disableTrigger();
     try {
       return (Consultor__c) TestFactory.createSObject(consultor, true);
