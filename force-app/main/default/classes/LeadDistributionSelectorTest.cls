@@ -37,7 +37,12 @@ private class LeadDistributionSelectorTest {
     );
     setIfExists(consultor, 'Ativo__c', active);
     setIfExists(consultor, 'EstadosAtendidos__c', region);
-    return (Consultor__c) TestFactory.createSObject(consultor, true);
+    ConsultorTriggerHandler.disableTrigger();
+    try {
+      return (Consultor__c) TestFactory.createSObject(consultor, true);
+    } finally {
+      ConsultorTriggerHandler.enableTrigger();
+    }
   }
 
   private static Lead createLead(

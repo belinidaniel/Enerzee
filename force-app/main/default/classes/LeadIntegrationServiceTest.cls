@@ -136,8 +136,9 @@ private class LeadIntegrationServiceTest {
     for (
       Schema.PicklistEntry entry : Lead.Status.getDescribe().getPicklistValues()
     ) {
-      if (!String.isBlank(entry.getValue())) {
-        return entry.getValue();
+      String val = entry.getValue();
+      if (!String.isBlank(val) && val != 'Novo') {
+        return val;
       }
     }
     return null;

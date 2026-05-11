@@ -35,9 +35,6 @@
                     <stringValue>Novo</stringValue>
                 </rightValue>
             </conditions>
-            <connector>
-                <targetReference>TarefaLigacaoFollowup</targetReference>
-            </connector>
             <label>Novo</label>
         </rules>
         <rules>
@@ -129,17 +126,7 @@
         </rules>
     </decisions>
     <environments>Default</environments>
-    <formulas>
-        <name>NomeCompleto</name>
-        <dataType>String</dataType>
-        <expression
-    >{!$Record.FirstName} + &apos; &apos; + {!$Record.LastName}</expression>
-    </formulas>
-    <formulas>
-        <name>VencimentoEm24Horas</name>
-        <dataType>DateTime</dataType>
-        <expression>NOW() + 1</expression>
-    </formulas>
+
     <interviewLabel
   >Fluxo Qualificação Cliente {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Fluxo Qualificação Cliente</label>
@@ -162,65 +149,6 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
-    <recordCreates>
-        <name>TarefaLigacaoFollowup</name>
-        <label>Tarefa - Ligação de Follow-up</label>
-        <locationX>50</locationX>
-        <locationY>755</locationY>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Subject</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue
-        >Ligação de follow-up - {!NomeCompleto}</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>OwnerId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.OwnerId</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>WhoId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.Id</elementReference>
-            </value>
-        </filters>
-        <inputAssignments>
-            <field>ActivityDate</field>
-            <value>
-                <elementReference>VencimentoEm24Horas</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>OwnerId</field>
-            <value>
-                <elementReference>$Record.OwnerId</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Subject</field>
-            <value>
-                <stringValue
-        >Ligação de follow-up - {!NomeCompleto}</stringValue>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>WhoId</field>
-            <value>
-                <elementReference>$Record.Id</elementReference>
-            </value>
-        </inputAssignments>
-        <object>Task</object>
-        <operationMultMatchingRecords>None</operationMultMatchingRecords>
-        <operationOneMatchingRecord>None</operationOneMatchingRecord>
-        <operationZeroMatchingRecords>AddRecord</operationZeroMatchingRecords>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordCreates>
     <recordLookups>
         <name>ObtemFilaQualificacaoDeClientes</name>
         <label>Obtém Fila Qualificação de Clientes</label>

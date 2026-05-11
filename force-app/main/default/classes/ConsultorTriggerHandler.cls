@@ -6,8 +6,8 @@
  * @last modified by  : Daniel Belini
  * @test              : ClickSignUtilsCoverageTest, ConsultorTriggerHandlerTest, ConsultorTriggerTest,
  *                       IntegracaoGeradorPropostasTest, IntegracaoSAPCoverageTest, LeadBOTest,
- *                       LeadDistribuicaoQueueableTest, LeadIntegrationBatchTest, LeadIntegrationServiceTest,
- *                       OpportunityShareHandlerTest, ProjetoBOCoverageTest
+ *                       LeadDistribuicaoQueueableTest, LeadDistributionSelectorTest, LeadIntegrationBatchTest,
+ *                       LeadIntegrationServiceTest, OpportunityShareHandlerTest, ProjetoBOCoverageTest
  **/
 public class ConsultorTriggerHandler extends TriggerHandler {
   public ConsultorTriggerHandler() {
