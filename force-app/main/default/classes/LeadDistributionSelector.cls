@@ -2,7 +2,7 @@
  * @description       : Seleciona o consultor correto para um Lead e atualiza o "ultimo lead recebido" com lock de linha para evitar concorrencia.
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-08-2026
  * @last modified by  : Daniel Belini
  * @test              : LeadDistributionSelectorTest
  **/
@@ -69,7 +69,6 @@ public with sharing class LeadDistributionSelector {
     Boolean hasDistributionValue = leadFields.containsKey(
       'DistributionValue__c'
     );
-    Boolean hasLeadRegion = leadFields.containsKey('LeadRegion__c');
     Boolean hasConsultorRegional = leadFields.containsKey(
       'ConsultorRegional__c'
     );
@@ -82,9 +81,6 @@ public with sharing class LeadDistributionSelector {
       }
       if (hasDistributionValue) {
         selectFields.add('DistributionValue__c');
-      }
-      if (hasLeadRegion) {
-        selectFields.add('LeadRegion__c');
       }
       if (hasConsultorRegional) {
         selectFields.add('ConsultorRegional__c');
@@ -112,7 +108,6 @@ public with sharing class LeadDistributionSelector {
           lead,
           hasDistributionType,
           hasDistributionValue,
-          hasLeadRegion,
           hasConsultorRegional
         );
       } catch (Exception ex) {
@@ -129,7 +124,6 @@ public with sharing class LeadDistributionSelector {
     Lead lead,
     Boolean hasDistributionType,
     Boolean hasDistributionValue,
-    Boolean hasLeadRegion,
     Boolean hasConsultorRegional
   ) {
     if (lead == null) {
@@ -141,9 +135,6 @@ public with sharing class LeadDistributionSelector {
       : null;
     String distributionValue = hasDistributionValue
       ? (String) lead.get('DistributionValue__c')
-      : null;
-    String leadRegion = hasLeadRegion
-      ? (String) lead.get('LeadRegion__c')
       : null;
     Id consultorRegionalId = hasConsultorRegional
       ? (Id) lead.get('ConsultorRegional__c')
@@ -170,7 +161,7 @@ public with sharing class LeadDistributionSelector {
           return selectedId;
         }
         selectedId = selectWarmFilter(
-          leadRegion,
+          lead.State,
           consultorRegionalId,
           lead.Rating
         );
@@ -178,7 +169,7 @@ public with sharing class LeadDistributionSelector {
           return selectedId;
         }
         selectedId = selectHotFilter(
-          leadRegion,
+          lead.State,
           consultorRegionalId,
           lead.Rating
         );
@@ -194,7 +185,7 @@ public with sharing class LeadDistributionSelector {
 
       if (lead.Rating == 'Hot') {
         selectedId = selectHotFilter(
-          leadRegion,
+          lead.State,
           consultorRegionalId,
           lead.Rating
         );
@@ -281,20 +272,19 @@ public with sharing class LeadDistributionSelector {
   }
 
   private static Id selectWarmFilter(
-    String leadRegion,
+    String leadState,
     Id consultorRegionalId,
     String rating
   ) {
-    if (String.isBlank(leadRegion)) {
+    if (String.isBlank(leadState)) {
       return null;
     }
 
-    String regionLike = '%' + leadRegion + '%';
     List<Consultor__c> candidates = [
       SELECT Id, Lb065_UltimoLeadRecebido__c
       FROM Consultor__c
       WHERE
-        Lb065_RegiaoConsultorEstado__c LIKE :regionLike
+        EstadosAtendidos__c INCLUDES (:leadState)
         AND (Lb65_Graduacao__c IN :GRADS_WARM_STATE
         OR (SpecialRange__c = :rating
         AND SpecialRange__c != NULL))
@@ -309,20 +299,19 @@ public with sharing class LeadDistributionSelector {
   }
 
   private static Id selectHotFilter(
-    String leadRegion,
+    String leadState,
     Id consultorRegionalId,
     String rating
   ) {
-    if (String.isBlank(leadRegion)) {
+    if (String.isBlank(leadState)) {
       return null;
     }
 
-    String regionLike = '%' + leadRegion + '%';
     List<Consultor__c> candidates = [
       SELECT Id, Lb065_UltimoLeadRecebido__c
       FROM Consultor__c
       WHERE
-        Lb065_RegiaoConsultorEstado__c LIKE :regionLike
+        EstadosAtendidos__c INCLUDES (:leadState)
         AND (Lb65_Graduacao__c IN :GRADS_HOT_STATE
         OR (SpecialRange__c = :rating
         AND SpecialRange__c != NULL))

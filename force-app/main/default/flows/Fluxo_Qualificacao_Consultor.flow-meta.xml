@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
         <name>Email_Notificar_Consultor_Regional</name>
@@ -40,7 +40,8 @@
         <inputParameters>
             <name>emailSubject</name>
             <value>
-                <stringValue>Resultado do seu processo de qualificação</stringValue>
+                <stringValue
+        >Resultado do seu processo de qualificação</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -87,7 +88,8 @@
         <inputParameters>
             <name>emailSubject</name>
             <value>
-                <stringValue>Resultado do seu processo de qualificação</stringValue>
+                <stringValue
+        >Resultado do seu processo de qualificação</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -143,21 +145,25 @@
             <name>Sim_Consultor_Regional_Informado</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.ConsultorRegional__c</leftValueReference>
+                <leftValueReference
+        >$Record.ConsultorRegional__c</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
-                <leftValueReference>$Record.ConsultorRegional__c</leftValueReference>
+                <leftValueReference
+        >$Record.ConsultorRegional__c</leftValueReference>
                 <operator>NotEqualTo</operator>
                 <rightValue>
-                    <elementReference>$Record__Prior.ConsultorRegional__c</elementReference>
+                    <elementReference
+          >$Record__Prior.ConsultorRegional__c</elementReference>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Consultor_regional_Possui_Email</targetReference>
+                <targetReference
+        >Consultor_regional_Possui_Email</targetReference>
             </connector>
             <label>Sim</label>
         </rules>
@@ -172,7 +178,8 @@
             <name>PossuiEmailSim</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.ConsultorRegional__r.Email__c</leftValueReference>
+                <leftValueReference
+        >$Record.ConsultorRegional__r.Email__c</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -200,9 +207,6 @@
                     <stringValue>Novo</stringValue>
                 </rightValue>
             </conditions>
-            <connector>
-                <targetReference>TarefaLigacaoFollowup</targetReference>
-            </connector>
             <label>Novo</label>
         </rules>
         <rules>
@@ -216,7 +220,8 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>TarefaInformarConsultorRegional</targetReference>
+                <targetReference
+        >TarefaInformarConsultorRegional</targetReference>
             </connector>
             <label>Trabalhando</label>
         </rules>
@@ -276,14 +281,16 @@
             <name>Qualificacao_de_Consultores</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>Fila_Qualificacao_de_Consultores.Id</leftValueReference>
+                <leftValueReference
+        >Fila_Qualificacao_de_Consultores.Id</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
-                <leftValueReference>RecordType_Qualificacao_de_Consultores.Id</leftValueReference>
+                <leftValueReference
+        >RecordType_Qualificacao_de_Consultores.Id</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -293,14 +300,16 @@
                 <leftValueReference>$Record.RecordTypeId</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
-                    <elementReference>RecordType_Qualificacao_de_Consultores.Id</elementReference>
+                    <elementReference
+          >RecordType_Qualificacao_de_Consultores.Id</elementReference>
                 </rightValue>
             </conditions>
             <conditions>
                 <leftValueReference>$Record.OwnerId</leftValueReference>
                 <operator>NotEqualTo</operator>
                 <rightValue>
-                    <elementReference>Fila_Qualificacao_de_Consultores.Id</elementReference>
+                    <elementReference
+          >Fila_Qualificacao_de_Consultores.Id</elementReference>
                 </rightValue>
             </conditions>
             <connector>
@@ -313,7 +322,8 @@
     <formulas>
         <name>NomeCompleto</name>
         <dataType>String</dataType>
-        <expression>{!$Record.FirstName} + &apos; &apos; + {!$Record.LastName}</expression>
+        <expression
+    >{!$Record.FirstName} + &apos; &apos; + {!$Record.LastName}</expression>
     </formulas>
     <formulas>
         <name>VencimentoEm24Horas</name>
@@ -325,7 +335,8 @@
         <dataType>DateTime</dataType>
         <expression>NOW() + 3</expression>
     </formulas>
-    <interviewLabel>Fluxo Qualificação Consultor {!$Flow.CurrentDateTime}</interviewLabel>
+    <interviewLabel
+  >Fluxo Qualificação Consultor {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Fluxo Qualificação Consultor</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -359,7 +370,8 @@
             <field>Subject</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>É necessário confirmar o pagamento do lead - {!NomeCompleto}</stringValue>
+                <stringValue
+        >É necessário confirmar o pagamento do lead - {!NomeCompleto}</stringValue>
             </value>
         </filters>
         <filters>
@@ -391,7 +403,8 @@
         <inputAssignments>
             <field>Subject</field>
             <value>
-                <stringValue>É necessário confirmar o pagamento do lead - {!NomeCompleto}</stringValue>
+                <stringValue
+        >É necessário confirmar o pagamento do lead - {!NomeCompleto}</stringValue>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -419,7 +432,8 @@
             <field>Subject</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>Informar Consultor Regional do lead - {!NomeCompleto}</stringValue>
+                <stringValue
+        >Informar Consultor Regional do lead - {!NomeCompleto}</stringValue>
             </value>
         </filters>
         <filters>
@@ -451,64 +465,8 @@
         <inputAssignments>
             <field>Subject</field>
             <value>
-                <stringValue>Informar Consultor Regional do lead - {!NomeCompleto}</stringValue>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>WhoId</field>
-            <value>
-                <elementReference>$Record.Id</elementReference>
-            </value>
-        </inputAssignments>
-        <object>Task</object>
-        <operationMultMatchingRecords>None</operationMultMatchingRecords>
-        <operationOneMatchingRecord>None</operationOneMatchingRecord>
-        <operationZeroMatchingRecords>AddRecord</operationZeroMatchingRecords>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordCreates>
-    <recordCreates>
-        <name>TarefaLigacaoFollowup</name>
-        <label>Tarefa - Ligação de follow-up</label>
-        <locationX>50</locationX>
-        <locationY>755</locationY>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Subject</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Ligação de follow-up - {!NomeCompleto}</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>OwnerId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.OwnerId</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>WhoId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.Id</elementReference>
-            </value>
-        </filters>
-        <inputAssignments>
-            <field>ActivityDate</field>
-            <value>
-                <elementReference>VencimentoEm24Horas</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>OwnerId</field>
-            <value>
-                <elementReference>$Record.OwnerId</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Subject</field>
-            <value>
-                <stringValue>Ligação de follow-up - {!NomeCompleto}</stringValue>
+                <stringValue
+        >Informar Consultor Regional do lead - {!NomeCompleto}</stringValue>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -533,7 +491,8 @@
             <field>Subject</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>Passagem de bastão do lead - {!NomeCompleto}</stringValue>
+                <stringValue
+        >Passagem de bastão do lead - {!NomeCompleto}</stringValue>
             </value>
         </filters>
         <filters>
@@ -565,7 +524,8 @@
         <inputAssignments>
             <field>Subject</field>
             <value>
-                <stringValue>Passagem de bastão do lead - {!NomeCompleto}</stringValue>
+                <stringValue
+        >Passagem de bastão do lead - {!NomeCompleto}</stringValue>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -585,7 +545,8 @@
         <label>Obtém Fila Qualificação de Consultores</label>
         <locationX>1568</locationX>
         <locationY>431</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Tipo_de_Registro</targetReference>
         </connector>
@@ -613,7 +574,8 @@
         <label>Usuário Financeiro</label>
         <locationX>1106</locationX>
         <locationY>755</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>TarefaConferirPagamento</targetReference>
         </connector>
@@ -634,7 +596,8 @@
         <label>Obtém RecordType Qualificação de Consultores</label>
         <locationX>1568</locationX>
         <locationY>323</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Fila_Qualificacao_de_Consultores</targetReference>
         </connector>
@@ -663,12 +626,14 @@
         <locationX>314</locationX>
         <locationY>1079</locationY>
         <connector>
-            <targetReference>Email_Notificar_Consultor_Regional</targetReference>
+            <targetReference
+      >Email_Notificar_Consultor_Regional</targetReference>
         </connector>
         <inputAssignments>
             <field>EmailConsultor__c</field>
             <value>
-                <elementReference>$Record.ConsultorRegional__r.Email__c</elementReference>
+                <elementReference
+        >$Record.ConsultorRegional__r.Email__c</elementReference>
             </value>
         </inputAssignments>
         <inputReference>$Record</inputReference>
@@ -677,7 +642,8 @@
         <locationX>1442</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>RecordType_Qualificacao_de_Consultores</targetReference>
+            <targetReference
+      >RecordType_Qualificacao_de_Consultores</targetReference>
         </connector>
         <object>Lead</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
