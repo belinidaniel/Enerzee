@@ -353,7 +353,7 @@
         <assignNullValuesIfNoRecordsFound
     >false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Create_Interaction</targetReference>
+            <targetReference>Validar_Email</targetReference>
         </connector>
         <filterLogic>or</filterLogic>
         <filters>
@@ -376,6 +376,51 @@
         <sortOrder>Desc</sortOrder>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
+    <assignments>
+        <name>Limpar_Email_Invalido</name>
+        <label>Limpar Email Inválido</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varEmail</assignToReference>
+            <operator>Assign</operator>
+        </assignmentItems>
+        <connector>
+            <targetReference>Create_Interaction</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Validar_Email</name>
+        <label>Email válido?</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Limpar_Email_Invalido</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Email inválido ou ausente</defaultConnectorLabel>
+        <rules>
+            <name>Email_Valido</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varEmail</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>varEmail</leftValueReference>
+                <operator>Contains</operator>
+                <rightValue>
+                    <stringValue>@</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Interaction</targetReference>
+            </connector>
+            <label>Email válido</label>
+        </rules>
+    </decisions>
     <recordUpdates>
         <name>update</name>
         <label>update</label>
