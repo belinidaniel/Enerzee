@@ -17,6 +17,8 @@ coverage/
 # Generated artifacts
 .output/
 output/
+graphify-out
+graphify-out/
 
 # Logs
 logs
