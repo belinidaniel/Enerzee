@@ -17,7 +17,6 @@ export default class OpportunityProposalConsole extends LightningElement {
   wiredResult;
   selectedTemplateId;
   previewUrl;
-  previewMessage;
   isModalOpen = false;
   isSendMode = false;
   isLoading = true;
@@ -155,33 +154,8 @@ export default class OpportunityProposalConsole extends LightningElement {
     return !this.hasTemplates || this.isProcessing;
   }
 
-  get showActions() {
-    return this.hasTemplates;
-  }
-
   get disablePrimaryAction() {
     return !this.selectedTemplateId || this.isProcessing;
-  }
-
-  get modalControlsDisabled() {
-    return this.disablePaymentField || this.isProcessing;
-  }
-
-  get batteryDescriptionDisabled() {
-    return this.isSavingBatteryDescription || this.isProcessing;
-  }
-
-  get showPreviewMessage() {
-    return !!this.previewMessage && !this.previewUrl && !this.isPreviewLoading;
-  }
-
-  get sendActionButtonLabel() {
-    if (this.isProcessing) {
-      return this.isViabilityMode
-        ? "Gerando readequação..."
-        : "Gerando proposta...";
-    }
-    return this.isViabilityMode ? "Enviar readequação" : "Enviar proposta";
   }
 
   get isViabilityMode() {
@@ -265,14 +239,10 @@ export default class OpportunityProposalConsole extends LightningElement {
     }
   }
 
-  closeModal(force = false) {
-    if (this.isProcessing && !force) {
-      return;
-    }
+  closeModal() {
     this.isModalOpen = false;
     this.isSendMode = false;
     this.previewUrl = null;
-    this.previewMessage = null;
     this.isPreviewLoading = false;
     this.selectedTemplateId = null;
   }
@@ -280,20 +250,19 @@ export default class OpportunityProposalConsole extends LightningElement {
   handleTemplateChange(event) {
     const selectedValue = event.detail.value;
     this.selectedTemplateId = selectedValue || null;
+    this.isSavingBatteryDescription = true;
     this.updatePreviewUrl();
   }
 
   updatePreviewUrl() {
     if (!this.selectedTemplateId) {
       this.previewUrl = null;
-      this.previewMessage = null;
       this.isPreviewLoading = false;
       return Promise.resolve();
     }
 
     const requestSequence = ++this.previewRequestSequence;
     this.previewUrl = null;
-    this.previewMessage = null;
     this.isPreviewLoading = true;
 
     return generatePreview({
@@ -306,12 +275,12 @@ export default class OpportunityProposalConsole extends LightningElement {
         }
 
         this.previewUrl = result?.previewUrl || null;
-        this.previewMessage = this.previewUrl ? null : result?.message || null;
         this.error = undefined;
 
         if (!this.previewUrl) {
-          this.isPreviewLoading = false;
-          return;
+          throw new Error(
+            result?.message || "Não foi possível carregar a pré-visualização."
+          );
         }
 
         // Capas legado (VF page) não renderizam em iframe — abre em nova aba.
@@ -327,7 +296,6 @@ export default class OpportunityProposalConsole extends LightningElement {
         }
 
         this.previewUrl = null;
-        this.previewMessage = null;
         const message = this.reduceError(error);
         this.error = message;
         this.dispatchEvent(
@@ -434,6 +402,9 @@ export default class OpportunityProposalConsole extends LightningElement {
     this.isProcessing = true;
     this.isLoading = true;
 
+    // Oculta modal mas mantém estado para reabrir em caso de falha.
+    this.isModalOpen = false;
+
     sendProposal({
       opportunityId: this.recordId,
       coverId: this.selectedTemplateId
@@ -450,10 +421,10 @@ export default class OpportunityProposalConsole extends LightningElement {
         );
         // Refresh imediato; agenda novos refreshes para capturar anexos assíncronos.
         this.scheduleRefresh();
-        this.closeModal(true);
         return refreshApex(this.wiredResult);
       })
       .catch((error) => {
+        // Reabre a modal em caso de falha.
         this.isModalOpen = true;
         this.isSendMode = true;
         const message = this.reduceError(error);

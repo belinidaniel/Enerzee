@@ -11,7 +11,7 @@
       <div class="slds-text-color_error slds-p-around_small">{error}</div>
     </template>
 
-    <template if:true={showActions}>
+    <template if:false={disableActions}>
       <div
         class="action-row slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-around_small"
       >
@@ -170,7 +170,6 @@
             onclick={closeModal}
             variant="bare-inverse"
             class="slds-modal__close"
-            disabled={isProcessing}
           ></lightning-button-icon>
           <h2 class="slds-text-heading_medium">{modalTitle}</h2>
         </header>
@@ -183,7 +182,7 @@
               placeholder="Selecione um modelo"
               options={templateOptions}
               onchange={handleTemplateChange}
-              disabled={modalControlsDisabled}
+              disabled={disablePaymentField}
             >
             </lightning-combobox>
             <template if:true={showBatteryDescription}>
@@ -193,26 +192,9 @@
                 value={batteryDescription}
                 onchange={handleBatteryDescriptionInput}
                 onblur={handleBatteryDescriptionBlur}
-                disabled={batteryDescriptionDisabled}
+                disabled={isSavingBatteryDescription}
               >
               </lightning-textarea>
-            </template>
-            <template if:true={isProcessing}>
-              <div class="spinner-wrapper slds-m-top_medium">
-                <lightning-spinner
-                  alternative-text="Gerando proposta"
-                  size="medium"
-                ></lightning-spinner>
-              </div>
-            </template>
-            <template if:true={showPreviewMessage}>
-              <div
-                class="slds-notify slds-notify_alert slds-alert_info slds-m-top_medium"
-                role="status"
-              >
-                <span class="slds-assistive-text">Informação</span>
-                <span>{previewMessage}</span>
-              </div>
             </template>
             <template if:true={previewUrl}>
               <div class="preview-container slds-m-top_medium">
@@ -241,11 +223,10 @@
           <lightning-button
             label="Cancelar"
             onclick={closeModal}
-            disabled={isProcessing}
           ></lightning-button>
           <template if:true={isSendMode}>
             <lightning-button
-              label={sendActionButtonLabel}
+              label="Enviar proposta"
               variant="brand"
               onclick={handleSendProposal}
               disabled={disablePrimaryAction}

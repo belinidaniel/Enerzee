@@ -13,7 +13,6 @@ public with sharing class LeadDistribuicaoQueueable implements Queueable, Databa
     this.leadIds = new List<Id>(leadIds);
   }
 
-  @TestVisible
   private LeadDistribuicaoQueueable(List<Id> leadIds) {
     this.leadIds = leadIds;
   }

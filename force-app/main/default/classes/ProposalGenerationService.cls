@@ -24,19 +24,7 @@ public with sharing class ProposalGenerationService {
   }
 
   public static ProposalResult generatePreview(Id opportunityId, Id coverId) {
-    ProposalContextResolver.Context context = resolveValidatedContext(
-      opportunityId,
-      coverId
-    );
-    getRequiredTagConfigs(context);
-    getRequiredSectionsToShow(context);
-    ProposalTemplateResolver.resolveTemplate(context);
-
-    ProposalResult result = new ProposalResult();
-    result.success = true;
-    result.message = 'Modelo validado. O PDF sera gerado ao enviar a proposta.';
-    result.reusedExistingFile = false;
-    return result;
+    return generate(opportunityId, coverId);
   }
 
   public static ProposalResult generateProposal(Id opportunityId, Id coverId) {
@@ -44,14 +32,38 @@ public with sharing class ProposalGenerationService {
   }
 
   private static ProposalResult generate(Id opportunityId, Id coverId) {
-    ProposalContextResolver.Context context = resolveValidatedContext(
+    ProposalContextResolver.Context context = ProposalContextResolver.resolve(
       opportunityId,
       coverId
     );
-    List<ProposalConfigurationService.TagConfig> tagConfigs = getRequiredTagConfigs(
-      context
+    if (String.isBlank(context.coverKey)) {
+      throw new ProposalGenerationException(
+        'A capa selecionada nao possui configuracao valida para geracao via API.'
+      );
+    }
+
+    List<ProposalConfigurationService.TagConfig> tagConfigs = ProposalConfigurationService.getTagConfigs(
+      context.coverKey,
+      context.scenario,
+      context.paymentType
     );
-    List<String> sectionsToShow = getRequiredSectionsToShow(context);
+    if (tagConfigs.isEmpty()) {
+      throw new ProposalGenerationException(
+        'Nenhuma tag configurada para a capa selecionada e o cenario atual.'
+      );
+    }
+
+    List<String> sectionsToShow = ProposalConfigurationService.getSectionsToShow(
+      context.coverKey,
+      context.scenario,
+      context.paymentType,
+      context.opportunity.TipoKitPromocional__c
+    );
+    if (sectionsToShow.isEmpty()) {
+      throw new ProposalGenerationException(
+        'Nenhuma secao configurada para a capa selecionada e o cenario atual.'
+      );
+    }
 
     ContentVersion templateVersion = ProposalTemplateResolver.resolveTemplate(
       context
@@ -110,6 +122,22 @@ public with sharing class ProposalGenerationService {
     Id mainViabilityId = (Id) dataOpportunity.get('MainViability__c');
     String layoutBase64 = fetchLayoutAttachment(mainViabilityId);
 
+    ContentVersion existingProposal = ProposalFileService.findExistingProposal(
+      context.opportunity.Id,
+      payload.payloadHash
+    );
+    if (existingProposal != null) {
+      ProposalResult reusedResult = new ProposalResult();
+      reusedResult.success = true;
+      reusedResult.message = 'Proposta reutilizada com sucesso.';
+      reusedResult.contentVersionId = existingProposal.Id;
+      reusedResult.previewUrl = ProposalFileService.buildPreviewUrl(
+        existingProposal.Id
+      );
+      reusedResult.reusedExistingFile = true;
+      return reusedResult;
+    }
+
     ProposalApiClient.ApiResponse apiResponse = ProposalApiClient.convertProposal(
       templateVersion,
       payload.tagsJson,
@@ -130,55 +158,6 @@ public with sharing class ProposalGenerationService {
     result.previewUrl = ProposalFileService.buildPreviewUrl(contentVersionId);
     result.reusedExistingFile = false;
     return result;
-  }
-
-  private static ProposalContextResolver.Context resolveValidatedContext(
-    Id opportunityId,
-    Id coverId
-  ) {
-    ProposalContextResolver.Context context = ProposalContextResolver.resolve(
-      opportunityId,
-      coverId
-    );
-    if (String.isBlank(context.coverKey)) {
-      throw new ProposalGenerationException(
-        'A capa selecionada nao possui configuracao valida para geracao via API.'
-      );
-    }
-    return context;
-  }
-
-  private static List<ProposalConfigurationService.TagConfig> getRequiredTagConfigs(
-    ProposalContextResolver.Context context
-  ) {
-    List<ProposalConfigurationService.TagConfig> tagConfigs = ProposalConfigurationService.getTagConfigs(
-      context.coverKey,
-      context.scenario,
-      context.paymentType
-    );
-    if (tagConfigs.isEmpty()) {
-      throw new ProposalGenerationException(
-        'Nenhuma tag configurada para a capa selecionada e o cenario atual.'
-      );
-    }
-    return tagConfigs;
-  }
-
-  private static List<String> getRequiredSectionsToShow(
-    ProposalContextResolver.Context context
-  ) {
-    List<String> sectionsToShow = ProposalConfigurationService.getSectionsToShow(
-      context.coverKey,
-      context.scenario,
-      context.paymentType,
-      context.opportunity.TipoKitPromocional__c
-    );
-    if (sectionsToShow.isEmpty()) {
-      throw new ProposalGenerationException(
-        'Nenhuma secao configurada para a capa selecionada e o cenario atual.'
-      );
-    }
-    return sectionsToShow;
   }
 
   /**

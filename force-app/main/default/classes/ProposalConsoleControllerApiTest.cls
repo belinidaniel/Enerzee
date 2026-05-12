@@ -62,7 +62,7 @@ private class ProposalConsoleControllerApiTest {
   }
 
   @isTest
-  static void generatePreviewValidatesAndSendProposalGeneratesFile() {
+  static void generatePreviewAndSendProposalReuseGeneratedFile() {
     Opportunity opportunityRecord = [
       SELECT Id, Name, StageName, PropostaGerada__c
       FROM Opportunity
@@ -97,15 +97,15 @@ private class ProposalConsoleControllerApiTest {
 
       Assert.isTrue(
         previewResult.success,
-        'O preview deve validar o modelo com sucesso.'
+        'O preview deve ser gerado com sucesso.'
       );
-      Assert.isNull(
+      Assert.isNotNull(
         previewResult.contentVersionId,
-        'O preview nao deve persistir arquivo antes do envio.'
+        'O preview deve persistir um ContentVersion reutilizavel.'
       );
       Assert.isTrue(
-        String.isBlank(previewResult.previewUrl),
-        'O preview via API nao deve gerar PDF no Salesforce para iframe.'
+        String.isNotBlank(previewResult.previewUrl),
+        'O preview deve expor uma URL para o iframe.'
       );
 
       Assert.isTrue(
@@ -117,18 +117,19 @@ private class ProposalConsoleControllerApiTest {
         sendResult.message.contains('envio para o aplicativo iniciado'),
         'O retorno do envio deve explicar que a integração roda em segundo plano.'
       );
-      Assert.isNotNull(
+      Assert.areEqual(
+        previewResult.contentVersionId,
         sendResult.contentVersionId,
-        'O envio deve gerar e salvar o PDF final.'
+        'O envio deve reutilizar o mesmo arquivo gerado no preview.'
       );
-      Assert.isFalse(
+      Assert.isTrue(
         sendResult.reusedExistingFile,
-        'O envio deve regenerar o PDF, sem reutilizar arquivo anterior.'
+        'O fluxo de envio deve indicar que reutilizou o PDF existente.'
       );
       Assert.areEqual(
         1,
         proposalCallCount,
-        'A API de conversao deve ser chamada apenas no envio final.'
+        'A API de conversao deve ser chamada apenas uma vez.'
       );
       Assert.areEqual(
         1,
@@ -495,16 +496,16 @@ private class ProposalConsoleControllerApiTest {
 
       Assert.isTrue(
         result.success,
-        'A capa legada mapeada deve validar o preview usando o fluxo API.'
+        'A capa legada mapeada deve gerar preview usando a API.'
       );
       Assert.isTrue(
-        String.isBlank(result.previewUrl),
-        'O preview de capa API nao deve retornar PDF gerado.'
+        String.isNotBlank(result.previewUrl),
+        'O preview precisa retornar a URL do PDF gerado.'
       );
       Assert.areEqual(
-        0,
+        1,
         proposalCallCount,
-        'O preview de capa API nao deve chamar a API de conversao.'
+        'A geração deve passar pela API quando o template legado estiver mapeado.'
       );
     } finally {
       clearApiMappings();
