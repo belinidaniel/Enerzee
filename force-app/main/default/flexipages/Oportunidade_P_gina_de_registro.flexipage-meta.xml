@@ -126,6 +126,10 @@
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>hideSlackAction</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>numVisibleActions</name>
                     <value>3</value>
                 </componentInstanceProperties>
@@ -339,6 +343,24 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.Produto__c</fieldItem>
+                <identifier>RecordProduto_cField</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue
+            >{!Record.RecordType.DeveloperName}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Produtos</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.SubTipo__c</fieldItem>
                 <identifier>RecordSubTipo_cField</identifier>
                 <visibilityRule>
@@ -481,6 +503,16 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.PropostaRevo__c</fieldItem>
                 <identifier>RecordPropostaRevo_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.IsRSD__c</fieldItem>
+                <identifier>RecordIsRSD_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-0ce53166-d159-437e-917e-534a4ba3b1a6</name>
