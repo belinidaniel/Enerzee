@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Produto__c</fullName>
+    <label>Produto</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>false</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Wemob</fullName>
+                <default>false</default>
+                <label>Wemob</label>
+            </value>
+            <value>
+                <fullName>Bateria</fullName>
+                <default>false</default>
+                <label>Bateria</label>
+            </value>
+            <value>
+                <fullName>Estacao de Recarga</fullName>
+                <default>false</default>
+                <label>Estacao de Recarga</label>
+            </value>
+            <value>
+                <fullName>Modulos</fullName>
+                <default>false</default>
+                <label>Modulos</label>
+            </value>
+            <value>
+                <fullName>Inversores</fullName>
+                <default>false</default>
+                <label>Inversores</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

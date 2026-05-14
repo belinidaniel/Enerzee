@@ -2145,17 +2145,21 @@ public class OpportunityBO {
     Id solarRtId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
       .get('Solar')
       .getRecordTypeId();
+    Id produtosRtId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+      .get('Produtos')
+      .getRecordTypeId();
 
     // Primeira passagem: identifica opps elegíveis para verificação de disponibilidade de proposta.
     // Um opp é elegível quando há alguma mudança relevante OU quando PropostaGerada__c ainda é falsa
     // e os campos obrigatórios já estão preenchidos (caso de nova opp na primeira atualização).
     Set<Id> eligibleIds = new Set<Id>();
     for (Opportunity opp : newMap.values()) {
-      Opportunity oldOpp = oldMap.get(opp.Id);
+      Opportunity oldOpp = oldMap == null ? null : oldMap.get(opp.Id);
       Boolean skippedGrupoA = opp.GrupoTarifario__c == 'Grupo A';
-      Boolean skippedRecordType =
-        opp.RecordTypeId != ezeeConnectRtId &&
-        opp.RecordTypeId != solarRtId;
+      Boolean isEzeeConnect = opp.RecordTypeId == ezeeConnectRtId;
+      Boolean isSolar = opp.RecordTypeId == solarRtId;
+      Boolean isProdutos = opp.RecordTypeId == produtosRtId;
+      Boolean skippedRecordType = !isEzeeConnect && !isSolar && !isProdutos;
       if (skippedGrupoA || skippedRecordType) {
         continue;
       }
@@ -2170,18 +2174,25 @@ public class OpportunityBO {
         (oldOpp != null ? oldOpp.StatusAprovacaoDesconto__c : null);
       Boolean formulaChanged =
         oldOpp != null && formulaFieldsChanged(oldOpp, opp);
+      Boolean produtoChanged =
+        isProdutos &&
+        oldOpp != null &&
+        opp.Produto__c != oldOpp.Produto__c;
       // Nova opp com campos preenchidos: PropostaGerada__c ainda falsa mas já pronta para gerar
-      Boolean isEzeeConnect = opp.RecordTypeId == ezeeConnectRtId;
+      Boolean requiredFieldsFilled = areRequiredFieldsFilledForProposal(
+        opp,
+        isEzeeConnect,
+        isSolar,
+        isProdutos
+      );
       Boolean propostaGeradaStillFalse =
-        opp.PropostaGerada__c == false &&
-        (isEzeeConnect
-          ? areRequiredFieldsFilledConnect(opp)
-          : areRequiredFieldsFilled(opp));
+        opp.PropostaGerada__c == false && requiredFieldsFilled;
       if (
         propostaGeradaChanged ||
         propostaGeradaStillFalse ||
         readequacaoChanged ||
         aprovacaoChanged ||
+        produtoChanged ||
         formulaChanged
       ) {
         eligibleIds.add(opp.Id);
@@ -2199,7 +2210,7 @@ public class OpportunityBO {
       if (!eligibleIds.contains(opp.Id)) {
         continue;
       }
-      Opportunity oldOpp = oldMap.get(opp.Id);
+      Opportunity oldOpp = oldMap == null ? null : oldMap.get(opp.Id);
       ProposalFileService.ProposalAvailability availability = proposalAvailabilityByOpportunityId.get(
         opp.Id
       );
@@ -2213,21 +2224,21 @@ public class OpportunityBO {
       ) {
         continue;
       }
-      if (
-        ((opp.RecordTypeId ==
-        Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-          .get('EzeeConnect')
-          .getRecordTypeId() && areRequiredFieldsFilledConnect(opp)) ||
-        (opp.RecordTypeId ==
-        Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-          .get('Solar')
-          .getRecordTypeId() && areRequiredFieldsFilled(opp))) &&
-        opp.GrupoTarifario__c != 'Grupo A'
-      ) {
+      Boolean isEzeeConnect = opp.RecordTypeId == ezeeConnectRtId;
+      Boolean isSolar = opp.RecordTypeId == solarRtId;
+      Boolean isProdutos = opp.RecordTypeId == produtosRtId;
+      Boolean requiredFieldsFilled = areRequiredFieldsFilledForProposal(
+        opp,
+        isEzeeConnect,
+        isSolar,
+        isProdutos
+      );
+      if (requiredFieldsFilled && opp.GrupoTarifario__c != 'Grupo A') {
         Boolean shouldGenerate = false;
 
         if (
-          (opp.PropostaGerada__c == false &&
+          (oldOpp != null &&
+          opp.PropostaGerada__c == false &&
           oldOpp.PropostaGerada__c == true)
         ) {
           ApprovalProcessService.enqueueProposalSavePdfJobIfAbsent(
@@ -2256,6 +2267,13 @@ public class OpportunityBO {
             shouldGenerate = true;
           }
           if (oldOpp != null && formulaFieldsChanged(oldOpp, opp)) {
+            shouldGenerate = true;
+          }
+          if (
+            isProdutos &&
+            oldOpp != null &&
+            opp.Produto__c != oldOpp.Produto__c
+          ) {
             shouldGenerate = true;
           }
 
@@ -3343,6 +3361,28 @@ public class OpportunityBO {
     return opp.FaturaDescontoFixo__c != null &&
       opp.EconomiaXMesesFixa__c != null &&
       opp.PrazoContratoParceiro__c != null;
+  }
+
+  public static Boolean areRequiredFieldsFilledProdutos(Opportunity opp) {
+    return opp != null && String.isNotBlank(opp.Produto__c);
+  }
+
+  private static Boolean areRequiredFieldsFilledForProposal(
+    Opportunity opp,
+    Boolean isEzeeConnect,
+    Boolean isSolar,
+    Boolean isProdutos
+  ) {
+    if (isEzeeConnect == true) {
+      return areRequiredFieldsFilledConnect(opp);
+    }
+    if (isSolar == true) {
+      return areRequiredFieldsFilled(opp);
+    }
+    if (isProdutos == true) {
+      return areRequiredFieldsFilledProdutos(opp);
+    }
+    return false;
   }
 
   public static Boolean formulaFieldsChanged(

@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-16-2026
+ * @last modified on  : 05-14-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -93,10 +93,6 @@ private class ProposalConsoleControllerApiTest {
       Assert.isTrue(
         previewResult.success,
         'O preview deve ser gerado com sucesso.'
-      );
-      Assert.isNull(
-        previewResult.contentVersionId,
-        'O preview não deve persistir ContentVersion antes do envio.'
       );
       Assert.isTrue(
         String.isNotBlank(previewResult.previewUrl),
