@@ -24,14 +24,18 @@ public with sharing class ProposalGenerationService {
   }
 
   public static ProposalResult generatePreview(Id opportunityId, Id coverId) {
-    return generate(opportunityId, coverId);
+    return generate(opportunityId, coverId, true);
   }
 
   public static ProposalResult generateProposal(Id opportunityId, Id coverId) {
-    return generate(opportunityId, coverId);
+    return generate(opportunityId, coverId, false);
   }
 
-  private static ProposalResult generate(Id opportunityId, Id coverId) {
+  private static ProposalResult generate(
+    Id opportunityId,
+    Id coverId,
+    Boolean previewOnly
+  ) {
     ProposalContextResolver.Context context = ProposalContextResolver.resolve(
       opportunityId,
       coverId
@@ -122,29 +126,24 @@ public with sharing class ProposalGenerationService {
     Id mainViabilityId = (Id) dataOpportunity.get('MainViability__c');
     String layoutBase64 = fetchLayoutAttachment(mainViabilityId);
 
-    ContentVersion existingProposal = ProposalFileService.findExistingProposal(
-      context.opportunity.Id,
-      payload.payloadHash
-    );
-    if (existingProposal != null) {
-      ProposalResult reusedResult = new ProposalResult();
-      reusedResult.success = true;
-      reusedResult.message = 'Proposta reutilizada com sucesso.';
-      reusedResult.contentVersionId = existingProposal.Id;
-      reusedResult.previewUrl = ProposalFileService.buildPreviewUrl(
-        existingProposal.Id
-      );
-      reusedResult.reusedExistingFile = true;
-      return reusedResult;
-    }
-
     ProposalApiClient.ApiResponse apiResponse = ProposalApiClient.convertProposal(
       templateVersion,
       payload.tagsJson,
       payload.sectionsJson,
       context.cover,
-      layoutBase64
+      layoutBase64,
+      previewOnly != true
     );
+
+    if (previewOnly == true) {
+      ProposalResult previewResult = new ProposalResult();
+      previewResult.success = true;
+      previewResult.message = 'Pré-visualização gerada com sucesso.';
+      previewResult.previewUrl = apiResponse.previewUrl;
+      previewResult.reusedExistingFile = false;
+      return previewResult;
+    }
+
     Id contentVersionId = ProposalFileService.saveGeneratedProposal(
       context,
       apiResponse,

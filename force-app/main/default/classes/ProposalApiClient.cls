@@ -23,6 +23,7 @@ public with sharing class ProposalApiClient {
     public Blob fileBlob;
     public String fileName;
     public String mimeType;
+    public String previewUrl;
   }
 
   /**
@@ -59,6 +60,24 @@ public with sharing class ProposalApiClient {
     String sectionsJson,
     ProposalCover__c cover,
     String layoutBase64
+  ) {
+    return convertProposal(
+      templateVersion,
+      tagsJson,
+      sectionsJson,
+      cover,
+      layoutBase64,
+      true
+    );
+  }
+
+  public static ApiResponse convertProposal(
+    ContentVersion templateVersion,
+    String tagsJson,
+    String sectionsJson,
+    ProposalCover__c cover,
+    String layoutBase64,
+    Boolean downloadUrlFile
   ) {
     String tagsResolved = (String.isBlank(tagsJson) || tagsJson == 'null')
       ? '{}'
@@ -149,12 +168,13 @@ public with sharing class ProposalApiClient {
       );
     }
 
-    return parseResponse(response, title);
+    return parseResponse(response, title, downloadUrlFile);
   }
 
   private static ApiResponse parseResponse(
     HttpResponse response,
-    String fallbackTitle
+    String fallbackTitle,
+    Boolean downloadUrlFile
   ) {
     ApiResponse apiResponse = new ApiResponse();
     String contentType = response.getHeader('Content-Type');
@@ -174,7 +194,6 @@ public with sharing class ProposalApiClient {
       // Resposta com fileBase64 inline
       String fileBase64 = (String) json.get('fileBase64');
       if (String.isNotBlank(fileBase64)) {
-        apiResponse.fileBlob = EncodingUtil.base64Decode(fileBase64);
         apiResponse.fileName = json.containsKey('fileName') &&
           json.get('fileName') != null
           ? (String) json.get('fileName')
@@ -183,6 +202,10 @@ public with sharing class ProposalApiClient {
           json.get('mimeType') != null
           ? (String) json.get('mimeType')
           : 'application/pdf';
+        apiResponse.previewUrl = buildDataUrl(apiResponse.mimeType, fileBase64);
+        if (downloadUrlFile == true) {
+          apiResponse.fileBlob = EncodingUtil.base64Decode(fileBase64);
+        }
         return apiResponse;
       }
 
@@ -195,14 +218,17 @@ public with sharing class ProposalApiClient {
         }
       }
       if (String.isNotBlank(urlFile)) {
-        HttpRequest downloadReq = new HttpRequest();
-        downloadReq.setEndpoint(urlFile);
-        downloadReq.setMethod('GET');
-        downloadReq.setTimeout(TIMEOUT_MS);
-        HttpResponse downloadRes = new Http().send(downloadReq);
-        apiResponse.fileBlob = downloadRes.getBodyAsBlob();
         apiResponse.fileName = fallbackTitle + '.pdf';
         apiResponse.mimeType = 'application/pdf';
+        apiResponse.previewUrl = urlFile;
+        if (downloadUrlFile == true) {
+          HttpRequest downloadReq = new HttpRequest();
+          downloadReq.setEndpoint(urlFile);
+          downloadReq.setMethod('GET');
+          downloadReq.setTimeout(TIMEOUT_MS);
+          HttpResponse downloadRes = new Http().send(downloadReq);
+          apiResponse.fileBlob = downloadRes.getBodyAsBlob();
+        }
         return apiResponse;
       }
     }
@@ -211,11 +237,22 @@ public with sharing class ProposalApiClient {
     apiResponse.fileBlob = response.getBodyAsBlob();
     apiResponse.fileName = fallbackTitle + '.pdf';
     apiResponse.mimeType = 'application/pdf';
+    apiResponse.previewUrl = buildDataUrl(
+      apiResponse.mimeType,
+      EncodingUtil.base64Encode(apiResponse.fileBlob)
+    );
     System.debug(
       '[ProposalApiClient.parseResponse] bodySize=' +
       apiResponse.fileBlob.size()
     );
     return apiResponse;
+  }
+
+  private static String buildDataUrl(String mimeType, String fileBase64) {
+    String resolvedMimeType = String.isNotBlank(mimeType)
+      ? mimeType
+      : 'application/pdf';
+    return 'data:' + resolvedMimeType + ';base64,' + fileBase64;
   }
 
   private static String loadIntegrationUrl() {

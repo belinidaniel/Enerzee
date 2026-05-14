@@ -182,7 +182,7 @@
               placeholder="Selecione um modelo"
               options={templateOptions}
               onchange={handleTemplateChange}
-              disabled={disablePaymentField}
+              disabled={isTemplateInputDisabled}
             >
             </lightning-combobox>
             <template if:true={showBatteryDescription}>
@@ -198,9 +198,9 @@
             </template>
             <template if:true={previewUrl}>
               <div class="preview-container slds-m-top_medium">
-                <template if:true={isPreviewLoading}>
+                <template if:true={isPreviewBusy}>
                   <lightning-spinner
-                    alternative-text="Carregando proposta"
+                    alternative-text={previewLoadingMessage}
                     size="medium"
                     class="preview-spinner"
                   ></lightning-spinner>
@@ -211,6 +211,16 @@
                   onload={handleIframeLoad}
                 ></iframe>
               </div>
+            </template>
+            <template if:false={previewUrl}>
+              <template if:true={isPreviewBusy}>
+                <div class="spinner-wrapper slds-m-top_medium">
+                  <lightning-spinner
+                    alternative-text={previewLoadingMessage}
+                    size="medium"
+                  ></lightning-spinner>
+                </div>
+              </template>
             </template>
           </template>
           <template if:false={hasTemplates}>
@@ -226,7 +236,7 @@
           ></lightning-button>
           <template if:true={isSendMode}>
             <lightning-button
-              label="Enviar proposta"
+              label={primaryActionLabel}
               variant="brand"
               onclick={handleSendProposal}
               disabled={disablePrimaryAction}

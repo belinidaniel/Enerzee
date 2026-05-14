@@ -21,6 +21,7 @@ export default class OpportunityProposalConsole extends LightningElement {
   isSendMode = false;
   isLoading = true;
   isProcessing = false;
+  isGeneratingPreview = false;
   isPreviewLoading = false;
   proposalVisibleCount = 0;
   otherVisibleCount = 0;
@@ -155,7 +156,37 @@ export default class OpportunityProposalConsole extends LightningElement {
   }
 
   get disablePrimaryAction() {
-    return !this.selectedTemplateId || this.isProcessing;
+    return (
+      !this.selectedTemplateId || this.isProcessing || this.isGeneratingPreview
+    );
+  }
+
+  get isPreviewBusy() {
+    return this.isGeneratingPreview || this.isPreviewLoading;
+  }
+
+  get isTemplateInputDisabled() {
+    return (
+      this.disablePaymentField || this.isProcessing || this.isGeneratingPreview
+    );
+  }
+
+  get previewLoadingMessage() {
+    return this.isViabilityMode
+      ? "Gerando readequação..."
+      : "Gerando proposta...";
+  }
+
+  get primaryActionLabel() {
+    if (this.isProcessing) {
+      return this.isViabilityMode
+        ? "Enviando readequação..."
+        : "Enviando proposta...";
+    }
+    if (this.isGeneratingPreview) {
+      return this.previewLoadingMessage;
+    }
+    return this.sendButtonLabel;
   }
 
   get isViabilityMode() {
@@ -240,9 +271,11 @@ export default class OpportunityProposalConsole extends LightningElement {
   }
 
   closeModal() {
+    this.previewRequestSequence += 1;
     this.isModalOpen = false;
     this.isSendMode = false;
     this.previewUrl = null;
+    this.isGeneratingPreview = false;
     this.isPreviewLoading = false;
     this.selectedTemplateId = null;
   }
@@ -250,20 +283,21 @@ export default class OpportunityProposalConsole extends LightningElement {
   handleTemplateChange(event) {
     const selectedValue = event.detail.value;
     this.selectedTemplateId = selectedValue || null;
-    this.isSavingBatteryDescription = true;
     this.updatePreviewUrl();
   }
 
   updatePreviewUrl() {
     if (!this.selectedTemplateId) {
       this.previewUrl = null;
+      this.isGeneratingPreview = false;
       this.isPreviewLoading = false;
       return Promise.resolve();
     }
 
     const requestSequence = ++this.previewRequestSequence;
     this.previewUrl = null;
-    this.isPreviewLoading = true;
+    this.isGeneratingPreview = true;
+    this.isPreviewLoading = false;
 
     return generatePreview({
       opportunityId: this.recordId,
@@ -276,6 +310,7 @@ export default class OpportunityProposalConsole extends LightningElement {
 
         this.previewUrl = result?.previewUrl || null;
         this.error = undefined;
+        this.isGeneratingPreview = false;
 
         if (!this.previewUrl) {
           throw new Error(
@@ -288,6 +323,8 @@ export default class OpportunityProposalConsole extends LightningElement {
           window.open(this.previewUrl, "_blank");
           this.previewUrl = null;
           this.isPreviewLoading = false;
+        } else {
+          this.isPreviewLoading = true;
         }
       })
       .catch((error) => {
@@ -296,6 +333,8 @@ export default class OpportunityProposalConsole extends LightningElement {
         }
 
         this.previewUrl = null;
+        this.isGeneratingPreview = false;
+        this.isPreviewLoading = false;
         const message = this.reduceError(error);
         this.error = message;
         this.dispatchEvent(
@@ -308,7 +347,7 @@ export default class OpportunityProposalConsole extends LightningElement {
       })
       .finally(() => {
         if (requestSequence === this.previewRequestSequence) {
-          this.isPreviewLoading = !this.previewUrl;
+          this.isGeneratingPreview = false;
         }
       });
   }
@@ -398,9 +437,14 @@ export default class OpportunityProposalConsole extends LightningElement {
       );
       return;
     }
+    if (this.isGeneratingPreview) {
+      return;
+    }
 
     this.isProcessing = true;
     this.isLoading = true;
+    this.isGeneratingPreview = false;
+    this.isPreviewLoading = false;
 
     // Oculta modal mas mantém estado para reabrir em caso de falha.
     this.isModalOpen = false;
