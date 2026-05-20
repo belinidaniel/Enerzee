@@ -2782,6 +2782,14 @@
         >RecordMainViability_rAdditionalCost_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem
+        >Record.MainViability__r.StandardAdequacyCost__c</fieldItem>
+                <identifier
+        >RecordMainViability_rStandardAdequacyCost_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-339b5cc6-2903-4f02-8e4b-a61ac1369f47</name>
         <type>Facet</type>
     </flexiPageRegions>
