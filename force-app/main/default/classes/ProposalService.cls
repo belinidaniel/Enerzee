@@ -78,6 +78,8 @@ public class ProposalService {
           opportunity.StageName
         )
       ) {
+        substatusId = StatusEnumMap.getSubstatusEnum(statusEnum, 'Perdido');
+        request.SubStatus = substatusId;
         request.LossReason = getLossReasonAsInteger(opportunity.Loss_Reason__c);
         request.DescriptionReasonLoss = opportunity.DescricaoMotivoPerda__c;
       }
