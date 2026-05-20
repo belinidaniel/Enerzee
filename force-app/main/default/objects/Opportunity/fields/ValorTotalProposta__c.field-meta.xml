@@ -33,8 +33,8 @@
             RecordType.DeveloperName = &quot;Raizen&quot;,
             RecordType.DeveloperName = &quot;Plin&quot;
         ),
-        FaturaDescontoFixo__c,
-        ValorTotalProdutos__c
+        FaturaDescontoFixo__c + ValorAdicionalVendaFinal__c,
+        ValorTotalProdutos__c + ValorAdicionalVendaFinal__c
     )
 )</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
