@@ -4,9 +4,12 @@
     <description
   >Campo que indica o valor total da proposta, incluindo o custo adicional somado ao valor da proposta.</description>
     <formula>IF(
-    AND(
-        RecordType.DeveloperName = &quot;Solar&quot;,
-        DATEVALUE(CreatedDate) &gt;= DATE(2025, 8, 12)
+    OR(
+        AND(
+            RecordType.DeveloperName = &quot;Solar&quot;,
+            DATEVALUE(CreatedDate) &gt;= DATE(2025, 8, 12)
+        ),
+        RecordType.DeveloperName = &quot;Produtos&quot;
     ),
     CustoFinanceiroWeg__c +
     CustoAdicionalFixo__c +
@@ -16,7 +19,8 @@
     Acoplamento__c +
     BDI__c +
     ValorTotalProdutos__c +
-    Direct__c + ClientTotalCost__c,
+    Direct__c + ClientTotalCost__c + 
+    ValorAdicionalVendaFinal__c,
     IF(
         OR(
             RecordType.DeveloperName = &quot;EzeeConnect&quot;,

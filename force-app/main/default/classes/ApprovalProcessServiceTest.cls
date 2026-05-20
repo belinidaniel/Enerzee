@@ -140,4 +140,59 @@ private class ApprovalProcessServiceTest {
       ApprovalProcessService.resetGateway();
     }
   }
+
+  // SAL-495: quando ValorTotalProdutos__c muda com desconto pendente, deve limpar o status
+  @IsTest
+  static void cancelDiscountOnValueChange_clearsStatusWhenValueChanges() {
+    Opportunity newOpp = new Opportunity(
+      Id = OPPORTUNITY_ID,
+      StatusAprovacaoDesconto__c = 'Pendente',
+      ValorTotalProdutos__c = 20000
+    );
+    Map<Id, Opportunity> oldMap = new Map<Id, Opportunity>{
+      OPPORTUNITY_ID => new Opportunity(
+        Id = OPPORTUNITY_ID,
+        StatusAprovacaoDesconto__c = 'Pendente',
+        ValorTotalProdutos__c = 15000
+      )
+    };
+
+    ApprovalProcessService.cancelDiscountOnValueChange(
+      new List<Opportunity>{ newOpp },
+      oldMap
+    );
+
+    Assert.isNull(
+      newOpp.StatusAprovacaoDesconto__c,
+      'SAL-495: Status deve ser limpo quando o valor da proposta muda com desconto pendente.'
+    );
+  }
+
+  // SAL-495: quando valor NÃO muda, status de desconto pendente deve ser mantido
+  @IsTest
+  static void cancelDiscountOnValueChange_keepsStatusWhenValueUnchanged() {
+    Opportunity newOpp = new Opportunity(
+      Id = OPPORTUNITY_ID,
+      StatusAprovacaoDesconto__c = 'Pendente',
+      ValorTotalProdutos__c = 15000
+    );
+    Map<Id, Opportunity> oldMap = new Map<Id, Opportunity>{
+      OPPORTUNITY_ID => new Opportunity(
+        Id = OPPORTUNITY_ID,
+        StatusAprovacaoDesconto__c = 'Pendente',
+        ValorTotalProdutos__c = 15000
+      )
+    };
+
+    ApprovalProcessService.cancelDiscountOnValueChange(
+      new List<Opportunity>{ newOpp },
+      oldMap
+    );
+
+    Assert.areEqual(
+      'Pendente',
+      newOpp.StatusAprovacaoDesconto__c,
+      'SAL-495: Status deve permanecer Pendente quando o valor nao muda.'
+    );
+  }
 }

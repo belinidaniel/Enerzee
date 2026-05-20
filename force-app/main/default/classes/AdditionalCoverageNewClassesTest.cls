@@ -305,4 +305,72 @@ private class AdditionalCoverageNewClassesTest {
       'validateRequiredFieldSetsOnCompletion para APROVAÇÃO DO PROJETO UFV não deve lançar exceção.'
     );
   }
+
+  // SAL-496: Garante que SubStatus 'Perdido' é enviado ao APP quando StageName = 'Fechado Perdido'
+  private static List<String> sal496RequestBodies = new List<String>();
+
+  private class ProposalStatusMock implements HttpCalloutMock {
+    public HttpResponse respond(HttpRequest req) {
+      AdditionalCoverageNewClassesTest.sal496RequestBodies.add(req.getBody());
+      HttpResponse res = new HttpResponse();
+      res.setStatusCode(200);
+      res.setBody('{"success":true}');
+      return res;
+    }
+  }
+
+  @IsTest
+  static void proposalService_fechadoPerdido_sendsSubStatusPerdido() {
+    if (
+      !TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'ProposalStatus')
+    ) {
+      return;
+    }
+
+    Account acc = (Account) TestFactory.createSObject(
+      new Account(),
+      'TestFactoryDefaults.LegalPersonAccount'
+    );
+    insert acc;
+
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        StageName = 'Fechado Perdido',
+        RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+          .get('Solar')
+          .getRecordTypeId()
+      )
+    );
+    opp.Loss_Reason__c = 'Valor';
+    OpportunityTriggerHandler.disableTrigger();
+    try {
+      insert opp;
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
+
+    sal496RequestBodies.clear();
+    Test.setMock(HttpCalloutMock.class, new ProposalStatusMock());
+
+    Test.startTest();
+    ProposalService.updateOpportunityPhase(new Set<Id>{ opp.Id });
+    Test.stopTest();
+
+    Assert.isFalse(
+      sal496RequestBodies.isEmpty(),
+      'ProposalService deve ter feito callout para Fechado Perdido'
+    );
+
+    Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(
+      sal496RequestBodies[0]
+    );
+    Integer subStatus = (Integer) payload.get('SubStatus');
+    // Solar statusEnum=10, 'Perdido'=12
+    Assert.areEqual(
+      12,
+      subStatus,
+      'SubStatus deve ser 12 (Perdido) para Solar Fechado Perdido'
+    );
+  }
 }
