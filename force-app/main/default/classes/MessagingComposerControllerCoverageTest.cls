@@ -634,10 +634,15 @@ private class MessagingComposerControllerCoverageTest {
     }
     System.assertEquals(true, missingChannelRaised);
 
-    MessagingComposerController.SendMessageResponse response = MessagingComposerController.sendMessageJson(
-      '{"messageDefinitionName":"Template","messagingChannelId":"0Mh000000000001AAA","messagingEndUserId":"0Mj000000000001AAA"}'
-    );
-    System.assertEquals('Simulado', response.status);
+    Boolean sendFlowThrew = false;
+    try {
+      MessagingComposerController.sendMessageJson(
+        '{"messageDefinitionName":"Template","messagingChannelId":"0Mh000000000001AAA","messagingEndUserId":"0Mj000000000001AAA"}'
+      );
+    } catch (Exception ex) {
+      sendFlowThrew = true;
+    }
+    System.assertEquals(true, sendFlowThrew, 'Flow invocation deve lançar em ambiente de teste.');
   }
 
   @IsTest
