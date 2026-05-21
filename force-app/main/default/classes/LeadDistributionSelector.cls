@@ -259,6 +259,8 @@ public with sharing class LeadDistributionSelector {
       FROM Consultor__c
       WHERE
         Estado__c = :lead.State
+        AND (EstadosAtendidos__c = NULL
+        OR EstadosAtendidos__c INCLUDES (:lead.State))
         AND SendLead__c = TRUE
         AND FreezeConsult__c = FALSE
         AND (Lb65_Graduacao__c IN :GRADS_WARM_STATE
