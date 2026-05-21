@@ -32,6 +32,12 @@ public class RemarketingRouterTest {
     }
   }
 
+  public class ThrowingMock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest req) {
+      throw new CalloutException('Credencial indisponivel');
+    }
+  }
+
   @IsTest
   static void testRemarketingDetected() {
     String mockBody =
@@ -87,5 +93,31 @@ public class RemarketingRouterTest {
       new List<RemarketingRouter.Input>{ inp }
     );
     Test.stopTest();
+  }
+
+  @IsTest
+  static void testCalloutFailureDoesNotAbortFlowAction() {
+    Test.setMock(HttpCalloutMock.class, new ThrowingMock());
+
+    RemarketingRouter.Input inp = new RemarketingRouter.Input();
+    inp.conversationIdentifier = 'credential-error';
+    inp.messageLimit = 2;
+
+    Test.startTest();
+    List<RemarketingRouter.Output> results = RemarketingRouter.run(
+      new List<RemarketingRouter.Input>{ inp }
+    );
+    Test.stopTest();
+
+    Assert.areEqual(1, results.size(), 'A action deve retornar uma saida.');
+    Assert.isFalse(
+      results[0].isRemarketing,
+      'Falha de credencial nao deve classificar como remarketing.'
+    );
+    Assert.areEqual(
+      '',
+      results[0].messagesStringSimple,
+      'Falha de callout deve retornar conversa vazia.'
+    );
   }
 }
