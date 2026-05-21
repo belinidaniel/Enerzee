@@ -693,4 +693,136 @@ private class MessagingComposerControllerCoverageTest {
     requestItem.messageDefinitionName = 'Template';
     return requestItem;
   }
+
+  @IsTest
+  static void testResolveEndUserDerivationBranches() {
+    String chanPrefix = MessagingChannel.SObjectType.getDescribe()
+      .getKeyPrefix();
+    Id fakeChannelId = Id.valueOf(chanPrefix + '000000000099');
+
+    Account noPhoneAccount = new Account(Name = 'Conta Sem Telefone Deriv');
+    insert noPhoneAccount;
+
+    // opportunity path: contactId/accountId null → no MEU query; account has no phone → throw
+    Opportunity noPhoneOpp = new Opportunity(
+      Name = 'Opp Sem Telefone',
+      StageName = 'Prospecting',
+      CloseDate = Date.today().addDays(5),
+      AccountId = noPhoneAccount.Id,
+      IdVirtualOffice__c = 'VO-DERIV-TEST-001'
+    );
+    insert noPhoneOpp;
+
+    MessagingComposerController.SendMessageRequest reqOpp = new MessagingComposerController.SendMessageRequest();
+    reqOpp.messagingChannelId = fakeChannelId;
+    reqOpp.opportunityId = noPhoneOpp.Id;
+
+    Boolean threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqOpp);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar quando opp sem telefone.');
+
+    // no ids, no phone → throw (without any MEU query)
+    MessagingComposerController.SendMessageRequest reqNone = new MessagingComposerController.SendMessageRequest();
+    reqNone.messagingChannelId = fakeChannelId;
+    threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqNone);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar sem ids e sem telefone.');
+
+    // contact with no phone → contact derivation branch → throw
+    Contact noPhoneContact = new Contact(LastName = 'Sem Telefone Deriv');
+    insert noPhoneContact;
+
+    MessagingComposerController.SendMessageRequest reqContact = new MessagingComposerController.SendMessageRequest();
+    reqContact.messagingChannelId = fakeChannelId;
+    reqContact.contactId = noPhoneContact.Id;
+    threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqContact);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar quando contato sem telefone.');
+
+    // account with no phone → account derivation branch → throw
+    MessagingComposerController.SendMessageRequest reqAccount = new MessagingComposerController.SendMessageRequest();
+    reqAccount.messagingChannelId = fakeChannelId;
+    reqAccount.accountId = noPhoneAccount.Id;
+    threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqAccount);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar quando conta sem telefone.');
+
+    // lead with no phone → lead derivation branch → throw
+    Lead noPhoneLead = new Lead(LastName = 'Lead Sem Tel', Company = 'Enerzee');
+    insert noPhoneLead;
+
+    MessagingComposerController.SendMessageRequest reqLead = new MessagingComposerController.SendMessageRequest();
+    reqLead.messagingChannelId = fakeChannelId;
+    reqLead.leadId = noPhoneLead.Id;
+    threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqLead);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar quando lead sem telefone.');
+  }
+
+  @IsTest
+  static void testNullHelperPaths() {
+    Assert.isNull(MessagingComposerController.buildSessionContext(null));
+    Assert.isNull(MessagingComposerController.buildSessionRecipient(null));
+    Assert.isNull(MessagingComposerController.buildEndUserRecipient(null));
+    Assert.isNull(MessagingComposerController.pickPhone((Lead) null));
+    Assert.isNull(MessagingComposerController.pickPhone((Contact) null));
+    Assert.isNull(MessagingComposerController.pickPhone((Account) null));
+    Assert.isNull(MessagingComposerController.normalizeSearchTerm(null));
+    Assert.isTrue(MessagingComposerController.searchRecipients('').isEmpty());
+    Assert.areEqual(
+      'AFTER - Template',
+      MessagingComposerController.stripPrefix('AFTER - Template', 'SALES - ')
+    );
+
+    Id fakeChannelId = Id.valueOf(
+      MessagingChannel.SObjectType.getDescribe().getKeyPrefix() + '000000000099'
+    );
+    Id fakeEndUserId = Id.valueOf(
+      MessagingEndUser.SObjectType.getDescribe().getKeyPrefix() + '000000000099'
+    );
+
+    MessagingComposerController.SessionLaunchResponse resp = MessagingComposerController.initializeSessionLaunchResponse(
+      null,
+      fakeChannelId,
+      fakeEndUserId
+    );
+    Assert.isNull(resp.messagingEndUserRecordTypeDeveloperName);
+
+    Map<String, Object> flowInputs = MessagingComposerController.buildPrepareSessionFlowInputs(
+      null,
+      fakeChannelId,
+      fakeEndUserId,
+      null,
+      'SALES',
+      null,
+      'Template'
+    );
+    Assert.isNull(flowInputs.get('recipientId'));
+    Assert.isNull(flowInputs.get('recipientType'));
+
+    MessagingSession sessionNoMeu = new MessagingSession();
+    Assert.isNull(
+      MessagingComposerController.buildSessionRecipient(sessionNoMeu)
+    );
+  }
 }
