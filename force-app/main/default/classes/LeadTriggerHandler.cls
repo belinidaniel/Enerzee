@@ -2,10 +2,11 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-08-2026
  * @last modified by  : Daniel Belini
  * @test              : IntegracaoGeradorPropostasTest, IntegracaoVOConsultorPreCadastroTest, LeadBOTest,
- *                       LeadIntegrationBatchTest, LeadIntegrationServiceTest, LeadTriggerTest
+ *                       LeadDistribuicaoQueueableTest, LeadIntegrationBatchTest, LeadIntegrationServiceTest,
+ *                       LeadTriggerTest
  **/
 public class LeadTriggerHandler extends TriggerHandler {
   public LeadTriggerHandler() {
@@ -41,6 +42,10 @@ public class LeadTriggerHandler extends TriggerHandler {
   public override void beforeUpdate() {
     LeadBO.LeadValidationHandler((List<Lead>) newRecordList);
     LeadBO.setRecordTypeAccount((List<Lead>) newRecordList);
+    LeadBO.resetConsultorChangeIntegrationFlags(
+      (List<Lead>) newRecordList,
+      (Map<Id, Lead>) oldMap
+    );
     LeadBO.sendConsultorRecordToVirtualOffice(
       (List<Lead>) newRecordList,
       (Map<Id, Lead>) oldMap
@@ -50,6 +55,10 @@ public class LeadTriggerHandler extends TriggerHandler {
   public override void afterUpdate() {
     LeadBO.sendClientRecordToProposalGenerator((List<Lead>) newRecordList);
     LeadBO.createMessagingUser(newRecordList, (Map<Id, Lead>) oldMap);
+    LeadBO.handleConsultorChange(
+      (List<Lead>) newRecordList,
+      (Map<Id, Lead>) oldMap
+    );
   }
 
   public override void beforeDelete() {

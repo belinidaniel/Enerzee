@@ -480,6 +480,29 @@ public without sharing class ApprovalProcessService {
     return targetObjectIds;
   }
 
+  // SAL-495: limpa o status de desconto em memória (beforeUpdate) quando o valor da
+  // proposta muda com um approval pendente, fazendo o recall disparar no afterUpdate.
+  public static void cancelDiscountOnValueChange(
+    List<Opportunity> newList,
+    Map<Id, Opportunity> oldMap
+  ) {
+    if (newList == null || oldMap == null) {
+      return;
+    }
+    for (Opportunity opp : newList) {
+      Opportunity oldOpp = oldMap.get(opp.Id);
+      if (oldOpp == null) {
+        continue;
+      }
+      if (
+        opp.StatusAprovacaoDesconto__c == DISCOUNT_STATUS_PENDING &&
+        opp.ValorTotalProdutos__c != oldOpp.ValorTotalProdutos__c
+      ) {
+        opp.StatusAprovacaoDesconto__c = null;
+      }
+    }
+  }
+
   public static Boolean enqueueProposalSavePdfJobIfAbsent(
     Id opportunityId,
     Boolean firstFlag,

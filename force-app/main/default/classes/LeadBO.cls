@@ -2,11 +2,11 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-18-2026
+ * @last modified on  : 05-21-2026
  * @last modified by  : Daniel Belini
  * @test              : LeadBOTest, LeadTriggerTest
  **/
-public with sharing class LeadBO {
+public without sharing class LeadBO {
   public static Id QualificarClienteRT = Schema.SObjectType.Lead.getRecordTypeInfosByDeveloperName()
     .get('QualificacaodeClientes')
     .getRecordTypeId();
@@ -282,6 +282,54 @@ public with sharing class LeadBO {
       System.debug('##Erro ao criar Messaging user: ' + ex.getMessage());
       System.debug('##Stack: ' + ex.getStackTraceString());
       System.debug('##Line: ' + ex.getLineNumber());
+    }
+  }
+
+  public static void resetConsultorChangeIntegrationFlags(
+    List<Lead> newRecordList,
+    Map<Id, Lead> oldMap
+  ) {
+    for (Lead lead : newRecordList) {
+      Lead oldLead = oldMap.get(lead.Id);
+      if (
+        oldLead != null &&
+        lead.ConsultorRegional__c != oldLead.ConsultorRegional__c &&
+        lead.ConsultorRegional__c != null
+      ) {
+        lead.Lab065_IntegracaoDistribuicaoLead__c = false;
+        lead.IntegracaoDistribuicaoLeadErro__c = null;
+      }
+    }
+  }
+
+  /**
+   * Detecta troca manual de consultor e reenvia o lead ao app externo via Queueable.
+   * As flags de reintegração são resetadas em before update para evitar um segundo
+   * DML no Lead após mudança de owner/sharing feita por Flow.
+   */
+  public static void handleConsultorChange(
+    List<Lead> newRecordList,
+    Map<Id, Lead> oldMap
+  ) {
+    Set<Id> leadsToReintegrate = new Set<Id>();
+
+    for (Lead lead : newRecordList) {
+      Lead oldLead = oldMap.get(lead.Id);
+      if (
+        oldLead != null &&
+        lead.ConsultorRegional__c != oldLead.ConsultorRegional__c &&
+        lead.ConsultorRegional__c != null
+      ) {
+        leadsToReintegrate.add(lead.Id);
+      }
+    }
+
+    if (leadsToReintegrate.isEmpty()) {
+      return;
+    }
+
+    if (!System.isBatch() && !System.isFuture() && !System.isQueueable()) {
+      System.enqueueJob(new LeadDistribuicaoQueueable(leadsToReintegrate));
     }
   }
 

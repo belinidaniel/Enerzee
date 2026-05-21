@@ -2449,6 +2449,24 @@
                 <identifier>RecordDirect_cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ValorAdicionalVendaFinal__c</fieldItem>
+                <identifier>RecordValorAdicionalVendaFinal_cField</identifier>
+                <visibilityRule>
+                    <criteria>
+                        <leftValue
+            >{!Record.RecordType.DeveloperName}</leftValue>
+                        <operator>EQUAL</operator>
+                        <rightValue>Produtos</rightValue>
+                    </criteria>
+                </visibilityRule>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-eacfb4fb-f9bd-485a-9507-92c1563f196b</name>
         <type>Facet</type>
     </flexiPageRegions>

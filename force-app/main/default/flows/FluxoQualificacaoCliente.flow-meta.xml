@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
         <name>EmailNotificarConsultorRegional</name>
@@ -35,9 +35,6 @@
                     <stringValue>Novo</stringValue>
                 </rightValue>
             </conditions>
-            <connector>
-                <targetReference>TarefaLigacaoFollowup</targetReference>
-            </connector>
             <label>Novo</label>
         </rules>
         <rules>
@@ -75,7 +72,8 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>EmailNotificarConsultorRegional</targetReference>
+                <targetReference
+        >EmailNotificarConsultorRegional</targetReference>
             </connector>
             <label>Qualificado</label>
         </rules>
@@ -90,14 +88,16 @@
             <name>QualificacaoDeClientes</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>ObtemFilaQualificacaoDeClientes.Id</leftValueReference>
+                <leftValueReference
+        >ObtemFilaQualificacaoDeClientes.Id</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
-                <leftValueReference>RecordTypeQualificacaoDeClientes.Id</leftValueReference>
+                <leftValueReference
+        >RecordTypeQualificacaoDeClientes.Id</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -107,14 +107,16 @@
                 <leftValueReference>$Record.RecordTypeId</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
-                    <elementReference>RecordTypeQualificacaoDeClientes.Id</elementReference>
+                    <elementReference
+          >RecordTypeQualificacaoDeClientes.Id</elementReference>
                 </rightValue>
             </conditions>
             <conditions>
                 <leftValueReference>$Record.OwnerId</leftValueReference>
                 <operator>NotEqualTo</operator>
                 <rightValue>
-                    <elementReference>ObtemFilaQualificacaoDeClientes.Id</elementReference>
+                    <elementReference
+          >ObtemFilaQualificacaoDeClientes.Id</elementReference>
                 </rightValue>
             </conditions>
             <connector>
@@ -124,17 +126,9 @@
         </rules>
     </decisions>
     <environments>Default</environments>
-    <formulas>
-        <name>NomeCompleto</name>
-        <dataType>String</dataType>
-        <expression>{!$Record.FirstName} + &apos; &apos; + {!$Record.LastName}</expression>
-    </formulas>
-    <formulas>
-        <name>VencimentoEm24Horas</name>
-        <dataType>DateTime</dataType>
-        <expression>NOW() + 1</expression>
-    </formulas>
-    <interviewLabel>Fluxo Qualificação Cliente {!$Flow.CurrentDateTime}</interviewLabel>
+
+    <interviewLabel
+  >Fluxo Qualificação Cliente {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Fluxo Qualificação Cliente</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -155,69 +149,13 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
-    <recordCreates>
-        <name>TarefaLigacaoFollowup</name>
-        <label>Tarefa - Ligação de Follow-up</label>
-        <locationX>50</locationX>
-        <locationY>755</locationY>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Subject</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Ligação de follow-up - {!NomeCompleto}</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>OwnerId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.OwnerId</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>WhoId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.Id</elementReference>
-            </value>
-        </filters>
-        <inputAssignments>
-            <field>ActivityDate</field>
-            <value>
-                <elementReference>VencimentoEm24Horas</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>OwnerId</field>
-            <value>
-                <elementReference>$Record.OwnerId</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Subject</field>
-            <value>
-                <stringValue>Interação de primeiro contato com o cliente {!NomeCompleto}</stringValue>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>WhoId</field>
-            <value>
-                <elementReference>$Record.Id</elementReference>
-            </value>
-        </inputAssignments>
-        <object>Task</object>
-        <operationMultMatchingRecords>None</operationMultMatchingRecords>
-        <operationOneMatchingRecord>None</operationOneMatchingRecord>
-        <operationZeroMatchingRecords>AddRecord</operationZeroMatchingRecords>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordCreates>
     <recordLookups>
         <name>ObtemFilaQualificacaoDeClientes</name>
         <label>Obtém Fila Qualificação de Clientes</label>
         <locationX>974</locationX>
         <locationY>431</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>TipoDeRegistro</targetReference>
         </connector>
@@ -245,7 +183,8 @@
         <label>Obtém RecordType Qualificação de Clientes</label>
         <locationX>974</locationX>
         <locationY>323</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>ObtemFilaQualificacaoDeClientes</targetReference>
         </connector>

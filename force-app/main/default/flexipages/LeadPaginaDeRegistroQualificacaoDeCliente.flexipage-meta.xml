@@ -659,6 +659,29 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
+                    <value>readonly</value>
+                </fieldInstanceProperties>
+                <fieldItem
+        >Record.IntegracaoDistribuicaoLeadDataHora__c</fieldItem>
+                <identifier
+        >RecordIntegracaoDistribuicaoLeadDataHora_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>readonly</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.IntegracaoDistribuicaoLeadErro__c</fieldItem>
+                <identifier
+        >RecordIntegracaoDistribuicaoLeadErro_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.SDRAgent__c</fieldItem>
