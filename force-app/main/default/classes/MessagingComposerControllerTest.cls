@@ -51,8 +51,8 @@ private class MessagingComposerControllerTest {
   static void testSendMessageInTestMode() {
     MessagingComposerController.SendMessageRequest req = new MessagingComposerController.SendMessageRequest();
     req.messageDefinitionName = 'Template_De_Teste';
-    req.messagingChannelId = '0Mj000000000000AAA';
-    req.messagingEndUserId = '0Mj000000000001AAA';
+    req.messagingChannelId = '001000000000001';
+    req.messagingEndUserId = UserInfo.getUserId();
 
     Boolean threw = false;
     Test.startTest();

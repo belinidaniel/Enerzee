@@ -637,7 +637,9 @@ private class MessagingComposerControllerCoverageTest {
     Boolean sendFlowThrew = false;
     try {
       MessagingComposerController.sendMessageJson(
-        '{"messageDefinitionName":"Template","messagingChannelId":"0Mh000000000001AAA","messagingEndUserId":"0Mj000000000001AAA"}'
+        '{"messageDefinitionName":"Template","messagingChannelId":"001000000000001","messagingEndUserId":"' +
+          UserInfo.getUserId() +
+          '"}'
       );
     } catch (Exception ex) {
       sendFlowThrew = true;
@@ -923,5 +925,52 @@ private class MessagingComposerControllerCoverageTest {
     Assert.isNull(
       MessagingComposerController.buildSessionRecipient(sessionNoMeu)
     );
+  }
+
+  @IsTest
+  static void testDoSendMessageFullParamsAndPrepareSessionBody() {
+    // Cover doSendMessage ternary true-branches (allowedSessionStatus/requestType/enforceConsent/channelConsentType)
+    MessagingComposerController.SendMessageRequest req = new MessagingComposerController.SendMessageRequest();
+    req.messageDefinitionName = 'Template';
+    req.messagingChannelId = '001000000000001';
+    req.messagingEndUserId = UserInfo.getUserId();
+    req.allowedSessionStatus = 'Active';
+    req.requestType = 'SendTemplateMessages';
+    req.enforceConsent = false;
+    req.channelConsentType = 'Explicit';
+
+    Boolean sendThrew = false;
+    try {
+      MessagingComposerController.sendMessage(req);
+    } catch (Exception ex) {
+      sendThrew = true;
+    }
+    Assert.isTrue(sendThrew);
+
+    // Cover prepareSessionAndLaunchFlow body (resolveChannelId via existingChannelId,
+    // buildSessionRequest, resolveMessagingEndUser, findLatestSession, flowInputs map,
+    // then throw because channelKey has no configured flow)
+    String userId = UserInfo.getUserId();
+    String recipientJson =
+      '{"id":"' +
+        userId +
+        '","type":"MessagingEndUser",' +
+        '"messagingEndUserId":"' +
+        userId +
+        '","messagingChannelId":"' +
+        userId +
+        '"}';
+    Boolean prepareThrew = false;
+    try {
+      MessagingComposerController.prepareSessionAndLaunchFlow(
+        recipientJson,
+        'CANAL_INEXISTENTE',
+        null,
+        'Template'
+      );
+    } catch (Exception ex) {
+      prepareThrew = true;
+    }
+    Assert.isTrue(prepareThrew);
   }
 }
