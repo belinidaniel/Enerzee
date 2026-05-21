@@ -340,24 +340,6 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Produto__c</fieldItem>
-                <identifier>RecordProduto_cField</identifier>
-                <visibilityRule>
-                    <criteria>
-                        <leftValue
-            >{!Record.RecordType.DeveloperName}</leftValue>
-                        <operator>EQUAL</operator>
-                        <rightValue>Produtos</rightValue>
-                    </criteria>
-                </visibilityRule>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.SubTipo__c</fieldItem>
                 <identifier>RecordSubTipo_cField</identifier>
                 <visibilityRule>

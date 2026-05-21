@@ -27,6 +27,7 @@ global with sharing class OpportunityRecordsTO {
     public String DynamicTechnicalProposal;
     public String SaleType;
     public Product[] Products;
+    public Composition[] Compositions;
     public Client Client;
     public String RecordTypeId;
     public String StageName;
@@ -83,6 +84,24 @@ global with sharing class OpportunityRecordsTO {
     public Double AdditionalFixedCost;
     public Double Coupling;
     public Double Bdi;
+  }
+
+  public class Composition {
+    public String ExternalId;
+    public String Id;
+    public String Name;
+    public Double UnitaryValue;
+    public Integer Quantity;
+    public String Description;
+    public Double FinancialCostWeg;
+    public Double Direct;
+    public Double Rede;
+    public Double Pontos;
+    public Double Installation;
+    public Double AdditionalFixedCost;
+    public Double Coupling;
+    public Double Bdi;
+    public Double TotalProductValue;
   }
 
   public class Client {
