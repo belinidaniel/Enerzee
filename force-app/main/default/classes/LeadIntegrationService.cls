@@ -6,7 +6,7 @@
  * @last modified by  : Daniel Belini
  * @test              : LeadIntegrationServiceTest
  **/
-public with sharing class LeadIntegrationService {
+public without sharing class LeadIntegrationService {
   // Classe de entrada para o Flow
   public class LeadInput {
     @InvocableVariable(required=true)
@@ -47,7 +47,11 @@ public with sharing class LeadIntegrationService {
   }
 
   public static void integrateLead(String leadId) {
-    Lead leadRecord = [
+    if (String.isBlank(leadId)) {
+      return;
+    }
+
+    List<Lead> leads = [
       SELECT
         Id,
         Name,
@@ -85,6 +89,15 @@ public with sharing class LeadIntegrationService {
       WHERE Id = :leadId
       LIMIT 1
     ];
+
+    if (leads.isEmpty()) {
+      System.debug(
+        'LeadIntegrationService.integrateLead: Lead not found for id=' + leadId
+      );
+      return;
+    }
+
+    Lead leadRecord = leads[0];
 
     try {
       // Buscar o endpoint do Custom Metadata

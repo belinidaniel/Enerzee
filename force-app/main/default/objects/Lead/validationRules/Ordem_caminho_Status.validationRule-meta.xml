@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Ordem_caminho_Status</fullName>
     <active>true</active>
@@ -16,6 +16,7 @@
             NOT(
                 OR(
                     ISPICKVAL(PRIORVALUE(Status), &quot;Novo&quot;),
+                    ISPICKVAL(PRIORVALUE(Status), &quot;Distribuído&quot;),
                     ISPICKVAL(PRIORVALUE(Status), &quot;Unqualified&quot;)
                 )
             )
@@ -30,5 +31,6 @@
         )
     )
 )</errorConditionFormula>
-    <errorMessage>Sequencia do caminho incorreta! Favor seguir com a próxima etapa.</errorMessage>
+    <errorMessage
+  >Sequencia do caminho incorreta! Favor seguir com a próxima etapa.</errorMessage>
 </ValidationRule>

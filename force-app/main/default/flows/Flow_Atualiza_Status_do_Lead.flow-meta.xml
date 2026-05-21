@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>64.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
@@ -11,7 +11,8 @@
             <assignToReference>outcomeMessage</assignToReference>
             <operator>Assign</operator>
             <value>
-                <stringValue>Status foi atualizado para trabalhando</stringValue>
+                <stringValue
+        >Status foi atualizado para trabalhando</stringValue>
             </value>
         </assignmentItems>
     </assignments>
@@ -43,14 +44,16 @@
             <name>Interesse_Energia_Solar_Para</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>inputInteresseEnergiaSolarPara</leftValueReference>
+                <leftValueReference
+        >inputInteresseEnergiaSolarPara</leftValueReference>
                 <operator>IsBlank</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Atualiza_Interesse_energia_solar</targetReference>
+                <targetReference
+        >Atualiza_Interesse_energia_solar</targetReference>
             </connector>
             <label>Interesse Energia Solar Para</label>
         </rules>
@@ -65,7 +68,8 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>C_pia_1_de_Atualiza_tipo_de_imovel</targetReference>
+                <targetReference
+        >C_pia_1_de_Atualiza_tipo_de_imovel</targetReference>
             </connector>
             <label>Tipo do Imovel</label>
         </rules>
@@ -80,13 +84,15 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>C_pia_1_de_Atualiza_custo_de_energia</targetReference>
+                <targetReference
+        >C_pia_1_de_Atualiza_custo_de_energia</targetReference>
             </connector>
             <label>Custo Medio Energia</label>
         </rules>
     </decisions>
     <environments>Default</environments>
-    <interviewLabel>Flow: Atualiza Status do Lead {!$Flow.CurrentDateTime}</interviewLabel>
+    <interviewLabel
+  >Flow: Atualiza Status do Lead {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Flow: Atualiza Status do Lead</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -106,13 +112,20 @@
             <stringValue>LightningFlowBuilder</stringValue>
         </value>
     </processMetadataValues>
+    <formulas>
+        <name>statusParaAtualizar</name>
+        <dataType>String</dataType>
+        <expression
+    >IF({!Obter_Lead.Status} = &quot;Distribuído&quot;, &quot;Trabalhando&quot;, {!Obter_Lead.Status})</expression>
+    </formulas>
     <processType>AutoLaunchedFlow</processType>
     <recordLookups>
         <name>Obter_Lead</name>
         <label>Obter Lead</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Houve_alteracao</targetReference>
         </connector>
@@ -134,7 +147,8 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Atribui_mensagem_de_sucesso_a_variavel</targetReference>
+            <targetReference
+      >Atribui_mensagem_de_sucesso_a_variavel</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -147,13 +161,14 @@
         <inputAssignments>
             <field>InteresseEnergiaSolar__c</field>
             <value>
-                <elementReference>inputInteresseEnergiaSolarPara</elementReference>
+                <elementReference
+        >inputInteresseEnergiaSolarPara</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <field>Status</field>
             <value>
-                <stringValue>Trabalhando</stringValue>
+                <elementReference>statusParaAtualizar</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
@@ -164,7 +179,8 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Atribui_mensagem_de_sucesso_a_variavel</targetReference>
+            <targetReference
+      >Atribui_mensagem_de_sucesso_a_variavel</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -183,7 +199,7 @@
         <inputAssignments>
             <field>Status</field>
             <value>
-                <stringValue>Trabalhando</stringValue>
+                <elementReference>statusParaAtualizar</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
@@ -194,7 +210,8 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Atribui_mensagem_de_sucesso_a_variavel</targetReference>
+            <targetReference
+      >Atribui_mensagem_de_sucesso_a_variavel</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -207,7 +224,7 @@
         <inputAssignments>
             <field>Status</field>
             <value>
-                <stringValue>Trabalhando</stringValue>
+                <elementReference>statusParaAtualizar</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
@@ -218,7 +235,8 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Atribui_mensagem_de_sucesso_a_variavel</targetReference>
+            <targetReference
+      >Atribui_mensagem_de_sucesso_a_variavel</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -237,7 +255,7 @@
         <inputAssignments>
             <field>Status</field>
             <value>
-                <stringValue>Trabalhando</stringValue>
+                <elementReference>statusParaAtualizar</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
@@ -248,7 +266,8 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Atribui_mensagem_de_sucesso_a_variavel</targetReference>
+            <targetReference
+      >Atribui_mensagem_de_sucesso_a_variavel</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -261,7 +280,7 @@
         <inputAssignments>
             <field>Status</field>
             <value>
-                <stringValue>Trabalhando</stringValue>
+                <elementReference>statusParaAtualizar</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
