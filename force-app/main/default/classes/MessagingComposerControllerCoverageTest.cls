@@ -454,6 +454,100 @@ private class MessagingComposerControllerCoverageTest {
     return Id.valueOf(prefix + suffix);
   }
 
+  private class Non200Mock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest req) {
+      HttpResponse resp = new HttpResponse();
+      resp.setStatusCode(400);
+      resp.setBody('Bad Request');
+      return resp;
+    }
+  }
+
+  private class InvalidDateRestMock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest req) {
+      HttpResponse resp = new HttpResponse();
+      resp.setStatusCode(200);
+      resp.setHeader('Content-Type', 'application/json');
+      resp.setBody(
+        '{"records":[{"FullName":"Test","DeveloperName":"Test","NamespacePrefix":null,"LastModifiedDate":"NOT_A_DATE","CreatedBy":{"Name":"Tester"}}]}'
+      );
+      return resp;
+    }
+  }
+
+  @IsTest
+  static void testNon200CalloutResponses() {
+    Test.setMock(HttpCalloutMock.class, new Non200Mock());
+    Test.startTest();
+    List<MetadataService.FileProperties> restResults = MessagingComposerController.fetchMessageDefinitionsViaNamedCredentialRest();
+    List<MetadataService.FileProperties> soapResults = MessagingComposerController.fetchMessageDefinitionsViaNamedCredential();
+    Test.stopTest();
+
+    Assert.isTrue(restResults.isEmpty(), 'REST 400 deve retornar lista vazia.');
+    Assert.isTrue(soapResults.isEmpty(), 'SOAP 400 deve retornar lista vazia.');
+  }
+
+  @IsTest
+  static void testCollectFilePropertiesEdgePaths() {
+    List<MetadataService.FileProperties> props = new List<MetadataService.FileProperties>();
+
+    // null node — deve retornar sem erro
+    MessagingComposerController.collectFileProperties(null, props);
+    Assert.isTrue(props.isEmpty());
+
+    // nó com lastModifiedDate válido
+    Dom.Document doc1 = new Dom.Document();
+    doc1.load(
+      '<root><result><fullName>Test</fullName><lastModifiedDate>2026-01-01T00:00:00.000Z</lastModifiedDate></result></root>'
+    );
+    MessagingComposerController.collectFileProperties(
+      doc1.getRootElement(),
+      props
+    );
+    Assert.areEqual(1, props.size());
+    Assert.isNotNull(props[0].lastModifiedDate);
+
+    // nó com lastModifiedDate inválido — deve ignorar e ainda adicionar o registro
+    props.clear();
+    Dom.Document doc2 = new Dom.Document();
+    doc2.load(
+      '<root><result><fullName>Test2</fullName><lastModifiedDate>NOT_A_DATE</lastModifiedDate></result></root>'
+    );
+    MessagingComposerController.collectFileProperties(
+      doc2.getRootElement(),
+      props
+    );
+    Assert.areEqual(1, props.size());
+    Assert.isNull(props[0].lastModifiedDate);
+  }
+
+  @IsTest
+  static void testGetMessageDefinitionsWithSearchTerm() {
+    // termo que encontra o stub
+    List<MessagingComposerController.MessageTemplateDTO> match = MessagingComposerController.getMessageDefinitions(
+      'Template_De_Teste'
+    );
+    Assert.areEqual(1, match.size());
+
+    // termo que não encontra nada — cobre o branch continue
+    List<MessagingComposerController.MessageTemplateDTO> noMatch = MessagingComposerController.getMessageDefinitions(
+      'ZZZ_NoMatch_XYZ'
+    );
+    Assert.isTrue(noMatch.isEmpty());
+  }
+
+  @IsTest
+  static void testFetchRestWithInvalidDate() {
+    Test.setMock(HttpCalloutMock.class, new InvalidDateRestMock());
+    Test.startTest();
+    List<MetadataService.FileProperties> results = MessagingComposerController.fetchMessageDefinitionsViaNamedCredentialRest();
+    Test.stopTest();
+
+    // registro deve ser adicionado mesmo com data inválida (catch ignore)
+    Assert.areEqual(1, results.size());
+    Assert.isNull(results[0].lastModifiedDate);
+  }
+
   @IsTest
   static void testPrepareAndSendValidationPaths() {
     Boolean missingRecipientRaised = false;
