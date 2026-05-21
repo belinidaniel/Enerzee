@@ -1,0 +1,1112 @@
+/**
+ * @description       :
+ * @author            : Daniel Belini
+ * @group             :
+ * @last modified on  : 03-15-2026
+ * @last modified by  : Daniel Belini
+ * @test              : N/A - classe de teste executavel
+ **/
+@IsTest
+private class MessagingComposerControllerCoverageTest {
+  private class MetadataNamedCredentialMock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest request) {
+      HttpResponse response = new HttpResponse();
+      response.setStatusCode(200);
+
+      if (request.getEndpoint().contains('/tooling/query')) {
+        response.setHeader('Content-Type', 'application/json');
+        response.setBody(
+          '{"records":[{"FullName":"SALES - Oferta","DeveloperName":"Oferta","NamespacePrefix":null,"LastModifiedDate":"2026-03-15T10:00:00.000Z","CreatedBy":{"Name":"Tester"}}]}'
+        );
+        return response;
+      }
+
+      response.setHeader('Content-Type', 'text/xml');
+      response.setBody(
+        '<?xml version="1.0" encoding="UTF-8"?><Envelope><Body><result><fullName>AFTER - Template XML</fullName><fileName>conversationMessageDefinitions/AfterTemplate.conversationMessageDefinition</fileName><createdByName>Tester</createdByName></result></Body></Envelope>'
+      );
+      return response;
+    }
+  }
+
+  @IsTest
+  static void testRecipientResolutionByRecordType() {
+    Account accountRecord = new Account(
+      Name = 'Conta Cobertura',
+      Phone = '(11) 4003-8852'
+    );
+    insert accountRecord;
+
+    Contact contactRecord = new Contact(
+      LastName = 'Contato Cobertura',
+      AccountId = accountRecord.Id,
+      MobilePhone = '(11) 98888-7777'
+    );
+    insert contactRecord;
+
+    Lead leadRecord = new Lead(
+      LastName = 'Lead Cobertura',
+      Company = 'Enerzee',
+      Phone = '(11) 3666-5555'
+    );
+    insert leadRecord;
+
+    MessagingComposerController.PreselectRecipientResponse emptyResponse = MessagingComposerController.getRecipientFromRecordId(
+      null
+    );
+    MessagingComposerController.PreselectRecipientResponse contactResponse = MessagingComposerController.getRecipientFromRecordId(
+      contactRecord.Id
+    );
+    MessagingComposerController.PreselectRecipientResponse accountResponse = MessagingComposerController.getRecipientFromRecordId(
+      accountRecord.Id
+    );
+    MessagingComposerController.PreselectRecipientResponse leadResponse = MessagingComposerController.getRecipientFromRecordId(
+      leadRecord.Id
+    );
+
+    System.assertEquals(null, emptyResponse.recipient);
+    System.assertEquals('Contact', contactResponse.recipient.type);
+    System.assertEquals(accountRecord.Name, contactResponse.recipient.detail);
+    System.assertEquals('Account', accountResponse.recipient.type);
+    System.assertEquals('Conta', accountResponse.recipient.detail);
+    System.assertEquals('Lead', leadResponse.recipient.type);
+    System.assertEquals('Enerzee', leadResponse.recipient.detail);
+    System.assertEquals(
+      null,
+      MessagingComposerController.getMessagingSessionContext(null)
+    );
+    System.assertEquals(
+      null,
+      MessagingComposerController.getMessagingSessionContext(accountRecord.Id)
+    );
+  }
+
+  @IsTest
+  static void testTemplateFiltersAndUtilityMethods() {
+    List<MessagingComposerController.MessageTemplateDTO> unknownChannel = MessagingComposerController.getMessageDefinitionsByChannelKey(
+      'OUTRO'
+    );
+    List<MessagingComposerController.MessageTemplateDTO> salesChannel = MessagingComposerController.getMessageDefinitionsByChannelKey(
+      'SALES'
+    );
+    List<MessagingComposerController.MessageTemplateDTO> blankChannel = MessagingComposerController.getMessageDefinitionsByChannelKey(
+      null
+    );
+
+    System.assertEquals(1, unknownChannel.size());
+    System.assertEquals('Template_De_Teste', unknownChannel[0].label);
+    System.assertEquals(0, salesChannel.size());
+    System.assertEquals(0, blankChannel.size());
+
+    System.assertEquals(
+      'Teste',
+      MessagingComposerController.normalizeSearchTerm('  Teste  ')
+    );
+    System.assertEquals(
+      '11988887777',
+      MessagingComposerController.normalizePhone('(11) 98888-7777')
+    );
+    System.assertEquals(
+      null,
+      MessagingComposerController.normalizePhone('abc')
+    );
+    System.assertEquals(
+      'Oferta',
+      MessagingComposerController.stripPrefix('SALES - Oferta', 'SALES - ')
+    );
+    System.assertEquals(
+      'Template',
+      MessagingComposerController.stripPrefix('Template', null)
+    );
+    System.assertEquals(
+      1,
+      MessagingComposerController.fetchMessageDefinitions().size()
+    );
+
+    Dom.Document doc = new Dom.Document();
+    doc.load(
+      '<root><result><fullName>SALES - Oferta</fullName><fileName>conversationMessageDefinitions/Oferta.conversationMessageDefinition</fileName><createdByName>Tester</createdByName></result></root>'
+    );
+
+    List<MetadataService.FileProperties> properties = new List<MetadataService.FileProperties>();
+    MessagingComposerController.collectFileProperties(
+      doc.getRootElement(),
+      properties
+    );
+
+    System.assertEquals(1, properties.size());
+    System.assertEquals('SALES - Oferta', properties[0].fullName);
+    System.assertEquals(
+      true,
+      MessagingComposerController.resolveAllowedChannelIds().isEmpty()
+    );
+  }
+
+  @IsTest
+  static void testSearchRecipientsAndNamedCredentialHelpers() {
+    Account accountRecord = new Account(
+      Name = 'Busca Cobertura',
+      Phone = '(11) 4111-0000'
+    );
+    insert accountRecord;
+
+    Contact contactRecord = new Contact(
+      LastName = 'Busca Cobertura',
+      AccountId = accountRecord.Id,
+      Phone = '(11) 92222-0000'
+    );
+    insert contactRecord;
+
+    Lead leadRecord = new Lead(
+      LastName = 'Busca Cobertura',
+      Company = 'Enerzee',
+      Phone = '(11) 93333-0000'
+    );
+    insert leadRecord;
+
+    List<MessagingComposerController.RecipientDTO> results = MessagingComposerController.searchRecipients(
+      'Busca Cobertura'
+    );
+    Set<String> recipientTypes = new Set<String>();
+    for (MessagingComposerController.RecipientDTO item : results) {
+      recipientTypes.add(item.type);
+    }
+
+    System.assert(recipientTypes.contains('Account'));
+    System.assert(recipientTypes.contains('Contact'));
+    System.assert(recipientTypes.contains('Lead'));
+
+    Test.setMock(HttpCalloutMock.class, new MetadataNamedCredentialMock());
+    Test.startTest();
+    List<MetadataService.FileProperties> restTemplates = MessagingComposerController.fetchMessageDefinitionsViaNamedCredentialRest();
+    List<MetadataService.FileProperties> soapTemplates = MessagingComposerController.fetchMessageDefinitionsViaNamedCredential();
+    MetadataService.MetadataPort port = MessagingComposerController.createMetadataPort();
+    Test.stopTest();
+
+    System.assertEquals(1, restTemplates.size());
+    System.assertEquals('SALES - Oferta', restTemplates[0].fullName);
+    System.assertEquals(1, soapTemplates.size());
+    System.assertEquals('AFTER - Template XML', soapTemplates[0].fullName);
+    System.assertNotEquals(null, port);
+  }
+
+  @IsTest
+  static void testMessagingBranchesWhenMessagingDataIsAvailable() {
+    List<MessagingChannel> channels = [
+      SELECT Id, DeveloperName, MasterLabel
+      FROM MessagingChannel
+      LIMIT 1
+    ];
+    if (channels.isEmpty()) {
+      System.assert(
+        true,
+        'Nenhum canal de messaging disponivel no org de teste.'
+      );
+      return;
+    }
+
+    MessagingChannel channel = channels[0];
+    Account accountRecord = new Account(
+      Name = 'Conta Messaging Branch',
+      Phone = '(11) 4555-0000'
+    );
+    insert accountRecord;
+
+    Contact contactRecord = new Contact(
+      LastName = 'Contato Messaging Branch',
+      AccountId = accountRecord.Id,
+      Phone = '(11) 96666-0000'
+    );
+    insert contactRecord;
+
+    try {
+      MessagingEndUser endUser = new MessagingEndUser(
+        ContactId = contactRecord.Id,
+        AccountId = accountRecord.Id,
+        MessagingPlatformKey = '11966660000',
+        Name = 'Messaging Branch User',
+        MessageType = 'WhatsApp',
+        MessagingChannelId = channel.Id
+      );
+      insert endUser;
+
+      MessagingSession session = new MessagingSession(
+        MessagingEndUserId = endUser.Id,
+        MessagingChannelId = channel.Id,
+        Status = 'New',
+        ConversationId = '0dwU50000034lLBIAY'
+      );
+      insert session;
+
+      MessagingComposerController.SessionContext context = MessagingComposerController.getMessagingSessionContext(
+        session.Id
+      );
+      MessagingComposerController.PreselectRecipientResponse sessionResponse = MessagingComposerController.getRecipientFromRecordId(
+        session.Id
+      );
+      MessagingComposerController.PreselectRecipientResponse endUserResponse = MessagingComposerController.getRecipientFromRecordId(
+        endUser.Id
+      );
+
+      System.assertEquals(endUser.Id, context.messagingEndUserId);
+      System.assertEquals(channel.Id, context.messagingChannelId);
+      System.assertEquals(endUser.Id, sessionResponse.recipient.id);
+      System.assertEquals('MessagingEndUser', sessionResponse.recipient.type);
+      System.assertEquals(
+        endUser.Id,
+        endUserResponse.recipient.messagingEndUserId
+      );
+
+      System.assertEquals(
+        channel.Id,
+        MessagingComposerController.resolveChannelId(
+          null,
+          null,
+          channel.DeveloperName,
+          null
+        )
+      );
+      System.assertEquals(
+        endUser.Id,
+        MessagingComposerController.findExistingEndUser(
+          contactRecord.Id,
+          accountRecord.Id,
+          channel.Id
+        )
+      );
+      System.assertEquals(
+        endUser.Id,
+        MessagingComposerController.findExistingEndUserByPhone(
+          '11966660000',
+          channel.Id
+        )
+      );
+      System.assertEquals(
+        session.Id,
+        MessagingComposerController.findLatestSession(endUser.Id, channel.Id).Id
+      );
+
+      MessagingComposerController.SendMessageRequest requestByPhone = new MessagingComposerController.SendMessageRequest();
+      requestByPhone.messagingChannelId = channel.Id;
+      requestByPhone.phone = '(11) 96666-0000';
+      System.assertEquals(
+        endUser.Id,
+        MessagingComposerController.resolveMessagingEndUser(requestByPhone)
+      );
+
+      MessagingComposerController.SendMessageRequest requestByContact = new MessagingComposerController.SendMessageRequest();
+      requestByContact.messagingChannelId = channel.Id;
+      requestByContact.contactId = contactRecord.Id;
+      System.assertEquals(
+        endUser.Id,
+        MessagingComposerController.resolveMessagingEndUser(requestByContact)
+      );
+
+      String recipientJson =
+        '{"id":"' +
+        endUser.Id +
+        '","type":"MessagingEndUser","name":"Messaging Branch User","phone":"(11) 96666-0000","messagingEndUserId":"' +
+        endUser.Id +
+        '","messagingChannelId":"' +
+        channel.Id +
+        '"}';
+      Boolean missingFlowRaised = false;
+      try {
+        MessagingComposerController.prepareSessionAndLaunchFlow(
+          recipientJson,
+          'CANAL_INEXISTENTE',
+          null,
+          'Template'
+        );
+      } catch (Exception ex) {
+        missingFlowRaised = true;
+      }
+      System.assertEquals(true, missingFlowRaised);
+
+      // MEU creation path: telefone novo sem MEU existente → cria novo registro
+      MessagingComposerController.SendMessageRequest createReq = new MessagingComposerController.SendMessageRequest();
+      createReq.messagingChannelId = channel.Id;
+      createReq.phone = '11855554499';
+      Id createdMeuId = MessagingComposerController.resolveMessagingEndUser(
+        createReq
+      );
+      Assert.isNotNull(createdMeuId, 'MEU deve ser criado quando não existe.');
+
+      // MEU creation com contactId definido
+      Contact newContact = new Contact(
+        LastName = 'MEU Creation Contact',
+        AccountId = accountRecord.Id,
+        MobilePhone = '11855554488'
+      );
+      insert newContact;
+      MessagingComposerController.SendMessageRequest createReqContact = new MessagingComposerController.SendMessageRequest();
+      createReqContact.messagingChannelId = channel.Id;
+      createReqContact.contactId = newContact.Id;
+      createReqContact.phone = '11855554488';
+      Id createdMeuContactId = MessagingComposerController.resolveMessagingEndUser(
+        createReqContact
+      );
+      Assert.isNotNull(createdMeuContactId);
+
+      // MEU creation com accountId definido
+      Account newAccount = new Account(
+        Name = 'MEU Creation Account',
+        Phone = '11855554477'
+      );
+      insert newAccount;
+      MessagingComposerController.SendMessageRequest createReqAccount = new MessagingComposerController.SendMessageRequest();
+      createReqAccount.messagingChannelId = channel.Id;
+      createReqAccount.accountId = newAccount.Id;
+      createReqAccount.phone = '11855554477';
+      Id createdMeuAccountId = MessagingComposerController.resolveMessagingEndUser(
+        createReqAccount
+      );
+      Assert.isNotNull(createdMeuAccountId);
+    } catch (Exception ex) {
+      if (
+        ex.getMessage() == null ||
+        !ex.getMessage().contains('MessagingDisabled')
+      ) {
+        throw ex;
+      }
+    }
+  }
+
+  @IsTest
+  static void testPureBuilderHelpers() {
+    Id fakeChannelId = buildFakeId(
+      MessagingChannel.SObjectType,
+      '000000000001'
+    );
+    Id fakeEndUserId = buildFakeId(
+      MessagingEndUser.SObjectType,
+      '000000000001'
+    );
+
+    MessagingChannel channel = new MessagingChannel(
+      Id = fakeChannelId,
+      DeveloperName = 'SALES',
+      MasterLabel = '+55 11 4003-8852'
+    );
+
+    MessagingEndUser endUser = new MessagingEndUser(
+      Id = fakeEndUserId,
+      Name = 'Builder User',
+      MessagingPlatformKey = '11911112222',
+      MessagingChannelId = fakeChannelId
+    );
+
+    MessagingSession session = new MessagingSession(
+      MessagingEndUserId = fakeEndUserId,
+      MessagingChannelId = fakeChannelId
+    );
+
+    MessagingComposerController.SessionContext context = MessagingComposerController.buildSessionContext(
+      session
+    );
+    MessagingComposerController.RecipientDTO sessionRecipient = MessagingComposerController.buildSessionRecipient(
+      session
+    );
+    MessagingComposerController.RecipientDTO endUserRecipient = MessagingComposerController.buildEndUserRecipient(
+      endUser
+    );
+
+    System.assertEquals(fakeEndUserId, context.messagingEndUserId);
+    System.assertEquals(null, context.endUserName);
+    System.assertEquals('MessagingEndUser', sessionRecipient.type);
+    System.assertEquals(null, sessionRecipient.phone);
+    System.assertEquals('MessagingEndUser', endUserRecipient.type);
+    System.assertEquals(null, endUserRecipient.messagingChannelDeveloperName);
+
+    MessagingComposerController.RecipientDTO recipient = new MessagingComposerController.RecipientDTO();
+    recipient.id = fakeEndUserId;
+    recipient.type = 'MessagingEndUser';
+    recipient.recordTypeDeveloperName = 'PessoaFisica';
+
+    MessagingComposerController.SessionLaunchResponse response = MessagingComposerController.initializeSessionLaunchResponse(
+      recipient,
+      fakeChannelId,
+      fakeEndUserId
+    );
+    Map<String, Object> flowInputs = MessagingComposerController.buildPrepareSessionFlowInputs(
+      recipient,
+      fakeChannelId,
+      fakeEndUserId,
+      '0dw000000000001AAA',
+      'SALES',
+      '+55 11 4003-8852',
+      'Template'
+    );
+
+    System.assertEquals(fakeEndUserId, response.messagingEndUserId);
+    System.assertEquals(
+      'PessoaFisica',
+      response.messagingEndUserRecordTypeDeveloperName
+    );
+    System.assertEquals(
+      'Template',
+      (String) flowInputs.get('selectedMessageComponentName')
+    );
+    System.assertEquals(
+      'MessagingEndUser',
+      (String) flowInputs.get('recipientType')
+    );
+
+    MessagingComposerController.SendMessageRequest request = new MessagingComposerController.SendMessageRequest();
+    request.messageDefinitionName = 'Template';
+    request.messagingChannelId = fakeChannelId;
+    Map<String, Object> params = MessagingComposerController.buildSendMessageFlowParams(
+      request,
+      fakeEndUserId
+    );
+
+    System.assertEquals(
+      'Template',
+      (String) params.get('messageDefinitionName')
+    );
+    System.assertEquals('Any', (String) params.get('allowedSessionStatus'));
+    System.assertEquals(
+      'SendNotificationMessages',
+      (String) params.get('requestType')
+    );
+    System.assertEquals(
+      'MessagingEndUser',
+      (String) params.get('channelConsentType')
+    );
+
+    MessagingComposerController.SendMessageResponse queuedResponse = MessagingComposerController.buildSendMessageCompletionResponse(
+      fakeEndUserId,
+      null,
+      'Template'
+    );
+    MessagingComposerController.SendMessageResponse sentResponse = MessagingComposerController.buildSendMessageCompletionResponse(
+      fakeEndUserId,
+      session,
+      'Template'
+    );
+
+    System.assertEquals('Processando', queuedResponse.status);
+    System.assertEquals('Enviado', sentResponse.status);
+  }
+
+  private static Id buildFakeId(SObjectType sObjectType, String suffix) {
+    String prefix = sObjectType.getDescribe().getKeyPrefix();
+    return Id.valueOf(prefix + suffix);
+  }
+
+  private class Non200Mock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest req) {
+      HttpResponse resp = new HttpResponse();
+      resp.setStatusCode(400);
+      resp.setBody('Bad Request');
+      return resp;
+    }
+  }
+
+  private class InvalidDateRestMock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest req) {
+      HttpResponse resp = new HttpResponse();
+      resp.setStatusCode(200);
+      resp.setHeader('Content-Type', 'application/json');
+      resp.setBody(
+        '{"records":[{"FullName":"Test","DeveloperName":"Test","NamespacePrefix":null,"LastModifiedDate":"NOT_A_DATE","CreatedBy":{"Name":"Tester"}}]}'
+      );
+      return resp;
+    }
+  }
+
+  @IsTest
+  static void testNon200CalloutResponses() {
+    Test.setMock(HttpCalloutMock.class, new Non200Mock());
+    Test.startTest();
+    List<MetadataService.FileProperties> restResults = MessagingComposerController.fetchMessageDefinitionsViaNamedCredentialRest();
+    List<MetadataService.FileProperties> soapResults = MessagingComposerController.fetchMessageDefinitionsViaNamedCredential();
+    Test.stopTest();
+
+    Assert.isTrue(restResults.isEmpty(), 'REST 400 deve retornar lista vazia.');
+    Assert.isTrue(soapResults.isEmpty(), 'SOAP 400 deve retornar lista vazia.');
+  }
+
+  @IsTest
+  static void testCollectFilePropertiesEdgePaths() {
+    List<MetadataService.FileProperties> props = new List<MetadataService.FileProperties>();
+
+    // null node — deve retornar sem erro
+    MessagingComposerController.collectFileProperties(null, props);
+    Assert.isTrue(props.isEmpty());
+
+    // nó com lastModifiedDate válido
+    Dom.Document doc1 = new Dom.Document();
+    doc1.load(
+      '<root><result><fullName>Test</fullName><lastModifiedDate>2026-01-01T00:00:00.000Z</lastModifiedDate></result></root>'
+    );
+    MessagingComposerController.collectFileProperties(
+      doc1.getRootElement(),
+      props
+    );
+    Assert.areEqual(1, props.size());
+    Assert.isNotNull(props[0].lastModifiedDate);
+
+    // nó com lastModifiedDate inválido — deve ignorar e ainda adicionar o registro
+    props.clear();
+    Dom.Document doc2 = new Dom.Document();
+    doc2.load(
+      '<root><result><fullName>Test2</fullName><lastModifiedDate>NOT_A_DATE</lastModifiedDate></result></root>'
+    );
+    MessagingComposerController.collectFileProperties(
+      doc2.getRootElement(),
+      props
+    );
+    Assert.areEqual(1, props.size());
+    Assert.isNull(props[0].lastModifiedDate);
+
+    // nó com namespacePrefix e fileName — cobre branches não testados
+    props.clear();
+    Dom.Document doc3 = new Dom.Document();
+    doc3.load(
+      '<root><result><fullName>NS_Template</fullName><namespacePrefix>myns</namespacePrefix><fileName>conversationMessageDefinitions/NS_Template.conversationMessageDefinition</fileName></result></root>'
+    );
+    MessagingComposerController.collectFileProperties(
+      doc3.getRootElement(),
+      props
+    );
+    Assert.areEqual(1, props.size());
+    Assert.areEqual('myns', props[0].namespacePrefix);
+    Assert.areEqual(
+      'conversationMessageDefinitions/NS_Template.conversationMessageDefinition',
+      props[0].fileName
+    );
+
+    // nó result com fullName em branco — não deve ser adicionado à lista
+    props.clear();
+    Dom.Document doc4 = new Dom.Document();
+    doc4.load(
+      '<root><result><fileName>only_file.xml</fileName></result></root>'
+    );
+    MessagingComposerController.collectFileProperties(
+      doc4.getRootElement(),
+      props
+    );
+    Assert.isTrue(
+      props.isEmpty(),
+      'Resultado sem fullName não deve ser adicionado.'
+    );
+  }
+
+  @IsTest
+  static void testGetMessageDefinitionsWithSearchTerm() {
+    // termo que encontra o stub
+    List<MessagingComposerController.MessageTemplateDTO> match = MessagingComposerController.getMessageDefinitions(
+      'Template_De_Teste'
+    );
+    Assert.areEqual(1, match.size());
+
+    // termo que não encontra nada — cobre o branch continue
+    List<MessagingComposerController.MessageTemplateDTO> noMatch = MessagingComposerController.getMessageDefinitions(
+      'ZZZ_NoMatch_XYZ'
+    );
+    Assert.isTrue(noMatch.isEmpty());
+  }
+
+  @IsTest
+  static void testFetchRestWithInvalidDate() {
+    Test.setMock(HttpCalloutMock.class, new InvalidDateRestMock());
+    Test.startTest();
+    List<MetadataService.FileProperties> results = MessagingComposerController.fetchMessageDefinitionsViaNamedCredentialRest();
+    Test.stopTest();
+
+    // registro deve ser adicionado mesmo com data inválida (catch ignore)
+    Assert.areEqual(1, results.size());
+    Assert.isNull(results[0].lastModifiedDate);
+  }
+
+  @IsTest
+  static void testPrepareAndSendValidationPaths() {
+    Boolean missingRecipientRaised = false;
+    try {
+      MessagingComposerController.prepareSessionAndLaunchFlow(
+        null,
+        'SALES',
+        null,
+        'Template'
+      );
+    } catch (Exception ex) {
+      missingRecipientRaised = true;
+    }
+    System.assertEquals(true, missingRecipientRaised);
+
+    Boolean invalidRecipientRaised = false;
+    try {
+      MessagingComposerController.prepareSessionAndLaunchFlow(
+        '{',
+        'SALES',
+        null,
+        'Template'
+      );
+    } catch (Exception ex) {
+      invalidRecipientRaised = true;
+    }
+    System.assertEquals(true, invalidRecipientRaised);
+
+    String recipientJson = '{"id":"001000000000001AAA","type":"Account","name":"Conta"}';
+    Boolean missingMessageRaised = false;
+    try {
+      MessagingComposerController.prepareSessionAndLaunchFlow(
+        recipientJson,
+        'SALES',
+        null,
+        null
+      );
+    } catch (Exception ex) {
+      missingMessageRaised = true;
+    }
+    System.assertEquals(true, missingMessageRaised);
+
+    Boolean nullRequestRaised = false;
+    try {
+      MessagingComposerController.sendMessage(null);
+    } catch (Exception ex) {
+      nullRequestRaised = true;
+    }
+    System.assertEquals(true, nullRequestRaised);
+
+    Boolean blankPayloadRaised = false;
+    try {
+      MessagingComposerController.sendMessageJson(null);
+    } catch (Exception ex) {
+      blankPayloadRaised = true;
+    }
+    System.assertEquals(true, blankPayloadRaised);
+
+    Boolean invalidPayloadRaised = false;
+    try {
+      MessagingComposerController.sendMessageJson('{');
+    } catch (Exception ex) {
+      invalidPayloadRaised = true;
+    }
+    System.assertEquals(true, invalidPayloadRaised);
+
+    Boolean missingTemplateRaised = false;
+    try {
+      MessagingComposerController.sendMessageJson(
+        '{"messagingChannelId":"0Mh000000000001AAA"}'
+      );
+    } catch (Exception ex) {
+      missingTemplateRaised = true;
+    }
+    System.assertEquals(true, missingTemplateRaised);
+
+    Boolean missingChannelRaised = false;
+    try {
+      MessagingComposerController.sendMessageJson(
+        '{"messageDefinitionName":"Template"}'
+      );
+    } catch (Exception ex) {
+      missingChannelRaised = true;
+    }
+    System.assertEquals(true, missingChannelRaised);
+
+    Boolean sendFlowThrew = false;
+    try {
+      MessagingComposerController.sendMessageJson(
+        '{"messageDefinitionName":"Template","messagingChannelId":"001000000000001","messagingEndUserId":"' +
+          UserInfo.getUserId() +
+          '"}'
+      );
+    } catch (Exception ex) {
+      sendFlowThrew = true;
+    }
+    System.assertEquals(
+      true,
+      sendFlowThrew,
+      'Flow invocation deve lançar em ambiente de teste.'
+    );
+  }
+
+  @IsTest
+  static void testDirectHelperPaths() {
+    Account accountRecord = new Account(
+      Name = 'Conta Helpers',
+      Phone = '11 4003 8852'
+    );
+    insert accountRecord;
+
+    Contact contactRecord = new Contact(
+      LastName = 'Contato Helpers',
+      AccountId = accountRecord.Id,
+      MobilePhone = '11 97777 6666'
+    );
+    insert contactRecord;
+
+    Lead leadRecord = new Lead(
+      LastName = 'Lead Helpers',
+      Company = 'Enerzee',
+      MobilePhone = '(11) 95555-4444'
+    );
+    insert leadRecord;
+
+    Opportunity opportunityRecord = new Opportunity(
+      Name = 'Oportunidade Helpers',
+      StageName = 'Prospecting',
+      CloseDate = Date.today().addDays(10),
+      AccountId = accountRecord.Id,
+      IdVirtualOffice__c = 'VO-HELPERS-001'
+    );
+    insert opportunityRecord;
+
+    MessagingComposerController.RecipientDTO parsedRecipient = MessagingComposerController.parseRecipient(
+      '{"id":"' +
+        contactRecord.Id +
+        '","type":"Contact","phone":"(11) 97777-6666","name":"Contato"}'
+    );
+    System.assertEquals('Contact', parsedRecipient.type);
+    System.assertEquals(contactRecord.Id, parsedRecipient.id);
+
+    MessagingComposerController.SendMessageRequest contactRequest = MessagingComposerController.buildSessionRequest(
+      parsedRecipient,
+      null
+    );
+    System.assertEquals(contactRecord.Id, contactRequest.contactId);
+    System.assertEquals('11977776666', contactRequest.phone);
+
+    MessagingComposerController.RecipientDTO accountRecipient = new MessagingComposerController.RecipientDTO();
+    accountRecipient.id = accountRecord.Id;
+    accountRecipient.type = 'Account';
+    MessagingComposerController.SendMessageRequest accountRequest = MessagingComposerController.buildSessionRequest(
+      accountRecipient,
+      null
+    );
+    System.assertEquals(accountRecord.Id, accountRequest.accountId);
+
+    MessagingComposerController.RecipientDTO leadRecipient = new MessagingComposerController.RecipientDTO();
+    leadRecipient.id = leadRecord.Id;
+    leadRecipient.type = 'Lead';
+    MessagingComposerController.SendMessageRequest leadRequest = MessagingComposerController.buildSessionRequest(
+      leadRecipient,
+      null
+    );
+    System.assertEquals(leadRecord.Id, leadRequest.leadId);
+
+    MessagingComposerController.RecipientDTO opportunityRecipient = new MessagingComposerController.RecipientDTO();
+    opportunityRecipient.id = opportunityRecord.Id;
+    opportunityRecipient.type = 'Opportunity';
+    MessagingComposerController.SendMessageRequest opportunityRequest = MessagingComposerController.buildSessionRequest(
+      opportunityRecipient,
+      null
+    );
+    System.assertEquals(accountRecord.Id, opportunityRequest.accountId);
+    System.assertEquals(opportunityRecord.Id, opportunityRequest.opportunityId);
+
+    System.assertEquals(
+      accountRecord.Id,
+      MessagingComposerController.resolveChannelId(
+        null,
+        accountRecord.Id,
+        null,
+        null
+      )
+    );
+    System.assertEquals(
+      accountRecord.Id,
+      MessagingComposerController.resolveMessagingEndUser(
+        buildDirectRequest(accountRecord.Id)
+      )
+    );
+    System.assertEquals(
+      null,
+      MessagingComposerController.findExistingEndUser(
+        null,
+        null,
+        accountRecord.Id
+      )
+    );
+    System.assertEquals(
+      null,
+      MessagingComposerController.findExistingEndUserByPhone(
+        '11 97777 6666',
+        accountRecord.Id
+      )
+    );
+    System.assertEquals(
+      null,
+      MessagingComposerController.findLatestSession(
+        accountRecord.Id,
+        accountRecord.Id
+      )
+    );
+
+    Boolean missingChannelRaised = false;
+    try {
+      MessagingComposerController.resolveChannelId(null, null, null, null);
+    } catch (Exception ex) {
+      missingChannelRaised = true;
+    }
+    System.assertEquals(true, missingChannelRaised);
+
+    System.assertEquals(
+      '11 4003 8852',
+      MessagingComposerController.pickPhone(accountRecord)
+    );
+    System.assertEquals(
+      '11 97777 6666',
+      MessagingComposerController.pickPhone(contactRecord)
+    );
+    System.assertEquals(
+      '(11) 95555-4444',
+      MessagingComposerController.pickPhone(leadRecord)
+    );
+    System.assertEquals(
+      true,
+      String.isNotBlank(MessagingComposerController.resolveMetadataEndpoint())
+    );
+  }
+
+  private static MessagingComposerController.SendMessageRequest buildDirectRequest(
+    Id idValue
+  ) {
+    MessagingComposerController.SendMessageRequest requestItem = new MessagingComposerController.SendMessageRequest();
+    requestItem.messagingEndUserId = idValue;
+    requestItem.messagingChannelId = idValue;
+    requestItem.messageDefinitionName = 'Template';
+    return requestItem;
+  }
+
+  @IsTest
+  static void testResolveEndUserDerivationBranches() {
+    String chanPrefix = MessagingChannel.SObjectType.getDescribe()
+      .getKeyPrefix();
+    Id fakeChannelId = Id.valueOf(chanPrefix + '000000000099');
+
+    Account noPhoneAccount = new Account(Name = 'Conta Sem Telefone Deriv');
+    insert noPhoneAccount;
+
+    // opportunity path: contactId/accountId null → no MEU query; account has no phone → throw
+    Opportunity noPhoneOpp = new Opportunity(
+      Name = 'Opp Sem Telefone',
+      StageName = 'Prospecting',
+      CloseDate = Date.today().addDays(5),
+      AccountId = noPhoneAccount.Id,
+      IdVirtualOffice__c = 'VO-DERIV-TEST-001'
+    );
+    insert noPhoneOpp;
+
+    MessagingComposerController.SendMessageRequest reqOpp = new MessagingComposerController.SendMessageRequest();
+    reqOpp.messagingChannelId = fakeChannelId;
+    reqOpp.opportunityId = noPhoneOpp.Id;
+
+    Boolean threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqOpp);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar quando opp sem telefone.');
+
+    // no ids, no phone → throw (without any MEU query)
+    MessagingComposerController.SendMessageRequest reqNone = new MessagingComposerController.SendMessageRequest();
+    reqNone.messagingChannelId = fakeChannelId;
+    threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqNone);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar sem ids e sem telefone.');
+
+    // contact with no phone → contact derivation branch → throw
+    Contact noPhoneContact = new Contact(LastName = 'Sem Telefone Deriv');
+    insert noPhoneContact;
+
+    MessagingComposerController.SendMessageRequest reqContact = new MessagingComposerController.SendMessageRequest();
+    reqContact.messagingChannelId = fakeChannelId;
+    reqContact.contactId = noPhoneContact.Id;
+    threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqContact);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar quando contato sem telefone.');
+
+    // account with no phone → account derivation branch → throw
+    MessagingComposerController.SendMessageRequest reqAccount = new MessagingComposerController.SendMessageRequest();
+    reqAccount.messagingChannelId = fakeChannelId;
+    reqAccount.accountId = noPhoneAccount.Id;
+    threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqAccount);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar quando conta sem telefone.');
+
+    // lead with no phone → lead derivation branch → throw
+    Lead noPhoneLead = new Lead(LastName = 'Lead Sem Tel', Company = 'Enerzee');
+    insert noPhoneLead;
+
+    MessagingComposerController.SendMessageRequest reqLead = new MessagingComposerController.SendMessageRequest();
+    reqLead.messagingChannelId = fakeChannelId;
+    reqLead.leadId = noPhoneLead.Id;
+    threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqLead);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar quando lead sem telefone.');
+  }
+
+  @IsTest
+  static void testResolveChannelIdFallbackPaths() {
+    // Branch 2: existingChannelDevName fornecido mas nenhum canal encontrado → cai para fallback → throw
+    Boolean threw1 = false;
+    try {
+      MessagingComposerController.resolveChannelId(
+        null,
+        null,
+        'DEV_NAME_INEXISTENTE_XYZ',
+        null
+      );
+    } catch (Exception ex) {
+      threw1 = true;
+    }
+    Assert.isTrue(threw1, 'Deve lançar quando devName não encontra canal.');
+
+    // Branch 3: channelKey mapeado para developerName mas sem canal correspondente → throw
+    Boolean threw2 = false;
+    try {
+      MessagingComposerController.resolveChannelId('SALES', null, null, null);
+    } catch (Exception ex) {
+      threw2 = true;
+    }
+    Assert.isTrue(threw2, 'Deve lançar quando channelKey não encontra canal.');
+
+    // Branch 3 com AFTERSALES
+    Boolean threw3 = false;
+    try {
+      MessagingComposerController.resolveChannelId(
+        'AFTERSALES',
+        null,
+        null,
+        null
+      );
+    } catch (Exception ex) {
+      threw3 = true;
+    }
+    Assert.isTrue(threw3, 'Deve lançar quando AFTERSALES não encontra canal.');
+
+    // Branch 4: telefone fornecido → executa bloco de fallback por telefone
+    // O org pode ter canal com este MasterLabel (retorna Id) ou não (lança) — ambos são válidos.
+    try {
+      Id resolvedByPhone = MessagingComposerController.resolveChannelId(
+        null,
+        null,
+        null,
+        '+55 11 4003-8852'
+      );
+      Assert.isNotNull(
+        resolvedByPhone,
+        'Canal encontrado por telefone deve retornar Id.'
+      );
+    } catch (AuraHandledException ex) {
+      Assert.isTrue(
+        ex.getMessage() != null,
+        'Exceção deve ter mensagem quando canal não é encontrado.'
+      );
+    }
+  }
+
+  @IsTest
+  static void testNullHelperPaths() {
+    Assert.isNull(MessagingComposerController.buildSessionContext(null));
+    Assert.isNull(MessagingComposerController.buildSessionRecipient(null));
+    Assert.isNull(MessagingComposerController.buildEndUserRecipient(null));
+    Assert.isNull(MessagingComposerController.pickPhone((Lead) null));
+    Assert.isNull(MessagingComposerController.pickPhone((Contact) null));
+    Assert.isNull(MessagingComposerController.pickPhone((Account) null));
+    Assert.isNull(MessagingComposerController.normalizeSearchTerm(null));
+    Assert.isTrue(MessagingComposerController.searchRecipients('').isEmpty());
+    Assert.areEqual(
+      'AFTER - Template',
+      MessagingComposerController.stripPrefix('AFTER - Template', 'SALES - ')
+    );
+
+    Id fakeChannelId = Id.valueOf(
+      MessagingChannel.SObjectType.getDescribe().getKeyPrefix() + '000000000099'
+    );
+    Id fakeEndUserId = Id.valueOf(
+      MessagingEndUser.SObjectType.getDescribe().getKeyPrefix() + '000000000099'
+    );
+
+    MessagingComposerController.SessionLaunchResponse resp = MessagingComposerController.initializeSessionLaunchResponse(
+      null,
+      fakeChannelId,
+      fakeEndUserId
+    );
+    Assert.isNull(resp.messagingEndUserRecordTypeDeveloperName);
+
+    Map<String, Object> flowInputs = MessagingComposerController.buildPrepareSessionFlowInputs(
+      null,
+      fakeChannelId,
+      fakeEndUserId,
+      null,
+      'SALES',
+      null,
+      'Template'
+    );
+    Assert.isNull(flowInputs.get('recipientId'));
+    Assert.isNull(flowInputs.get('recipientType'));
+
+    MessagingSession sessionNoMeu = new MessagingSession();
+    Assert.isNull(
+      MessagingComposerController.buildSessionRecipient(sessionNoMeu)
+    );
+  }
+
+  @IsTest
+  static void testDoSendMessageFullParamsAndPrepareSessionBody() {
+    // Cover doSendMessage ternary true-branches (allowedSessionStatus/requestType/enforceConsent/channelConsentType)
+    MessagingComposerController.SendMessageRequest req = new MessagingComposerController.SendMessageRequest();
+    req.messageDefinitionName = 'Template';
+    req.messagingChannelId = '001000000000001';
+    req.messagingEndUserId = UserInfo.getUserId();
+    req.allowedSessionStatus = 'Active';
+    req.requestType = 'SendTemplateMessages';
+    req.enforceConsent = false;
+    req.channelConsentType = 'Explicit';
+
+    Boolean sendThrew = false;
+    try {
+      MessagingComposerController.sendMessage(req);
+    } catch (Exception ex) {
+      sendThrew = true;
+    }
+    Assert.isTrue(sendThrew);
+
+    // Cover prepareSessionAndLaunchFlow body (resolveChannelId via existingChannelId,
+    // buildSessionRequest, resolveMessagingEndUser, findLatestSession, flowInputs map,
+    // then throw because channelKey has no configured flow)
+    String userId = UserInfo.getUserId();
+    String recipientJson =
+      '{"id":"' +
+      userId +
+      '","type":"MessagingEndUser",' +
+      '"messagingEndUserId":"' +
+      userId +
+      '","messagingChannelId":"' +
+      userId +
+      '"}';
+    Boolean prepareThrew = false;
+    try {
+      MessagingComposerController.prepareSessionAndLaunchFlow(
+        recipientJson,
+        'CANAL_INEXISTENTE',
+        null,
+        'Template'
+      );
+    } catch (Exception ex) {
+      prepareThrew = true;
+    }
+    Assert.isTrue(prepareThrew);
+  }
+}

@@ -227,6 +227,186 @@ public with sharing class APIOpcoesCondicaoPagamentoTest {
     return requisicao;
   }
 
+  @IsTest
+  static void testMontarReqTipoReg() {
+    APIOpcoesCondicaoPagamento.MetadadosReqCustomField mtdCustomField = buildMtdCustomField(
+      'VALOR_TESTE',
+      'Rótulo Teste'
+    );
+
+    APIOpcoesCondicaoPagamento.MetadadosReqRecType emptyRecType = new APIOpcoesCondicaoPagamento.MetadadosReqRecType();
+    emptyRecType.Metadata = new APIOpcoesCondicaoPagamento.MetadataRecordType();
+    emptyRecType.Metadata.picklistValues = new List<APIOpcoesCondicaoPagamento.PicklistValuesRecordType>();
+
+    APIOpcoesCondicaoPagamento.MetadadosReqRecType resultado = APIOpcoesCondicaoPagamento.montarReqTipoReg(
+      mtdCustomField,
+      emptyRecType
+    );
+
+    Assert.areEqual(1, resultado.Metadata.picklistValues.size());
+    Assert.areEqual(
+      'CondicaoPagamento2__c',
+      resultado.Metadata.picklistValues[0].picklist
+    );
+    Assert.areEqual(1, resultado.Metadata.picklistValues[0].values.size());
+    Assert.areEqual(
+      'VALOR_TESTE',
+      resultado.Metadata.picklistValues[0].values[0].valueName
+    );
+  }
+
+  @IsTest
+  static void testGerenciarOpcoesTipoRegistroSuccess() {
+    APIOpcoesCondicaoPagamento.MetadadosReqCustomField mtdCustomField = buildMtdCustomField(
+      'VALOR_SUCESSO',
+      'Sucesso'
+    );
+
+    Test.setMock(HttpCalloutMock.class, new GerenciarSuccessMock());
+    Test.startTest();
+    Boolean result = APIOpcoesCondicaoPagamento.gerenciarOpcoesTipoRegistro(
+      'ContratoMini',
+      mtdCustomField
+    );
+    Test.stopTest();
+
+    Assert.isTrue(result);
+  }
+
+  @IsTest
+  static void testGerenciarOpcoesTipoRegistroGetFailure() {
+    APIOpcoesCondicaoPagamento.MetadadosReqCustomField mtdCustomField = buildMtdCustomField(
+      'VALOR_FALHA',
+      'Falha'
+    );
+
+    Test.setMock(HttpCalloutMock.class, new GerenciarGetFailMock());
+    Test.startTest();
+    Boolean result = APIOpcoesCondicaoPagamento.gerenciarOpcoesTipoRegistro(
+      'ContratoMini',
+      mtdCustomField
+    );
+    Test.stopTest();
+
+    Assert.isFalse(result);
+  }
+
+  @IsTest
+  static void testGerenciarOpcoesTipoRegistroPatchFailure() {
+    APIOpcoesCondicaoPagamento.MetadadosReqCustomField mtdCustomField = buildMtdCustomField(
+      'VALOR_PATCH_FAIL',
+      'Patch Fail'
+    );
+
+    Test.setMock(HttpCalloutMock.class, new GerenciarPatchFailMock());
+    Test.startTest();
+    Boolean result = APIOpcoesCondicaoPagamento.gerenciarOpcoesTipoRegistro(
+      'ContratoMini',
+      mtdCustomField
+    );
+    Test.stopTest();
+
+    Assert.isFalse(result);
+  }
+
+  @IsTest
+  static void testAtualizarMetadadosTipoReg() {
+    APIOpcoesCondicaoPagamento.MetadadosReqCustomField mtdCustomField = buildMtdCustomField(
+      'VALOR_ATU',
+      'Atu'
+    );
+
+    APIOpcoesCondicaoPagamento.MetadadosReqRecType srcRecType = new APIOpcoesCondicaoPagamento.MetadadosReqRecType();
+    srcRecType.Metadata = new APIOpcoesCondicaoPagamento.MetadataRecordType();
+    srcRecType.Metadata.picklistValues = new List<APIOpcoesCondicaoPagamento.PicklistValuesRecordType>();
+
+    HTTPResponse fakeGetResponse = new HTTPResponse();
+    fakeGetResponse.setStatusCode(200);
+    fakeGetResponse.setBody(JSON.serialize(srcRecType));
+
+    Test.setMock(HttpCalloutMock.class, new PatchSuccessMock());
+    Test.startTest();
+    HTTPResponse result = APIOpcoesCondicaoPagamento.atualizarMetadadosTipoReg(
+      fakeGetResponse,
+      mtdCustomField,
+      URL.getSalesforceBaseUrl().toExternalForm() + '/test-endpoint'
+    );
+    Test.stopTest();
+
+    Assert.areEqual(204, result.getStatusCode());
+  }
+
+  private static APIOpcoesCondicaoPagamento.MetadadosReqCustomField buildMtdCustomField(
+    String valueName,
+    String label
+  ) {
+    APIOpcoesCondicaoPagamento.MetadadosReqCustomField mtd = new APIOpcoesCondicaoPagamento.MetadadosReqCustomField();
+    mtd.Metadata = new APIOpcoesCondicaoPagamento.MetadataCustomField();
+    mtd.Metadata.valueSet = new APIOpcoesCondicaoPagamento.ValueSetCustomField();
+    APIOpcoesCondicaoPagamento.ValSetDefCustomField valSetDef = new APIOpcoesCondicaoPagamento.ValSetDefCustomField();
+    APIOpcoesCondicaoPagamento.ValueCustomField val = new APIOpcoesCondicaoPagamento.ValueCustomField();
+    val.valueName = valueName;
+    val.label = label;
+    val.default_Z = false;
+    valSetDef.value = new List<APIOpcoesCondicaoPagamento.ValueCustomField>{
+      val
+    };
+    mtd.Metadata.valueSet.valueSetDefinition = valSetDef;
+    return mtd;
+  }
+
+  private class GerenciarSuccessMock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest req) {
+      HTTPResponse res = new HTTPResponse();
+      if (req.getMethod() == 'GET') {
+        APIOpcoesCondicaoPagamento.MetadadosReqRecType rt = new APIOpcoesCondicaoPagamento.MetadadosReqRecType();
+        rt.Metadata = new APIOpcoesCondicaoPagamento.MetadataRecordType();
+        rt.Metadata.picklistValues = new List<APIOpcoesCondicaoPagamento.PicklistValuesRecordType>();
+        res.setStatusCode(200);
+        res.setBody(JSON.serialize(rt));
+        res.setHeader('Content-Type', 'application/json');
+      } else {
+        res.setStatusCode(204);
+      }
+      return res;
+    }
+  }
+
+  private class GerenciarGetFailMock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest req) {
+      HTTPResponse res = new HTTPResponse();
+      res.setStatusCode(404);
+      res.setBody('{"error":"Not Found"}');
+      return res;
+    }
+  }
+
+  private class GerenciarPatchFailMock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest req) {
+      HTTPResponse res = new HTTPResponse();
+      if (req.getMethod() == 'GET') {
+        APIOpcoesCondicaoPagamento.MetadadosReqRecType rt = new APIOpcoesCondicaoPagamento.MetadadosReqRecType();
+        rt.Metadata = new APIOpcoesCondicaoPagamento.MetadataRecordType();
+        rt.Metadata.picklistValues = new List<APIOpcoesCondicaoPagamento.PicklistValuesRecordType>();
+        res.setStatusCode(200);
+        res.setBody(JSON.serialize(rt));
+        res.setHeader('Content-Type', 'application/json');
+      } else {
+        res.setStatusCode(500);
+        res.setBody('{"error":"Internal Server Error"}');
+      }
+      return res;
+    }
+  }
+
+  private class PatchSuccessMock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest req) {
+      HTTPResponse res = new HTTPResponse();
+      res.setStatusCode(204);
+      return res;
+    }
+  }
+
   //Classe Mock - faz mock de todas as chamadas de API internas para a Tooling API
   public class APICondPagamentoMock implements HttpCalloutMock {
     final String ID_CAMPO = APIOpcoesCondicaoPagamento.buscarIdCampo();

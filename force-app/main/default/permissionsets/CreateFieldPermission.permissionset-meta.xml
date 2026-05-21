@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <fieldPermissions>
         <editable>true</editable>
@@ -1277,6 +1277,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Opportunity.IsRSD__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Opportunity.LastInvoiceAmount__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1505,11 +1510,7 @@
         <field>Opportunity.Observacoes__c</field>
         <readable>true</readable>
     </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Opportunity.Observacoes_pos_sombreamento__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
+
     <fieldPermissions>
         <editable>true</editable>
         <field>Opportunity.Observacoes_pos_visita__c</field>
@@ -2133,11 +2134,13 @@
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <recordTypeVisibilities>
-        <recordType>Case.Assist_ncia_T_cnica_Gest_o_de_Faturas_e_Concession_rias_Interno</recordType>
+        <recordType
+    >Case.Assist_ncia_T_cnica_Gest_o_de_Faturas_e_Concession_rias_Interno</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
-        <recordType>Case.Assist_ncia_T_cnica_Manuten_es_e_Garantias_Servi_os</recordType>
+        <recordType
+    >Case.Assist_ncia_T_cnica_Manuten_es_e_Garantias_Servi_os</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
@@ -2145,7 +2148,8 @@
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>
-        <recordType>Case.Assistencia_Tecnica_Gestao_de_Faturas_e_Concessionarias</recordType>
+        <recordType
+    >Case.Assistencia_Tecnica_Gestao_de_Faturas_e_Concessionarias</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
     <recordTypeVisibilities>

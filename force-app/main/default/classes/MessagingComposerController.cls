@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 01-02-2026
  * @last modified by  : Daniel Belini
- * @test              : MessagingComposerControllerTest
+ * @test              : MessagingComposerControllerCoverageTest, MessagingComposerControllerTest
  **/
 public without sharing class MessagingComposerController {
   private static final Integer MAX_RESULTS = 25;
@@ -675,7 +675,158 @@ public without sharing class MessagingComposerController {
     return doSendMessage(request);
   }
 
+  @TestVisible
+  private static SessionContext buildSessionContext(MessagingSession session) {
+    if (session == null) {
+      return null;
+    }
+    SessionContext context = new SessionContext();
+    context.messagingEndUserId = session.MessagingEndUserId;
+    context.messagingChannelId = session.MessagingChannelId;
+    context.endUserName = session.MessagingEndUser != null
+      ? session.MessagingEndUser.Name
+      : null;
+    context.phone = session.Telefone__c;
+    context.messagingEndUserRecordTypeDeveloperName = null;
+    context.channelDeveloperName = session.MessagingChannel != null
+      ? session.MessagingChannel.DeveloperName
+      : null;
+    return context;
+  }
+
+  @TestVisible
+  private static RecipientDTO buildSessionRecipient(MessagingSession session) {
+    if (session == null || session.MessagingEndUserId == null) {
+      return null;
+    }
+    RecipientDTO dto = new RecipientDTO();
+    dto.id = session.MessagingEndUserId;
+    dto.messagingEndUserId = session.MessagingEndUserId;
+    dto.messagingChannelId = session.MessagingChannelId;
+    dto.messagingChannelDeveloperName = session.MessagingChannel != null
+      ? session.MessagingChannel.DeveloperName
+      : null;
+    dto.name = session.MessagingEndUser != null
+      ? session.MessagingEndUser.Name
+      : 'Cliente';
+    dto.phone = session.MessagingEndUser != null &&
+      String.isNotBlank(session.MessagingEndUser.Telefone_Formatado__c)
+      ? session.MessagingEndUser.Telefone_Formatado__c
+      : (session.MessagingEndUser != null
+          ? session.MessagingEndUser.MessagingPlatformKey
+          : session.Telefone__c);
+    dto.type = 'MessagingEndUser';
+    return dto;
+  }
+
+  @TestVisible
+  private static RecipientDTO buildEndUserRecipient(MessagingEndUser endUser) {
+    if (endUser == null) {
+      return null;
+    }
+    RecipientDTO dto = new RecipientDTO();
+    dto.id = endUser.Id;
+    dto.messagingEndUserId = endUser.Id;
+    dto.messagingChannelId = endUser.MessagingChannelId;
+    dto.messagingChannelDeveloperName = endUser.MessagingChannel != null
+      ? endUser.MessagingChannel.DeveloperName
+      : null;
+    dto.name = endUser.Name;
+    dto.phone = String.isNotBlank(endUser.Telefone_Formatado__c)
+      ? endUser.Telefone_Formatado__c
+      : endUser.MessagingPlatformKey;
+    dto.type = 'MessagingEndUser';
+    return dto;
+  }
+
+  @TestVisible
+  private static SessionLaunchResponse initializeSessionLaunchResponse(
+    RecipientDTO recipient,
+    Id channelId,
+    Id messagingEndUserId
+  ) {
+    SessionLaunchResponse response = new SessionLaunchResponse();
+    response.messagingEndUserId = messagingEndUserId;
+    response.messagingChannelId = (String) channelId;
+    response.messagingEndUserRecordTypeDeveloperName = recipient != null
+      ? recipient.recordTypeDeveloperName
+      : null;
+    return response;
+  }
+
+  @TestVisible
+  private static Map<String, Object> buildPrepareSessionFlowInputs(
+    RecipientDTO recipient,
+    Id channelId,
+    Id messagingEndUserId,
+    String sessionId,
+    String channelKey,
+    String channelPhone,
+    String selectedMessageComponentName
+  ) {
+    return new Map<String, Object>{
+      'messagingSessionId' => sessionId,
+      'messagingEndUserId' => messagingEndUserId,
+      'recipientId' => recipient != null ? recipient.id : null,
+      'selectedMessageComponentName' => selectedMessageComponentName,
+      'channelKey' => channelKey,
+      'channelPhone' => channelPhone,
+      'messagingChannelId' => (String) channelId,
+      'recipientType' => recipient != null ? recipient.type : null,
+      'recordTypeDeveloperName' => recipient != null
+        ? recipient.recordTypeDeveloperName
+        : null,
+      'messagingEndUserRecordTypeDeveloperName' => recipient != null
+        ? recipient.recordTypeDeveloperName
+        : null
+    };
+  }
+
+  @TestVisible
+  private static Map<String, Object> buildSendMessageFlowParams(
+    SendMessageRequest request,
+    Id messagingEndUserId
+  ) {
+    return new Map<String, Object>{
+      'messageDefinitionName' => request.messageDefinitionName,
+      'messagingEndUserIds' => new List<String>{ (String) messagingEndUserId },
+      'messagingEndUserId' => (String) messagingEndUserId,
+      'allowedSessionStatus' => String.isNotBlank(request.allowedSessionStatus)
+        ? request.allowedSessionStatus
+        : 'Any',
+      'requestType' => String.isNotBlank(request.requestType)
+        ? request.requestType
+        : 'SendNotificationMessages',
+      'isEnforceMessagingChannelConsent' => request.enforceConsent == null
+        ? true
+        : request.enforceConsent,
+      'channelConsentType' => String.isNotBlank(request.channelConsentType)
+        ? request.channelConsentType
+        : 'MessagingEndUser',
+      'messagingChannelId' => request.messagingChannelId
+    };
+  }
+
+  @TestVisible
+  private static SendMessageResponse buildSendMessageCompletionResponse(
+    Id messagingEndUserId,
+    MessagingSession session,
+    String messageDefinitionName
+  ) {
+    Boolean hasSession = session != null;
+    return new SendMessageResponse(
+      messagingEndUserId,
+      hasSession ? session.Id : null,
+      messageDefinitionName,
+      hasSession ? 'Enviado' : 'Processando',
+      hasSession
+        ? 'Mensagem enviada para o cliente.'
+        : 'Mensagem acionada. A sessão pode aparecer em instantes; se não aparecer, verifique status/aprovação do template e permissões do canal.'
+    );
+  }
+
   // Mantém a lógica central em um único lugar para evitar duplicação.
+  @TestVisible
   private static SendMessageResponse doSendMessage(SendMessageRequest request) {
     if (request == null) {
       throw new AuraHandledException(
@@ -687,18 +838,6 @@ public without sharing class MessagingComposerController {
     }
     if (String.isBlank(request.messagingChannelId)) {
       throw new AuraHandledException('Selecione um canal de envio.');
-    }
-
-    if (Test.isRunningTest()) {
-      return new SendMessageResponse(
-        String.isNotBlank(request.messagingEndUserId)
-          ? request.messagingEndUserId
-          : '0Mj000000000001AAA',
-        '0dw000000000001AAA',
-        request.messageDefinitionName,
-        'Simulado',
-        'Fluxo ignorado em modo de teste.'
-      );
     }
 
     Id messagingEndUserId = resolveMessagingEndUser(request);
@@ -764,6 +903,7 @@ public without sharing class MessagingComposerController {
     );
   }
 
+  @TestVisible
   private static MetadataService.FileProperties[] fetchMessageDefinitions() {
     if (Test.isRunningTest()) {
       MetadataService.FileProperties fp = new MetadataService.FileProperties();
@@ -812,6 +952,7 @@ public without sharing class MessagingComposerController {
     }
   }
 
+  @TestVisible
   private static MetadataService.MetadataPort createMetadataPort() {
     MetadataService.MetadataPort svc = new MetadataService.MetadataPort();
     svc.SessionHeader = new MetadataService.SessionHeader_element();
@@ -826,6 +967,7 @@ public without sharing class MessagingComposerController {
     return svc;
   }
 
+  @TestVisible
   private static String resolveMetadataEndpoint() {
     // Prioriza o domínio da requisição atual (Lightning) para evitar INVALID_SESSION_ID
     try {
@@ -843,6 +985,7 @@ public without sharing class MessagingComposerController {
   }
 
   // Fallback usando Named Credential "Salesforce_PRD" (conforme exemplo em RemarketingRouter)
+  @TestVisible
   private static List<MetadataService.FileProperties> fetchMessageDefinitionsViaNamedCredential() {
     List<MetadataService.FileProperties> results = new List<MetadataService.FileProperties>();
     try {
@@ -893,6 +1036,7 @@ public without sharing class MessagingComposerController {
   }
 
   // Fallback via Tooling API usando Named Credential (evita usar o sessionId do usuário)
+  @TestVisible
   private static List<MetadataService.FileProperties> fetchMessageDefinitionsViaNamedCredentialRest() {
     List<MetadataService.FileProperties> results = new List<MetadataService.FileProperties>();
     try {
@@ -959,6 +1103,7 @@ public without sharing class MessagingComposerController {
   }
 
   // Percorre árvore XML para encontrar nós <result>
+  @TestVisible
   private static void collectFileProperties(
     Dom.XMLNode node,
     List<MetadataService.FileProperties> acc
@@ -996,6 +1141,7 @@ public without sharing class MessagingComposerController {
     }
   }
 
+  @TestVisible
   private static String stripPrefix(String value, String prefix) {
     if (String.isBlank(value) || String.isBlank(prefix)) {
       return value;
@@ -1005,6 +1151,7 @@ public without sharing class MessagingComposerController {
       : value;
   }
 
+  @TestVisible
   private static RecipientDTO parseRecipient(String recipientJson) {
     if (String.isBlank(recipientJson)) {
       return null;
@@ -1036,6 +1183,7 @@ public without sharing class MessagingComposerController {
     }
   }
 
+  @TestVisible
   private static SendMessageRequest buildSessionRequest(
     RecipientDTO recipient,
     Id channelId
@@ -1073,6 +1221,7 @@ public without sharing class MessagingComposerController {
     return request;
   }
 
+  @TestVisible
   private static Id resolveChannelId(
     String channelKey,
     String existingChannelId,
@@ -1158,6 +1307,7 @@ public without sharing class MessagingComposerController {
     );
   }
 
+  @TestVisible
   private static Id resolveMessagingEndUser(SendMessageRequest request) {
     if (String.isNotBlank(request.messagingEndUserId)) {
       System.debug(
@@ -1272,6 +1422,7 @@ public without sharing class MessagingComposerController {
     return endUser.Id;
   }
 
+  @TestVisible
   private static Id findExistingEndUser(
     String contactId,
     String accountId,
@@ -1295,6 +1446,7 @@ public without sharing class MessagingComposerController {
     return candidates.isEmpty() ? null : candidates[0].Id;
   }
 
+  @TestVisible
   private static Id findExistingEndUserByPhone(String phone, Id channelId) {
     String normalized = normalizePhone(phone);
     if (String.isBlank(normalized)) {
@@ -1312,6 +1464,7 @@ public without sharing class MessagingComposerController {
     return candidates.isEmpty() ? null : candidates[0].Id;
   }
 
+  @TestVisible
   private static MessagingSession findLatestSession(
     Id messagingEndUserId,
     String channelId
@@ -1333,10 +1486,12 @@ public without sharing class MessagingComposerController {
     }
   }
 
+  @TestVisible
   private static String normalizeSearchTerm(String searchTerm) {
     return searchTerm == null ? null : searchTerm.trim();
   }
 
+  @TestVisible
   private static String pickPhone(Lead leadRecord) {
     if (leadRecord == null) {
       return null;
@@ -1350,6 +1505,7 @@ public without sharing class MessagingComposerController {
     return leadRecord.Phone;
   }
 
+  @TestVisible
   private static Set<Id> resolveAllowedChannelIds() {
     Set<String> devNames = new Set<String>();
     for (String dn : CHANNEL_DEVELOPER_NAMES.values()) {
@@ -1371,6 +1527,7 @@ public without sharing class MessagingComposerController {
     return channelIds;
   }
 
+  @TestVisible
   private static String normalizePhone(String rawPhone) {
     if (String.isBlank(rawPhone)) {
       return null;
@@ -1379,6 +1536,7 @@ public without sharing class MessagingComposerController {
     return String.isBlank(digits) ? null : digits;
   }
 
+  @TestVisible
   private static String pickPhone(Contact contactRecord) {
     if (contactRecord == null) {
       return null;
@@ -1392,6 +1550,7 @@ public without sharing class MessagingComposerController {
     return contactRecord.Phone;
   }
 
+  @TestVisible
   private static String pickPhone(Account accountRecord) {
     if (accountRecord == null) {
       return null;

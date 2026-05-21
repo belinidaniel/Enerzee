@@ -125,6 +125,7 @@
                     <name>hideChatterActions</name>
                     <value>false</value>
                 </componentInstanceProperties>
+
                 <componentInstanceProperties>
                     <name>numVisibleActions</name>
                     <value>3</value>
@@ -481,6 +482,16 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.PropostaRevo__c</fieldItem>
                 <identifier>RecordPropostaRevo_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.IsRSD__c</fieldItem>
+                <identifier>RecordIsRSD_cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-0ce53166-d159-437e-917e-534a4ba3b1a6</name>
