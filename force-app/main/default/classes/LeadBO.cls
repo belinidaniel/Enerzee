@@ -2,11 +2,11 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 05-08-2026
+ * @last modified on  : 05-21-2026
  * @last modified by  : Daniel Belini
  * @test              : LeadBOTest, LeadTriggerTest
  **/
-public with sharing class LeadBO {
+public without sharing class LeadBO {
   public static Id QualificarClienteRT = Schema.SObjectType.Lead.getRecordTypeInfosByDeveloperName()
     .get('QualificacaodeClientes')
     .getRecordTypeId();
@@ -285,17 +285,33 @@ public with sharing class LeadBO {
     }
   }
 
+  public static void resetConsultorChangeIntegrationFlags(
+    List<Lead> newRecordList,
+    Map<Id, Lead> oldMap
+  ) {
+    for (Lead lead : newRecordList) {
+      Lead oldLead = oldMap.get(lead.Id);
+      if (
+        oldLead != null &&
+        lead.ConsultorRegional__c != oldLead.ConsultorRegional__c &&
+        lead.ConsultorRegional__c != null
+      ) {
+        lead.Lab065_IntegracaoDistribuicaoLead__c = false;
+        lead.IntegracaoDistribuicaoLeadErro__c = null;
+      }
+    }
+  }
+
   /**
    * Detecta troca manual de consultor e reenvia o lead ao app externo via Queueable.
-   * A flag Lab065_IntegracaoDistribuicaoLead__c é resetada para false imediatamente,
-   * sinalizando "pendente de reintegração" — o Queueable a marca true ao concluir com sucesso.
+   * As flags de reintegração são resetadas em before update para evitar um segundo
+   * DML no Lead após mudança de owner/sharing feita por Flow.
    */
   public static void handleConsultorChange(
     List<Lead> newRecordList,
     Map<Id, Lead> oldMap
   ) {
     Set<Id> leadsToReintegrate = new Set<Id>();
-    List<Lead> flagResets = new List<Lead>();
 
     for (Lead lead : newRecordList) {
       Lead oldLead = oldMap.get(lead.Id);
@@ -305,21 +321,12 @@ public with sharing class LeadBO {
         lead.ConsultorRegional__c != null
       ) {
         leadsToReintegrate.add(lead.Id);
-        flagResets.add(
-          new Lead(
-            Id = lead.Id,
-            Lab065_IntegracaoDistribuicaoLead__c = false,
-            IntegracaoDistribuicaoLeadErro__c = null
-          )
-        );
       }
     }
 
-    if (flagResets.isEmpty()) {
+    if (leadsToReintegrate.isEmpty()) {
       return;
     }
-
-    update flagResets;
 
     if (!System.isBatch() && !System.isFuture() && !System.isQueueable()) {
       System.enqueueJob(new LeadDistribuicaoQueueable(leadsToReintegrate));

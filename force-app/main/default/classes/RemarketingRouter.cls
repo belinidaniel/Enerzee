@@ -49,6 +49,12 @@ public without sharing class RemarketingRouter {
     String logSummary = '';
 
     for (Input input : inputs) {
+      Output out = new Output();
+      out.messages = new List<MessageDetail>();
+      out.messagesString = new List<String>();
+      out.messagesStringSimple = '';
+      out.isRemarketing = false;
+
       HttpRequest req = new HttpRequest();
       String endpointUrl =
         'callout:Salesforce_PRD/services/data/v64.0/connect/conversation/' +
@@ -60,13 +66,27 @@ public without sharing class RemarketingRouter {
       req.setEndpoint(endpointUrl);
       req.setMethod('GET');
 
-      HttpResponse res = new Http().send(req);
+      HttpResponse res;
+      try {
+        res = new Http().send(req);
+      } catch (Exception ex) {
+        System.debug(
+          'Erro na chamada de conversa: ' +
+            ex.getTypeName() +
+            ' - ' +
+            ex.getMessage()
+        );
+        logSummary +=
+          '\n=== Conversa: ' +
+          input.conversationIdentifier +
+          '\nErro callout: ' +
+          ex.getMessage();
+        results.add(out);
+        continue;
+      }
+
       System.debug('🔎 Raw Response: ' + res.getBody());
       logSummary += '\n=== Conversa: ' + input.conversationIdentifier;
-
-      Output out = new Output();
-      out.messages = new List<MessageDetail>();
-      out.messagesString = new List<String>();
 
       if (res.getStatusCode() == 200) {
         Map<String, Object> jsonMap = (Map<String, Object>) JSON.deserializeUntyped(
@@ -75,6 +95,9 @@ public without sharing class RemarketingRouter {
         List<Object> entries = (List<Object>) jsonMap.get(
           'conversationEntries'
         );
+        if (entries == null) {
+          entries = new List<Object>();
+        }
         System.debug('📌 Total de entradas recebidas: ' + entries.size());
         logSummary += '\nTotal de mensagens recebidas: ' + entries.size();
 
