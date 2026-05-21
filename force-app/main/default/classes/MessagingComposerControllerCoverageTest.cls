@@ -322,6 +322,46 @@ private class MessagingComposerControllerCoverageTest {
         missingFlowRaised = true;
       }
       System.assertEquals(true, missingFlowRaised);
+
+      // MEU creation path: telefone novo sem MEU existente → cria novo registro
+      MessagingComposerController.SendMessageRequest createReq = new MessagingComposerController.SendMessageRequest();
+      createReq.messagingChannelId = channel.Id;
+      createReq.phone = '11855554499';
+      Id createdMeuId = MessagingComposerController.resolveMessagingEndUser(
+        createReq
+      );
+      Assert.isNotNull(createdMeuId, 'MEU deve ser criado quando não existe.');
+
+      // MEU creation com contactId definido
+      Contact newContact = new Contact(
+        LastName = 'MEU Creation Contact',
+        AccountId = accountRecord.Id,
+        MobilePhone = '11855554488'
+      );
+      insert newContact;
+      MessagingComposerController.SendMessageRequest createReqContact = new MessagingComposerController.SendMessageRequest();
+      createReqContact.messagingChannelId = channel.Id;
+      createReqContact.contactId = newContact.Id;
+      createReqContact.phone = '11855554488';
+      Id createdMeuContactId = MessagingComposerController.resolveMessagingEndUser(
+        createReqContact
+      );
+      Assert.isNotNull(createdMeuContactId);
+
+      // MEU creation com accountId definido
+      Account newAccount = new Account(
+        Name = 'MEU Creation Account',
+        Phone = '11855554477'
+      );
+      insert newAccount;
+      MessagingComposerController.SendMessageRequest createReqAccount = new MessagingComposerController.SendMessageRequest();
+      createReqAccount.messagingChannelId = channel.Id;
+      createReqAccount.accountId = newAccount.Id;
+      createReqAccount.phone = '11855554477';
+      Id createdMeuAccountId = MessagingComposerController.resolveMessagingEndUser(
+        createReqAccount
+      );
+      Assert.isNotNull(createdMeuAccountId);
     } catch (Exception ex) {
       if (
         ex.getMessage() == null ||
@@ -519,6 +559,38 @@ private class MessagingComposerControllerCoverageTest {
     );
     Assert.areEqual(1, props.size());
     Assert.isNull(props[0].lastModifiedDate);
+
+    // nó com namespacePrefix e fileName — cobre branches não testados
+    props.clear();
+    Dom.Document doc3 = new Dom.Document();
+    doc3.load(
+      '<root><result><fullName>NS_Template</fullName><namespacePrefix>myns</namespacePrefix><fileName>conversationMessageDefinitions/NS_Template.conversationMessageDefinition</fileName></result></root>'
+    );
+    MessagingComposerController.collectFileProperties(
+      doc3.getRootElement(),
+      props
+    );
+    Assert.areEqual(1, props.size());
+    Assert.areEqual('myns', props[0].namespacePrefix);
+    Assert.areEqual(
+      'conversationMessageDefinitions/NS_Template.conversationMessageDefinition',
+      props[0].fileName
+    );
+
+    // nó result com fullName em branco — não deve ser adicionado à lista
+    props.clear();
+    Dom.Document doc4 = new Dom.Document();
+    doc4.load(
+      '<root><result><fileName>only_file.xml</fileName></result></root>'
+    );
+    MessagingComposerController.collectFileProperties(
+      doc4.getRootElement(),
+      props
+    );
+    Assert.isTrue(
+      props.isEmpty(),
+      'Resultado sem fullName não deve ser adicionado.'
+    );
   }
 
   @IsTest
@@ -644,7 +716,11 @@ private class MessagingComposerControllerCoverageTest {
     } catch (Exception ex) {
       sendFlowThrew = true;
     }
-    System.assertEquals(true, sendFlowThrew, 'Flow invocation deve lançar em ambiente de teste.');
+    System.assertEquals(
+      true,
+      sendFlowThrew,
+      'Flow invocation deve lançar em ambiente de teste.'
+    );
   }
 
   @IsTest
@@ -881,6 +957,60 @@ private class MessagingComposerControllerCoverageTest {
   }
 
   @IsTest
+  static void testResolveChannelIdFallbackPaths() {
+    // Branch 2: existingChannelDevName fornecido mas nenhum canal encontrado → cai para fallback → throw
+    Boolean threw1 = false;
+    try {
+      MessagingComposerController.resolveChannelId(
+        null,
+        null,
+        'DEV_NAME_INEXISTENTE_XYZ',
+        null
+      );
+    } catch (Exception ex) {
+      threw1 = true;
+    }
+    Assert.isTrue(threw1, 'Deve lançar quando devName não encontra canal.');
+
+    // Branch 3: channelKey mapeado para developerName mas sem canal correspondente → throw
+    Boolean threw2 = false;
+    try {
+      MessagingComposerController.resolveChannelId('SALES', null, null, null);
+    } catch (Exception ex) {
+      threw2 = true;
+    }
+    Assert.isTrue(threw2, 'Deve lançar quando channelKey não encontra canal.');
+
+    // Branch 3 com AFTERSALES
+    Boolean threw3 = false;
+    try {
+      MessagingComposerController.resolveChannelId(
+        'AFTERSALES',
+        null,
+        null,
+        null
+      );
+    } catch (Exception ex) {
+      threw3 = true;
+    }
+    Assert.isTrue(threw3, 'Deve lançar quando AFTERSALES não encontra canal.');
+
+    // Branch 4: telefone fornecido, sem candidatos correspondentes → throw
+    Boolean threw4 = false;
+    try {
+      MessagingComposerController.resolveChannelId(
+        null,
+        null,
+        null,
+        '+55 11 4003-8852'
+      );
+    } catch (Exception ex) {
+      threw4 = true;
+    }
+    Assert.isTrue(threw4, 'Deve lançar quando telefone não encontra canal.');
+  }
+
+  @IsTest
   static void testNullHelperPaths() {
     Assert.isNull(MessagingComposerController.buildSessionContext(null));
     Assert.isNull(MessagingComposerController.buildSessionRecipient(null));
@@ -953,13 +1083,13 @@ private class MessagingComposerControllerCoverageTest {
     String userId = UserInfo.getUserId();
     String recipientJson =
       '{"id":"' +
-        userId +
-        '","type":"MessagingEndUser",' +
-        '"messagingEndUserId":"' +
-        userId +
-        '","messagingChannelId":"' +
-        userId +
-        '"}';
+      userId +
+      '","type":"MessagingEndUser",' +
+      '"messagingEndUserId":"' +
+      userId +
+      '","messagingChannelId":"' +
+      userId +
+      '"}';
     Boolean prepareThrew = false;
     try {
       MessagingComposerController.prepareSessionAndLaunchFlow(
