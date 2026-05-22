@@ -365,6 +365,7 @@ public without sharing class KitInstalacaoBO {
       ];
 
       List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
+      List<Log__c> logsToInsert = new List<Log__c>();
 
       for (Opportunity opp : opportunitiesToProcess) {
         try {
@@ -380,13 +381,16 @@ public without sharing class KitInstalacaoBO {
               JSON.serialize(requestBody)
           );
 
-          Utils.createLog(
-            'IdVirtualOffice',
-            'IdVirtualOffice - response',
-            JSON.serialize(requestBody)
+          logsToInsert.add(
+            Utils.createLogNoInsert(
+              'IdVirtualOffice',
+              'IdVirtualOffice - response',
+              JSON.serialize(requestBody)
+            )
           );
           IntegracaoNivelloContrato.EnviarKitResponse response = IntegracaoNivelloContrato.enviarKit(
-            requestBody
+            requestBody,
+            logsToInsert
           );
           System.debug(
             '[SendKitUpdate] oppId=' +
@@ -404,16 +408,27 @@ public without sharing class KitInstalacaoBO {
 
           Id relatedKitId = oppIdToKitIdMap.get(opp.Id);
           opportunitiesToUpdate.add(
-            createOpportunityForUpdate(opp, response, relatedKitId)
+            createOpportunityForUpdate(
+              opp,
+              response,
+              relatedKitId,
+              logsToInsert
+            )
           );
         } catch (Exception e) {
-          Utils.createLog(
-            CLASS_NAME,
-            'SendKitUpdate - opp ' + opp.Id,
-            e,
-            opp.Id
+          logsToInsert.add(
+            Utils.createLogNoInsert(
+              CLASS_NAME,
+              'SendKitUpdate - opp ' + opp.Id,
+              e,
+              opp.Id
+            )
           );
         }
+      }
+
+      if (!logsToInsert.isEmpty()) {
+        Database.insert(logsToInsert, false);
       }
 
       if (!opportunitiesToUpdate.isEmpty()) {
@@ -518,7 +533,8 @@ public without sharing class KitInstalacaoBO {
   private static Opportunity createOpportunityForUpdate(
     Opportunity originalOpp,
     IntegracaoNivelloContrato.EnviarKitResponse response,
-    Id kitId
+    Id kitId,
+    List<Log__c> logsToInsert
   ) {
     Opportunity oppToUpdate = new Opportunity(Id = originalOpp.Id);
 
@@ -528,11 +544,13 @@ public without sharing class KitInstalacaoBO {
     oppToUpdate.ValorAnteriorPontos__c = originalOpp.Pontos__c;
     oppToUpdate.ValorAnteriorDirect__c = originalOpp.Direct__c;
     if (response == null) {
-      Utils.createLog(
-        CLASS_NAME,
-        'createOpportunityForUpdate',
-        'Response is null',
-        originalOpp.Id
+      logsToInsert.add(
+        Utils.createLogNoInsert(
+          CLASS_NAME,
+          'createOpportunityForUpdate',
+          'Response is null',
+          originalOpp.Id
+        )
       );
       return oppToUpdate;
     }

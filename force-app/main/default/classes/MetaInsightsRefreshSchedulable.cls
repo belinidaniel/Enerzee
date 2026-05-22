@@ -11,6 +11,6 @@
  */
 public with sharing class MetaInsightsRefreshSchedulable implements Schedulable {
   public void execute(SchedulableContext context) {
-    Database.executeBatch(new MetaInsightsRefreshBatch('lifetime'), 20);
+    Database.executeBatch(new MetaInsightsRefreshBatch('maximum'), 20);
   }
 }

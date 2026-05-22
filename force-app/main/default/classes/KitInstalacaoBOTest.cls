@@ -147,7 +147,7 @@ private class KitInstalacaoBOTest {
           new Opportunity(
             AccountId = acc.Id,
             IdVirtualOffice__c = 'VO-BULK-' + i,
-            GeracaoDesejadaMensalB__c = 400
+            ConsumoInformadoB__c = 400
           ),
           true
         )
@@ -167,7 +167,7 @@ private class KitInstalacaoBOTest {
 
     Test.startTest();
     for (Opportunity o : opps) {
-      o.GeracaoDesejadaMensalB__c = 800;
+      o.ConsumoInformadoB__c = 800;
     }
     update opps;
     Test.stopTest();
@@ -177,6 +177,12 @@ private class KitInstalacaoBOTest {
       FROM Opportunity
       WHERE Id IN :opps
     ];
+    for (Opportunity opp : updated) {
+      Assert.isTrue(
+        opp.PropostaAlterada__c,
+        'Todas as oportunidades devem processar resposta do updateInfosKit.'
+      );
+    }
   }
 
   @IsTest
@@ -273,7 +279,15 @@ private class KitInstalacaoBOTest {
     update opp;
     Test.stopTest();
 
-    Assert.isTrue(true, 'No exception should be thrown when IsRSD__c changes');
+    Opportunity updated = [
+      SELECT PropostaAlterada__c
+      FROM Opportunity
+      WHERE Id = :opp.Id
+    ];
+    Assert.isTrue(
+      updated.PropostaAlterada__c,
+      'A resposta do updateInfosKit deve ser processada quando IsRSD__c muda.'
+    );
   }
 
   @IsTest
