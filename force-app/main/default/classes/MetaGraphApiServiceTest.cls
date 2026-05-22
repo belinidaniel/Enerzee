@@ -48,7 +48,7 @@ private class MetaGraphApiServiceTest {
     );
     MetaGraphApiService.InsightsEnvelope insights = MetaGraphApiService.getInsights(
       '120247934274870536',
-      'lifetime'
+      'maximum'
     );
     Test.stopTest();
 
@@ -197,7 +197,7 @@ private class MetaGraphApiServiceTest {
     insert adRecord;
 
     Test.startTest();
-    Database.executeBatch(new MetaInsightsRefreshBatch('lifetime'), 1);
+    Database.executeBatch(new MetaInsightsRefreshBatch('maximum'), 1);
     Test.stopTest();
 
     Meta_Ad__c updatedAd = [

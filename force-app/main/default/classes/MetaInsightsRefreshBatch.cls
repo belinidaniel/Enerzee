@@ -11,10 +11,13 @@
  * @test : MetaGraphApiServiceTest
  */
 public with sharing class MetaInsightsRefreshBatch implements Database.Batchable<SObject>, Database.AllowsCallouts {
+  private static final String DEFAULT_DATE_PRESET = 'maximum';
   private final String datePreset;
 
   public MetaInsightsRefreshBatch(String datePreset) {
-    this.datePreset = String.isBlank(datePreset) ? 'lifetime' : datePreset;
+    this.datePreset = String.isBlank(datePreset)
+      ? DEFAULT_DATE_PRESET
+      : datePreset;
   }
 
   public Database.QueryLocator start(Database.BatchableContext context) {
@@ -32,6 +35,7 @@ public with sharing class MetaInsightsRefreshBatch implements Database.Batchable
     List<Meta_Ad__c> scope
   ) {
     List<Meta_Ad__c> adsToUpdate = new List<Meta_Ad__c>();
+    List<Log__c> logsToInsert = new List<Log__c>();
     Map<Id, Campaign> campaignTotalsMap = new Map<Id, Campaign>();
 
     for (Meta_Ad__c adRecord : scope) {
@@ -62,11 +66,13 @@ public with sharing class MetaInsightsRefreshBatch implements Database.Batchable
           );
         }
       } catch (Exception e) {
-        Utils.createLog(
-          'MetaInsightsRefreshBatch',
-          'execute',
-          e.getMessage(),
-          adRecord.Id
+        logsToInsert.add(
+          Utils.createLogNoInsert(
+            'MetaInsightsRefreshBatch',
+            'execute',
+            e.getMessage(),
+            adRecord.Id
+          )
         );
       }
     }
@@ -77,6 +83,10 @@ public with sharing class MetaInsightsRefreshBatch implements Database.Batchable
 
     if (!campaignTotalsMap.isEmpty()) {
       updateCampaignTotals(campaignTotalsMap);
+    }
+
+    if (!logsToInsert.isEmpty()) {
+      insert logsToInsert;
     }
   }
 

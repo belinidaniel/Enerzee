@@ -93,6 +93,13 @@ public without sharing class IntegracaoNivelloContrato {
   }
 
   public static EnviarKitResponse enviarKit(EnviarKitRequest requestBody) {
+    return enviarKit(requestBody, null);
+  }
+
+  public static EnviarKitResponse enviarKit(
+    EnviarKitRequest requestBody,
+    List<Log__c> deferredLogs
+  ) {
     System.debug(
       '[enviarKit] requestId=' +
         requestBody.Id +
@@ -115,7 +122,8 @@ public without sharing class IntegracaoNivelloContrato {
         return null;
       }
 
-      Utils.createLog(
+      createOrDeferLog(
+        deferredLogs,
         'IntegracaoNivelloContrato',
         'enviarKit ' + requestBody.Id,
         response
@@ -199,7 +207,8 @@ public without sharing class IntegracaoNivelloContrato {
           ' | stack=' +
           e.getStackTraceString()
       );
-      Utils.createLog(
+      createOrDeferLog(
+        deferredLogs,
         'IntegracaoNivelloContrato',
         'enviarKit ' + requestBody.Id,
         e
@@ -207,6 +216,20 @@ public without sharing class IntegracaoNivelloContrato {
       // You might want to handle the exception differently.
       return null;
     }
+  }
+
+  private static void createOrDeferLog(
+    List<Log__c> deferredLogs,
+    String className,
+    String methodName,
+    Object source
+  ) {
+    if (deferredLogs == null) {
+      Utils.createLog(className, methodName, source);
+      return;
+    }
+
+    deferredLogs.add(Utils.createLogNoInsert(className, methodName, source));
   }
 
   private static HttpResponse chamadaIntegracao(

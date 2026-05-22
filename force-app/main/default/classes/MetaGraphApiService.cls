@@ -12,6 +12,7 @@
 public with sharing class MetaGraphApiService {
   private static final String INTEGRATION_DEV_NAME = 'WhatsApp_Cloud_API';
   private static final String DEFAULT_GRAPH_URL = 'https://graph.facebook.com/v25.0';
+  private static final String DEFAULT_DATE_PRESET = 'maximum';
   private static final Integer TIMEOUT_MS = 120000;
 
   public class MetaGraphException extends Exception {
@@ -110,7 +111,7 @@ public with sharing class MetaGraphApiService {
       EncodingUtil.urlEncode(fields, 'UTF-8') +
       '&date_preset=' +
       EncodingUtil.urlEncode(
-        String.isBlank(datePreset) ? 'lifetime' : datePreset,
+        String.isBlank(datePreset) ? DEFAULT_DATE_PRESET : datePreset,
         'UTF-8'
       );
     HttpResponse response = send('GET', path);
