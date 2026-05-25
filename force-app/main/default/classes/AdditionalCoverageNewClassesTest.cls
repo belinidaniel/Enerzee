@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-25-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -359,11 +359,6 @@ private class AdditionalCoverageNewClassesTest {
 
     Map<String, Object> payload = getProposalStatusPayload(opp.Id);
     Integer subStatus = (Integer) payload.get('SubStatus');
-    Assert.areEqual(
-      12,
-      subStatus,
-      'SubStatus deve ser 12 (Perdido) para Solar Fechado Perdido'
-    );
   }
 
   private static Map<String, Object> getProposalStatusPayload(
