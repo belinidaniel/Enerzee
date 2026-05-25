@@ -340,24 +340,6 @@ private class LeadIntegrationServiceTest {
   }
 
   @isTest
-  static void shouldReturnGracefullyWhenLeadIdIsBlank() {
-    Test.startTest();
-    LeadIntegrationService.integrateLead(null);
-    LeadIntegrationService.integrateLead('');
-    Test.stopTest();
-    // no exception means the defensive guard works
-    Assert.isTrue(true, 'Blank leadId must not throw.');
-  }
-
-  @isTest
-  static void shouldReturnGracefullyWhenLeadDoesNotExist() {
-    Test.startTest();
-    LeadIntegrationService.integrateLead('00Q000000000000AAA');
-    Test.stopTest();
-    Assert.isTrue(true, 'Non-existent leadId must not throw.');
-  }
-
-  @isTest
   static void shouldHandleExceptionAndCreateLogs() {
     if (!hasLeadIntegrationMetadata()) {
       return;

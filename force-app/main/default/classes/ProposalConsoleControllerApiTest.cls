@@ -62,7 +62,7 @@ private class ProposalConsoleControllerApiTest {
   }
 
   @isTest
-  static void generatePreviewAndSendProposalReuseGeneratedFile() {
+  static void generatePreviewDoesNotCreateSalesforceFile() {
     Opportunity opportunityRecord = [
       SELECT Id, Name, StageName, PropostaGerada__c
       FROM Opportunity
@@ -82,14 +82,9 @@ private class ProposalConsoleControllerApiTest {
 
     try {
       ProposalConsoleController.ProposalActionResult previewResult;
-      ProposalConsoleController.ProposalActionResult sendResult;
 
       Test.startTest();
       previewResult = ProposalConsoleController.generatePreview(
-        opportunityRecord.Id,
-        cover.Id
-      );
-      sendResult = ProposalConsoleController.sendProposal(
         opportunityRecord.Id,
         cover.Id
       );
@@ -99,18 +94,80 @@ private class ProposalConsoleControllerApiTest {
         previewResult.success,
         'O preview deve ser gerado com sucesso.'
       );
-      Assert.isNotNull(
+      Assert.isNull(
         previewResult.contentVersionId,
-        'O preview deve persistir um ContentVersion reutilizavel.'
+        'O preview não deve persistir ContentVersion antes do envio.'
       );
       Assert.isTrue(
         String.isNotBlank(previewResult.previewUrl),
         'O preview deve expor uma URL para o iframe.'
       );
 
+      Assert.areEqual(
+        1,
+        proposalCallCount,
+        'A API de conversao deve ser chamada uma vez para gerar o preview.'
+      );
+      Assert.areEqual(
+        0,
+        nivelloCallCount,
+        'O preview não deve enviar a proposta ao aplicativo.'
+      );
+
+      Assert.areEqual(
+        0,
+        [
+          SELECT COUNT()
+          FROM ContentVersion
+          WHERE FirstPublishLocationId = :opportunityRecord.Id
+        ],
+        'O preview não deve criar arquivo em Files da oportunidade.'
+      );
+    } finally {
+      clearApiMappings();
+    }
+  }
+
+  @isTest
+  static void sendProposalGeneratesFreshPdfWithoutReusingPreview() {
+    Opportunity opportunityRecord = [
+      SELECT Id, Name, StageName, PropostaGerada__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-API-001'
+      LIMIT 1
+    ];
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+
+    configureApiMappings(COVER_KEY);
+    resetCalloutCounters();
+    Test.setMock(HttpCalloutMock.class, new ProposalApiAndNivelloMock());
+
+    try {
+      ProposalConsoleController.ProposalActionResult sendResult;
+
+      Test.startTest();
+      sendResult = ProposalConsoleController.sendProposal(
+        opportunityRecord.Id,
+        cover.Id
+      );
+      Test.stopTest();
+
       Assert.isTrue(
         sendResult.success,
         'O envio da proposta deve retornar sucesso.'
+      );
+      Assert.isNotNull(
+        sendResult.contentVersionId,
+        'O envio deve persistir um novo PDF.'
+      );
+      Assert.isFalse(
+        sendResult.reusedExistingFile,
+        'O fluxo de envio não deve indicar reuso de PDF existente.'
       );
       Assert.isTrue(
         sendResult.message != null &&
@@ -118,18 +175,9 @@ private class ProposalConsoleControllerApiTest {
         'O retorno do envio deve explicar que a integração roda em segundo plano.'
       );
       Assert.areEqual(
-        previewResult.contentVersionId,
-        sendResult.contentVersionId,
-        'O envio deve reutilizar o mesmo arquivo gerado no preview.'
-      );
-      Assert.isTrue(
-        sendResult.reusedExistingFile,
-        'O fluxo de envio deve indicar que reutilizou o PDF existente.'
-      );
-      Assert.areEqual(
         1,
         proposalCallCount,
-        'A API de conversao deve ser chamada apenas uma vez.'
+        'A API de conversao deve ser chamada uma vez para o envio.'
       );
       Assert.areEqual(
         1,
@@ -181,7 +229,7 @@ private class ProposalConsoleControllerApiTest {
       Assert.areEqual(
         ProposalConfigurationService.SCENARIO_INITIAL,
         generatedVersion.ProposalScenario__c,
-        'O preview inicial deve registrar o cenário correto.'
+        'O envio inicial deve registrar o cenário correto.'
       );
 
       Opportunity updatedOpportunity = [

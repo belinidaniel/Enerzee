@@ -322,6 +322,46 @@ private class MessagingComposerControllerCoverageTest {
         missingFlowRaised = true;
       }
       System.assertEquals(true, missingFlowRaised);
+
+      // MEU creation path: telefone novo sem MEU existente → cria novo registro
+      MessagingComposerController.SendMessageRequest createReq = new MessagingComposerController.SendMessageRequest();
+      createReq.messagingChannelId = channel.Id;
+      createReq.phone = '11855554499';
+      Id createdMeuId = MessagingComposerController.resolveMessagingEndUser(
+        createReq
+      );
+      Assert.isNotNull(createdMeuId, 'MEU deve ser criado quando não existe.');
+
+      // MEU creation com contactId definido
+      Contact newContact = new Contact(
+        LastName = 'MEU Creation Contact',
+        AccountId = accountRecord.Id,
+        MobilePhone = '11855554488'
+      );
+      insert newContact;
+      MessagingComposerController.SendMessageRequest createReqContact = new MessagingComposerController.SendMessageRequest();
+      createReqContact.messagingChannelId = channel.Id;
+      createReqContact.contactId = newContact.Id;
+      createReqContact.phone = '11855554488';
+      Id createdMeuContactId = MessagingComposerController.resolveMessagingEndUser(
+        createReqContact
+      );
+      Assert.isNotNull(createdMeuContactId);
+
+      // MEU creation com accountId definido
+      Account newAccount = new Account(
+        Name = 'MEU Creation Account',
+        Phone = '11855554477'
+      );
+      insert newAccount;
+      MessagingComposerController.SendMessageRequest createReqAccount = new MessagingComposerController.SendMessageRequest();
+      createReqAccount.messagingChannelId = channel.Id;
+      createReqAccount.accountId = newAccount.Id;
+      createReqAccount.phone = '11855554477';
+      Id createdMeuAccountId = MessagingComposerController.resolveMessagingEndUser(
+        createReqAccount
+      );
+      Assert.isNotNull(createdMeuAccountId);
     } catch (Exception ex) {
       if (
         ex.getMessage() == null ||
@@ -454,6 +494,132 @@ private class MessagingComposerControllerCoverageTest {
     return Id.valueOf(prefix + suffix);
   }
 
+  private class Non200Mock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest req) {
+      HttpResponse resp = new HttpResponse();
+      resp.setStatusCode(400);
+      resp.setBody('Bad Request');
+      return resp;
+    }
+  }
+
+  private class InvalidDateRestMock implements HttpCalloutMock {
+    public HTTPResponse respond(HTTPRequest req) {
+      HttpResponse resp = new HttpResponse();
+      resp.setStatusCode(200);
+      resp.setHeader('Content-Type', 'application/json');
+      resp.setBody(
+        '{"records":[{"FullName":"Test","DeveloperName":"Test","NamespacePrefix":null,"LastModifiedDate":"NOT_A_DATE","CreatedBy":{"Name":"Tester"}}]}'
+      );
+      return resp;
+    }
+  }
+
+  @IsTest
+  static void testNon200CalloutResponses() {
+    Test.setMock(HttpCalloutMock.class, new Non200Mock());
+    Test.startTest();
+    List<MetadataService.FileProperties> restResults = MessagingComposerController.fetchMessageDefinitionsViaNamedCredentialRest();
+    List<MetadataService.FileProperties> soapResults = MessagingComposerController.fetchMessageDefinitionsViaNamedCredential();
+    Test.stopTest();
+
+    Assert.isTrue(restResults.isEmpty(), 'REST 400 deve retornar lista vazia.');
+    Assert.isTrue(soapResults.isEmpty(), 'SOAP 400 deve retornar lista vazia.');
+  }
+
+  @IsTest
+  static void testCollectFilePropertiesEdgePaths() {
+    List<MetadataService.FileProperties> props = new List<MetadataService.FileProperties>();
+
+    // null node — deve retornar sem erro
+    MessagingComposerController.collectFileProperties(null, props);
+    Assert.isTrue(props.isEmpty());
+
+    // nó com lastModifiedDate válido
+    Dom.Document doc1 = new Dom.Document();
+    doc1.load(
+      '<root><result><fullName>Test</fullName><lastModifiedDate>2026-01-01T00:00:00.000Z</lastModifiedDate></result></root>'
+    );
+    MessagingComposerController.collectFileProperties(
+      doc1.getRootElement(),
+      props
+    );
+    Assert.areEqual(1, props.size());
+    Assert.isNotNull(props[0].lastModifiedDate);
+
+    // nó com lastModifiedDate inválido — deve ignorar e ainda adicionar o registro
+    props.clear();
+    Dom.Document doc2 = new Dom.Document();
+    doc2.load(
+      '<root><result><fullName>Test2</fullName><lastModifiedDate>NOT_A_DATE</lastModifiedDate></result></root>'
+    );
+    MessagingComposerController.collectFileProperties(
+      doc2.getRootElement(),
+      props
+    );
+    Assert.areEqual(1, props.size());
+    Assert.isNull(props[0].lastModifiedDate);
+
+    // nó com namespacePrefix e fileName — cobre branches não testados
+    props.clear();
+    Dom.Document doc3 = new Dom.Document();
+    doc3.load(
+      '<root><result><fullName>NS_Template</fullName><namespacePrefix>myns</namespacePrefix><fileName>conversationMessageDefinitions/NS_Template.conversationMessageDefinition</fileName></result></root>'
+    );
+    MessagingComposerController.collectFileProperties(
+      doc3.getRootElement(),
+      props
+    );
+    Assert.areEqual(1, props.size());
+    Assert.areEqual('myns', props[0].namespacePrefix);
+    Assert.areEqual(
+      'conversationMessageDefinitions/NS_Template.conversationMessageDefinition',
+      props[0].fileName
+    );
+
+    // nó result com fullName em branco — não deve ser adicionado à lista
+    props.clear();
+    Dom.Document doc4 = new Dom.Document();
+    doc4.load(
+      '<root><result><fileName>only_file.xml</fileName></result></root>'
+    );
+    MessagingComposerController.collectFileProperties(
+      doc4.getRootElement(),
+      props
+    );
+    Assert.isTrue(
+      props.isEmpty(),
+      'Resultado sem fullName não deve ser adicionado.'
+    );
+  }
+
+  @IsTest
+  static void testGetMessageDefinitionsWithSearchTerm() {
+    // termo que encontra o stub
+    List<MessagingComposerController.MessageTemplateDTO> match = MessagingComposerController.getMessageDefinitions(
+      'Template_De_Teste'
+    );
+    Assert.areEqual(1, match.size());
+
+    // termo que não encontra nada — cobre o branch continue
+    List<MessagingComposerController.MessageTemplateDTO> noMatch = MessagingComposerController.getMessageDefinitions(
+      'ZZZ_NoMatch_XYZ'
+    );
+    Assert.isTrue(noMatch.isEmpty());
+  }
+
+  @IsTest
+  static void testFetchRestWithInvalidDate() {
+    Test.setMock(HttpCalloutMock.class, new InvalidDateRestMock());
+    Test.startTest();
+    List<MetadataService.FileProperties> results = MessagingComposerController.fetchMessageDefinitionsViaNamedCredentialRest();
+    Test.stopTest();
+
+    // registro deve ser adicionado mesmo com data inválida (catch ignore)
+    Assert.areEqual(1, results.size());
+    Assert.isNull(results[0].lastModifiedDate);
+  }
+
   @IsTest
   static void testPrepareAndSendValidationPaths() {
     Boolean missingRecipientRaised = false;
@@ -540,10 +706,21 @@ private class MessagingComposerControllerCoverageTest {
     }
     System.assertEquals(true, missingChannelRaised);
 
-    MessagingComposerController.SendMessageResponse response = MessagingComposerController.sendMessageJson(
-      '{"messageDefinitionName":"Template","messagingChannelId":"0Mh000000000001AAA","messagingEndUserId":"0Mj000000000001AAA"}'
+    Boolean sendFlowThrew = false;
+    try {
+      MessagingComposerController.sendMessageJson(
+        '{"messageDefinitionName":"Template","messagingChannelId":"001000000000001","messagingEndUserId":"' +
+          UserInfo.getUserId() +
+          '"}'
+      );
+    } catch (Exception ex) {
+      sendFlowThrew = true;
+    }
+    System.assertEquals(
+      true,
+      sendFlowThrew,
+      'Flow invocation deve lançar em ambiente de teste.'
     );
-    System.assertEquals('Simulado', response.status);
   }
 
   @IsTest
@@ -692,5 +869,244 @@ private class MessagingComposerControllerCoverageTest {
     requestItem.messagingChannelId = idValue;
     requestItem.messageDefinitionName = 'Template';
     return requestItem;
+  }
+
+  @IsTest
+  static void testResolveEndUserDerivationBranches() {
+    String chanPrefix = MessagingChannel.SObjectType.getDescribe()
+      .getKeyPrefix();
+    Id fakeChannelId = Id.valueOf(chanPrefix + '000000000099');
+
+    Account noPhoneAccount = new Account(Name = 'Conta Sem Telefone Deriv');
+    insert noPhoneAccount;
+
+    // opportunity path: contactId/accountId null → no MEU query; account has no phone → throw
+    Opportunity noPhoneOpp = new Opportunity(
+      Name = 'Opp Sem Telefone',
+      StageName = 'Prospecting',
+      CloseDate = Date.today().addDays(5),
+      AccountId = noPhoneAccount.Id,
+      IdVirtualOffice__c = 'VO-DERIV-TEST-001'
+    );
+    insert noPhoneOpp;
+
+    MessagingComposerController.SendMessageRequest reqOpp = new MessagingComposerController.SendMessageRequest();
+    reqOpp.messagingChannelId = fakeChannelId;
+    reqOpp.opportunityId = noPhoneOpp.Id;
+
+    Boolean threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqOpp);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar quando opp sem telefone.');
+
+    // no ids, no phone → throw (without any MEU query)
+    MessagingComposerController.SendMessageRequest reqNone = new MessagingComposerController.SendMessageRequest();
+    reqNone.messagingChannelId = fakeChannelId;
+    threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqNone);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar sem ids e sem telefone.');
+
+    // contact with no phone → contact derivation branch → throw
+    Contact noPhoneContact = new Contact(LastName = 'Sem Telefone Deriv');
+    insert noPhoneContact;
+
+    MessagingComposerController.SendMessageRequest reqContact = new MessagingComposerController.SendMessageRequest();
+    reqContact.messagingChannelId = fakeChannelId;
+    reqContact.contactId = noPhoneContact.Id;
+    threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqContact);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar quando contato sem telefone.');
+
+    // account with no phone → account derivation branch → throw
+    MessagingComposerController.SendMessageRequest reqAccount = new MessagingComposerController.SendMessageRequest();
+    reqAccount.messagingChannelId = fakeChannelId;
+    reqAccount.accountId = noPhoneAccount.Id;
+    threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqAccount);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar quando conta sem telefone.');
+
+    // lead with no phone → lead derivation branch → throw
+    Lead noPhoneLead = new Lead(LastName = 'Lead Sem Tel', Company = 'Enerzee');
+    insert noPhoneLead;
+
+    MessagingComposerController.SendMessageRequest reqLead = new MessagingComposerController.SendMessageRequest();
+    reqLead.messagingChannelId = fakeChannelId;
+    reqLead.leadId = noPhoneLead.Id;
+    threw = false;
+    try {
+      MessagingComposerController.resolveMessagingEndUser(reqLead);
+    } catch (Exception ex) {
+      threw = true;
+    }
+    Assert.isTrue(threw, 'Deve lançar quando lead sem telefone.');
+  }
+
+  @IsTest
+  static void testResolveChannelIdFallbackPaths() {
+    // Branch 2: existingChannelDevName fornecido mas nenhum canal encontrado → cai para fallback → throw
+    Boolean threw1 = false;
+    try {
+      MessagingComposerController.resolveChannelId(
+        null,
+        null,
+        'DEV_NAME_INEXISTENTE_XYZ',
+        null
+      );
+    } catch (Exception ex) {
+      threw1 = true;
+    }
+    Assert.isTrue(threw1, 'Deve lançar quando devName não encontra canal.');
+
+    // Branch 3: channelKey mapeado para developerName mas sem canal correspondente → throw
+    Boolean threw2 = false;
+    try {
+      MessagingComposerController.resolveChannelId('SALES', null, null, null);
+    } catch (Exception ex) {
+      threw2 = true;
+    }
+    Assert.isTrue(threw2, 'Deve lançar quando channelKey não encontra canal.');
+
+    // Branch 3 com AFTERSALES
+    Boolean threw3 = false;
+    try {
+      MessagingComposerController.resolveChannelId(
+        'AFTERSALES',
+        null,
+        null,
+        null
+      );
+    } catch (Exception ex) {
+      threw3 = true;
+    }
+    Assert.isTrue(threw3, 'Deve lançar quando AFTERSALES não encontra canal.');
+
+    // Branch 4: telefone fornecido → executa bloco de fallback por telefone
+    // O org pode ter canal com este MasterLabel (retorna Id) ou não (lança) — ambos são válidos.
+    try {
+      Id resolvedByPhone = MessagingComposerController.resolveChannelId(
+        null,
+        null,
+        null,
+        '+55 11 4003-8852'
+      );
+      Assert.isNotNull(
+        resolvedByPhone,
+        'Canal encontrado por telefone deve retornar Id.'
+      );
+    } catch (AuraHandledException ex) {
+      Assert.isTrue(
+        ex.getMessage() != null,
+        'Exceção deve ter mensagem quando canal não é encontrado.'
+      );
+    }
+  }
+
+  @IsTest
+  static void testNullHelperPaths() {
+    Assert.isNull(MessagingComposerController.buildSessionContext(null));
+    Assert.isNull(MessagingComposerController.buildSessionRecipient(null));
+    Assert.isNull(MessagingComposerController.buildEndUserRecipient(null));
+    Assert.isNull(MessagingComposerController.pickPhone((Lead) null));
+    Assert.isNull(MessagingComposerController.pickPhone((Contact) null));
+    Assert.isNull(MessagingComposerController.pickPhone((Account) null));
+    Assert.isNull(MessagingComposerController.normalizeSearchTerm(null));
+    Assert.isTrue(MessagingComposerController.searchRecipients('').isEmpty());
+    Assert.areEqual(
+      'AFTER - Template',
+      MessagingComposerController.stripPrefix('AFTER - Template', 'SALES - ')
+    );
+
+    Id fakeChannelId = Id.valueOf(
+      MessagingChannel.SObjectType.getDescribe().getKeyPrefix() + '000000000099'
+    );
+    Id fakeEndUserId = Id.valueOf(
+      MessagingEndUser.SObjectType.getDescribe().getKeyPrefix() + '000000000099'
+    );
+
+    MessagingComposerController.SessionLaunchResponse resp = MessagingComposerController.initializeSessionLaunchResponse(
+      null,
+      fakeChannelId,
+      fakeEndUserId
+    );
+    Assert.isNull(resp.messagingEndUserRecordTypeDeveloperName);
+
+    Map<String, Object> flowInputs = MessagingComposerController.buildPrepareSessionFlowInputs(
+      null,
+      fakeChannelId,
+      fakeEndUserId,
+      null,
+      'SALES',
+      null,
+      'Template'
+    );
+    Assert.isNull(flowInputs.get('recipientId'));
+    Assert.isNull(flowInputs.get('recipientType'));
+
+    MessagingSession sessionNoMeu = new MessagingSession();
+    Assert.isNull(
+      MessagingComposerController.buildSessionRecipient(sessionNoMeu)
+    );
+  }
+
+  @IsTest
+  static void testDoSendMessageFullParamsAndPrepareSessionBody() {
+    // Cover doSendMessage ternary true-branches (allowedSessionStatus/requestType/enforceConsent/channelConsentType)
+    MessagingComposerController.SendMessageRequest req = new MessagingComposerController.SendMessageRequest();
+    req.messageDefinitionName = 'Template';
+    req.messagingChannelId = '001000000000001';
+    req.messagingEndUserId = UserInfo.getUserId();
+    req.allowedSessionStatus = 'Active';
+    req.requestType = 'SendTemplateMessages';
+    req.enforceConsent = false;
+    req.channelConsentType = 'Explicit';
+
+    Boolean sendThrew = false;
+    try {
+      MessagingComposerController.sendMessage(req);
+    } catch (Exception ex) {
+      sendThrew = true;
+    }
+    Assert.isTrue(sendThrew);
+
+    // Cover prepareSessionAndLaunchFlow body (resolveChannelId via existingChannelId,
+    // buildSessionRequest, resolveMessagingEndUser, findLatestSession, flowInputs map,
+    // then throw because channelKey has no configured flow)
+    String userId = UserInfo.getUserId();
+    String recipientJson =
+      '{"id":"' +
+      userId +
+      '","type":"MessagingEndUser",' +
+      '"messagingEndUserId":"' +
+      userId +
+      '","messagingChannelId":"' +
+      userId +
+      '"}';
+    Boolean prepareThrew = false;
+    try {
+      MessagingComposerController.prepareSessionAndLaunchFlow(
+        recipientJson,
+        'CANAL_INEXISTENTE',
+        null,
+        'Template'
+      );
+    } catch (Exception ex) {
+      prepareThrew = true;
+    }
+    Assert.isTrue(prepareThrew);
   }
 }

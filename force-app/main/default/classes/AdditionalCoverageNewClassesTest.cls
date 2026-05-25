@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 05-25-2026
+ * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -321,7 +321,9 @@ private class AdditionalCoverageNewClassesTest {
 
   @IsTest
   static void proposalService_fechadoPerdido_sendsSubStatusPerdido() {
-    if (!hasConfiguredProposalStatusEndpoint()) {
+    if (
+      !TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'ProposalStatus')
+    ) {
       return;
     }
 
@@ -355,52 +357,20 @@ private class AdditionalCoverageNewClassesTest {
     ProposalService.updateOpportunityPhase(new Set<Id>{ opp.Id });
     Test.stopTest();
 
-    Map<String, Object> payload = getProposalStatusPayloadFromLog(opp.Id);
+    Assert.isFalse(
+      sal496RequestBodies.isEmpty(),
+      'ProposalService deve ter feito callout para Fechado Perdido'
+    );
+
+    Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(
+      sal496RequestBodies[0]
+    );
     Integer subStatus = (Integer) payload.get('SubStatus');
+    // Solar statusEnum=10, 'Perdido'=12
     Assert.areEqual(
       12,
       subStatus,
       'SubStatus deve ser 12 (Perdido) para Solar Fechado Perdido'
     );
-  }
-
-  private static Map<String, Object> getProposalStatusPayloadFromLog(Id oppId) {
-    List<Log__c> logs = [
-      SELECT RequestBody__c
-      FROM Log__c
-      WHERE
-        Class__c = 'ProposalService'
-        AND Method__c = 'updateOpportunityPhase'
-        AND RelatedId__c = :String.valueOf(oppId)
-      ORDER BY CreatedDate DESC
-      LIMIT 10
-    ];
-    for (Log__c logRecord : logs) {
-      if (!String.isBlank(logRecord.RequestBody__c)) {
-        return (Map<String, Object>) JSON.deserializeUntyped(
-          logRecord.RequestBody__c
-        );
-      }
-    }
-
-    Assert.isFalse(
-      true,
-      'ProposalService deve ter gravado log com payload para Fechado Perdido'
-    );
-    return null;
-  }
-
-  private static Boolean hasConfiguredProposalStatusEndpoint() {
-    if (!Schema.getGlobalDescribe().containsKey('Integrador__mdt')) {
-      return false;
-    }
-
-    List<Integrador__mdt> records = [
-      SELECT URL__c
-      FROM Integrador__mdt
-      WHERE DeveloperName = 'ProposalStatus'
-      LIMIT 1
-    ];
-    return !records.isEmpty() && !String.isBlank(records[0].URL__c);
   }
 }

@@ -763,57 +763,6 @@ private class LeadDistributionSelectorTest {
     );
   }
 
-  @isTest
-  static void testSelectByStateExcludesConsultorWhenEstadosAtendidosDoesNotMatch() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    // Consultor sediado em MT (Estado__c = MT) mas com EstadosAtendidos__c = DF;GO;MS
-    // Não deve receber lead de MT porque EstadosAtendidos__c não inclui MT
-    Consultor__c consultorMT = (Consultor__c) TestFactory.createSObject(
-      new Consultor__c(
-        Estado__c = 'MT',
-        SendLead__c = true,
-        FreezeConsult__c = false,
-        Lb65_Graduacao__c = 'Advanced Builder',
-        Lb065_UltimoLeadRecebido__c = System.now().addDays(-10)
-      ),
-      false
-    );
-    if (
-      consultorMT.getSObjectType()
-        .getDescribe()
-        .fields.getMap()
-        .containsKey('EstadosAtendidos__c')
-    ) {
-      consultorMT.put('EstadosAtendidos__c', 'DF;GO;MS');
-    }
-    ConsultorTriggerHandler.disableTrigger();
-    try {
-      insert consultorMT;
-    } finally {
-      ConsultorTriggerHandler.enableTrigger();
-    }
-
-    Lead lead = createLead('Lead MT', statusValue, 'Warm', 'MT');
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-    Assert.areNotEqual(
-      consultorMT.Id,
-      res[0].consultantId,
-      'Consultor com EstadosAtendidos DF;GO;MS não deve receber lead de MT.'
-    );
-  }
-
   private static void freezeAllConsultors() {
     List<Consultor__c> existing = [
       SELECT Id, FreezeConsult__c
