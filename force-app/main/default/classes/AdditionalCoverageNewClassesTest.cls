@@ -321,9 +321,7 @@ private class AdditionalCoverageNewClassesTest {
 
   @IsTest
   static void proposalService_fechadoPerdido_sendsSubStatusPerdido() {
-    if (
-      !TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'ProposalStatus')
-    ) {
+    if (!hasConfiguredProposalStatusEndpoint()) {
       return;
     }
 
@@ -372,5 +370,19 @@ private class AdditionalCoverageNewClassesTest {
       subStatus,
       'SubStatus deve ser 12 (Perdido) para Solar Fechado Perdido'
     );
+  }
+
+  private static Boolean hasConfiguredProposalStatusEndpoint() {
+    if (!Schema.getGlobalDescribe().containsKey('Integrador__mdt')) {
+      return false;
+    }
+
+    List<Integrador__mdt> records = [
+      SELECT URL__c
+      FROM Integrador__mdt
+      WHERE DeveloperName = 'ProposalStatus'
+      LIMIT 1
+    ];
+    return !records.isEmpty() && !String.isBlank(records[0].URL__c);
   }
 }
