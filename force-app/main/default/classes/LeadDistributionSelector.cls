@@ -176,11 +176,15 @@ public with sharing class LeadDistributionSelector {
         if (selectedId != null) {
           return selectedId;
         }
-        selectedId = selectPrioritarioFilter(consultorRegionalId, lead.Rating);
+        selectedId = selectPrioritarioFilter(
+          lead.State,
+          consultorRegionalId,
+          lead.Rating
+        );
         if (selectedId != null) {
           return selectedId;
         }
-        return selectNoState(lead);
+        return null;
       }
 
       if (lead.Rating == 'Hot') {
@@ -192,19 +196,27 @@ public with sharing class LeadDistributionSelector {
         if (selectedId != null) {
           return selectedId;
         }
-        selectedId = selectPrioritarioFilter(consultorRegionalId, lead.Rating);
+        selectedId = selectPrioritarioFilter(
+          lead.State,
+          consultorRegionalId,
+          lead.Rating
+        );
         if (selectedId != null) {
           return selectedId;
         }
-        return selectNoState(lead);
+        return null;
       }
 
       if (lead.Rating == 'Prioritário') {
-        selectedId = selectPrioritarioFilter(consultorRegionalId, lead.Rating);
+        selectedId = selectPrioritarioFilter(
+          lead.State,
+          consultorRegionalId,
+          lead.Rating
+        );
         if (selectedId != null) {
           return selectedId;
         }
-        return selectNoState(lead);
+        return null;
       }
     }
 
@@ -253,14 +265,15 @@ public with sharing class LeadDistributionSelector {
     if (String.isBlank(lead.State)) {
       return null;
     }
+    String stateSuffix = '%' + lead.State;
 
     List<Consultor__c> candidates = [
       SELECT Id, Lb065_UltimoLeadRecebido__c
       FROM Consultor__c
       WHERE
-        Estado__c = :lead.State
-        AND (EstadosAtendidos__c = NULL
-        OR EstadosAtendidos__c INCLUDES (:lead.State))
+        (EstadosAtendidos__c INCLUDES (:lead.State)
+        OR (EstadosAtendidos__c = NULL
+        AND Estado__c LIKE :stateSuffix))
         AND SendLead__c = TRUE
         AND FreezeConsult__c = FALSE
         AND (Lb65_Graduacao__c IN :GRADS_WARM_STATE
@@ -328,9 +341,32 @@ public with sharing class LeadDistributionSelector {
   }
 
   private static Id selectPrioritarioFilter(
+    String leadState,
     Id consultorRegionalId,
     String rating
   ) {
+    if (!String.isBlank(leadState)) {
+      String stateSuffix = '%' + leadState;
+      List<Consultor__c> candidatesWithState = [
+        SELECT Id, Lb065_UltimoLeadRecebido__c
+        FROM Consultor__c
+        WHERE
+          (EstadosAtendidos__c INCLUDES (:leadState)
+          OR (EstadosAtendidos__c = NULL
+          AND Estado__c LIKE :stateSuffix))
+          AND (Lb65_Graduacao__c IN :GRADS_PRIOR_STATE
+          OR (SpecialRange__c = :rating
+          AND SpecialRange__c != NULL))
+          AND SendLead__c = TRUE
+          AND Id != :consultorRegionalId
+          AND FreezeConsult__c = FALSE
+        ORDER BY Lb065_UltimoLeadRecebido__c ASC
+        LIMIT :LOCK_BATCH_SIZE
+      ];
+
+      return lockAndUpdate(candidatesWithState);
+    }
+
     List<Consultor__c> candidates = [
       SELECT Id, Lb065_UltimoLeadRecebido__c
       FROM Consultor__c

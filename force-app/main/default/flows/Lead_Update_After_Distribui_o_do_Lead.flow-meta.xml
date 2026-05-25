@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
         <name>Call_Lead_Integration</name>
@@ -26,7 +26,7 @@
         <actionName>LeadDistributionSelector</actionName>
         <actionType>apex</actionType>
         <connector>
-            <targetReference>get_recordtype</targetReference>
+            <targetReference>Copy_2_of_Has_Owner_Warm</targetReference>
         </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
@@ -53,14 +53,16 @@
             <assignToReference>varConsultorSelecionadoId</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Get_Consultor_Filter_Warm.Id</elementReference>
+                <elementReference
+        >Get_Consultor_Filter_Warm.Id</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
             <assignToReference>varConsultorId.Id</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Get_Consultor_Filter_Warm.Id</elementReference>
+                <elementReference
+        >Get_Consultor_Filter_Warm.Id</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -122,14 +124,16 @@
             <assignToReference>varConsultorSelecionadoId</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Get_Consultor_Filter_Prioritario.Id</elementReference>
+                <elementReference
+        >Get_Consultor_Filter_Prioritario.Id</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
             <assignToReference>varConsultorId</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Get_Consultor_Filter_Prioritario</elementReference>
+                <elementReference
+        >Get_Consultor_Filter_Prioritario</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -188,7 +192,8 @@
         <locationX>1634</locationX>
         <locationY>1505</locationY>
         <assignmentItems>
-            <assignToReference>varConsultorId.Lb065_UltimoLeadRecebido__c</assignToReference>
+            <assignToReference
+      >varConsultorId.Lb065_UltimoLeadRecebido__c</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>NOW</elementReference>
@@ -254,14 +259,16 @@
             <assignToReference>varConsultorSelecionadoId</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Get_Consultant_by_graduation.Id</elementReference>
+                <elementReference
+        >Get_Consultant_by_graduation.Id</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
             <assignToReference>varConsultorId</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Get_Consultant_by_graduation</elementReference>
+                <elementReference
+        >Get_Consultant_by_graduation</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -290,16 +297,13 @@
         <label>Has Owner</label>
         <locationX>402</locationX>
         <locationY>755</locationY>
-        <defaultConnector>
-            <isGoTo>true</isGoTo>
-            <targetReference>Evaluete_Lead_Rating_Filter_True</targetReference>
-        </defaultConnector>
         <defaultConnectorLabel>No</defaultConnectorLabel>
         <rules>
             <name>Copy_3_of_Yes</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>varConsultorSelecionadoId</leftValueReference>
+                <leftValueReference
+        >varConsultorSelecionadoId</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -464,7 +468,8 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Get_Consultor_Filter_Prioritario</targetReference>
+                <targetReference
+        >Get_Consultor_Filter_Prioritario</targetReference>
             </connector>
             <label>Prioritário</label>
         </rules>
@@ -482,7 +487,8 @@
             <name>Copy_1_of_Yes</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>varConsultorSelecionadoId</leftValueReference>
+                <leftValueReference
+        >varConsultorSelecionadoId</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -508,7 +514,8 @@
             <name>YesOwnerHot</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>varConsultorSelecionadoId</leftValueReference>
+                <leftValueReference
+        >varConsultorSelecionadoId</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -534,7 +541,8 @@
             <name>YesHasOwner</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>varConsultorSelecionadoId</leftValueReference>
+                <leftValueReference
+        >varConsultorSelecionadoId</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -560,7 +568,8 @@
             <name>YesHasWarm</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>varConsultorSelecionadoId</leftValueReference>
+                <leftValueReference
+        >varConsultorSelecionadoId</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -604,9 +613,11 @@
         <label>get Consultant by Email</label>
         <locationX>50</locationX>
         <locationY>539</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Copy_1_of_Assign_First_Consultant_Prioritario</targetReference>
+            <targetReference
+      >Copy_1_of_Assign_First_Consultant_Prioritario</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -625,9 +636,11 @@
         <label>Get Consultant by graduation</label>
         <locationX>402</locationX>
         <locationY>539</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Copy_2_of_Copy_1_of_Assign_First_Consultant_Prioritario</targetReference>
+            <targetReference
+      >Copy_2_of_Copy_1_of_Assign_First_Consultant_Prioritario</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -646,7 +659,8 @@
         <label>Get Consultor Filter Hot</label>
         <locationX>1722</locationX>
         <locationY>539</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Assign_First_Consultant_Hot</targetReference>
         </connector>
@@ -676,7 +690,8 @@
             <field>Id</field>
             <operator>NotEqualTo</operator>
             <value>
-                <elementReference>$Record.ConsultorRegional__c</elementReference>
+                <elementReference
+        >$Record.ConsultorRegional__c</elementReference>
             </value>
         </filters>
         <filters>
@@ -718,9 +733,11 @@
         <label>Get Consultor Filter Prioritario</label>
         <locationX>2162</locationX>
         <locationY>539</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Assign_First_Consultant_Prioritario</targetReference>
+            <targetReference
+      >Assign_First_Consultant_Prioritario</targetReference>
         </connector>
         <filterLogic>(1 OR 2 OR (6 AND 7)) AND 3 AND 4 AND 5</filterLogic>
         <filters>
@@ -748,7 +765,8 @@
             <field>Id</field>
             <operator>NotEqualTo</operator>
             <value>
-                <elementReference>$Record.ConsultorRegional__c</elementReference>
+                <elementReference
+        >$Record.ConsultorRegional__c</elementReference>
             </value>
         </filters>
         <filters>
@@ -783,7 +801,8 @@
         <label>Get Consultor Filter Warm</label>
         <locationX>1282</locationX>
         <locationY>539</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Assign_Consultant_Warm</targetReference>
         </connector>
@@ -813,7 +832,8 @@
             <field>Id</field>
             <operator>NotEqualTo</operator>
             <value>
-                <elementReference>$Record.ConsultorRegional__c</elementReference>
+                <elementReference
+        >$Record.ConsultorRegional__c</elementReference>
             </value>
         </filters>
         <filters>
@@ -855,7 +875,8 @@
         <label>get recordtype</label>
         <locationX>1634</locationX>
         <locationY>1289</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Update_Lead_Owner</targetReference>
         </connector>
@@ -876,9 +897,11 @@
         <label>Get Consultant Hot</label>
         <locationX>3218</locationX>
         <locationY>539</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Assign_First_Consultant_Hot_No_State</targetReference>
+            <targetReference
+      >Assign_First_Consultant_Hot_No_State</targetReference>
         </connector>
         <filterLogic>(1 OR 2) AND 3</filterLogic>
         <filters>
@@ -910,9 +933,11 @@
         <label>Get Consultant Prioritario</label>
         <locationX>3482</locationX>
         <locationY>539</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Assign_First_Consultant_Prioritario_No_State</targetReference>
+            <targetReference
+      >Assign_First_Consultant_Prioritario_No_State</targetReference>
         </connector>
         <filterLogic>(1 OR 2 OR 3) AND 4</filterLogic>
         <filters>
@@ -954,9 +979,11 @@
         <label>Get Consultant Warm</label>
         <locationX>2954</locationX>
         <locationY>539</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Assign_First_Consultant_Warm_No_State</targetReference>
+            <targetReference
+      >Assign_First_Consultant_Warm_No_State</targetReference>
         </connector>
         <filterLogic>(1 OR 2) AND 3</filterLogic>
         <filters>
@@ -991,7 +1018,8 @@
         <label>Get Consultor By State</label>
         <locationX>842</locationX>
         <locationY>539</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>AssignFirstConsultantWarm</targetReference>
         </connector>

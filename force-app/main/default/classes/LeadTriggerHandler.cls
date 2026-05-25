@@ -6,7 +6,7 @@
  * @last modified by  : Daniel Belini
  * @test              : IntegracaoGeradorPropostasTest, IntegracaoVOConsultorPreCadastroTest, LeadBOTest,
  *                       LeadDistribuicaoQueueableTest, LeadIntegrationBatchTest, LeadIntegrationServiceTest,
- *                       LeadTriggerTest
+ *                       LeadInteractionLeadSyncServiceTest, LeadTriggerTest
  **/
 public class LeadTriggerHandler extends TriggerHandler {
   public LeadTriggerHandler() {
