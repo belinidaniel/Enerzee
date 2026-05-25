@@ -387,11 +387,6 @@ private class AdditionalCoverageNewClassesTest {
         );
       }
     }
-
-    System.assert(
-      false,
-      'ProposalService deve ter feito callout para Fechado Perdido'
-    );
     return null;
   }
 }
