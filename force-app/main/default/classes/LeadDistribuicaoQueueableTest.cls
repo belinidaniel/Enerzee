@@ -283,4 +283,33 @@ private class LeadDistribuicaoQueueableTest {
 
     Assert.isTrue(true, 'Consultor null não deve enfileirar job');
   }
+
+  @isTest
+  static void testPrivateConstructorAndEmptyExecute() {
+    // Cobre o construtor privado (List<Id>) e o branch de lista vazia no execute.
+    Consultor__c c = createConsultant();
+    Lead lead = createLead(c.Id);
+
+    Test.setMock(HttpCalloutMock.class, new SuccessMock());
+    Test.startTest();
+    // Instancia via construtor privado (@TestVisible) com lista de um elemento —
+    // após processar o lead, leadIds fica vazio e o chaining é avaliado mas não executado.
+    LeadDistribuicaoQueueable job = new LeadDistribuicaoQueueable(
+      new List<Id>{ lead.Id }
+    );
+    System.enqueueJob(job);
+    // Segundo job com lista vazia — cobre o return imediato da linha de guard.
+    System.enqueueJob(new LeadDistribuicaoQueueable(new List<Id>()));
+    Test.stopTest();
+
+    Lead updated = [
+      SELECT Lab065_IntegracaoDistribuicaoLead__c
+      FROM Lead
+      WHERE Id = :lead.Id
+    ];
+    Assert.isTrue(
+      updated.Lab065_IntegracaoDistribuicaoLead__c,
+      'Lead deve estar integrado após execução via construtor privado'
+    );
+  }
 }

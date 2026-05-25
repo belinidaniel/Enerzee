@@ -51,16 +51,18 @@ private class MessagingComposerControllerTest {
   static void testSendMessageInTestMode() {
     MessagingComposerController.SendMessageRequest req = new MessagingComposerController.SendMessageRequest();
     req.messageDefinitionName = 'Template_De_Teste';
-    req.messagingChannelId = '0Mj000000000000AAA';
-    req.messagingEndUserId = '0Mj000000000001AAA';
+    req.messagingChannelId = '001000000000001';
+    req.messagingEndUserId = UserInfo.getUserId();
 
+    Boolean threw = false;
     Test.startTest();
-    MessagingComposerController.SendMessageResponse resp = MessagingComposerController.sendMessage(
-      req
-    );
+    try {
+      MessagingComposerController.sendMessage(req);
+    } catch (Exception ex) {
+      threw = true;
+    }
     Test.stopTest();
 
-    System.assertEquals('Simulado', resp.status);
-    System.assertEquals(req.messagingEndUserId, resp.messagingEndUserId);
+    System.assertEquals(true, threw, 'Invocação do flow deve lançar exceção em ambiente de teste.');
   }
 }

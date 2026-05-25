@@ -840,18 +840,6 @@ public without sharing class MessagingComposerController {
       throw new AuraHandledException('Selecione um canal de envio.');
     }
 
-    if (Test.isRunningTest()) {
-      return new SendMessageResponse(
-        String.isNotBlank(request.messagingEndUserId)
-          ? request.messagingEndUserId
-          : '0Mj000000000001AAA',
-        '0dw000000000001AAA',
-        request.messageDefinitionName,
-        'Simulado',
-        'Fluxo ignorado em modo de teste.'
-      );
-    }
-
     Id messagingEndUserId = resolveMessagingEndUser(request);
 
     Map<String, Object> params = new Map<String, Object>{
