@@ -706,20 +706,15 @@ private class MessagingComposerControllerCoverageTest {
     }
     System.assertEquals(true, missingChannelRaised);
 
-    Boolean sendFlowThrew = false;
-    try {
-      MessagingComposerController.sendMessageJson(
-        '{"messageDefinitionName":"Template","messagingChannelId":"001000000000001","messagingEndUserId":"' +
-          UserInfo.getUserId() +
-          '"}'
-      );
-    } catch (Exception ex) {
-      sendFlowThrew = true;
-    }
+    MessagingComposerController.SendMessageResponse simulatedResponse = MessagingComposerController.sendMessageJson(
+      '{"messageDefinitionName":"Template","messagingChannelId":"001000000000001","messagingEndUserId":"' +
+        UserInfo.getUserId() +
+        '"}'
+    );
     System.assertEquals(
-      true,
-      sendFlowThrew,
-      'Flow invocation deve lançar em ambiente de teste.'
+      'Simulado',
+      simulatedResponse.status,
+      'Flow deve ser simulado em ambiente de teste.'
     );
   }
 
@@ -1075,13 +1070,10 @@ private class MessagingComposerControllerCoverageTest {
     req.enforceConsent = false;
     req.channelConsentType = 'Explicit';
 
-    Boolean sendThrew = false;
-    try {
-      MessagingComposerController.sendMessage(req);
-    } catch (Exception ex) {
-      sendThrew = true;
-    }
-    Assert.isTrue(sendThrew);
+    MessagingComposerController.SendMessageResponse response = MessagingComposerController.sendMessage(
+      req
+    );
+    Assert.areEqual('Simulado', response.status);
 
     // Cover prepareSessionAndLaunchFlow body (resolveChannelId via existingChannelId,
     // buildSessionRequest, resolveMessagingEndUser, findLatestSession, flowInputs map,

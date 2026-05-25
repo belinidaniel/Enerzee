@@ -1422,6 +1422,7 @@ public without sharing class MessagingComposerController {
     endUser.MessagingChannelId = channelId;
     endUser.MessagingPlatformKey = phone;
     endUser.MessagingConsentStatus = 'ImplicitlyOptedIn';
+    endUser.MessageType = 'WhatsApp';
     if (String.isNotBlank(request.contactId)) {
       endUser.ContactId = request.contactId;
     } else if (String.isNotBlank(request.accountId)) {
