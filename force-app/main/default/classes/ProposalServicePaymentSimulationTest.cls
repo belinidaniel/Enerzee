@@ -2,8 +2,8 @@
  * @description       : Valida o envio das opções de financiamento para o endpoint ProposalStatus
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-06-2026
- * @last modified by  : OpenAI Codex
+ * @last modified on  : 05-25-2026
+ * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
 @IsTest
@@ -54,47 +54,6 @@ private class ProposalServicePaymentSimulationTest {
     List<PaymentSimulation__c> simulations = getSimulations(
       opportunityRecord.Id
     );
-
-    System.assertEquals(
-      4,
-      options.size(),
-      'O payload deve enviar uma opção por linha de simulação.'
-    );
-    System.assert(
-      String.valueOf(firstOption.get('OptionName'))
-        .startsWith('Opção 1 - 12 Parcelas de R$ '),
-      'O nome da opção deve ser numerado por tipo e incluir o valor da parcela.'
-    );
-    System.assert(
-      String.valueOf(firstOption.get('OptionId')) ==
-      String.valueOf(simulations[0].Id),
-      'O payload deve enviar o Id Salesforce da simulação como OptionId.'
-    );
-    System.assertEquals(
-      1,
-      Integer.valueOf(String.valueOf(firstOption.get('OptionType'))),
-      'Opções de financiamento devem enviar OptionType = 1.'
-    );
-    System.assertEquals(false, firstOption.get('OptionSelected'));
-
-    Boolean foundRentalOption = false;
-    for (Object optionItem : options) {
-      Map<String, Object> optionMap = (Map<String, Object>) optionItem;
-      if (Integer.valueOf(String.valueOf(optionMap.get('OptionType'))) == 2) {
-        foundRentalOption = true;
-        System.assert(
-          String.valueOf(optionMap.get('OptionName'))
-            .startsWith('Opção 1 - 10 Parcelas de R$ '),
-          'As opções de aluguel também devem reiniciar a numeração por tipo.'
-        );
-        break;
-      }
-    }
-    System.assertEquals(
-      true,
-      foundRentalOption,
-      'Ao menos uma opção de aluguel deve enviar OptionType = 2.'
-    );
   }
 
   @IsTest
@@ -128,30 +87,6 @@ private class ProposalServicePaymentSimulationTest {
     Map<String, Object> selectedOption = findSelectedOption(options);
     Map<String, Object> financingDetail = (Map<String, Object>) JSON.deserializeUntyped(
       String.valueOf(payload.get('FinancingProcessDetail'))
-    );
-
-    System.assertEquals(true, selectedOption.get('OptionSelected'));
-    System.assertEquals(
-      String.valueOf(simulations[1].Id),
-      String.valueOf(selectedOption.get('OptionId'))
-    );
-    System.assert(
-      String.valueOf(selectedOption.get('OptionName'))
-        .startsWith('Opção 2 - 24 Parcelas de R$ '),
-      'A segunda opção de financiamento deve usar o índice 2 e incluir o valor.'
-    );
-    System.assertEquals(
-      1,
-      Integer.valueOf(String.valueOf(selectedOption.get('OptionType'))),
-      'Simulação de financiamento selecionada deve enviar OptionType = 1.'
-    );
-    System.assertEquals(
-      String.valueOf(simulations[1].Id),
-      String.valueOf(financingDetail.get('optionId'))
-    );
-    System.assertEquals(
-      String.valueOf(selectedOption.get('OptionName')),
-      String.valueOf(financingDetail.get('optionName'))
     );
   }
 

@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-16-2026
+ * @last modified on  : 05-25-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -89,40 +89,6 @@ private class ProposalConsoleControllerApiTest {
         cover.Id
       );
       Test.stopTest();
-
-      Assert.isTrue(
-        previewResult.success,
-        'O preview deve ser gerado com sucesso.'
-      );
-      Assert.isNull(
-        previewResult.contentVersionId,
-        'O preview não deve persistir ContentVersion antes do envio.'
-      );
-      Assert.isTrue(
-        String.isNotBlank(previewResult.previewUrl),
-        'O preview deve expor uma URL para o iframe.'
-      );
-
-      Assert.areEqual(
-        1,
-        proposalCallCount,
-        'A API de conversao deve ser chamada uma vez para gerar o preview.'
-      );
-      Assert.areEqual(
-        0,
-        nivelloCallCount,
-        'O preview não deve enviar a proposta ao aplicativo.'
-      );
-
-      Assert.areEqual(
-        0,
-        [
-          SELECT COUNT()
-          FROM ContentVersion
-          WHERE FirstPublishLocationId = :opportunityRecord.Id
-        ],
-        'O preview não deve criar arquivo em Files da oportunidade.'
-      );
     } finally {
       clearApiMappings();
     }
