@@ -355,11 +355,39 @@ private class AdditionalCoverageNewClassesTest {
     ProposalService.updateOpportunityPhase(new Set<Id>{ opp.Id });
     Test.stopTest();
 
-    Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(
-      sal496RequestBodies[0]
-    );
+    Map<String, Object> payload = getProposalStatusPayloadFromLog(opp.Id);
     Integer subStatus = (Integer) payload.get('SubStatus');
-    // Solar statusEnum=10, 'Perdido'=12
+    Assert.areEqual(
+      12,
+      subStatus,
+      'SubStatus deve ser 12 (Perdido) para Solar Fechado Perdido'
+    );
+  }
+
+  private static Map<String, Object> getProposalStatusPayloadFromLog(Id oppId) {
+    List<Log__c> logs = [
+      SELECT RequestBody__c
+      FROM Log__c
+      WHERE
+        Class__c = 'ProposalService'
+        AND Method__c = 'updateOpportunityPhase'
+        AND RelatedId__c = :String.valueOf(oppId)
+      ORDER BY CreatedDate DESC
+      LIMIT 10
+    ];
+    for (Log__c logRecord : logs) {
+      if (!String.isBlank(logRecord.RequestBody__c)) {
+        return (Map<String, Object>) JSON.deserializeUntyped(
+          logRecord.RequestBody__c
+        );
+      }
+    }
+
+    Assert.isFalse(
+      true,
+      'ProposalService deve ter gravado log com payload para Fechado Perdido'
+    );
+    return null;
   }
 
   private static Boolean hasConfiguredProposalStatusEndpoint() {

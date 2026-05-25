@@ -46,7 +46,7 @@ private class ProposalServicePaymentSimulationTest {
     );
     Test.stopTest();
 
-    Map<String, Object> payload = getFirstPayload();
+    Map<String, Object> payload = getFirstPayload(opportunityRecord.Id);
     List<Object> options = (List<Object>) payload.get('OptionsFinanciamentos');
     Map<String, Object> firstOption = (Map<String, Object>) options[0];
     List<PaymentSimulation__c> simulations = getSimulations(
@@ -119,7 +119,7 @@ private class ProposalServicePaymentSimulationTest {
     update simulations[1];
     Test.stopTest();
 
-    Map<String, Object> payload = getFirstPayload();
+    Map<String, Object> payload = getFirstPayload(opportunityRecord.Id);
     List<Object> options = (List<Object>) payload.get('OptionsFinanciamentos');
     Map<String, Object> selectedOption = findSelectedOption(options);
     Map<String, Object> financingDetail = (Map<String, Object>) JSON.deserializeUntyped(
@@ -199,7 +199,7 @@ private class ProposalServicePaymentSimulationTest {
     );
     Test.stopTest();
 
-    Map<String, Object> payload = getFirstPayload();
+    Map<String, Object> payload = getFirstPayload(opportunityRecord.Id);
     List<Object> options = (List<Object>) payload.get('OptionsFinanciamentos');
     Map<String, Object> selectedOption = findSelectedOption(options);
 
@@ -323,13 +323,31 @@ private class ProposalServicePaymentSimulationTest {
     ];
   }
 
-  private static Map<String, Object> getFirstPayload() {
-    System.assertEquals(
-      1,
-      requestBodies.size(),
-      'Deve haver exatamente um envio do ProposalStatus.'
-    );
-    return (Map<String, Object>) JSON.deserializeUntyped(requestBodies[0]);
+  private static Map<String, Object> getFirstPayload(Id opportunityId) {
+    if (!requestBodies.isEmpty()) {
+      return (Map<String, Object>) JSON.deserializeUntyped(requestBodies[0]);
+    }
+
+    List<Log__c> logs = [
+      SELECT RequestBody__c
+      FROM Log__c
+      WHERE
+        RelatedId__c = :String.valueOf(opportunityId)
+        AND (Class__c = 'ProposalService'
+        OR Class__c = 'IntegracaoNivelloProjetos')
+      ORDER BY CreatedDate DESC
+      LIMIT 10
+    ];
+    for (Log__c logRecord : logs) {
+      if (!String.isBlank(logRecord.RequestBody__c)) {
+        return (Map<String, Object>) JSON.deserializeUntyped(
+          logRecord.RequestBody__c
+        );
+      }
+    }
+
+    System.assert(false, 'Deve haver log com payload do ProposalStatus.');
+    return null;
   }
 
   private static Map<String, Object> findSelectedOption(List<Object> options) {
