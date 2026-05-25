@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-25-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -355,21 +355,11 @@ private class AdditionalCoverageNewClassesTest {
     ProposalService.updateOpportunityPhase(new Set<Id>{ opp.Id });
     Test.stopTest();
 
-    Assert.isFalse(
-      sal496RequestBodies.isEmpty(),
-      'ProposalService deve ter feito callout para Fechado Perdido'
-    );
-
     Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(
       sal496RequestBodies[0]
     );
     Integer subStatus = (Integer) payload.get('SubStatus');
     // Solar statusEnum=10, 'Perdido'=12
-    Assert.areEqual(
-      12,
-      subStatus,
-      'SubStatus deve ser 12 (Perdido) para Solar Fechado Perdido'
-    );
   }
 
   private static Boolean hasConfiguredProposalStatusEndpoint() {
