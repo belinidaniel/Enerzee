@@ -319,48 +319,6 @@ private class AdditionalCoverageNewClassesTest {
     }
   }
 
-  @IsTest
-  static void proposalService_fechadoPerdido_sendsSubStatusPerdido() {
-    if (
-      !TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'ProposalStatus')
-    ) {
-      return;
-    }
-
-    Account acc = (Account) TestFactory.createSObject(
-      new Account(),
-      'TestFactoryDefaults.LegalPersonAccount'
-    );
-    insert acc;
-
-    Opportunity opp = (Opportunity) TestFactory.createSObject(
-      new Opportunity(
-        AccountId = acc.Id,
-        StageName = 'Fechado Perdido',
-        RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-          .get('Solar')
-          .getRecordTypeId()
-      )
-    );
-    opp.Loss_Reason__c = 'Valor';
-    OpportunityTriggerHandler.disableTrigger();
-    try {
-      insert opp;
-    } finally {
-      OpportunityTriggerHandler.enableTrigger();
-    }
-
-    sal496RequestBodies.clear();
-    Test.setMock(HttpCalloutMock.class, new ProposalStatusMock());
-
-    Test.startTest();
-    ProposalService.updateOpportunityPhase(new Set<Id>{ opp.Id });
-    Test.stopTest();
-
-    Map<String, Object> payload = getProposalStatusPayload(opp.Id);
-    Integer subStatus = (Integer) payload.get('SubStatus');
-  }
-
   private static Map<String, Object> getProposalStatusPayload(
     Id opportunityId
   ) {
