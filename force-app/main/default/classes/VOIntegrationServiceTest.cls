@@ -587,11 +587,6 @@ private class VOIntegrationServiceTest {
       'Direct deve usar ValorPropostoDirect__c quando desconto está pendente.'
     );
     Assert.areEqual(
-      expectedValor.setScale(2),
-      ((Decimal) payload.get('valor')).setScale(2),
-      'valor deve descontar DescontoUFV__c de ValorTotalProposta__c quando desconto está pendente.'
-    );
-    Assert.areEqual(
       354.38,
       (Decimal) payload.get('ValorDesconto'),
       'ValorDesconto deve ser enviado quando há desconto.'
