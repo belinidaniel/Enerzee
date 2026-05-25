@@ -274,11 +274,11 @@ private class LeadDistributionSelectorTest {
       true,
       System.now().addDays(-3)
     );
-    // priorityConsultor: Diamond grad, no state filter applied in selectPrioritarioFilter
+    // priorityConsultor: Diamond grad and eligible for the lead state.
     Consultor__c priorityConsultor = createConsultor(
       'Diamond',
       null,
-      null,
+      'MG',
       true,
       System.now().addDays(-7)
     );
@@ -555,25 +555,17 @@ private class LeadDistributionSelectorTest {
   }
 
   @isTest
-  static void testWarmLeadWithStateNoMatchFallsToNoState() {
+  static void testWarmLeadWithStateNoMatchReturnsNull() {
     String statusValue = getNonNovoStatus();
     if (String.isBlank(statusValue)) {
       return;
     }
 
-    // Consultor with Advisor graduation active (GRADS_WARM_NO_STATE), no matching state
-    Consultor__c noStateConsultor = createConsultor(
-      'Advisor',
-      null,
-      null,
-      true,
-      System.now().addDays(-3)
-    );
+    // Consultor with Advisor graduation active (GRADS_WARM_NO_STATE), no matching state.
+    createConsultor('Advisor', null, null, true, System.now().addDays(-3));
 
-    // Warm lead WITH a state, but no consultor in that state
-    // → selectByState returns null → selectWarmFilter(null region) returns null
-    // → selectHotFilter(null region) returns null → selectPrioritarioFilter returns null
-    // → selectNoState(Warm) → selectNoStateByGraduation(GRADS_WARM_NO_STATE) → finds noStateConsultor
+    // Warm lead WITH a state, but no consultor in that state.
+    // A configured lead state must not fall back to an unrelated no-state consultor.
     Lead lead = createLead(
       'Lead Warm With State No Match',
       statusValue,
@@ -589,10 +581,9 @@ private class LeadDistributionSelectorTest {
     );
 
     Assert.areEqual(1, res.size());
-    Assert.areEqual(
-      noStateConsultor.Id,
+    Assert.isNull(
       res[0].consultantId,
-      'Fallback para selectNoState deve encontrar consultor sem estado.'
+      'Lead com estado configurado nao deve cair em consultor sem aderencia ao estado.'
     );
   }
 
