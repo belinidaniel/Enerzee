@@ -29,7 +29,10 @@ private class LeadInteractionLeadSyncServiceTest {
 
     LeadTriggerHandler.disableTrigger();
     try {
-      insert interaction;
+      LeadInteractionLeadSyncService.syncToLeads(
+        new List<LeadInteraction__c>{ interaction },
+        null
+      );
     } finally {
       LeadTriggerHandler.enableTrigger();
     }
@@ -142,7 +145,10 @@ private class LeadInteractionLeadSyncServiceTest {
 
     LeadTriggerHandler.disableTrigger();
     try {
-      insert interaction;
+      LeadInteractionLeadSyncService.syncToLeads(
+        new List<LeadInteraction__c>{ interaction },
+        null
+      );
     } finally {
       LeadTriggerHandler.enableTrigger();
     }
@@ -169,6 +175,101 @@ private class LeadInteractionLeadSyncServiceTest {
     Assert.isTrue(logRecord.RequestBody__c.contains('email-invalido'));
     Assert.isTrue(logRecord.RequestBody__c.contains('leadFieldsAttempted'));
     Assert.isTrue(logRecord.ResponseBody__c.contains('leadInteraction'));
+  }
+
+  @isTest
+  static void shouldHandleGuardClausesAndMissingLeadWithoutBlocking() {
+    LeadInteractionLeadSyncService.syncToLeads(null, null);
+    LeadInteractionLeadSyncService.syncToLeads(
+      new List<LeadInteraction__c>(),
+      null
+    );
+
+    LeadInteractionLeadSyncService.syncToLeads(
+      new List<LeadInteraction__c>{
+        new LeadInteraction__c(Nome__c = 'Sem Lead')
+      },
+      null
+    );
+
+    List<Log__c> logs = [
+      SELECT Method__c, Message__c, RelatedId__c
+      FROM Log__c
+      WHERE Class__c = 'LeadInteractionLeadSyncService'
+      ORDER BY CreatedDate
+    ];
+
+    Boolean foundNoLeadLog = false;
+    for (Log__c logRecord : logs) {
+      foundNoLeadLog =
+        foundNoLeadLog ||
+        logRecord.Message__c.contains('LeadInteraction sem Lead__c');
+    }
+    Assert.isTrue(foundNoLeadLog);
+  }
+
+  @isTest
+  static void shouldMapDocumentsPhonesAndScoreRanges() {
+    Lead lowValueLead = createLead('Low Value', 'Other');
+    Lead highValueLead = createLead('High Value', 'Purchased List');
+
+    LeadInteractionLeadSyncService.syncToLeads(
+      new List<LeadInteraction__c>{
+        new LeadInteraction__c(
+          Lead__c = lowValueLead.Id,
+          CPF_CNPJ__c = '12.345.678/0001-95',
+          Telefone__c = '+55 (51) 99999-8888',
+          ValorConta__c = '199,99'
+        ),
+        new LeadInteraction__c(
+          Lead__c = highValueLead.Id,
+          CPF_CNPJ__c = 'documento invalido',
+          Telefone__c = '123',
+          ValorConta__c = '6.000,00'
+        )
+      },
+      null
+    );
+
+    Map<Id, Lead> leads = new Map<Id, Lead>(
+      [
+        SELECT
+          CNPJ__c,
+          MobilePhone,
+          Phone,
+          Lb065_FaturaEnergia__c,
+          CustoEnergiaMes__c,
+          ValorContaEnergia__c,
+          Lb065_PontuacaoFatura__c,
+          Lb065_PontuacaoOrigem__c
+        FROM Lead
+        WHERE Id IN :new Set<Id>{ lowValueLead.Id, highValueLead.Id }
+      ]
+    );
+
+    Lead lowValueUpdated = leads.get(lowValueLead.Id);
+    Assert.areEqual('12345678000195', lowValueUpdated.CNPJ__c);
+    Assert.areEqual('5551999998888', lowValueUpdated.MobilePhone);
+    Assert.areEqual('5551999998888', lowValueUpdated.Phone);
+    Assert.areEqual(
+      Decimal.valueOf('199.99'),
+      lowValueUpdated.Lb065_FaturaEnergia__c
+    );
+    Assert.areEqual('até R$ 300', lowValueUpdated.CustoEnergiaMes__c);
+    Assert.areEqual('Até R$ 200', lowValueUpdated.ValorContaEnergia__c);
+    Assert.areEqual(2, lowValueUpdated.Lb065_PontuacaoFatura__c);
+    Assert.areEqual(1, lowValueUpdated.Lb065_PontuacaoOrigem__c);
+
+    Lead highValueUpdated = leads.get(highValueLead.Id);
+    Assert.isNull(highValueUpdated.MobilePhone);
+    Assert.areEqual(
+      Decimal.valueOf('6000'),
+      highValueUpdated.Lb065_FaturaEnergia__c
+    );
+    Assert.areEqual('mais de R$ 1.000', highValueUpdated.CustoEnergiaMes__c);
+    Assert.areEqual('Acima de R$ 500', highValueUpdated.ValorContaEnergia__c);
+    Assert.areEqual(20, highValueUpdated.Lb065_PontuacaoFatura__c);
+    Assert.areEqual(3, highValueUpdated.Lb065_PontuacaoOrigem__c);
   }
 
   private static Lead createLead(String lastName, String leadSource) {
