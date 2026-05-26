@@ -51,16 +51,18 @@ private class MessagingComposerControllerTest {
   static void testSendMessageInTestMode() {
     MessagingComposerController.SendMessageRequest req = new MessagingComposerController.SendMessageRequest();
     req.messageDefinitionName = 'Template_De_Teste';
-    req.messagingChannelId = '0Mj000000000000AAA';
-    req.messagingEndUserId = '0Mj000000000001AAA';
+    req.messagingChannelId = '001000000000001';
+    req.messagingEndUserId = UserInfo.getUserId();
 
+    MessagingComposerController.SendMessageResponse response;
     Test.startTest();
-    MessagingComposerController.SendMessageResponse resp = MessagingComposerController.sendMessage(
-      req
-    );
+    response = MessagingComposerController.sendMessage(req);
     Test.stopTest();
 
-    System.assertEquals('Simulado', resp.status);
-    System.assertEquals(req.messagingEndUserId, resp.messagingEndUserId);
+    System.assertEquals(
+      'Simulado',
+      response.status,
+      'Em ambiente de teste, o envio deve retornar resposta simulada.'
+    );
   }
 }

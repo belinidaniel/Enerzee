@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-25-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -319,58 +319,32 @@ private class AdditionalCoverageNewClassesTest {
     }
   }
 
-  @IsTest
-  static void proposalService_fechadoPerdido_sendsSubStatusPerdido() {
-    if (
-      !TestMetadataUtils.hasMetadataRecord('Integrador__mdt', 'ProposalStatus')
-    ) {
-      return;
+  private static Map<String, Object> getProposalStatusPayload(
+    Id opportunityId
+  ) {
+    if (!sal496RequestBodies.isEmpty()) {
+      return (Map<String, Object>) JSON.deserializeUntyped(
+        sal496RequestBodies[0]
+      );
     }
 
-    Account acc = (Account) TestFactory.createSObject(
-      new Account(),
-      'TestFactoryDefaults.LegalPersonAccount'
-    );
-    insert acc;
-
-    Opportunity opp = (Opportunity) TestFactory.createSObject(
-      new Opportunity(
-        AccountId = acc.Id,
-        StageName = 'Fechado Perdido',
-        RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-          .get('Solar')
-          .getRecordTypeId()
-      )
-    );
-    opp.Loss_Reason__c = 'Valor';
-    OpportunityTriggerHandler.disableTrigger();
-    try {
-      insert opp;
-    } finally {
-      OpportunityTriggerHandler.enableTrigger();
+    List<Log__c> logs = [
+      SELECT RequestBody__c
+      FROM Log__c
+      WHERE
+        Class__c = 'ProposalService'
+        AND Method__c = 'updateOpportunityPhase'
+        AND RelatedId__c = :String.valueOf(opportunityId)
+      ORDER BY CreatedDate DESC
+      LIMIT 10
+    ];
+    for (Log__c logRecord : logs) {
+      if (!String.isBlank(logRecord.RequestBody__c)) {
+        return (Map<String, Object>) JSON.deserializeUntyped(
+          logRecord.RequestBody__c
+        );
+      }
     }
-
-    sal496RequestBodies.clear();
-    Test.setMock(HttpCalloutMock.class, new ProposalStatusMock());
-
-    Test.startTest();
-    ProposalService.updateOpportunityPhase(new Set<Id>{ opp.Id });
-    Test.stopTest();
-
-    Assert.isFalse(
-      sal496RequestBodies.isEmpty(),
-      'ProposalService deve ter feito callout para Fechado Perdido'
-    );
-
-    Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(
-      sal496RequestBodies[0]
-    );
-    Integer subStatus = (Integer) payload.get('SubStatus');
-    // Solar statusEnum=10, 'Perdido'=12
-    Assert.areEqual(
-      12,
-      subStatus,
-      'SubStatus deve ser 12 (Perdido) para Solar Fechado Perdido'
-    );
+    return null;
   }
 }

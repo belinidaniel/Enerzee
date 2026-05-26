@@ -92,6 +92,77 @@ private class OpportunityBOCoverageTest {
     return client;
   }
 
+  private static Account createProposalAccount(String namePrefix) {
+    Account account = new Account(
+      Name = TestFactory.nextUniqueValue(namePrefix)
+    );
+    Database.DMLOptions options = new Database.DMLOptions();
+    options.DuplicateRuleHeader.allowSave = true;
+    account.setOptions(options);
+    insert account;
+    return account;
+  }
+
+  private static Opportunity createSolarProposalOpportunity() {
+    Id solarRecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+      .get('Solar')
+      .getRecordTypeId();
+    ProposalCover__c proposalCover = (ProposalCover__c) TestFactory.createSObject(
+      new ProposalCover__c(Template__c = 'ModeloPropostaA'),
+      true
+    );
+    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
+      new Parceiro__c(
+        Name = TestFactory.nextUniqueValue('ParceiroSolar'),
+        Produto__c = 'Solar',
+        CapaProposta__c = proposalCover.Id
+      ),
+      true
+    );
+    OpportunityTriggerHandler.disableTrigger();
+    try {
+      Opportunity opportunityRecord = new Opportunity(
+        AccountId = createProposalAccount('ContaSolar').Id,
+        Name = TestFactory.nextUniqueValue('OppSolarProposal'),
+        StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
+        CloseDate = Date.today().addDays(10),
+        RecordTypeId = solarRecordTypeId,
+        IdVirtualOffice__c = TestFactory.nextUniqueValue('VO-SOLAR'),
+        ParceiroRegistroOportunidade__c = 'Revo',
+        Parceiro__c = parceiro.Id,
+        GrupoTarifario__c = 'Grupo B',
+        PotenciaPicoSistema__c = 1,
+        ValidadeProposta__c = '7',
+        ConsumoAnual__c = 1,
+        CustoMedioEnergia__c = 1,
+        NumeroModulos__c = 1,
+        FabricanteModulos__c = 'Fabricante',
+        Modelo__c = 'Modelo',
+        PotenciaNominalWp__c = 550,
+        Pesokg__c = 1,
+        NumeroInversores__c = 1,
+        FabricanteInversor__c = 'Fabricante',
+        ModeloInversor__c = 'Modelo Inversor',
+        PotenciaNominalSistema__c = 100,
+        GeracaoAnualEstimada__c = 100,
+        GeracaoMensalEstimada__c = 10,
+        PaybackAnos__c = 1,
+        EconomiaMensalEstimada__c = 10,
+        EconomiaAnualEstimada__c = 100,
+        EconomiaAcumulada__c = 100,
+        TipoTelhadoEstrutura__c = 'Ao Solo',
+        AreaM__c = 10,
+        PrazoEntregaDias__c = '30',
+        Amount = 1000,
+        PropostaGerada__c = false
+      );
+      insert opportunityRecord;
+      return opportunityRecord;
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
+  }
+
   @isTest
   static void shouldMapOpportunityFieldsFromRest() {
     OpportunityRecordsTO.SingleOpportunity single = buildRestOpportunity();
@@ -259,6 +330,23 @@ private class OpportunityBOCoverageTest {
     System.assertEquals(
       false,
       OpportunityBO.areRequiredFieldsFilledConnect(connect)
+    );
+  }
+
+  @isTest
+  static void shouldPreserveSolarProposalEligibility() {
+    ApprovalProcessService.queuedProposalOpps.clear();
+    Opportunity oldOpportunity = createSolarProposalOpportunity();
+    Opportunity newOpportunity = oldOpportunity.clone(true, true, true, true);
+
+    OpportunityBO.generateProposalAsync(
+      new Map<Id, Opportunity>{ newOpportunity.Id => newOpportunity },
+      new Map<Id, Opportunity>{ oldOpportunity.Id => oldOpportunity }
+    );
+
+    Assert.isTrue(
+      ApprovalProcessService.queuedProposalOpps.contains(newOpportunity.Id),
+      'Solar deve continuar usando os criterios obrigatorios existentes.'
     );
   }
 
@@ -650,7 +738,11 @@ private class OpportunityBOCoverageTest {
         new Map<Id, Opportunity>{ opp.Id => opp }
       );
 
-      Assert.areEqual(null, toUpdate.DescontoUFV__c, 'Desconto deve ser zerado quando nova viabilidade tem custos');
+      Assert.areEqual(
+        null,
+        toUpdate.DescontoUFV__c,
+        'Desconto deve ser zerado quando nova viabilidade tem custos'
+      );
     } finally {
       OpportunityTriggerHandler.enableTrigger();
     }
@@ -686,7 +778,11 @@ private class OpportunityBOCoverageTest {
         new Map<Id, Opportunity>{ opp.Id => opp }
       );
 
-      Assert.areEqual(500, toUpdate.DescontoUFV__c, 'Desconto deve ser mantido quando nova viabilidade não tem custos');
+      Assert.areEqual(
+        500,
+        toUpdate.DescontoUFV__c,
+        'Desconto deve ser mantido quando nova viabilidade não tem custos'
+      );
     } finally {
       OpportunityTriggerHandler.enableTrigger();
     }

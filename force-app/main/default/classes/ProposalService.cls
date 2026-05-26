@@ -20,6 +20,8 @@ public class ProposalService {
         Id,
         IdVirtualOffice__c,
         StageName,
+        IsClosed,
+        IsWon,
         Observacoes__c,
         recordType.Name,
         Status__c,
@@ -53,8 +55,30 @@ public class ProposalService {
         statusEnum,
         opportunity.Status__c
       );
-      System.debug('statusEnum');
-      System.debug(statusEnum);
+
+      Utils.LogDTO entryLog = new Utils.LogDTO();
+      entryLog.className = 'ProposalService';
+      entryLog.methodName = 'updateOpportunityPhase';
+      entryLog.relatedId = opportunity.Id;
+      entryLog.typeName = 'INFO';
+      entryLog.message =
+        'SAL-496 entry | StageName=' +
+        opportunity.StageName +
+        ' | IsClosed=' +
+        opportunity.IsClosed +
+        ' | IsWon=' +
+        opportunity.IsWon +
+        ' | Status__c=' +
+        opportunity.Status__c +
+        ' | Loss_Reason__c=' +
+        opportunity.Loss_Reason__c +
+        ' | recordType=' +
+        opportunity.recordType.Name +
+        ' | statusEnum=' +
+        statusEnum +
+        ' | substatusId=' +
+        substatusId;
+      Utils.createLog(entryLog);
 
       GORecordsTO request = new GORecordsTO();
       request.IdSalesForce = opportunity.Id;
@@ -73,14 +97,23 @@ public class ProposalService {
         : new List<GORecordsTO.FinancingOptionTO>();
       request.Value = opportunity.ValorTotalProposta__c;
 
-      if (
-        OpportunityUtils.STATUS_FECHADO_PERDIDO.equalsIgnoreCase(
-          opportunity.StageName
-        )
-      ) {
+      if (opportunity.IsClosed && !opportunity.IsWon) {
         substatusId = StatusEnumMap.getSubstatusEnum(statusEnum, 'Perdido');
         request.SubStatus = substatusId;
-        request.LossReason = getLossReasonAsInteger(opportunity.Loss_Reason__c);
+        Integer lossReasonInt = getLossReasonAsInteger(opportunity.Loss_Reason__c);
+        if (lossReasonInt == null && !String.isBlank(opportunity.Loss_Reason__c)) {
+          Utils.LogDTO lossLog = new Utils.LogDTO();
+          lossLog.className = 'ProposalService';
+          lossLog.methodName = 'updateOpportunityPhase';
+          lossLog.relatedId = opportunity.Id;
+          lossLog.typeName = 'WARNING';
+          lossLog.message =
+            'SAL-496 LossReason not mapped: "' +
+            opportunity.Loss_Reason__c +
+            '"';
+          Utils.createLog(lossLog);
+        }
+        request.LossReason = lossReasonInt;
         request.DescriptionReasonLoss = opportunity.DescricaoMotivoPerda__c;
       }
 
