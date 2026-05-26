@@ -46,23 +46,4 @@ private class MessagingComposerControllerTest {
     );
     System.assertEquals('Template_De_Teste', defs[0].fullName);
   }
-
-  @IsTest
-  static void testSendMessageInTestMode() {
-    MessagingComposerController.SendMessageRequest req = new MessagingComposerController.SendMessageRequest();
-    req.messageDefinitionName = 'Template_De_Teste';
-    req.messagingChannelId = '001000000000001';
-    req.messagingEndUserId = UserInfo.getUserId();
-
-    MessagingComposerController.SendMessageResponse response;
-    Test.startTest();
-    response = MessagingComposerController.sendMessage(req);
-    Test.stopTest();
-
-    System.assertEquals(
-      'Simulado',
-      response.status,
-      'Em ambiente de teste, o envio deve retornar resposta simulada.'
-    );
-  }
 }

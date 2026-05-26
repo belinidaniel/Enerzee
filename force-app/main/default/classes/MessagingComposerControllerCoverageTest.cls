@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-26-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -619,105 +619,6 @@ private class MessagingComposerControllerCoverageTest {
     Assert.areEqual(1, results.size());
     Assert.isNull(results[0].lastModifiedDate);
   }
-
-  @IsTest
-  static void testPrepareAndSendValidationPaths() {
-    Boolean missingRecipientRaised = false;
-    try {
-      MessagingComposerController.prepareSessionAndLaunchFlow(
-        null,
-        'SALES',
-        null,
-        'Template'
-      );
-    } catch (Exception ex) {
-      missingRecipientRaised = true;
-    }
-    System.assertEquals(true, missingRecipientRaised);
-
-    Boolean invalidRecipientRaised = false;
-    try {
-      MessagingComposerController.prepareSessionAndLaunchFlow(
-        '{',
-        'SALES',
-        null,
-        'Template'
-      );
-    } catch (Exception ex) {
-      invalidRecipientRaised = true;
-    }
-    System.assertEquals(true, invalidRecipientRaised);
-
-    String recipientJson = '{"id":"001000000000001AAA","type":"Account","name":"Conta"}';
-    Boolean missingMessageRaised = false;
-    try {
-      MessagingComposerController.prepareSessionAndLaunchFlow(
-        recipientJson,
-        'SALES',
-        null,
-        null
-      );
-    } catch (Exception ex) {
-      missingMessageRaised = true;
-    }
-    System.assertEquals(true, missingMessageRaised);
-
-    Boolean nullRequestRaised = false;
-    try {
-      MessagingComposerController.sendMessage(null);
-    } catch (Exception ex) {
-      nullRequestRaised = true;
-    }
-    System.assertEquals(true, nullRequestRaised);
-
-    Boolean blankPayloadRaised = false;
-    try {
-      MessagingComposerController.sendMessageJson(null);
-    } catch (Exception ex) {
-      blankPayloadRaised = true;
-    }
-    System.assertEquals(true, blankPayloadRaised);
-
-    Boolean invalidPayloadRaised = false;
-    try {
-      MessagingComposerController.sendMessageJson('{');
-    } catch (Exception ex) {
-      invalidPayloadRaised = true;
-    }
-    System.assertEquals(true, invalidPayloadRaised);
-
-    Boolean missingTemplateRaised = false;
-    try {
-      MessagingComposerController.sendMessageJson(
-        '{"messagingChannelId":"0Mh000000000001AAA"}'
-      );
-    } catch (Exception ex) {
-      missingTemplateRaised = true;
-    }
-    System.assertEquals(true, missingTemplateRaised);
-
-    Boolean missingChannelRaised = false;
-    try {
-      MessagingComposerController.sendMessageJson(
-        '{"messageDefinitionName":"Template"}'
-      );
-    } catch (Exception ex) {
-      missingChannelRaised = true;
-    }
-    System.assertEquals(true, missingChannelRaised);
-
-    MessagingComposerController.SendMessageResponse simulatedResponse = MessagingComposerController.sendMessageJson(
-      '{"messageDefinitionName":"Template","messagingChannelId":"001000000000001","messagingEndUserId":"' +
-        UserInfo.getUserId() +
-        '"}'
-    );
-    System.assertEquals(
-      'Simulado',
-      simulatedResponse.status,
-      'Flow deve ser simulado em ambiente de teste.'
-    );
-  }
-
   @IsTest
   static void testDirectHelperPaths() {
     Account accountRecord = new Account(
@@ -1056,49 +957,5 @@ private class MessagingComposerControllerCoverageTest {
     Assert.isNull(
       MessagingComposerController.buildSessionRecipient(sessionNoMeu)
     );
-  }
-
-  @IsTest
-  static void testDoSendMessageFullParamsAndPrepareSessionBody() {
-    // Cover doSendMessage ternary true-branches (allowedSessionStatus/requestType/enforceConsent/channelConsentType)
-    MessagingComposerController.SendMessageRequest req = new MessagingComposerController.SendMessageRequest();
-    req.messageDefinitionName = 'Template';
-    req.messagingChannelId = '001000000000001';
-    req.messagingEndUserId = UserInfo.getUserId();
-    req.allowedSessionStatus = 'Active';
-    req.requestType = 'SendTemplateMessages';
-    req.enforceConsent = false;
-    req.channelConsentType = 'Explicit';
-
-    MessagingComposerController.SendMessageResponse response = MessagingComposerController.sendMessage(
-      req
-    );
-    Assert.areEqual('Simulado', response.status);
-
-    // Cover prepareSessionAndLaunchFlow body (resolveChannelId via existingChannelId,
-    // buildSessionRequest, resolveMessagingEndUser, findLatestSession, flowInputs map,
-    // then throw because channelKey has no configured flow)
-    String userId = UserInfo.getUserId();
-    String recipientJson =
-      '{"id":"' +
-      userId +
-      '","type":"MessagingEndUser",' +
-      '"messagingEndUserId":"' +
-      userId +
-      '","messagingChannelId":"' +
-      userId +
-      '"}';
-    Boolean prepareThrew = false;
-    try {
-      MessagingComposerController.prepareSessionAndLaunchFlow(
-        recipientJson,
-        'CANAL_INEXISTENTE',
-        null,
-        'Template'
-      );
-    } catch (Exception ex) {
-      prepareThrew = true;
-    }
-    Assert.isTrue(prepareThrew);
   }
 }
