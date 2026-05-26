@@ -179,12 +179,17 @@ public without sharing class LeadInteractionLeadSyncService {
   ) {
     Boolean hasChanges = false;
     Boolean hasInvalidEmail = false;
+    String firstName = interaction.Nome__c;
+    String lastName = interaction.Sobrenome__c;
+    if (String.isBlank(firstName) && !String.isBlank(lastName)) {
+      List<String> nameParts = splitFullName(lastName);
+      firstName = nameParts[0];
+      lastName = nameParts[1];
+    }
 
     hasChanges =
-      assignText(leadUpdate, Lead.FirstName, interaction.Nome__c) || hasChanges;
-    hasChanges =
-      assignText(leadUpdate, Lead.LastName, interaction.Sobrenome__c) ||
-      hasChanges;
+      assignText(leadUpdate, Lead.FirstName, firstName) || hasChanges;
+    hasChanges = assignText(leadUpdate, Lead.LastName, lastName) || hasChanges;
     if (!String.isBlank(interaction.Email__c)) {
       if (isValidEmail(interaction.Email__c)) {
         leadUpdate.Email = interaction.Email__c.trim();
@@ -300,6 +305,24 @@ public without sharing class LeadInteractionLeadSyncService {
       return true;
     }
     return false;
+  }
+
+  private static List<String> splitFullName(String rawName) {
+    String normalizedName = String.isBlank(rawName)
+      ? null
+      : rawName.trim().replaceAll('\\s+', ' ');
+    if (String.isBlank(normalizedName)) {
+      return new List<String>{ null, null };
+    }
+
+    Integer firstSeparatorIndex = normalizedName.indexOf(' ');
+    if (firstSeparatorIndex <= 0) {
+      return new List<String>{ null, normalizedName };
+    }
+    return new List<String>{
+      normalizedName.substring(0, firstSeparatorIndex),
+      normalizedName.substring(firstSeparatorIndex + 1)
+    };
   }
 
   private static Boolean changed(Object currentValue, Object oldValue) {

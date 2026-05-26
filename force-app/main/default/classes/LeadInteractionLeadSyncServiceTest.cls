@@ -178,6 +178,29 @@ private class LeadInteractionLeadSyncServiceTest {
   }
 
   @isTest
+  static void shouldSplitFullNameStoredOnlyInInteractionLastNameWhenSyncingLead() {
+    Lead lead = createLead('Nome Antigo', 'Website');
+
+    LeadInteractionLeadSyncService.syncToLeads(
+      new List<LeadInteraction__c>{
+        new LeadInteraction__c(
+          Lead__c = lead.Id,
+          Sobrenome__c = 'Vanuza Paixao'
+        )
+      },
+      null
+    );
+
+    Lead updated = [
+      SELECT FirstName, LastName
+      FROM Lead
+      WHERE Id = :lead.Id
+    ];
+    Assert.areEqual('Vanuza', updated.FirstName);
+    Assert.areEqual('Paixao', updated.LastName);
+  }
+
+  @isTest
   static void shouldHandleGuardClausesAndMissingLeadWithoutBlocking() {
     LeadInteractionLeadSyncService.syncToLeads(null, null);
     LeadInteractionLeadSyncService.syncToLeads(
@@ -270,6 +293,60 @@ private class LeadInteractionLeadSyncServiceTest {
     Assert.areEqual('Acima de R$ 500', highValueUpdated.ValorContaEnergia__c);
     Assert.areEqual(20, highValueUpdated.Lb065_PontuacaoFatura__c);
     Assert.isTrue(highValueUpdated.Lb065_PontuacaoOrigem__c >= 3);
+  }
+
+  @isTest
+  static void shouldSplitFullNameStoredOnlyInLastNameOnInsert() {
+    LeadInteraction__c interaction = new LeadInteraction__c(
+      Sobrenome__c = ' Vanuza   Paixao '
+    );
+
+    insert interaction;
+
+    LeadInteraction__c savedInteraction = [
+      SELECT Nome__c, Sobrenome__c
+      FROM LeadInteraction__c
+      WHERE Id = :interaction.Id
+    ];
+    Assert.areEqual('Vanuza', savedInteraction.Nome__c);
+    Assert.areEqual('Paixao', savedInteraction.Sobrenome__c);
+  }
+
+  @isTest
+  static void shouldSplitFullNameStoredOnlyInLastNameOnUpdate() {
+    LeadInteraction__c interaction = new LeadInteraction__c(
+      Sobrenome__c = 'Cliente'
+    );
+    insert interaction;
+
+    interaction.Sobrenome__c = 'Maria da Silva Santos';
+    update interaction;
+
+    LeadInteraction__c savedInteraction = [
+      SELECT Nome__c, Sobrenome__c
+      FROM LeadInteraction__c
+      WHERE Id = :interaction.Id
+    ];
+    Assert.areEqual('Maria', savedInteraction.Nome__c);
+    Assert.areEqual('da Silva Santos', savedInteraction.Sobrenome__c);
+  }
+
+  @isTest
+  static void shouldKeepNameWhenFirstNameIsAlreadyFilled() {
+    LeadInteraction__c interaction = new LeadInteraction__c(
+      Nome__c = 'Ana',
+      Sobrenome__c = 'Maria Souza'
+    );
+
+    insert interaction;
+
+    LeadInteraction__c savedInteraction = [
+      SELECT Nome__c, Sobrenome__c
+      FROM LeadInteraction__c
+      WHERE Id = :interaction.Id
+    ];
+    Assert.areEqual('Ana', savedInteraction.Nome__c);
+    Assert.areEqual('Maria Souza', savedInteraction.Sobrenome__c);
   }
 
   private static Lead createLead(String lastName, String leadSource) {

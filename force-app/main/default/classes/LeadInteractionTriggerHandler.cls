@@ -36,6 +36,7 @@ public class LeadInteractionTriggerHandler extends TriggerHandler {
   }
 
   public override void beforeInsert() {
+    normalizeFullNames((List<LeadInteraction__c>) newRecordList);
   }
 
   public override void afterInsert() {
@@ -46,6 +47,7 @@ public class LeadInteractionTriggerHandler extends TriggerHandler {
   }
 
   public override void beforeUpdate() {
+    normalizeFullNames((List<LeadInteraction__c>) newRecordList);
   }
 
   public override void afterUpdate() {
@@ -59,5 +61,33 @@ public class LeadInteractionTriggerHandler extends TriggerHandler {
   }
 
   public override void afterDelete() {
+  }
+
+  private static void normalizeFullNames(
+    List<LeadInteraction__c> interactions
+  ) {
+    if (interactions == null || interactions.isEmpty()) {
+      return;
+    }
+
+    for (LeadInteraction__c interaction : interactions) {
+      if (
+        interaction == null ||
+        !String.isBlank(interaction.Nome__c) ||
+        String.isBlank(interaction.Sobrenome__c)
+      ) {
+        continue;
+      }
+
+      String fullName = interaction.Sobrenome__c.trim().replaceAll('\\s+', ' ');
+      Integer firstSeparatorIndex = fullName.indexOf(' ');
+      if (firstSeparatorIndex <= 0) {
+        interaction.Sobrenome__c = fullName;
+        continue;
+      }
+
+      interaction.Nome__c = fullName.substring(0, firstSeparatorIndex);
+      interaction.Sobrenome__c = fullName.substring(firstSeparatorIndex + 1);
+    }
   }
 }
