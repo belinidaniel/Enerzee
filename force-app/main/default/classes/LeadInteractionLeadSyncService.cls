@@ -119,12 +119,14 @@ public without sharing class LeadInteractionLeadSyncService {
 
     if (!leadsToUpdate.isEmpty()) {
       Database.SaveResult[] results = Database.update(leadsToUpdate, false);
+      List<Lead> failedLeadsToRetry = new List<Lead>();
       for (Integer index = 0; index < results.size(); index++) {
         if (results[index].isSuccess()) {
           continue;
         }
 
         Lead failedLead = leadsToUpdate[index];
+        failedLeadsToRetry.add(failedLead);
         for (Database.Error error : results[index].getErrors()) {
           logs.add(
             buildErrorLog(
@@ -137,9 +139,94 @@ public without sharing class LeadInteractionLeadSyncService {
           );
         }
       }
+      retryFailedLeadUpdates(failedLeadsToRetry, interactionByLeadId, logs);
     }
 
     insertLogsSafely(logs);
+  }
+
+  private static void retryFailedLeadUpdates(
+    List<Lead> failedLeadUpdates,
+    Map<Id, LeadInteraction__c> interactionByLeadId,
+    List<Log__c> logs
+  ) {
+    if (failedLeadUpdates == null || failedLeadUpdates.isEmpty()) {
+      return;
+    }
+
+    List<String> retryFieldNames = new List<String>{
+      'FirstName',
+      'LastName',
+      'Email',
+      'CPFCNPJ__c',
+      'CPF__c',
+      'CNPJ__c',
+      'MobilePhone',
+      'Phone',
+      'City',
+      'Cidade__c',
+      'State',
+      'Estado__c',
+      'Lb065_Estado__c',
+      'Lb065_HistoricoLead__c',
+      'ResumoInteracao__c',
+      'Lb065_ProdutoInteresse__c',
+      'TipoDeImovel__c',
+      'Lb065_FaturaEnergia__c',
+      'CustoEnergiaMes__c',
+      'ValorContaEnergia__c',
+      'Lb065_PontuacaoFatura__c',
+      'Lb065_PontuacaoOrigem__c',
+      'Lab065_IntegracaoDistribuicaoLead__c',
+      'SDRAgent__c'
+    };
+
+    for (String fieldName : retryFieldNames) {
+      List<Lead> singleFieldUpdates = new List<Lead>();
+      Map<Id, Lead> sourceLeadById = new Map<Id, Lead>();
+      for (Lead failedLead : failedLeadUpdates) {
+        Map<String, Object> populatedFields = failedLead.getPopulatedFieldsAsMap();
+        if (!populatedFields.containsKey(fieldName)) {
+          continue;
+        }
+
+        Lead singleFieldUpdate = new Lead(Id = failedLead.Id);
+        singleFieldUpdate.put(fieldName, populatedFields.get(fieldName));
+        singleFieldUpdates.add(singleFieldUpdate);
+        sourceLeadById.put(failedLead.Id, failedLead);
+      }
+
+      if (singleFieldUpdates.isEmpty()) {
+        continue;
+      }
+
+      Database.SaveResult[] retryResults = Database.update(
+        singleFieldUpdates,
+        false
+      );
+      for (Integer index = 0; index < retryResults.size(); index++) {
+        if (retryResults[index].isSuccess()) {
+          continue;
+        }
+
+        Lead failedSingleFieldLead = singleFieldUpdates[index];
+        for (Database.Error error : retryResults[index].getErrors()) {
+          logs.add(
+            buildErrorLog(
+              'retryFailedLeadUpdates',
+              fieldName + ': ' + error.getMessage(),
+              failedSingleFieldLead.Id,
+              interactionByLeadId.get(failedSingleFieldLead.Id).Id,
+              buildPayload(
+                sourceLeadById.get(failedSingleFieldLead.Id),
+                interactionByLeadId.get(failedSingleFieldLead.Id),
+                null
+              )
+            )
+          );
+        }
+      }
+    }
   }
 
   private static Boolean shouldSync(
@@ -284,7 +371,11 @@ public without sharing class LeadInteractionLeadSyncService {
     if (String.isBlank(value)) {
       return false;
     }
-    target.put(field, value.trim());
+    String trimmedValue = value.trim();
+    if (!isAssignablePicklistValue(field, trimmedValue)) {
+      return false;
+    }
+    target.put(field, trimmedValue);
     return true;
   }
 
@@ -323,6 +414,28 @@ public without sharing class LeadInteractionLeadSyncService {
       normalizedName.substring(0, firstSeparatorIndex),
       normalizedName.substring(firstSeparatorIndex + 1)
     };
+  }
+
+  private static Boolean isAssignablePicklistValue(
+    Schema.SObjectField field,
+    String value
+  ) {
+    Schema.DescribeFieldResult describeResult = field.getDescribe();
+    Schema.DisplayType fieldType = describeResult.getType();
+    if (
+      (fieldType != Schema.DisplayType.Picklist &&
+      fieldType != Schema.DisplayType.MultiPicklist) ||
+      !describeResult.isRestrictedPicklist()
+    ) {
+      return true;
+    }
+
+    for (Schema.PicklistEntry entry : describeResult.getPicklistValues()) {
+      if (entry.isActive() && entry.getValue() == value) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private static Boolean changed(Object currentValue, Object oldValue) {

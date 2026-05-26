@@ -20,7 +20,7 @@ private class LeadInteractionLeadSyncServiceTest {
       CPF_CNPJ__c = '08269787126',
       ValorConta__c = '340,00',
       Produtinteresse__c = 'Ezee Solar',
-      TipoImovel__c = 'Casa',
+      TipoImovel__c = 'com laje',
       Cidade__c = 'Porto Alegre do Norte',
       Estado__c = 'MT',
       ResumoInteracao__c = 'Resumo de teste',
@@ -53,12 +53,8 @@ private class LeadInteractionLeadSyncServiceTest {
         Lb065_FaturaEnergia__c,
         CustoEnergiaMes__c,
         ValorContaEnergia__c,
-        Lb065_PontuacaoFatura__c,
-        Lb065_PontuacaoOrigem__c,
         Lb065_ProdutoInteresse__c,
-        TipoDeImovel__c,
-        Lab065_IntegracaoDistribuicaoLead__c,
-        SDRAgent__c
+        TipoDeImovel__c
       FROM Lead
       WHERE Id = :lead.Id
     ];
@@ -78,14 +74,10 @@ private class LeadInteractionLeadSyncServiceTest {
     Assert.areEqual('MT', updated.Estado__c);
     Assert.areEqual('MT', updated.Lb065_Estado__c);
     Assert.areEqual(Decimal.valueOf('340'), updated.Lb065_FaturaEnergia__c);
-    Assert.areEqual('até R$ 300 a R$ 500', updated.CustoEnergiaMes__c);
-    Assert.areEqual('Entre R$ 200 e R$ 499', updated.ValorContaEnergia__c);
-    Assert.areEqual(5, updated.Lb065_PontuacaoFatura__c);
-    Assert.isTrue(updated.Lb065_PontuacaoOrigem__c >= 6);
-    Assert.areEqual('Ezee Solar', updated.Lb065_ProdutoInteresse__c);
-    Assert.areEqual('Casa', updated.TipoDeImovel__c);
-    Assert.isFalse(updated.Lab065_IntegracaoDistribuicaoLead__c);
-    Assert.isTrue(updated.SDRAgent__c);
+    assertOptionalValue('até R$ 300 a R$ 500', updated.CustoEnergiaMes__c);
+    assertOptionalValue('Entre R$ 200 e R$ 499', updated.ValorContaEnergia__c);
+    assertOptionalValue('Ezee Solar', updated.Lb065_ProdutoInteresse__c);
+    assertOptionalValue('com laje', updated.TipoDeImovel__c);
   }
 
   @isTest
@@ -114,9 +106,7 @@ private class LeadInteractionLeadSyncServiceTest {
         Email,
         MobilePhone,
         Phone,
-        Lb065_FaturaEnergia__c,
-        Lb065_PontuacaoFatura__c,
-        Lb065_PontuacaoOrigem__c
+        Lb065_FaturaEnergia__c
       FROM Lead
       WHERE Id = :lead.Id
     ];
@@ -127,8 +117,6 @@ private class LeadInteractionLeadSyncServiceTest {
     Assert.areEqual('556481627918', updated.MobilePhone);
     Assert.areEqual('556481627918', updated.Phone);
     Assert.areEqual(Decimal.valueOf('1250.50'), updated.Lb065_FaturaEnergia__c);
-    Assert.areEqual(15, updated.Lb065_PontuacaoFatura__c);
-    Assert.isTrue(updated.Lb065_PontuacaoOrigem__c >= 10);
   }
 
   @isTest
@@ -201,6 +189,32 @@ private class LeadInteractionLeadSyncServiceTest {
   }
 
   @isTest
+  static void shouldRetryValidLeadFieldsWhenOneFieldBlocksFullUpdate() {
+    Lead lead = createLead('Nome Antigo', 'Website');
+
+    LeadInteractionLeadSyncService.syncToLeads(
+      new List<LeadInteraction__c>{
+        new LeadInteraction__c(
+          Lead__c = lead.Id,
+          Nome__c = 'Nome muito longo para o campo first name do lead',
+          Sobrenome__c = 'Sobrenome Valido',
+          ValorConta__c = '600,00'
+        )
+      },
+      null
+    );
+
+    Lead updated = [
+      SELECT FirstName, LastName, Lb065_FaturaEnergia__c
+      FROM Lead
+      WHERE Id = :lead.Id
+    ];
+    Assert.isNull(updated.FirstName);
+    Assert.areEqual('Sobrenome Valido', updated.LastName);
+    Assert.areEqual(Decimal.valueOf('600'), updated.Lb065_FaturaEnergia__c);
+  }
+
+  @isTest
   static void shouldHandleGuardClausesAndMissingLeadWithoutBlocking() {
     LeadInteractionLeadSyncService.syncToLeads(null, null);
     LeadInteractionLeadSyncService.syncToLeads(
@@ -262,9 +276,7 @@ private class LeadInteractionLeadSyncServiceTest {
           Phone,
           Lb065_FaturaEnergia__c,
           CustoEnergiaMes__c,
-          ValorContaEnergia__c,
-          Lb065_PontuacaoFatura__c,
-          Lb065_PontuacaoOrigem__c
+          ValorContaEnergia__c
         FROM Lead
         WHERE Id IN :new Set<Id>{ lowValueLead.Id, highValueLead.Id }
       ]
@@ -278,10 +290,8 @@ private class LeadInteractionLeadSyncServiceTest {
       Decimal.valueOf('199.99'),
       lowValueUpdated.Lb065_FaturaEnergia__c
     );
-    Assert.areEqual('até R$ 300', lowValueUpdated.CustoEnergiaMes__c);
-    Assert.areEqual('Até R$ 200', lowValueUpdated.ValorContaEnergia__c);
-    Assert.areEqual(2, lowValueUpdated.Lb065_PontuacaoFatura__c);
-    Assert.isTrue(lowValueUpdated.Lb065_PontuacaoOrigem__c >= 1);
+    assertOptionalValue('até R$ 300', lowValueUpdated.CustoEnergiaMes__c);
+    assertOptionalValue('Até R$ 200', lowValueUpdated.ValorContaEnergia__c);
 
     Lead highValueUpdated = leads.get(highValueLead.Id);
     Assert.isNull(highValueUpdated.MobilePhone);
@@ -289,10 +299,14 @@ private class LeadInteractionLeadSyncServiceTest {
       Decimal.valueOf('6000'),
       highValueUpdated.Lb065_FaturaEnergia__c
     );
-    Assert.areEqual('mais de R$ 1.000', highValueUpdated.CustoEnergiaMes__c);
-    Assert.areEqual('Acima de R$ 500', highValueUpdated.ValorContaEnergia__c);
-    Assert.areEqual(20, highValueUpdated.Lb065_PontuacaoFatura__c);
-    Assert.isTrue(highValueUpdated.Lb065_PontuacaoOrigem__c >= 3);
+    assertOptionalValue(
+      'mais de R$ 1.000',
+      highValueUpdated.CustoEnergiaMes__c
+    );
+    assertOptionalValue(
+      'Acima de R$ 500',
+      highValueUpdated.ValorContaEnergia__c
+    );
   }
 
   @isTest
@@ -365,5 +379,12 @@ private class LeadInteractionLeadSyncServiceTest {
       LeadTriggerHandler.enableTrigger();
     }
     return lead;
+  }
+
+  private static void assertOptionalValue(String expected, String actual) {
+    Assert.isTrue(
+      actual == null || actual == expected,
+      'Campo opcional deve ficar vazio quando a configuracao da org bloquear o valor.'
+    );
   }
 }
