@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-26-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -206,7 +206,6 @@ private class AdditionalCoverageNewClassesTest {
 
     Assert.areEqual(true, true);
   }
-
   @IsTest
   static void externalArchiveService_guardClauses() {
     try {
