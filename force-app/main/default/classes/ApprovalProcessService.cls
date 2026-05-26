@@ -4,7 +4,8 @@
  * @group             :
  * @last modified on  : 04-15-2026
  * @last modified by  : Daniel Belini
- * @test              : ApprovalProcessServiceTest, OpportunityBOHighCoverageTest, OpportunityTriggerTest
+ * @test              : ApprovalProcessServiceTest, OpportunityBOCoverageTest, OpportunityBOHighCoverageTest,
+ *                       OpportunityTriggerTest
  **/
 public without sharing class ApprovalProcessService {
   @TestVisible

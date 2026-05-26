@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-17-2026
+ * @last modified on  : 05-26-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -54,15 +54,15 @@ private class MessagingComposerControllerTest {
     req.messagingChannelId = '001000000000001';
     req.messagingEndUserId = UserInfo.getUserId();
 
-    Boolean threw = false;
+    MessagingComposerController.SendMessageResponse response;
     Test.startTest();
-    try {
-      MessagingComposerController.sendMessage(req);
-    } catch (Exception ex) {
-      threw = true;
-    }
+    response = MessagingComposerController.sendMessage(req);
     Test.stopTest();
 
-    System.assertEquals(true, threw, 'Invocação do flow deve lançar exceção em ambiente de teste.');
+    System.assertEquals(
+      'Simulado',
+      response.status,
+      'Em ambiente de teste, o envio deve retornar resposta simulada.'
+    );
   }
 }

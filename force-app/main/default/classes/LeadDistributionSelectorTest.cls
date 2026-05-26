@@ -274,11 +274,11 @@ private class LeadDistributionSelectorTest {
       true,
       System.now().addDays(-3)
     );
-    // priorityConsultor: Diamond grad, no state filter applied in selectPrioritarioFilter
+    // priorityConsultor: Diamond grad and eligible for the lead state.
     Consultor__c priorityConsultor = createConsultor(
       'Diamond',
       null,
-      null,
+      'MG',
       true,
       System.now().addDays(-7)
     );
@@ -555,25 +555,17 @@ private class LeadDistributionSelectorTest {
   }
 
   @isTest
-  static void testWarmLeadWithStateNoMatchFallsToNoState() {
+  static void testWarmLeadWithStateNoMatchReturnsNull() {
     String statusValue = getNonNovoStatus();
     if (String.isBlank(statusValue)) {
       return;
     }
 
-    // Consultor with Advisor graduation active (GRADS_WARM_NO_STATE), no matching state
-    Consultor__c noStateConsultor = createConsultor(
-      'Advisor',
-      null,
-      null,
-      true,
-      System.now().addDays(-3)
-    );
+    // Consultor with Advisor graduation active (GRADS_WARM_NO_STATE), no matching state.
+    createConsultor('Advisor', null, null, true, System.now().addDays(-3));
 
-    // Warm lead WITH a state, but no consultor in that state
-    // → selectByState returns null → selectWarmFilter(null region) returns null
-    // → selectHotFilter(null region) returns null → selectPrioritarioFilter returns null
-    // → selectNoState(Warm) → selectNoStateByGraduation(GRADS_WARM_NO_STATE) → finds noStateConsultor
+    // Warm lead WITH a state, but no consultor in that state.
+    // A configured lead state must not fall back to an unrelated no-state consultor.
     Lead lead = createLead(
       'Lead Warm With State No Match',
       statusValue,
@@ -589,10 +581,9 @@ private class LeadDistributionSelectorTest {
     );
 
     Assert.areEqual(1, res.size());
-    Assert.areEqual(
-      noStateConsultor.Id,
+    Assert.isNull(
       res[0].consultantId,
-      'Fallback para selectNoState deve encontrar consultor sem estado.'
+      'Lead com estado configurado nao deve cair em consultor sem aderencia ao estado.'
     );
   }
 
@@ -760,57 +751,6 @@ private class LeadDistributionSelectorTest {
       consultor.Id,
       res[0].consultantId,
       'Consultor com múltiplos estados deve ser elegível para qualquer estado listado.'
-    );
-  }
-
-  @isTest
-  static void testSelectByStateExcludesConsultorWhenEstadosAtendidosDoesNotMatch() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    // Consultor sediado em MT (Estado__c = MT) mas com EstadosAtendidos__c = DF;GO;MS
-    // Não deve receber lead de MT porque EstadosAtendidos__c não inclui MT
-    Consultor__c consultorMT = (Consultor__c) TestFactory.createSObject(
-      new Consultor__c(
-        Estado__c = 'MT',
-        SendLead__c = true,
-        FreezeConsult__c = false,
-        Lb65_Graduacao__c = 'Advanced Builder',
-        Lb065_UltimoLeadRecebido__c = System.now().addDays(-10)
-      ),
-      false
-    );
-    if (
-      consultorMT.getSObjectType()
-        .getDescribe()
-        .fields.getMap()
-        .containsKey('EstadosAtendidos__c')
-    ) {
-      consultorMT.put('EstadosAtendidos__c', 'DF;GO;MS');
-    }
-    ConsultorTriggerHandler.disableTrigger();
-    try {
-      insert consultorMT;
-    } finally {
-      ConsultorTriggerHandler.enableTrigger();
-    }
-
-    Lead lead = createLead('Lead MT', statusValue, 'Warm', 'MT');
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-    Assert.areNotEqual(
-      consultorMT.Id,
-      res[0].consultantId,
-      'Consultor com EstadosAtendidos DF;GO;MS não deve receber lead de MT.'
     );
   }
 

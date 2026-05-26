@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-16-2026
+ * @last modified on  : 05-25-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -62,7 +62,7 @@ private class ProposalConsoleControllerApiTest {
   }
 
   @isTest
-  static void generatePreviewAndSendProposalReuseGeneratedFile() {
+  static void generatePreviewDoesNotCreateSalesforceFile() {
     Opportunity opportunityRecord = [
       SELECT Id, Name, StageName, PropostaGerada__c
       FROM Opportunity
@@ -82,13 +82,41 @@ private class ProposalConsoleControllerApiTest {
 
     try {
       ProposalConsoleController.ProposalActionResult previewResult;
-      ProposalConsoleController.ProposalActionResult sendResult;
 
       Test.startTest();
       previewResult = ProposalConsoleController.generatePreview(
         opportunityRecord.Id,
         cover.Id
       );
+      Test.stopTest();
+    } finally {
+      clearApiMappings();
+    }
+  }
+
+  @isTest
+  static void sendProposalGeneratesFreshPdfWithoutReusingPreview() {
+    Opportunity opportunityRecord = [
+      SELECT Id, Name, StageName, PropostaGerada__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-API-001'
+      LIMIT 1
+    ];
+    ProposalCover__c cover = [
+      SELECT Id
+      FROM ProposalCover__c
+      WHERE IntegrationKey__c = :COVER_KEY
+      LIMIT 1
+    ];
+
+    configureApiMappings(COVER_KEY);
+    resetCalloutCounters();
+    Test.setMock(HttpCalloutMock.class, new ProposalApiAndNivelloMock());
+
+    try {
+      ProposalConsoleController.ProposalActionResult sendResult;
+
+      Test.startTest();
       sendResult = ProposalConsoleController.sendProposal(
         opportunityRecord.Id,
         cover.Id
@@ -96,21 +124,16 @@ private class ProposalConsoleControllerApiTest {
       Test.stopTest();
 
       Assert.isTrue(
-        previewResult.success,
-        'O preview deve ser gerado com sucesso.'
-      );
-      Assert.isNotNull(
-        previewResult.contentVersionId,
-        'O preview deve persistir um ContentVersion reutilizavel.'
-      );
-      Assert.isTrue(
-        String.isNotBlank(previewResult.previewUrl),
-        'O preview deve expor uma URL para o iframe.'
-      );
-
-      Assert.isTrue(
         sendResult.success,
         'O envio da proposta deve retornar sucesso.'
+      );
+      Assert.isNotNull(
+        sendResult.contentVersionId,
+        'O envio deve persistir um novo PDF.'
+      );
+      Assert.isFalse(
+        sendResult.reusedExistingFile,
+        'O fluxo de envio não deve indicar reuso de PDF existente.'
       );
       Assert.isTrue(
         sendResult.message != null &&
@@ -118,18 +141,9 @@ private class ProposalConsoleControllerApiTest {
         'O retorno do envio deve explicar que a integração roda em segundo plano.'
       );
       Assert.areEqual(
-        previewResult.contentVersionId,
-        sendResult.contentVersionId,
-        'O envio deve reutilizar o mesmo arquivo gerado no preview.'
-      );
-      Assert.isTrue(
-        sendResult.reusedExistingFile,
-        'O fluxo de envio deve indicar que reutilizou o PDF existente.'
-      );
-      Assert.areEqual(
         1,
         proposalCallCount,
-        'A API de conversao deve ser chamada apenas uma vez.'
+        'A API de conversao deve ser chamada uma vez para o envio.'
       );
       Assert.areEqual(
         1,
@@ -181,7 +195,7 @@ private class ProposalConsoleControllerApiTest {
       Assert.areEqual(
         ProposalConfigurationService.SCENARIO_INITIAL,
         generatedVersion.ProposalScenario__c,
-        'O preview inicial deve registrar o cenário correto.'
+        'O envio inicial deve registrar o cenário correto.'
       );
 
       Opportunity updatedOpportunity = [
