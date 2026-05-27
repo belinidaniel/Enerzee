@@ -14,7 +14,7 @@
  *                       ProjetoTriggerTest, ProposalEngineSupportTest, ProposalPendingControllerTest,
  *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest,
  *                       ProposalServicePaymentSimulationTest, ProposalServiceTest, ServiceAppointmentBOTest,
- *                       WorkDeliveryReportPdfControllerTest
+ *                       UpdateOpportunityPhaseQueueableTest, WorkDeliveryReportPdfControllerTest
  **/
 public class OpportunityTriggerHandler extends TriggerHandler {
   public OpportunityTriggerHandler() {

@@ -11,7 +11,6 @@ public class ProposalService {
   public static void updateOpportunityPhase(Set<Id> opportunityIds) {
     String endpointUrl = getEndpointUrl();
     if (String.isEmpty(endpointUrl)) {
-      // Tratar o caso onde o endpoint não está configurado
       return;
     }
 
@@ -45,6 +44,7 @@ public class ProposalService {
     );
 
     List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
+    List<Log__c> logsToInsert = new List<Log__c>();
     Integer statusEnum;
     Integer substatusId;
     for (Opportunity opportunity : opportunities) {
@@ -79,7 +79,7 @@ public class ProposalService {
         statusEnum +
         ' | substatusId=' +
         substatusId;
-      Utils.createLog(entryLog);
+      logsToInsert.add(Utils.createLogNoInsert(entryLog));
 
       GORecordsTO request = new GORecordsTO();
       request.IdSalesForce = opportunity.Id;
@@ -116,7 +116,7 @@ public class ProposalService {
             'SAL-496 LossReason not mapped: "' +
             opportunity.Loss_Reason__c +
             '"';
-          Utils.createLog(lossLog);
+          logsToInsert.add(Utils.createLogNoInsert(lossLog));
         }
         request.LossReason = lossReasonInt;
         request.DescriptionReasonLoss = opportunity.DescricaoMotivoPerda__c;
@@ -135,16 +135,14 @@ public class ProposalService {
           endpointUrl,
           jsonBody,
           opportunity.Id,
-          'updateOpportunityPhase'
+          'updateOpportunityPhase',
+          logsToInsert
         );
 
-        //Sucesso
         if (response.getStatusCode() == 200) {
           System.debug('SUCCESS');
           opportunity.SucessoIntegracaoNivello__c = true;
-        }
-        //Erro
-        else {
+        } else {
           System.debug('ERROR');
           opportunity.SucessoIntegracaoNivello__c = false;
         }
@@ -154,11 +152,13 @@ public class ProposalService {
           ' ' +
           response.getBody();
       } catch (Exception e) {
-        Utils.createLog(
-          'ProposalService',
-          'updateOpportunityPhase',
-          e,
-          opportunity.Id
+        logsToInsert.add(
+          Utils.createLogNoInsert(
+            'ProposalService',
+            'updateOpportunityPhase',
+            e,
+            opportunity.Id
+          )
         );
 
         opportunity.SucessoIntegracaoNivello__c = false;
@@ -169,6 +169,10 @@ public class ProposalService {
       }
 
       opportunitiesToUpdate.add(opportunity);
+    }
+
+    if (!logsToInsert.isEmpty()) {
+      Database.insert(logsToInsert, false);
     }
 
     if (!opportunitiesToUpdate.isEmpty()) {
@@ -191,7 +195,8 @@ public class ProposalService {
     String endpointUrl,
     String jsonBody,
     Id relatedId,
-    String logMethodName
+    String logMethodName,
+    List<Log__c> logsToInsert
   ) {
     HttpRequest req = new HttpRequest();
 
@@ -214,7 +219,7 @@ public class ProposalService {
       logDTO.status = response.getStatus();
       logDTO.responseBody = response.getBody();
     }
-    Utils.createLog(logDTO);
+    logsToInsert.add(Utils.createLogNoInsert(logDTO));
 
     return response;
   }

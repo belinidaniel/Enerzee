@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 05-26-2026
+ * @last modified on  : 05-27-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
  *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
@@ -13,7 +13,6 @@
 public class OpportunityBO {
   // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas
   public static Boolean skipAsyncProposalGeneration = false;
-  private static final Integer KIT_PROPOSAL_GENERATION_BATCH_SIZE = 10;
   @TestVisible
   private static String PAYMENT_REMINDER_FINANCE_QUEUE_DEVELOPER_NAME = 'Financeiro';
   @TestVisible
@@ -1007,9 +1006,7 @@ public class OpportunityBO {
     }
 
     if (!opportunityIds.isEmpty()) {
-      PaymentSimulationProposalStatusService.enqueueOpportunityStatusSync(
-        opportunityIds
-      );
+      ProposalService.updateOpportunityPhase(opportunityIds);
     }
   }
 
@@ -2276,109 +2273,6 @@ public class OpportunityBO {
     }
   }
 
-  public static void generateProposalAfterKitUpdate(Set<Id> opportunityIds) {
-    if (opportunityIds == null || opportunityIds.isEmpty()) {
-      return;
-    }
-
-    Id ezeeConnectRtId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-      .get('EzeeConnect')
-      .getRecordTypeId();
-    Id solarRtId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-      .get('Solar')
-      .getRecordTypeId();
-
-    List<Id> eligibleIds = new List<Id>();
-    for (Opportunity opp : [
-      SELECT
-        Id,
-        RecordTypeId,
-        GrupoTarifario__c,
-        FaturaDescontoFixo__c,
-        EconomiaXMesesFixa__c,
-        PrazoContratoParceiro__c,
-        PotenciaPicoSistema__c,
-        ValidadeProposta__c,
-        ConsumoAnual__c,
-        CustoMedioEnergia__c,
-        NumeroModulos__c,
-        FabricanteModulos__c,
-        Modelo__c,
-        PotenciaNominalWp__c,
-        Pesokg__c,
-        NumeroInversores__c,
-        FabricanteInversor__c,
-        ModeloInversor__c,
-        PotenciaNominalSistema__c,
-        GeracaoAnualEstimada__c,
-        GeracaoMensalEstimada__c,
-        PaybackAnos__c,
-        EconomiaMensalEstimada__c,
-        EconomiaAnualEstimada__c,
-        EconomiaAcumulada__c,
-        TipoTelhadoEstrutura__c,
-        AreaM__c,
-        PrazoEntregaDias__c,
-        Amount
-      FROM Opportunity
-      WHERE Id IN :opportunityIds AND IsClosed = FALSE
-    ]) {
-      if (opp.GrupoTarifario__c == 'Grupo A') {
-        continue;
-      }
-      if (
-        (opp.RecordTypeId == ezeeConnectRtId &&
-        areRequiredFieldsFilledConnect(opp)) ||
-        (opp.RecordTypeId == solarRtId && areRequiredFieldsFilled(opp))
-      ) {
-        eligibleIds.add(opp.Id);
-      }
-    }
-
-    if (!eligibleIds.isEmpty()) {
-      System.enqueueJob(new KitProposalGenerationJob(eligibleIds));
-    }
-  }
-
-  public class KitProposalGenerationJob implements Queueable, Database.AllowsCallouts {
-    private List<Id> opportunityIds;
-
-    public KitProposalGenerationJob(List<Id> opportunityIds) {
-      this.opportunityIds = new List<Id>();
-      if (opportunityIds != null) {
-        this.opportunityIds.addAll(opportunityIds);
-      }
-    }
-
-    public void execute(QueueableContext context) {
-      if (opportunityIds.isEmpty()) {
-        return;
-      }
-
-      List<Id> currentBatch = new List<Id>();
-      List<Id> remainingIds = new List<Id>();
-      for (Integer i = 0; i < opportunityIds.size(); i++) {
-        if (i < KIT_PROPOSAL_GENERATION_BATCH_SIZE) {
-          currentBatch.add(opportunityIds[i]);
-        } else {
-          remainingIds.add(opportunityIds[i]);
-        }
-      }
-
-      for (Id opportunityId : currentBatch) {
-        PDFControllerExtension.generateProposalFileNow(
-          opportunityId,
-          true,
-          true
-        );
-      }
-
-      if (!remainingIds.isEmpty()) {
-        System.enqueueJob(new KitProposalGenerationJob(remainingIds));
-      }
-    }
-  }
-
   public static void processPaymentMethodApproval(
     Map<Id, Opportunity> newMap,
     Map<Id, Opportunity> oldOpportunityMap
@@ -3610,20 +3504,15 @@ public class OpportunityBO {
     Map<Id, Opportunity> oldMap
   ) {
     Set<Id> opportunityIds = new Set<Id>();
-    Set<Id> opportunityIdsToGenerateProposal = new Set<Id>();
 
     for (Opportunity newOpp : newList) {
       Opportunity oldOpp = oldMap.get(newOpp.Id);
-      Boolean isRsdChanged = newOpp.IsRSD__c != oldOpp.IsRSD__c;
       if (
         newOpp.ConsumoInformadoB__c != oldOpp.ConsumoInformadoB__c ||
         newOpp.TipoTelhadoEstrutura__c != oldOpp.TipoTelhadoEstrutura__c ||
-        isRsdChanged
+        newOpp.IsRSD__c != oldOpp.IsRSD__c
       ) {
         opportunityIds.add(newOpp.Id);
-      }
-      if (isRsdChanged) {
-        opportunityIdsToGenerateProposal.add(newOpp.Id);
       }
     }
 
@@ -3632,28 +3521,16 @@ public class OpportunityBO {
     }
 
     Set<Id> kitIds = new Set<Id>();
-    Set<Id> kitIdsToGenerateProposal = new Set<Id>();
     for (Kit_Instalacao__c kit : [
-      SELECT Id, Nome_da_Oportunidade__c
+      SELECT Id
       FROM Kit_Instalacao__c
       WHERE Nome_da_Oportunidade__c IN :opportunityIds
     ]) {
-      if (
-        opportunityIdsToGenerateProposal.contains(kit.Nome_da_Oportunidade__c)
-      ) {
-        kitIdsToGenerateProposal.add(kit.Id);
-      } else {
-        kitIds.add(kit.Id);
-      }
+      kitIds.add(kit.Id);
     }
 
     if (!kitIds.isEmpty()) {
       KitInstalacaoBO.SendKitUpdate(kitIds);
-    }
-    if (!kitIdsToGenerateProposal.isEmpty()) {
-      KitInstalacaoBO.sendKitUpdateAndGenerateProposal(
-        kitIdsToGenerateProposal
-      );
     }
   }
 

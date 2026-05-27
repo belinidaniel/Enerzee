@@ -13,7 +13,8 @@
  *                       OpportunityDisqualifyLeadsTest, OpportunityPDFHelperTest, OpportunityTriggerTest,
  *                       OpportunityUtilsTest, PDFControllerExtensionExtraTest, ProjetoTriggerTest,
  *                       ProposalConsoleControllerApiTest, ProposalConsoleControllerTest, ProposalEngineSupportTest,
- *                       ProposalServiceTest, TaskBOTest, UtilsTest, ViabilityControllerTest
+ *                       ProposalServiceTest, TaskBOTest, UpdateOpportunityPhaseQueueableTest, UtilsTest,
+ *                       ViabilityControllerTest
  **/
 public class OpportunityUtils {
   //	 Status
