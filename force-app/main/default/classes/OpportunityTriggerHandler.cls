@@ -13,7 +13,7 @@
  *                       PaymentSimulationBOTest, PaymentSimulationCardControllerTest, ProjetoBOCoverageTest,
  *                       ProjetoTriggerTest, ProposalEngineSupportTest, ProposalPendingControllerTest,
  *                       ProposalPendingResponseRestTest, ProposalPendingStatusQueueableTest,
- *                       ProposalServicePaymentSimulationTest, ServiceAppointmentBOTest,
+ *                       ProposalServicePaymentSimulationTest, ProposalServiceTest, ServiceAppointmentBOTest,
  *                       WorkDeliveryReportPdfControllerTest
  **/
 public class OpportunityTriggerHandler extends TriggerHandler {

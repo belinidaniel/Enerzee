@@ -11,7 +11,7 @@
  *                       IntegracaoNivelloViabilidadeCoverageTest, IntegracaoNivelloViabilidadeTest,
  *                       IntegrationHubServiceTest, NivelloTokenTest, OpportunityDiscountRequestControllerTest,
  *                       ProposalPendingControllerTest, ProposalPendingSendQueueableTest,
- *                       ProposalPendingStatusQueueableTest, UtilsTest
+ *                       ProposalPendingStatusQueueableTest, ProposalServiceTest, UtilsTest
  **/
 public class TokenAPINivelloWs {
   public String erro { get; set; }

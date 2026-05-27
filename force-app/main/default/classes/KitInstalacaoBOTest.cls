@@ -356,6 +356,85 @@ private class KitInstalacaoBOTest {
     );
   }
 
+  // -----------------------------------------------------------------------
+  // refreshValorTotalProdutosFromLineItems
+  // -----------------------------------------------------------------------
+
+  @IsTest
+  static void shouldRefreshValorTotalProdutosFromLineItems() {
+    OpportunityTriggerHandler.disableTrigger();
+    KitInstalacaoTriggerHandler.disableTrigger();
+
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        Name = 'Opp Refresh Test',
+        StageName = 'Prospecting',
+        CloseDate = Date.today(),
+        IdVirtualOffice__c = 'VO-REFRESH',
+        ValorTotalProdutos__c = 0
+      ),
+      true
+    );
+
+    Product2 prod = (Product2) TestFactory.createSObject(
+      new Product2(Name = 'Produto Teste', IsActive = true),
+      true
+    );
+    Pricebook2 pb = [SELECT Id FROM Pricebook2 WHERE IsStandard = TRUE LIMIT 1];
+    PricebookEntry pbe = (PricebookEntry) TestFactory.createSObject(
+      new PricebookEntry(
+        Pricebook2Id = pb.Id,
+        Product2Id = prod.Id,
+        UnitPrice = 5000,
+        IsActive = true
+      ),
+      true
+    );
+    OpportunityLineItem oli = (OpportunityLineItem) TestFactory.createSObject(
+      new OpportunityLineItem(
+        OpportunityId = opp.Id,
+        PricebookEntryId = pbe.Id,
+        Quantity = 2,
+        UnitPrice = 5000
+      ),
+      true
+    );
+
+    Set<Id> kitIds = new Set<Id>();
+    Set<Id> oppIds = new Set<Id>{ opp.Id };
+
+    Test.startTest();
+    KitInstalacaoBO.refreshValorTotalProdutosFromLineItems(kitIds, oppIds);
+    Test.stopTest();
+
+    Opportunity refreshed = [
+      SELECT ValorTotalProdutos__c
+      FROM Opportunity
+      WHERE Id = :opp.Id
+    ];
+    Assert.areEqual(
+      10000,
+      refreshed.ValorTotalProdutos__c,
+      'ValorTotalProdutos__c deve ser a soma dos OLIs (2 x 5000 = 10000)'
+    );
+
+    OpportunityTriggerHandler.enableTrigger();
+    KitInstalacaoTriggerHandler.enableTrigger();
+  }
+
+  @IsTest
+  static void shouldSkipRefreshWhenOpportunityIdsEmpty() {
+    Test.startTest();
+    KitInstalacaoBO.refreshValorTotalProdutosFromLineItems(
+      new Set<Id>(),
+      new Set<Id>()
+    );
+    Test.stopTest();
+    Assert.isTrue(true, 'Should complete without error when oppIds is empty');
+  }
+
   /**
    * Returns a valid KitResponseWrapper payload for /api/Proposal/updateInfosKit.
    * Also handles any other Nivello endpoint called in the same transaction.

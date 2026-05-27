@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 05-26-2026
+ * @last modified on  : 05-27-2026
  * @last modified by  : Daniel Belini
  * @test              : KitInstalacaoBOTest, KitInstalacaoTriggerTest
  **/
@@ -335,7 +335,70 @@ public without sharing class KitInstalacaoBO {
 
     public void execute(QueueableContext context) {
       Set<Id> updatedOpportunityIds = sendKitUpdateSync(kitIds);
+      if (!updatedOpportunityIds.isEmpty()) {
+        refreshValorTotalProdutosFromLineItems(kitIds, updatedOpportunityIds);
+      }
       OpportunityBO.generateProposalAfterKitUpdate(updatedOpportunityIds);
+    }
+  }
+
+  /**
+   * @description Recalculates ValorTotalProdutos__c on Opportunities by summing current
+   *              OpportunityLineItem.TotalPrice values. Called before PDF generation when
+   *              IsRSD__c changes to ensure the formula field ValorTotalProposta__c reflects
+   *              the current product prices (OLIs may have been updated by Nivello async).
+   * @param kitIds          Kit IDs whose Opportunities need recalculation
+   * @param opportunityIds  Opportunity IDs already confirmed to have updated proposal values
+   */
+  @TestVisible
+  static void refreshValorTotalProdutosFromLineItems(
+    Set<Id> kitIds,
+    Set<Id> opportunityIds
+  ) {
+    if (opportunityIds == null || opportunityIds.isEmpty()) {
+      return;
+    }
+
+    Map<Id, Decimal> oppIdToProductTotal = new Map<Id, Decimal>();
+    for (Id oppId : opportunityIds) {
+      oppIdToProductTotal.put(oppId, 0);
+    }
+
+    for (OpportunityLineItem oli : [
+      SELECT OpportunityId, TotalPrice
+      FROM OpportunityLineItem
+      WHERE OpportunityId IN :opportunityIds
+    ]) {
+      if (oli.TotalPrice != null) {
+        oppIdToProductTotal.put(
+          oli.OpportunityId,
+          oppIdToProductTotal.get(oli.OpportunityId) + oli.TotalPrice
+        );
+      }
+    }
+
+    List<Opportunity> toUpdate = new List<Opportunity>();
+    for (Id oppId : oppIdToProductTotal.keySet()) {
+      toUpdate.add(
+        new Opportunity(
+          Id = oppId,
+          ValorTotalProdutos__c = oppIdToProductTotal.get(oppId)
+        )
+      );
+    }
+
+    if (!toUpdate.isEmpty()) {
+      OpportunityTriggerHandler.disableTrigger();
+      try {
+        update toUpdate;
+      } finally {
+        OpportunityTriggerHandler.enableTrigger();
+      }
+      System.debug(
+        '[refreshValorTotalProdutosFromLineItems] updated ValorTotalProdutos__c for ' +
+          toUpdate.size() +
+          ' opportunities'
+      );
     }
   }
 

@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : AdditionalCoverageNewClassesTest, ProposalServicePaymentSimulationTest
+ * @test              : AdditionalCoverageNewClassesTest, ProposalServicePaymentSimulationTest, ProposalServiceTest
  **/
 public class ProposalService {
   @future(callout=true)
@@ -44,6 +44,7 @@ public class ProposalService {
       queriedOpportunityIds
     );
 
+    List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
     Integer statusEnum;
     Integer substatusId;
     for (Opportunity opportunity : opportunities) {
@@ -100,8 +101,12 @@ public class ProposalService {
       if (opportunity.IsClosed && !opportunity.IsWon) {
         substatusId = StatusEnumMap.getSubstatusEnum(statusEnum, 'Perdido');
         request.SubStatus = substatusId;
-        Integer lossReasonInt = getLossReasonAsInteger(opportunity.Loss_Reason__c);
-        if (lossReasonInt == null && !String.isBlank(opportunity.Loss_Reason__c)) {
+        Integer lossReasonInt = getLossReasonAsInteger(
+          opportunity.Loss_Reason__c
+        );
+        if (
+          lossReasonInt == null && !String.isBlank(opportunity.Loss_Reason__c)
+        ) {
           Utils.LogDTO lossLog = new Utils.LogDTO();
           lossLog.className = 'ProposalService';
           lossLog.methodName = 'updateOpportunityPhase';
@@ -144,10 +149,6 @@ public class ProposalService {
           opportunity.SucessoIntegracaoNivello__c = false;
         }
 
-        OpportunityTriggerHandler.disableTrigger();
-        update opportunity;
-        OpportunityTriggerHandler.enableTrigger();
-
         opportunity.StatusBodyIntegracaoNivello__c =
           response.getStatusCode() +
           ' ' +
@@ -165,10 +166,15 @@ public class ProposalService {
           e.getMessage() +
           ' ' +
           e.getStackTraceString();
-        OpportunityTriggerHandler.disableTrigger();
-        update opportunity;
-        OpportunityTriggerHandler.enableTrigger();
       }
+
+      opportunitiesToUpdate.add(opportunity);
+    }
+
+    if (!opportunitiesToUpdate.isEmpty()) {
+      OpportunityTriggerHandler.disableTrigger();
+      update opportunitiesToUpdate;
+      OpportunityTriggerHandler.enableTrigger();
     }
   }
 

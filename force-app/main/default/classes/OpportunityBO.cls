@@ -1007,7 +1007,9 @@ public class OpportunityBO {
     }
 
     if (!opportunityIds.isEmpty()) {
-      ProposalService.updateOpportunityPhase(opportunityIds);
+      PaymentSimulationProposalStatusService.enqueueOpportunityStatusSync(
+        opportunityIds
+      );
     }
   }
 
@@ -1047,7 +1049,9 @@ public class OpportunityBO {
     }
 
     if (!opportunityIds.isEmpty()) {
-      ProposalService.updateOpportunityPhase(opportunityIds);
+      PaymentSimulationProposalStatusService.enqueueOpportunityStatusSync(
+        opportunityIds
+      );
     }
   }
 
