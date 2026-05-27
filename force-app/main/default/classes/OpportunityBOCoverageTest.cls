@@ -351,6 +351,22 @@ private class OpportunityBOCoverageTest {
   }
 
   @isTest
+  static void shouldQueueProposalGenerationAfterKitUpdateForEligibleSolar() {
+    Opportunity opportunityRecord = createSolarProposalOpportunity();
+    Integer queueableJobsBefore = Limits.getQueueableJobs();
+
+    OpportunityBO.generateProposalAfterKitUpdate(
+      new Set<Id>{ opportunityRecord.Id }
+    );
+
+    Assert.areEqual(
+      queueableJobsBefore + 1,
+      Limits.getQueueableJobs(),
+      'Atualizacao de kit deve enfileirar geracao de proposta para Solar elegivel.'
+    );
+  }
+
+  @isTest
   static void shouldHandleSubstatusAndClosedLostAutomation() {
     Account acc = (Account) TestFactory.createSObject(
       new Account(Name = 'Account Substatus'),

@@ -754,6 +754,50 @@ private class LeadDistributionSelectorTest {
     );
   }
 
+  @isTest
+  static void testConsultorAddressStateDoesNotOverrideEstadosAtendidos() {
+    String statusValue = getNonNovoStatus();
+    if (String.isBlank(statusValue)) {
+      return;
+    }
+
+    freezeAllConsultors();
+
+    Consultor__c mtAddressOnlyConsultor = createConsultor(
+      'Diamond',
+      'MT',
+      'DF;GO;MS',
+      true,
+      System.now().addDays(-10)
+    );
+    mtAddressOnlyConsultor.SpecialRange__c = 'Hot';
+    updateConsultors(new List<Consultor__c>{ mtAddressOnlyConsultor });
+
+    Consultor__c mtEligibleConsultor = createConsultor(
+      'Gold',
+      null,
+      'MT',
+      true,
+      System.now().addDays(-1)
+    );
+
+    Lead lead = createLead('Lead MT', statusValue, 'Hot', 'MT');
+    insert lead;
+
+    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
+    req.leadId = lead.Id;
+    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ req }
+    );
+
+    Assert.areEqual(1, res.size());
+    Assert.areEqual(
+      mtEligibleConsultor.Id,
+      res[0].consultantId,
+      'Estado do endereco do consultor nao deve substituir Estados Atendidos.'
+    );
+  }
+
   private static void freezeAllConsultors() {
     List<Consultor__c> existing = [
       SELECT Id, FreezeConsult__c
@@ -764,12 +808,16 @@ private class LeadDistributionSelectorTest {
       c.FreezeConsult__c = true;
     }
     if (!existing.isEmpty()) {
-      ConsultorTriggerHandler.disableTrigger();
-      try {
-        update existing;
-      } finally {
-        ConsultorTriggerHandler.enableTrigger();
-      }
+      updateConsultors(existing);
+    }
+  }
+
+  private static void updateConsultors(List<Consultor__c> consultors) {
+    ConsultorTriggerHandler.disableTrigger();
+    try {
+      update consultors;
+    } finally {
+      ConsultorTriggerHandler.enableTrigger();
     }
   }
 

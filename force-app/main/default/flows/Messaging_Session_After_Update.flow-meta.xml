@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
         <name>Agenteforce_Gerar_resumo_completo_desse_lead_Action_1</name>
@@ -14,7 +14,8 @@
         <inputParameters>
             <name>Input:Conversa</name>
             <value>
-                <elementReference>Detect_Remarketing_in_Conversation_Action_1.messagesStringSimple</elementReference>
+                <elementReference
+        >Detect_Remarketing_in_Conversation_Action_1.messagesStringSimple</elementReference>
             </value>
         </inputParameters>
         <nameSegment>Agenteforce_Gerar_resumo_completo_desse_lead</nameSegment>
@@ -29,13 +30,14 @@
         <actionName>RemarketingRouter</actionName>
         <actionType>apex</actionType>
         <connector>
-            <targetReference>Agenteforce_Gerar_resumo_completo_desse_lead_Action_1</targetReference>
+            <targetReference>has_conversation_summary_input</targetReference>
         </connector>
         <flowTransactionModel>Automatic</flowTransactionModel>
         <inputParameters>
             <name>conversationIdentifier</name>
             <value>
-                <elementReference>$Record.Conversation.ConversationIdentifier</elementReference>
+                <elementReference
+        >$Record.Conversation.ConversationIdentifier</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -57,6 +59,38 @@
     <apiVersion>62.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
+        <name>has_conversation_summary_input</name>
+        <label>has conversation summary input</label>
+        <locationX>446</locationX>
+        <locationY>546</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>hasConversationInput</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference
+        >Detect_Remarketing_in_Conversation_Action_1.messagesStringSimple</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference
+        >Detect_Remarketing_in_Conversation_Action_1.messagesStringSimple</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue />
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference
+        >Agenteforce_Gerar_resumo_completo_desse_lead_Action_1</targetReference>
+            </connector>
+            <label>Has Conversation Input</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>has_interaction</name>
         <label>has interaction</label>
         <locationX>578</locationX>
@@ -73,7 +107,8 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Detect_Remarketing_in_Conversation_Action_1</targetReference>
+                <targetReference
+        >Detect_Remarketing_in_Conversation_Action_1</targetReference>
             </connector>
             <label>yes</label>
         </rules>
@@ -106,7 +141,8 @@
         <dataType>Boolean</dataType>
         <expression>ISCHANGED({!$Record.OwnerChanged__c})</expression>
     </formulas>
-    <interviewLabel>Messaging Session - After Update {!$Flow.CurrentDateTime}</interviewLabel>
+    <interviewLabel
+  >Messaging Session - After Update {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Messaging Session - After Update</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -132,7 +168,8 @@
         <label>get interaction</label>
         <locationX>578</locationX>
         <locationY>276</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>has_interaction</targetReference>
         </connector>
@@ -153,7 +190,8 @@
         <label>Get Lead Interaction</label>
         <locationX>50</locationX>
         <locationY>276</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound
+    >false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Has_record</targetReference>
         </connector>
@@ -179,13 +217,15 @@
             <field>Id</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference>Create_Lead_Interaction.varLeadId</elementReference>
+                <elementReference
+        >Create_Lead_Interaction.varLeadId</elementReference>
             </value>
         </filters>
         <inputAssignments>
             <field>Description</field>
             <value>
-                <stringValue>A conversa Foi Inicializada sem o Agente Coletar todas as informações</stringValue>
+                <stringValue
+        >A conversa Foi Inicializada sem o Agente Coletar todas as informações</stringValue>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -218,13 +258,15 @@
         <inputAssignments>
             <field>Lb065_HistoricoLead__c</field>
             <value>
-                <elementReference>Agenteforce_Gerar_resumo_completo_desse_lead_Action_1.promptResponse</elementReference>
+                <elementReference
+        >Agenteforce_Gerar_resumo_completo_desse_lead_Action_1.promptResponse</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <field>ResumoInteracao__c</field>
             <value>
-                <elementReference>Agenteforce_Gerar_resumo_completo_desse_lead_Action_1.promptResponse</elementReference>
+                <elementReference
+        >Agenteforce_Gerar_resumo_completo_desse_lead_Action_1.promptResponse</elementReference>
             </value>
         </inputAssignments>
         <object>Lead</object>
@@ -235,7 +277,8 @@
         <connector>
             <targetReference>Get_Lead_Interaction</targetReference>
         </connector>
-        <filterFormula>AND(TEXT({!$Record.Status}) == &apos;Ended&apos; , TEXT({!$Record__Prior.Status}) != &apos;Ended&apos; , {!$Record.AgenteSDR__c})</filterFormula>
+        <filterFormula
+    >AND(TEXT({!$Record.Status}) == &apos;Ended&apos; , TEXT({!$Record__Prior.Status}) != &apos;Ended&apos; , {!$Record.AgenteSDR__c})</filterFormula>
         <object>MessagingSession</object>
         <recordTriggerType>Update</recordTriggerType>
         <scheduledPaths>
@@ -264,13 +307,15 @@
         <inputAssignments>
             <name>varLastName</name>
             <value>
-                <elementReference>$Record.MessagingEndUser.Name</elementReference>
+                <elementReference
+        >$Record.MessagingEndUser.Name</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <name>varPhone</name>
             <value>
-                <elementReference>$Record.MessagingEndUser.Telefone_Formatado__c</elementReference>
+                <elementReference
+        >$Record.MessagingEndUser.Telefone_Formatado__c</elementReference>
             </value>
         </inputAssignments>
         <storeOutputAutomatically>true</storeOutputAutomatically>

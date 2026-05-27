@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-26-2026
  * @last modified by  : Daniel Belini
  * @test              : HelpDeskCaseServiceTest, ModuloHelpDeskCaseControllerTest
  **/
@@ -114,6 +114,42 @@ public without sharing class HelpDeskCaseService {
     return sanitized[0];
   }
 
+  public static Id addMessage(
+    Id caseId,
+    String body,
+    String authorName,
+    String authorType,
+    Boolean isPublic,
+    Id contactId,
+    UserContext ctx
+  ) {
+    enforceVisibility(caseId, contactId, ctx);
+    if (String.isBlank(body)) {
+      throw new AuraHandledException('O comentário não pode estar vazio.');
+    }
+    HelpDeskMessage__c msg = new HelpDeskMessage__c();
+    msg.Case__c = caseId;
+    msg.Body__c = body;
+    msg.AuthorName__c = String.isNotBlank(authorName) ? authorName : 'Cliente';
+    msg.AuthorType__c = String.isNotBlank(authorType) ? authorType : 'Cliente';
+    msg.IsPublic__c = isPublic != null ? isPublic : true;
+    HelpDeskCaseDAO.insertMessage(msg);
+    return msg.Id;
+  }
+
+  public static List<HelpDeskMessage__c> getMessages(
+    Id caseId,
+    Id contactId,
+    UserContext ctx,
+    Boolean includePrivate
+  ) {
+    enforceVisibility(caseId, contactId, ctx);
+    if (includePrivate == true) {
+      return HelpDeskCaseDAO.queryAllMessages(caseId);
+    }
+    return HelpDeskCaseDAO.queryMessages(caseId);
+  }
+
   public static List<CaseCategoryOptionDTO> getCaseCategoryOptions() {
     List<CaseCategoryOptionDTO> options = new List<CaseCategoryOptionDTO>();
     for (HelpDesk_Case_Category__mdt row : [
@@ -215,7 +251,7 @@ public without sharing class HelpDeskCaseService {
     Id contactId,
     UserContext ctx
   ) {
-    uploadFilesInternal(caseId, files, contactId, ctx, false);
+    uploadFilesInternal(caseId, null, files, contactId, ctx, false);
   }
 
   public static void uploadFilesBypassLicense(
@@ -224,11 +260,61 @@ public without sharing class HelpDeskCaseService {
     Id contactId,
     UserContext ctx
   ) {
-    uploadFilesInternal(caseId, files, contactId, ctx, true);
+    uploadFilesInternal(caseId, null, files, contactId, ctx, true);
+  }
+
+  public static void uploadFilesToMessage(
+    Id caseId,
+    Id messageId,
+    List<HelpDeskFilePayload> files,
+    Id contactId,
+    UserContext ctx
+  ) {
+    uploadFilesInternal(caseId, messageId, files, contactId, ctx, true);
+  }
+
+  public static Id uploadMessageFileExternal(
+    Id caseId,
+    Id messageId,
+    String fileName,
+    String base64File,
+    Id contactId,
+    UserContext ctx
+  ) {
+    enforceVisibility(caseId, contactId, ctx);
+    if (String.isBlank(base64File) || String.isBlank(fileName)) {
+      throw new AuraHandledException('fileName e base64File são obrigatórios.');
+    }
+
+    ExternalArchiveService.UploadResult result = ExternalArchiveService.uploadExternalArchiveForCase(
+      caseId,
+      fileName,
+      base64File,
+      'Help Desk',
+      fileName
+    );
+
+    if (result == null || !result.success) {
+      throw new AuraHandledException(
+        result != null
+          ? result.message
+          : 'Falha ao enviar arquivo para API externa.'
+      );
+    }
+
+    if (messageId != null && result.attachmentId != null) {
+      HelpDeskMessage__c msg = new HelpDeskMessage__c(
+        Id = messageId,
+        AttachmentURL__c = String.valueOf(result.attachmentId)
+      );
+      update msg;
+    }
+    return result.attachmentId;
   }
 
   private static void uploadFilesInternal(
     Id caseId,
+    Id messageId,
     List<HelpDeskFilePayload> files,
     Id contactId,
     UserContext ctx,
@@ -243,6 +329,7 @@ public without sharing class HelpDeskCaseService {
       return;
     }
     enforceVisibility(caseId, contactId, ctx);
+    Id linkedEntityId = messageId != null ? messageId : caseId;
     Id networkId = resolveCurrentNetworkId();
     List<ContentVersion> versions = new List<ContentVersion>();
     Integer receivedFiles = 0;
@@ -318,7 +405,7 @@ public without sharing class HelpDeskCaseService {
       linksToInsert.add(
         new ContentDocumentLink(
           ContentDocumentId = storedVersion.ContentDocumentId,
-          LinkedEntityId = caseId,
+          LinkedEntityId = linkedEntityId,
           ShareType = 'V',
           Visibility = 'AllUsers'
         )
@@ -445,6 +532,15 @@ public without sharing class HelpDeskCaseService {
     Id overrideContactId,
     UserContext ctx
   ) {
+    if (isInternalUser()) {
+      List<Case> rows = [SELECT Id FROM Case WHERE Id = :caseId LIMIT 1];
+      if (rows.isEmpty()) {
+        throw new AuraHandledException(
+          'Caso não encontrado ou sem permissão de acesso.'
+        );
+      }
+      return;
+    }
     String ownershipFilter = buildOwnershipFilter(ctx, overrideContactId);
     String query =
       'SELECT Id FROM Case WHERE Id = :caseId AND ' +
@@ -456,5 +552,11 @@ public without sharing class HelpDeskCaseService {
         'Caso não encontrado ou sem permissão de acesso.'
       );
     }
+  }
+
+  private static Boolean isInternalUser() {
+    return !UserInfo.getUserType().equalsIgnoreCase('Guest') &&
+      !UserInfo.getUserType().equalsIgnoreCase('PowerPartner') &&
+      !UserInfo.getUserType().equalsIgnoreCase('CustomerSuccess');
   }
 }

@@ -2,7 +2,7 @@
  * @description       : Queueable que gera proposta via API PPTX e avança o estágio da Opportunity. Usado como substituto do PDFControllerExtension.SavePdfJob para capas com IntegrationKey__c.
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-10-2026
+ * @last modified on  : 05-26-2026
  * @last modified by  : Daniel Belini
  * @test              : ProposalEngineSupportTest
  **/
@@ -40,7 +40,7 @@ public with sharing class ProposalApiGenerationJob implements Queueable, Databas
     }
   }
 
-  private static void advanceStage(Id opportunityId) {
+  public static void advanceStage(Id opportunityId) {
     List<Opportunity> opps = [
       SELECT
         Id,

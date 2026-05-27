@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PathAssistant xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <entityName>Case</entityName>
+    <fieldName>HelpDesk_Status__c</fieldName>
+    <masterLabel>Case Help Desk Salesforce</masterLabel>
+    <pathAssistantSteps>
+        <fieldValue>Criado</fieldValue>
+        <info>Chamado registrado. Aguardando análise.</info>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldValue>Pendente Aprovação Gestor</fieldValue>
+        <info>Aguardando aprovação do gestor responsável.</info>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldValue>Pendente Aprovação Gerente</fieldValue>
+        <info>Aguardando aprovação do gerente.</info>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldValue>Aprovado</fieldValue>
+        <info>Chamado aprovado. Em fila para atendimento.</info>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldValue>Trabalhando</fieldValue>
+        <info>Chamado em atendimento pelo time de suporte.</info>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldValue>Concluído</fieldValue>
+        <info>Chamado concluído.</info>
+    </pathAssistantSteps>
+    <recordTypeName>Help_Desk_Salesforce</recordTypeName>
+</PathAssistant>

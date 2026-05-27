@@ -76,6 +76,9 @@ public with sharing class LeadDistributionSelector {
     Map<Id, Lead> leadMap = new Map<Id, Lead>();
     if (!leadIds.isEmpty()) {
       List<String> selectFields = new List<String>{ 'Id', 'State', 'Rating' };
+      if (leadFields.containsKey('Estado__c')) {
+        selectFields.add('Estado__c');
+      }
       if (hasDistributionType) {
         selectFields.add('Distributiontype__c');
       }
@@ -154,14 +157,16 @@ public with sharing class LeadDistributionSelector {
       }
     }
 
-    if (!String.isBlank(lead.State)) {
+    String leadState = getLeadState(lead);
+
+    if (!String.isBlank(leadState)) {
       if (isColdOrWarm(lead.Rating)) {
-        selectedId = selectByState(lead);
+        selectedId = selectByState(leadState, lead.Rating);
         if (selectedId != null) {
           return selectedId;
         }
         selectedId = selectWarmFilter(
-          lead.State,
+          leadState,
           consultorRegionalId,
           lead.Rating
         );
@@ -169,7 +174,7 @@ public with sharing class LeadDistributionSelector {
           return selectedId;
         }
         selectedId = selectHotFilter(
-          lead.State,
+          leadState,
           consultorRegionalId,
           lead.Rating
         );
@@ -177,7 +182,7 @@ public with sharing class LeadDistributionSelector {
           return selectedId;
         }
         selectedId = selectPrioritarioFilter(
-          lead.State,
+          leadState,
           consultorRegionalId,
           lead.Rating
         );
@@ -189,7 +194,7 @@ public with sharing class LeadDistributionSelector {
 
       if (lead.Rating == 'Hot') {
         selectedId = selectHotFilter(
-          lead.State,
+          leadState,
           consultorRegionalId,
           lead.Rating
         );
@@ -197,7 +202,7 @@ public with sharing class LeadDistributionSelector {
           return selectedId;
         }
         selectedId = selectPrioritarioFilter(
-          lead.State,
+          leadState,
           consultorRegionalId,
           lead.Rating
         );
@@ -209,7 +214,7 @@ public with sharing class LeadDistributionSelector {
 
       if (lead.Rating == 'Prioritário') {
         selectedId = selectPrioritarioFilter(
-          lead.State,
+          leadState,
           consultorRegionalId,
           lead.Rating
         );
@@ -225,6 +230,18 @@ public with sharing class LeadDistributionSelector {
 
   private static Boolean isColdOrWarm(String rating) {
     return rating == 'Cold' || rating == 'Warm';
+  }
+
+  private static String getLeadState(Lead lead) {
+    if (lead == null) {
+      return null;
+    }
+
+    String customState;
+    if (Schema.SObjectType.Lead.fields.getMap().containsKey('Estado__c')) {
+      customState = (String) lead.get('Estado__c');
+    }
+    return !String.isBlank(customState) ? customState : lead.State;
   }
 
   private static Id selectByEmail(String distributionValue) {
@@ -261,23 +278,23 @@ public with sharing class LeadDistributionSelector {
     return lockAndUpdate(candidates);
   }
 
-  private static Id selectByState(Lead lead) {
-    if (String.isBlank(lead.State)) {
+  private static Id selectByState(String leadState, String rating) {
+    if (String.isBlank(leadState)) {
       return null;
     }
-    String stateSuffix = '%' + lead.State;
+    String stateSuffix = '%' + leadState;
 
     List<Consultor__c> candidates = [
       SELECT Id, Lb065_UltimoLeadRecebido__c
       FROM Consultor__c
       WHERE
-        (EstadosAtendidos__c INCLUDES (:lead.State)
+        (EstadosAtendidos__c INCLUDES (:leadState)
         OR (EstadosAtendidos__c = NULL
         AND Estado__c LIKE :stateSuffix))
         AND SendLead__c = TRUE
         AND FreezeConsult__c = FALSE
         AND (Lb65_Graduacao__c IN :GRADS_WARM_STATE
-        OR (SpecialRange__c = :lead.Rating
+        OR (SpecialRange__c = :rating
         AND SpecialRange__c != NULL))
       ORDER BY Lb065_UltimoLeadRecebido__c ASC
       LIMIT :LOCK_BATCH_SIZE
