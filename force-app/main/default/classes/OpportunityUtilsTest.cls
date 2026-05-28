@@ -65,6 +65,10 @@ private class OpportunityUtilsTest {
       );
       System.assert(OpportunityUtils.isRecordTypeEzeeSolarB(solarB));
       System.assert(OpportunityUtils.isRecordTypeEzeeSolar(solarB));
+      System.assertEquals(
+        OpportunityUtils.STATUS_EQUIPAMENTO,
+        OpportunityUtils.resolveStageForProjectCompletion(solarB)
+      );
     }
     if (recordTypes.containsKey('EzeeConnect')) {
       System.assert(

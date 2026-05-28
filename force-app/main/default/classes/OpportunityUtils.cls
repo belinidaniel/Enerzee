@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-28-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, EngineeringDateStampFlowTest, InstalacaoBOTest,
  *                       IntegracaoNivelloContratoCoverageTest, IntegracaoNivelloPropostaTest, IntegracaoNivelloTest,
@@ -11,9 +11,9 @@
  *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentConfirmationTaskTest,
  *                       OpportunityBOPaymentReminderTaskTest, OpportunityDiscountRequestControllerTest,
  *                       OpportunityDisqualifyLeadsTest, OpportunityPDFHelperTest, OpportunityTriggerTest,
- *                       OpportunityUtilsTest, PDFControllerExtensionExtraTest, ProjetoTriggerTest,
- *                       ProposalConsoleControllerApiTest, ProposalConsoleControllerTest, ProposalEngineSupportTest,
- *                       TaskBOTest, UtilsTest, ViabilityControllerTest
+ *                       OpportunityUtilsTest, PDFControllerExtensionExtraTest, ProjetoBOCoverageTest,
+ *                       ProjetoTriggerTest, ProposalConsoleControllerApiTest, ProposalConsoleControllerTest,
+ *                       ProposalEngineSupportTest, TaskBOTest, UtilsTest, ViabilityControllerTest
  **/
 public class OpportunityUtils {
   //	 Status
@@ -89,81 +89,64 @@ public class OpportunityUtils {
   public static String SUB_TYPE_CONTRATO_MINI = 'Contrato Mini';
 
   //	 Validação de Tipo de Registro
-  public static boolean isRecordTypeSolar(Opportunity opportunity) {
+  private static Boolean isOpportunityRecordType(
+    Opportunity opportunity,
+    String developerName
+  ) {
+    if (opportunity == null || opportunity.RecordTypeId == null) {
+      return false;
+    }
+
+    Map<String, Schema.RecordTypeInfo> recordTypes = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName();
+    if (!recordTypes.containsKey(developerName)) {
+      return false;
+    }
+
     return opportunity.RecordTypeId ==
-      Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-        .get('Solar')
-        .getRecordTypeId();
+      recordTypes.get(developerName).getRecordTypeId();
+  }
+
+  public static boolean isRecordTypeSolar(Opportunity opportunity) {
+    return isOpportunityRecordType(opportunity, 'Solar');
   }
 
   public static boolean isRecordTypeProdutos(Opportunity opportunity) {
-    return opportunity.RecordTypeId ==
-      Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-        .get('Produtos')
-        .getRecordTypeId();
+    return isOpportunityRecordType(opportunity, 'Produtos');
   }
 
   public static boolean isRecordTypeServicos(Opportunity opportunity) {
-    return opportunity.RecordTypeId ==
-      Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-        .get('Servicos')
-        .getRecordTypeId();
+    return isOpportunityRecordType(opportunity, 'Servicos');
   }
 
   public static boolean isRecordTypeServicosEPC(Opportunity opportunity) {
-    return opportunity.RecordTypeId ==
-      Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-        .get('ServicosEPC')
-        .getRecordTypeId();
+    return isOpportunityRecordType(opportunity, 'ServicosEPC');
   }
 
   public static boolean isRecordTypeEzeeSolarA(Opportunity opportunity) {
-    return opportunity.RecordTypeId ==
-      Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-        .get('EzeeSolarA')
-        .getRecordTypeId();
+    return isOpportunityRecordType(opportunity, 'EzeeSolarA');
   }
 
   public static boolean isRecordTypeEzeeSolarB(Opportunity opportunity) {
-    return opportunity.RecordTypeId ==
-      Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-        .get('EzeeSolarB')
-        .getRecordTypeId();
+    return isOpportunityRecordType(opportunity, 'EzeeSolarB');
   }
 
   public static Boolean isRecordTypeEzeeSolar(Opportunity opportunity) {
-    Id EzeeSolarA = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-      .get('EzeeSolarA')
-      .getRecordTypeId();
-    Id EzeeSolarB = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-      .get('EzeeSolarB')
-      .getRecordTypeId();
-
-    return opportunity.RecordTypeId == EzeeSolarA ||
-      opportunity.RecordTypeId == EzeeSolarB;
+    return isRecordTypeEzeeSolarA(opportunity) ||
+      isRecordTypeEzeeSolarB(opportunity);
   }
 
   public static boolean isRecordTypeEzeeConnect(Opportunity opportunity) {
-    return opportunity.RecordTypeId ==
-      Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-        .get('EzeeConnect')
-        .getRecordTypeId();
+    return isOpportunityRecordType(opportunity, 'EzeeConnect');
   }
 
   public static boolean isRecordTypeEzeeLivre(Opportunity opportunity) {
-    return opportunity.RecordTypeId ==
-      Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-        .get('EzeeLivre')
-        .getRecordTypeId();
+    return isOpportunityRecordType(opportunity, 'EzeeLivre');
   }
 
   public static boolean isRecordTypeOtherOpportunities(
     Opportunity opportunity
   ) {
-    return opportunity.RecordTypeId ==
-      Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-        .get('OutrasOportunidades')
-        .getRecordTypeId();
+    return isOpportunityRecordType(opportunity, 'OutrasOportunidades');
   }
 
   public static String resolveStageForProjectCompletion(
@@ -172,9 +155,13 @@ public class OpportunityUtils {
     if (opportunity == null) {
       return STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO;
     }
-    if (isRecordTypeEzeeSolarA(opportunity)) {
+
+    if (
+      isRecordTypeEzeeSolarA(opportunity) || isRecordTypeEzeeSolarB(opportunity)
+    ) {
       return STATUS_EQUIPAMENTO;
     }
+
     return STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO;
   }
 

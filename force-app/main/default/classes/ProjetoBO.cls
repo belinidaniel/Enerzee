@@ -204,7 +204,7 @@ public with sharing class ProjetoBO {
       return;
     }
 
-    String query = 'SELECT Id, Status__c';
+    String query = 'SELECT Id, Status__c, StageName, RecordTypeId';
     if (hasProjectStatusReason) {
       query += ', ProjectStatusReason__c';
     }
@@ -221,6 +221,18 @@ public with sharing class ProjetoBO {
       if (project.Status__c != null && opp.Status__c != project.Status__c) {
         opp.Status__c = project.Status__c;
         changed = true;
+      }
+
+      if (project.Status__c == ProjetoUtils.STATUS_PROJETO_APROVADO) {
+        String targetStage = OpportunityUtils.resolveStageForProjectCompletion(
+          opp
+        );
+        if (
+          opp.StageName == null || !opp.StageName.equalsIgnoreCase(targetStage)
+        ) {
+          opp.StageName = targetStage;
+          changed = true;
+        }
       }
 
       if (

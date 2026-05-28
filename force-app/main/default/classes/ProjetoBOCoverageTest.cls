@@ -151,6 +151,58 @@ private class ProjetoBOCoverageTest {
   }
 
   @IsTest
+  static void shouldAdvanceOpportunityStageWhenProjectIsApproved() {
+    Opportunity opportunityRecord = createOpportunity('ApprovedStage');
+    Map<String, Schema.RecordTypeInfo> opportunityRecordTypes = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName();
+    if (opportunityRecordTypes.containsKey('EzeeSolarB')) {
+      opportunityRecord.RecordTypeId = opportunityRecordTypes.get('EzeeSolarB')
+        .getRecordTypeId();
+    }
+    opportunityRecord.StageName = OpportunityUtils.STATUS_PARECER_DE_ACESSO;
+    opportunityRecord.PotenciaPicoSistema__c = 1;
+    opportunityRecord.ValorTotalProdutos__c = 1000;
+
+    OpportunityTriggerHandler.disableTrigger();
+    try {
+      update opportunityRecord;
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
+
+    Projeto__c insertedProject = createProject(opportunityRecord);
+    Projeto__c oldProject = new Projeto__c(
+      Id = insertedProject.Id,
+      Oportunidade__c = opportunityRecord.Id,
+      Status__c = ProjetoUtils.STATUS_PROJETO_EM_ANALISE
+    );
+    Projeto__c newProject = new Projeto__c(
+      Id = insertedProject.Id,
+      Oportunidade__c = opportunityRecord.Id,
+      Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO
+    );
+
+    ProjetoBO.syncOpportunityStatusFromProject(
+      new List<Projeto__c>{ newProject },
+      new Map<Id, Projeto__c>{ insertedProject.Id => oldProject }
+    );
+
+    Opportunity refreshedOpportunity = [
+      SELECT StageName, Status__c
+      FROM Opportunity
+      WHERE Id = :opportunityRecord.Id
+    ];
+
+    System.assertEquals(
+      ProjetoUtils.STATUS_PROJETO_APROVADO,
+      refreshedOpportunity.Status__c
+    );
+    System.assertEquals(
+      OpportunityUtils.STATUS_EQUIPAMENTO,
+      refreshedOpportunity.StageName
+    );
+  }
+
+  @IsTest
   static void shouldUpdateFinishProjectTaskDate() {
     Opportunity opportunityRecord = createOpportunity('Finish');
     Projeto__c insertedProject = createProject(opportunityRecord);
