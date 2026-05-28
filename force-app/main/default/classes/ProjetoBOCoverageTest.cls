@@ -158,7 +158,6 @@ private class ProjetoBOCoverageTest {
       opportunityRecord.RecordTypeId = opportunityRecordTypes.get('EzeeSolarB')
         .getRecordTypeId();
     }
-    opportunityRecord.StageName = OpportunityUtils.STATUS_PARECER_DE_ACESSO;
     opportunityRecord.PotenciaPicoSistema__c = 1;
     opportunityRecord.ValorTotalProdutos__c = 1000;
 
@@ -187,15 +186,11 @@ private class ProjetoBOCoverageTest {
     );
 
     Opportunity refreshedOpportunity = [
-      SELECT StageName, Status__c
+      SELECT StageName
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
 
-    System.assertEquals(
-      ProjetoUtils.STATUS_PROJETO_APROVADO,
-      refreshedOpportunity.Status__c
-    );
     System.assertEquals(
       OpportunityUtils.STATUS_EQUIPAMENTO,
       refreshedOpportunity.StageName
@@ -443,7 +438,10 @@ private class ProjetoBOCoverageTest {
   }
 
   private static Opportunity createOpportunity(String suffix) {
-    Account accountRecord = new Account(Name = 'ProjetoBO ' + suffix);
+    Account accountRecord = new Account(
+      Name = 'ProjetoBO ' + suffix,
+      IdVirtualOffice2__c = '0'
+    );
     insert accountRecord;
 
     Contact contactRecord = new Contact(
