@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EstadosAtendidos__c</fullName>
+    <externalId>false</externalId>
+    <formula>TRIM(
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;AC&quot;), &quot;AC &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;AL&quot;), &quot;AL &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;AM&quot;), &quot;AM &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;AP&quot;), &quot;AP &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;BA&quot;), &quot;BA &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;CE&quot;), &quot;CE &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;DF&quot;), &quot;DF &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;ES&quot;), &quot;ES &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;GO&quot;), &quot;GO &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;MA&quot;), &quot;MA &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;MG&quot;), &quot;MG &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;MS&quot;), &quot;MS &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;MT&quot;), &quot;MT &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;PA&quot;), &quot;PA &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;PB&quot;), &quot;PB &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;PE&quot;), &quot;PE &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;PI&quot;), &quot;PI &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;PR&quot;), &quot;PR &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;RJ&quot;), &quot;RJ &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;RN&quot;), &quot;RN &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;RO&quot;), &quot;RO &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;RR&quot;), &quot;RR &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;RS&quot;), &quot;RS &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;SC&quot;), &quot;SC &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;SE&quot;), &quot;SE &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;SP&quot;), &quot;SP &quot;, &quot;&quot;) &amp;
+IF(INCLUDES(ConsultorRegional__r.EstadosAtendidos__c, &quot;TO&quot;), &quot;TO &quot;, &quot;&quot;)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsBlank</formulaTreatBlanksAs>
+    <label>Estados Atendidos</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

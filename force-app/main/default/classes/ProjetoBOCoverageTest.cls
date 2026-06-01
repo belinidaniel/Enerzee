@@ -158,6 +158,7 @@ private class ProjetoBOCoverageTest {
       opportunityRecord.RecordTypeId = opportunityRecordTypes.get('EzeeSolarB')
         .getRecordTypeId();
     }
+    opportunityRecord.StageName = OpportunityUtils.STATUS_PARECER_DE_ACESSO;
     opportunityRecord.PotenciaPicoSistema__c = 1;
     opportunityRecord.ValorTotalProdutos__c = 1000;
 

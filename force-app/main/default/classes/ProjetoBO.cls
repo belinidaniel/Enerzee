@@ -223,7 +223,13 @@ public with sharing class ProjetoBO {
         changed = true;
       }
 
-      if (project.Status__c == ProjetoUtils.STATUS_PROJETO_APROVADO) {
+      if (
+        project.Status__c == ProjetoUtils.STATUS_PROJETO_APROVADO &&
+        opp.StageName != null &&
+        opp.StageName.equalsIgnoreCase(
+          OpportunityUtils.STATUS_PARECER_DE_ACESSO
+        )
+      ) {
         String targetStage = OpportunityUtils.resolveStageForProjectCompletion(
           opp
         );
