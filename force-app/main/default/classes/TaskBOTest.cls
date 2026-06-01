@@ -560,7 +560,10 @@ private class TaskBOTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'notifyAfterTaskConclusion Acusar nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'notifyAfterTaskConclusion Acusar nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -687,13 +690,13 @@ private class TaskBOTest {
 
     // oldMap is null → isTaskBeingConcluded returns false → skip
     Test.startTest();
-    TaskBO.updateViabilityStatusOnTaskCompletion(
-      new List<Task>{ task },
-      null
-    );
+    TaskBO.updateViabilityStatusOnTaskCompletion(new List<Task>{ task }, null);
     Test.stopTest();
 
-    Assert.isTrue(true, 'updateViabilityStatusOnTaskCompletion com null oldMap nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'updateViabilityStatusOnTaskCompletion com null oldMap nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -728,7 +731,10 @@ private class TaskBOTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'createNFConfirmationTask sem viabilities elegiveis nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'createNFConfirmationTask sem viabilities elegiveis nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -818,13 +824,13 @@ private class TaskBOTest {
     );
 
     Test.startTest();
-    TaskBO.updateProjectPhase(
-      new List<Task>{ task },
-      new Map<Id, Task>()
-    );
+    TaskBO.updateProjectPhase(new List<Task>{ task }, new Map<Id, Task>());
     Test.stopTest();
 
-    Assert.isTrue(true, 'updateProjectPhase com projeto real nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'updateProjectPhase com projeto real nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -864,7 +870,10 @@ private class TaskBOTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'validateRequiredFieldSetsOnCompletion nao deve lancar erro em contexto de teste.');
+    Assert.isTrue(
+      true,
+      'validateRequiredFieldSetsOnCompletion nao deve lancar erro em contexto de teste.'
+    );
   }
 
   @IsTest
@@ -884,7 +893,10 @@ private class TaskBOTest {
     TaskBO.notifyViabilityInvoiceAttachment(t, link);
     Test.stopTest();
 
-    Assert.isTrue(true, 'notifyViabilityInvoiceAttachment com subject diferente nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'notifyViabilityInvoiceAttachment com subject diferente nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -904,7 +916,10 @@ private class TaskBOTest {
     TaskBO.notifyViabilityInvoiceAttachment(t, link);
     Test.stopTest();
 
-    Assert.isTrue(true, 'notifyViabilityInvoiceAttachment com WhatId nao-viabilidade nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'notifyViabilityInvoiceAttachment com WhatId nao-viabilidade nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -955,7 +970,10 @@ private class TaskBOTest {
     TaskBO.notifyViabilityInvoiceAttachment(t, link);
     Test.stopTest();
 
-    Assert.isTrue(true, 'notifyViabilityInvoiceAttachment com viabilidade e arquivo nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'notifyViabilityInvoiceAttachment com viabilidade e arquivo nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -991,14 +1009,30 @@ private class TaskBOTest {
   @IsTest
   static void shouldCoverNormalizeTaskSubjectWithNull() {
     String result = TaskBO.normalizeTaskSubject(null);
-    Assert.areEqual('', result, 'normalizeTaskSubject(null) deve retornar string vazia.');
+    Assert.areEqual(
+      '',
+      result,
+      'normalizeTaskSubject(null) deve retornar string vazia.'
+    );
   }
 
   @IsTest
   static void shouldCoverNormalizeNameWithAccents() {
-    Assert.areEqual('acoes', TaskBO.normalizeName('Ações'), 'normalizeName deve remover acentos.');
-    Assert.areEqual('u', TaskBO.normalizeName('ú'), 'normalizeName deve normalizar ú → u.');
-    Assert.areEqual('e', TaskBO.normalizeName('ê'), 'normalizeName deve normalizar ê → e.');
+    Assert.areEqual(
+      'acoes',
+      TaskBO.normalizeName('Ações'),
+      'normalizeName deve remover acentos.'
+    );
+    Assert.areEqual(
+      'u',
+      TaskBO.normalizeName('ú'),
+      'normalizeName deve normalizar ú → u.'
+    );
+    Assert.areEqual(
+      'e',
+      TaskBO.normalizeName('ê'),
+      'normalizeName deve normalizar ê → e.'
+    );
   }
 
   @IsTest
@@ -1006,8 +1040,14 @@ private class TaskBOTest {
     // Pick a known Friday and add 1 working day → should land on Monday (skip Sat/Sun)
     Date friday = Date.newInstance(2026, 3, 20); // Friday
     Date result = TaskBO.getActivityDateBasedOnWorkingDays(friday, 1);
-    Assert.isNotNull(result, 'getActivityDateBasedOnWorkingDays não deve retornar null.');
-    Assert.isTrue(result > friday, 'Data resultado deve ser posterior à data de início.');
+    Assert.isNotNull(
+      result,
+      'getActivityDateBasedOnWorkingDays não deve retornar null.'
+    );
+    Assert.isTrue(
+      result > friday,
+      'Data resultado deve ser posterior à data de início.'
+    );
   }
 
   @IsTest
@@ -1036,7 +1076,10 @@ private class TaskBOTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'validateRequiredDocuments com tasks inválidas não deve lançar erro.');
+    Assert.isTrue(
+      true,
+      'validateRequiredDocuments com tasks inválidas não deve lançar erro.'
+    );
   }
 
   @IsTest
@@ -1086,7 +1129,10 @@ private class TaskBOTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'createWorkOrderContractingIntegrator com tarefa sendo concluída não deve lançar erro.');
+    Assert.isTrue(
+      true,
+      'createWorkOrderContractingIntegrator com tarefa sendo concluída não deve lançar erro.'
+    );
   }
 
   @IsTest
@@ -1136,7 +1182,10 @@ private class TaskBOTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'createWorkOrderRequestMaterialBuy com tarefa sendo concluída não deve lançar erro.');
+    Assert.isTrue(
+      true,
+      'createWorkOrderRequestMaterialBuy com tarefa sendo concluída não deve lançar erro.'
+    );
   }
 
   @IsTest
@@ -1186,7 +1235,10 @@ private class TaskBOTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'createWorkOrderRequestMaterialBuy complementares não deve lançar erro.');
+    Assert.isTrue(
+      true,
+      'createWorkOrderRequestMaterialBuy complementares não deve lançar erro.'
+    );
   }
 
   @IsTest
@@ -1235,7 +1287,10 @@ private class TaskBOTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'updateProjectPhase com todas tarefas concluídas não deve lançar erro.');
+    Assert.isTrue(
+      true,
+      'updateProjectPhase com todas tarefas concluídas não deve lançar erro.'
+    );
   }
 
   @IsTest
@@ -1267,7 +1322,9 @@ private class TaskBOTest {
     );
 
     // Set SubStatus__c = 'Aprovado' if field exists
-    if (Schema.SObjectType.Projeto__c.fields.getMap().containsKey('SubStatus__c')) {
+    if (
+      Schema.SObjectType.Projeto__c.fields.getMap().containsKey('SubStatus__c')
+    ) {
       project.put('SubStatus__c', 'Aprovado');
       update project;
     }
@@ -1291,20 +1348,109 @@ private class TaskBOTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'handleAprovacaoProjetoUfv com SubStatus Aprovado não deve lançar erro.');
+    Assert.isTrue(
+      true,
+      'handleAprovacaoProjetoUfv com SubStatus Aprovado não deve lançar erro.'
+    );
+  }
+
+  @IsTest
+  static void shouldNotRegressClosedWonOpportunityOnAprovacaoProjetoUfv() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        StageName = OpportunityUtils.STATUS_GANHO_FECHADO,
+        CloseDate = System.today(),
+        Name = 'Opp Projeto UFV Fechada'
+      ),
+      true
+    );
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+    Projeto__c projectToInsert = new Projeto__c(
+      Oportunidade__c = opp.Id,
+      Viabilidade__c = viability.Id,
+      Conta__c = acc.Id,
+      TipoObra__c = 'UFVMicro',
+      Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO,
+      RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+        .get('UFVMicro')
+        .getRecordTypeId()
+    );
+    if (
+      Schema.SObjectType.Projeto__c.fields.getMap().containsKey('SubStatus__c')
+    ) {
+      projectToInsert.put('SubStatus__c', 'Aprovado');
+    }
+
+    Projeto__c project;
+    ProjetoTriggerHandler.disableTrigger();
+    try {
+      project = (Projeto__c) TestFactory.createSObject(projectToInsert, true);
+    } finally {
+      ProjetoTriggerHandler.enableTrigger();
+    }
+
+    Task oldTask = new Task(
+      Subject = TaskUtils.SUBJECT_APROVACAO_DO_PROJETO_UFV,
+      WhatId = project.Id,
+      Status = TaskUtils.STATUS_OPEN,
+      OwnerId = UserInfo.getUserId(),
+      ActivityDate = System.today()
+    );
+    insert oldTask;
+
+    Task newTask = oldTask.clone(true, true, false, false);
+    newTask.Status = TaskUtils.STATUS_CONCLUIDO;
+
+    Test.startTest();
+    TaskBO.handleAprovacaoProjetoUfv(
+      new List<Task>{ newTask },
+      new Map<Id, Task>{ oldTask.Id => oldTask }
+    );
+    Test.stopTest();
+
+    Opportunity refreshedOpp = [
+      SELECT StageName
+      FROM Opportunity
+      WHERE Id = :opp.Id
+    ];
+    Assert.areEqual(
+      OpportunityUtils.STATUS_GANHO_FECHADO,
+      refreshedOpp.StageName,
+      'Conclusao da task de aprovacao do projeto nao deve regredir oportunidade fechada.'
+    );
   }
 
   @IsTest
   static void shouldCoverLoadNormalizedSubjectsFromStaticResource() {
     Test.startTest();
-    Set<String> projetoSubjects = TaskBO.loadNormalizedSubjectsFromStaticResource('TabelaTarefasProjetos');
-    Set<String> instalacaoSubjects = TaskBO.loadNormalizedSubjectsFromStaticResource('TabelaTarefasInstalacao');
-    Set<String> unknownSubjects = TaskBO.loadNormalizedSubjectsFromStaticResource('RecursoInexistente');
+    Set<String> projetoSubjects = TaskBO.loadNormalizedSubjectsFromStaticResource(
+      'TabelaTarefasProjetos'
+    );
+    Set<String> instalacaoSubjects = TaskBO.loadNormalizedSubjectsFromStaticResource(
+      'TabelaTarefasInstalacao'
+    );
+    Set<String> unknownSubjects = TaskBO.loadNormalizedSubjectsFromStaticResource(
+      'RecursoInexistente'
+    );
     Test.stopTest();
 
     Assert.isNotNull(projetoSubjects, 'projetoSubjects não deve ser null.');
-    Assert.isNotNull(instalacaoSubjects, 'instalacaoSubjects não deve ser null.');
-    Assert.isNotNull(unknownSubjects, 'unknownSubjects não deve ser null (retorna Set vazio em erro).');
+    Assert.isNotNull(
+      instalacaoSubjects,
+      'instalacaoSubjects não deve ser null.'
+    );
+    Assert.isNotNull(
+      unknownSubjects,
+      'unknownSubjects não deve ser null (retorna Set vazio em erro).'
+    );
   }
 
   @IsTest
@@ -1335,9 +1481,7 @@ private class TaskBOTest {
       true
     );
 
-    Instalacao__c instalacao = new Instalacao__c(
-      Projeto__c = project.Id
-    );
+    Instalacao__c instalacao = new Instalacao__c(Projeto__c = project.Id);
     insert instalacao;
 
     Task taskInstalacao = new Task(
