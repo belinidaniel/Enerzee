@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 05-05-2026
+ * @last modified on  : 05-26-2026
  * @last modified by  : Daniel Belini
  * @test              : KitInstalacaoBOTest, KitInstalacaoTriggerTest
  **/
@@ -312,9 +312,38 @@ public without sharing class KitInstalacaoBO {
 
   @future(callout=true)
   public static void SendKitUpdate(Set<Id> kitIds) {
+    sendKitUpdateSync(kitIds);
+  }
+
+  public static void sendKitUpdateAndGenerateProposal(Set<Id> kitIds) {
+    if (kitIds == null || kitIds.isEmpty()) {
+      System.debug('sendKitUpdateAndGenerateProposal called with no kit IDs.');
+      return;
+    }
+    System.enqueueJob(new SendKitUpdateAndGenerateProposalJob(kitIds));
+  }
+
+  public class SendKitUpdateAndGenerateProposalJob implements Queueable, Database.AllowsCallouts {
+    private Set<Id> kitIds;
+
+    public SendKitUpdateAndGenerateProposalJob(Set<Id> kitIds) {
+      this.kitIds = new Set<Id>();
+      if (kitIds != null) {
+        this.kitIds.addAll(kitIds);
+      }
+    }
+
+    public void execute(QueueableContext context) {
+      Set<Id> updatedOpportunityIds = sendKitUpdateSync(kitIds);
+      OpportunityBO.generateProposalAfterKitUpdate(updatedOpportunityIds);
+    }
+  }
+
+  public static Set<Id> sendKitUpdateSync(Set<Id> kitIds) {
+    Set<Id> opportunityIdsWithUpdatedProposalValues = new Set<Id>();
     if (kitIds == null || kitIds.isEmpty()) {
       System.debug('SendKitUpdate called with no kit IDs.');
-      return;
+      return opportunityIdsWithUpdatedProposalValues;
     }
     System.debug('SendKitUpdate called for kits: ' + kitIds);
 
@@ -331,7 +360,7 @@ public without sharing class KitInstalacaoBO {
 
       if (oppIdToKitIdMap.isEmpty()) {
         System.debug('No opportunities found for the given kits.');
-        return;
+        return opportunityIdsWithUpdatedProposalValues;
       }
 
       List<Opportunity> opportunitiesToProcess = [
@@ -432,6 +461,11 @@ public without sharing class KitInstalacaoBO {
       }
 
       if (!opportunitiesToUpdate.isEmpty()) {
+        for (Opportunity oppToUpdate : opportunitiesToUpdate) {
+          if (oppToUpdate.PropostaAlterada__c == true) {
+            opportunityIdsWithUpdatedProposalValues.add(oppToUpdate.Id);
+          }
+        }
         OpportunityTriggerHandler.disableTrigger();
         try {
           update opportunitiesToUpdate;
@@ -448,6 +482,7 @@ public without sharing class KitInstalacaoBO {
       Utils.createLog(CLASS_NAME, 'SendKitUpdate', e);
       // @future should log and finish without rethrow to avoid unhandled async exception e-mails.
     }
+    return opportunityIdsWithUpdatedProposalValues;
   }
 
   /**

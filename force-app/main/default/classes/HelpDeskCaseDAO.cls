@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-26-2026
  * @last modified by  : Daniel Belini
  * @test              : HelpDeskCaseDAOTest
  **/
@@ -34,12 +34,15 @@ public without sharing class HelpDeskCaseDAO {
         CaseNumber,
         Subject,
         Status,
+        HelpDesk_Status__c,
         CreatedDate,
         LastModifiedDate,
         Contact.Name,
         ContactId,
         Description,
-        Description_Rich__c
+        Description_Rich__c,
+        Oportunidade_Pai__c,
+        Oportunidade_Pai__r.IdVirtualOffice__c
       FROM Case
       WHERE Id = :caseId
     ];
@@ -106,6 +109,69 @@ public without sharing class HelpDeskCaseDAO {
       return;
     }
     insert links;
+  }
+
+  public static List<HelpDeskMessage__c> queryMessages(Id caseId) {
+    return [
+      SELECT
+        Id,
+        Name,
+        Body__c,
+        IsPublic__c,
+        AuthorName__c,
+        AuthorType__c,
+        CreatedDate,
+        CreatedById,
+        CreatedBy.Name,
+        (
+          SELECT
+            Id,
+            ContentDocumentId,
+            ContentDocument.LatestPublishedVersionId,
+            ContentDocument.Title,
+            ContentDocument.FileExtension,
+            ContentDocument.ContentSize
+          FROM ContentDocumentLinks
+          ORDER BY ContentDocument.CreatedDate ASC
+        )
+      FROM HelpDeskMessage__c
+      WHERE Case__c = :caseId AND IsPublic__c = TRUE
+      ORDER BY CreatedDate ASC
+    ];
+  }
+
+  public static List<HelpDeskMessage__c> queryAllMessages(Id caseId) {
+    return [
+      SELECT
+        Id,
+        Name,
+        Body__c,
+        IsPublic__c,
+        AuthorName__c,
+        AuthorType__c,
+        CreatedDate,
+        CreatedById,
+        CreatedBy.Name,
+        (
+          SELECT
+            Id,
+            ContentDocumentId,
+            ContentDocument.LatestPublishedVersionId,
+            ContentDocument.Title,
+            ContentDocument.FileExtension,
+            ContentDocument.ContentSize
+          FROM ContentDocumentLinks
+          ORDER BY ContentDocument.CreatedDate ASC
+        )
+      FROM HelpDeskMessage__c
+      WHERE Case__c = :caseId
+      ORDER BY CreatedDate ASC
+    ];
+  }
+
+  public static HelpDeskMessage__c insertMessage(HelpDeskMessage__c msg) {
+    insert msg;
+    return msg;
   }
 
   public static Id resolveRecordTypeId(

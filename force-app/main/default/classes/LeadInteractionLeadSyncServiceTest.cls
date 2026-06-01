@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 05-27-2026
+ * @last modified on  : 05-25-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -58,6 +58,26 @@ private class LeadInteractionLeadSyncServiceTest {
       FROM Lead
       WHERE Id = :lead.Id
     ];
+
+    Assert.areEqual('Karolamika09', updated.FirstName);
+    Assert.areEqual('Cliente', updated.LastName);
+    Assert.areEqual('karolamika09@gmail.com', updated.Email);
+    Assert.areEqual('08269787126', updated.CPFCNPJ__c);
+    Assert.areEqual('08269787126', updated.CPF__c);
+    Assert.isNull(
+      updated.MobilePhone,
+      'Id de MessagingSession nao deve virar telefone.'
+    );
+    Assert.areEqual('Porto Alegre do Norte', updated.City);
+    Assert.areEqual('Porto Alegre do Norte', updated.Cidade__c);
+    Assert.areEqual('MT', updated.State);
+    Assert.areEqual('MT', updated.Estado__c);
+    Assert.areEqual('MT', updated.Lb065_Estado__c);
+    Assert.areEqual(Decimal.valueOf('340'), updated.Lb065_FaturaEnergia__c);
+    assertOptionalValue('até R$ 300 a R$ 500', updated.CustoEnergiaMes__c);
+    assertOptionalValue('Entre R$ 200 e R$ 499', updated.ValorContaEnergia__c);
+    assertOptionalValue('Ezee Solar', updated.Lb065_ProdutoInteresse__c);
+    assertOptionalValue('com laje', updated.TipoDeImovel__c);
   }
 
   @isTest
@@ -90,6 +110,13 @@ private class LeadInteractionLeadSyncServiceTest {
       FROM Lead
       WHERE Id = :lead.Id
     ];
+
+    Assert.areEqual('Novo', updated.FirstName);
+    Assert.areEqual('Sobrenome', updated.LastName);
+    Assert.areEqual('novo@email.com', updated.Email);
+    Assert.areEqual('556481627918', updated.MobilePhone);
+    Assert.areEqual('556481627918', updated.Phone);
+    Assert.areEqual(Decimal.valueOf('1250.50'), updated.Lb065_FaturaEnergia__c);
   }
 
   @isTest
@@ -119,12 +146,23 @@ private class LeadInteractionLeadSyncServiceTest {
       FROM Lead
       WHERE Id = :lead.Id
     ];
+    Assert.isNull(updated.Email, 'Email invalido nao deve atualizar o Lead.');
+    Assert.areEqual('Lead', updated.FirstName);
+    Assert.areEqual('Sem Email Valido', updated.LastName);
+    Assert.areEqual(Decimal.valueOf('340'), updated.Lb065_FaturaEnergia__c);
+
     Log__c logRecord = [
       SELECT Class__c, Method__c, Message__c, RequestBody__c, ResponseBody__c
       FROM Log__c
       WHERE RelatedId__c = :lead.Id
       LIMIT 1
     ];
+    Assert.areEqual('LeadInteractionLeadSyncService', logRecord.Class__c);
+    Assert.areEqual('applyInteractionFields', logRecord.Method__c);
+    Assert.isTrue(logRecord.Message__c.contains('Email fora do padrao'));
+    Assert.isTrue(logRecord.RequestBody__c.contains('email-invalido'));
+    Assert.isTrue(logRecord.RequestBody__c.contains('leadFieldsAttempted'));
+    Assert.isTrue(logRecord.ResponseBody__c.contains('leadInteraction'));
   }
 
   @isTest
@@ -146,6 +184,8 @@ private class LeadInteractionLeadSyncServiceTest {
       FROM Lead
       WHERE Id = :lead.Id
     ];
+    Assert.areEqual('Vanuza', updated.FirstName);
+    Assert.areEqual('Paixao', updated.LastName);
   }
 
   @isTest
@@ -169,6 +209,9 @@ private class LeadInteractionLeadSyncServiceTest {
       FROM Lead
       WHERE Id = :lead.Id
     ];
+    Assert.isNull(updated.FirstName);
+    Assert.areEqual('Sobrenome Valido', updated.LastName);
+    Assert.areEqual(Decimal.valueOf('600'), updated.Lb065_FaturaEnergia__c);
   }
 
   @isTest
@@ -199,6 +242,7 @@ private class LeadInteractionLeadSyncServiceTest {
         foundNoLeadLog ||
         logRecord.Message__c.contains('LeadInteraction sem Lead__c');
     }
+    Assert.isTrue(foundNoLeadLog);
   }
 
   @isTest
@@ -239,7 +283,30 @@ private class LeadInteractionLeadSyncServiceTest {
     );
 
     Lead lowValueUpdated = leads.get(lowValueLead.Id);
+    Assert.areEqual('12345678000195', lowValueUpdated.CNPJ__c);
+    Assert.areEqual('5551999998888', lowValueUpdated.MobilePhone);
+    Assert.areEqual('5551999998888', lowValueUpdated.Phone);
+    Assert.areEqual(
+      Decimal.valueOf('199.99'),
+      lowValueUpdated.Lb065_FaturaEnergia__c
+    );
+    assertOptionalValue('até R$ 300', lowValueUpdated.CustoEnergiaMes__c);
+    assertOptionalValue('Até R$ 200', lowValueUpdated.ValorContaEnergia__c);
+
     Lead highValueUpdated = leads.get(highValueLead.Id);
+    Assert.isNull(highValueUpdated.MobilePhone);
+    Assert.areEqual(
+      Decimal.valueOf('6000'),
+      highValueUpdated.Lb065_FaturaEnergia__c
+    );
+    assertOptionalValue(
+      'mais de R$ 1.000',
+      highValueUpdated.CustoEnergiaMes__c
+    );
+    assertOptionalValue(
+      'Acima de R$ 500',
+      highValueUpdated.ValorContaEnergia__c
+    );
   }
 
   @isTest
@@ -255,6 +322,8 @@ private class LeadInteractionLeadSyncServiceTest {
       FROM LeadInteraction__c
       WHERE Id = :interaction.Id
     ];
+    Assert.areEqual('Vanuza', savedInteraction.Nome__c);
+    Assert.areEqual('Paixao', savedInteraction.Sobrenome__c);
   }
 
   @isTest
@@ -272,6 +341,8 @@ private class LeadInteractionLeadSyncServiceTest {
       FROM LeadInteraction__c
       WHERE Id = :interaction.Id
     ];
+    Assert.areEqual('Maria', savedInteraction.Nome__c);
+    Assert.areEqual('da Silva Santos', savedInteraction.Sobrenome__c);
   }
 
   @isTest
@@ -288,6 +359,8 @@ private class LeadInteractionLeadSyncServiceTest {
       FROM LeadInteraction__c
       WHERE Id = :interaction.Id
     ];
+    Assert.areEqual('Ana', savedInteraction.Nome__c);
+    Assert.areEqual('Maria Souza', savedInteraction.Sobrenome__c);
   }
 
   private static Lead createLead(String lastName, String leadSource) {
@@ -306,5 +379,12 @@ private class LeadInteractionLeadSyncServiceTest {
       LeadTriggerHandler.enableTrigger();
     }
     return lead;
+  }
+
+  private static void assertOptionalValue(String expected, String actual) {
+    Assert.isTrue(
+      actual == null || actual == expected,
+      'Campo opcional deve ficar vazio quando a configuracao da org bloquear o valor.'
+    );
   }
 }

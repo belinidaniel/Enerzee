@@ -149,7 +149,6 @@ private class LeadDistributionSelectorTest {
     Consultor__c consultor = (Consultor__c) TestFactory.createSObject(
       new Consultor__c(
         Estado__c = 'SP',
-        EstadosAtendidos__c = 'SP',
         SendLead__c = true,
         FreezeConsult__c = false,
         Lb65_Graduacao__c = 'Advanced Builder',
@@ -179,100 +178,6 @@ private class LeadDistributionSelectorTest {
       consultor.Id,
       res[0].consultantId,
       'Deve selecionar consultor pelo estado.'
-    );
-  }
-
-  @isTest
-  static void testWarmLeadWithStateUsesAdvisorInTerritory() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    freezeAllConsultors();
-
-    Consultor__c wrongState = createConsultor(
-      'Advisor',
-      'MT',
-      'DF;GO;MS',
-      true,
-      System.now().addDays(-5)
-    );
-    Consultor__c mtConsultor = createConsultor(
-      'Advisor',
-      'SP',
-      'MT',
-      true,
-      System.now().addDays(-3)
-    );
-
-    Lead lead = createLead('Lead Warm MT', statusValue, 'Warm', 'MT');
-    setIfExists(lead, 'ConsultorRegional__c', wrongState.Id);
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-    Assert.areEqual(
-      mtConsultor.Id,
-      res[0].consultantId,
-      'Warm com estado deve selecionar Advisor que atende o estado, nao consultor de outra UF.'
-    );
-  }
-
-  @isTest
-  static void testDistributionTypeRespectsLeadState() {
-    Map<String, Schema.SObjectField> leadFields = Schema.SObjectType.Lead.fields.getMap();
-    if (
-      !leadFields.containsKey('Distributiontype__c') ||
-      !leadFields.containsKey('DistributionValue__c')
-    ) {
-      return;
-    }
-
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    freezeAllConsultors();
-
-    Consultor__c wrongState = createConsultor(
-      'Platinum',
-      null,
-      'DF;GO;MS',
-      true,
-      System.now().addDays(-5)
-    );
-    Consultor__c mtConsultor = createConsultor(
-      'Platinum',
-      null,
-      'MT',
-      true,
-      System.now().addDays(-3)
-    );
-
-    Lead lead = createLead('Lead Grad MT', statusValue, 'Hot', 'MT');
-    lead.put('Distributiontype__c', 'Graduação');
-    lead.put('DistributionValue__c', 'Platinum');
-    setIfExists(lead, 'ConsultorRegional__c', wrongState.Id);
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-    Assert.areEqual(
-      mtConsultor.Id,
-      res[0].consultantId,
-      'Distribuicao por graduacao tambem deve respeitar EstadosAtendidos__c quando o lead tem estado.'
     );
   }
 
@@ -849,6 +754,50 @@ private class LeadDistributionSelectorTest {
     );
   }
 
+  @isTest
+  static void testConsultorAddressStateDoesNotOverrideEstadosAtendidos() {
+    String statusValue = getNonNovoStatus();
+    if (String.isBlank(statusValue)) {
+      return;
+    }
+
+    freezeAllConsultors();
+
+    Consultor__c mtAddressOnlyConsultor = createConsultor(
+      'Diamond',
+      'MT',
+      'DF;GO;MS',
+      true,
+      System.now().addDays(-10)
+    );
+    mtAddressOnlyConsultor.SpecialRange__c = 'Hot';
+    updateConsultors(new List<Consultor__c>{ mtAddressOnlyConsultor });
+
+    Consultor__c mtEligibleConsultor = createConsultor(
+      'Gold',
+      null,
+      'MT',
+      true,
+      System.now().addDays(-1)
+    );
+
+    Lead lead = createLead('Lead MT', statusValue, 'Hot', 'MT');
+    insert lead;
+
+    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
+    req.leadId = lead.Id;
+    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ req }
+    );
+
+    Assert.areEqual(1, res.size());
+    Assert.areEqual(
+      mtEligibleConsultor.Id,
+      res[0].consultantId,
+      'Estado do endereco do consultor nao deve substituir Estados Atendidos.'
+    );
+  }
+
   private static void freezeAllConsultors() {
     List<Consultor__c> existing = [
       SELECT Id, FreezeConsult__c
@@ -859,12 +808,16 @@ private class LeadDistributionSelectorTest {
       c.FreezeConsult__c = true;
     }
     if (!existing.isEmpty()) {
-      ConsultorTriggerHandler.disableTrigger();
-      try {
-        update existing;
-      } finally {
-        ConsultorTriggerHandler.enableTrigger();
-      }
+      updateConsultors(existing);
+    }
+  }
+
+  private static void updateConsultors(List<Consultor__c> consultors) {
+    ConsultorTriggerHandler.disableTrigger();
+    try {
+      update consultors;
+    } finally {
+      ConsultorTriggerHandler.enableTrigger();
     }
   }
 

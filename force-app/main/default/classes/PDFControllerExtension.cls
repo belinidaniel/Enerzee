@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-17-2026
+ * @last modified on  : 05-26-2026
  * @last modified by  : Daniel Belini
  * @test              : PDFControllerExtensionExtraTest, PDFControllerExtensionTest
  **/
@@ -792,6 +792,77 @@ public with sharing class PDFControllerExtension {
     savePdfFileAsyncInternal(opportunityId, autoIntegrate, false);
   }
 
+  public static void generateProposalFileNow(
+    Id opportunityId,
+    Boolean autoIntegrate,
+    Boolean forceNewFile
+  ) {
+    Id resolvedCoverId = resolveApiCoverId(opportunityId);
+    if (resolvedCoverId != null) {
+      try {
+        ProposalGenerationService.ProposalResult result = ProposalGenerationService.generateProposal(
+          opportunityId,
+          resolvedCoverId
+        );
+        ProposalApiGenerationJob.advanceStage(opportunityId);
+
+        if (autoIntegrate == true) {
+          IntegracaoNivelloProposta.gerandoProposta(
+            opportunityId,
+            result.contentVersionId
+          );
+        }
+      } catch (Exception e) {
+        Utils.createLog('PDFControllerExtension', 'generateProposalFileNow', e);
+      }
+      return;
+    }
+    savePdfFileAsyncInternal(opportunityId, autoIntegrate, forceNewFile);
+  }
+
+  public static Id resolveApiCoverId(Id opportunityId) {
+    List<Opportunity> opps = [
+      SELECT
+        Parceiro__r.CapaProposta__c,
+        Parceiro__r.CapaPromocional__c,
+        TipoKitPromocional__c,
+        isPromotional__c,
+        Parceiro__r.Name
+      FROM Opportunity
+      WHERE Id = :opportunityId
+      LIMIT 1
+    ];
+    if (opps.isEmpty() || opps[0].Parceiro__r == null) {
+      return null;
+    }
+    Opportunity opp = opps[0];
+    Boolean isPromotional = ProposalContextResolver.determineIsPromotional(opp);
+    Id candidateCoverId = isPromotional
+      ? opp.Parceiro__r.CapaPromocional__c
+      : opp.Parceiro__r.CapaProposta__c;
+    if (candidateCoverId == null) {
+      return null;
+    }
+    List<ProposalCover__c> covers = [
+      SELECT
+        Id,
+        IntegrationKey__c,
+        Template__c,
+        IsActive__c,
+        isPromotional__c,
+        TemplateUrl__c
+      FROM ProposalCover__c
+      WHERE Id = :candidateCoverId AND IsActive__c = TRUE
+      LIMIT 1
+    ];
+    if (covers.isEmpty()) {
+      return null;
+    }
+    return ProposalCoverRoutingService.usesApiFlow(covers[0])
+      ? covers[0].Id
+      : null;
+  }
+
   public class SavePdfJob implements Queueable, Database.AllowsCallouts {
     private Id oppId;
     private Boolean autoIntegrate;
@@ -806,7 +877,7 @@ public with sharing class PDFControllerExtension {
       this.forceNewFile = forceNewFile;
     }
     public void execute(QueueableContext ctx) {
-      Id resolvedCoverId = resolveApiCoverId(oppId);
+      Id resolvedCoverId = PDFControllerExtension.resolveApiCoverId(oppId);
       if (resolvedCoverId != null) {
         if (!Test.isRunningTest()) {
           System.enqueueJob(
@@ -816,51 +887,6 @@ public with sharing class PDFControllerExtension {
         return;
       }
       savePdfFileAsyncInternal(oppId, autoIntegrate, forceNewFile);
-    }
-
-    private Id resolveApiCoverId(Id opportunityId) {
-      List<Opportunity> opps = [
-        SELECT
-          Parceiro__r.CapaProposta__c,
-          Parceiro__r.CapaPromocional__c,
-          TipoKitPromocional__c,
-          isPromotional__c,
-          Parceiro__r.Name
-        FROM Opportunity
-        WHERE Id = :opportunityId
-        LIMIT 1
-      ];
-      if (opps.isEmpty() || opps[0].Parceiro__r == null) {
-        return null;
-      }
-      Opportunity opp = opps[0];
-      Boolean isPromotional = ProposalContextResolver.determineIsPromotional(
-        opp
-      );
-      Id candidateCoverId = isPromotional
-        ? opp.Parceiro__r.CapaPromocional__c
-        : opp.Parceiro__r.CapaProposta__c;
-      if (candidateCoverId == null) {
-        return null;
-      }
-      List<ProposalCover__c> covers = [
-        SELECT
-          Id,
-          IntegrationKey__c,
-          Template__c,
-          IsActive__c,
-          isPromotional__c,
-          TemplateUrl__c
-        FROM ProposalCover__c
-        WHERE Id = :candidateCoverId AND IsActive__c = TRUE
-        LIMIT 1
-      ];
-      if (covers.isEmpty()) {
-        return null;
-      }
-      return ProposalCoverRoutingService.usesApiFlow(covers[0])
-        ? covers[0].Id
-        : null;
     }
   }
 
@@ -976,7 +1002,8 @@ public with sharing class PDFControllerExtension {
   }
 
   public String getEconomiaAnualFormatada() {
-    Decimal val = this.opportunity.EconomiaAnual__c != null && this.opportunity.EconomiaAnual__c > 0
+    Decimal val = this.opportunity.EconomiaAnual__c != null &&
+      this.opportunity.EconomiaAnual__c > 0
       ? this.opportunity.EconomiaAnual__c
       : this.opportunity.EconomiaAnualEstimada__c;
     return formatCurrencyBR(val);
