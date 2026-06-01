@@ -12,8 +12,6 @@ public without sharing class PaymentSimulationBO {
   @TestVisible
   private static final String MANUAL_SIMULATION_LABEL = 'Simulação ajustada';
   @TestVisible
-  private static final String MANUAL_PAYMENT_TYPE = 'ManualFinancing';
-  @TestVisible
   private static final String GROUP_B_VALUE = 'Grupo B';
   @TestVisible
   private static final String PAYMENT_TYPE_RENTAL = 'Rental';
@@ -220,14 +218,8 @@ public without sharing class PaymentSimulationBO {
       return;
     }
 
-    if (!syncPlan.simulationsToDelete.isEmpty()) {
-      delete syncPlan.simulationsToDelete;
-    }
     if (!syncPlan.simulationsToInsert.isEmpty()) {
       insert syncPlan.simulationsToInsert;
-    }
-    if (!syncPlan.simulationsToUpdate.isEmpty()) {
-      update syncPlan.simulationsToUpdate;
     }
 
     // Opportunity sync is handled by PaymentSimulationTrigger afterInsert/afterUpdate/afterDelete.
@@ -254,7 +246,6 @@ public without sharing class PaymentSimulationBO {
 
       Decimal simulationAmount = getSimulationAmount(opportunityRecord);
       if (simulationAmount == null) {
-        markForDeletion(existingSimulations, syncPlan);
         continue;
       }
 
@@ -262,7 +253,6 @@ public without sharing class PaymentSimulationBO {
         activeFinancingRates.isEmpty() &&
         !isPixPaymentMethod(opportunityRecord.FormaPagamento__c)
       ) {
-        markForDeletion(existingSimulations, syncPlan);
         continue;
       }
 
@@ -276,45 +266,9 @@ public without sharing class PaymentSimulationBO {
         existingSimulations
       );
 
-      Map<String, List<PaymentSimulation__c>> existingByKey = groupSimulationsByKey(
-        existingSimulations
-      );
-      for (PaymentSimulation__c desiredSimulation : desiredSimulations) {
-        String simulationKey = buildSimulationKey(desiredSimulation);
-        PaymentSimulation__c existingMatch = takeFirstSimulationForKey(
-          existingByKey,
-          simulationKey
-        );
-
-        if (existingMatch == null) {
-          syncPlan.simulationsToInsert.add(desiredSimulation);
-          syncPlan.affectedOpportunityIds.add(opportunityRecord.Id);
-          continue;
-        }
-
-        PaymentSimulation__c updateSimulation = buildSimulationUpdate(
-          existingMatch,
-          desiredSimulation
-        );
-        if (updateSimulation != null) {
-          syncPlan.simulationsToUpdate.add(updateSimulation);
-          syncPlan.affectedOpportunityIds.add(opportunityRecord.Id);
-        }
-      }
-
-      for (
-        List<PaymentSimulation__c> orphanedSimulations : existingByKey.values()
-      ) {
-        for (PaymentSimulation__c orphanedSimulation : orphanedSimulations) {
-          if (
-            orphanedSimulation.ProposalLabel__c == MANUAL_SIMULATION_LABEL ||
-            orphanedSimulation.PaymentType__c == MANUAL_PAYMENT_TYPE
-          ) {
-            continue;
-          }
-          syncPlan.simulationsToDelete.add(orphanedSimulation);
-          syncPlan.affectedOpportunityIds.add(opportunityRecord.Id);
-        }
+      if (!desiredSimulations.isEmpty()) {
+        syncPlan.simulationsToInsert.addAll(desiredSimulations);
+        syncPlan.affectedOpportunityIds.add(opportunityRecord.Id);
       }
     }
 
@@ -426,18 +380,6 @@ public without sharing class PaymentSimulationBO {
     }
 
     return desiredSimulations;
-  }
-
-  private static void markForDeletion(
-    List<PaymentSimulation__c> simulations,
-    SimulationSyncPlan syncPlan
-  ) {
-    for (PaymentSimulation__c simulationRecord : simulations) {
-      syncPlan.simulationsToDelete.add(simulationRecord);
-      if (simulationRecord.Opportunity__c != null) {
-        syncPlan.affectedOpportunityIds.add(simulationRecord.Opportunity__c);
-      }
-    }
   }
 
   @TestVisible
@@ -753,45 +695,6 @@ public without sharing class PaymentSimulationBO {
     return simulationsByOpportunityId;
   }
 
-  private static Map<String, List<PaymentSimulation__c>> groupSimulationsByKey(
-    List<PaymentSimulation__c> simulations
-  ) {
-    Map<String, List<PaymentSimulation__c>> simulationsByKey = new Map<String, List<PaymentSimulation__c>>();
-    for (PaymentSimulation__c simulationRecord : simulations) {
-      String simulationKey = buildSimulationKey(simulationRecord);
-      if (simulationKey == null) {
-        simulationKey = 'ID:' + simulationRecord.Id;
-      }
-
-      if (!simulationsByKey.containsKey(simulationKey)) {
-        simulationsByKey.put(simulationKey, new List<PaymentSimulation__c>());
-      }
-      simulationsByKey.get(simulationKey).add(simulationRecord);
-    }
-    return simulationsByKey;
-  }
-
-  private static PaymentSimulation__c takeFirstSimulationForKey(
-    Map<String, List<PaymentSimulation__c>> simulationsByKey,
-    String simulationKey
-  ) {
-    if (
-      String.isBlank(simulationKey) ||
-      simulationsByKey == null ||
-      !simulationsByKey.containsKey(simulationKey) ||
-      simulationsByKey.get(simulationKey).isEmpty()
-    ) {
-      return null;
-    }
-
-    PaymentSimulation__c simulationRecord = simulationsByKey.get(simulationKey)
-      .remove(0);
-    if (simulationsByKey.get(simulationKey).isEmpty()) {
-      simulationsByKey.remove(simulationKey);
-    }
-    return simulationRecord;
-  }
-
   private static Set<String> collectSelectedSimulationKeys(
     List<PaymentSimulation__c> simulations
   ) {
@@ -835,66 +738,6 @@ public without sharing class PaymentSimulationBO {
       }
     }
     return false;
-  }
-
-  private static PaymentSimulation__c buildSimulationUpdate(
-    PaymentSimulation__c existingSimulation,
-    PaymentSimulation__c desiredSimulation
-  ) {
-    if (existingSimulation == null || desiredSimulation == null) {
-      return null;
-    }
-
-    List<String> synchronizedFields = new List<String>{
-      'Opportunity__c',
-      'FinancingRate__c',
-      'PaymentType__c',
-      'ProposalLabel__c',
-      'Selected__c',
-      'InstallmentCount__c',
-      'InterestRate__c',
-      'InstallmentAmount__c'
-    };
-
-    Boolean hasChanges = false;
-    PaymentSimulation__c updateSimulation = new PaymentSimulation__c(
-      Id = existingSimulation.Id
-    );
-    for (String fieldName : synchronizedFields) {
-      Object desiredValue = desiredSimulation.get(fieldName);
-      if (areSameValue(existingSimulation.get(fieldName), desiredValue)) {
-        continue;
-      }
-
-      updateSimulation.put(fieldName, desiredValue);
-      hasChanges = true;
-    }
-
-    return hasChanges ? updateSimulation : null;
-  }
-
-  private static Boolean areSameValue(
-    Object currentValue,
-    Object desiredValue
-  ) {
-    return currentValue == desiredValue ||
-      String.valueOf(currentValue) == String.valueOf(desiredValue);
-  }
-
-  private static Boolean didSimulationInputsChange(
-    Opportunity currentOpportunity,
-    Opportunity previousOpportunity
-  ) {
-    if (previousOpportunity == null) {
-      return true;
-    }
-
-    return getSimulationAmount(currentOpportunity) !=
-      getSimulationAmount(previousOpportunity) ||
-      currentOpportunity.GrupoTarifario__c !=
-      previousOpportunity.GrupoTarifario__c ||
-      currentOpportunity.AccountId != previousOpportunity.AccountId ||
-      currentOpportunity.RecordTypeId != previousOpportunity.RecordTypeId;
   }
 
   private static Integer getInstallmentCount(
@@ -1172,14 +1015,10 @@ public without sharing class PaymentSimulationBO {
 
   private class SimulationSyncPlan {
     public List<PaymentSimulation__c> simulationsToInsert = new List<PaymentSimulation__c>();
-    public List<PaymentSimulation__c> simulationsToUpdate = new List<PaymentSimulation__c>();
-    public List<PaymentSimulation__c> simulationsToDelete = new List<PaymentSimulation__c>();
     public Set<Id> affectedOpportunityIds = new Set<Id>();
 
     public Boolean isEmpty() {
-      return simulationsToInsert.isEmpty() &&
-        simulationsToUpdate.isEmpty() &&
-        simulationsToDelete.isEmpty();
+      return simulationsToInsert.isEmpty();
     }
   }
 
