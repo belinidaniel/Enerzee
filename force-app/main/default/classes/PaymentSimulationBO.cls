@@ -248,6 +248,10 @@ public without sharing class PaymentSimulationBO {
         ? simulationsByOpportunityId.get(opportunityRecord.Id)
         : new List<PaymentSimulation__c>();
 
+      if (!existingSimulations.isEmpty()) {
+        continue;
+      }
+
       Decimal simulationAmount = getSimulationAmount(opportunityRecord);
       if (simulationAmount == null) {
         markForDeletion(existingSimulations, syncPlan);

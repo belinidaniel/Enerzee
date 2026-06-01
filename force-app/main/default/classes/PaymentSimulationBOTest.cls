@@ -469,7 +469,7 @@ public class PaymentSimulationBOTest {
   }
 
   @IsTest
-  static void recalculateOnAmountChangeBackfillsAndUpdatesOptions() {
+  static void recalculateOnAmountChangeCreatesOnlyWhenNoSimulationsExist() {
     createFinancingRate(
       'Banco Recalculo',
       'Financing',
@@ -506,6 +506,7 @@ public class PaymentSimulationBOTest {
       simulations.size(),
       'O after update deve criar as simulações faltantes quando a oportunidade ainda não tiver nenhuma.'
     );
+    Decimal firstInstallmentAmount = simulations[0].InstallmentAmount__c;
 
     OpportunityTriggerHandler.disableTrigger();
     try {
@@ -521,10 +522,20 @@ public class PaymentSimulationBOTest {
     );
 
     simulations = getSimulations(opportunityRecord.Id);
+    System.assertEquals(
+      2,
+      simulations.size(),
+      'O after update não deve criar novas simulações quando a oportunidade já tiver simulações.'
+    );
+    System.assertEquals(
+      firstInstallmentAmount,
+      simulations[0].InstallmentAmount__c,
+      'O after update não deve recalcular simulações existentes.'
+    );
   }
 
   @IsTest
-  static void recalculateOnAmountChangeConvertsLegacyRowsIntoOptionRows() {
+  static void recalculateOnAmountChangeKeepsExistingLegacyRowsUnchanged() {
     FinancingRate__c financingRate = createFinancingRate(
       'Banco Legado',
       'Financing',
@@ -572,6 +583,17 @@ public class PaymentSimulationBOTest {
 
     List<PaymentSimulation__c> simulations = getSimulations(
       opportunityRecord.Id
+    );
+    Assert.areEqual(
+      1,
+      simulations.size(),
+      'O after update não deve converter linhas existentes em novas opções.'
+    );
+    Assert.areEqual(financingRate.Id, simulations[0].FinancingRate__c);
+    Assert.areEqual(24, simulations[0].InstallmentCount__c);
+    Assert.areEqual(
+      calculateExpectedSimpleInterest(100000, 0.0219),
+      simulations[0].InstallmentAmount__c
     );
   }
 
