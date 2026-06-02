@@ -2,13 +2,13 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 06-01-2026
+ * @last modified on  : 06-02-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
  *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
  *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentConfirmationTaskTest,
- *                       OpportunityBOPaymentReminderTaskTest, OpportunityDisqualifyLeadsTest, OpportunityTriggerTest,
- *                       PDFControllerExtensionExtraTest
+ *                       OpportunityBOPaymentReminderTaskTest, OpportunityDisqualifyLeadsTest,
+ *                       OpportunityLeadAssociationTest, OpportunityTriggerTest, PDFControllerExtensionExtraTest
  **/
 public class OpportunityBO {
   // Flag para evitar recursividade/duplicidade na geração de propostas assíncronas
@@ -21,6 +21,213 @@ public class OpportunityBO {
   private static String FINANCING_SIMULATION_OWNER_EMAIL_LIKE = 'dayane.silva@enerzee.com.br%';
   @TestVisible
   private static Map<String, String> testProposalFieldDefaults;
+  private static final String LEAD_MATCH_KEY_SEPARATOR = '|';
+
+  public static void assignLeadOnCreate(List<Opportunity> newRecords) {
+    if (newRecords == null || newRecords.isEmpty()) {
+      return;
+    }
+
+    Set<String> emailSearchValues = new Set<String>();
+    Set<String> phoneSearchValues = new Set<String>();
+    Boolean hasOpportunityToMatch = false;
+
+    for (Opportunity opp : newRecords) {
+      if (opp == null || !String.isBlank(opp.Lead__c)) {
+        continue;
+      }
+
+      Set<String> oppEmails = getOpportunityLeadMatchEmails(opp);
+      Set<String> oppPhones = getOpportunityLeadMatchPhones(opp);
+
+      if (oppEmails.isEmpty() && oppPhones.isEmpty()) {
+        continue;
+      }
+
+      hasOpportunityToMatch = true;
+      emailSearchValues.addAll(oppEmails);
+      phoneSearchValues.addAll(oppPhones);
+    }
+
+    if (
+      !hasOpportunityToMatch ||
+      (emailSearchValues.isEmpty() && phoneSearchValues.isEmpty())
+    ) {
+      return;
+    }
+
+    Map<String, Lead> leadByEmail = new Map<String, Lead>();
+    Map<String, Lead> leadByPhone = new Map<String, Lead>();
+    Map<String, Lead> leadByEmailAndPhone = new Map<String, Lead>();
+
+    for (Lead leadRecord : [
+      SELECT Id, Email, Phone, MobilePhone, Telefone_Formatado__c
+      FROM Lead
+      WHERE
+        Email IN :emailSearchValues
+        OR Phone IN :phoneSearchValues
+        OR MobilePhone IN :phoneSearchValues
+        OR Telefone_Formatado__c IN :phoneSearchValues
+      ORDER BY CreatedDate DESC
+    ]) {
+      String leadEmail = normalizeLeadMatchEmail(leadRecord.Email);
+      Set<String> leadPhones = getLeadMatchPhones(leadRecord);
+
+      if (!String.isBlank(leadEmail) && !leadByEmail.containsKey(leadEmail)) {
+        leadByEmail.put(leadEmail, leadRecord);
+      }
+
+      for (String leadPhone : leadPhones) {
+        if (!leadByPhone.containsKey(leadPhone)) {
+          leadByPhone.put(leadPhone, leadRecord);
+        }
+        if (!String.isBlank(leadEmail)) {
+          String combinedKey = buildLeadMatchKey(leadEmail, leadPhone);
+          if (!leadByEmailAndPhone.containsKey(combinedKey)) {
+            leadByEmailAndPhone.put(combinedKey, leadRecord);
+          }
+        }
+      }
+    }
+
+    for (Opportunity opp : newRecords) {
+      if (opp == null || !String.isBlank(opp.Lead__c)) {
+        continue;
+      }
+
+      Lead matchedLead = findBestLeadMatch(
+        getOpportunityLeadMatchEmails(opp),
+        getOpportunityLeadMatchPhones(opp),
+        leadByEmailAndPhone,
+        leadByPhone,
+        leadByEmail
+      );
+
+      if (matchedLead != null) {
+        opp.Lead__c = String.valueOf(matchedLead.Id);
+      }
+    }
+  }
+
+  private static Lead findBestLeadMatch(
+    Set<String> opportunityEmails,
+    Set<String> opportunityPhones,
+    Map<String, Lead> leadByEmailAndPhone,
+    Map<String, Lead> leadByPhone,
+    Map<String, Lead> leadByEmail
+  ) {
+    for (String email : opportunityEmails) {
+      for (String phone : opportunityPhones) {
+        Lead leadRecord = leadByEmailAndPhone.get(
+          buildLeadMatchKey(email, phone)
+        );
+        if (leadRecord != null) {
+          return leadRecord;
+        }
+      }
+    }
+
+    for (String phone : opportunityPhones) {
+      Lead leadRecord = leadByPhone.get(phone);
+      if (leadRecord != null) {
+        return leadRecord;
+      }
+    }
+
+    for (String email : opportunityEmails) {
+      Lead leadRecord = leadByEmail.get(email);
+      if (leadRecord != null) {
+        return leadRecord;
+      }
+    }
+
+    return null;
+  }
+
+  private static Set<String> getOpportunityLeadMatchEmails(Opportunity opp) {
+    Set<String> emails = new Set<String>();
+    addLeadMatchEmail(emails, opp.EmailDoResponsavel__c);
+    addLeadMatchEmail(emails, opp.EmailDoProprietario__c);
+    addLeadMatchEmail(emails, opp.EmailDoDevedor__c);
+    return emails;
+  }
+
+  private static Set<String> getOpportunityLeadMatchPhones(Opportunity opp) {
+    Set<String> phones = new Set<String>();
+    addLeadMatchPhone(phones, opp.Telefone__c);
+    addLeadMatchPhone(phones, opp.TelefoneDoResponsavel__c);
+    addLeadMatchPhone(phones, opp.TelefoneDoProprietario__c);
+    addLeadMatchPhone(phones, opp.TelefoneDoDevedor__c);
+    return phones;
+  }
+
+  private static Set<String> getLeadMatchPhones(Lead leadRecord) {
+    Set<String> phones = new Set<String>();
+    addLeadMatchPhone(phones, leadRecord.Phone);
+    addLeadMatchPhone(phones, leadRecord.MobilePhone);
+    addLeadMatchPhone(phones, leadRecord.Telefone_Formatado__c);
+    return phones;
+  }
+
+  private static void addLeadMatchEmail(Set<String> emails, String email) {
+    String normalizedEmail = normalizeLeadMatchEmail(email);
+    if (!String.isBlank(normalizedEmail)) {
+      emails.add(normalizedEmail);
+    }
+  }
+
+  private static String normalizeLeadMatchEmail(String email) {
+    return String.isBlank(email) ? null : email.trim().toLowerCase();
+  }
+
+  private static void addLeadMatchPhone(Set<String> phones, String phone) {
+    Set<String> variants = buildLeadMatchPhoneVariants(phone);
+    if (!variants.isEmpty()) {
+      phones.addAll(variants);
+    }
+  }
+
+  private static Set<String> buildLeadMatchPhoneVariants(String phone) {
+    Set<String> variants = new Set<String>();
+    if (String.isBlank(phone)) {
+      return variants;
+    }
+
+    String digits = phone.replaceAll('[^0-9]', '');
+    if (String.isBlank(digits) || digits.length() < 8) {
+      return variants;
+    }
+
+    variants.add(digits);
+
+    if (digits.startsWith('0') && digits.length() > 8) {
+      digits = digits.substring(1);
+      variants.add(digits);
+    }
+
+    String nationalDigits = digits;
+    if (nationalDigits.startsWith('55') && nationalDigits.length() > 11) {
+      nationalDigits = nationalDigits.substring(2);
+      variants.add(nationalDigits);
+    }
+
+    if (nationalDigits.length() == 10 || nationalDigits.length() == 11) {
+      variants.add('55' + nationalDigits);
+    }
+
+    if (nationalDigits.length() == 11) {
+      String withoutNinthDigit =
+        nationalDigits.substring(0, 2) + nationalDigits.substring(3);
+      variants.add(withoutNinthDigit);
+      variants.add('55' + withoutNinthDigit);
+    }
+
+    return variants;
+  }
+
+  private static String buildLeadMatchKey(String email, String phone) {
+    return email + LEAD_MATCH_KEY_SEPARATOR + phone;
+  }
 
   public static void setProposalFieldDefaults(List<Opportunity> newRecords) {
     Map<String, String> defaultsByField = loadProposalFieldDefaults();
@@ -1046,7 +1253,9 @@ public class OpportunityBO {
     }
 
     if (!opportunityIds.isEmpty()) {
-      ProposalService.updateOpportunityPhase(opportunityIds);
+      PaymentSimulationProposalStatusService.enqueueOpportunityStatusSync(
+        opportunityIds
+      );
     }
   }
 

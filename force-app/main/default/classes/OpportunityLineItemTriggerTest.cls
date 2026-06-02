@@ -68,6 +68,42 @@ public class OpportunityLineItemTriggerTest {
   }
 
   @isTest
+  static void afterDeleteShouldBypassKitUpdateForIntegrationUser() {
+    Opportunity opportunity = [
+      SELECT Id
+      FROM Opportunity
+      LIMIT 1
+    ];
+
+    Product2 product = [
+      SELECT Id
+      FROM Product2
+      LIMIT 1
+    ];
+
+    OpportunityLineItem item = (OpportunityLineItem) TestFactory.createSObject(
+      new OpportunityLineItem(
+        OpportunityId = opportunity.Id,
+        Product2Id = product.Id
+      ),
+      true
+    );
+
+    KitInstalacaoBO.enqueuedSendKitUpdateKitIds.clear();
+    OpportunityLineItemTriggerHandler.bypassKitUpdateForIntegrationUser = true;
+    try {
+      delete item;
+      Assert.areEqual(
+        0,
+        KitInstalacaoBO.enqueuedSendKitUpdateKitIds.size(),
+        'Delete executado por usuário de integração não deve enfileirar atualização de kit.'
+      );
+    } finally {
+      OpportunityLineItemTriggerHandler.bypassKitUpdateForIntegrationUser = false;
+    }
+  }
+
+  @isTest
   static void triggerEnabledFlagTest() {
     OpportunityLineItemTriggerHandler.enableTrigger();
     Assert.isTrue(OpportunityLineItemTriggerHandler.isTriggerEnabled());

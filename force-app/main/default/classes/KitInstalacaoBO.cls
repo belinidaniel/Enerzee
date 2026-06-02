@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 05-26-2026
  * @last modified by  : Daniel Belini
- * @test              : KitInstalacaoBOTest, KitInstalacaoTriggerTest
+ * @test              : KitInstalacaoBOTest, KitInstalacaoTriggerTest, OpportunityLineItemTriggerTest
  **/
 public without sharing class KitInstalacaoBO {
   private static final String CLASS_NAME = 'KitInstalacaoBO';

@@ -7,8 +7,8 @@
  * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
  *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
  *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentConfirmationTaskTest,
- *                       OpportunityBOPaymentReminderTaskTest, OpportunityDisqualifyLeadsTest, OpportunityTriggerTest,
- *                       PDFControllerExtensionExtraTest
+ *                       OpportunityBOPaymentReminderTaskTest, OpportunityDisqualifyLeadsTest,
+ *                       OpportunityLeadAssociationTest, OpportunityTriggerTest, PDFControllerExtensionExtraTest
  **/
 public with sharing class UserDAO {
   private static final String INTEGRATION_USER_USERNAME = 'integracao@lab065.com';

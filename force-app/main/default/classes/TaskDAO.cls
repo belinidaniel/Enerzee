@@ -7,8 +7,8 @@
  * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
  *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
  *                       OpportunityBOIntegrationVOFixesTest, OpportunityBOPaymentConfirmationTaskTest,
- *                       OpportunityBOPaymentReminderTaskTest, OpportunityDisqualifyLeadsTest, OpportunityTriggerTest,
- *                       PDFControllerExtensionExtraTest
+ *                       OpportunityBOPaymentReminderTaskTest, OpportunityDisqualifyLeadsTest,
+ *                       OpportunityLeadAssociationTest, OpportunityTriggerTest, PDFControllerExtensionExtraTest
  **/
 public with sharing class TaskDAO {
   /**
