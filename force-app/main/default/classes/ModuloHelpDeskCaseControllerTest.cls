@@ -286,4 +286,60 @@ private class ModuloHelpDeskCaseControllerTest {
       Test.stopTest();
     }
   }
+
+  private class ExternalArchiveMock implements HttpCalloutMock {
+    public HttpResponse respond(HttpRequest req) {
+      HttpResponse res = new HttpResponse();
+      res.setStatusCode(200);
+      res.setStatus('OK');
+      res.setHeader('Content-Type', 'application/json');
+      res.setBody('{"data":"https://files.example.com/ctrl.png"}');
+      return res;
+    }
+  }
+
+  @IsTest
+  static void testMessageAttachmentsWrappers() {
+    User u = createUser();
+    insert u;
+    Contact c = createContact();
+    Case cs = new Case(
+      Subject = 'Case message attachments',
+      Status = 'Novo',
+      Origin = 'Email',
+      ContactId = c.Id
+    );
+    insert cs;
+
+    System.runAs(u) {
+      Id messageId = ModuloHelpDeskCaseController.addMessage(
+        cs.Id,
+        'Comentário com anexo',
+        'Cliente',
+        'Cliente',
+        true,
+        c.Id
+      );
+
+      Test.setMock(HttpCalloutMock.class, new ExternalArchiveMock());
+
+      Test.startTest();
+      Id linkId = ModuloHelpDeskCaseController.uploadMessageFileExternal(
+        cs.Id,
+        messageId,
+        'foto.png',
+        EncodingUtil.base64Encode(Blob.valueOf('imagem')),
+        c.Id
+      );
+      List<AttachmentLink__c> links = ModuloHelpDeskCaseController.getMessageAttachments(
+        cs.Id,
+        c.Id
+      );
+      Test.stopTest();
+
+      System.assertNotEquals(null, linkId);
+      System.assertEquals(1, links.size());
+      System.assertEquals(String.valueOf(messageId), links[0].SObjectId__c);
+    }
+  }
 }

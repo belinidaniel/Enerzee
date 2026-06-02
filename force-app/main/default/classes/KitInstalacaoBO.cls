@@ -8,6 +8,8 @@
  **/
 public without sharing class KitInstalacaoBO {
   private static final String CLASS_NAME = 'KitInstalacaoBO';
+  @TestVisible
+  private static Set<Id> enqueuedSendKitUpdateKitIds = new Set<Id>();
   private static final Set<String> EZEECONNECT_RECORD_TYPES = new Set<String>{
     'BowE',
     'Ultragaz',
@@ -310,9 +312,54 @@ public without sharing class KitInstalacaoBO {
     }
   }
 
-  @future(callout=true)
   public static void SendKitUpdate(Set<Id> kitIds) {
-    sendKitUpdateSync(kitIds);
+    if (kitIds == null || kitIds.isEmpty()) {
+      System.debug('SendKitUpdate called with no kit IDs.');
+      return;
+    }
+
+    Set<Id> kitIdsToEnqueue = new Set<Id>(kitIds);
+    kitIdsToEnqueue.remove(null);
+    kitIdsToEnqueue.removeAll(enqueuedSendKitUpdateKitIds);
+
+    if (kitIdsToEnqueue.isEmpty()) {
+      System.debug(
+        'SendKitUpdate skipped because all kit IDs were already enqueued in this transaction.'
+      );
+      return;
+    }
+
+    enqueuedSendKitUpdateKitIds.addAll(kitIdsToEnqueue);
+
+    Map<Id, Set<Id>> opportunityIdToKitIds = new Map<Id, Set<Id>>();
+    Set<Id> kitIdsWithoutOpportunity = new Set<Id>();
+
+    for (Kit_Instalacao__c kit : [
+      SELECT Id, Nome_da_Oportunidade__c
+      FROM Kit_Instalacao__c
+      WHERE Id IN :kitIdsToEnqueue
+    ]) {
+      if (kit.Nome_da_Oportunidade__c == null) {
+        kitIdsWithoutOpportunity.add(kit.Id);
+        continue;
+      }
+
+      if (!opportunityIdToKitIds.containsKey(kit.Nome_da_Oportunidade__c)) {
+        opportunityIdToKitIds.put(kit.Nome_da_Oportunidade__c, new Set<Id>());
+      }
+      opportunityIdToKitIds.get(kit.Nome_da_Oportunidade__c).add(kit.Id);
+    }
+
+    for (Id opportunityId : opportunityIdToKitIds.keySet()) {
+      enqueueSendKitUpdateJob(
+        opportunityIdToKitIds.get(opportunityId),
+        opportunityId
+      );
+    }
+
+    for (Id kitId : kitIdsWithoutOpportunity) {
+      enqueueSendKitUpdateJob(new Set<Id>{ kitId }, kitId);
+    }
   }
 
   public static void sendKitUpdateAndGenerateProposal(Set<Id> kitIds) {
@@ -320,7 +367,69 @@ public without sharing class KitInstalacaoBO {
       System.debug('sendKitUpdateAndGenerateProposal called with no kit IDs.');
       return;
     }
-    System.enqueueJob(new SendKitUpdateAndGenerateProposalJob(kitIds));
+    enqueueSendKitUpdateAndGenerateProposalJob(kitIds);
+  }
+
+  private static void enqueueSendKitUpdateJob(Set<Id> kitIds, Id signatureId) {
+    if (kitIds == null || kitIds.isEmpty() || signatureId == null) {
+      return;
+    }
+
+    AsyncOptions options = new AsyncOptions();
+    options.DuplicateSignature = QueueableDuplicateSignature.Builder()
+      .addId(signatureId)
+      .build();
+
+    try {
+      System.enqueueJob(new SendKitUpdateJob(kitIds), options);
+      System.debug(
+        'SendKitUpdate enqueued for signatureId=' +
+          signatureId +
+          ' | kits=' +
+          kitIds
+      );
+    } catch (DuplicateMessageException e) {
+      System.debug(
+        'SendKitUpdate skipped because a queueable is already enqueued for signatureId=' +
+        signatureId
+      );
+    }
+  }
+
+  private static void enqueueSendKitUpdateAndGenerateProposalJob(
+    Set<Id> kitIds
+  ) {
+    AsyncOptions options = new AsyncOptions();
+    options.DuplicateSignature = QueueableDuplicateSignature.Builder()
+      .addInteger(System.hashCode(kitIds))
+      .build();
+
+    try {
+      System.enqueueJob(
+        new SendKitUpdateAndGenerateProposalJob(kitIds),
+        options
+      );
+    } catch (DuplicateMessageException e) {
+      System.debug(
+        'sendKitUpdateAndGenerateProposal skipped because a queueable is already enqueued for kitIds=' +
+        kitIds
+      );
+    }
+  }
+
+  public class SendKitUpdateJob implements Queueable, Database.AllowsCallouts {
+    private Set<Id> kitIds;
+
+    public SendKitUpdateJob(Set<Id> kitIds) {
+      this.kitIds = new Set<Id>();
+      if (kitIds != null) {
+        this.kitIds.addAll(kitIds);
+      }
+    }
+
+    public void execute(QueueableContext context) {
+      sendKitUpdateSync(kitIds);
+    }
   }
 
   public class SendKitUpdateAndGenerateProposalJob implements Queueable, Database.AllowsCallouts {
@@ -334,8 +443,7 @@ public without sharing class KitInstalacaoBO {
     }
 
     public void execute(QueueableContext context) {
-      Set<Id> updatedOpportunityIds = sendKitUpdateSync(kitIds);
-      OpportunityBO.generateProposalAfterKitUpdate(updatedOpportunityIds);
+      sendKitUpdateSync(kitIds);
     }
   }
 

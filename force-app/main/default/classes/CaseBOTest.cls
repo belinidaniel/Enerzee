@@ -353,6 +353,59 @@ private class CaseBOTest {
     return queueRecord;
   }
 
+  @IsTest
+  static void shouldPopulateApproversFromContact() {
+    User supervisor = createUser('supervisor.case@test.com', 'csup');
+    User gerente = createUser('gerente.case@test.com', 'cger');
+
+    Account acc = new Account(Name = 'Conta Aprovadores');
+    insert acc;
+    Contact ct = new Contact(
+      LastName = 'Contato Aprovadores',
+      AccountId = acc.Id,
+      Supervisor__c = supervisor.Id,
+      Gerente__c = gerente.Id
+    );
+    insert ct;
+
+    Case cs = new Case(
+      Subject = 'Caso aprovação',
+      Status = 'New',
+      Origin = 'Phone',
+      ContactId = ct.Id
+    );
+
+    Test.startTest();
+    CaseBO.populateApprovers(new List<Case>{ cs });
+    Test.stopTest();
+
+    // Name é campo calculado (FirstName + LastName): só vem preenchido via SOQL.
+    Map<Id, User> userNames = new Map<Id, User>(
+      [SELECT Id, Name FROM User WHERE Id IN (:supervisor.Id, :gerente.Id)]
+    );
+    System.assertEquals(supervisor.Id, cs.Supervisor__c);
+    System.assertEquals(gerente.Id, cs.Gerente__c);
+    System.assertEquals(
+      userNames.get(supervisor.Id).Name,
+      cs.SupervisorNome__c
+    );
+    System.assertEquals(userNames.get(gerente.Id).Name, cs.GerenteNome__c);
+  }
+
+  @IsTest
+  static void shouldSkipApproversWhenNoContact() {
+    Case cs = new Case(
+      Subject = 'Sem contato',
+      Status = 'New',
+      Origin = 'Phone'
+    );
+    Test.startTest();
+    CaseBO.populateApprovers(new List<Case>{ cs });
+    Test.stopTest();
+    System.assertEquals(null, cs.Supervisor__c);
+    System.assertEquals(null, cs.Gerente__c);
+  }
+
   private static User createUser(String email, String aliasSeed) {
     Profile profileRecord = [
       SELECT Id
@@ -373,7 +426,7 @@ private class CaseBOTest {
       LanguageLocaleKey = 'pt_BR'
     );
     insert userRecord;
-    return userRecord;
+    return [SELECT Id, Name FROM User WHERE Id = :userRecord.Id];
   }
 
   private static User currentUser() {

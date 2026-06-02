@@ -34,6 +34,9 @@ public without sharing class HelpDeskCaseDAO {
         CaseNumber,
         Subject,
         Status,
+        StatusAprovacao__c,
+        Supervisor__c,
+        Gerente__c,
         HelpDesk_Status__c,
         CreatedDate,
         LastModifiedDate,
@@ -41,6 +44,9 @@ public without sharing class HelpDeskCaseDAO {
         ContactId,
         Description,
         Description_Rich__c,
+        JiraIssueKey__c,
+        JiraIssueUrl__c,
+        JiraStatus__c,
         Oportunidade_Pai__c,
         Oportunidade_Pai__r.IdVirtualOffice__c
       FROM Case
@@ -136,7 +142,7 @@ public without sharing class HelpDeskCaseDAO {
         )
       FROM HelpDeskMessage__c
       WHERE Case__c = :caseId AND IsPublic__c = TRUE
-      ORDER BY CreatedDate ASC
+      ORDER BY CreatedDate DESC
     ];
   }
 
@@ -165,13 +171,70 @@ public without sharing class HelpDeskCaseDAO {
         )
       FROM HelpDeskMessage__c
       WHERE Case__c = :caseId
-      ORDER BY CreatedDate ASC
+      ORDER BY CreatedDate DESC
+    ];
+  }
+
+  public static Case queryApprovalDetail(Id caseId) {
+    return [
+      SELECT
+        Id,
+        StatusAprovacao__c,
+        ContactId,
+        Supervisor__c,
+        Gerente__c,
+        SupervisorNome__c,
+        GerenteNome__c,
+        Contact.Supervisor__c,
+        Contact.Supervisor__r.Name,
+        Contact.Gerente__c,
+        Contact.Gerente__r.Name
+      FROM Case
+      WHERE Id = :caseId
+      LIMIT 1
+    ];
+  }
+
+  public static List<ProcessInstanceWorkitem> queryPendingApprovalWorkitems(
+    Id caseId
+  ) {
+    return [
+      SELECT Id, ActorId, Actor.Name, CreatedDate
+      FROM ProcessInstanceWorkitem
+      WHERE
+        ProcessInstance.TargetObjectId = :caseId
+        AND ProcessInstance.Status = 'Pending'
+      ORDER BY CreatedDate DESC
+      LIMIT 1
     ];
   }
 
   public static HelpDeskMessage__c insertMessage(HelpDeskMessage__c msg) {
     insert msg;
     return msg;
+  }
+
+  public static List<AttachmentLink__c> queryAttachmentLinksByParents(
+    Set<Id> parentIds
+  ) {
+    Set<String> parentKeys = new Set<String>();
+    for (Id pid : parentIds) {
+      parentKeys.add(String.valueOf(pid));
+    }
+    return [
+      SELECT
+        Id,
+        SObjectId__c,
+        SObjectType__c,
+        AttachmentURL__c,
+        InternalAttachmentURL__c,
+        FileName__c,
+        FileType__c,
+        AttachmentDescription__c
+      FROM AttachmentLink__c
+      WHERE SObjectId__c IN :parentKeys
+      ORDER BY CreatedDate ASC
+    ];
   }
 
   public static Id resolveRecordTypeId(

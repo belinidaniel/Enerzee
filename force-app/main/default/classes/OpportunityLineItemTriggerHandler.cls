@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-17-2026
+ * @last modified on  : 06-01-2026
  * @last modified by  : Daniel Belini
  * @test              : OpportunityLineItemTriggerTest
  **/
@@ -149,8 +149,8 @@ public class OpportunityLineItemTriggerHandler extends TriggerHandler {
     }
   }
   public override void afterDelete() {
-    // OpportunityLineItemBO.forceKitUpdateOnItemInsertUpdate(
-    //   (List<OpportunityLineItem>) oldRecordList
-    // );S
+    OpportunityLineItemBO.forceKitUpdateOnItemInsertUpdate(
+      (List<OpportunityLineItem>) oldRecordList
+    );
   }
 }

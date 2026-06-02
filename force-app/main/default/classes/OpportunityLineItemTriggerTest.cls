@@ -32,8 +32,6 @@ public class OpportunityLineItemTriggerTest {
 
   @isTest
   static void forceKitUpdateOnItemInsertUpdateTest() {
-    Test.startTest();
-
     Opportunity opportunity = [
       SELECT Id
       FROM Opportunity
@@ -46,6 +44,8 @@ public class OpportunityLineItemTriggerTest {
       LIMIT 1
     ];
 
+    Test.startTest();
+
     OpportunityLineItem item = (OpportunityLineItem) TestFactory.createSObject(
       new OpportunityLineItem(
         OpportunityId = opportunity.Id,
@@ -54,7 +54,29 @@ public class OpportunityLineItemTriggerTest {
       true
     );
 
+    item = [
+      SELECT Id, Quantity, UnitPrice
+      FROM OpportunityLineItem
+      WHERE Id = :item.Id
+    ];
+    item.Quantity = item.Quantity + 1;
+    update item;
+
+    delete item;
+
     Test.stopTest();
+  }
+
+  @isTest
+  static void triggerEnabledFlagTest() {
+    OpportunityLineItemTriggerHandler.enableTrigger();
+    Assert.isTrue(OpportunityLineItemTriggerHandler.isTriggerEnabled());
+
+    OpportunityLineItemTriggerHandler.disableTrigger();
+    Assert.isFalse(OpportunityLineItemTriggerHandler.isTriggerEnabled());
+
+    OpportunityLineItemTriggerHandler.enableTrigger();
+    Assert.isTrue(OpportunityLineItemTriggerHandler.isTriggerEnabled());
   }
 
   @isTest

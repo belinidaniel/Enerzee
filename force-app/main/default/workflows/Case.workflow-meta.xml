@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
     <alerts>
         <fullName>Caso_expirado</fullName>
@@ -55,6 +55,46 @@
         <field>Priority</field>
         <literalValue>High</literalValue>
         <name>Altera a prioridade do caso para alta.</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HelpDeskAprovacaoEmAprovacao</fullName>
+        <field>StatusAprovacao__c</field>
+        <literalValue>Em Aprovação</literalValue>
+        <name>HelpDesk - Status Em Aprovação</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HelpDeskAprovacaoAprovado</fullName>
+        <field>StatusAprovacao__c</field>
+        <literalValue>Aprovado</literalValue>
+        <name>HelpDesk - Status Aprovado</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HelpDeskAprovacaoCasoEmAndamento</fullName>
+        <field>Status</field>
+        <literalValue>Em andamento</literalValue>
+        <name>HelpDesk - Caso Em andamento (aprovado)</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HelpDeskAprovacaoRejeitado</fullName>
+        <field>StatusAprovacao__c</field>
+        <literalValue>Rejeitado</literalValue>
+        <name>HelpDesk - Status Rejeitado</name>
         <notifyAssignee>false</notifyAssignee>
         <operation>Literal</operation>
         <protected>false</protected>

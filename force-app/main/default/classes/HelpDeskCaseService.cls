@@ -33,6 +33,19 @@ public without sharing class HelpDeskCaseService {
     public Integer sortOrder;
   }
 
+  public class ApprovalStatusDTO {
+    @AuraEnabled
+    public String status;
+    @AuraEnabled
+    public String currentApproverName;
+    @AuraEnabled
+    public String currentApproverId;
+    @AuraEnabled
+    public String supervisorName;
+    @AuraEnabled
+    public String gerenteName;
+  }
+
   public static List<Case> getCases(
     String filterType,
     String searchTerm,
@@ -130,8 +143,16 @@ public without sharing class HelpDeskCaseService {
     HelpDeskMessage__c msg = new HelpDeskMessage__c();
     msg.Case__c = caseId;
     msg.Body__c = body;
-    msg.AuthorName__c = String.isNotBlank(authorName) ? authorName : 'Cliente';
-    msg.AuthorType__c = String.isNotBlank(authorType) ? authorType : 'Cliente';
+    String normalizedAuthorType = String.isNotBlank(authorType)
+      ? authorType
+      : 'Cliente';
+    msg.AuthorType__c = normalizedAuthorType;
+    msg.AuthorName__c = resolveMessageAuthorName(
+      authorName,
+      normalizedAuthorType,
+      contactId,
+      ctx
+    );
     msg.IsPublic__c = isPublic != null ? isPublic : true;
     HelpDeskCaseDAO.insertMessage(msg);
     return msg.Id;
@@ -148,6 +169,111 @@ public without sharing class HelpDeskCaseService {
       return HelpDeskCaseDAO.queryAllMessages(caseId);
     }
     return HelpDeskCaseDAO.queryMessages(caseId);
+  }
+
+  public static ApprovalStatusDTO getApprovalStatus(
+    Id caseId,
+    Id contactId,
+    UserContext ctx
+  ) {
+    enforceVisibility(caseId, contactId, ctx);
+    Case detail = HelpDeskCaseDAO.queryApprovalDetail(caseId);
+    ApprovalStatusDTO dto = new ApprovalStatusDTO();
+    dto.status = detail.StatusAprovacao__c;
+
+    List<ProcessInstanceWorkitem> workitems = HelpDeskCaseDAO.queryPendingApprovalWorkitems(
+      caseId
+    );
+    Id currentApproverId = workitems.isEmpty() ? null : workitems[0].ActorId;
+    if (currentApproverId != null) {
+      dto.currentApproverId = String.valueOf(currentApproverId);
+    }
+
+    dto.supervisorName = resolveApprovalDisplayName(
+      detail.SupervisorNome__c,
+      detail.Contact != null &&
+        detail.Contact.Supervisor__r != null
+        ? detail.Contact.Supervisor__r.Name
+        : null
+    );
+    dto.gerenteName = resolveApprovalDisplayName(
+      detail.GerenteNome__c,
+      detail.Contact != null &&
+        detail.Contact.Gerente__r != null
+        ? detail.Contact.Gerente__r.Name
+        : null
+    );
+
+    // Fallback para casos antigos (criados antes do snapshot) ou usuários
+    // internos: resolve via helper, em contexto de sistema.
+    if (
+      isMaskedUserName(dto.supervisorName) || isMaskedUserName(dto.gerenteName)
+    ) {
+      Map<Id, String> userNames = HelpDeskApproverHelper.getUserNames(
+        new Set<Id>{ detail.Supervisor__c, detail.Gerente__c }
+      );
+      if (isMaskedUserName(dto.supervisorName)) {
+        dto.supervisorName = userNames.get(detail.Supervisor__c);
+      }
+      if (isMaskedUserName(dto.gerenteName)) {
+        dto.gerenteName = userNames.get(detail.Gerente__c);
+      }
+    }
+
+    // O aprovador atual é o Supervisor (etapa 1) ou o Gerente (etapa 2):
+    // resolve a partir do snapshot, comparando o ActorId do workitem pendente.
+    if (currentApproverId == detail.Supervisor__c) {
+      dto.currentApproverName = dto.supervisorName;
+    } else if (currentApproverId == detail.Gerente__c) {
+      dto.currentApproverName = dto.gerenteName;
+    } else if (currentApproverId != null) {
+      Map<Id, String> approverNames = HelpDeskApproverHelper.getUserNames(
+        new Set<Id>{ currentApproverId }
+      );
+      dto.currentApproverName = approverNames.get(currentApproverId);
+    }
+    return dto;
+  }
+
+  private static String resolveApprovalDisplayName(
+    String caseSnapshotName,
+    String contactLookupName
+  ) {
+    if (
+      String.isNotBlank(contactLookupName) && isMaskedUserName(caseSnapshotName)
+    ) {
+      return contactLookupName;
+    }
+    return String.isNotBlank(caseSnapshotName)
+      ? caseSnapshotName
+      : contactLookupName;
+  }
+
+  private static Boolean isMaskedUserName(String value) {
+    return String.isBlank(value) || value.startsWith('Usuário');
+  }
+
+  /**
+   * Retorna os anexos (AttachmentLink__c) vinculados às mensagens do caso, agrupados por mensagem.
+   */
+  public static List<AttachmentLink__c> getCaseAttachmentLinks(
+    Id caseId,
+    Id contactId,
+    UserContext ctx,
+    Boolean includePrivate
+  ) {
+    enforceVisibility(caseId, contactId, ctx);
+    List<HelpDeskMessage__c> messages = includePrivate == true
+      ? HelpDeskCaseDAO.queryAllMessages(caseId)
+      : HelpDeskCaseDAO.queryMessages(caseId);
+    Set<Id> messageIds = new Set<Id>();
+    for (HelpDeskMessage__c m : messages) {
+      messageIds.add(m.Id);
+    }
+    if (messageIds.isEmpty()) {
+      return new List<AttachmentLink__c>();
+    }
+    return HelpDeskCaseDAO.queryAttachmentLinksByParents(messageIds);
   }
 
   public static List<CaseCategoryOptionDTO> getCaseCategoryOptions() {
@@ -286,12 +412,18 @@ public without sharing class HelpDeskCaseService {
       throw new AuraHandledException('fileName e base64File são obrigatórios.');
     }
 
+    // Vincula o anexo à mensagem (HelpDeskMessage__c) quando houver; senão, ao Case.
+    Id linkParentId = messageId != null ? messageId : caseId;
+    String linkParentType = messageId != null ? 'HelpDeskMessage__c' : 'Case';
+
     ExternalArchiveService.UploadResult result = ExternalArchiveService.uploadExternalArchiveForCase(
       caseId,
       fileName,
       base64File,
       'Help Desk',
-      fileName
+      fileName,
+      linkParentId,
+      linkParentType
     );
 
     if (result == null || !result.success) {
@@ -302,13 +434,7 @@ public without sharing class HelpDeskCaseService {
       );
     }
 
-    if (messageId != null && result.attachmentId != null) {
-      HelpDeskMessage__c msg = new HelpDeskMessage__c(
-        Id = messageId,
-        AttachmentURL__c = String.valueOf(result.attachmentId)
-      );
-      update msg;
-    }
+    // result.attachmentId é o Id do AttachmentLink__c criado (SObjectId__c = messageId).
     return result.attachmentId;
   }
 
@@ -457,13 +583,14 @@ public without sharing class HelpDeskCaseService {
     public Id userId;
     public Id contactId;
     public String email;
+    public String name;
   }
 
   public static UserContext loadUserContext() {
     UserContext ctx = new UserContext();
     ctx.userId = UserInfo.getUserId();
     List<User> users = [
-      SELECT Id, ContactId, Email
+      SELECT Id, ContactId, Email, Name
       FROM User
       WHERE Id = :ctx.userId
       LIMIT 1
@@ -471,8 +598,28 @@ public without sharing class HelpDeskCaseService {
     if (!users.isEmpty()) {
       ctx.contactId = users[0].ContactId;
       ctx.email = users[0].Email;
+      ctx.name = users[0].Name;
     }
     return ctx;
+  }
+
+  private static String resolveMessageAuthorName(
+    String authorName,
+    String authorType,
+    Id contactId,
+    UserContext ctx
+  ) {
+    if (String.isNotBlank(authorName)) {
+      return authorName;
+    }
+    if (authorType == 'Agente') {
+      return String.isNotBlank(ctx.name) ? ctx.name : 'Agente';
+    }
+    Contact contactRecord = HelpDeskContactDAO.findById(contactId);
+    if (contactRecord != null && String.isNotBlank(contactRecord.Name)) {
+      return contactRecord.Name;
+    }
+    return 'Cliente';
   }
 
   private static String buildOwnershipFilter(

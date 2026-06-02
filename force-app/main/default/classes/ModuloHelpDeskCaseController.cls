@@ -29,7 +29,7 @@ public without sharing class ModuloHelpDeskCaseController {
     return HelpDeskCaseService.getCaseComments(caseId, contactId, ctx);
   }
 
-  @AuraEnabled(cacheable=false)
+  @AuraEnabled(cacheable=true)
   public static List<HelpDeskMessage__c> getMessages(Id caseId, Id contactId) {
     HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
     return HelpDeskCaseService.getMessages(caseId, contactId, ctx, false);
@@ -39,6 +39,29 @@ public without sharing class ModuloHelpDeskCaseController {
   public static List<HelpDeskMessage__c> getAllMessages(Id caseId) {
     HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
     return HelpDeskCaseService.getMessages(caseId, null, ctx, true);
+  }
+
+  @AuraEnabled(cacheable=true)
+  public static HelpDeskCaseService.ApprovalStatusDTO getApprovalStatus(
+    Id caseId,
+    Id contactId
+  ) {
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    return HelpDeskCaseService.getApprovalStatus(caseId, contactId, ctx);
+  }
+
+  @AuraEnabled(cacheable=true)
+  public static List<AttachmentLink__c> getMessageAttachments(
+    Id caseId,
+    Id contactId
+  ) {
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    return HelpDeskCaseService.getCaseAttachmentLinks(
+      caseId,
+      contactId,
+      ctx,
+      false
+    );
   }
 
   @AuraEnabled

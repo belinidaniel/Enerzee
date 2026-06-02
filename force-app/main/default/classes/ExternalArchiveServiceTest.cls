@@ -200,4 +200,57 @@ private class ExternalArchiveServiceTest {
     System.assertEquals(true, blankRelatedRecord);
     System.assertEquals(true, blankOpportunity);
   }
+
+  @IsTest
+  static void shouldUploadForCaseAndCreateAttachmentLink() {
+    Account acc = new Account(Name = 'Conta Caso');
+    insert acc;
+    Contact ct = new Contact(LastName = 'Contato Caso', AccountId = acc.Id);
+    insert ct;
+    Case cs = new Case(
+      Subject = 'Caso sem oportunidade',
+      Status = 'New',
+      Origin = 'Phone',
+      ContactId = ct.Id,
+      AccountId = acc.Id
+    );
+    insert cs;
+
+    Test.setMock(
+      HttpCalloutMock.class,
+      new ExternalArchiveMock(200, '{"data":"https://files.example.com/c.png"}')
+    );
+
+    Test.startTest();
+    ExternalArchiveService.UploadResult result = ExternalArchiveService.uploadExternalArchiveForCase(
+      cs.Id,
+      'comprovante.png',
+      EncodingUtil.base64Encode(Blob.valueOf('imagem')),
+      'Help Desk',
+      'comprovante.png',
+      cs.Id,
+      'HelpDeskMessage__c'
+    );
+    Test.stopTest();
+
+    System.assertEquals(true, result.success);
+    AttachmentLink__c link = [
+      SELECT
+        SObjectId__c,
+        SObjectType__c,
+        AttachmentURL__c,
+        FileName__c,
+        FileType__c
+      FROM AttachmentLink__c
+      WHERE Id = :result.attachmentId
+    ];
+    System.assertEquals(String.valueOf(cs.Id), link.SObjectId__c);
+    System.assertEquals('HelpDeskMessage__c', link.SObjectType__c);
+    System.assertEquals(
+      'https://files.example.com/c.png',
+      link.AttachmentURL__c
+    );
+    System.assertEquals('comprovante.png', link.FileName__c);
+    System.assertEquals('png', link.FileType__c);
+  }
 }

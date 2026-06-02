@@ -4,7 +4,7 @@
  * @group             :
  * @last modified on  : 03-15-2026
  * @last modified by  : Daniel Belini
- * @test              : CaseBOTest, CaseTriggerTest, ProjetoBOCoverageTest
+ * @test              : CaseBOTest, CaseCommentBOTest, CaseTriggerTest, HelpDeskMessageBOTest, ProjetoBOCoverageTest
  **/
 public class CaseTriggerHandler extends TriggerHandler {
   public CaseTriggerHandler() {
@@ -28,11 +28,13 @@ public class CaseTriggerHandler extends TriggerHandler {
 
   public override void beforeInsert() {
     CaseBO.AssignContactForCase((List<Case>) newRecordList);
+    CaseBO.populateApprovers((List<Case>) newRecordList);
   }
 
   public override void afterInsert() {
     CaseBO.CreateAttachments((List<Case>) newRecordList);
     CaseBO.assignCaseToMessagingSessions((List<Case>) newRecordList);
+    CaseBO.submitHelpDeskCasesForApproval((List<Case>) newRecordList);
   }
 
   public override void beforeUpdate() {

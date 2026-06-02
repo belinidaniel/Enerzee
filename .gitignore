@@ -17,6 +17,7 @@ coverage/
 # Generated artifacts
 .output/
 output/
+.claude/scheduled_tasks.lock
 
 # Logs
 logs
