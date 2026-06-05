@@ -16117,6 +16117,10 @@
         <recordType>Case.QualificacaoDeIntegradores</recordType>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Case-Help Desk Salesforce Layout</layout>
+        <recordType>Case.Help_Desk_Salesforce</recordType>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>CaseClose-Close Case Layout</layout>
     </layoutAssignments>
     <layoutAssignments>

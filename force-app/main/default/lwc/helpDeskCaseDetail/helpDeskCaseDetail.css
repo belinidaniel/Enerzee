@@ -183,6 +183,12 @@
   text-align: center;
 }
 
+.plain-description {
+  white-space: pre-wrap;
+  color: #1f2937;
+  margin: 0;
+}
+
 .details-card {
   background: #ffffff;
   border-radius: 12px;

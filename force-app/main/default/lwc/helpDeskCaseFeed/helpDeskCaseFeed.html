@@ -1,0 +1,146 @@
+<template>
+    <div class="feed-container">
+        <section class="composer slds-box slds-box_x-small slds-theme_default">
+            <p class="composer-title">Nova mensagem</p>
+            <lightning-textarea
+                value={newBody}
+                placeholder="Escreva sua resposta..."
+                onchange={handleBodyChange}
+                class="slds-m-bottom_x-small"
+            ></lightning-textarea>
+
+            <div class="composer-options">
+                <div class="visibility-toggle">
+                    <lightning-input
+                        type="checkbox"
+                        label="Visível para o cliente"
+                        checked={isPublic}
+                        onchange={handleVisibilityChange}
+                        name="isPublic"
+                    ></lightning-input>
+                </div>
+                <div class="file-picker">
+                    <lightning-input
+                        type="file"
+                        label="Anexar arquivos"
+                        multiple
+                        accept={acceptedFormats}
+                        onchange={handleFilesChange}
+                    ></lightning-input>
+                    <template if:true={pendingFiles.length}>
+                        <ul class="pending-list">
+                            <template for:each={pendingFiles} for:item="file">
+                                <li key={file.name} class="pending-item">
+                                    <lightning-icon icon-name="utility:attachment" size="x-small"></lightning-icon>
+                                    <span class="pending-name">{file.name}</span>
+                                    <span class="pending-size">({file.humanSize})</span>
+                                    <lightning-button-icon
+                                        icon-name="utility:close"
+                                        alternative-text="Remover"
+                                        size="x-small"
+                                        onclick={removePendingFile}
+                                        data-name={file.name}
+                                    ></lightning-button-icon>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                </div>
+            </div>
+
+            <div class="composer-actions">
+                <lightning-button
+                    variant="brand"
+                    label="Enviar"
+                    onclick={handleSend}
+                    disabled={isSendDisabled}
+                ></lightning-button>
+                <template if:true={isSaving}>
+                    <lightning-spinner alternative-text="Enviando" size="x-small" class="slds-m-left_x-small"></lightning-spinner>
+                </template>
+            </div>
+        </section>
+
+        <section class="feed">
+            <template if:true={hasMessages}>
+                <template for:each={displayMessages} for:item="msg">
+                    <div key={msg.id} class="feed-item" data-agent={msg.isAgent} data-private={msg.isPrivate}>
+                        <div class="feed-avatar">
+                            <lightning-avatar
+                                fallback-icon-name="standard:user"
+                                alternative-text={msg.authorName}
+                                size="medium"
+                                initials={msg.initials}
+                            ></lightning-avatar>
+                        </div>
+                        <div class="feed-body">
+                            <div class="feed-meta">
+                                <span class="author">{msg.authorName}</span>
+                                <span class="author-type-badge" data-agent={msg.isAgent}>{msg.authorType}</span>
+                                <template if:true={msg.isPrivate}>
+                                    <span class="private-badge">
+                                        <lightning-icon icon-name="utility:lock" size="xx-small"></lightning-icon>
+                                        Interno
+                                    </span>
+                                </template>
+                                <span class="date">{msg.date}</span>
+                            </div>
+                            <div class="feed-text">{msg.body}</div>
+                            <template if:true={msg.hasAttachments}>
+                                <ul class="msg-attachment-list">
+                                    <template for:each={msg.attachments} for:item="att">
+                                        <li key={att.id} class="msg-attachment-item">
+                                            <lightning-icon
+                                                icon-name={att.iconName}
+                                                size="small"
+                                                alternative-text={att.title}
+                                                class="attachment-type-icon"
+                                            ></lightning-icon>
+                                            <button
+                                                type="button"
+                                                class="att-link"
+                                                data-url={att.url}
+                                                data-title={att.title}
+                                                onclick={handleOpenAttachment}
+                                            >
+                                                {att.title}
+                                            </button>
+                                            <lightning-button-icon
+                                                icon-name="utility:preview"
+                                                alternative-text="Visualizar"
+                                                title="Visualizar"
+                                                data-url={att.url}
+                                                data-title={att.title}
+                                                onclick={handleOpenAttachment}
+                                            ></lightning-button-icon>
+                                            <lightning-button-icon
+                                                icon-name="utility:new_window"
+                                                alternative-text="Abrir em nova aba"
+                                                title="Abrir em nova aba"
+                                                data-url={att.url}
+                                                onclick={handleOpenInNewTab}
+                                            ></lightning-button-icon>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </template>
+            <template if:false={hasMessages}>
+                <div class="empty-feed">
+                    <lightning-icon icon-name="utility:chat" size="medium" class="slds-m-bottom_x-small"></lightning-icon>
+                    <p>Sem mensagens ainda.</p>
+                </div>
+            </template>
+        </section>
+
+        <c-attachment-preview-modal
+            open={previewOpen}
+            url={previewUrl}
+            title={previewTitle}
+            onclose={handleClosePreview}
+        ></c-attachment-preview-modal>
+    </div>
+</template>

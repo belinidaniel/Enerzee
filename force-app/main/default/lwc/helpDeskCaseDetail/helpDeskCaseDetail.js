@@ -12,7 +12,20 @@ import uploadMessageFileExternal from "@salesforce/apex/ModuloHelpDeskCaseContro
 const IMAGE_EXTENSIONS = ["png", "jpg", "jpeg", "gif", "webp", "bmp"];
 
 export default class HelpDeskCaseDetail extends LightningElement {
-  @api recordId;
+  // Em Record Page nativa o recordId é injetado pela plataforma; numa página
+  // custom da Experience Cloud (rota /helpdesk/case/:id) ele NÃO é, então
+  // resolvemos via CurrentPageReference. Os @wire observam resolvedRecordId,
+  // que é alimentado tanto pelo @api recordId quanto pela rota.
+  @api
+  get recordId() {
+    return this.resolvedRecordId;
+  }
+  set recordId(value) {
+    if (value) {
+      this.resolvedRecordId = value;
+    }
+  }
+  @track resolvedRecordId;
   contactId;
   detail;
   wiredDetail;
@@ -41,7 +54,8 @@ export default class HelpDeskCaseDetail extends LightningElement {
     const fromState =
       ref?.state?.recordId ||
       ref?.state?.c__recordId ||
-      ref?.attributes?.recordId;
+      ref?.attributes?.recordId ||
+      this.recordIdFromUrl();
     const contactState = ref?.state?.cId || ref?.state?.c__contactId;
     if (!this.resolvedRecordId && fromState) {
       this.resolvedRecordId = fromState;
@@ -51,7 +65,7 @@ export default class HelpDeskCaseDetail extends LightningElement {
     }
   }
 
-  @wire(getCaseDetail, { caseId: "$recordId", contactId: "$contactId" })
+  @wire(getCaseDetail, { caseId: "$resolvedRecordId", contactId: "$contactId" })
   wiredCaseDetail(result) {
     this.wiredDetail = result;
     const { data, error } = result;
@@ -62,19 +76,18 @@ export default class HelpDeskCaseDetail extends LightningElement {
     }
   }
 
-  @wire(getMessageAttachments, { caseId: "$recordId", contactId: "$contactId" })
+  @wire(getMessageAttachments, { caseId: "$resolvedRecordId", contactId: "$contactId" })
   wiredMessageAttachments(result) {
     this.wiredAttachments = result;
     const { data, error } = result;
     if (data) {
       this.attachmentsByMessage = this.groupAttachments(data);
-      this.applyAttachmentsToMessages();
     } else if (error) {
       this.handleError("Erro ao carregar anexos", error);
     }
   }
 
-  @wire(getApprovalStatus, { caseId: "$recordId", contactId: "$contactId" })
+  @wire(getApprovalStatus, { caseId: "$resolvedRecordId", contactId: "$contactId" })
   wiredCaseApproval(result) {
     this.wiredApproval = result;
     const { data, error } = result;
@@ -85,7 +98,7 @@ export default class HelpDeskCaseDetail extends LightningElement {
     }
   }
 
-  @wire(getMessages, { caseId: "$recordId", contactId: "$contactId" })
+  @wire(getMessages, { caseId: "$resolvedRecordId", contactId: "$contactId" })
   wiredCaseMessages(result) {
     this.wiredMessages = result;
     const { data, error } = result;
@@ -96,10 +109,19 @@ export default class HelpDeskCaseDetail extends LightningElement {
           new Date(b.CreatedDate).getTime() - new Date(a.CreatedDate).getTime()
       );
       this.messages = sorted.map((item) => this.normalizeMessage(item));
-      this.applyAttachmentsToMessages();
     } else if (error) {
       this.handleError("Erro ao carregar comentários", error);
     }
+  }
+
+  // Combina mensagens + anexos no momento do render, evitando race condition
+  // entre os dois @wire (mensagens e anexos chegam de forma assíncrona/independente).
+  get displayMessages() {
+    const byMessage = this.attachmentsByMessage || {};
+    return (this.messages || []).map((msg) => {
+      const atts = byMessage[msg.id] || [];
+      return { ...msg, attachments: atts, hasAttachments: atts.length > 0 };
+    });
   }
 
   get isOpen() {
@@ -120,6 +142,10 @@ export default class HelpDeskCaseDetail extends LightningElement {
 
   get acceptedFormats() {
     return ".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.txt";
+  }
+
+  get hasDescription() {
+    return !!(this.detail?.richDescription || this.detail?.plainDescription);
   }
 
   get hasApprovalStatus() {
@@ -342,6 +368,7 @@ export default class HelpDeskCaseDetail extends LightningElement {
   }
 
   normalizeDetail(data) {
+    const hasRich = !!data.Description_Rich__c;
     return {
       id: data.Id,
       caseNumber: data.CaseNumber,
@@ -354,8 +381,23 @@ export default class HelpDeskCaseDetail extends LightningElement {
       contactName: data.Contact ? data.Contact.Name : "",
       createdDateDisplay: this.formatDate(data.CreatedDate),
       lastModifiedDisplay: this.formatDate(data.LastModifiedDate),
-      richDescription: data.Description_Rich__c || data.Description || ""
+      // Rich text vai como HTML; o fallback (Description em texto puro) é
+      // exibido preservando as quebras de linha (CSS white-space: pre-wrap),
+      // sem o prefixo técnico "Sistema:" que é montado no backend.
+      richDescription: hasRich ? data.Description_Rich__c : "",
+      plainDescription: hasRich
+        ? ""
+        : this.stripSistemaPrefix(data.Description || "")
     };
+  }
+
+  // Remove a linha inicial "Sistema: <x>" do Description (montada por
+  // buildCaseDescription no Apex) — o sistema já é exibido em campo próprio.
+  stripSistemaPrefix(text) {
+    if (!text) {
+      return "";
+    }
+    return text.replace(/^Sistema:.*\r?\n?/, "").trim();
   }
 
   updateJiraStatusPolling() {
@@ -428,17 +470,6 @@ export default class HelpDeskCaseDetail extends LightningElement {
     return grouped;
   }
 
-  applyAttachmentsToMessages() {
-    if (!this.messages || this.messages.length === 0) {
-      return;
-    }
-    const byMessage = this.attachmentsByMessage || {};
-    this.messages = this.messages.map((msg) => {
-      const atts = byMessage[msg.id] || [];
-      return { ...msg, attachments: atts, hasAttachments: atts.length > 0 };
-    });
-  }
-
   extensionFromName(name) {
     if (!name || name.indexOf(".") === -1) {
       return "";
@@ -496,6 +527,15 @@ export default class HelpDeskCaseDetail extends LightningElement {
 
   handleError(title, error) {
     this.showToast(title, this.normalizeError(error), "error");
+  }
+
+  // Fallback: extrai o Id do Case direto do path (/helpdesk/case/{id}) quando
+  // o CurrentPageReference não traz recordId em state nem attributes — depende
+  // de como a rota path-based está mapeada no Experience Builder.
+  recordIdFromUrl() {
+    const path = window.location.pathname || "";
+    const match = path.match(/\/case\/(500[A-Za-z0-9]{12,15})(?:\/|$)/);
+    return match ? match[1] : null;
   }
 
   normalizeError(error) {

@@ -2,7 +2,8 @@ import { api, LightningElement, track } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import createCase from "@salesforce/apex/ModuloHelpDeskCaseController.createCase";
 import getDefaultEntities from "@salesforce/apex/ModuloHelpDeskCaseController.getDefaultEntities";
-import uploadFilesBypassLicense from "@salesforce/apex/ModuloHelpDeskCaseController.uploadFilesBypassLicense";
+import addMessage from "@salesforce/apex/ModuloHelpDeskCaseController.addMessage";
+import uploadMessageFileExternal from "@salesforce/apex/ModuloHelpDeskCaseController.uploadMessageFileExternal";
 import getCaseCategoryOptions from "@salesforce/apex/ModuloHelpDeskCaseController.getCaseCategoryOptions";
 import cloudLogo from "@salesforce/resourceUrl/salesforceCloudV3";
 import agentAstro from "@salesforce/resourceUrl/agentforceAgentAstro";
@@ -30,7 +31,6 @@ export default class HelpDeskHome extends LightningElement {
 
   @track subject = "";
   @track description = "";
-  @track richDescription = "";
   @track systemValue = "";
   @track typeValue = "";
   @track subtypeValue = "";
@@ -111,19 +111,6 @@ export default class HelpDeskHome extends LightningElement {
     { label: "Baixa", value: "Low" }
   ];
 
-  richFormats = [
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "align",
-    "link",
-    "image",
-    "clean"
-  ];
 
   get disableCreate() {
     return (
@@ -243,7 +230,7 @@ export default class HelpDeskHome extends LightningElement {
     createCase({
       subject: this.subject,
       description: this.description,
-      richDescription: this.richDescription,
+      richDescription: null,
       systemValue: this.systemValue,
       typeValue: this.typeValue,
       subtypeValue: this.subtypeValue,
@@ -255,14 +242,7 @@ export default class HelpDeskHome extends LightningElement {
     })
       .then((result) => {
         createdId = result;
-        if (this.hasFiles) {
-          return uploadFilesBypassLicense({
-            caseId: createdId,
-            files: this.buildApexFilePayload(),
-            contactId: this.contactId
-          });
-        }
-        return null;
+        return this.uploadEvidence(createdId);
       })
       .then(() => {
         this.createdCaseId = createdId;
@@ -284,6 +264,36 @@ export default class HelpDeskHome extends LightningElement {
       });
   }
 
+  // Anexos da criação seguem o mesmo fluxo das mensagens: cria uma mensagem
+  // inicial "Evidências:" (visível ao cliente) e sobe os arquivos via upload
+  // externo (Azure/AttachmentLink__c) vinculados a ela. Assim aparecem no
+  // portal, no feed interno e chegam ao Jira com os links quebrando linha.
+  uploadEvidence(caseId) {
+    if (!this.hasFiles) {
+      return Promise.resolve(null);
+    }
+    return addMessage({
+      caseId,
+      body: "Evidências:",
+      authorName: this.contactName || null,
+      authorType: "Cliente",
+      isPublic: true,
+      contactId: this.contactId
+    }).then((messageId) =>
+      Promise.all(
+        this.pendingFiles.map((file) =>
+          uploadMessageFileExternal({
+            caseId,
+            messageId,
+            fileName: file.fileName || file.name,
+            base64File: file.base64Data,
+            contactId: this.contactId
+          })
+        )
+      )
+    );
+  }
+
   navigateToCase(caseId) {
     if (!caseId) return;
     // Redireciona para a rota do case no site (preserva cId para uso nos detalhes)
@@ -296,7 +306,6 @@ export default class HelpDeskHome extends LightningElement {
     this.createdCaseId = null;
     this.subject = "";
     this.description = "";
-    this.richDescription = "";
     this.systemValue = "";
     this.typeValue = "";
     this.subtypeValue = "";

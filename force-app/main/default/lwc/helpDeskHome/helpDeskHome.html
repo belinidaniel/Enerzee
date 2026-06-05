@@ -143,14 +143,12 @@
                   ></lightning-input>
                 </div>
                 <div class="slds-col slds-size_1-of-1">
-                  <lightning-input-rich-text
-                    class="rich-input"
-                    name="richDescription"
+                  <lightning-textarea
+                    name="description"
                     label="Descrição"
-                    value={richDescription}
-                    formats={richFormats}
+                    value={description}
                     onchange={handleInputChange}
-                  ></lightning-input-rich-text>
+                  ></lightning-textarea>
                 </div>
               </div>
 

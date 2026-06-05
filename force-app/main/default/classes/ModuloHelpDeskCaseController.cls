@@ -64,6 +64,13 @@ public without sharing class ModuloHelpDeskCaseController {
     );
   }
 
+  // Visão interna (agente): inclui anexos de mensagens privadas também.
+  @AuraEnabled(cacheable=false)
+  public static List<AttachmentLink__c> getAllMessageAttachments(Id caseId) {
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    return HelpDeskCaseService.getCaseAttachmentLinks(caseId, null, ctx, true);
+  }
+
   @AuraEnabled
   public static Id addAgentMessage(
     Id caseId,

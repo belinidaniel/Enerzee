@@ -30,12 +30,104 @@ private class HelpDeskMessageBOTest {
     Test.stopTest();
 
     List<CaseComment> comments = [
-      SELECT CommentBody, IsPublished
+      SELECT Id, CommentBody, IsPublished
       FROM CaseComment
       WHERE ParentId = :c.Id
     ];
     Assert.areEqual(1, comments.size(), 'Deve criar 1 CaseComment para o Jira');
     Assert.areEqual('Mensagem do cliente no portal', comments[0].CommentBody);
+
+    // A mensagem deve guardar o Id do CaseComment espelhado (para append de URLs).
+    HelpDeskMessage__c stored = [
+      SELECT CaseCommentId__c
+      FROM HelpDeskMessage__c
+      WHERE Case__c = :c.Id
+      LIMIT 1
+    ];
+    Assert.areEqual(
+      String.valueOf(comments[0].Id),
+      stored.CaseCommentId__c,
+      'CaseCommentId__c deve apontar para o CaseComment espelhado'
+    );
+  }
+
+  @isTest
+  static void appendsAttachmentUrlsToMirroredComment() {
+    Case c = buildCase();
+
+    HelpDeskMessage__c msg = new HelpDeskMessage__c(
+      Case__c = c.Id,
+      Body__c = 'Mensagem com anexo',
+      AuthorType__c = 'Cliente',
+      IsPublic__c = true
+    );
+    insert msg;
+
+    Id commentId = (Id) [
+      SELECT CaseCommentId__c
+      FROM HelpDeskMessage__c
+      WHERE Id = :msg.Id
+      LIMIT 1
+    ]
+    .CaseCommentId__c;
+
+    // Anexos vinculados à mensagem (fonte da verdade para a seção "Anexos:").
+    insert new List<AttachmentLink__c>{
+      new AttachmentLink__c(
+        SObjectType__c = 'HelpDeskMessage__c',
+        SObjectId__c = String.valueOf(msg.Id),
+        FileName__c = 'foto-erro.png',
+        AttachmentURL__c = 'https://arquivos.exemplo/abc123'
+      ),
+      new AttachmentLink__c(
+        SObjectType__c = 'HelpDeskMessage__c',
+        SObjectId__c = String.valueOf(msg.Id),
+        FileName__c = 'layout.png',
+        AttachmentURL__c = 'https://arquivos.exemplo/def456'
+      ),
+      new AttachmentLink__c(
+        SObjectType__c = 'HelpDeskMessage__c',
+        SObjectId__c = String.valueOf(msg.Id),
+        FileName__c = 'sem-url.png',
+        AttachmentURL__c = null
+      )
+    };
+
+    Test.startTest();
+    HelpDeskMessageBO.appendAttachmentUrlsToComment(msg.Id, null, null);
+    Test.stopTest();
+
+    CaseComment updated = [
+      SELECT CommentBody
+      FROM CaseComment
+      WHERE Id = :commentId
+      LIMIT 1
+    ];
+    Assert.isTrue(
+      updated.CommentBody.contains('Anexos:'),
+      'Deve conter o cabeçalho "Anexos:"'
+    );
+    Assert.isTrue(
+      updated.CommentBody.contains(
+        '1- foto-erro.png: https://arquivos.exemplo/abc123'
+      ),
+      'Deve numerar o primeiro anexo'
+    );
+    Assert.isTrue(
+      updated.CommentBody.contains(
+        '2- layout.png: https://arquivos.exemplo/def456'
+      ),
+      'Deve numerar o segundo anexo'
+    );
+    Assert.isFalse(
+      updated.CommentBody.contains('sem-url.png'),
+      'Anexo sem URL deve ser ignorado'
+    );
+    // Texto original da mensagem deve ser preservado acima da seção.
+    Assert.isTrue(
+      updated.CommentBody.startsWith('Mensagem com anexo'),
+      'O texto original do comentário deve ser preservado'
+    );
   }
 
   @isTest

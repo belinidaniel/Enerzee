@@ -335,11 +335,54 @@ private class ModuloHelpDeskCaseControllerTest {
         cs.Id,
         c.Id
       );
+      // Visão interna (agente) deve enxergar os mesmos anexos.
+      List<AttachmentLink__c> allLinks = ModuloHelpDeskCaseController.getAllMessageAttachments(
+        cs.Id
+      );
+      // Mensagem do agente + listagem completa (visão interna).
+      Id agentMsgId = ModuloHelpDeskCaseController.addAgentMessage(
+        cs.Id,
+        'Resposta do agente',
+        null,
+        false
+      );
+      List<HelpDeskMessage__c> allMessages = ModuloHelpDeskCaseController.getAllMessages(
+        cs.Id
+      );
       Test.stopTest();
 
       System.assertNotEquals(null, linkId);
       System.assertEquals(1, links.size());
       System.assertEquals(String.valueOf(messageId), links[0].SObjectId__c);
+      System.assertEquals(1, allLinks.size());
+      System.assertEquals(String.valueOf(messageId), allLinks[0].SObjectId__c);
+      System.assertNotEquals(null, agentMsgId);
+      System.assertEquals(2, allMessages.size());
+
+      // A URL do anexo deve ter sido anexada ("nome: url") ao CaseComment do Jira.
+      Id commentId = (Id) [
+        SELECT CaseCommentId__c
+        FROM HelpDeskMessage__c
+        WHERE Id = :messageId
+        LIMIT 1
+      ]
+      .CaseCommentId__c;
+      CaseComment mirrored = [
+        SELECT CommentBody
+        FROM CaseComment
+        WHERE Id = :commentId
+        LIMIT 1
+      ];
+      System.assert(
+        mirrored.CommentBody.contains('Anexos:'),
+        'O CaseComment deve conter a seção "Anexos:"'
+      );
+      System.assert(
+        mirrored.CommentBody.contains(
+          '1- foto.png: https://files.example.com/ctrl.png'
+        ),
+        'A URL do anexo deve constar numerada no CaseComment espelhado'
+      );
     }
   }
 }

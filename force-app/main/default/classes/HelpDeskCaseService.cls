@@ -329,17 +329,21 @@ public without sharing class HelpDeskCaseService {
     if (String.isNotBlank(richDescription)) {
       newCase.Description_Rich__c = richDescription;
     }
-    if (String.isNotBlank(typeValue)) {
-      newCase.Type = typeValue;
-    }
-    if (String.isNotBlank(subtypeValue)) {
-      newCase.Reason = subtypeValue;
-    }
+    Map<String, Schema.SObjectField> caseFields = Schema.SObjectType.Case.fields.getMap();
     if (
       String.isNotBlank(systemValue) &&
-      Schema.SObjectType.Case.fields.getMap().containsKey('HelpDesk_Sistema__c')
+      caseFields.containsKey('HelpDesk_Sistema__c')
     ) {
       newCase.put('HelpDesk_Sistema__c', systemValue);
+    }
+    if (String.isNotBlank(typeValue) && caseFields.containsKey('HelpDesk_Tipo__c')) {
+      newCase.put('HelpDesk_Tipo__c', typeValue);
+    }
+    if (
+      String.isNotBlank(subtypeValue) &&
+      caseFields.containsKey('HelpDesk_Subtipo__c')
+    ) {
+      newCase.put('HelpDesk_Subtipo__c', subtypeValue);
     }
     if (String.isNotBlank(priorityValue)) {
       newCase.Priority = priorityValue;
@@ -432,6 +436,13 @@ public without sharing class HelpDeskCaseService {
           ? result.message
           : 'Falha ao enviar arquivo para API externa.'
       );
+    }
+
+    // Quando o anexo pertence a uma mensagem do portal, reescreve a seção
+    // "Anexos:" do CaseComment espelhado com todos os anexos atuais, para que
+    // cheguem ao Jira (conector Getint). O BO busca os AttachmentLink__c.
+    if (messageId != null && result.attachmentId != null) {
+      HelpDeskMessageBO.appendAttachmentUrlsToComment(messageId, null, null);
     }
 
     // result.attachmentId é o Id do AttachmentLink__c criado (SObjectId__c = messageId).

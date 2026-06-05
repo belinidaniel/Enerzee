@@ -83,7 +83,10 @@
             value={detail.richDescription}
           ></lightning-formatted-rich-text>
         </template>
-        <template if:false={detail.richDescription}>
+        <template if:true={detail.plainDescription}>
+          <p class="plain-description">{detail.plainDescription}</p>
+        </template>
+        <template if:false={hasDescription}>
           <p class="empty-feed">Sem detalhes adicionais.</p>
         </template>
       </section>
@@ -131,7 +134,7 @@
 
       <section class="feed">
         <template if:true={hasMessages}>
-          <template for:each={messages} for:item="message">
+          <template for:each={displayMessages} for:item="message">
             <div key={message.id} class="feed-item slds-card">
               <div class="avatar">
                 <lightning-avatar

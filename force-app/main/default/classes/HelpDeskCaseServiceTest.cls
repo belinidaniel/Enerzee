@@ -114,7 +114,7 @@ private class HelpDeskCaseServiceTest {
           .containsKey('HelpDesk_Sistema__c')
       ) {
         Case createdCase = [
-          SELECT HelpDesk_Sistema__c, Reason, Type
+          SELECT HelpDesk_Sistema__c, HelpDesk_Tipo__c, HelpDesk_Subtipo__c
           FROM Case
           WHERE Id = :newCaseId
           LIMIT 1
@@ -123,10 +123,90 @@ private class HelpDeskCaseServiceTest {
         if (systemValue != null) {
           System.assertEquals('Salesforce', (String) systemValue);
         }
-        System.assertEquals('Acesso', createdCase.Type);
-        System.assertEquals('Login', createdCase.Reason);
+        Object typeValue = createdCase.get('HelpDesk_Tipo__c');
+        if (typeValue != null) {
+          System.assertEquals('Acesso', (String) typeValue);
+        }
+        Object subtypeValue = createdCase.get('HelpDesk_Subtipo__c');
+        if (subtypeValue != null) {
+          System.assertEquals('Login', (String) subtypeValue);
+        }
       }
     }
+  }
+
+  @IsTest
+  static void shouldAddAndListMessages() {
+    Account acc = new Account(Name = 'Enerzee Mensagens');
+    insert acc;
+
+    Contact c = new Contact(
+      LastName = 'Contato Mensagens',
+      Email = 'mensagens@teste.com',
+      AccountId = acc.Id
+    );
+    insert c;
+
+    Case cs = new Case(
+      Subject = 'Caso com mensagens',
+      Status = 'New',
+      Origin = 'Phone',
+      ContactId = c.Id,
+      AccountId = acc.Id
+    );
+    insert cs;
+
+    HelpDeskCaseService.UserContext ctx = new HelpDeskCaseService.UserContext();
+    ctx.userId = UserInfo.getUserId();
+    ctx.contactId = c.Id;
+    ctx.email = c.Email;
+    ctx.name = 'Agente Teste';
+
+    Id publicMessageId = HelpDeskCaseService.addMessage(
+      cs.Id,
+      'Mensagem pública',
+      null,
+      'Cliente',
+      true,
+      c.Id,
+      ctx
+    );
+    System.assertNotEquals(null, publicMessageId);
+
+    Id privateMessageId = HelpDeskCaseService.addMessage(
+      cs.Id,
+      'Mensagem interna',
+      null,
+      'Agente',
+      false,
+      c.Id,
+      ctx
+    );
+    System.assertNotEquals(null, privateMessageId);
+
+    List<HelpDeskMessage__c> publicMessages = HelpDeskCaseService.getMessages(
+      cs.Id,
+      c.Id,
+      ctx,
+      false
+    );
+    System.assertEquals(1, publicMessages.size());
+
+    List<HelpDeskMessage__c> allMessages = HelpDeskCaseService.getMessages(
+      cs.Id,
+      c.Id,
+      ctx,
+      true
+    );
+    System.assertEquals(2, allMessages.size());
+
+    List<AttachmentLink__c> links = HelpDeskCaseService.getCaseAttachmentLinks(
+      cs.Id,
+      c.Id,
+      ctx,
+      true
+    );
+    System.assertNotEquals(null, links);
   }
 
   @IsTest
