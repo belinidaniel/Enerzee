@@ -3,6 +3,6 @@
     <fullName>Help_Desk_Salesforce</fullName>
     <active>true</active>
     <businessProcess>Help_Desk</businessProcess>
-    <description>Casos criados e gerenciados pelo portal interno de Help Desk Salesforce.</description>
+    <description>Casos criados e gerenciados pelo portal de Help Desk Salesforce.</description>
     <label>Help Desk Salesforce</label>
 </RecordType>
