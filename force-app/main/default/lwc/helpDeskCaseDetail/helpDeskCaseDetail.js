@@ -8,8 +8,11 @@ import getApprovalStatus from "@salesforce/apex/ModuloHelpDeskCaseController.get
 import addMessage from "@salesforce/apex/ModuloHelpDeskCaseController.addMessage";
 import getMessageAttachments from "@salesforce/apex/ModuloHelpDeskCaseController.getMessageAttachments";
 import uploadMessageFileExternal from "@salesforce/apex/ModuloHelpDeskCaseController.uploadMessageFileExternal";
-
-const IMAGE_EXTENSIONS = ["png", "jpg", "jpeg", "gif", "webp", "bmp"];
+import {
+  formatFileSize,
+  groupMessageAttachments,
+  initialsFromName
+} from "c/helpDeskAttachmentUtils";
 
 export default class HelpDeskCaseDetail extends LightningElement {
   // Em Record Page nativa o recordId é injetado pela plataforma; numa página
@@ -76,18 +79,24 @@ export default class HelpDeskCaseDetail extends LightningElement {
     }
   }
 
-  @wire(getMessageAttachments, { caseId: "$resolvedRecordId", contactId: "$contactId" })
+  @wire(getMessageAttachments, {
+    caseId: "$resolvedRecordId",
+    contactId: "$contactId"
+  })
   wiredMessageAttachments(result) {
     this.wiredAttachments = result;
     const { data, error } = result;
     if (data) {
-      this.attachmentsByMessage = this.groupAttachments(data);
+      this.attachmentsByMessage = groupMessageAttachments(data);
     } else if (error) {
       this.handleError("Erro ao carregar anexos", error);
     }
   }
 
-  @wire(getApprovalStatus, { caseId: "$resolvedRecordId", contactId: "$contactId" })
+  @wire(getApprovalStatus, {
+    caseId: "$resolvedRecordId",
+    contactId: "$contactId"
+  })
   wiredCaseApproval(result) {
     this.wiredApproval = result;
     const { data, error } = result;
@@ -156,7 +165,6 @@ export default class HelpDeskCaseDetail extends LightningElement {
     return (
       this.hasApprovalStatus ||
       !!this.approvalInfo?.currentApproverName ||
-      !!this.approvalInfo?.supervisorName ||
       !!this.approvalInfo?.gerenteName
     );
   }
@@ -207,19 +215,16 @@ export default class HelpDeskCaseDetail extends LightningElement {
       return this.approvalInfo.currentApproverName;
     }
     if (
-      this.approvalInfo?.supervisorName &&
+      this.approvalInfo?.gerenteName &&
       this.approvalStatusLabel === "Em Aprovação"
     ) {
-      return this.approvalInfo.supervisorName;
+      return this.approvalInfo.gerenteName;
     }
     return "Aguardando envio para aprovação";
   }
 
   get approvalRouteLabel() {
-    const supervisor =
-      this.approvalInfo?.supervisorName || "Supervisor não definido";
-    const gerente = this.approvalInfo?.gerenteName || "Gerente não definido";
-    return `${supervisor} -> ${gerente}`;
+    return this.approvalInfo?.gerenteName || "Gerente não definido";
   }
 
   get hasJiraActivity() {
@@ -251,7 +256,7 @@ export default class HelpDeskCaseDetail extends LightningElement {
               fileName: file.name,
               contentType: file.type,
               base64Data: base64,
-              humanSize: this.formatSize(file.size),
+              humanSize: formatFileSize(file.size),
               name: file.name
             });
           };
@@ -378,6 +383,7 @@ export default class HelpDeskCaseDetail extends LightningElement {
       jiraIssueKey: data.JiraIssueKey__c || "",
       jiraIssueUrl: data.JiraIssueUrl__c || "",
       jiraStatus: data.JiraStatus__c || "",
+      system: data.HelpDesk_Sistema__c || "",
       contactName: data.Contact ? data.Contact.Name : "",
       createdDateDisplay: this.formatDate(data.CreatedDate),
       lastModifiedDisplay: this.formatDate(data.LastModifiedDate),
@@ -387,17 +393,29 @@ export default class HelpDeskCaseDetail extends LightningElement {
       richDescription: hasRich ? data.Description_Rich__c : "",
       plainDescription: hasRich
         ? ""
-        : this.stripSistemaPrefix(data.Description || "")
+        : this.stripSistemaPrefix(
+            data.Description || "",
+            data.HelpDesk_Sistema__c || ""
+          )
     };
   }
 
-  // Remove a linha inicial "Sistema: <x>" do Description (montada por
-  // buildCaseDescription no Apex) — o sistema já é exibido em campo próprio.
-  stripSistemaPrefix(text) {
+  // Remove somente o prefixo técnico correspondente ao sistema do próprio Case.
+  // O fallback sem systemValue preserva a visualização de casos legados.
+  stripSistemaPrefix(text, systemValue) {
     if (!text) {
       return "";
     }
-    return text.replace(/^Sistema:.*\r?\n?/, "").trim();
+    const lines = text.split(/\r?\n/);
+    const firstLine = lines[0]?.trim() || "";
+    const expectedPrefix = systemValue ? `Sistema: ${systemValue}` : null;
+    if (
+      firstLine === expectedPrefix ||
+      (!expectedPrefix && /^Sistema:.*$/.test(firstLine))
+    ) {
+      return lines.slice(1).join("\n").trim();
+    }
+    return text.trim();
   }
 
   updateJiraStatusPolling() {
@@ -436,65 +454,9 @@ export default class HelpDeskCaseDetail extends LightningElement {
       date: this.formatDate(item.CreatedDate),
       author,
       authorType: item.AuthorType__c || "Cliente",
-      initials: author ? this.getInitials(author) : "C",
+      initials: initialsFromName(author, "C"),
       attachments: []
     };
-  }
-
-  groupAttachments(links) {
-    const grouped = {};
-    links.forEach((link) => {
-      const parentId = link.SObjectId__c;
-      if (!parentId) {
-        return;
-      }
-      const url = link.AttachmentURL__c || link.InternalAttachmentURL__c;
-      const fileType = (
-        link.FileType__c ||
-        this.extensionFromName(link.FileName__c) ||
-        ""
-      ).toLowerCase();
-      const isImage = IMAGE_EXTENSIONS.includes(fileType);
-      const attachment = {
-        id: link.Id,
-        url,
-        title: link.FileName__c || link.AttachmentDescription__c || "Anexo",
-        isImage,
-        iconName: this.resolveIconName(fileType)
-      };
-      if (!grouped[parentId]) {
-        grouped[parentId] = [];
-      }
-      grouped[parentId].push(attachment);
-    });
-    return grouped;
-  }
-
-  extensionFromName(name) {
-    if (!name || name.indexOf(".") === -1) {
-      return "";
-    }
-    return name.substring(name.lastIndexOf(".") + 1);
-  }
-
-  resolveIconName(fileType) {
-    const type = (fileType || "").toLowerCase();
-    if (IMAGE_EXTENSIONS.includes(type)) {
-      return "doctype:image";
-    }
-    if (type === "pdf") {
-      return "doctype:pdf";
-    }
-    if (type === "doc" || type === "docx") {
-      return "doctype:word";
-    }
-    if (type === "xls" || type === "xlsx" || type === "csv") {
-      return "doctype:excel";
-    }
-    if (type === "txt") {
-      return "doctype:txt";
-    }
-    return "doctype:attachment";
   }
 
   formatDate(dateValue) {
@@ -505,24 +467,6 @@ export default class HelpDeskCaseDetail extends LightningElement {
       hour: "2-digit",
       minute: "2-digit"
     }).format(new Date(dateValue));
-  }
-
-  formatSize(bytes) {
-    if (!bytes && bytes !== 0) {
-      return "";
-    }
-    const sizes = ["B", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
-  }
-
-  getInitials(name) {
-    return name
-      .split(" ")
-      .map((n) => n.charAt(0))
-      .join("")
-      .substring(0, 2)
-      .toUpperCase();
   }
 
   handleError(title, error) {

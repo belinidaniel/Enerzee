@@ -210,6 +210,65 @@ private class HelpDeskCaseServiceTest {
   }
 
   @IsTest
+  static void shouldRejectAttachmentForMessageFromAnotherCase() {
+    Account acc = new Account(Name = 'Enerzee Mensagem Cruzada');
+    insert acc;
+
+    Contact c = new Contact(
+      LastName = 'Contato Mensagem Cruzada',
+      Email = 'mensagem.cruzada@teste.com',
+      AccountId = acc.Id
+    );
+    insert c;
+
+    List<Case> cases = new List<Case>{
+      new Case(
+        Subject = 'Caso autorizado',
+        Status = 'New',
+        Origin = 'Phone',
+        ContactId = c.Id,
+        AccountId = acc.Id
+      ),
+      new Case(
+        Subject = 'Caso de outra mensagem',
+        Status = 'New',
+        Origin = 'Phone',
+        ContactId = c.Id,
+        AccountId = acc.Id
+      )
+    };
+    insert cases;
+
+    HelpDeskMessage__c message = new HelpDeskMessage__c(
+      Case__c = cases[1].Id,
+      Body__c = 'Mensagem de outro caso',
+      AuthorType__c = 'Cliente',
+      IsPublic__c = true
+    );
+    insert message;
+
+    HelpDeskCaseService.UserContext ctx = new HelpDeskCaseService.UserContext();
+    ctx.userId = UserInfo.getUserId();
+    ctx.contactId = c.Id;
+    ctx.email = c.Email;
+
+    Boolean rejected = false;
+    try {
+      HelpDeskCaseService.uploadMessageFileExternal(
+        cases[0].Id,
+        message.Id,
+        'arquivo.txt',
+        EncodingUtil.base64Encode(Blob.valueOf('conteudo')),
+        c.Id,
+        ctx
+      );
+    } catch (AuraHandledException expected) {
+      rejected = true;
+    }
+    Assert.isTrue(rejected, 'Deve rejeitar mensagem vinculada a outro caso');
+  }
+
+  @IsTest
   static void shouldUseContactApproverLabelsWhenCaseSnapshotIsMasked() {
     User approver = [
       SELECT Id, Name

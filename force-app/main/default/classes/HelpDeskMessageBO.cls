@@ -79,16 +79,25 @@ public without sharing class HelpDeskMessageBO {
   private static final String ATTACHMENTS_MARKER = 'Anexos:';
 
   /**
-   * Reescreve a seção "Anexos:" do CaseComment espelhado da mensagem com TODOS
-   * os anexos atuais, em lista numerada, para que cheguem ao Jira (conector Getint).
-   * Idempotente: cada upload regrava a seção inteira a partir dos AttachmentLink__c.
-   * O texto original da mensagem (acima do marcador) é preservado.
+   * Mantido para compatibilidade com chamadas existentes. Os nomes e URLs
+   * recebidos nunca foram a fonte da verdade; a sincronização sempre consulta
+   * todos os AttachmentLink__c vinculados à mensagem.
    */
   public static void appendAttachmentUrlsToComment(
     Id messageId,
     List<String> fileNames,
     List<String> urls
   ) {
+    syncMirroredCommentAttachments(messageId);
+  }
+
+  /**
+   * Reescreve a seção "Anexos:" do CaseComment espelhado da mensagem com TODOS
+   * os anexos atuais, em lista numerada, para que cheguem ao Jira (conector Getint).
+   * Idempotente: cada upload regrava a seção inteira a partir dos AttachmentLink__c.
+   * O texto original da mensagem (acima do marcador) é preservado.
+   */
+  public static void syncMirroredCommentAttachments(Id messageId) {
     if (messageId == null) {
       return;
     }
@@ -172,9 +181,8 @@ public without sharing class HelpDeskMessageBO {
     }
     Integer cutIndex = body.indexOf(ATTACHMENTS_MARKER);
     // Primeira linha no padrão "N- ...: http" (link gerado por esta classe).
-    Matcher linkMatcher = Pattern.compile('(?m)^\\d+- .*?: https?://').matcher(
-      body
-    );
+    Matcher linkMatcher = Pattern.compile('(?m)^\\d+- .*?: https?://')
+      .matcher(body);
     if (linkMatcher.find()) {
       Integer linkIndex = linkMatcher.start();
       if (cutIndex == -1 || linkIndex < cutIndex) {

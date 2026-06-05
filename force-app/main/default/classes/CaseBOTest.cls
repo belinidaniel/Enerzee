@@ -393,6 +393,35 @@ private class CaseBOTest {
   }
 
   @IsTest
+  static void shouldMarkApprovalPendingWhenOnlyManagerExists() {
+    User gerente = createUser('gerente.unico.case@test.com', 'cgeru');
+
+    Account acc = new Account(Name = 'Conta Gerente Único');
+    insert acc;
+    Contact ct = new Contact(
+      LastName = 'Contato Gerente Único',
+      AccountId = acc.Id,
+      Gerente__c = gerente.Id
+    );
+    insert ct;
+
+    Case cs = new Case(
+      Subject = 'Caso aprovação gerente',
+      Status = 'New',
+      Origin = 'Phone',
+      ContactId = ct.Id
+    );
+
+    Test.startTest();
+    CaseBO.populateApprovers(new List<Case>{ cs });
+    Test.stopTest();
+
+    System.assertEquals(null, cs.Supervisor__c);
+    System.assertEquals(gerente.Id, cs.Gerente__c);
+    System.assertEquals('Pendente', cs.StatusAprovacao__c);
+  }
+
+  @IsTest
   static void shouldSkipApproversWhenNoContact() {
     Case cs = new Case(
       Subject = 'Sem contato',

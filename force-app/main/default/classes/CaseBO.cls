@@ -207,11 +207,7 @@ public without sharing class CaseBO {
           ? ct.Gerente__r.Name
           : approverNames.get(c.Gerente__c);
       }
-      if (
-        c.Supervisor__c != null &&
-        c.Gerente__c != null &&
-        String.isBlank(c.StatusAprovacao__c)
-      ) {
+      if (c.Gerente__c != null && String.isBlank(c.StatusAprovacao__c)) {
         c.StatusAprovacao__c = 'Pendente';
       }
     }
@@ -219,13 +215,13 @@ public without sharing class CaseBO {
 
   // DeveloperName do RecordType de casos do portal Help Desk.
   private static final String HELPDESK_RECORD_TYPE = 'Help_Desk_Salesforce';
-  private static final String HELPDESK_APPROVAL_PROCESS = 'AprovacaoHelpDesk';
+  private static final String HELPDESK_APPROVAL_PROCESS = 'AprovacaoHelpDeskGerente';
   @TestVisible
   private static Boolean skipHelpDeskApprovalSubmission = Test.isRunningTest();
 
   /**
-   * Submete os casos do Help Desk ao processo de aprovação (Supervisor -> Gerente).
-   * Só submete casos cujo RecordType é Help Desk e que possuem Supervisor definido,
+   * Submete os casos do Help Desk ao processo de aprovação do Gerente.
+   * Só submete casos cujo RecordType é Help Desk e que possuem Gerente definido,
    * para evitar erro de "no approver". Executado no afterInsert.
    */
   public static void submitHelpDeskCasesForApproval(List<Case> newRecords) {
@@ -246,7 +242,7 @@ public without sharing class CaseBO {
       if (c.RecordTypeId != helpDeskRtId) {
         continue;
       }
-      if (c.Supervisor__c == null || c.Gerente__c == null) {
+      if (c.Gerente__c == null) {
         continue;
       }
       Approval.ProcessSubmitRequest req = new Approval.ProcessSubmitRequest();

@@ -44,6 +44,7 @@ public without sharing class HelpDeskCaseDAO {
         ContactId,
         Description,
         Description_Rich__c,
+        HelpDesk_Sistema__c,
         JiraIssueKey__c,
         JiraIssueUrl__c,
         JiraStatus__c,
@@ -172,6 +173,18 @@ public without sharing class HelpDeskCaseDAO {
       FROM HelpDeskMessage__c
       WHERE Case__c = :caseId
       ORDER BY CreatedDate DESC
+    ];
+  }
+
+  public static List<HelpDeskMessage__c> queryMessageByIdAndCase(
+    Id messageId,
+    Id caseId
+  ) {
+    return [
+      SELECT Id, Case__c, IsPublic__c
+      FROM HelpDeskMessage__c
+      WHERE Id = :messageId AND Case__c = :caseId
+      LIMIT 1
     ];
   }
 

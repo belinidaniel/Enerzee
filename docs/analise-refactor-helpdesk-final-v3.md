@@ -123,7 +123,7 @@ Plano de refactor:
 1. Preservar o metodo publico atual por compatibilidade, se necessario.
 2. Extrair metodo privado sem parametros mortos, por exemplo `rewriteMirroredCommentAttachmentSection(Id messageId)`.
 3. Fazer o metodo publico atual delegar para o metodo novo ou remover os parametros se nao houver consumo externo relevante.
-4. Ajustar testes para nomear a regra: "reescreve a secao de anexos a partir de AttachmentLink__c".
+4. Ajustar testes para nomear a regra: "reescreve a secao de anexos a partir de AttachmentLink\_\_c".
 
 ### P1 - Append de anexos faz DML adicional dentro do fluxo de upload
 
@@ -400,3 +400,59 @@ Validacao proposta apos aprovacao:
 - Nao adicionei dependencias.
 - Nao fiz commit.
 
+## Decisao funcional aprovada em 2026-06-05
+
+A aprovacao do Help Desk passa a ter somente uma etapa, atribuida ao Gerente do
+contato. A ausencia de Supervisor nao deve mais impedir o status `Pendente` nem
+a submissao automatica ao processo de aprovacao.
+
+Escopo aprovado:
+
+- remover a etapa de Supervisor do Approval Process;
+- exigir somente `Gerente__c` para submissao;
+- definir `StatusAprovacao__c = Pendente` quando houver Gerente;
+- remover Supervisor do painel e do layout de aprovacao;
+- preservar os campos de Supervisor no modelo para historico e outros usos.
+
+Restricao de plataforma identificada na validacao:
+
+- Salesforce nao permite remover etapas de um Approval Process que ja foi
+  ativado.
+- O processo legado `AprovacaoHelpDesk` deve ser desativado sem alterar suas
+  etapas.
+- O processo novo `AprovacaoHelpDeskGerente` passa a ser o processo ativo e
+  possui somente a etapa do Gerente.
+
+## Implementacao do plano de refactor
+
+Executado em 2026-06-05:
+
+- corrigido o field `ContactId` do layout;
+- criado o processo `AprovacaoHelpDeskGerente` e desativado o processo legado;
+- submissao e status `Pendente` passam a depender somente de `Gerente__c`;
+- Supervisor removido do painel e da secao de aprovacao do layout;
+- sincronizacao de anexos renomeada para
+  `syncMirroredCommentAttachments`, mantendo o metodo anterior como
+  compatibilidade;
+- adicionada validacao de mensagem/caso antes de vincular anexos;
+- endpoints de mensagens privadas protegidos para usuarios internos;
+- removida leitura de `CaseCommentId__c` do permission set Guest;
+- helpers puros de anexos extraidos para `helpDeskAttachmentUtils`;
+- removido `buildApexFilePayload`, que nao possuia consumidores;
+- remocao do prefixo `Sistema:` passou a comparar o valor real do Case;
+- criado `manifest/helpdesk-final-v3.xml`.
+
+Decisao deliberada para preservar comportamento:
+
+- uploads externos continuam sendo executados por arquivo e em transacoes
+  separadas. Consolidar os uploads em um unico Apex introduziria callout depois
+  de DML entre arquivos, alterando o limite/transacao atual.
+
+Observacao de deploy:
+
+- `Administrador.profile` nao faz parte do manifesto portatil porque o profile
+  completo possui dependencias diferentes entre ambientes. Na UAT, ele
+  referencia `Case.rsplus__Phone_Number__c`, campo inexistente na org.
+- o assignment do layout `Case-Help Desk Salesforce Layout` ao record type deve
+  ser aplicado por metadata de profile recuperada da org alvo ou manualmente no
+  Setup.

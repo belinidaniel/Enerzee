@@ -128,6 +128,19 @@ private class HelpDeskMessageBOTest {
       updated.CommentBody.startsWith('Mensagem com anexo'),
       'O texto original do comentário deve ser preservado'
     );
+
+    HelpDeskMessageBO.syncMirroredCommentAttachments(msg.Id);
+    CaseComment synchronizedAgain = [
+      SELECT CommentBody
+      FROM CaseComment
+      WHERE Id = :commentId
+      LIMIT 1
+    ];
+    Assert.areEqual(
+      updated.CommentBody,
+      synchronizedAgain.CommentBody,
+      'Sincronizações sucessivas não devem duplicar a seção de anexos'
+    );
   }
 
   @isTest

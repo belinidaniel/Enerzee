@@ -7,6 +7,7 @@ import uploadMessageFileExternal from "@salesforce/apex/ModuloHelpDeskCaseContro
 import getCaseCategoryOptions from "@salesforce/apex/ModuloHelpDeskCaseController.getCaseCategoryOptions";
 import cloudLogo from "@salesforce/resourceUrl/salesforceCloudV3";
 import agentAstro from "@salesforce/resourceUrl/agentforceAgentAstro";
+import { formatFileSize } from "c/helpDeskAttachmentUtils";
 
 export default class HelpDeskHome extends LightningElement {
   _contactId;
@@ -110,7 +111,6 @@ export default class HelpDeskHome extends LightningElement {
     { label: "Média", value: "Medium" },
     { label: "Baixa", value: "Low" }
   ];
-
 
   get disableCreate() {
     return (
@@ -404,7 +404,7 @@ export default class HelpDeskHome extends LightningElement {
               fileName: file.name,
               contentType: file.type,
               base64Data: base64,
-              humanSize: this.formatSize(file.size),
+              humanSize: formatFileSize(file.size),
               name: file.name,
               clientKey
             });
@@ -481,25 +481,6 @@ export default class HelpDeskHome extends LightningElement {
 
   toPicklistOptions(values) {
     return values.map((value) => ({ label: value, value }));
-  }
-
-  buildApexFilePayload() {
-    return this.pendingFiles.map((file) => ({
-      fileName: file.fileName || file.name || "",
-      contentType: file.contentType || "",
-      base64Data: file.base64Data || "",
-      humanSize: file.humanSize || "",
-      name: file.name || file.fileName || ""
-    }));
-  }
-
-  formatSize(bytes) {
-    if (!bytes && bytes !== 0) {
-      return "";
-    }
-    const units = ["B", "KB", "MB", "GB"];
-    const index = Math.floor(Math.log(bytes) / Math.log(1024));
-    return `${(bytes / Math.pow(1024, index)).toFixed(1)} ${units[index]}`;
   }
 
   showToast(title, message, variant) {

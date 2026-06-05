@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ApprovalProcess xmlns="http://soap.sforce.com/2006/04/metadata">
-    <active>false</active>
+    <active>true</active>
     <allowRecall>true</allowRecall>
     <allowedSubmitters>
         <type>creator</type>
@@ -12,29 +12,8 @@
         <field>Subject</field>
         <field>CaseNumber</field>
         <field>Contact</field>
-        <field>Supervisor__c</field>
         <field>Gerente__c</field>
     </approvalPageFields>
-    <approvalStep>
-        <allowDelegate>false</allowDelegate>
-        <approvalActions>
-            <action>
-                <name>HelpDeskAprovacaoEmAprovacao</name>
-                <type>FieldUpdate</type>
-            </action>
-        </approvalActions>
-        <assignedApprover>
-            <approver>
-                <name>Supervisor__c</name>
-                <type>relatedUserField</type>
-            </approver>
-            <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
-        </assignedApprover>
-        <description
-    >1ª etapa: aprovação do Supervisor do contato do caso.</description>
-        <label>Aprovação do Supervisor</label>
-        <name>Aprovacao_Supervisor</name>
-    </approvalStep>
     <approvalStep>
         <allowDelegate>false</allowDelegate>
         <assignedApprover>
@@ -44,8 +23,7 @@
             </approver>
             <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
         </assignedApprover>
-        <description
-    >2ª etapa: aprovação do Gerente do contato do caso.</description>
+        <description>Aprovação do Gerente do contato do caso.</description>
         <label>Aprovação do Gerente</label>
         <name>Aprovacao_Gerente</name>
         <rejectBehavior>
@@ -53,7 +31,7 @@
         </rejectBehavior>
     </approvalStep>
     <description
-  >Processo de aprovação dos casos do portal Help Desk: Supervisor e depois Gerente do contato.</description>
+  >Processo de aprovação dos casos do portal Help Desk pelo Gerente do contato.</description>
     <enableMobileDeviceAccess>false</enableMobileDeviceAccess>
     <entryCriteria>
         <booleanFilter>1</booleanFilter>
@@ -87,7 +65,7 @@
             <type>FieldUpdate</type>
         </action>
     </initialSubmissionActions>
-    <label>Aprovação Help Desk</label>
+    <label>Aprovação Help Desk - Gerente</label>
     <processOrder>1</processOrder>
     <recordEditability>AdminOrCurrentApprover</recordEditability>
     <showApprovalHistory>true</showApprovalHistory>

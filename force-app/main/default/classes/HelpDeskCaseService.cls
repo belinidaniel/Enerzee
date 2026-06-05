@@ -140,10 +140,11 @@ public without sharing class HelpDeskCaseService {
     if (String.isBlank(body)) {
       throw new AuraHandledException('O comentário não pode estar vazio.');
     }
+    Boolean internalUser = isInternalUser();
     HelpDeskMessage__c msg = new HelpDeskMessage__c();
     msg.Case__c = caseId;
     msg.Body__c = body;
-    String normalizedAuthorType = String.isNotBlank(authorType)
+    String normalizedAuthorType = internalUser && String.isNotBlank(authorType)
       ? authorType
       : 'Cliente';
     msg.AuthorType__c = normalizedAuthorType;
@@ -153,7 +154,7 @@ public without sharing class HelpDeskCaseService {
       contactId,
       ctx
     );
-    msg.IsPublic__c = isPublic != null ? isPublic : true;
+    msg.IsPublic__c = internalUser && isPublic != null ? isPublic : true;
     HelpDeskCaseDAO.insertMessage(msg);
     return msg.Id;
   }
@@ -336,7 +337,9 @@ public without sharing class HelpDeskCaseService {
     ) {
       newCase.put('HelpDesk_Sistema__c', systemValue);
     }
-    if (String.isNotBlank(typeValue) && caseFields.containsKey('HelpDesk_Tipo__c')) {
+    if (
+      String.isNotBlank(typeValue) && caseFields.containsKey('HelpDesk_Tipo__c')
+    ) {
       newCase.put('HelpDesk_Tipo__c', typeValue);
     }
     if (
@@ -412,6 +415,7 @@ public without sharing class HelpDeskCaseService {
     UserContext ctx
   ) {
     enforceVisibility(caseId, contactId, ctx);
+    enforceMessageAccess(caseId, messageId);
     if (String.isBlank(base64File) || String.isBlank(fileName)) {
       throw new AuraHandledException('fileName e base64File são obrigatórios.');
     }
@@ -442,7 +446,7 @@ public without sharing class HelpDeskCaseService {
     // "Anexos:" do CaseComment espelhado com todos os anexos atuais, para que
     // cheguem ao Jira (conector Getint). O BO busca os AttachmentLink__c.
     if (messageId != null && result.attachmentId != null) {
-      HelpDeskMessageBO.appendAttachmentUrlsToComment(messageId, null, null);
+      HelpDeskMessageBO.syncMirroredCommentAttachments(messageId);
     }
 
     // result.attachmentId é o Id do AttachmentLink__c criado (SObjectId__c = messageId).
@@ -614,6 +618,14 @@ public without sharing class HelpDeskCaseService {
     return ctx;
   }
 
+  public static void enforceInternalAccess() {
+    if (!isInternalUser()) {
+      throw new AuraHandledException(
+        'Esta operação está disponível apenas para usuários internos.'
+      );
+    }
+  }
+
   private static String resolveMessageAuthorName(
     String authorName,
     String authorType,
@@ -708,6 +720,24 @@ public without sharing class HelpDeskCaseService {
     if (rows.isEmpty()) {
       throw new AuraHandledException(
         'Caso não encontrado ou sem permissão de acesso.'
+      );
+    }
+  }
+
+  private static void enforceMessageAccess(Id caseId, Id messageId) {
+    if (messageId == null) {
+      return;
+    }
+    List<HelpDeskMessage__c> messages = HelpDeskCaseDAO.queryMessageByIdAndCase(
+      messageId,
+      caseId
+    );
+    if (
+      messages.isEmpty() ||
+      (!isInternalUser() && messages[0].IsPublic__c != true)
+    ) {
+      throw new AuraHandledException(
+        'Mensagem não encontrada ou sem permissão de acesso.'
       );
     }
   }
