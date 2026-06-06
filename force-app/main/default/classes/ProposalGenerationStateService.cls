@@ -55,6 +55,12 @@ public without sharing class ProposalGenerationStateService {
     updateStatus(opportunityId, FAILED);
   }
 
+  // Reabre o ciclo de geração de uma proposta já concluída (ex.: troca de simulação),
+  // limpando o status para que requestGeneration/canProcess permitam reprocessar.
+  public static void reset(Id opportunityId) {
+    updateStatus(opportunityId, null);
+  }
+
   public static Boolean isActive(String status) {
     return status == PENDING || status == PROCESSING;
   }

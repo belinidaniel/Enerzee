@@ -338,7 +338,10 @@ public without sharing class PaymentSimulationBO {
       selectedSimulationKeys.clear();
     }
 
-    if (!isPixPayment) {
+    // As simulações de financiamento/aluguel são sempre mantidas, mesmo quando a
+    // forma de pagamento selecionada é PIX. Selecionar uma simulação não deve
+    // apagar as demais — apenas a marcação Selected__c muda.
+    {
       for (FinancingRate__c financingRate : activeFinancingRates) {
         if (String.isBlank(financingRate.PaymentType__c)) {
           continue;
