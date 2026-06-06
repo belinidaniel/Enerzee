@@ -1490,13 +1490,29 @@ private class ProposalEngineSupportTest {
     Test.stopTest();
 
     Opportunity unchangedOpportunity = [
-      SELECT PropostaGerada__c
+      SELECT PropostaGerada__c, ProposalGenerationStatus__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
     Assert.isFalse(
       unchangedOpportunity.PropostaGerada__c,
       'Sem configuração mínima da API, o job deve falhar sem marcar proposta gerada.'
+    );
+    Assert.areEqual(
+      ProposalGenerationStateService.FAILED,
+      unchangedOpportunity.ProposalGenerationStatus__c
+    );
+    Log__c generationLog = [
+      SELECT RelatedId__c
+      FROM Log__c
+      WHERE Class__c = 'ProposalApiGenerationJob' AND Method__c = 'execute'
+      ORDER BY CreatedDate DESC
+      LIMIT 1
+    ];
+    Assert.areEqual(
+      String.valueOf(opportunityRecord.Id),
+      generationLog.RelatedId__c,
+      'O log do job deve identificar a Opportunity que falhou.'
     );
   }
 

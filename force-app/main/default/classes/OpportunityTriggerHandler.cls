@@ -69,6 +69,14 @@ public class OpportunityTriggerHandler extends TriggerHandler {
   }
 
   public override void beforeUpdate() {
+    OpportunityBO.preventProposalGeneratedStageWithoutStoredFile(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
+    OpportunityBO.preventCompletedProposalStageRegression(
+      (List<Opportunity>) Trigger.new,
+      (Map<Id, Opportunity>) Trigger.oldMap
+    );
     OpportunityBO.validateViabilityTexts(
       (List<Opportunity>) Trigger.new,
       (Map<Id, Opportunity>) Trigger.oldMap

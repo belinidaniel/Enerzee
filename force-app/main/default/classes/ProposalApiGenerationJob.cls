@@ -10,33 +10,78 @@ public with sharing class ProposalApiGenerationJob implements Queueable, Databas
   private Id opportunityId;
   private Id coverId;
   private Boolean autoIntegrate;
+  private Boolean forceNewFile;
 
   public ProposalApiGenerationJob(
     Id opportunityId,
     Id coverId,
     Boolean autoIntegrate
   ) {
+    this(opportunityId, coverId, autoIntegrate, false);
+  }
+
+  public ProposalApiGenerationJob(
+    Id opportunityId,
+    Id coverId,
+    Boolean autoIntegrate,
+    Boolean forceNewFile
+  ) {
     this.opportunityId = opportunityId;
     this.coverId = coverId;
     this.autoIntegrate = autoIntegrate;
+    this.forceNewFile = forceNewFile;
   }
 
   public void execute(QueueableContext ctx) {
+    if (!ProposalGenerationStateService.canProcess(opportunityId)) {
+      return;
+    }
+
     try {
       ProposalGenerationService.ProposalResult result = ProposalGenerationService.generateProposal(
         opportunityId,
-        coverId
+        coverId,
+        forceNewFile
       );
+      ensureProposalWasStored(opportunityId, result.contentVersionId);
       advanceStage(opportunityId);
 
+      // gerandoProposta(oppId, cvId) é @future(callout=true): apenas enfileira aqui e
+      // executa o callout em transação separada, sem conflito com o DML acima.
       if (autoIntegrate == true) {
         IntegracaoNivelloProposta.gerandoProposta(
           opportunityId,
           result.contentVersionId
         );
       }
+      ProposalGenerationStateService.markSucceeded(opportunityId);
     } catch (Exception e) {
-      Utils.createLog('ProposalApiGenerationJob', 'execute', e);
+      ProposalGenerationStateService.markFailed(opportunityId);
+      Utils.createLog(
+        'ProposalApiGenerationJob',
+        'execute',
+        e,
+        String.valueOf(opportunityId)
+      );
+    }
+  }
+
+  private static void ensureProposalWasStored(
+    Id opportunityId,
+    Id contentVersionId
+  ) {
+    if (contentVersionId == null) {
+      throw new ProposalGenerationService.ProposalGenerationException(
+        'A geração terminou sem retornar o arquivo da proposta.'
+      );
+    }
+
+    if (
+      !ProposalFileService.isStoredProposal(opportunityId, contentVersionId)
+    ) {
+      throw new ProposalGenerationService.ProposalGenerationException(
+        'O arquivo retornado não está vinculado à oportunidade.'
+      );
     }
   }
 

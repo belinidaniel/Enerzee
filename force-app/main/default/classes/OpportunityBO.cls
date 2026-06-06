@@ -21,6 +21,89 @@ public class OpportunityBO {
   private static String FINANCING_SIMULATION_OWNER_EMAIL_LIKE = 'dayane.silva@enerzee.com.br%';
   @TestVisible
   private static Map<String, String> testProposalFieldDefaults;
+  @TestVisible
+  private static Set<Id> proposalGenerationRequestedByStage = new Set<Id>();
+
+  public static void preventProposalGeneratedStageWithoutStoredFile(
+    List<Opportunity> newList,
+    Map<Id, Opportunity> oldMap
+  ) {
+    if (newList == null || oldMap == null) {
+      return;
+    }
+
+    Set<Id> opportunityIdsToValidate = new Set<Id>();
+    for (Opportunity opportunityRecord : newList) {
+      Opportunity oldOpportunity = oldMap.get(opportunityRecord.Id);
+      if (
+        oldOpportunity != null &&
+        !OpportunityUtils.STATUS_PROPOSTA_GERADA.equalsIgnoreCase(
+          oldOpportunity.StageName
+        ) &&
+        OpportunityUtils.STATUS_PROPOSTA_GERADA.equalsIgnoreCase(
+          opportunityRecord.StageName
+        )
+      ) {
+        opportunityIdsToValidate.add(opportunityRecord.Id);
+      }
+    }
+    if (opportunityIdsToValidate.isEmpty()) {
+      return;
+    }
+
+    Map<Id, ProposalFileService.ProposalAvailability> availabilityByOpportunityId = ProposalFileService.getProposalAvailability(
+      opportunityIdsToValidate
+    );
+    for (Opportunity opportunityRecord : newList) {
+      if (!opportunityIdsToValidate.contains(opportunityRecord.Id)) {
+        continue;
+      }
+
+      ProposalFileService.ProposalAvailability availability = availabilityByOpportunityId.get(
+        opportunityRecord.Id
+      );
+      if (availability == null || !availability.hasStoredProposal) {
+        proposalGenerationRequestedByStage.add(opportunityRecord.Id);
+        opportunityRecord.StageName = oldMap.get(opportunityRecord.Id)
+          .StageName;
+      }
+    }
+  }
+
+  public static void preventCompletedProposalStageRegression(
+    List<Opportunity> newList,
+    Map<Id, Opportunity> oldMap
+  ) {
+    if (newList == null || oldMap == null) {
+      return;
+    }
+
+    for (Opportunity opportunityRecord : newList) {
+      Opportunity oldOpportunity = oldMap.get(opportunityRecord.Id);
+      if (
+        oldOpportunity == null ||
+        opportunityRecord.ReadequacaoSolicitada__c == true
+      ) {
+        continue;
+      }
+
+      Boolean proposalWasCompleted =
+        oldOpportunity.PropostaGerada__c == true ||
+        oldOpportunity.ProposalGenerationStatus__c ==
+        ProposalGenerationStateService.SUCCEEDED;
+      if (
+        proposalWasCompleted &&
+        OpportunityUtils.STATUS_PROPOSTA_GERADA.equalsIgnoreCase(
+          oldOpportunity.StageName
+        ) &&
+        OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA.equalsIgnoreCase(
+          opportunityRecord.StageName
+        )
+      ) {
+        opportunityRecord.StageName = oldOpportunity.StageName;
+      }
+    }
+  }
 
   public static void setProposalFieldDefaults(List<Opportunity> newRecords) {
     Map<String, String> defaultsByField = loadProposalFieldDefaults();
@@ -2147,11 +2230,16 @@ public class OpportunityBO {
       .getRecordTypeId();
 
     // Primeira passagem: identifica opps elegíveis para verificação de disponibilidade de proposta.
-    // Um opp é elegível quando há alguma mudança relevante OU quando PropostaGerada__c ainda é falsa
-    // e os campos obrigatórios já estão preenchidos (caso de nova opp na primeira atualização).
+    // A integração monta kit e simulações em várias transações. A geração só começa
+    // após um sinal explícito no estágio/flag ou em eventos funcionais específicos.
     Set<Id> eligibleIds = new Set<Id>();
     for (Opportunity opp : newMap.values()) {
       Opportunity oldOpp = oldMap.get(opp.Id);
+      if (
+        ProposalGenerationStateService.isActive(opp.ProposalGenerationStatus__c)
+      ) {
+        continue;
+      }
       Boolean skippedGrupoA = opp.GrupoTarifario__c == 'Grupo A';
       Boolean skippedRecordType =
         opp.RecordTypeId != ezeeConnectRtId &&
@@ -2168,8 +2256,6 @@ public class OpportunityBO {
       Boolean aprovacaoChanged =
         opp.StatusAprovacaoDesconto__c !=
         (oldOpp != null ? oldOpp.StatusAprovacaoDesconto__c : null);
-      Boolean formulaChanged =
-        oldOpp != null && formulaFieldsChanged(oldOpp, opp);
       // Nova opp com campos preenchidos: PropostaGerada__c ainda falsa mas já pronta para gerar
       Boolean isEzeeConnect = opp.RecordTypeId == ezeeConnectRtId;
       Boolean propostaGeradaStillFalse =
@@ -2178,11 +2264,11 @@ public class OpportunityBO {
           ? areRequiredFieldsFilledConnect(opp)
           : areRequiredFieldsFilled(opp));
       if (
+        proposalGenerationRequestedByStage.contains(opp.Id) ||
         propostaGeradaChanged ||
         propostaGeradaStillFalse ||
         readequacaoChanged ||
-        aprovacaoChanged ||
-        formulaChanged
+        aprovacaoChanged
       ) {
         eligibleIds.add(opp.Id);
       }
@@ -2203,13 +2289,14 @@ public class OpportunityBO {
       ProposalFileService.ProposalAvailability availability = proposalAvailabilityByOpportunityId.get(
         opp.Id
       );
-      Boolean hasReadyProposal = availability != null && availability.isReady();
+      Boolean hasStoredProposal =
+        availability != null && availability.hasStoredProposal;
 
-      // Se já gerada e não é readequação solicitada, não enfileira novamente
+      // O arquivo local é o pré-requisito para considerar a proposta gerada.
       if (
         opp.PropostaGerada__c == true &&
         opp.ReadequacaoSolicitada__c != true &&
-        hasReadyProposal
+        hasStoredProposal
       ) {
         continue;
       }
@@ -2227,6 +2314,25 @@ public class OpportunityBO {
         Boolean shouldGenerate = false;
 
         if (
+          proposalGenerationRequestedByStage.contains(opp.Id) &&
+          !hasStoredProposal
+        ) {
+          ApprovalProcessService.enqueueProposalSavePdfJobIfAbsent(
+            opp.Id,
+            true,
+            true
+          );
+        } else if (
+          opp.PropostaGerada__c == true &&
+          oldOpp.PropostaGerada__c == false &&
+          !hasStoredProposal
+        ) {
+          ApprovalProcessService.enqueueProposalSavePdfJobIfAbsent(
+            opp.Id,
+            true,
+            true
+          );
+        } else if (
           (opp.PropostaGerada__c == false &&
           oldOpp.PropostaGerada__c == true)
         ) {
@@ -2236,7 +2342,7 @@ public class OpportunityBO {
             true
           );
         } else {
-          if (opp.PropostaGerada__c == false) {
+          if (opp.PropostaGerada__c == false && !hasStoredProposal) {
             shouldGenerate = true;
           }
 
@@ -2253,9 +2359,6 @@ public class OpportunityBO {
             oldOpp.StatusAprovacaoDesconto__c &&
             opp.StatusAprovacaoDesconto__c == 'Aprovado'
           ) {
-            shouldGenerate = true;
-          }
-          if (oldOpp != null && formulaFieldsChanged(oldOpp, opp)) {
             shouldGenerate = true;
           }
 

@@ -313,10 +313,17 @@ public with sharing class ProposalConsoleController {
     Boolean waitForIntegration,
     Id contentVersionId
   ) {
+    if (!ProposalFileService.isStoredProposal(sourceOpp.Id, contentVersionId)) {
+      throw new AuraHandledException(
+        'A geração terminou sem armazenar o arquivo da proposta.'
+      );
+    }
+
     OpportunityBO.skipAsyncProposalGeneration = true;
 
     Opportunity oppUpdate = new Opportunity(Id = sourceOpp.Id);
     oppUpdate.PropostaGerada__c = true;
+    oppUpdate.ProposalGenerationStatus__c = ProposalGenerationStateService.SUCCEEDED;
 
     if (OpportunityUtils.isStatusAwaitingAcceptance(sourceOpp)) {
       oppUpdate.StageName = OpportunityUtils.STATUS_CONTRATO;

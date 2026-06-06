@@ -53,7 +53,6 @@ public without sharing class PaymentSimulationBO {
     // Resync every eligible opportunity on each update so that plain saves
     // backfill missing simulations and normalize legacy rows.
     syncSimulationsForOpportunities(newList);
-    enqueueProposalGenerationOnPaymentMethodChange(newList, oldMap);
   }
 
   public static void normalizeSelectionDetails(
@@ -920,36 +919,6 @@ public without sharing class PaymentSimulationBO {
   private static Boolean isPixPaymentMethod(String paymentMethod) {
     return String.isNotBlank(paymentMethod) &&
       paymentMethod.trim().toUpperCase() == PIX_PAYMENT_METHOD;
-  }
-
-  private static void enqueueProposalGenerationOnPaymentMethodChange(
-    List<Opportunity> newList,
-    Map<Id, Opportunity> oldMap
-  ) {
-    if (newList == null || newList.isEmpty() || oldMap == null) {
-      return;
-    }
-
-    for (Opportunity opportunityRecord : newList) {
-      if (opportunityRecord == null || opportunityRecord.Id == null) {
-        continue;
-      }
-
-      Opportunity previousOpportunity = oldMap.get(opportunityRecord.Id);
-      if (
-        previousOpportunity == null ||
-        previousOpportunity.FormaPagamento__c ==
-        opportunityRecord.FormaPagamento__c
-      ) {
-        continue;
-      }
-
-      ApprovalProcessService.enqueueProposalSavePdfJobIfAbsent(
-        opportunityRecord.Id,
-        true,
-        false
-      );
-    }
   }
 
   private static String resolveProposalLabel(FinancingRate__c financingRate) {
