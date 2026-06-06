@@ -204,7 +204,7 @@ public with sharing class ProjetoBO {
       return;
     }
 
-    String query = 'SELECT Id, Status__c, StageName, RecordTypeId';
+    String query = 'SELECT Id, Status__c, StageName, RecordTypeId, IsClosed';
     if (hasProjectStatusReason) {
       query += ', ProjectStatusReason__c';
     }
@@ -225,6 +225,7 @@ public with sharing class ProjetoBO {
 
       if (
         project.Status__c == ProjetoUtils.STATUS_PROJETO_APROVADO &&
+        !opp.IsClosed &&
         opp.StageName != null &&
         opp.StageName.equalsIgnoreCase(
           OpportunityUtils.STATUS_PARECER_DE_ACESSO

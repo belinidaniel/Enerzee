@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-17-2026
+ * @last modified on  : 06-01-2026
  * @last modified by  : Daniel Belini
  * @test              : OpportunityLineItemTriggerTest
  **/
@@ -18,6 +18,8 @@ public class OpportunityLineItemTriggerHandler extends TriggerHandler {
   }
 
   public static boolean enabled = true;
+  @TestVisible
+  private static Boolean bypassKitUpdateForIntegrationUser = false;
   public static boolean isTriggerEnabled() {
     return enabled;
   }
@@ -149,8 +151,22 @@ public class OpportunityLineItemTriggerHandler extends TriggerHandler {
     }
   }
   public override void afterDelete() {
-    // OpportunityLineItemBO.forceKitUpdateOnItemInsertUpdate(
-    //   (List<OpportunityLineItem>) oldRecordList
-    // );S
+    if (shouldBypassKitUpdateForRunningUser()) {
+      return;
+    }
+
+    OpportunityLineItemBO.forceKitUpdateOnItemInsertUpdate(
+      (List<OpportunityLineItem>) oldRecordList
+    );
+  }
+
+  private static Boolean shouldBypassKitUpdateForRunningUser() {
+    if (bypassKitUpdateForIntegrationUser) {
+      return true;
+    }
+
+    String userName = UserInfo.getUserName();
+    return String.isNotBlank(userName) &&
+      userName.toLowerCase().startsWith('integracao@lab065.com');
   }
 }

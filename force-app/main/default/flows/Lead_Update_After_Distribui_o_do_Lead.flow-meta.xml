@@ -19,27 +19,65 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
     <actionCalls>
-        <name>Select_Consultor_Locked</name>
-        <label>Select Consultant (Locked)</label>
-        <locationX>1634</locationX>
-        <locationY>215</locationY>
-        <actionName>LeadDistributionSelector</actionName>
+        <name>Split_value_consultant</name>
+        <label>Split value consultant</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <actionName>StringListParser</actionName>
         <actionType>apex</actionType>
         <connector>
-            <targetReference>Copy_2_of_Has_Owner_Warm</targetReference>
+            <targetReference>get_Consultant_by_Email</targetReference>
         </connector>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <flowTransactionModel>Automatic</flowTransactionModel>
         <inputParameters>
-            <name>leadId</name>
+            <name>delimiterType</name>
             <value>
-                <elementReference>$Record.Id</elementReference>
+                <stringValue>VIRGULA</stringValue>
             </value>
         </inputParameters>
-        <nameSegment>LeadDistributionSelector</nameSegment>
+        <inputParameters>
+            <name>rawValue</name>
+            <value>
+                <elementReference
+        >$Record.DistributionValue__c</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>StringListParser</nameSegment>
         <offset>0</offset>
         <outputParameters>
-            <assignToReference>varConsultorSelecionadoId</assignToReference>
-            <name>consultantId</name>
+            <assignToReference>ValueSearchList</assignToReference>
+            <name>values</name>
+        </outputParameters>
+    </actionCalls>
+    <actionCalls>
+        <name>Split_value_graduation</name>
+        <label>Split value graduation</label>
+        <locationX>402</locationX>
+        <locationY>431</locationY>
+        <actionName>StringListParser</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Get_Consultant_by_graduation</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>delimiterType</name>
+            <value>
+                <stringValue>VIRGULA</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>rawValue</name>
+            <value>
+                <elementReference
+        >$Record.DistributionValue__c</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>StringListParser</nameSegment>
+        <offset>0</offset>
+        <outputParameters>
+            <assignToReference>ValueSearchList</assignToReference>
+            <name>values</name>
         </outputParameters>
     </actionCalls>
     <apiVersion>63.0</apiVersion>
@@ -297,6 +335,10 @@
         <label>Has Owner</label>
         <locationX>402</locationX>
         <locationY>755</locationY>
+        <defaultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Evaluete_Lead_Rating_Filter_True</targetReference>
+        </defaultConnector>
         <defaultConnectorLabel>No</defaultConnectorLabel>
         <rules>
             <name>Copy_3_of_Yes</name>
@@ -581,6 +623,64 @@
             <label>Yes</label>
         </rules>
     </decisions>
+    <decisions>
+        <name>Type_of_Distribution</name>
+        <label>Type of Distribution</label>
+        <locationX>1634</locationX>
+        <locationY>323</locationY>
+        <defaultConnector>
+            <targetReference>Evaluete_Lead_Rating</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No</defaultConnectorLabel>
+        <rules>
+            <name>By_Consutant</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference
+        >$Record.Distributiontype__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Email</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Split_value_consultant</targetReference>
+            </connector>
+            <label>By Consutant</label>
+        </rules>
+        <rules>
+            <name>By_Graduation</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference
+        >$Record.Distributiontype__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Graduação</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Split_value_graduation</targetReference>
+            </connector>
+            <label>By Graduation</label>
+        </rules>
+        <rules>
+            <name>YesState</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.State</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference
+        >Evaluete_Lead_Rating_Filter_True</targetReference>
+            </connector>
+            <label>by State</label>
+        </rules>
+    </decisions>
     <environments>Default</environments>
     <formulas>
         <name>NOW</name>
@@ -664,12 +764,15 @@
         <connector>
             <targetReference>Assign_First_Consultant_Hot</targetReference>
         </connector>
+        <faultConnector>
+            <targetReference>get_recordtype</targetReference>
+        </faultConnector>
         <filterLogic>1 AND (2 OR 3 OR (7 AND 8)) AND 4 AND 5 AND 6</filterLogic>
         <filters>
-            <field>Lb065_RegiaoConsultorEstado__c</field>
+            <field>EstadosAtendidos__c</field>
             <operator>Contains</operator>
             <value>
-                <elementReference>$Record.LeadRegion__c</elementReference>
+                <elementReference>$Record.Estado__c</elementReference>
             </value>
         </filters>
         <filters>
@@ -739,12 +842,15 @@
             <targetReference
       >Assign_First_Consultant_Prioritario</targetReference>
         </connector>
+        <faultConnector>
+            <targetReference>get_recordtype</targetReference>
+        </faultConnector>
         <filterLogic>(1 OR 2 OR (6 AND 7)) AND 3 AND 4 AND 5</filterLogic>
         <filters>
-            <field>Lb65_Graduacao__c</field>
-            <operator>EqualTo</operator>
+            <field>EstadosAtendidos__c</field>
+            <operator>Contains</operator>
             <value>
-                <stringValue>Diamond</stringValue>
+                <elementReference>$Record.Estado__c</elementReference>
             </value>
         </filters>
         <filters>
@@ -806,12 +912,15 @@
         <connector>
             <targetReference>Assign_Consultant_Warm</targetReference>
         </connector>
+        <faultConnector>
+            <targetReference>get_recordtype</targetReference>
+        </faultConnector>
         <filterLogic>1 AND (2 OR 3 OR (7 AND 8)) AND 4 AND 5 AND 6</filterLogic>
         <filters>
-            <field>Lb065_RegiaoConsultorEstado__c</field>
+            <field>EstadosAtendidos__c</field>
             <operator>Contains</operator>
             <value>
-                <elementReference>$Record.LeadRegion__c</elementReference>
+                <elementReference>$Record.Estado__c</elementReference>
             </value>
         </filters>
         <filters>
@@ -1023,12 +1132,15 @@
         <connector>
             <targetReference>AssignFirstConsultantWarm</targetReference>
         </connector>
+        <faultConnector>
+            <targetReference>get_recordtype</targetReference>
+        </faultConnector>
         <filterLogic>1 AND 2 AND 3 AND (4 OR 5 OR (6 AND 7))</filterLogic>
         <filters>
-            <field>Estado__c</field>
-            <operator>EqualTo</operator>
+            <field>EstadosAtendidos__c</field>
+            <operator>Contains</operator>
             <value>
-                <elementReference>$Record.State</elementReference>
+                <elementReference>$Record.Estado__c</elementReference>
             </value>
         </filters>
         <filters>
@@ -1095,7 +1207,7 @@
         <locationX>1634</locationX>
         <locationY>1397</locationY>
         <connector>
-            <targetReference>Call_Lead_Integration</targetReference>
+            <targetReference>Assign_Last_Lead_Consultant</targetReference>
         </connector>
         <inputAssignments>
             <field>ConsultorRegional__c</field>
@@ -1127,7 +1239,7 @@
         <locationX>1508</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Select_Consultor_Locked</targetReference>
+            <targetReference>Type_of_Distribution</targetReference>
         </connector>
         <filterLogic>(1 OR (3 AND 4)) AND 2</filterLogic>
         <filters>
@@ -1162,7 +1274,7 @@
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Obsolete</status>
+    <status>Active</status>
     <variables>
         <name>currentItem_Filter_Rating_Hot</name>
         <dataType>SObject</dataType>

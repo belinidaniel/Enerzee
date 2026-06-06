@@ -894,7 +894,6 @@ public with sharing class TaskBO {
     }
 
     List<Projeto__c> projectsToUpdate = new List<Projeto__c>();
-    Set<Id> opportunityIds = new Set<Id>();
 
     Boolean hasSubStatus = Schema.SObjectType.Projeto__c.fields.getMap()
       .containsKey('SubStatus__c');
@@ -915,37 +914,11 @@ public with sharing class TaskBO {
           project.Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO;
           projectsToUpdate.add(project);
         }
-        if (project.Oportunidade__c != null) {
-          opportunityIds.add(project.Oportunidade__c);
-        }
       }
     }
 
     if (!projectsToUpdate.isEmpty()) {
       update projectsToUpdate;
-    }
-
-    if (!opportunityIds.isEmpty()) {
-      List<Opportunity> oppsToUpdate = new List<Opportunity>();
-      for (Opportunity opp : [
-        SELECT Id, StageName, RecordTypeId
-        FROM Opportunity
-        WHERE Id IN :opportunityIds
-      ]) {
-        String targetStage = OpportunityUtils.resolveStageForProjectCompletion(
-          opp
-        );
-        if (
-          opp.StageName == null || !opp.StageName.equalsIgnoreCase(targetStage)
-        ) {
-          opp.StageName = targetStage;
-          oppsToUpdate.add(opp);
-        }
-      }
-
-      if (!oppsToUpdate.isEmpty()) {
-        update oppsToUpdate;
-      }
     }
   }
 

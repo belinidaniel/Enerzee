@@ -152,49 +152,41 @@ private class ProjetoBOCoverageTest {
 
   @IsTest
   static void shouldAdvanceOpportunityStageWhenProjectIsApproved() {
-    Opportunity opportunityRecord = createOpportunity('ApprovedStage');
-    Map<String, Schema.RecordTypeInfo> opportunityRecordTypes = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName();
-    if (opportunityRecordTypes.containsKey('EzeeSolarB')) {
-      opportunityRecord.RecordTypeId = opportunityRecordTypes.get('EzeeSolarB')
-        .getRecordTypeId();
-    }
-    opportunityRecord.StageName = OpportunityUtils.STATUS_PARECER_DE_ACESSO;
-    opportunityRecord.PotenciaPicoSistema__c = 1;
-    opportunityRecord.ValorTotalProdutos__c = 1000;
-
-    OpportunityTriggerHandler.disableTrigger();
-    try {
-      update opportunityRecord;
-    } finally {
-      OpportunityTriggerHandler.enableTrigger();
-    }
-
-    Projeto__c insertedProject = createProject(opportunityRecord);
-    Projeto__c oldProject = new Projeto__c(
-      Id = insertedProject.Id,
-      Oportunidade__c = opportunityRecord.Id,
-      Status__c = ProjetoUtils.STATUS_PROJETO_EM_ANALISE
-    );
-    Projeto__c newProject = new Projeto__c(
-      Id = insertedProject.Id,
-      Oportunidade__c = opportunityRecord.Id,
-      Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO
-    );
-
-    ProjetoBO.syncOpportunityStatusFromProject(
-      new List<Projeto__c>{ newProject },
-      new Map<Id, Projeto__c>{ insertedProject.Id => oldProject }
-    );
-
-    Opportunity refreshedOpportunity = [
-      SELECT StageName
-      FROM Opportunity
-      WHERE Id = :opportunityRecord.Id
-    ];
-
-    System.assertEquals(
+    assertProjectApprovalStage(
+      'EzeeSolarB',
+      OpportunityUtils.STATUS_PARECER_DE_ACESSO,
       OpportunityUtils.STATUS_EQUIPAMENTO,
-      refreshedOpportunity.StageName
+      'ApprovedStageGrupoB'
+    );
+  }
+
+  @IsTest
+  static void shouldAdvanceSolarStageToPaymentConfirmation() {
+    assertProjectApprovalStage(
+      'Solar',
+      OpportunityUtils.STATUS_PARECER_DE_ACESSO,
+      OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO,
+      'ApprovedStageSolar'
+    );
+  }
+
+  @IsTest
+  static void shouldNotRegressClosedWonSolarStageWhenProjectIsApproved() {
+    assertProjectApprovalStage(
+      'Solar',
+      OpportunityUtils.STATUS_GANHO_FECHADO,
+      OpportunityUtils.STATUS_GANHO_FECHADO,
+      'ClosedWonSolar'
+    );
+  }
+
+  @IsTest
+  static void shouldNotRegressClosedWonGrupoBStageWhenProjectIsApproved() {
+    assertProjectApprovalStage(
+      'EzeeSolarB',
+      OpportunityUtils.STATUS_GANHO_FECHADO,
+      OpportunityUtils.STATUS_GANHO_FECHADO,
+      'ClosedWonGrupoB'
     );
   }
 
@@ -470,6 +462,53 @@ private class ProjetoBOCoverageTest {
     }
 
     return opportunityRecord;
+  }
+
+  private static void assertProjectApprovalStage(
+    String recordTypeDeveloperName,
+    String initialStage,
+    String expectedStage,
+    String suffix
+  ) {
+    Opportunity opportunityRecord = createOpportunity(suffix);
+    opportunityRecord.RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
+      .get(recordTypeDeveloperName)
+      .getRecordTypeId();
+    opportunityRecord.StageName = initialStage;
+    opportunityRecord.PotenciaPicoSistema__c = 1;
+    opportunityRecord.ValorTotalProdutos__c = 1000;
+
+    OpportunityTriggerHandler.disableTrigger();
+    try {
+      update opportunityRecord;
+    } finally {
+      OpportunityTriggerHandler.enableTrigger();
+    }
+
+    Id projectId = buildProjetoId(10);
+    ProjetoBO.syncOpportunityStatusFromProject(
+      new List<Projeto__c>{
+        new Projeto__c(
+          Id = projectId,
+          Oportunidade__c = opportunityRecord.Id,
+          Status__c = ProjetoUtils.STATUS_PROJETO_APROVADO
+        )
+      },
+      new Map<Id, Projeto__c>{
+        projectId => new Projeto__c(
+          Id = projectId,
+          Oportunidade__c = opportunityRecord.Id,
+          Status__c = ProjetoUtils.STATUS_PROJETO_EM_ANALISE
+        )
+      }
+    );
+
+    Opportunity refreshedOpportunity = [
+      SELECT StageName
+      FROM Opportunity
+      WHERE Id = :opportunityRecord.Id
+    ];
+    System.assertEquals(expectedStage, refreshedOpportunity.StageName);
   }
 
   private static Projeto__c createProject(Opportunity opportunityRecord) {
