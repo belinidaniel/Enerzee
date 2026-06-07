@@ -222,14 +222,50 @@ public without sharing class PaymentSimulationBO {
     if (!syncPlan.simulationsToDelete.isEmpty()) {
       delete syncPlan.simulationsToDelete;
     }
+    Set<Id> createdOpportunityIds = new Set<Id>();
     if (!syncPlan.simulationsToInsert.isEmpty()) {
       insert syncPlan.simulationsToInsert;
+      for (PaymentSimulation__c createdSimulation : syncPlan.simulationsToInsert) {
+        if (createdSimulation.Opportunity__c != null) {
+          createdOpportunityIds.add(createdSimulation.Opportunity__c);
+        }
+      }
     }
     if (!syncPlan.simulationsToUpdate.isEmpty()) {
       update syncPlan.simulationsToUpdate;
     }
 
+    // Marca que o Salesforce já fez a criação inicial. A partir daqui, o sync
+    // automático não roda mais para estas opps (ver filterEligibleOpportunities).
+    // Só marca quando houve criação real de simulações.
+    markSimulationsAsCreated(createdOpportunityIds);
+
     // Opportunity sync is handled by PaymentSimulationTrigger afterInsert/afterUpdate/afterDelete.
+  }
+
+  private static void markSimulationsAsCreated(Set<Id> opportunityIds) {
+    if (opportunityIds == null || opportunityIds.isEmpty()) {
+      return;
+    }
+
+    List<Opportunity> opportunitiesToFlag = new List<Opportunity>();
+    for (Id opportunityId : opportunityIds) {
+      opportunitiesToFlag.add(
+        new Opportunity(Id = opportunityId, SimulacaoCriada__c = true)
+      );
+    }
+
+    Boolean triggerWasEnabled = OpportunityTriggerHandler.isTriggerEnabled();
+    if (triggerWasEnabled) {
+      OpportunityTriggerHandler.disableTrigger();
+    }
+    try {
+      update opportunitiesToFlag;
+    } finally {
+      if (triggerWasEnabled) {
+        OpportunityTriggerHandler.enableTrigger();
+      }
+    }
   }
 
   private static SimulationSyncPlan buildSyncPlan(
@@ -691,6 +727,8 @@ public without sharing class PaymentSimulationBO {
       return eligibleOpportunities;
     }
 
+    List<Opportunity> candidates = new List<Opportunity>();
+    Set<Id> candidateIds = new Set<Id>();
     for (Opportunity opportunityRecord : opportunities) {
       if (
         opportunityRecord == null ||
@@ -698,6 +736,31 @@ public without sharing class PaymentSimulationBO {
         opportunityRecord.RecordTypeId != targetRecordTypeId ||
         opportunityRecord.GrupoTarifario__c != GROUP_B_VALUE
       ) {
+        continue;
+      }
+      candidates.add(opportunityRecord);
+      candidateIds.add(opportunityRecord.Id);
+    }
+
+    if (candidates.isEmpty()) {
+      return eligibleOpportunities;
+    }
+
+    // O Salesforce só cria as simulações UMA vez. Após SimulacaoCriada__c = true,
+    // a gestão passa a ser do aplicativo (integração) ou do usuário (LWC), e o sync
+    // automático nunca mais recria/recalcula/deleta. Consultamos o valor persistido
+    // pois o Trigger.new nem sempre traz o campo populado.
+    Map<Id, Opportunity> simulationStateById = new Map<Id, Opportunity>(
+      [
+        SELECT Id, SimulacaoCriada__c
+        FROM Opportunity
+        WHERE Id IN :candidateIds
+      ]
+    );
+
+    for (Opportunity opportunityRecord : candidates) {
+      Opportunity stateRecord = simulationStateById.get(opportunityRecord.Id);
+      if (stateRecord != null && stateRecord.SimulacaoCriada__c == true) {
         continue;
       }
       eligibleOpportunities.add(opportunityRecord);
