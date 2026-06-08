@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 06-07-2026
+ * @last modified on  : 06-08-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
  *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
@@ -2228,12 +2228,27 @@ public class OpportunityBO {
       .get('Solar')
       .getRecordTypeId();
 
+    // Troca de simulação selecionada (ex.: app via API atualiza SelectedSimulation__c).
+    // Selecionar uma simulação REGERA a proposta, mesmo que ela já esteja concluída
+    // (Succeeded) e com arquivo armazenado — caso contrário a lógica normal abaixo faria
+    // continue (PropostaGerada__c == true). Espelha PaymentSimulationCardController
+    // .regenerateProposalForSelection: reset do status + enqueue com forceNewFile=true.
+    Set<Id> selectionRegeneratedIds = regenerateProposalsForSimulationChange(
+      newMap,
+      oldMap,
+      ezeeConnectRtId,
+      solarRtId
+    );
+
     // Primeira passagem: identifica opps elegíveis para verificação de disponibilidade de proposta.
     // A integração monta kit e simulações em várias transações. A geração só começa
     // após um sinal explícito no estágio/flag ou em eventos funcionais específicos.
     Set<Id> eligibleIds = new Set<Id>();
     for (Opportunity opp : newMap.values()) {
       Opportunity oldOpp = oldMap.get(opp.Id);
+      if (selectionRegeneratedIds.contains(opp.Id)) {
+        continue;
+      }
       if (
         ProposalGenerationStateService.isActive(opp.ProposalGenerationStatus__c)
       ) {
@@ -2360,6 +2375,43 @@ public class OpportunityBO {
         }
       }
     }
+  }
+
+  // Regera a proposta quando a simulação selecionada (SelectedSimulation__c) muda —
+  // tipicamente o app via API. Espelha PaymentSimulationCardController
+  // .regenerateProposalForSelection: reset do status + enqueue com forceNewFile=true,
+  // permitindo regerar mesmo que a proposta já esteja Succeeded e com arquivo armazenado.
+  // Retorna os Ids tratados para que a lógica normal de generateProposalAsync os ignore.
+  private static Set<Id> regenerateProposalsForSimulationChange(
+    Map<Id, Opportunity> newMap,
+    Map<Id, Opportunity> oldMap,
+    Id ezeeConnectRtId,
+    Id solarRtId
+  ) {
+    Set<Id> selectionRegeneratedIds = new Set<Id>();
+    for (Opportunity opp : newMap.values()) {
+      Opportunity oldOpp = oldMap.get(opp.Id);
+      Boolean selectedSimulationChanged =
+        oldOpp != null &&
+        opp.SelectedSimulation__c != oldOpp.SelectedSimulation__c &&
+        opp.SelectedSimulation__c != null;
+      if (!selectedSimulationChanged) {
+        continue;
+      }
+      Boolean isProposalRecordType =
+        opp.RecordTypeId == ezeeConnectRtId || opp.RecordTypeId == solarRtId;
+      if (opp.GrupoTarifario__c == 'Grupo A' || !isProposalRecordType) {
+        continue;
+      }
+      ProposalGenerationStateService.reset(opp.Id);
+      ApprovalProcessService.enqueueProposalSavePdfJobIfAbsent(
+        opp.Id,
+        true,
+        true
+      );
+      selectionRegeneratedIds.add(opp.Id);
+    }
+    return selectionRegeneratedIds;
   }
 
   public static void processPaymentMethodApproval(
