@@ -9,6 +9,7 @@
 public with sharing class LeadDistributionSelector {
   private static final Integer LOCK_BATCH_SIZE = 5;
   private static final Set<String> GRADS_WARM_STATE = new Set<String>{
+    'Advisor',
     'Advanced Builder',
     'Builder'
   };
@@ -76,9 +77,6 @@ public with sharing class LeadDistributionSelector {
     Map<Id, Lead> leadMap = new Map<Id, Lead>();
     if (!leadIds.isEmpty()) {
       List<String> selectFields = new List<String>{ 'Id', 'State', 'Rating' };
-      if (leadFields.containsKey('Estado__c')) {
-        selectFields.add('Estado__c');
-      }
       if (hasDistributionType) {
         selectFields.add('Distributiontype__c');
       }
@@ -146,27 +144,25 @@ public with sharing class LeadDistributionSelector {
     Id selectedId;
 
     if (distributionType == 'Email') {
-      selectedId = selectByEmail(distributionValue);
+      selectedId = selectByEmail(distributionValue, lead.State);
       if (selectedId != null) {
         return selectedId;
       }
     } else if (distributionType == 'Graduação') {
-      selectedId = selectByGraduation(distributionValue);
+      selectedId = selectByGraduation(distributionValue, lead.State);
       if (selectedId != null) {
         return selectedId;
       }
     }
 
-    String leadState = getLeadState(lead);
-
-    if (!String.isBlank(leadState)) {
+    if (!String.isBlank(lead.State)) {
       if (isColdOrWarm(lead.Rating)) {
-        selectedId = selectByState(leadState, lead.Rating);
+        selectedId = selectByState(lead);
         if (selectedId != null) {
           return selectedId;
         }
         selectedId = selectWarmFilter(
-          leadState,
+          lead.State,
           consultorRegionalId,
           lead.Rating
         );
@@ -174,7 +170,7 @@ public with sharing class LeadDistributionSelector {
           return selectedId;
         }
         selectedId = selectHotFilter(
-          leadState,
+          lead.State,
           consultorRegionalId,
           lead.Rating
         );
@@ -182,7 +178,7 @@ public with sharing class LeadDistributionSelector {
           return selectedId;
         }
         selectedId = selectPrioritarioFilter(
-          leadState,
+          lead.State,
           consultorRegionalId,
           lead.Rating
         );
@@ -194,7 +190,7 @@ public with sharing class LeadDistributionSelector {
 
       if (lead.Rating == 'Hot') {
         selectedId = selectHotFilter(
-          leadState,
+          lead.State,
           consultorRegionalId,
           lead.Rating
         );
@@ -202,7 +198,7 @@ public with sharing class LeadDistributionSelector {
           return selectedId;
         }
         selectedId = selectPrioritarioFilter(
-          leadState,
+          lead.State,
           consultorRegionalId,
           lead.Rating
         );
@@ -214,7 +210,7 @@ public with sharing class LeadDistributionSelector {
 
       if (lead.Rating == 'Prioritário') {
         selectedId = selectPrioritarioFilter(
-          leadState,
+          lead.State,
           consultorRegionalId,
           lead.Rating
         );
@@ -232,22 +228,22 @@ public with sharing class LeadDistributionSelector {
     return rating == 'Cold' || rating == 'Warm';
   }
 
-  private static String getLeadState(Lead lead) {
-    if (lead == null) {
-      return null;
-    }
-
-    String customState;
-    if (Schema.SObjectType.Lead.fields.getMap().containsKey('Estado__c')) {
-      customState = (String) lead.get('Estado__c');
-    }
-    return !String.isBlank(customState) ? customState : lead.State;
-  }
-
-  private static Id selectByEmail(String distributionValue) {
+  private static Id selectByEmail(String distributionValue, String leadState) {
     List<String> emails = splitCsv(distributionValue);
     if (emails.isEmpty()) {
       return null;
+    }
+
+    if (!String.isBlank(leadState)) {
+      List<Consultor__c> candidatesWithState = [
+        SELECT Id, Lb065_UltimoLeadRecebido__c
+        FROM Consultor__c
+        WHERE Email__c IN :emails AND EstadosAtendidos__c INCLUDES (:leadState)
+        ORDER BY Lb065_UltimoLeadRecebido__c ASC
+        LIMIT :LOCK_BATCH_SIZE
+      ];
+
+      return lockAndUpdate(candidatesWithState);
     }
 
     List<Consultor__c> candidates = [
@@ -261,10 +257,27 @@ public with sharing class LeadDistributionSelector {
     return lockAndUpdate(candidates);
   }
 
-  private static Id selectByGraduation(String distributionValue) {
+  private static Id selectByGraduation(
+    String distributionValue,
+    String leadState
+  ) {
     List<String> graduations = splitCsv(distributionValue);
     if (graduations.isEmpty()) {
       return null;
+    }
+
+    if (!String.isBlank(leadState)) {
+      List<Consultor__c> candidatesWithState = [
+        SELECT Id, Lb065_UltimoLeadRecebido__c
+        FROM Consultor__c
+        WHERE
+          Lb65_Graduacao__c IN :graduations
+          AND EstadosAtendidos__c INCLUDES (:leadState)
+        ORDER BY Lb065_UltimoLeadRecebido__c ASC
+        LIMIT :LOCK_BATCH_SIZE
+      ];
+
+      return lockAndUpdate(candidatesWithState);
     }
 
     List<Consultor__c> candidates = [
@@ -278,23 +291,20 @@ public with sharing class LeadDistributionSelector {
     return lockAndUpdate(candidates);
   }
 
-  private static Id selectByState(String leadState, String rating) {
-    if (String.isBlank(leadState)) {
+  private static Id selectByState(Lead lead) {
+    if (String.isBlank(lead.State)) {
       return null;
     }
-    String stateSuffix = '%' + leadState;
 
     List<Consultor__c> candidates = [
       SELECT Id, Lb065_UltimoLeadRecebido__c
       FROM Consultor__c
       WHERE
-        (EstadosAtendidos__c INCLUDES (:leadState)
-        OR (EstadosAtendidos__c = NULL
-        AND Estado__c LIKE :stateSuffix))
+        EstadosAtendidos__c INCLUDES (:lead.State)
         AND SendLead__c = TRUE
         AND FreezeConsult__c = FALSE
         AND (Lb65_Graduacao__c IN :GRADS_WARM_STATE
-        OR (SpecialRange__c = :rating
+        OR (SpecialRange__c = :lead.Rating
         AND SpecialRange__c != NULL))
       ORDER BY Lb065_UltimoLeadRecebido__c ASC
       LIMIT :LOCK_BATCH_SIZE
@@ -363,14 +373,11 @@ public with sharing class LeadDistributionSelector {
     String rating
   ) {
     if (!String.isBlank(leadState)) {
-      String stateSuffix = '%' + leadState;
       List<Consultor__c> candidatesWithState = [
         SELECT Id, Lb065_UltimoLeadRecebido__c
         FROM Consultor__c
         WHERE
-          (EstadosAtendidos__c INCLUDES (:leadState)
-          OR (EstadosAtendidos__c = NULL
-          AND Estado__c LIKE :stateSuffix))
+          EstadosAtendidos__c INCLUDES (:leadState)
           AND (Lb65_Graduacao__c IN :GRADS_PRIOR_STATE
           OR (SpecialRange__c = :rating
           AND SpecialRange__c != NULL))
