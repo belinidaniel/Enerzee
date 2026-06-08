@@ -2,7 +2,7 @@
  * @description       : Queueable que gera proposta via API PPTX e avança o estágio da Opportunity. Usado como substituto do PDFControllerExtension.SavePdfJob para capas com IntegrationKey__c.
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-10-2026
+ * @last modified on  : 06-08-2026
  * @last modified by  : Daniel Belini
  * @test              : ProposalEngineSupportTest
  **/
@@ -44,7 +44,17 @@ public with sharing class ProposalApiGenerationJob implements Queueable, Databas
         forceNewFile
       );
       ensureProposalWasStored(opportunityId, result.contentVersionId);
-      advanceStage(opportunityId);
+      Boolean stageChanged = advanceStage(opportunityId);
+
+      // Quando advanceStage muda o StageName, o trigger da Opportunity já dispara o
+      // envio da fase. Quando NÃO muda (opp já estava na fase-alvo), enviamos aqui —
+      // do contrário o payload sairia sem OptionsFinanciamentos. Neste ponto as
+      // simulações já existem, então as opções de financiamento vão preenchidas.
+      if (!stageChanged) {
+        PaymentSimulationProposalStatusService.enqueueOpportunityStatusSync(
+          new Set<Id>{ opportunityId }
+        );
+      }
 
       // gerandoProposta(oppId, cvId) é @future(callout=true): apenas enfileira aqui e
       // executa o callout em transação separada, sem conflito com o DML acima.
@@ -85,7 +95,7 @@ public with sharing class ProposalApiGenerationJob implements Queueable, Databas
     }
   }
 
-  private static void advanceStage(Id opportunityId) {
+  private static Boolean advanceStage(Id opportunityId) {
     List<Opportunity> opps = [
       SELECT
         Id,
@@ -100,7 +110,7 @@ public with sharing class ProposalApiGenerationJob implements Queueable, Databas
       LIMIT 1
     ];
     if (opps.isEmpty()) {
-      return;
+      return false;
     }
     Opportunity opp = opps[0];
 
@@ -124,9 +134,11 @@ public with sharing class ProposalApiGenerationJob implements Queueable, Databas
       Id = opportunityId,
       PropostaGerada__c = true
     );
-    if (stageToSet != null && opp.StageName != stageToSet) {
+    Boolean stageChanged = stageToSet != null && opp.StageName != stageToSet;
+    if (stageChanged) {
       oppUpdate.StageName = stageToSet;
     }
     update oppUpdate;
+    return stageChanged;
   }
 }
