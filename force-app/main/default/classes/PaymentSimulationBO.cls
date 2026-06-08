@@ -53,7 +53,6 @@ public without sharing class PaymentSimulationBO {
     // Resync every eligible opportunity on each update so that plain saves
     // backfill missing simulations and normalize legacy rows.
     syncSimulationsForOpportunities(newList);
-    enqueueProposalGenerationOnPaymentMethodChange(newList, oldMap);
   }
 
   public static void normalizeSelectionDetails(
@@ -223,14 +222,50 @@ public without sharing class PaymentSimulationBO {
     if (!syncPlan.simulationsToDelete.isEmpty()) {
       delete syncPlan.simulationsToDelete;
     }
+    Set<Id> createdOpportunityIds = new Set<Id>();
     if (!syncPlan.simulationsToInsert.isEmpty()) {
       insert syncPlan.simulationsToInsert;
+      for (PaymentSimulation__c createdSimulation : syncPlan.simulationsToInsert) {
+        if (createdSimulation.Opportunity__c != null) {
+          createdOpportunityIds.add(createdSimulation.Opportunity__c);
+        }
+      }
     }
     if (!syncPlan.simulationsToUpdate.isEmpty()) {
       update syncPlan.simulationsToUpdate;
     }
 
+    // Marca que o Salesforce já fez a criação inicial. A partir daqui, o sync
+    // automático não roda mais para estas opps (ver filterEligibleOpportunities).
+    // Só marca quando houve criação real de simulações.
+    markSimulationsAsCreated(createdOpportunityIds);
+
     // Opportunity sync is handled by PaymentSimulationTrigger afterInsert/afterUpdate/afterDelete.
+  }
+
+  private static void markSimulationsAsCreated(Set<Id> opportunityIds) {
+    if (opportunityIds == null || opportunityIds.isEmpty()) {
+      return;
+    }
+
+    List<Opportunity> opportunitiesToFlag = new List<Opportunity>();
+    for (Id opportunityId : opportunityIds) {
+      opportunitiesToFlag.add(
+        new Opportunity(Id = opportunityId, SimulacaoCriada__c = true)
+      );
+    }
+
+    Boolean triggerWasEnabled = OpportunityTriggerHandler.isTriggerEnabled();
+    if (triggerWasEnabled) {
+      OpportunityTriggerHandler.disableTrigger();
+    }
+    try {
+      update opportunitiesToFlag;
+    } finally {
+      if (triggerWasEnabled) {
+        OpportunityTriggerHandler.enableTrigger();
+      }
+    }
   }
 
   private static SimulationSyncPlan buildSyncPlan(
@@ -339,7 +374,10 @@ public without sharing class PaymentSimulationBO {
       selectedSimulationKeys.clear();
     }
 
-    if (!isPixPayment) {
+    // As simulações de financiamento/aluguel são sempre mantidas, mesmo quando a
+    // forma de pagamento selecionada é PIX. Selecionar uma simulação não deve
+    // apagar as demais — apenas a marcação Selected__c muda.
+    {
       for (FinancingRate__c financingRate : activeFinancingRates) {
         if (String.isBlank(financingRate.PaymentType__c)) {
           continue;
@@ -689,6 +727,8 @@ public without sharing class PaymentSimulationBO {
       return eligibleOpportunities;
     }
 
+    List<Opportunity> candidates = new List<Opportunity>();
+    Set<Id> candidateIds = new Set<Id>();
     for (Opportunity opportunityRecord : opportunities) {
       if (
         opportunityRecord == null ||
@@ -696,6 +736,31 @@ public without sharing class PaymentSimulationBO {
         opportunityRecord.RecordTypeId != targetRecordTypeId ||
         opportunityRecord.GrupoTarifario__c != GROUP_B_VALUE
       ) {
+        continue;
+      }
+      candidates.add(opportunityRecord);
+      candidateIds.add(opportunityRecord.Id);
+    }
+
+    if (candidates.isEmpty()) {
+      return eligibleOpportunities;
+    }
+
+    // O Salesforce só cria as simulações UMA vez. Após SimulacaoCriada__c = true,
+    // a gestão passa a ser do aplicativo (integração) ou do usuário (LWC), e o sync
+    // automático nunca mais recria/recalcula/deleta. Consultamos o valor persistido
+    // pois o Trigger.new nem sempre traz o campo populado.
+    Map<Id, Opportunity> simulationStateById = new Map<Id, Opportunity>(
+      [
+        SELECT Id, SimulacaoCriada__c
+        FROM Opportunity
+        WHERE Id IN :candidateIds
+      ]
+    );
+
+    for (Opportunity opportunityRecord : candidates) {
+      Opportunity stateRecord = simulationStateById.get(opportunityRecord.Id);
+      if (stateRecord != null && stateRecord.SimulacaoCriada__c == true) {
         continue;
       }
       eligibleOpportunities.add(opportunityRecord);
@@ -920,36 +985,6 @@ public without sharing class PaymentSimulationBO {
   private static Boolean isPixPaymentMethod(String paymentMethod) {
     return String.isNotBlank(paymentMethod) &&
       paymentMethod.trim().toUpperCase() == PIX_PAYMENT_METHOD;
-  }
-
-  private static void enqueueProposalGenerationOnPaymentMethodChange(
-    List<Opportunity> newList,
-    Map<Id, Opportunity> oldMap
-  ) {
-    if (newList == null || newList.isEmpty() || oldMap == null) {
-      return;
-    }
-
-    for (Opportunity opportunityRecord : newList) {
-      if (opportunityRecord == null || opportunityRecord.Id == null) {
-        continue;
-      }
-
-      Opportunity previousOpportunity = oldMap.get(opportunityRecord.Id);
-      if (
-        previousOpportunity == null ||
-        previousOpportunity.FormaPagamento__c ==
-        opportunityRecord.FormaPagamento__c
-      ) {
-        continue;
-      }
-
-      ApprovalProcessService.enqueueProposalSavePdfJobIfAbsent(
-        opportunityRecord.Id,
-        true,
-        false
-      );
-    }
   }
 
   private static String resolveProposalLabel(FinancingRate__c financingRate) {

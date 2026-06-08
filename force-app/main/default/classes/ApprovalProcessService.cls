@@ -2,7 +2,7 @@
  * @description       : Centraliza regras de Approval Process da Opportunity
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-15-2026
+ * @last modified on  : 06-07-2026
  * @last modified by  : Daniel Belini
  * @test              : ApprovalProcessServiceTest, OpportunityBOCoverageTest, OpportunityBOHighCoverageTest,
  *                       OpportunityTriggerTest
@@ -236,9 +236,7 @@ public without sharing class ApprovalProcessService {
         oppToUpdate.Pontos__c = opp.ValorPropostoPontos__c;
         oppToUpdate.Direct__c = opp.ValorPropostoDirect__c;
 
-        oppToUpdate.PropostaAlterada__c = true;
         oppToUpdate.PropostaGerada__c = false;
-        // oppToUpdate.ReadequacaoSolicitada__c = true;
 
         approvedOpportunities.add(oppToUpdate);
         approvedIds.add(opp.Id);
@@ -517,16 +515,29 @@ public without sharing class ApprovalProcessService {
       System.debug('SavePdfJob - ja enfileirado para opp ' + opportunityId);
       return false;
     }
+    if (!ProposalGenerationStateService.requestGeneration(opportunityId)) {
+      System.debug(
+        'SavePdfJob - geração já pendente ou em processamento para opp ' +
+        opportunityId
+      );
+      return false;
+    }
     System.debug('opportunityId - ja enfileirado para opp ' + opportunityId);
 
     queuedProposalOpps.add(opportunityId);
-    System.enqueueJob(
-      new PDFControllerExtension.SavePdfJob(
-        opportunityId,
-        firstFlag,
-        secondFlag
-      )
-    );
+    try {
+      System.enqueueJob(
+        new PDFControllerExtension.SavePdfJob(
+          opportunityId,
+          firstFlag,
+          secondFlag
+        )
+      );
+    } catch (Exception e) {
+      queuedProposalOpps.remove(opportunityId);
+      ProposalGenerationStateService.markFailed(opportunityId);
+      throw e;
+    }
     return true;
   }
 }

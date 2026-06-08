@@ -451,6 +451,27 @@ public with sharing class PaymentSimulationCardController {
         OpportunityTriggerHandler.enableTrigger();
       }
     }
+
+    // Selecionar uma simulação regenera a proposta com a forma de pagamento escolhida.
+    // O update acima roda com o trigger desabilitado, então enfileiramos aqui.
+    // forceNewFile=true garante um arquivo novo mesmo que o status esteja Succeeded.
+    regenerateProposalForSelection(opportunityRecord.Id);
+  }
+
+  private static void regenerateProposalForSelection(Id opportunityId) {
+    if (opportunityId == null) {
+      return;
+    }
+
+    // Reabre o ciclo de geração: uma proposta já concluída (Succeeded) não seria
+    // reprocessada pelo job, então limpamos o status e a flag antes de enfileirar.
+    ProposalGenerationStateService.reset(opportunityId);
+
+    ApprovalProcessService.enqueueProposalSavePdfJobIfAbsent(
+      opportunityId,
+      true,
+      true
+    );
   }
 
   private static Boolean areSameInstallmentAmount(

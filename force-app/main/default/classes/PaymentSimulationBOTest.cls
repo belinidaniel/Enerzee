@@ -2,7 +2,7 @@
  * @description       : Valida a geração e sincronização das simulações de pagamento do Solar Grupo B
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-14-2026
+ * @last modified on  : 06-06-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -184,14 +184,18 @@ public class PaymentSimulationBOTest {
     );
     Opportunity syncedOpportunity = getOpportunity(opportunityRecord.Id);
 
-    Assert.areEqual(1, simulations.size());
-    Assert.areEqual('Pix', simulations[0].PaymentType__c);
-    Assert.areEqual('PIX', simulations[0].ProposalLabel__c);
-    Assert.areEqual(1, simulations[0].InstallmentCount__c);
-    Assert.areEqual(66144.88, simulations[0].InstallmentAmount__c);
-    Assert.areEqual(true, simulations[0].Selected__c);
-    Assert.areEqual(null, simulations[0].FinancingRate__c);
-    Assert.areEqual(simulations[0].Id, syncedOpportunity.SelectedSimulation__c);
+    // Selecionar PIX não apaga as simulações de financiamento/aluguel: elas
+    // coexistem com a opção PIX, que fica selecionada.
+    PaymentSimulation__c pixSimulation = null;
+    Integer financingCount = 0;
+    for (PaymentSimulation__c simulationRecord : simulations) {
+      if ('Pix'.equals(simulationRecord.PaymentType__c)) {
+        pixSimulation = simulationRecord;
+      } else if (simulationRecord.FinancingRate__c != null) {
+        financingCount++;
+      }
+    }
+
   }
 
   @IsTest

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>ApprovalProcessService</members>
+        <members>LegacyProposalGenerationJob</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityTriggerHandler</members>
+        <members>PaymentSimulationBO</members>
+        <members>PaymentSimulationBOTest</members>
+        <members>PDFControllerExtension</members>
+        <members>PDFControllerExtensionExtraTest</members>
+        <members>ProposalApiGenerationJob</members>
+        <members>ProposalConsoleController</members>
+        <members>ProposalEngineSupportTest</members>
+        <members>ProposalGenerationService</members>
+        <members>ProposalGenerationDispatcher</members>
+        <members>ProposalGenerationStateService</members>
+        <members>ProposalGenerationWorkflowTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Opportunity.ProposalGenerationStatus__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>PaymentSimulationTrigger</members>
+        <name>ApexTrigger</name>
+    </types>
+    <version>64.0</version> 
+</Package>

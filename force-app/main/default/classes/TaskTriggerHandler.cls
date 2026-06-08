@@ -6,7 +6,7 @@
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, OppClosedLostFlowActionTest, OpportunityBOCoverageTest,
  *                       OpportunityBOHighCoverageTest, OpportunityBOPaymentConfirmationTaskTest,
- *                       OpportunityBOPaymentReminderTaskTest, ProjetoBOCoverageTest, ProjetoTriggerTest,
+ *                       OpportunityBOPaymentReminderTaskTest, ProjetoBOCoverageTest, ProjetoTriggerTest, TaskBOTest,
  *                       TaskStateServiceTest, TaskTriggerTest, WorkDeliveryReportPdfControllerTest
  **/
 public class TaskTriggerHandler extends TriggerHandler {

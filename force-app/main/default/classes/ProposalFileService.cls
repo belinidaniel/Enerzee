@@ -62,6 +62,24 @@ public with sharing class ProposalFileService {
     return matches.isEmpty() ? null : matches[0];
   }
 
+  public static Boolean isStoredProposal(
+    Id opportunityId,
+    Id contentVersionId
+  ) {
+    if (opportunityId == null || contentVersionId == null) {
+      return false;
+    }
+
+    return [
+        SELECT COUNT()
+        FROM ContentVersion
+        WHERE
+          Id = :contentVersionId
+          AND FirstPublishLocationId = :opportunityId
+          AND IsProposal__c = TRUE
+      ] > 0;
+  }
+
   public static Map<Id, ProposalAvailability> getProposalAvailability(
     Set<Id> opportunityIds
   ) {
