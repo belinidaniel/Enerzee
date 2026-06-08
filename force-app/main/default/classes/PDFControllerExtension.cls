@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 05-26-2026
+ * @last modified on  : 04-17-2026
  * @last modified by  : Daniel Belini
  * @test              : PDFControllerExtensionExtraTest, PDFControllerExtensionTest
  **/
@@ -772,16 +772,7 @@ public with sharing class PDFControllerExtension {
       this.forceNewFile = forceNewFile;
     }
     public void execute(QueueableContext ctx) {
-      Id resolvedCoverId = PDFControllerExtension.resolveApiCoverId(oppId);
-      if (resolvedCoverId != null) {
-        if (!Test.isRunningTest()) {
-          System.enqueueJob(
-            new ProposalApiGenerationJob(oppId, resolvedCoverId, autoIntegrate)
-          );
-        }
-        return;
-      }
-      savePdfFileAsyncInternal(oppId, autoIntegrate, forceNewFile);
+      ProposalGenerationDispatcher.dispatch(oppId, autoIntegrate, forceNewFile);
     }
   }
 

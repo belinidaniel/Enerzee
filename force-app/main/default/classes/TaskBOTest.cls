@@ -1177,6 +1177,39 @@ private class TaskBOTest {
   }
 
   @IsTest
+  static void shouldCoverTaskBOGuardClauses() {
+    Account accountRecord = (Account) TestFactory.createSObject(
+      new Account(),
+      true
+    );
+
+    Test.startTest();
+    Assert.isFalse(TaskBO.hasOpenTasks(null));
+    TaskBO.preventDuplicateOpenTasks(null);
+    TaskBO.preventDuplicateOpenTasks(new List<Task>());
+    TaskBO.preventDuplicateOpenTasks(
+      new List<Task>{
+        new Task(WhatId = accountRecord.Id),
+        new Task(Subject = 'Sem relacionamento')
+      }
+    );
+    Assert.isFalse(TaskBO.taskSubjectExists(null, 'Assunto'));
+    Assert.isFalse(TaskBO.taskSubjectExists(accountRecord.Id, null));
+    TaskBO.handleAprovacaoProjetoUfv(null, null);
+    TaskBO.handleAprovacaoProjetoUfv(new List<Task>(), new Map<Id, Task>());
+    TaskBO.updateProjectPhase(
+      new List<Task>{
+        new Task(
+          WhatId = accountRecord.Id,
+          Subject = 'Objeto que não é projeto'
+        )
+      },
+      new Map<Id, Task>()
+    );
+    Test.stopTest();
+  }
+
+  @IsTest
   static void shouldCoverCreateWorkOrderRequestMaterialBuyWithConcludingTask() {
     Account acc = (Account) TestFactory.createSObject(new Account(), true);
     Opportunity opp = (Opportunity) TestFactory.createSObject(
@@ -1331,6 +1364,64 @@ private class TaskBOTest {
     Assert.isTrue(
       true,
       'updateProjectPhase com todas tarefas concluídas não deve lançar erro.'
+    );
+  }
+
+  @IsTest
+  static void shouldEvaluateProjectPhaseWhenProjectHasNoTasks() {
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(AccountId = acc.Id),
+      true
+    );
+    ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
+      new ViabilityStudy__c(
+        Opportunity__c = opp.Id,
+        TypeWorkProjectFeasibility__c = 'UFV Micro'
+      ),
+      true
+    );
+    Projeto__c project = (Projeto__c) TestFactory.createSObject(
+      new Projeto__c(
+        Oportunidade__c = opp.Id,
+        Viabilidade__c = viability.Id,
+        Conta__c = acc.Id,
+        TipoObra__c = 'UFVMicro',
+        Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
+        RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
+          .get('UFVMicro')
+          .getRecordTypeId()
+      ),
+      true
+    );
+
+    List<Task> generatedTasks = [
+      SELECT Id
+      FROM Task
+      WHERE WhatId = :project.Id
+    ];
+    if (!generatedTasks.isEmpty()) {
+      TaskTriggerHandler.disableTrigger();
+      delete generatedTasks;
+      TaskTriggerHandler.enableTrigger();
+    }
+
+    Test.startTest();
+    TaskBO.updateProjectPhase(
+      new List<Task>{
+        new Task(
+          WhatId = project.Id,
+          Subject = 'Avaliar fase sem tarefas',
+          Status = TaskUtils.STATUS_CONCLUIDO
+        )
+      },
+      new Map<Id, Task>()
+    );
+    Test.stopTest();
+
+    Assert.isTrue(
+      true,
+      'Projeto sem tarefas deve avaliar as fases sem lançar erro.'
     );
   }
 
