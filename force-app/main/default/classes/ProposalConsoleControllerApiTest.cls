@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 05-25-2026
+ * @last modified on  : 06-08-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -575,7 +575,7 @@ private class ProposalConsoleControllerApiTest {
     ProposalApiClient.testIntegrationUrl = null;
   }
 
-  private static void resetCalloutCounters() {
+  private static void resetCalloutCounters() { 
     proposalCallCount = 0;
     nivelloCallCount = 0;
   }

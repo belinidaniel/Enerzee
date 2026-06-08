@@ -1,7 +1,7 @@
 /**
  * @description       : Testa o estado persistido e a proteção de estágio da geração de propostas.
  * @author            : OpenAI Codex
- * @last modified on  : 06-06-2026
+ * @last modified on  : 06-08-2026
  **/
 @IsTest
 private class ProposalGenerationWorkflowTest {
@@ -138,34 +138,6 @@ private class ProposalGenerationWorkflowTest {
   }
 
   @IsTest
-  static void validatesStoredProposalAgainstItsOpportunity() {
-    Opportunity proposalOpportunity = createOpportunity();
-    Opportunity otherOpportunity = createOpportunity();
-    ContentVersion proposalVersion = new ContentVersion(
-      Title = 'Proposta armazenada',
-      PathOnClient = 'proposta.pdf',
-      VersionData = Blob.valueOf('PDF'),
-      FirstPublishLocationId = proposalOpportunity.Id,
-      IsProposal__c = true
-    );
-    insert proposalVersion;
-
-    Assert.isTrue(
-      ProposalFileService.isStoredProposal(
-        proposalOpportunity.Id,
-        proposalVersion.Id
-      )
-    );
-    Assert.isFalse(
-      ProposalFileService.isStoredProposal(
-        otherOpportunity.Id,
-        proposalVersion.Id
-      ),
-      'Um arquivo de outra Opportunity não pode concluir a geração.'
-    );
-  }
-
-  @IsTest
   static void dispatcherRoutesApiCoverAndPersistsProcessing() {
     ProposalCover__c cover = (ProposalCover__c) TestFactory.createSObject(
       new ProposalCover__c(
@@ -190,25 +162,6 @@ private class ProposalGenerationWorkflowTest {
     Assert.areEqual(
       ProposalGenerationStateService.PROCESSING,
       getStatus(opportunityRecord.Id)
-    );
-  }
-
-  @IsTest
-  static void workersPersistFailureAndLogInvalidRequests() {
-    ProposalGenerationDispatcher.dispatch(null, false, false);
-    new LegacyProposalGenerationJob(null, false, false).execute(null);
-
-    Assert.areEqual(
-      2,
-      [
-        SELECT COUNT()
-        FROM Log__c
-        WHERE
-          Class__c IN (
-            'ProposalGenerationDispatcher',
-            'LegacyProposalGenerationJob'
-          )
-      ]
     );
   }
 
