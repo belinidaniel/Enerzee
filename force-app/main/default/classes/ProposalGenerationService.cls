@@ -24,14 +24,26 @@ public with sharing class ProposalGenerationService {
   }
 
   public static ProposalResult generatePreview(Id opportunityId, Id coverId) {
-    return generate(opportunityId, coverId);
+    return generate(opportunityId, coverId, false);
   }
 
   public static ProposalResult generateProposal(Id opportunityId, Id coverId) {
-    return generate(opportunityId, coverId);
+    return generate(opportunityId, coverId, false);
   }
 
-  private static ProposalResult generate(Id opportunityId, Id coverId) {
+  public static ProposalResult generateProposal(
+    Id opportunityId,
+    Id coverId,
+    Boolean forceNewFile
+  ) {
+    return generate(opportunityId, coverId, forceNewFile == true);
+  }
+
+  private static ProposalResult generate(
+    Id opportunityId,
+    Id coverId,
+    Boolean forceNewFile
+  ) {
     ProposalContextResolver.Context context = ProposalContextResolver.resolve(
       opportunityId,
       coverId
@@ -122,11 +134,13 @@ public with sharing class ProposalGenerationService {
     Id mainViabilityId = (Id) dataOpportunity.get('MainViability__c');
     String layoutBase64 = fetchLayoutAttachment(mainViabilityId);
 
-    ContentVersion existingProposal = ProposalFileService.findExistingProposal(
-      context.opportunity.Id,
-      payload.payloadHash
-    );
-    if (existingProposal != null) {
+    ContentVersion existingProposal = forceNewFile
+      ? null
+      : ProposalFileService.findExistingProposal(
+          context.opportunity.Id,
+          payload.payloadHash
+        );
+    if (shouldReuseExistingProposal(existingProposal, forceNewFile)) {
       ProposalResult reusedResult = new ProposalResult();
       reusedResult.success = true;
       reusedResult.message = 'Proposta reutilizada com sucesso.';
@@ -158,6 +172,14 @@ public with sharing class ProposalGenerationService {
     result.previewUrl = ProposalFileService.buildPreviewUrl(contentVersionId);
     result.reusedExistingFile = false;
     return result;
+  }
+
+  @TestVisible
+  private static Boolean shouldReuseExistingProposal(
+    ContentVersion existingProposal,
+    Boolean forceNewFile
+  ) {
+    return forceNewFile != true && existingProposal != null;
   }
 
   /**

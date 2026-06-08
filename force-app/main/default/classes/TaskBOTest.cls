@@ -1086,7 +1086,10 @@ private class TaskBOTest {
   static void shouldCoverCreateWorkOrderContractingIntegratorWithConcludingTask() {
     Account acc = (Account) TestFactory.createSObject(new Account(), true);
     Opportunity opp = (Opportunity) TestFactory.createSObject(
-      new Opportunity(AccountId = acc.Id),
+      new Opportunity(
+        AccountId = acc.Id,
+        MunicipioInstalacao__c = 'Cidade Coverage'
+      ),
       true
     );
     ViabilityStudy__c viability = (ViabilityStudy__c) TestFactory.createSObject(
@@ -1101,6 +1104,7 @@ private class TaskBOTest {
         Oportunidade__c = opp.Id,
         Viabilidade__c = viability.Id,
         Conta__c = acc.Id,
+        GestorObra__c = UserInfo.getUserId(),
         TipoObra__c = 'UFVMicro',
         Status__c = ProjetoUtils.STATUS_PLANEJAMENTO_DE_PROJETO,
         RecordTypeId = Schema.SObjectType.Projeto__c.getRecordTypeInfosByDeveloperName()
@@ -1109,6 +1113,43 @@ private class TaskBOTest {
       ),
       true
     );
+
+    OperatingHours operatingHours = (OperatingHours) TestFactory.createSObject(
+      new OperatingHours(),
+      true
+    );
+    TestFactory.createSObject(
+      new ServiceTerritory(
+        Name = 'Cidade Coverage',
+        OperatingHoursId = operatingHours.Id,
+        IsActive = true
+      ),
+      true
+    );
+
+    List<WorkType> installationWorkTypes = new List<WorkType>();
+    for (
+      String workTypeName : new List<String>{
+        'Instalação Bombeamento',
+        'Instalação Estação de recarga',
+        'Instalação Financiamento',
+        'Instalação Padrão de entrada',
+        'Instalação Posto de transformação',
+        'Instalação Subestação',
+        'Instalação UFV Micro',
+        'Instalação UFV Mini acima de 300',
+        'Instalação UFV Mini até 300'
+      }
+    ) {
+      installationWorkTypes.add(
+        new WorkType(
+          Name = workTypeName,
+          EstimatedDuration = 1,
+          DurationType = 'Hours'
+        )
+      );
+    }
+    insert installationWorkTypes;
 
     Task oldTask = new Task(
       Subject = TaskUtils.SUBJECT_CONTRATAR_INTEGRADOR,

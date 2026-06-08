@@ -449,7 +449,6 @@ public with sharing class InstalacaoBO {
 
     List<Projeto__c> toProcess = new List<Projeto__c>();
     Set<Id> projectIds = new Set<Id>();
-    Set<Id> opportunityIdsToAdvance = new Set<Id>();
 
     for (Projeto__c project : newProjects) {
       Projeto__c oldProject = oldMap != null ? oldMap.get(project.Id) : null;
@@ -470,17 +469,12 @@ public with sharing class InstalacaoBO {
       Boolean movedToApproved = statusApproved || approvalDateFilled;
 
       if (movedToApproved) {
-        if (project.Oportunidade__c != null) {
-          opportunityIdsToAdvance.add(project.Oportunidade__c);
-        }
         if (project.Instalacao__c == null) {
           toProcess.add(project);
           projectIds.add(project.Id);
         }
       }
     }
-
-    advanceOpportunitiesToPaymentConfirmation(opportunityIdsToAdvance);
 
     if (toProcess.isEmpty()) {
       return;
@@ -528,39 +522,6 @@ public with sharing class InstalacaoBO {
 
     insert toInsert;
     relateProjectsToInstallations(toProcess, toInsert);
-  }
-
-  private static void advanceOpportunitiesToPaymentConfirmation(
-    Set<Id> opportunityIds
-  ) {
-    if (opportunityIds == null || opportunityIds.isEmpty()) {
-      return;
-    }
-
-    List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
-    for (Opportunity opp : [
-      SELECT Id, StageName, RecordTypeId, IsClosed
-      FROM Opportunity
-      WHERE Id IN :opportunityIds AND IsClosed = FALSE // BUG FIX: não regredir Oportunidades já fechadas (ex: "Ganho fechado")
-    ]) {
-      if (
-        opp.StageName != null &&
-        opp.StageName.equalsIgnoreCase(
-          OpportunityUtils.STATUS_PARECER_DE_ACESSO
-        )
-      ) {
-        String targetStage = OpportunityUtils.resolveStageForProjectCompletion(
-          opp
-        );
-        opportunitiesToUpdate.add(
-          new Opportunity(Id = opp.Id, StageName = targetStage)
-        );
-      }
-    }
-
-    if (!opportunitiesToUpdate.isEmpty()) {
-      update opportunitiesToUpdate;
-    }
   }
 
   private static Instalacao__c buildInstallation(Projeto__c project) {

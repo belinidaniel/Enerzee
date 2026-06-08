@@ -999,7 +999,6 @@ public class OpportunityBO {
         OpportunityUtils.isStatusProposalSimulation(oldOpp)) &&
         opp.ReadequacaoSolicitada__c
       ) {
-        // opp.ReadequacaoSolicitada__c = false;
       }
     }
   }
@@ -2356,46 +2355,38 @@ public class OpportunityBO {
       .getRecordTypeId();
 
     // Primeira passagem: identifica opps elegíveis para verificação de disponibilidade de proposta.
-    // Um opp é elegível quando há alguma mudança relevante OU quando PropostaGerada__c ainda é falsa
-    // e os campos obrigatórios já estão preenchidos (caso de nova opp na primeira atualização).
+    // A integração monta kit e simulações em várias transações. A geração só começa
+    // após um sinal explícito no estágio/flag ou em eventos funcionais específicos.
     Set<Id> eligibleIds = new Set<Id>();
     for (Opportunity opp : newMap.values()) {
       Opportunity oldOpp = oldMap.get(opp.Id);
-      Boolean skippedGrupoA = opp.GrupoTarifario__c == 'Grupo A';
-      Boolean skippedRecordType =
-        opp.RecordTypeId != ezeeConnectRtId &&
-        opp.RecordTypeId != solarRtId;
-      if (skippedGrupoA || skippedRecordType) {
+      if (
+        ProposalGenerationStateService.isActive(opp.ProposalGenerationStatus__c)
+      ) {
         continue;
       }
-      Boolean propostaGeradaChanged =
-        opp.PropostaGerada__c !=
-        (oldOpp != null ? oldOpp.PropostaGerada__c : null);
-      Boolean readequacaoChanged =
-        opp.ReadequacaoSolicitada__c !=
-        (oldOpp != null ? oldOpp.ReadequacaoSolicitada__c : null);
-      Boolean aprovacaoChanged =
-        opp.StatusAprovacaoDesconto__c !=
-        (oldOpp != null ? oldOpp.StatusAprovacaoDesconto__c : null);
-      Boolean formulaChanged =
-        oldOpp != null && formulaFieldsChanged(oldOpp, opp);
-      // Nova opp com campos preenchidos: PropostaGerada__c ainda falsa mas já pronta para gerar
+      Boolean skippedGrupoA = opp.GrupoTarifario__c == 'Grupo A'; 
+	  Boolean skippedRecordType = opp.RecordTypeId != ezeeConnectRtId && opp.RecordTypeId != solarRtId;
+	  Boolean SkipeedGeracaoProposta = oldOpp != null && opp.PropostaGerada__c == true && opp.ProposalGenerationStatus__c != ProposalGenerationStateService.SUCCEEDED;
+	  if (skippedGrupoA || skippedRecordType || SkipeedGeracaoProposta) {
+        continue;
+      }
+
+      Boolean propostaGeradaChanged = opp.PropostaGerada__c != (oldOpp != null ? oldOpp.PropostaGerada__c : null);
+      Boolean aprovacaoChanged = opp.StatusAprovacaoDesconto__c != (oldOpp != null ? oldOpp.StatusAprovacaoDesconto__c : null);
       Boolean isEzeeConnect = opp.RecordTypeId == ezeeConnectRtId;
-      Boolean propostaGeradaStillFalse =
-        opp.PropostaGerada__c == false &&
-        (isEzeeConnect
-          ? areRequiredFieldsFilledConnect(opp)
-          : areRequiredFieldsFilled(opp));
-      if (
+      Boolean propostaGeradaStillFalse = opp.PropostaGerada__c == false && (isEzeeConnect ? areRequiredFieldsFilledConnect(opp) : areRequiredFieldsFilled(opp));
+      
+	  if (
+        proposalGenerationRequestedByStage.contains(opp.Id) ||
         propostaGeradaChanged ||
         propostaGeradaStillFalse ||
-        readequacaoChanged ||
-        aprovacaoChanged ||
-        formulaChanged
+        aprovacaoChanged
       ) {
         eligibleIds.add(opp.Id);
       }
     }
+
     if (eligibleIds.isEmpty()) {
       return;
     }
@@ -2412,13 +2403,14 @@ public class OpportunityBO {
       ProposalFileService.ProposalAvailability availability = proposalAvailabilityByOpportunityId.get(
         opp.Id
       );
-      Boolean hasReadyProposal = availability != null && availability.isReady();
+      Boolean hasStoredProposal =
+        availability != null && availability.hasStoredProposal;
 
-      // Se já gerada e não é readequação solicitada, não enfileira novamente
+      // O arquivo local é o pré-requisito para considerar a proposta gerada.
       if (
         opp.PropostaGerada__c == true &&
         opp.ReadequacaoSolicitada__c != true &&
-        hasReadyProposal
+        hasStoredProposal
       ) {
         continue;
       }
@@ -2436,6 +2428,25 @@ public class OpportunityBO {
         Boolean shouldGenerate = false;
 
         if (
+          proposalGenerationRequestedByStage.contains(opp.Id) &&
+          !hasStoredProposal
+        ) {
+          ApprovalProcessService.enqueueProposalSavePdfJobIfAbsent(
+            opp.Id,
+            true,
+            true
+          );
+        } else if (
+          opp.PropostaGerada__c == true &&
+          oldOpp.PropostaGerada__c == false &&
+          !hasStoredProposal
+        ) {
+          ApprovalProcessService.enqueueProposalSavePdfJobIfAbsent(
+            opp.Id,
+            true,
+            true
+          );
+        } else if (
           (opp.PropostaGerada__c == false &&
           oldOpp.PropostaGerada__c == true)
         ) {
@@ -2445,7 +2456,7 @@ public class OpportunityBO {
             true
           );
         } else {
-          if (opp.PropostaGerada__c == false) {
+          if (opp.PropostaGerada__c == false && !hasStoredProposal) {
             shouldGenerate = true;
           }
 
@@ -2462,9 +2473,6 @@ public class OpportunityBO {
             oldOpp.StatusAprovacaoDesconto__c &&
             opp.StatusAprovacaoDesconto__c == 'Aprovado'
           ) {
-            shouldGenerate = true;
-          }
-          if (oldOpp != null && formulaFieldsChanged(oldOpp, opp)) {
             shouldGenerate = true;
           }
 

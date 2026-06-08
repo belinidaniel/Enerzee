@@ -230,7 +230,7 @@ public class InstalacaoBOTest {
   }
 
   @isTest
-  static void advancesOpportunityStageOnProjectApproval() {
+  static void createsInstallationOnProjectApprovalForSolar() {
     Account account = (Account) TestFactory.createSObject(new Account(), true);
     Parceiro__c parceiro = createPartner();
     Opportunity opportunity = (Opportunity) TestFactory.createSObject(
@@ -279,17 +279,15 @@ public class InstalacaoBOTest {
     );
     Test.stopTest();
 
-    Opportunity updatedOpp = [
-      SELECT StageName
-      FROM Opportunity
-      WHERE Id = :opportunity.Id
-    ];
-
-    //System.//assertEquals(OpportunityUtils.STATUS_CONFIRMACAO_PAGAMENTO_CONTRATO, updatedOpp.StageName, 'Oportunidade deve avançar para Confirmação de pagamento contrato');
+    Assert.areEqual(
+      1,
+      [SELECT COUNT() FROM Instalacao__c WHERE Projeto__c = :projectOld.Id],
+      'A aprovação deve criar a instalação sem delegar controle de estágio ao InstalacaoBO.'
+    );
   }
 
   @isTest
-  static void advancesOpportunityStageOnProjectApprovalGrupoA() {
+  static void createsInstallationOnProjectApprovalForEzeeSolarA() {
     Account account = (Account) TestFactory.createSObject(new Account(), true);
     Parceiro__c parceiro = createPartner();
     Opportunity opportunity = (Opportunity) TestFactory.createSObject(
@@ -338,13 +336,11 @@ public class InstalacaoBOTest {
     );
     Test.stopTest();
 
-    Opportunity updatedOpp = [
-      SELECT StageName
-      FROM Opportunity
-      WHERE Id = :opportunity.Id
-    ];
-
-    //System.//assertEquals(OpportunityUtils.STATUS_EQUIPAMENTO, updatedOpp.StageName, 'Oportunidade Grupo A deve avançar para Equipamento');
+    Assert.areEqual(
+      1,
+      [SELECT COUNT() FROM Instalacao__c WHERE Projeto__c = :projectOld.Id],
+      'A aprovação deve criar a instalação sem delegar controle de estágio ao InstalacaoBO.'
+    );
   }
 
   @isTest

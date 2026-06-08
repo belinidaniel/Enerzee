@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 05-25-2026
+ * @last modified on  : 06-08-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -40,7 +40,7 @@ private class ProposalConsoleControllerApiTest {
       true
     );
 
-    TestFactory.createSObject(
+    Opportunity opportunityRecord = (Opportunity) TestFactory.createSObject(
       new Opportunity(
         AccountId = account.Id,
         StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
@@ -49,6 +49,17 @@ private class ProposalConsoleControllerApiTest {
         IdVirtualOffice__c = 'VO-API-001'
       ),
       true
+    );
+
+    // Simulacao RENTAL para manter o cenario INITIAL (com card de aluguel).
+    // Sem ela, o resolver roteia para INITIAL_FINANCING e os mappings de teste
+    // (configurados apenas para INITIAL) nao se aplicam.
+    insert new PaymentSimulation__c(
+      Opportunity__c = opportunityRecord.Id,
+      PaymentType__c = 'Rental',
+      ProposalLabel__c = 'Solar Aluguel',
+      InstallmentCount__c = 60,
+      InstallmentAmount__c = 465.90
     );
 
     insert new ContentVersion(
@@ -487,6 +498,15 @@ private class ProposalConsoleControllerApiTest {
       true
     );
 
+    // Simulacao RENTAL para manter o cenario INITIAL (com card de aluguel).
+    insert new PaymentSimulation__c(
+      Opportunity__c = opportunityRecord.Id,
+      PaymentType__c = 'Rental',
+      ProposalLabel__c = 'Solar Aluguel',
+      InstallmentCount__c = 60,
+      InstallmentAmount__c = 465.90
+    );
+
     insert new ContentVersion(
       Title = 'Template Fallback API',
       PathOnClient = 'template-fallback-api.pptx',
@@ -555,7 +575,7 @@ private class ProposalConsoleControllerApiTest {
     ProposalApiClient.testIntegrationUrl = null;
   }
 
-  private static void resetCalloutCounters() {
+  private static void resetCalloutCounters() { 
     proposalCallCount = 0;
     nivelloCallCount = 0;
   }

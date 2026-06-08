@@ -496,7 +496,7 @@ public with sharing class PDFControllerExtension {
   }
 
   // Executor central: usado pelo Queueable e pelo @future (fallback)
-  private static void savePdfFileAsyncInternal(
+  private static Id savePdfFileAsyncInternal(
     Id opportunityId,
     Boolean autoIntegrate,
     Boolean forceNewFile
@@ -509,14 +509,14 @@ public with sharing class PDFControllerExtension {
       System.debug(
         'savePdfFileAsyncInternal abortado: skipAsyncProposalGeneration == true'
       );
-      return;
+      return null;
     }
     if (processingOpps.contains(opportunityId)) {
       System.debug(
         'savePdfFileAsyncInternal abortado: já em processamento para opp ' +
         opportunityId
       );
-      return;
+      return null;
     }
     processingOpps.add(opportunityId);
     System.debug(
@@ -553,46 +553,6 @@ public with sharing class PDFControllerExtension {
       FOR UPDATE
     ];
 
-    // Se já marcada como gerada e não é readequação, apenas garante estágio e sai
-    if (
-      !forceNewFile &&
-      opp.PropostaGerada__c == true &&
-      opp.ReadequacaoSolicitada__c != true
-    ) {
-      try {
-        String stageToSet;
-        if (OpportunityUtils.isStatusAwaitingAcceptance(opp)) {
-          stageToSet = OpportunityUtils.STATUS_CONTRATO;
-        } else if (
-          OpportunityUtils.isStatusProposalElaboration(opp) ||
-          OpportunityUtils.isStatusProposalSimulation(opp)
-        ) {
-          if (OpportunityUtils.isRecordTypeSolar(opp)) {
-            stageToSet = OpportunityUtils.STATUS_PROPOSTA_GERADA;
-          } else if (OpportunityUtils.isRecordTypeEzeeSolarB(opp)) {
-            stageToSet = OpportunityUtils.STATUS_ANALISE_CREDITO;
-          } else {
-            stageToSet = OpportunityUtils.STATUS_PROPOSTA_ENVIADA;
-          }
-        }
-        if (stageToSet != null && opp.StageName != stageToSet) {
-          System.debug(
-            'savePdfFileAsyncInternal early-exit: ajustando stage existente para ' +
-            stageToSet
-          );
-          update new Opportunity(Id = opp.Id, StageName = stageToSet);
-        }
-      } catch (Exception eEarly) {
-        Utils.createLog(
-          'PDFControllerExtension',
-          'savePdfFileAsyncInternal.earlyExit',
-          eEarly
-        );
-      }
-      processingOpps.remove(opportunityId);
-      return;
-    }
-
     // if((opp.Distribuidora__c == null || opp.Distribuidora__c == '') && opp.RecordType.DeveloperName == 'EzeeConnect') {
     //				 return;
     // }
@@ -622,7 +582,7 @@ public with sharing class PDFControllerExtension {
     );
     if (proposta == null) {
       processingOpps.remove(opportunityId);
-      return;
+      return null;
     }
 
     if (proposta.Template__c != null) {
@@ -636,25 +596,22 @@ public with sharing class PDFControllerExtension {
     }
 
     // Evita duplicidade: se já existe proposta (IsProposal__c), apenas garante flag e integração.
-    Integer existingCount = [
-      SELECT COUNT()
+    List<ContentVersion> existingProposals = [
+      SELECT Id
       FROM ContentVersion
       WHERE FirstPublishLocationId = :opportunityId AND IsProposal__c = TRUE
+      ORDER BY CreatedDate DESC
+      LIMIT 1
     ];
     System.debug(
       'savePdfFileAsyncInternal existing proposal count: ' +
-        existingCount +
+        existingProposals.size() +
         ' | PropostaGerada__c=' +
         opp.PropostaGerada__c +
         ' | ReadequacaoSolicitada__c=' +
         opp.ReadequacaoSolicitada__c
     );
-    if (
-      !forceNewFile &&
-      (existingCount > 0 ||
-      (opp.PropostaGerada__c == true &&
-      opp.ReadequacaoSolicitada__c != true))
-    ) {
+    if (!forceNewFile && !existingProposals.isEmpty()) {
       try {
         Opportunity oppUpdate = new Opportunity(
           Id = opportunityId,
@@ -706,7 +663,7 @@ public with sharing class PDFControllerExtension {
         }
       }
       processingOpps.remove(opportunityId);
-      return;
+      return existingProposals[0].Id;
     }
 
     Blob conteudoPdf = generatePdfContent(
@@ -718,7 +675,7 @@ public with sharing class PDFControllerExtension {
 
     if (conteudoPdf == null) {
       processingOpps.remove(opportunityId);
-      return;
+      return null;
     }
 
     Id arquivoId = savePdfFile(
@@ -784,6 +741,7 @@ public with sharing class PDFControllerExtension {
       }
     }
     processingOpps.remove(opportunityId);
+    return arquivoId;
   }
 
   @Future(callout=true)
@@ -792,75 +750,12 @@ public with sharing class PDFControllerExtension {
     savePdfFileAsyncInternal(opportunityId, autoIntegrate, false);
   }
 
-  public static void generateProposalFileNow(
+  public static Id runLegacyProposalGeneration(
     Id opportunityId,
     Boolean autoIntegrate,
     Boolean forceNewFile
   ) {
-    Id resolvedCoverId = resolveApiCoverId(opportunityId);
-    if (resolvedCoverId != null) {
-      try {
-        ProposalGenerationService.ProposalResult result = ProposalGenerationService.generateProposal(
-          opportunityId,
-          resolvedCoverId
-        );
-        ProposalApiGenerationJob.advanceStage(opportunityId);
-
-        if (autoIntegrate == true) {
-          IntegracaoNivelloProposta.gerandoProposta(
-            opportunityId,
-            result.contentVersionId
-          );
-        }
-      } catch (Exception e) {
-        Utils.createLog('PDFControllerExtension', 'generateProposalFileNow', e);
-      }
-      return;
-    }
-    savePdfFileAsyncInternal(opportunityId, autoIntegrate, forceNewFile);
-  }
-
-  public static Id resolveApiCoverId(Id opportunityId) {
-    List<Opportunity> opps = [
-      SELECT
-        Parceiro__r.CapaProposta__c,
-        Parceiro__r.CapaPromocional__c,
-        TipoKitPromocional__c,
-        isPromotional__c,
-        Parceiro__r.Name
-      FROM Opportunity
-      WHERE Id = :opportunityId
-      LIMIT 1
-    ];
-    if (opps.isEmpty() || opps[0].Parceiro__r == null) {
-      return null;
-    }
-    Opportunity opp = opps[0];
-    Boolean isPromotional = ProposalContextResolver.determineIsPromotional(opp);
-    Id candidateCoverId = isPromotional
-      ? opp.Parceiro__r.CapaPromocional__c
-      : opp.Parceiro__r.CapaProposta__c;
-    if (candidateCoverId == null) {
-      return null;
-    }
-    List<ProposalCover__c> covers = [
-      SELECT
-        Id,
-        IntegrationKey__c,
-        Template__c,
-        IsActive__c,
-        isPromotional__c,
-        TemplateUrl__c
-      FROM ProposalCover__c
-      WHERE Id = :candidateCoverId AND IsActive__c = TRUE
-      LIMIT 1
-    ];
-    if (covers.isEmpty()) {
-      return null;
-    }
-    return ProposalCoverRoutingService.usesApiFlow(covers[0])
-      ? covers[0].Id
-      : null;
+    return savePdfFileAsyncInternal(opportunityId, autoIntegrate, forceNewFile);
   }
 
   public class SavePdfJob implements Queueable, Database.AllowsCallouts {
@@ -1246,6 +1141,7 @@ public with sharing class PDFControllerExtension {
     }
   }
 
+  @TestVisible
   private Integer findBestSplitPosition(String text, Integer target) {
     if (String.isBlank(text)) {
       return 0;
@@ -1343,6 +1239,7 @@ public with sharing class PDFControllerExtension {
     return null;
   }
 
+  @TestVisible
   private Boolean isLayoutLabel(String value) {
     if (String.isBlank(value)) {
       return false;
@@ -1351,6 +1248,7 @@ public with sharing class PDFControllerExtension {
     return value.trim().toLowerCase().contains('layout');
   }
 
+  @TestVisible
   private Decimal firstNonZero(List<Decimal> values) {
     for (Decimal value : values) {
       if (value != null && value != 0) {

@@ -44,6 +44,12 @@ public class ProposalService {
       queriedOpportunityIds
     );
 
+    // Logs e updates são acumulados e persistidos somente APÓS todos os callouts.
+    // Qualquer DML (insert Log__c / update Opportunity) antes de um callout dispara
+    // CalloutException ("uncommitted work pending") — inclusive entre iterações do loop.
+    List<Log__c> pendingLogs = new List<Log__c>();
+    List<Opportunity> opportunitiesToUpdate = new List<Opportunity>();
+
     Integer statusEnum;
     Integer substatusId;
     for (Opportunity opportunity : opportunities) {
@@ -78,7 +84,7 @@ public class ProposalService {
         statusEnum +
         ' | substatusId=' +
         substatusId;
-      Utils.createLog(entryLog);
+      pendingLogs.add(Utils.createLogNoInsert(entryLog));
 
       GORecordsTO request = new GORecordsTO();
       request.IdSalesForce = opportunity.Id;
@@ -111,7 +117,7 @@ public class ProposalService {
             'SAL-496 LossReason not mapped: "' +
             opportunity.Loss_Reason__c +
             '"';
-          Utils.createLog(lossLog);
+          pendingLogs.add(Utils.createLogNoInsert(lossLog));
         }
         request.LossReason = lossReasonInt;
         request.DescriptionReasonLoss = opportunity.DescricaoMotivoPerda__c;
@@ -130,7 +136,8 @@ public class ProposalService {
           endpointUrl,
           jsonBody,
           opportunity.Id,
-          'updateOpportunityPhase'
+          'updateOpportunityPhase',
+          pendingLogs
         );
 
         //Sucesso
@@ -144,20 +151,13 @@ public class ProposalService {
           opportunity.SucessoIntegracaoNivello__c = false;
         }
 
-        OpportunityTriggerHandler.disableTrigger();
-        update opportunity;
-        OpportunityTriggerHandler.enableTrigger();
-
         opportunity.StatusBodyIntegracaoNivello__c =
           response.getStatusCode() +
           ' ' +
           response.getBody();
       } catch (Exception e) {
-        Utils.createLog(
-          'ProposalService',
-          'updateOpportunityPhase',
-          e,
-          opportunity.Id
+        pendingLogs.add(
+          Utils.createLogNoInsert('ProposalService', 'updateOpportunityPhase', e, opportunity.Id)
         );
 
         opportunity.SucessoIntegracaoNivello__c = false;
@@ -165,10 +165,22 @@ public class ProposalService {
           e.getMessage() +
           ' ' +
           e.getStackTraceString();
-        OpportunityTriggerHandler.disableTrigger();
-        update opportunity;
+      }
+      opportunitiesToUpdate.add(opportunity);
+    }
+
+    // DML somente após todos os callouts, evitando "uncommitted work pending".
+    if (!opportunitiesToUpdate.isEmpty()) {
+      OpportunityTriggerHandler.disableTrigger();
+      try {
+        update opportunitiesToUpdate;
+      } finally {
         OpportunityTriggerHandler.enableTrigger();
       }
+    }
+
+    if (!pendingLogs.isEmpty()) {
+      insert pendingLogs;
     }
   }
 
@@ -185,7 +197,8 @@ public class ProposalService {
     String endpointUrl,
     String jsonBody,
     Id relatedId,
-    String logMethodName
+    String logMethodName,
+    List<Log__c> pendingLogs
   ) {
     HttpRequest req = new HttpRequest();
 
@@ -208,7 +221,9 @@ public class ProposalService {
       logDTO.status = response.getStatus();
       logDTO.responseBody = response.getBody();
     }
-    Utils.createLog(logDTO);
+    // Acumula o log em vez de inserir: DML entre callouts (dentro do loop) dispara
+    // "uncommitted work pending". A inserção ocorre após todos os callouts.
+    pendingLogs.add(Utils.createLogNoInsert(logDTO));
 
     return response;
   }

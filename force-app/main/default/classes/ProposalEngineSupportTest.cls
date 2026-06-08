@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-13-2026
+ * @last modified on  : 06-08-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -62,6 +62,66 @@ private class ProposalEngineSupportTest {
       ExternalId__c = 'template-engine',
       ProposalTemplateRole__c = 'API_PPTX_TEMPLATE'
     );
+  }
+
+  @isTest
+  static void rentalHiddenWhenNoRentalSimulationExists() {
+    Opportunity opportunityRecord = [
+      SELECT
+        Id,
+        Amount,
+        ValorTotalProposta__c,
+        TipoKitPromocional__c,
+        Account.CNPJ__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+
+    Test.startTest();
+    Assert.isFalse(
+      ProposalContextResolver.hasRentalSimulation(opportunityRecord.Id),
+      'Sem simulacao RENTAL a oportunidade nao deve ter aluguel disponivel.'
+    );
+    Assert.isTrue(
+      ProposalContextResolver.shouldShowFinancingInInitial(opportunityRecord),
+      'Elegivel por valor mas sem simulacao RENTAL deve cair em financiamento (oculta o card de aluguel vazio).'
+    );
+    Test.stopTest();
+  }
+
+  @isTest
+  static void rentalShownWhenRentalSimulationExists() {
+    Opportunity opportunityRecord = [
+      SELECT
+        Id,
+        Amount,
+        ValorTotalProposta__c,
+        TipoKitPromocional__c,
+        Account.CNPJ__c
+      FROM Opportunity
+      WHERE IdVirtualOffice__c = 'VO-ENGINE-001'
+      LIMIT 1
+    ];
+
+    insert new PaymentSimulation__c(
+      Opportunity__c = opportunityRecord.Id,
+      PaymentType__c = 'Rental',
+      ProposalLabel__c = 'Solar Aluguel',
+      InstallmentCount__c = 60,
+      InstallmentAmount__c = 465.90
+    );
+
+    Test.startTest();
+    Assert.isTrue(
+      ProposalContextResolver.hasRentalSimulation(opportunityRecord.Id),
+      'Com simulacao RENTAL a oportunidade deve ter aluguel disponivel.'
+    );
+    Assert.isFalse(
+      ProposalContextResolver.shouldShowFinancingInInitial(opportunityRecord),
+      'Elegivel por valor e com simulacao RENTAL deve manter o cenario com aluguel.'
+    );
+    Test.stopTest();
   }
 
   @isTest
@@ -1490,13 +1550,29 @@ private class ProposalEngineSupportTest {
     Test.stopTest();
 
     Opportunity unchangedOpportunity = [
-      SELECT PropostaGerada__c
+      SELECT PropostaGerada__c, ProposalGenerationStatus__c
       FROM Opportunity
       WHERE Id = :opportunityRecord.Id
     ];
     Assert.isFalse(
       unchangedOpportunity.PropostaGerada__c,
       'Sem configuração mínima da API, o job deve falhar sem marcar proposta gerada.'
+    );
+    Assert.areEqual(
+      ProposalGenerationStateService.FAILED,
+      unchangedOpportunity.ProposalGenerationStatus__c
+    );
+    Log__c generationLog = [
+      SELECT RelatedId__c
+      FROM Log__c
+      WHERE Class__c = 'ProposalApiGenerationJob' AND Method__c = 'execute'
+      ORDER BY CreatedDate DESC
+      LIMIT 1
+    ];
+    Assert.areEqual(
+      String.valueOf(opportunityRecord.Id),
+      generationLog.RelatedId__c,
+      'O log do job deve identificar a Opportunity que falhou.'
     );
   }
 

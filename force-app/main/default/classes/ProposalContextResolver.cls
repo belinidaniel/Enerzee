@@ -39,11 +39,33 @@ public with sharing class ProposalContextResolver {
       ? opportunityRecord.Account.CNPJ__c
       : null;
 
-    return !PaymentSimulationBO.isRentalEligible(
+    Boolean eligibleByValue = PaymentSimulationBO.isRentalEligible(
       amount,
       cnpj,
       opportunityRecord.TipoKitPromocional__c
     );
+
+    // Card de aluguel so aparece se elegivel por valor E existir simulacao RENTAL real.
+    // Sem isso o PDF renderiza o card "EZEE SOLAR - ALUGUEL" vazio.
+    return !(eligibleByValue && hasRentalSimulation(opportunityRecord.Id));
+  }
+
+  @TestVisible
+  static Boolean hasRentalSimulation(Id opportunityId) {
+    if (opportunityId == null) {
+      return false;
+    }
+
+    for (
+      PaymentSimulation__c simulationRecord : PaymentSimulationDAO.getByOpportunityIds(
+        new Set<Id>{ opportunityId }
+      )
+    ) {
+      if ('RENTAL'.equalsIgnoreCase(simulationRecord.PaymentType__c)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public static Context resolve(Id opportunityId, Id coverId) {
