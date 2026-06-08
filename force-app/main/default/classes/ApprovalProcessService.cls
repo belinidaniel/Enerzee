@@ -2,7 +2,7 @@
  * @description       : Centraliza regras de Approval Process da Opportunity
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-15-2026
+ * @last modified on  : 06-07-2026
  * @last modified by  : Daniel Belini
  * @test              : ApprovalProcessServiceTest, OpportunityBOCoverageTest, OpportunityBOHighCoverageTest,
  *                       OpportunityTriggerTest
@@ -236,9 +236,7 @@ public without sharing class ApprovalProcessService {
         oppToUpdate.Pontos__c = opp.ValorPropostoPontos__c;
         oppToUpdate.Direct__c = opp.ValorPropostoDirect__c;
 
-        oppToUpdate.PropostaAlterada__c = true;
         oppToUpdate.PropostaGerada__c = false;
-        // oppToUpdate.ReadequacaoSolicitada__c = true;
 
         approvedOpportunities.add(oppToUpdate);
         approvedIds.add(opp.Id);
