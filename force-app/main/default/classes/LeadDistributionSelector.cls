@@ -2,37 +2,36 @@
  * @description       : Seleciona o consultor correto para um Lead e atualiza o "ultimo lead recebido" com lock de linha para evitar concorrencia.
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 05-08-2026
+ * @last modified on  : 06-08-2026
  * @last modified by  : Daniel Belini
  * @test              : LeadDistributionSelectorTest
  **/
 public with sharing class LeadDistributionSelector {
   private static final Integer LOCK_BATCH_SIZE = 5;
-  private static final Set<String> GRADS_WARM_STATE = new Set<String>{
-    'Advisor',
-    'Advanced Builder',
-    'Builder'
+  private static final Set<String> ADVANCED_GRADUATIONS = new Set<String>{
+    'Advanced Builder'
   };
-  private static final Set<String> GRADS_HOT_STATE = new Set<String>{
-    'Platinum',
-    'Gold'
+  private static final Set<String> HOT_GRADUATIONS = new Set<String>{
+    'Gold',
+    'Platinum'
   };
-  private static final Set<String> GRADS_PRIOR_STATE = new Set<String>{
+  private static final Set<String> PRIORITY_GRADUATIONS = new Set<String>{
     'Diamond',
     'Carbon Diamond'
   };
-  private static final Set<String> GRADS_WARM_NO_STATE = new Set<String>{
-    'Advisor',
-    'Builder'
-  };
-  private static final Set<String> GRADS_HOT_NO_STATE = new Set<String>{
-    'Advanced Builder',
-    'Gold'
-  };
-  private static final Set<String> GRADS_PRIOR_NO_STATE = new Set<String>{
-    'Platinum',
-    'Diamond',
-    'Carbon Diamond'
+  private static final Map<String, List<Set<String>>> GRADUATION_LADDER_BY_RATING = new Map<String, List<Set<String>>>{
+    'Cold' => new List<Set<String>>{
+      ADVANCED_GRADUATIONS,
+      HOT_GRADUATIONS,
+      PRIORITY_GRADUATIONS
+    },
+    'Warm' => new List<Set<String>>{
+      ADVANCED_GRADUATIONS,
+      HOT_GRADUATIONS,
+      PRIORITY_GRADUATIONS
+    },
+    'Hot' => new List<Set<String>>{ HOT_GRADUATIONS, PRIORITY_GRADUATIONS },
+    'Prioritário' => new List<Set<String>>{ PRIORITY_GRADUATIONS }
   };
 
   public class Request {
@@ -141,115 +140,59 @@ public with sharing class LeadDistributionSelector {
       ? (Id) lead.get('ConsultorRegional__c')
       : null;
 
-    Id selectedId;
+    if (
+      String.isBlank(lead.State) ||
+      !GRADUATION_LADDER_BY_RATING.containsKey(lead.Rating)
+    ) {
+      return null;
+    }
 
     if (distributionType == 'Email') {
-      selectedId = selectByEmail(distributionValue, lead.State);
+      Id selectedId = selectByEmail(distributionValue, lead.State, lead.Rating);
       if (selectedId != null) {
         return selectedId;
       }
     } else if (distributionType == 'Graduação') {
-      selectedId = selectByGraduation(distributionValue, lead.State);
+      Id selectedId = selectByGraduation(
+        distributionValue,
+        lead.State,
+        lead.Rating
+      );
       if (selectedId != null) {
         return selectedId;
       }
     }
 
-    if (!String.isBlank(lead.State)) {
-      if (isColdOrWarm(lead.Rating)) {
-        selectedId = selectByState(lead);
-        if (selectedId != null) {
-          return selectedId;
-        }
-        selectedId = selectWarmFilter(
-          lead.State,
-          consultorRegionalId,
-          lead.Rating
-        );
-        if (selectedId != null) {
-          return selectedId;
-        }
-        selectedId = selectHotFilter(
-          lead.State,
-          consultorRegionalId,
-          lead.Rating
-        );
-        if (selectedId != null) {
-          return selectedId;
-        }
-        selectedId = selectPrioritarioFilter(
-          lead.State,
-          consultorRegionalId,
-          lead.Rating
-        );
-        if (selectedId != null) {
-          return selectedId;
-        }
-        return null;
-      }
-
-      if (lead.Rating == 'Hot') {
-        selectedId = selectHotFilter(
-          lead.State,
-          consultorRegionalId,
-          lead.Rating
-        );
-        if (selectedId != null) {
-          return selectedId;
-        }
-        selectedId = selectPrioritarioFilter(
-          lead.State,
-          consultorRegionalId,
-          lead.Rating
-        );
-        if (selectedId != null) {
-          return selectedId;
-        }
-        return null;
-      }
-
-      if (lead.Rating == 'Prioritário') {
-        selectedId = selectPrioritarioFilter(
-          lead.State,
-          consultorRegionalId,
-          lead.Rating
-        );
-        if (selectedId != null) {
-          return selectedId;
-        }
-        return null;
-      }
-    }
-
-    return selectNoState(lead);
+    return selectByState(lead.State, lead.Rating, consultorRegionalId);
   }
 
-  private static Boolean isColdOrWarm(String rating) {
-    return rating == 'Cold' || rating == 'Warm';
-  }
-
-  private static Id selectByEmail(String distributionValue, String leadState) {
+  private static Id selectByEmail(
+    String distributionValue,
+    String leadState,
+    String rating
+  ) {
     List<String> emails = splitCsv(distributionValue);
-    if (emails.isEmpty()) {
+    Set<String> graduations = getPrimaryGraduations(rating);
+    if (
+      emails.isEmpty() ||
+      String.isBlank(leadState) ||
+      graduations == null ||
+      graduations.isEmpty()
+    ) {
       return null;
-    }
-
-    if (!String.isBlank(leadState)) {
-      List<Consultor__c> candidatesWithState = [
-        SELECT Id, Lb065_UltimoLeadRecebido__c
-        FROM Consultor__c
-        WHERE Email__c IN :emails AND EstadosAtendidos__c INCLUDES (:leadState)
-        ORDER BY Lb065_UltimoLeadRecebido__c ASC
-        LIMIT :LOCK_BATCH_SIZE
-      ];
-
-      return lockAndUpdate(candidatesWithState);
     }
 
     List<Consultor__c> candidates = [
       SELECT Id, Lb065_UltimoLeadRecebido__c
       FROM Consultor__c
-      WHERE Email__c IN :emails
+      WHERE
+        Email__c IN :emails
+        AND EstadosAtendidos__c INCLUDES (:leadState)
+        AND Ativo__c = TRUE
+        AND SendLead__c = TRUE
+        AND FreezeConsult__c = FALSE
+        AND (Lb65_Graduacao__c IN :graduations
+        OR SpecialRange__c = :rating)
       ORDER BY Lb065_UltimoLeadRecebido__c ASC
       LIMIT :LOCK_BATCH_SIZE
     ];
@@ -259,66 +202,17 @@ public with sharing class LeadDistributionSelector {
 
   private static Id selectByGraduation(
     String distributionValue,
-    String leadState
-  ) {
-    List<String> graduations = splitCsv(distributionValue);
-    if (graduations.isEmpty()) {
-      return null;
-    }
-
-    if (!String.isBlank(leadState)) {
-      List<Consultor__c> candidatesWithState = [
-        SELECT Id, Lb065_UltimoLeadRecebido__c
-        FROM Consultor__c
-        WHERE
-          Lb65_Graduacao__c IN :graduations
-          AND EstadosAtendidos__c INCLUDES (:leadState)
-        ORDER BY Lb065_UltimoLeadRecebido__c ASC
-        LIMIT :LOCK_BATCH_SIZE
-      ];
-
-      return lockAndUpdate(candidatesWithState);
-    }
-
-    List<Consultor__c> candidates = [
-      SELECT Id, Lb065_UltimoLeadRecebido__c
-      FROM Consultor__c
-      WHERE Lb65_Graduacao__c IN :graduations
-      ORDER BY Lb065_UltimoLeadRecebido__c ASC
-      LIMIT :LOCK_BATCH_SIZE
-    ];
-
-    return lockAndUpdate(candidates);
-  }
-
-  private static Id selectByState(Lead lead) {
-    if (String.isBlank(lead.State)) {
-      return null;
-    }
-
-    List<Consultor__c> candidates = [
-      SELECT Id, Lb065_UltimoLeadRecebido__c
-      FROM Consultor__c
-      WHERE
-        EstadosAtendidos__c INCLUDES (:lead.State)
-        AND SendLead__c = TRUE
-        AND FreezeConsult__c = FALSE
-        AND (Lb65_Graduacao__c IN :GRADS_WARM_STATE
-        OR (SpecialRange__c = :lead.Rating
-        AND SpecialRange__c != NULL))
-      ORDER BY Lb065_UltimoLeadRecebido__c ASC
-      LIMIT :LOCK_BATCH_SIZE
-    ];
-
-    return lockAndUpdate(candidates);
-  }
-
-  private static Id selectWarmFilter(
     String leadState,
-    Id consultorRegionalId,
     String rating
   ) {
-    if (String.isBlank(leadState)) {
+    List<String> requestedGraduations = splitCsv(distributionValue);
+    Set<String> eligibleGraduations = getPrimaryGraduations(rating);
+    if (
+      requestedGraduations.isEmpty() ||
+      String.isBlank(leadState) ||
+      eligibleGraduations == null ||
+      eligibleGraduations.isEmpty()
+    ) {
       return null;
     }
 
@@ -326,13 +220,13 @@ public with sharing class LeadDistributionSelector {
       SELECT Id, Lb065_UltimoLeadRecebido__c
       FROM Consultor__c
       WHERE
-        EstadosAtendidos__c INCLUDES (:leadState)
-        AND (Lb65_Graduacao__c IN :GRADS_WARM_STATE
-        OR (SpecialRange__c = :rating
-        AND SpecialRange__c != NULL))
-        AND Id != :consultorRegionalId
-        AND FreezeConsult__c = FALSE
+        Lb65_Graduacao__c IN :requestedGraduations
+        AND EstadosAtendidos__c INCLUDES (:leadState)
+        AND Ativo__c = TRUE
         AND SendLead__c = TRUE
+        AND FreezeConsult__c = FALSE
+        AND (Lb65_Graduacao__c IN :eligibleGraduations
+        OR SpecialRange__c = :rating)
       ORDER BY Lb065_UltimoLeadRecebido__c ASC
       LIMIT :LOCK_BATCH_SIZE
     ];
@@ -340,108 +234,68 @@ public with sharing class LeadDistributionSelector {
     return lockAndUpdate(candidates);
   }
 
-  private static Id selectHotFilter(
+  private static Id selectByState(
     String leadState,
-    Id consultorRegionalId,
-    String rating
+    String rating,
+    Id consultorRegionalId
   ) {
-    if (String.isBlank(leadState)) {
+    List<Set<String>> graduationLadder = GRADUATION_LADDER_BY_RATING.get(
+      rating
+    );
+    if (
+      String.isBlank(leadState) ||
+      graduationLadder == null ||
+      graduationLadder.isEmpty()
+    ) {
       return null;
     }
 
-    List<Consultor__c> candidates = [
-      SELECT Id, Lb065_UltimoLeadRecebido__c
-      FROM Consultor__c
-      WHERE
-        EstadosAtendidos__c INCLUDES (:leadState)
-        AND (Lb65_Graduacao__c IN :GRADS_HOT_STATE
-        OR (SpecialRange__c = :rating
-        AND SpecialRange__c != NULL))
-        AND Id != :consultorRegionalId
-        AND SendLead__c = TRUE
-        AND FreezeConsult__c = FALSE
-      ORDER BY Lb065_UltimoLeadRecebido__c ASC
-      LIMIT :LOCK_BATCH_SIZE
-    ];
-
-    return lockAndUpdate(candidates);
-  }
-
-  private static Id selectPrioritarioFilter(
-    String leadState,
-    Id consultorRegionalId,
-    String rating
-  ) {
-    if (!String.isBlank(leadState)) {
-      List<Consultor__c> candidatesWithState = [
-        SELECT Id, Lb065_UltimoLeadRecebido__c
-        FROM Consultor__c
-        WHERE
-          EstadosAtendidos__c INCLUDES (:leadState)
-          AND (Lb65_Graduacao__c IN :GRADS_PRIOR_STATE
-          OR (SpecialRange__c = :rating
-          AND SpecialRange__c != NULL))
-          AND SendLead__c = TRUE
-          AND Id != :consultorRegionalId
-          AND FreezeConsult__c = FALSE
-        ORDER BY Lb065_UltimoLeadRecebido__c ASC
-        LIMIT :LOCK_BATCH_SIZE
-      ];
-
-      return lockAndUpdate(candidatesWithState);
-    }
-
-    List<Consultor__c> candidates = [
-      SELECT Id, Lb065_UltimoLeadRecebido__c
-      FROM Consultor__c
-      WHERE
-        (Lb65_Graduacao__c IN :GRADS_PRIOR_STATE
-        OR (SpecialRange__c = :rating
-        AND SpecialRange__c != NULL))
-        AND SendLead__c = TRUE
-        AND Id != :consultorRegionalId
-        AND FreezeConsult__c = FALSE
-      ORDER BY Lb065_UltimoLeadRecebido__c ASC
-      LIMIT :LOCK_BATCH_SIZE
-    ];
-
-    return lockAndUpdate(candidates);
-  }
-
-  private static Id selectNoState(Lead lead) {
-    if (lead == null) {
-      return null;
-    }
-
-    if (lead.Rating == 'Warm') {
-      return selectNoStateByGraduation(GRADS_WARM_NO_STATE);
-    }
-
-    if (lead.Rating == 'Hot') {
-      return selectNoStateByGraduation(GRADS_HOT_NO_STATE);
-    }
-
-    if (lead.Rating == 'Prioritário') {
-      return selectNoStateByGraduation(GRADS_PRIOR_NO_STATE);
+    for (Set<String> graduations : graduationLadder) {
+      Id selectedId = selectByStateAndGraduations(
+        leadState,
+        rating,
+        consultorRegionalId,
+        graduations
+      );
+      if (selectedId != null) {
+        return selectedId;
+      }
     }
 
     return null;
   }
 
-  private static Id selectNoStateByGraduation(Set<String> graduations) {
-    if (graduations == null || graduations.isEmpty()) {
-      return null;
-    }
-
+  private static Id selectByStateAndGraduations(
+    String leadState,
+    String rating,
+    Id consultorRegionalId,
+    Set<String> graduations
+  ) {
     List<Consultor__c> candidates = [
       SELECT Id, Lb065_UltimoLeadRecebido__c
       FROM Consultor__c
-      WHERE Lb65_Graduacao__c IN :graduations AND Ativo__c = TRUE
+      WHERE
+        EstadosAtendidos__c INCLUDES (:leadState)
+        AND Ativo__c = TRUE
+        AND SendLead__c = TRUE
+        AND FreezeConsult__c = FALSE
+        AND Id != :consultorRegionalId
+        AND (Lb65_Graduacao__c IN :graduations
+        OR SpecialRange__c = :rating)
       ORDER BY Lb065_UltimoLeadRecebido__c ASC
       LIMIT :LOCK_BATCH_SIZE
     ];
 
     return lockAndUpdate(candidates);
+  }
+
+  private static Set<String> getPrimaryGraduations(String rating) {
+    List<Set<String>> graduationLadder = GRADUATION_LADDER_BY_RATING.get(
+      rating
+    );
+    return graduationLadder == null || graduationLadder.isEmpty()
+      ? null
+      : graduationLadder[0];
   }
 
   private static Id lockAndUpdate(List<Consultor__c> candidates) {

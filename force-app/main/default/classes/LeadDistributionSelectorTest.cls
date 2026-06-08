@@ -1,8 +1,8 @@
 /**
- * @description       :
+ * @description       : Testes da distribuição de Leads por estado, rating e elegibilidade do consultor.
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 06-08-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -12,18 +12,22 @@ private class LeadDistributionSelectorTest {
 
   private static Consultor__c createConsultor(
     String graduation,
-    String state,
-    String region,
+    String attendedStates,
     Boolean active,
+    Boolean sendLead,
+    Boolean frozen,
+    String specialRange,
     DateTime lastLeadReceived
   ) {
     consultantCounter++;
     Consultor__c consultor = new Consultor__c(
       Name = 'Consultor Selector ' + consultantCounter,
-      Estado__c = state,
-      SendLead__c = true,
-      FreezeConsult__c = false,
+      Ativo__c = active,
+      SendLead__c = sendLead,
+      FreezeConsult__c = frozen,
       Lb65_Graduacao__c = graduation,
+      EstadosAtendidos__c = attendedStates,
+      SpecialRange__c = specialRange,
       Email__c = 'consultor-selector-' + consultantCounter + '@teste.com',
       IdVirtualOffice__c = 'selector-vo-' + consultantCounter,
       IdVirtualOffice2__c = String.valueOf(consultantCounter),
@@ -35,22 +39,7 @@ private class LeadDistributionSelectorTest {
         String.valueOf(consultantCounter).leftPad(2, '0'),
       Lb065_UltimoLeadRecebido__c = lastLeadReceived
     );
-    if (
-      consultor.getSObjectType()
-        .getDescribe()
-        .fields.getMap()
-        .containsKey('Ativo__c')
-    ) {
-      consultor.put('Ativo__c', active);
-    }
-    if (
-      consultor.getSObjectType()
-        .getDescribe()
-        .fields.getMap()
-        .containsKey('EstadosAtendidos__c') && region != null
-    ) {
-      consultor.put('EstadosAtendidos__c', region);
-    }
+
     ConsultorTriggerHandler.disableTrigger();
     try {
       return (Consultor__c) TestFactory.createSObject(consultor, true);
@@ -59,16 +48,11 @@ private class LeadDistributionSelectorTest {
     }
   }
 
-  private static Lead createLead(
-    String lastName,
-    String statusValue,
-    String rating,
-    String state
-  ) {
+  private static Lead createLead(String rating, String state) {
     Lead lead = new Lead(
-      LastName = lastName,
+      LastName = 'Lead Selector ' + rating,
       Company = 'Empresa',
-      Status = statusValue,
+      Status = getNonNovoStatus(),
       Rating = rating,
       State = state,
       Phone = '11999999999'
@@ -77,757 +61,420 @@ private class LeadDistributionSelectorTest {
     return lead;
   }
 
+  private static LeadDistributionSelector.Response selectConsultant(Lead lead) {
+    LeadDistributionSelector.Request request = new LeadDistributionSelector.Request();
+    request.leadId = lead.Id;
+
+    List<LeadDistributionSelector.Response> responses = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ request }
+    );
+
+    Assert.areEqual(
+      1,
+      responses.size(),
+      'Deve retornar uma resposta por Lead.'
+    );
+    return responses[0];
+  }
+
   @isTest
-  static void testSelectByEmail() {
-    Map<String, Schema.SObjectField> leadFields = Schema.SObjectType.Lead.fields.getMap();
-    if (
-      !leadFields.containsKey('Distributiontype__c') ||
-      !leadFields.containsKey('DistributionValue__c')
-    ) {
-      return;
-    }
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    Consultor__c consultor = (Consultor__c) TestFactory.createSObject(
-      new Consultor__c(
-        Email__c = 'a@test.com',
-        SendLead__c = true,
-        FreezeConsult__c = false,
-        Lb65_Graduacao__c = 'Builder',
-        Lb065_UltimoLeadRecebido__c = System.now().addDays(-2)
-      ),
-      true
+  static void shouldApplyGraduationMatrixByRating() {
+    Consultor__c advanced = createConsultor(
+      'Advanced Builder',
+      'SP',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-10)
+    );
+    Consultor__c gold = createConsultor(
+      'Gold',
+      'RJ',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-8)
+    );
+    Consultor__c platinum = createConsultor(
+      'Platinum',
+      'RJ',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-6)
+    );
+    Consultor__c diamond = createConsultor(
+      'Diamond',
+      'MG',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-9)
+    );
+    Consultor__c carbonDiamond = createConsultor(
+      'Carbon Diamond',
+      'MG',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-7)
     );
 
-    Lead lead = new Lead(
-      LastName = 'Lead Email',
-      Company = 'Empresa',
-      Status = statusValue,
-      Rating = 'Warm',
-      Phone = '11999999999'
+    Lead coldLead = createLead('Cold', 'SP');
+    Lead warmLead = createLead('Warm', 'SP');
+    Lead firstHotLead = createLead('Hot', 'RJ');
+    Lead secondHotLead = createLead('Hot', 'RJ');
+    Lead firstPriorityLead = createLead('Prioritário', 'MG');
+    Lead secondPriorityLead = createLead('Prioritário', 'MG');
+    insert new List<Lead>{
+      coldLead,
+      warmLead,
+      firstHotLead,
+      secondHotLead,
+      firstPriorityLead,
+      secondPriorityLead
+    };
+
+    Assert.areEqual(advanced.Id, selectConsultant(coldLead).consultantId);
+    Assert.areEqual(advanced.Id, selectConsultant(warmLead).consultantId);
+    Assert.areEqual(gold.Id, selectConsultant(firstHotLead).consultantId);
+    Assert.areEqual(platinum.Id, selectConsultant(secondHotLead).consultantId);
+    Assert.areEqual(
+      diamond.Id,
+      selectConsultant(firstPriorityLead).consultantId
     );
-    setIfExists(lead, 'Lb065_LeadVencido__c', false);
-    lead.put('Distributiontype__c', 'Email');
-    lead.put('DistributionValue__c', 'a@test.com');
+    Assert.areEqual(
+      carbonDiamond.Id,
+      selectConsultant(secondPriorityLead).consultantId
+    );
+  }
+
+  @isTest
+  static void shouldFallbackToHigherGraduation() {
+    Consultor__c gold = createConsultor(
+      'Gold',
+      'SP',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-5)
+    );
+    Consultor__c diamond = createConsultor(
+      'Diamond',
+      'RJ',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-4)
+    );
+
+    Lead warmLead = createLead('Warm', 'SP');
+    Lead hotLead = createLead('Hot', 'RJ');
+    insert new List<Lead>{ warmLead, hotLead };
+
+    Assert.areEqual(
+      gold.Id,
+      selectConsultant(warmLead).consultantId,
+      'Warm deve subir para Gold ou Platinum quando não houver Advanced Builder.'
+    );
+    Assert.areEqual(
+      diamond.Id,
+      selectConsultant(hotLead).consultantId,
+      'Hot deve subir para Diamond ou Carbon Diamond quando não houver Gold ou Platinum.'
+    );
+  }
+
+  @isTest
+  static void shouldNotFallbackToLowerGraduation() {
+    createConsultor(
+      'Advanced Builder',
+      'SP',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-5)
+    );
+    createConsultor(
+      'Gold',
+      'RJ',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-4)
+    );
+
+    Lead hotLead = createLead('Hot', 'SP');
+    Lead priorityLead = createLead('Prioritário', 'RJ');
+    insert new List<Lead>{ hotLead, priorityLead };
+
+    Assert.isNull(
+      selectConsultant(hotLead).consultantId,
+      'Hot não pode descer para Advanced Builder.'
+    );
+    Assert.isNull(
+      selectConsultant(priorityLead).consultantId,
+      'Prioritário não pode descer para Gold.'
+    );
+  }
+
+  @isTest
+  static void shouldAllowSpecialRangeAndBlockAdvisorWithoutIt() {
+    Consultor__c advisorWithoutSpecialRange = createConsultor(
+      'Advisor',
+      'RJ',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-20)
+    );
+    Consultor__c advisorWithWarmRange = createConsultor(
+      'Advisor',
+      'RJ',
+      true,
+      true,
+      false,
+      'Warm',
+      System.now().addDays(-10)
+    );
+    Consultor__c advancedWithHotRange = createConsultor(
+      'Advanced Builder',
+      'SP',
+      true,
+      true,
+      false,
+      'Hot',
+      System.now().addDays(-15)
+    );
+    Consultor__c gold = createConsultor(
+      'Gold',
+      'SP',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-5)
+    );
+
+    Lead warmLead = createLead('Warm', 'RJ');
+    Lead hotLead = createLead('Hot', 'SP');
+    insert new List<Lead>{ warmLead, hotLead };
+
+    Assert.areEqual(
+      advisorWithWarmRange.Id,
+      selectConsultant(warmLead).consultantId,
+      'Advisor só pode receber Lead quando possuir a faixa especial correspondente.'
+    );
+    LeadDistributionSelector.Response hotResponse = selectConsultant(hotLead);
+    Assert.areEqual(
+      advancedWithHotRange.Id,
+      hotResponse.consultantId,
+      'A faixa especial deve tornar o consultor elegível para o rating.'
+    );
+    Assert.areNotEqual(
+      gold.Id,
+      hotResponse.consultantId,
+      'O consultor elegível há mais tempo deve ser priorizado.'
+    );
+    Assert.areNotEqual(advisorWithoutSpecialRange.Id, hotResponse.consultantId);
+  }
+
+  @isTest
+  static void shouldPrioritizeAttendedState() {
+    createConsultor(
+      'Gold',
+      'ES',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-20)
+    );
+    Consultor__c spConsultor = createConsultor(
+      'Gold',
+      'SP;RJ',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-2)
+    );
+
+    Lead lead = createLead('Hot', 'SP');
     insert lead;
 
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
+    Assert.areEqual(spConsultor.Id, selectConsultant(lead).consultantId);
+  }
+
+  @isTest
+  static void shouldRequireOperationalEligibility() {
+    createConsultor(
+      'Gold',
+      'SP',
+      false,
+      true,
+      false,
+      null,
+      System.now().addDays(-20)
+    );
+    createConsultor(
+      'Gold',
+      'SP',
+      true,
+      false,
+      false,
+      null,
+      System.now().addDays(-19)
+    );
+    createConsultor(
+      'Gold',
+      'SP',
+      true,
+      true,
+      true,
+      null,
+      System.now().addDays(-18)
+    );
+    Consultor__c eligible = createConsultor(
+      'Gold',
+      'SP',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-1)
     );
 
-    System.assertEquals(1, res.size(), 'Deve retornar uma resposta.');
-    System.assertEquals(
-      consultor.Id,
-      res[0].consultantId,
-      'Deve selecionar o consultor pelo email.'
+    Lead lead = createLead('Hot', 'SP');
+    insert lead;
+
+    Assert.areEqual(eligible.Id, selectConsultant(lead).consultantId);
+  }
+
+  @isTest
+  static void shouldApplyStateAndRatingToDirectedDistribution() {
+    Consultor__c emailConsultor = createConsultor(
+      'Advisor',
+      'SP',
+      true,
+      true,
+      false,
+      'Hot',
+      System.now().addDays(-5)
     );
+    Consultor__c graduationConsultor = createConsultor(
+      'Platinum',
+      'RJ',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-4)
+    );
+
+    Lead emailLead = createLead('Hot', 'SP');
+    emailLead.Distributiontype__c = 'Email';
+    emailLead.DistributionValue__c = emailConsultor.Email__c;
+
+    Lead graduationLead = createLead('Hot', 'RJ');
+    graduationLead.Distributiontype__c = 'Graduação';
+    graduationLead.DistributionValue__c = ' , Platinum , Gold ';
+    insert new List<Lead>{ emailLead, graduationLead };
+
+    Assert.areEqual(
+      emailConsultor.Id,
+      selectConsultant(emailLead).consultantId
+    );
+    Assert.areEqual(
+      graduationConsultor.Id,
+      selectConsultant(graduationLead).consultantId
+    );
+  }
+
+  @isTest
+  static void shouldSelectConsultantWaitingLongest() {
+    Consultor__c oldest = createConsultor(
+      'Gold',
+      'SP',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-10)
+    );
+    createConsultor(
+      'Gold',
+      'SP',
+      true,
+      true,
+      false,
+      null,
+      System.now().addDays(-1)
+    );
+
+    Lead lead = createLead('Hot', 'SP');
+    insert lead;
+
+    Assert.areEqual(oldest.Id, selectConsultant(lead).consultantId);
 
     Consultor__c updated = [
       SELECT Lb065_UltimoLeadRecebido__c
       FROM Consultor__c
-      WHERE Id = :consultor.Id
+      WHERE Id = :oldest.Id
     ];
-    System.assertNotEquals(
-      null,
-      updated.Lb065_UltimoLeadRecebido__c,
-      'Deve atualizar o último lead recebido.'
+    Assert.isTrue(
+      updated.Lb065_UltimoLeadRecebido__c > System.now().addMinutes(-1),
+      'A data do último Lead recebido deve ser atualizada.'
     );
   }
 
   @isTest
-  static void testSelectByStateWarm() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
+  static void shouldReturnNullWithoutStateOrSupportedRating() {
+    Lead noStateLead = createLead('Hot', null);
+    Lead noRatingLead = createLead(null, 'SP');
+    insert new List<Lead>{ noStateLead, noRatingLead };
 
-    Consultor__c consultor = (Consultor__c) TestFactory.createSObject(
-      new Consultor__c(
-        Estado__c = 'SP',
-        SendLead__c = true,
-        FreezeConsult__c = false,
-        Lb65_Graduacao__c = 'Advanced Builder',
-        Lb065_UltimoLeadRecebido__c = System.now().addDays(-3)
-      ),
-      true
-    );
-
-    Lead lead = new Lead(
-      LastName = 'Lead State',
-      Company = 'Empresa',
-      Status = statusValue,
-      Rating = 'Warm',
-      State = 'SP',
-      Phone = '11999999999'
-    );
-    setIfExists(lead, 'Lb065_LeadVencido__c', false);
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    System.assertEquals(
-      consultor.Id,
-      res[0].consultantId,
-      'Deve selecionar consultor pelo estado.'
-    );
+    Assert.isNull(selectConsultant(noStateLead).consultantId);
+    Assert.isNull(selectConsultant(noRatingLead).consultantId);
   }
 
   @isTest
-  static void testShouldHandleEmptyRequestsAndLeadNotFound() {
-    System.assertEquals(
-      0,
-      LeadDistributionSelector.selectConsultant(null).size(),
-      'Lista nula deve retornar vazia.'
-    );
-    System.assertEquals(
+  static void shouldHandleEmptyRequestsAndMissingLead() {
+    Assert.areEqual(0, LeadDistributionSelector.selectConsultant(null).size());
+    Assert.areEqual(
       0,
       LeadDistributionSelector.selectConsultant(
           new List<LeadDistributionSelector.Request>()
         )
-        .size(),
-      'Lista vazia deve retornar vazia.'
+        .size()
     );
 
-    LeadDistributionSelector.Request missingLeadRequest = new LeadDistributionSelector.Request();
-    missingLeadRequest.leadId = '00Q000000000001AAA';
+    LeadDistributionSelector.Request request = new LeadDistributionSelector.Request();
+    request.leadId = '00Q000000000001AAA';
 
-    List<LeadDistributionSelector.Response> response = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ null, missingLeadRequest }
+    List<LeadDistributionSelector.Response> responses = LeadDistributionSelector.selectConsultant(
+      new List<LeadDistributionSelector.Request>{ null, request }
     );
 
-    System.assertEquals(2, response.size());
-    System.assertEquals('Lead nao encontrado.', response[0].message);
-    System.assertEquals('Lead nao encontrado.', response[1].message);
-  }
-
-  @isTest
-  static void testSelectByGraduationAndCsvFallback() {
-    Map<String, Schema.SObjectField> leadFields = Schema.SObjectType.Lead.fields.getMap();
-    if (
-      !leadFields.containsKey('Distributiontype__c') ||
-      !leadFields.containsKey('DistributionValue__c')
-    ) {
-      return;
-    }
-
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    Consultor__c builder = createConsultor(
-      'Builder',
-      null,
-      null,
-      true,
-      System.now().addDays(-4)
-    );
-    createConsultor('Gold', null, null, true, System.now().addDays(-1));
-
-    Lead lead = createLead('Lead Graduation', statusValue, 'Warm', null);
-    lead.put('Distributiontype__c', 'Graduação');
-    lead.put('DistributionValue__c', ' , Builder , Gold ');
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-
-    List<LeadDistributionSelector.Response> response = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    System.assertEquals(1, response.size());
-    System.assertEquals(builder.Id, response[0].consultantId);
-  }
-
-  @isTest
-  static void testSelectHotAndPrioritarioFilters() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    freezeAllConsultors();
-
-    // regional consultor excluded via Id != consultorRegionalId
-    Consultor__c regional = createConsultor(
-      'Builder',
-      'SP',
-      'RJ',
-      true,
-      System.now().addDays(-5)
-    );
-    // hotConsultor has EstadosAtendidos__c = 'RJ' → matches lead.State = 'RJ'
-    Consultor__c hotConsultor = createConsultor(
-      'Gold',
-      null,
-      'RJ',
-      true,
-      System.now().addDays(-3)
-    );
-    // priorityConsultor: Diamond grad and eligible for the lead state.
-    Consultor__c priorityConsultor = createConsultor(
-      'Diamond',
-      null,
-      'MG',
-      true,
-      System.now().addDays(-7)
-    );
-
-    Lead hotLead = createLead('Lead Hot', statusValue, 'Hot', 'RJ');
-    setIfExists(hotLead, 'ConsultorRegional__c', regional.Id);
-    insert hotLead;
-
-    Lead priorityLead = createLead(
-      'Lead Priority',
-      statusValue,
-      'Prioritário',
-      'MG'
-    );
-    setIfExists(priorityLead, 'ConsultorRegional__c', regional.Id);
-    insert priorityLead;
-
-    LeadDistributionSelector.Request hotRequest = new LeadDistributionSelector.Request();
-    hotRequest.leadId = hotLead.Id;
-    LeadDistributionSelector.Request priorityRequest = new LeadDistributionSelector.Request();
-    priorityRequest.leadId = priorityLead.Id;
-
-    List<LeadDistributionSelector.Response> response = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ hotRequest, priorityRequest }
-    );
-
-    System.assertEquals(hotConsultor.Id, response[0].consultantId);
-    System.assertEquals(priorityConsultor.Id, response[1].consultantId);
-  }
-
-  @isTest
-  static void testSelectNoStateFallbackByRating() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    Consultor__c warmConsultor = createConsultor(
-      'Advisor',
-      null,
-      null,
-      true,
-      System.now().addDays(-8)
-    );
-    Consultor__c hotConsultor = createConsultor(
-      'Advanced Builder',
-      null,
-      null,
-      true,
-      System.now().addDays(-6)
-    );
-    Consultor__c priorityConsultor = createConsultor(
-      'Carbon Diamond',
-      null,
-      null,
-      true,
-      System.now().addDays(-9)
-    );
-
-    Lead warmLead = createLead('Lead Warm No State', statusValue, 'Warm', null);
-    Lead hotLead = createLead('Lead Hot No State', statusValue, 'Hot', null);
-    Lead priorityLead = createLead(
-      'Lead Priority No State',
-      statusValue,
-      'Prioritário',
-      null
-    );
-    insert new List<Lead>{ warmLead, hotLead, priorityLead };
-
-    LeadDistributionSelector.Request warmRequest = new LeadDistributionSelector.Request();
-    warmRequest.leadId = warmLead.Id;
-    LeadDistributionSelector.Request hotRequest = new LeadDistributionSelector.Request();
-    hotRequest.leadId = hotLead.Id;
-    LeadDistributionSelector.Request priorityRequest = new LeadDistributionSelector.Request();
-    priorityRequest.leadId = priorityLead.Id;
-
-    List<LeadDistributionSelector.Response> response = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{
-        warmRequest,
-        hotRequest,
-        priorityRequest
-      }
-    );
-
-    System.assertEquals(warmConsultor.Id, response[0].consultantId);
-    System.assertEquals(hotConsultor.Id, response[1].consultantId);
-    System.assertEquals(priorityConsultor.Id, response[2].consultantId);
-  }
-
-  @isTest
-  static void testSelectReturnsNullWhenNoConsultorMatchesRating() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    // Lead with Cold rating and no state — selectNoState returns null for 'Cold'
-    Lead coldLead = createLead('Lead Cold', statusValue, 'Cold', null);
-    insert coldLead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = coldLead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-    Assert.isNull(
-      res[0].consultantId,
-      'Cold rating sem consultor deve retornar null.'
-    );
-  }
-
-  @isTest
-  static void testSelectByEmailWithEmptyCsvReturnsNull() {
-    Map<String, Schema.SObjectField> leadFields = Schema.SObjectType.Lead.fields.getMap();
-    if (
-      !leadFields.containsKey('Distributiontype__c') ||
-      !leadFields.containsKey('DistributionValue__c')
-    ) {
-      return;
-    }
-
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    // No matching consultors by email → selectByEmail returns null → fallback to selectNoState (null for Warm without consultors)
-    Lead lead = createLead('Lead Email Empty', statusValue, 'Warm', null);
-    lead.put('Distributiontype__c', 'Email');
-    lead.put('DistributionValue__c', '  ,  '); // blank CSV
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-  }
-
-  @isTest
-  static void testSelectByGraduationWithEmptyCsv() {
-    Map<String, Schema.SObjectField> leadFields = Schema.SObjectType.Lead.fields.getMap();
-    if (
-      !leadFields.containsKey('Distributiontype__c') ||
-      !leadFields.containsKey('DistributionValue__c')
-    ) {
-      return;
-    }
-
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    Lead lead = createLead('Lead Grad Empty', statusValue, 'Warm', null);
-    lead.put('Distributiontype__c', 'Graduação');
-    lead.put('DistributionValue__c', ''); // blank CSV
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-  }
-
-  @isTest
-  static void testSelectWithNullRatingFallsToNoState() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    // Lead with null Rating and no state → goes to selectNoState(null) → returns null
-    Lead nullRatingLead = new Lead(
-      LastName = 'Lead Null Rating',
-      Company = 'Empresa',
-      Status = statusValue,
-      Phone = '11999999990'
-    );
-    setIfExists(nullRatingLead, 'Lb065_LeadVencido__c', false);
-    insert nullRatingLead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = nullRatingLead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-  }
-
-  @isTest
-  static void testChooseOldestSelectsConsultorWithEarliestDate() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    // Two consultors with Advisor graduation (GRADS_WARM_NO_STATE) — one older, one newer
-    Consultor__c older = createConsultor(
-      'Advisor',
-      null,
-      null,
-      true,
-      System.now().addDays(-10)
-    );
-    Consultor__c newer = createConsultor(
-      'Advisor',
-      null,
-      null,
-      true,
-      System.now().addDays(-1)
-    );
-
-    // Warm lead with no state → selectNoState → selectNoStateByGraduation(GRADS_WARM_NO_STATE)
-    // chooseOldest should pick the one with the earliest lastLeadReceived
-    Lead lead = createLead('Lead Oldest Test', statusValue, 'Warm', null);
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-    Assert.areEqual(
-      older.Id,
-      res[0].consultantId,
-      'chooseOldest deve selecionar o consultor com data mais antiga.'
-    );
-  }
-
-  @isTest
-  static void testChooseOldestPrefersNullLastLeadReceived() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    // consultor with null lastLeadReceived should be preferred over one with a date
-    Consultor__c withDate = createConsultor(
-      'Advisor',
-      null,
-      null,
-      true,
-      System.now().addDays(-5)
-    );
-    Consultor__c noDate = createConsultor('Advisor', null, null, true, null);
-
-    // Warm lead with no state → selectNoStateByGraduation → chooseOldest
-    // Candidate with null lastLeadReceived should win (returned first in ordering)
-    Lead lead = createLead('Lead Null Date', statusValue, 'Warm', null);
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-    Assert.isTrue(
-      res[0].consultantId == noDate.Id || res[0].consultantId == withDate.Id,
-      'Deve selecionar um dos consultores válidos.'
-    );
-  }
-
-  @isTest
-  static void testWarmLeadWithStateNoMatchReturnsNull() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    // Consultor with Advisor graduation active (GRADS_WARM_NO_STATE), no matching state.
-    createConsultor('Advisor', null, null, true, System.now().addDays(-3));
-
-    // Warm lead WITH a state, but no consultor in that state.
-    // A configured lead state must not fall back to an unrelated no-state consultor.
-    Lead lead = createLead(
-      'Lead Warm With State No Match',
-      statusValue,
-      'Warm',
-      'AC'
-    );
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-    Assert.isNull(
-      res[0].consultantId,
-      'Lead com estado configurado nao deve cair em consultor sem aderencia ao estado.'
-    );
-  }
-
-  @isTest
-  static void testSplitCsvHandlesBlankAndSpaces() {
-    // Exercise splitCsv indirectly via selectByGraduation with padded values
-    Map<String, Schema.SObjectField> leadFields = Schema.SObjectType.Lead.fields.getMap();
-    if (
-      !leadFields.containsKey('Distributiontype__c') ||
-      !leadFields.containsKey('DistributionValue__c')
-    ) {
-      return;
-    }
-
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    Consultor__c consultor = createConsultor(
-      'Platinum',
-      null,
-      null,
-      true,
-      System.now().addDays(-2)
-    );
-
-    Lead lead = createLead('Lead Split CSV', statusValue, 'Warm', null);
-    lead.put('Distributiontype__c', 'Graduação');
-    // Value has leading/trailing spaces and empty segments — splitCsv must trim and skip blanks
-    lead.put('DistributionValue__c', ' , , Platinum , ');
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-    Assert.areEqual(
-      consultor.Id,
-      res[0].consultantId,
-      'splitCsv deve normalizar espaços e selecionar consultor por Platinum.'
-    );
-  }
-
-  @isTest
-  static void testHotLeadWithStateNoMatchFallsToNoState() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    // Hot lead WITH a state but no consultor in that state → lines 195-208 (Hot+state block)
-    Lead lead = createLead('Lead Hot With State', statusValue, 'Hot', 'AM');
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-  }
-
-  @isTest
-  static void testPrioritarioLeadWithStateNoMatchFallsToNoState() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    // Prioritário lead WITH a state but no consultor → lines 211-217 (Prioritário+state block)
-    Lead lead = createLead(
-      'Lead Prioritario With State',
-      statusValue,
-      'Prioritário',
-      'RR'
-    );
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-  }
-
-  @isTest
-  static void testEstadosAtendidosNoFalsePositiveSubstring() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    freezeAllConsultors();
-
-    // Consultor com ES — com LIKE '%SP%' bateria erroneamente em 'ESP'
-    // Com INCLUDES o match é exato: 'ES' != 'SP'
-    Consultor__c esConsultor = createConsultor(
-      'Gold',
-      null,
-      'ES',
-      true,
-      System.now().addDays(-5)
-    );
-    // Consultor correto para SP
-    Consultor__c spConsultor = createConsultor(
-      'Gold',
-      null,
-      'SP',
-      true,
-      System.now().addDays(-4)
-    );
-
-    Lead lead = createLead('Lead SP', statusValue, 'Hot', 'SP');
-    setIfExists(lead, 'ConsultorRegional__c', esConsultor.Id);
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-    Assert.areEqual(
-      spConsultor.Id,
-      res[0].consultantId,
-      'Consultor de ES não deve ser selecionado para lead de SP.'
-    );
-  }
-
-  @isTest
-  static void testEstadosAtendidosMultipleStates() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    // Consultor atende SP e RJ — lead de RJ deve selecioná-lo
-    Consultor__c consultor = createConsultor(
-      'Gold',
-      null,
-      'SP;RJ',
-      true,
-      System.now().addDays(-3)
-    );
-
-    Lead lead = createLead('Lead RJ Multi', statusValue, 'Hot', 'RJ');
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-    Assert.areEqual(
-      consultor.Id,
-      res[0].consultantId,
-      'Consultor com múltiplos estados deve ser elegível para qualquer estado listado.'
-    );
-  }
-
-  @isTest
-  static void testConsultorAddressStateDoesNotOverrideEstadosAtendidos() {
-    String statusValue = getNonNovoStatus();
-    if (String.isBlank(statusValue)) {
-      return;
-    }
-
-    freezeAllConsultors();
-
-    Consultor__c mtAddressOnlyConsultor = createConsultor(
-      'Diamond',
-      'MT',
-      'DF;GO;MS',
-      true,
-      System.now().addDays(-10)
-    );
-    mtAddressOnlyConsultor.SpecialRange__c = 'Hot';
-    updateConsultors(new List<Consultor__c>{ mtAddressOnlyConsultor });
-
-    Consultor__c mtEligibleConsultor = createConsultor(
-      'Gold',
-      null,
-      'MT',
-      true,
-      System.now().addDays(-1)
-    );
-
-    Lead lead = createLead('Lead MT', statusValue, 'Hot', 'MT');
-    insert lead;
-
-    LeadDistributionSelector.Request req = new LeadDistributionSelector.Request();
-    req.leadId = lead.Id;
-    List<LeadDistributionSelector.Response> res = LeadDistributionSelector.selectConsultant(
-      new List<LeadDistributionSelector.Request>{ req }
-    );
-
-    Assert.areEqual(1, res.size());
-    Assert.areEqual(
-      mtEligibleConsultor.Id,
-      res[0].consultantId,
-      'Estado do endereco do consultor nao deve substituir Estados Atendidos.'
-    );
-  }
-
-  private static void freezeAllConsultors() {
-    List<Consultor__c> existing = [
-      SELECT Id, FreezeConsult__c
-      FROM Consultor__c
-      WHERE FreezeConsult__c = FALSE
-    ];
-    for (Consultor__c c : existing) {
-      c.FreezeConsult__c = true;
-    }
-    if (!existing.isEmpty()) {
-      updateConsultors(existing);
-    }
-  }
-
-  private static void updateConsultors(List<Consultor__c> consultors) {
-    ConsultorTriggerHandler.disableTrigger();
-    try {
-      update consultors;
-    } finally {
-      ConsultorTriggerHandler.enableTrigger();
-    }
+    Assert.areEqual(2, responses.size());
+    Assert.areEqual('Lead nao encontrado.', responses[0].message);
+    Assert.areEqual('Lead nao encontrado.', responses[1].message);
   }
 
   private static String getNonNovoStatus() {
-    Schema.DescribeFieldResult statusDescribe = Lead.Status.getDescribe();
-    if (statusDescribe == null) {
-      return null;
-    }
-    for (Schema.PicklistEntry entry : statusDescribe.getPicklistValues()) {
-      if (entry != null && entry.getValue() != 'Novo') {
+    for (
+      Schema.PicklistEntry entry : Lead.Status.getDescribe().getPicklistValues()
+    ) {
+      if (entry.getValue() != 'Novo') {
         return entry.getValue();
       }
     }
@@ -839,20 +486,11 @@ private class LeadDistributionSelectorTest {
     String fieldName,
     Object value
   ) {
-    if (record == null || String.isBlank(fieldName)) {
-      return;
-    }
     if (
       record.getSObjectType()
         .getDescribe()
         .fields.getMap()
-        .containsKey(fieldName) &&
-      record.getSObjectType()
-        .getDescribe()
-        .fields.getMap()
-        .get(fieldName)
-        .getDescribe()
-        .isCreateable()
+        .containsKey(fieldName)
     ) {
       record.put(fieldName, value);
     }
