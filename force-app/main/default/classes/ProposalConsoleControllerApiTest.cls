@@ -40,7 +40,7 @@ private class ProposalConsoleControllerApiTest {
       true
     );
 
-    TestFactory.createSObject(
+    Opportunity opportunityRecord = (Opportunity) TestFactory.createSObject(
       new Opportunity(
         AccountId = account.Id,
         StageName = OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
@@ -49,6 +49,17 @@ private class ProposalConsoleControllerApiTest {
         IdVirtualOffice__c = 'VO-API-001'
       ),
       true
+    );
+
+    // Simulacao RENTAL para manter o cenario INITIAL (com card de aluguel).
+    // Sem ela, o resolver roteia para INITIAL_FINANCING e os mappings de teste
+    // (configurados apenas para INITIAL) nao se aplicam.
+    insert new PaymentSimulation__c(
+      Opportunity__c = opportunityRecord.Id,
+      PaymentType__c = 'Rental',
+      ProposalLabel__c = 'Solar Aluguel',
+      InstallmentCount__c = 60,
+      InstallmentAmount__c = 465.90
     );
 
     insert new ContentVersion(
@@ -485,6 +496,15 @@ private class ProposalConsoleControllerApiTest {
         IdVirtualOffice__c = TestFactory.nextUniqueValue('VO-FALLBACK')
       ),
       true
+    );
+
+    // Simulacao RENTAL para manter o cenario INITIAL (com card de aluguel).
+    insert new PaymentSimulation__c(
+      Opportunity__c = opportunityRecord.Id,
+      PaymentType__c = 'Rental',
+      ProposalLabel__c = 'Solar Aluguel',
+      InstallmentCount__c = 60,
+      InstallmentAmount__c = 465.90
     );
 
     insert new ContentVersion(

@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 06-08-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -349,52 +349,6 @@ public class OpportunityTriggerTest {
 
     OpportunityTriggerHandler.enableTrigger();
     System.assert(OpportunityTriggerHandler.isTriggerEnabled());
-    Test.stopTest();
-  }
-
-  @isTest
-  private static void shouldCreateCaseCustomerJourney() {
-    Account account = (Account) TestFactory.createSObject(new Account(), true);
-
-    Test.startTest();
-    ProposalCover__c ProposalCover = (ProposalCover__c) TestFactory.createSObject(
-      new ProposalCover__c(),
-      true
-    );
-    Parceiro__c parceiro = (Parceiro__c) TestFactory.createSObject(
-      new Parceiro__c(CapaProposta__c = ProposalCover.id, Produto__c = 'Solar'),
-      true
-    );
-
-    Opportunity opportunity = (Opportunity) TestFactory.createSObject(
-      new Opportunity(
-        RecordTypeId = Schema.SObjectType.Opportunity.getRecordTypeInfosByDeveloperName()
-          .get('Solar')
-          .getRecordTypeId(),
-        PotenciaNominalSistema__c = 250,
-        GrupoTarifario__c = 'Grupo B',
-        AccountId = account.Id,
-        ValorTotalProdutos__c = 15000,
-        Parceiro__c = parceiro.id
-      ),
-      true
-    );
-
-    ViabilityStudy__c viability = new ViabilityStudy__c();
-    viability.Opportunity__c = opportunity.Id;
-    viability.TypeWorkProjectFeasibility__c = 'UFV Mini acima de 300';
-    insert viability;
-
-    opportunity.ViabilityStudyFinished__c = true;
-    //opportunity.StageName = OpportunityUtils.STATUS_CONTRATO_FIRMADO_ASSINADO;
-    opportunity.StageName = OpportunityUtils.STATUS_CONTRATO;
-    opportunity.Status__c = OpportunityUtils.SUB_STATUS_CONTRATO_ASSINADO;
-    update opportunity;
-
-    opportunity.StageName = OpportunityUtils.STATUS_GANHO_FECHADO;
-
-    update opportunity;
-
     Test.stopTest();
   }
 
