@@ -58,11 +58,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Opportunity.GeracaoDesejadaMinima__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>AttachmentLink__c.SObjectId__c</field>
         <readable>true</readable>
     </fieldPermissions>

@@ -2,8 +2,9 @@
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  min-height: 340px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .controls {

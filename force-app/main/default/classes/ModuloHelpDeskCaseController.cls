@@ -216,6 +216,25 @@ public without sharing class ModuloHelpDeskCaseController {
   }
 
   @AuraEnabled
+  public static void uploadCaseFile(
+    Id caseId,
+    String fileName,
+    String base64File
+  ) {
+    HelpDeskFilePayload file = new HelpDeskFilePayload();
+    file.fileName = fileName;
+    file.name = fileName;
+    file.base64Data = base64File;
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    HelpDeskCaseService.uploadFiles(
+      caseId,
+      new List<HelpDeskFilePayload>{ file },
+      null,
+      ctx
+    );
+  }
+
+  @AuraEnabled
   public static void uploadFilesBypassLicense(
     Id caseId,
     List<HelpDeskFilePayload> files,

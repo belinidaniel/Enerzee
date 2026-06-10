@@ -4,7 +4,7 @@ import { CurrentPageReference } from "lightning/navigation";
 import createCase from "@salesforce/apex/ModuloHelpDeskCaseController.createCase";
 import getDefaultEntities from "@salesforce/apex/ModuloHelpDeskCaseController.getDefaultEntities";
 import addMessage from "@salesforce/apex/ModuloHelpDeskCaseController.addMessage";
-import uploadFiles from "@salesforce/apex/ModuloHelpDeskCaseController.uploadFiles";
+import uploadCaseFile from "@salesforce/apex/ModuloHelpDeskCaseController.uploadCaseFile";
 import uploadMessageFileExternal from "@salesforce/apex/ModuloHelpDeskCaseController.uploadMessageFileExternal";
 import getCaseCategoryOptions from "@salesforce/apex/ModuloHelpDeskCaseController.getCaseCategoryOptions";
 import cloudLogo from "@salesforce/resourceUrl/salesforceCloudV3";
@@ -214,14 +214,15 @@ export default class HelpDeskHome extends LightningElement {
       return Promise.resolve(null);
     }
     if (!this.contactId) {
-      const files = this.pendingFiles.map((file) => ({
-        fileName: file.fileName || file.name,
-        contentType: file.contentType,
-        base64Data: file.base64Data,
-        humanSize: file.humanSize,
-        name: file.name
-      }));
-      return uploadFiles({ caseId, files, contactId: null });
+      return Promise.all(
+        this.pendingFiles.map((file) =>
+          uploadCaseFile({
+            caseId,
+            fileName: file.fileName || file.name,
+            base64File: file.base64Data
+          })
+        )
+      );
     }
 
     // No site, mantém o armazenamento externo vinculado à mensagem pública.
