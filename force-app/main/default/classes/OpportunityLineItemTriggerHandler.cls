@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 06-01-2026
+ * @last modified on  : 06-10-2026
  * @last modified by  : Daniel Belini
  * @test              : OpportunityLineItemTriggerTest
  **/
@@ -166,7 +166,11 @@ public class OpportunityLineItemTriggerHandler extends TriggerHandler {
     }
 
     String userName = UserInfo.getUserName();
-    return String.isNotBlank(userName) &&
-      userName.toLowerCase().startsWith('integracao@lab065.com');
+    if (String.isBlank(userName)) {
+      return false;
+    }
+    String normalizedUserName = userName.toLowerCase();
+    return normalizedUserName.startsWith('integracao@lab065.com') ||
+      normalizedUserName.startsWith('jean.carlos@enerzee.com.br');
   }
 }

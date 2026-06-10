@@ -271,8 +271,16 @@ public class OpportunityBO {
       );
       if (availability == null || !availability.hasStoredProposal) {
         proposalGenerationRequestedByStage.add(opportunityRecord.Id);
-        opportunityRecord.StageName = oldMap.get(opportunityRecord.Id)
-          .StageName;
+        // Vindo de "Readequação de Proposta", a fase avança normalmente para
+        // "Proposta Gerada": a (re)geração ainda é disparada acima, mas não
+        // revertemos o StageName para não travar o fluxo de readequação.
+        Boolean comingFromReadjustment = OpportunityUtils.STATUS_READEQUACAO_DE_PROPOSTA.equalsIgnoreCase(
+          oldMap.get(opportunityRecord.Id).StageName
+        );
+        if (!comingFromReadjustment) {
+          opportunityRecord.StageName = oldMap.get(opportunityRecord.Id)
+            .StageName;
+        }
       }
     }
   }
@@ -289,7 +297,10 @@ public class OpportunityBO {
       Opportunity oldOpportunity = oldMap.get(opportunityRecord.Id);
       if (
         oldOpportunity == null ||
-        opportunityRecord.ReadequacaoSolicitada__c == true
+        opportunityRecord.ReadequacaoSolicitada__c == true ||
+        OpportunityUtils.STATUS_READEQUACAO_DE_PROPOSTA.equalsIgnoreCase(
+          opportunityRecord.StageName
+        )
       ) {
         continue;
       }
