@@ -49,6 +49,7 @@
         <members>AttachmentLink__c.SObjectType__c</members>
         <members>Case.Gerente__c</members>
         <members>Case.GerenteNome__c</members>
+        <members>Case.ComentarioSuporte__c</members>
         <members>Case.JiraIssueKey__c</members>
         <members>Case.JiraIssueUrl__c</members>
         <members>Case.JiraStatus__c</members>

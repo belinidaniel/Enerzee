@@ -55,6 +55,34 @@ export function groupMessageAttachments(links = []) {
   return grouped;
 }
 
+export function normalizeCaseAttachments(links = []) {
+  return links.map((link) => {
+    const document = link.ContentDocument || {};
+    const fileType = (
+      document.FileExtension ||
+      extensionFromName(document.Title) ||
+      ""
+    ).toLowerCase();
+    const title = document.Title || "Anexo";
+    const displayTitle =
+      fileType && !title.toLowerCase().endsWith(`.${fileType}`)
+        ? `${title}.${fileType}`
+        : title;
+    const versionId = document.LatestPublishedVersionId;
+    const documentId = link.ContentDocumentId;
+
+    return {
+      id: link.Id || documentId,
+      url: versionId
+        ? `/sfc/servlet.shepherd/version/download/${versionId}`
+        : `/lightning/r/ContentDocument/${documentId}/view`,
+      title: displayTitle,
+      size: formatFileSize(document.ContentSize),
+      iconName: resolveIconName(fileType)
+    };
+  });
+}
+
 export function formatFileSize(bytes) {
   if (!bytes && bytes !== 0) {
     return "";

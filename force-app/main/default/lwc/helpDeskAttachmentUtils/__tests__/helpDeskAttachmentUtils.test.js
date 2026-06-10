@@ -1,7 +1,8 @@
 import {
   formatFileSize,
   groupMessageAttachments,
-  initialsFromName
+  initialsFromName,
+  normalizeCaseAttachments
 } from "c/helpDeskAttachmentUtils";
 
 describe("helpDeskAttachmentUtils", () => {
@@ -37,5 +38,28 @@ describe("helpDeskAttachmentUtils", () => {
     expect(formatFileSize(1024)).toBe("1.0 KB");
     expect(initialsFromName("Maria Silva")).toBe("MS");
     expect(initialsFromName("", "C")).toBe("C");
+  });
+
+  it("normalizes files linked directly to the case", () => {
+    const attachments = normalizeCaseAttachments([
+      {
+        Id: "06A",
+        ContentDocumentId: "069",
+        ContentDocument: {
+          Title: "proposta",
+          FileExtension: "pdf",
+          ContentSize: 2048,
+          LatestPublishedVersionId: "068"
+        }
+      }
+    ]);
+
+    expect(attachments[0]).toMatchObject({
+      id: "06A",
+      title: "proposta.pdf",
+      size: "2.0 KB",
+      iconName: "doctype:pdf",
+      url: "/sfc/servlet.shepherd/version/download/068"
+    });
   });
 });

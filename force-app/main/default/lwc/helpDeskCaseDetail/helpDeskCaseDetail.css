@@ -57,6 +57,36 @@
   border-color: #fca5a5;
 }
 
+.support-comment-card {
+  border-radius: 12px;
+  border: 1px solid;
+  box-shadow: 0 6px 14px rgba(15, 35, 75, 0.06);
+  margin-bottom: 16px;
+  padding: 16px;
+}
+
+.support-comment-card.is-completed {
+  background: #f0fdf4;
+  border-color: #22c55e;
+}
+
+.support-comment-card.is-cancelled {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.support-comment-heading {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.support-comment-heading .label {
+  font-weight: 700;
+  margin: 0;
+}
+
 .summary-item {
   display: flex;
   flex-direction: column;
@@ -298,4 +328,14 @@
 
 .attachment-link:hover {
   color: #073d73;
+}
+
+.initial-attachments {
+  margin-top: 0;
+}
+
+.attachment-size {
+  color: #6b7280;
+  font-size: 0.75rem;
+  white-space: nowrap;
 }

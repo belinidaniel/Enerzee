@@ -1,7 +1,7 @@
 /**
  * @description       : Persiste e coordena o estado da geração assíncrona de propostas.
  * @author            : OpenAI Codex
- * @last modified on  : 06-06-2026
+ * @last modified on  : 06-10-2026
  * @test              : ProposalGenerationWorkflowTest, ProposalEngineSupportTest
  **/
 public without sharing class ProposalGenerationStateService {
@@ -74,9 +74,6 @@ public without sharing class ProposalGenerationStateService {
       Id = opportunityId,
       ProposalGenerationStatus__c = status
     );
-    if (status == FAILED && !hasAnyStoredProposal(opportunityId)) {
-      opportunityUpdate.PropostaGerada__c = false;
-    }
 
     Boolean triggerWasEnabled = OpportunityTriggerHandler.isTriggerEnabled();
     if (triggerWasEnabled) {

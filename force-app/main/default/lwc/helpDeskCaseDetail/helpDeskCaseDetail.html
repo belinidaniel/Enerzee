@@ -59,6 +59,22 @@
         </section>
       </template>
 
+      <template if:true={showSupportComment}>
+        <section class={supportCommentClass}>
+          <div class="support-comment-heading">
+            <lightning-icon
+              icon-name="utility:success"
+              size="small"
+              alternative-text={supportCommentLabel}
+            ></lightning-icon>
+            <p class="label">{supportCommentLabel}</p>
+          </div>
+          <lightning-formatted-rich-text
+            value={detail.supportComment}
+          ></lightning-formatted-rich-text>
+        </section>
+      </template>
+
       <section class="details-card">
         <p class="label">Detalhes</p>
         <template if:true={detail.richDescription}>
@@ -73,6 +89,49 @@
           <p class="empty-feed">Sem detalhes adicionais.</p>
         </template>
       </section>
+
+      <template if:true={hasCaseAttachments}>
+        <section class="details-card initial-attachments-card">
+          <p class="label">Anexos iniciais</p>
+          <ul class="message-attachments initial-attachments">
+            <template for:each={caseAttachments} for:item="att">
+              <li key={att.id} class="message-attachment">
+                <lightning-icon
+                  icon-name={att.iconName}
+                  size="small"
+                  alternative-text={att.title}
+                  class="attachment-type-icon"
+                ></lightning-icon>
+                <button
+                  type="button"
+                  class="attachment-link"
+                  data-url={att.url}
+                  data-title={att.title}
+                  onclick={handleOpenAttachment}
+                >
+                  {att.title}
+                </button>
+                <span class="attachment-size">{att.size}</span>
+                <lightning-button-icon
+                  icon-name="utility:preview"
+                  alternative-text="Visualizar"
+                  title="Visualizar"
+                  data-url={att.url}
+                  data-title={att.title}
+                  onclick={handleOpenAttachment}
+                ></lightning-button-icon>
+                <lightning-button-icon
+                  icon-name="utility:new_window"
+                  alternative-text="Abrir em nova aba"
+                  title="Abrir em nova aba"
+                  data-url={att.url}
+                  onclick={handleOpenInNewTab}
+                ></lightning-button-icon>
+              </li>
+            </template>
+          </ul>
+        </section>
+      </template>
 
       <section class="composer">
         <label class="label composer-label">Adicionar um comentário</label>

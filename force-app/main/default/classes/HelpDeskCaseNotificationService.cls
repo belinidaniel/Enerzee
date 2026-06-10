@@ -1,11 +1,35 @@
 /**
- * @description       : Notifica o solicitante interno quando um status do caso
- *                      Help Desk é alterado.
+ * @description       : Notifica o solicitante interno quando o chamado do
+ *                      Help Desk é concluído ou cancelado no Jira.
  * @test              : HelpDeskCaseNotificationServiceTest
  **/
 public without sharing class HelpDeskCaseNotificationService {
+  private static final String HELP_DESK_RECORD_TYPE = 'Help_Desk_Salesforce';
+  private static final String CLOSED_CASE_STATUS = 'Finalizado';
+
   @TestVisible
   private static Boolean skipSend = false;
+
+  public static void closeCasesFromJira(
+    List<Case> newRecords,
+    Map<Id, Case> oldMap
+  ) {
+    Schema.RecordTypeInfo helpDeskRecordType = Schema.SObjectType.Case.getRecordTypeInfosByDeveloperName()
+      .get(HELP_DESK_RECORD_TYPE);
+    if (helpDeskRecordType == null) {
+      return;
+    }
+
+    Id helpDeskRecordTypeId = helpDeskRecordType.getRecordTypeId();
+    for (Case currentRecord : newRecords) {
+      if (
+        currentRecord.RecordTypeId == helpDeskRecordTypeId &&
+        isClosingTransition(currentRecord, oldMap.get(currentRecord.Id))
+      ) {
+        currentRecord.Status = CLOSED_CASE_STATUS;
+      }
+    }
+  }
 
   public static void notifyStatusChanges(
     List<Case> newRecords,
@@ -14,12 +38,7 @@ public without sharing class HelpDeskCaseNotificationService {
     Set<Id> changedIds = new Set<Id>();
     for (Case currentRecord : newRecords) {
       Case previousRecord = oldMap.get(currentRecord.Id);
-      if (
-        previousRecord != null &&
-        (currentRecord.Status != previousRecord.Status ||
-        currentRecord.StatusAprovacao__c != previousRecord.StatusAprovacao__c ||
-        currentRecord.JiraStatus__c != previousRecord.JiraStatus__c)
-      ) {
+      if (isClosingTransition(currentRecord, previousRecord)) {
         changedIds.add(currentRecord.Id);
       }
     }
@@ -36,6 +55,7 @@ public without sharing class HelpDeskCaseNotificationService {
         Status,
         StatusAprovacao__c,
         JiraStatus__c,
+        ComentarioSuporte__c,
         SuppliedEmail,
         Contact.Email,
         CreatedBy.Email,
@@ -44,7 +64,7 @@ public without sharing class HelpDeskCaseNotificationService {
       FROM Case
       WHERE Id IN :changedIds
     ]) {
-      if (caseRecord.RecordType.DeveloperName != 'Help_Desk_Salesforce') {
+      if (caseRecord.RecordType.DeveloperName != HELP_DESK_RECORD_TYPE) {
         continue;
       }
       String recipient = resolveRecipient(caseRecord);
@@ -65,6 +85,28 @@ public without sharing class HelpDeskCaseNotificationService {
         'Falha ao notificar status do Help Desk: ' + error.getMessage()
       );
     }
+  }
+
+  @TestVisible
+  private static Boolean isClosingTransition(
+    Case currentRecord,
+    Case previousRecord
+  ) {
+    return previousRecord != null &&
+      currentRecord.JiraStatus__c != previousRecord.JiraStatus__c &&
+      isClosingStatus(currentRecord.JiraStatus__c);
+  }
+
+  private static Boolean isClosingStatus(String jiraStatus) {
+    if (String.isBlank(jiraStatus)) {
+      return false;
+    }
+    String normalizedStatus = jiraStatus.trim().toUpperCase();
+    return normalizedStatus == 'CONCLUIDO' ||
+      normalizedStatus == 'CONCLUÍDO' ||
+      normalizedStatus == 'DONE' ||
+      normalizedStatus == 'CANCELADO' ||
+      normalizedStatus == 'ITENS CANCELADOS';
   }
 
   @TestVisible
@@ -93,6 +135,19 @@ public without sharing class HelpDeskCaseNotificationService {
     String executionStatus = String.isNotBlank(caseRecord.JiraStatus__c)
       ? caseRecord.JiraStatus__c
       : 'Aguardando aprovação';
+    Boolean cancelled =
+      caseRecord.JiraStatus__c != null &&
+      (caseRecord.JiraStatus__c.equalsIgnoreCase('Cancelado') ||
+      caseRecord.JiraStatus__c.equalsIgnoreCase('ITENS CANCELADOS'));
+    String closureLabel = cancelled
+      ? 'Motivo do cancelamento'
+      : 'Conclusão do suporte';
+    String supportCommentHtml = String.isNotBlank(
+        caseRecord.ComentarioSuporte__c
+      )
+      ? caseRecord.ComentarioSuporte__c
+      : 'Não informado.';
+    String supportCommentText = supportCommentHtml.stripHtmlTags();
     String caseUrl =
       URL.getOrgDomainUrl().toExternalForm() +
       '/lightning/r/Case/' +
@@ -110,6 +165,10 @@ public without sharing class HelpDeskCaseNotificationService {
       executionStatus +
       '\nStatus operacional: ' +
       caseRecord.Status +
+      '\n\n' +
+      closureLabel +
+      ':\n' +
+      supportCommentText +
       '\n\nAcompanhe o chamado: ' +
       caseUrl;
 
@@ -117,11 +176,29 @@ public without sharing class HelpDeskCaseNotificationService {
     email.setToAddresses(new List<String>{ recipient });
     email.setSaveAsActivity(false);
     email.setSubject(
-      '[Help Desk] Atualização do chamado ' + caseRecord.CaseNumber
+      '[Help Desk] Chamado ' +
+        caseRecord.CaseNumber +
+        (cancelled ? ' cancelado' : ' concluído')
     );
     email.setPlainTextBody(body);
     email.setHtmlBody(
-      body.escapeHtml4().replace('\n', '<br/>') +
+      ('O chamado ' +
+          caseRecord.CaseNumber +
+          (cancelled ? ' foi cancelado.' : ' foi concluído.') +
+          '\n\nAssunto: ' +
+          caseRecord.Subject +
+          '\nStatus da aprovação: ' +
+          approvalStatus +
+          '\nStatus de execução: ' +
+          executionStatus +
+          '\nStatus operacional: ' +
+          caseRecord.Status)
+          .escapeHtml4()
+          .replace('\n', '<br/>') +
+        '<br/><br/><strong>' +
+        closureLabel.escapeHtml4() +
+        ':</strong><br/>' +
+        supportCommentHtml +
         '<br/><br/><a href="' +
         caseUrl +
         '">Abrir chamado</a>'
