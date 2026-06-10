@@ -339,6 +339,7 @@ public without sharing class HelpDeskCaseService {
       );
     }
     HelpDeskCaseDAO.insertCase(sanitized[0]);
+    HelpDeskInitialCommentService.createForCase(sanitized[0].Id);
     return sanitized[0].Id;
   }
 

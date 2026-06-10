@@ -7,11 +7,13 @@ import getMessages from "@salesforce/apex/ModuloHelpDeskCaseController.getMessag
 import getApprovalStatus from "@salesforce/apex/ModuloHelpDeskCaseController.getApprovalStatus";
 import addMessage from "@salesforce/apex/ModuloHelpDeskCaseController.addMessage";
 import getMessageAttachments from "@salesforce/apex/ModuloHelpDeskCaseController.getMessageAttachments";
+import getCaseAttachments from "@salesforce/apex/ModuloHelpDeskCaseController.getCaseAttachments";
 import uploadMessageFileExternal from "@salesforce/apex/ModuloHelpDeskCaseController.uploadMessageFileExternal";
 import {
   formatFileSize,
   groupMessageAttachments,
-  initialsFromName
+  initialsFromName,
+  normalizeCaseAttachments
 } from "c/helpDeskAttachmentUtils";
 
 export default class HelpDeskCaseDetail extends LightningElement {
@@ -36,9 +38,11 @@ export default class HelpDeskCaseDetail extends LightningElement {
   wiredDetail;
   wiredMessages;
   wiredAttachments;
+  wiredCaseFiles;
   wiredApproval;
   @track messages = [];
   @track attachmentsByMessage = {};
+  @track caseAttachments = [];
   @track approvalInfo;
   @track pendingFiles = [];
   readingFiles = false;
@@ -97,6 +101,20 @@ export default class HelpDeskCaseDetail extends LightningElement {
       this.attachmentsByMessage = groupMessageAttachments(data);
     } else if (error) {
       this.handleError("Erro ao carregar anexos", error);
+    }
+  }
+
+  @wire(getCaseAttachments, {
+    caseId: "$resolvedRecordId",
+    contactId: "$contactId"
+  })
+  wiredInitialAttachments(result) {
+    this.wiredCaseFiles = result;
+    const { data, error } = result;
+    if (data) {
+      this.caseAttachments = normalizeCaseAttachments(data);
+    } else if (error) {
+      this.handleError("Erro ao carregar anexos iniciais", error);
     }
   }
 
@@ -176,6 +194,10 @@ export default class HelpDeskCaseDetail extends LightningElement {
     return this.messages && this.messages.length > 0;
   }
 
+  get hasCaseAttachments() {
+    return this.caseAttachments.length > 0;
+  }
+
   get acceptedFormats() {
     return ".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.txt";
   }
@@ -236,6 +258,33 @@ export default class HelpDeskCaseDetail extends LightningElement {
       return "Aguardando aprovação";
     }
     return this.detail?.jiraStatus || "Aguardando atualização do Jira";
+  }
+
+  get showSupportComment() {
+    return (
+      !!this.detail?.supportComment &&
+      (this.isCompletedExecution || this.isCancelledExecution)
+    );
+  }
+
+  get isCompletedExecution() {
+    return ["Concluido", "DONE"].includes(this.detail?.jiraStatus);
+  }
+
+  get isCancelledExecution() {
+    return ["Cancelado", "ITENS CANCELADOS"].includes(this.detail?.jiraStatus);
+  }
+
+  get supportCommentLabel() {
+    return this.isCancelledExecution
+      ? "Motivo do cancelamento"
+      : "Conclusão do suporte";
+  }
+
+  get supportCommentClass() {
+    return this.isCancelledExecution
+      ? "support-comment-card is-cancelled"
+      : "support-comment-card is-completed";
   }
 
   handleCommentChange(event) {
@@ -378,6 +427,7 @@ export default class HelpDeskCaseDetail extends LightningElement {
       jiraIssueKey: data.JiraIssueKey__c || "",
       jiraIssueUrl: data.JiraIssueUrl__c || "",
       jiraStatus: data.JiraStatus__c || "",
+      supportComment: data.ComentarioSuporte__c || "",
       system: data.HelpDesk_Sistema__c || "",
       contactName: data.Contact?.Name || data.CreatedBy?.Name || "",
       createdDateDisplay: this.formatDate(data.CreatedDate),

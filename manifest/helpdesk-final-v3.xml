@@ -36,6 +36,7 @@
     <types>
         <members>Case.HelpDesk_Sistema__c</members>
         <members>Case.HelpDesk_Tipo__c</members>
+        <members>Case.ComentarioSuporte__c</members>
         <members>Case.Gerente__c</members>
         <members>Case.GerenteNome__c</members>
         <members>Case.HelpDesk_Status__c</members>

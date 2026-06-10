@@ -4,11 +4,35 @@
     <description>Status atual da issue no Jira. Preenchido pelo sync (fase 2). Vazio nesta fase.</description>
     <externalId>false</externalId>
     <label>Jira Status</label>
-    <length>60</length>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
-    <type>Text</type>
-    <unique>false</unique>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Pendente</fullName>
+                <default>false</default>
+                <label>Pendente</label>
+            </value>
+            <value>
+                <fullName>Trabalhando</fullName>
+                <default>false</default>
+                <label>Trabalhando</label>
+            </value>
+            <value>
+                <fullName>Concluido</fullName>
+                <default>false</default>
+                <label>Concluido</label>
+            </value>
+            <value>
+                <fullName>Cancelado</fullName>
+                <default>false</default>
+                <label>Cancelado</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
 </CustomField>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <applicationVisibilities>
         <application>Help_Desk</application>
@@ -8,7 +8,13 @@
         <apexClass>ModuloHelpDeskCaseController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <description>Permite abrir e acompanhar os próprios chamados no app interno Help Desk.</description>
+    <description
+  >Permite abrir e acompanhar os próprios chamados no app interno Help Desk.</description>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Case.ComentarioSuporte__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
         <field>Case.GerenteNome__c</field>

@@ -46,6 +46,7 @@ public without sharing class HelpDeskCaseDAO {
         CreatedById,
         Description,
         Description_Rich__c,
+        ComentarioSuporte__c,
         HelpDesk_Sistema__c,
         JiraIssueKey__c,
         JiraIssueUrl__c,
@@ -222,6 +223,54 @@ public without sharing class HelpDeskCaseDAO {
   public static HelpDeskMessage__c insertMessage(HelpDeskMessage__c msg) {
     insert msg;
     return msg;
+  }
+
+  public static List<Case> queryInitialCommentCases(Set<Id> caseIds) {
+    if (caseIds == null || caseIds.isEmpty()) {
+      return new List<Case>();
+    }
+    return [
+      SELECT
+        Id,
+        CaseNumber,
+        Subject,
+        Status,
+        StatusAprovacao__c,
+        Origin,
+        CreatedDate,
+        Description,
+        Description_Rich__c,
+        HelpDesk_Sistema__c,
+        HelpDesk_Tipo__c,
+        SuppliedEmail,
+        SuppliedPhone,
+        Account.Name,
+        ContactId,
+        Contact.Name,
+        Contact.Email,
+        Contact.Phone,
+        Contact.MobilePhone,
+        Contact.Title,
+        Contact.Account.Name,
+        CreatedBy.Name,
+        CreatedBy.Email,
+        CreatedBy.Phone,
+        CreatedBy.MobilePhone,
+        CreatedBy.Title,
+        CreatedBy.Profile.Name,
+        CreatedBy.UserRole.Name,
+        Gerente__c,
+        GerenteNome__c,
+        Gerente__r.Name,
+        Gerente__r.Email,
+        Gerente__r.Phone,
+        Gerente__r.MobilePhone,
+        Gerente__r.Title,
+        Gerente__r.Profile.Name,
+        Gerente__r.UserRole.Name
+      FROM Case
+      WHERE Id IN :caseIds
+    ];
   }
 
   public static List<AttachmentLink__c> queryAttachmentLinksByParents(

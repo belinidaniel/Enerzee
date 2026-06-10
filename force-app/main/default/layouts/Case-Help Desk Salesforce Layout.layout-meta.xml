@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <layoutSections>
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
@@ -91,6 +92,19 @@
         </layoutColumns>
         <style>OneColumn</style>
     </layoutSections>
+        <layoutSections>
+        <customLabel>true</customLabel>
+        <detailHeading>true</detailHeading>
+        <editHeading>true</editHeading>
+        <label>Encerramento do Suporte</label>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>ComentarioSuporte__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <style>OneColumn</style>
+    </layoutSections>
     <layoutSections>
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
@@ -157,17 +171,87 @@
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
     <layoutSections>
-        <customLabel>false</customLabel>
+        <customLabel>true</customLabel>
         <detailHeading>false</detailHeading>
         <editHeading>false</editHeading>
-        <layoutColumns/>
+        <label>Custom Links</label>
+        <layoutColumns />
+        <layoutColumns />
+        <layoutColumns />
         <style>CustomLinks</style>
     </layoutSections>
     <relatedLists>
         <relatedList>RelatedCommentsList</relatedList>
     </relatedLists>
     <relatedLists>
+        <fields>MILESTONETYPE.MILESTONE</fields>
+        <fields>CASEMILESTONE.TARGET_DATE</fields>
+        <fields>CASEMILESTONE.COMPLETION_DATE</fields>
+        <fields>CASEMILESTONE.TIME_REMAIN_MINS</fields>
+        <fields>CASEMILESTONE.IS_VIOLATED_IN</fields>
+        <fields>CASEMILESTONE.IS_COMPLETED_IN</fields>
+        <fields>CASEMILESTONE.IS_PAUSED_IN</fields>
+        <relatedList>RelatedCaseMilestoneList</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <relatedList>HelpDeskMessage__c.Case__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>TITLE</fields>
+        <fields>LAST_UPDATE</fields>
+        <fields>CREATEDBY_USER</fields>
+        <relatedList>RelatedArticleList</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <relatedList>CaseFollowersList</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>TITLE</fields>
+        <fields>DISPLAY_URL</fields>
+        <fields>EXTERNAL_OBJECT</fields>
+        <relatedList>RelatedExternalDocumentList</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <relatedList>Faturamento__c.Caso__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <relatedList>ClickSignEnvelope__c.Case__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <relatedList>RelatedCaseContactRoleList</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>Name</fields>
+        <fields>CreatedBy</fields>
+        <fields>CreatedDate</fields>
+        <fields>ViewCount</fields>
+        <fields>LastViewDate</fields>
+        <relatedList>RelatedContentDistributionList</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>Name</fields>
+        <fields>Owner</fields>
+        <fields>StartTime</fields>
+        <fields>EndTime</fields>
+        <fields>Status</fields>
+        <relatedList>RelatedLiveChatTranscriptList</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>CreatedDate</fields>
+        <fields>StepStatus</fields>
+        <fields>OriginalActor</fields>
+        <fields>Actor</fields>
+        <fields>Comments</fields>
+        <relatedList>RelatedProcessHistoryList</relatedList>
+    </relatedLists>
+    <relatedLists>
         <relatedList>RelatedFileList</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <relatedList>RelatedEntityHistoryList</relatedList>
     </relatedLists>
     <relatedLists>
         <relatedList>RelatedAttachmentList</relatedList>
@@ -181,6 +265,8 @@
         <fields>TASK.LAST_UPDATE</fields>
         <relatedList>RelatedHistoryList</relatedList>
     </relatedLists>
+    <relatedObjects>ContactId</relatedObjects>
+    <relatedObjects>AccountId</relatedObjects>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>
     <showInteractionLogPanel>false</showInteractionLogPanel>
@@ -188,7 +274,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h000000000000AAA</masterLabel>
+        <masterLabel>00hU500000DhvGW</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

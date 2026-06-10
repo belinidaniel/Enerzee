@@ -38,6 +38,10 @@ public class CaseTriggerHandler extends TriggerHandler {
   }
 
   public override void beforeUpdate() {
+    HelpDeskCaseNotificationService.closeCasesFromJira(
+      (List<Case>) newRecordList,
+      (Map<Id, Case>) oldMap
+    );
     CaseBO.checkTasksConclusionBeforeStatusChange(
       (List<Case>) newRecordList,
       (Map<Id, Case>) oldMap

@@ -79,10 +79,10 @@ export default class HelpDeskCaseList extends LightningElement {
   get executionFilterOptions() {
     const defaultStatuses = [
       "Aguardando aprovação",
-      "Em Análise",
       "Pendente",
-      "Em Andamento",
-      "Finalizado"
+      "Trabalhando",
+      "Concluido",
+      "Cancelado"
     ];
     const receivedStatuses = this.allCases
       .map((caseItem) => caseItem.executionStatus)
