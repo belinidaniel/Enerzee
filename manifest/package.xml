@@ -21,11 +21,15 @@
         <members>HelpDeskMessageBO</members>
         <members>HelpDeskMessageBOTest</members>
         <members>HelpDeskMessageTriggerHandler</members>
+        <members>LeadInteractionLeadSyncService</members>
+        <members>LeadInteractionLeadSyncServiceTest</members>
+        <members>LeadInteractionTriggerHandler</members>
         <name>ApexClass</name>
     </types>
     <types>
         <members>CaseCommentTrigger</members>
         <members>HelpDeskMessageTrigger</members>
+        <members>LeadInteractionTrigger</members>
         <name>ApexTrigger</name>
     </types>
     <types>

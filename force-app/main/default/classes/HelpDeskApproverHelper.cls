@@ -12,6 +12,16 @@ public without sharing class HelpDeskApproverHelper {
   private static Id fallbackApproverId;
 
   public static User getCurrentUserApprover() {
+    if (fallbackApproverId != null) {
+      List<User> testFallback = [
+        SELECT Id, Name
+        FROM User
+        WHERE Id = :fallbackApproverId
+        LIMIT 1
+      ];
+      return testFallback.isEmpty() ? null : testFallback[0];
+    }
+
     User requester = [
       SELECT Id, ManagerId, Manager.Name, Manager.IsActive
       FROM User
@@ -24,16 +34,6 @@ public without sharing class HelpDeskApproverHelper {
       requester.Manager.IsActive
     ) {
       return requester.Manager;
-    }
-
-    if (fallbackApproverId != null) {
-      List<User> testFallback = [
-        SELECT Id, Name
-        FROM User
-        WHERE Id = :fallbackApproverId
-        LIMIT 1
-      ];
-      return testFallback.isEmpty() ? null : testFallback[0];
     }
 
     List<User> fallbackUsers = [

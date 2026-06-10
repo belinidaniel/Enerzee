@@ -12,10 +12,17 @@
         <members>HelpDeskApproverHelper</members>
         <members>HelpDeskMessageBO</members>
         <members>HelpDeskMessageBOTest</members>
+        <members>LeadInteractionLeadSyncService</members>
+        <members>LeadInteractionLeadSyncServiceTest</members>
+        <members>LeadInteractionTriggerHandler</members>
         <members>ModuloHelpDeskCaseController</members>
         <members>ModuloHelpDeskCaseControllerTest</members>
         <members>CaseTriggerHandler</members>
         <name>ApexClass</name>
+    </types>
+    <types>
+        <members>LeadInteractionTrigger</members>
+        <name>ApexTrigger</name>
     </types>
     <types>
         <members>Case.AprovacaoHelpDesk</members>
