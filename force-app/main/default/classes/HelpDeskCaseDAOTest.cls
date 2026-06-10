@@ -17,6 +17,9 @@ private class HelpDeskCaseDAOTest {
       Subject = 'Teste',
       Status = 'New',
       Origin = 'Phone',
+      RecordTypeId = Schema.SObjectType.Case.getRecordTypeInfosByDeveloperName()
+        .get('Help_Desk_Salesforce')
+        .getRecordTypeId(),
       ContactId = c.Id
     );
     insert cs;

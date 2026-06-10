@@ -4,19 +4,15 @@
     <description>Processo de negócios para casos do Help Desk Salesforce.</description>
     <isActive>true</isActive>
     <values>
-        <fullName>Novo</fullName>
-        <default>true</default>
-    </values>
-    <values>
         <fullName>Em andamento</fullName>
         <default>false</default>
     </values>
     <values>
-        <fullName>Escalado</fullName>
+        <fullName>Finalizado</fullName>
         <default>false</default>
     </values>
     <values>
-        <fullName>Fechado</fullName>
-        <default>false</default>
+        <fullName>Novo</fullName>
+        <default>true</default>
     </values>
 </BusinessProcess>

@@ -28,6 +28,20 @@
         </criteriaItems>
         <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>
     </sharingCriteriaRules>
+    <sharingCriteriaRules>
+        <fullName>Help_Desk_Gestores</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>Help Desk - Gestores</label>
+        <sharedTo>
+            <group>HelpDesk_Managers</group>
+        </sharedTo>
+        <criteriaItems>
+            <field>RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Help Desk Salesforce</value>
+        </criteriaItems>
+        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>
+    </sharingCriteriaRules>
     <sharingOwnerRules>
         <fullName>CAO</fullName>
         <accessLevel>Edit</accessLevel>

@@ -56,6 +56,21 @@ private class ModuloHelpDeskCaseControllerTest {
     User u = createUser();
     insert u;
     Contact c = createContact();
+    Case otherUserCase = new Case(
+      Subject = 'Case de outro usuário',
+      Status = [
+        SELECT MasterLabel
+        FROM CaseStatus
+        WHERE IsClosed = FALSE
+        ORDER BY SortOrder ASC
+        LIMIT 1
+      ]
+      .MasterLabel,
+      Origin = 'Phone',
+      RecordTypeId = helpDeskRecordTypeId(),
+      ContactId = c.Id
+    );
+    insert otherUserCase;
     String openStatus = [
       SELECT MasterLabel
       FROM CaseStatus
@@ -80,6 +95,7 @@ private class ModuloHelpDeskCaseControllerTest {
         Subject = 'Open Case',
         Status = openStatus,
         Origin = 'Phone',
+        RecordTypeId = helpDeskRecordTypeId(),
         ContactId = c.Id
       );
       insert openCase;
@@ -89,6 +105,7 @@ private class ModuloHelpDeskCaseControllerTest {
           Subject = 'Closed Case',
           Status = closedStatus,
           Origin = 'Phone',
+          RecordTypeId = helpDeskRecordTypeId(),
           ContactId = c.Id
         );
         insert closedCase;
@@ -113,6 +130,10 @@ private class ModuloHelpDeskCaseControllerTest {
       Test.stopTest();
 
       System.assert(new Map<Id, Case>(openCases).containsKey(openCase.Id));
+      System.assert(
+        !new Map<Id, Case>(openCases).containsKey(otherUserCase.Id),
+        'Usuário interno não deve listar casos criados por outro usuário.'
+      );
       if (closedCaseId != null) {
         System.assert(new Map<Id, Case>(closedCases).containsKey(closedCaseId));
       } else {
@@ -123,6 +144,17 @@ private class ModuloHelpDeskCaseControllerTest {
         );
       }
       System.assertEquals(openCase.Id, detail.Id);
+
+      Boolean denied = false;
+      try {
+        ModuloHelpDeskCaseController.getCaseDetail(otherUserCase.Id, c.Id);
+      } catch (AuraHandledException expected) {
+        denied = true;
+      }
+      System.assert(
+        denied,
+        'Usuário interno não deve abrir caso de outro usuário.'
+      );
     }
   }
 
@@ -131,15 +163,15 @@ private class ModuloHelpDeskCaseControllerTest {
     User u = createUser();
     insert u;
     Contact c = createContact();
-    Case cs = new Case(
-      Subject = 'Case with files',
-      Status = 'Novo',
-      Origin = 'Email',
-      ContactId = c.Id
-    );
-    insert cs;
-
     System.runAs(u) {
+      Case cs = new Case(
+        Subject = 'Case with files',
+        Status = 'Novo',
+        Origin = 'Email',
+        RecordTypeId = helpDeskRecordTypeId(),
+        ContactId = c.Id
+      );
+      insert cs;
       CaseComment existing = new CaseComment(
         ParentId = cs.Id,
         CommentBody = 'Existing',
@@ -169,6 +201,11 @@ private class ModuloHelpDeskCaseControllerTest {
         new List<HelpDeskFilePayload>{ fp },
         c.Id
       );
+      ModuloHelpDeskCaseController.uploadCaseFile(
+        cs.Id,
+        'internal.txt',
+        EncodingUtil.base64Encode(Blob.valueOf('internal'))
+      );
       ModuloHelpDeskCaseController.uploadFilesBypassLicense(
         cs.Id,
         new List<HelpDeskFilePayload>{ fp },
@@ -184,7 +221,7 @@ private class ModuloHelpDeskCaseControllerTest {
       System.assertEquals(1, comments.size());
       System.assertNotEquals(null, created.Id);
       System.assertEquals(0, beforeLinks.size());
-      System.assertEquals(2, afterLinks.size());
+      System.assertEquals(3, afterLinks.size());
       System.assertNotEquals(null, categoryOptions);
     }
   }
@@ -253,10 +290,8 @@ private class ModuloHelpDeskCaseControllerTest {
           'HelpDesk Subject',
           'Descricao simples',
           '<p>Descricao rica</p>',
-          null,
-          null,
-          null,
-          'Medium',
+          'Salesforce',
+          'Acesso',
           c.Email,
           c.Phone,
           c.Id,
@@ -285,5 +320,121 @@ private class ModuloHelpDeskCaseControllerTest {
       }
       Test.stopTest();
     }
+  }
+
+  private class ExternalArchiveMock implements HttpCalloutMock {
+    public HttpResponse respond(HttpRequest req) {
+      HttpResponse res = new HttpResponse();
+      res.setStatusCode(200);
+      res.setStatus('OK');
+      res.setHeader('Content-Type', 'application/json');
+      res.setBody('{"data":"https://files.example.com/ctrl.png"}');
+      return res;
+    }
+  }
+
+  @IsTest
+  static void testMessageAttachmentsWrappers() {
+    User u = createUser();
+    insert u;
+    PermissionSet managerPermission = [
+      SELECT Id
+      FROM PermissionSet
+      WHERE Name = 'HelpDesk_Aprovacao_Admin'
+      LIMIT 1
+    ];
+    insert new PermissionSetAssignment(
+      AssigneeId = u.Id,
+      PermissionSetId = managerPermission.Id
+    );
+    Contact c = createContact();
+
+    System.runAs(u) {
+      Case cs = new Case(
+        Subject = 'Case message attachments',
+        Status = 'Novo',
+        Origin = 'Email',
+        RecordTypeId = helpDeskRecordTypeId(),
+        ContactId = c.Id
+      );
+      insert cs;
+      Id messageId = ModuloHelpDeskCaseController.addMessage(
+        cs.Id,
+        'Comentário com anexo',
+        'Cliente',
+        'Cliente',
+        true,
+        c.Id
+      );
+
+      Test.setMock(HttpCalloutMock.class, new ExternalArchiveMock());
+
+      Test.startTest();
+      Id linkId = ModuloHelpDeskCaseController.uploadMessageFileExternal(
+        cs.Id,
+        messageId,
+        'foto.png',
+        EncodingUtil.base64Encode(Blob.valueOf('imagem')),
+        c.Id
+      );
+      List<AttachmentLink__c> links = ModuloHelpDeskCaseController.getMessageAttachments(
+        cs.Id,
+        c.Id
+      );
+      // Visão interna (agente) deve enxergar os mesmos anexos.
+      List<AttachmentLink__c> allLinks = ModuloHelpDeskCaseController.getAllMessageAttachments(
+        cs.Id
+      );
+      // Mensagem do agente + listagem completa (visão interna).
+      Id agentMsgId = ModuloHelpDeskCaseController.addAgentMessage(
+        cs.Id,
+        'Resposta do agente',
+        null,
+        false
+      );
+      List<HelpDeskMessage__c> allMessages = ModuloHelpDeskCaseController.getAllMessages(
+        cs.Id
+      );
+      Test.stopTest();
+
+      System.assertNotEquals(null, linkId);
+      System.assertEquals(1, links.size());
+      System.assertEquals(String.valueOf(messageId), links[0].SObjectId__c);
+      System.assertEquals(1, allLinks.size());
+      System.assertEquals(String.valueOf(messageId), allLinks[0].SObjectId__c);
+      System.assertNotEquals(null, agentMsgId);
+      System.assertEquals(2, allMessages.size());
+
+      // A URL do anexo deve ter sido anexada ("nome: url") ao CaseComment do Jira.
+      Id commentId = (Id) [
+        SELECT CaseCommentId__c
+        FROM HelpDeskMessage__c
+        WHERE Id = :messageId
+        LIMIT 1
+      ]
+      .CaseCommentId__c;
+      CaseComment mirrored = [
+        SELECT CommentBody
+        FROM CaseComment
+        WHERE Id = :commentId
+        LIMIT 1
+      ];
+      System.assert(
+        mirrored.CommentBody.contains('Anexos:'),
+        'O CaseComment deve conter a seção "Anexos:"'
+      );
+      System.assert(
+        mirrored.CommentBody.contains(
+          '1- foto.png: https://files.example.com/ctrl.png'
+        ),
+        'A URL do anexo deve constar numerada no CaseComment espelhado'
+      );
+    }
+  }
+
+  private static Id helpDeskRecordTypeId() {
+    return Schema.SObjectType.Case.getRecordTypeInfosByDeveloperName()
+      .get('Help_Desk_Salesforce')
+      .getRecordTypeId();
   }
 }

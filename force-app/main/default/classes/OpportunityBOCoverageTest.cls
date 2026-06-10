@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-14-2026
+ * @last modified on  : 06-01-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -14,6 +14,7 @@ private class OpportunityBOCoverageTest {
     single.Origem = 'API';
     single.ConsumptionAverage = 10.0;
     single.TargetConsume = 12.0;
+    single.GeracaoDesejadaMinima = 9.5;
     single.PercentageIncreaseInConsumption = 2.5;
     single.PowerDistributionCompany = 'Utility';
     single.ZipCode = '02925130';
@@ -170,6 +171,12 @@ private class OpportunityBOCoverageTest {
 
     OpportunityBO.mapOpportunityFieldsRest(single, opp);
     OpportunityBO.mapOpportunityFieldsRest(null, opp); // null guard coverage
+
+    Assert.areEqual(
+      9.5,
+      opp.GeracaoDesejadaMinima__c,
+      'A geração desejada mínima recebida deve ser mapeada na oportunidade.'
+    );
   }
 
   @isTest

@@ -2,12 +2,14 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 05-05-2026
+ * @last modified on  : 05-26-2026
  * @last modified by  : Daniel Belini
- * @test              : KitInstalacaoBOTest, KitInstalacaoTriggerTest
+ * @test              : KitInstalacaoBOTest, KitInstalacaoTriggerTest, OpportunityLineItemTriggerTest
  **/
 public without sharing class KitInstalacaoBO {
   private static final String CLASS_NAME = 'KitInstalacaoBO';
+  @TestVisible
+  private static Set<Id> enqueuedSendKitUpdateKitIds = new Set<Id>();
   private static final Set<String> EZEECONNECT_RECORD_TYPES = new Set<String>{
     'BowE',
     'Ultragaz',
@@ -310,11 +312,146 @@ public without sharing class KitInstalacaoBO {
     }
   }
 
-  @future(callout=true)
   public static void SendKitUpdate(Set<Id> kitIds) {
     if (kitIds == null || kitIds.isEmpty()) {
       System.debug('SendKitUpdate called with no kit IDs.');
       return;
+    }
+
+    Set<Id> kitIdsToEnqueue = new Set<Id>(kitIds);
+    kitIdsToEnqueue.remove(null);
+    kitIdsToEnqueue.removeAll(enqueuedSendKitUpdateKitIds);
+
+    if (kitIdsToEnqueue.isEmpty()) {
+      System.debug(
+        'SendKitUpdate skipped because all kit IDs were already enqueued in this transaction.'
+      );
+      return;
+    }
+
+    enqueuedSendKitUpdateKitIds.addAll(kitIdsToEnqueue);
+
+    Map<Id, Set<Id>> opportunityIdToKitIds = new Map<Id, Set<Id>>();
+    Set<Id> kitIdsWithoutOpportunity = new Set<Id>();
+
+    for (Kit_Instalacao__c kit : [
+      SELECT Id, Nome_da_Oportunidade__c
+      FROM Kit_Instalacao__c
+      WHERE Id IN :kitIdsToEnqueue
+    ]) {
+      if (kit.Nome_da_Oportunidade__c == null) {
+        kitIdsWithoutOpportunity.add(kit.Id);
+        continue;
+      }
+
+      if (!opportunityIdToKitIds.containsKey(kit.Nome_da_Oportunidade__c)) {
+        opportunityIdToKitIds.put(kit.Nome_da_Oportunidade__c, new Set<Id>());
+      }
+      opportunityIdToKitIds.get(kit.Nome_da_Oportunidade__c).add(kit.Id);
+    }
+
+    for (Id opportunityId : opportunityIdToKitIds.keySet()) {
+      enqueueSendKitUpdateJob(
+        opportunityIdToKitIds.get(opportunityId),
+        opportunityId
+      );
+    }
+
+    for (Id kitId : kitIdsWithoutOpportunity) {
+      enqueueSendKitUpdateJob(new Set<Id>{ kitId }, kitId);
+    }
+  }
+
+  public static void sendKitUpdateAndGenerateProposal(Set<Id> kitIds) {
+    if (kitIds == null || kitIds.isEmpty()) {
+      System.debug('sendKitUpdateAndGenerateProposal called with no kit IDs.');
+      return;
+    }
+    enqueueSendKitUpdateAndGenerateProposalJob(kitIds);
+  }
+
+  private static void enqueueSendKitUpdateJob(Set<Id> kitIds, Id signatureId) {
+    if (kitIds == null || kitIds.isEmpty() || signatureId == null) {
+      return;
+    }
+
+    AsyncOptions options = new AsyncOptions();
+    options.DuplicateSignature = QueueableDuplicateSignature.Builder()
+      .addId(signatureId)
+      .build();
+
+    try {
+      System.enqueueJob(new SendKitUpdateJob(kitIds), options);
+      System.debug(
+        'SendKitUpdate enqueued for signatureId=' +
+          signatureId +
+          ' | kits=' +
+          kitIds
+      );
+    } catch (DuplicateMessageException e) {
+      System.debug(
+        'SendKitUpdate skipped because a queueable is already enqueued for signatureId=' +
+        signatureId
+      );
+    }
+  }
+
+  private static void enqueueSendKitUpdateAndGenerateProposalJob(
+    Set<Id> kitIds
+  ) {
+    AsyncOptions options = new AsyncOptions();
+    options.DuplicateSignature = QueueableDuplicateSignature.Builder()
+      .addInteger(System.hashCode(kitIds))
+      .build();
+
+    try {
+      System.enqueueJob(
+        new SendKitUpdateAndGenerateProposalJob(kitIds),
+        options
+      );
+    } catch (DuplicateMessageException e) {
+      System.debug(
+        'sendKitUpdateAndGenerateProposal skipped because a queueable is already enqueued for kitIds=' +
+        kitIds
+      );
+    }
+  }
+
+  public class SendKitUpdateJob implements Queueable, Database.AllowsCallouts {
+    private Set<Id> kitIds;
+
+    public SendKitUpdateJob(Set<Id> kitIds) {
+      this.kitIds = new Set<Id>();
+      if (kitIds != null) {
+        this.kitIds.addAll(kitIds);
+      }
+    }
+
+    public void execute(QueueableContext context) {
+      sendKitUpdateSync(kitIds);
+    }
+  }
+
+  public class SendKitUpdateAndGenerateProposalJob implements Queueable, Database.AllowsCallouts {
+    private Set<Id> kitIds;
+
+    public SendKitUpdateAndGenerateProposalJob(Set<Id> kitIds) {
+      this.kitIds = new Set<Id>();
+      if (kitIds != null) {
+        this.kitIds.addAll(kitIds);
+      }
+    }
+
+    public void execute(QueueableContext context) {
+      sendKitUpdateSync(kitIds);
+    }
+  }
+
+  public static Set<Id> sendKitUpdateSync(Set<Id> kitIds) {
+    Set<Id> opportunityIdsWithUpdatedProposalValues = new Set<Id>();
+    if (kitIds == null || kitIds.isEmpty()) {
+      System.debug('SendKitUpdate called with no kit IDs.');
+      return opportunityIdsWithUpdatedProposalValues;
     }
     System.debug('SendKitUpdate called for kits: ' + kitIds);
 
@@ -331,7 +468,7 @@ public without sharing class KitInstalacaoBO {
 
       if (oppIdToKitIdMap.isEmpty()) {
         System.debug('No opportunities found for the given kits.');
-        return;
+        return opportunityIdsWithUpdatedProposalValues;
       }
 
       List<Opportunity> opportunitiesToProcess = [
@@ -348,6 +485,7 @@ public without sharing class KitInstalacaoBO {
           Instalacao__c,
           CustoFinanceiroWeg__c,
           ConsumoInformadoB__c,
+          GeracaoDesejadaMinima__c,
           TipoTelhadoEstrutura__c,
           IsRSD__c,
           (
@@ -432,6 +570,11 @@ public without sharing class KitInstalacaoBO {
       }
 
       if (!opportunitiesToUpdate.isEmpty()) {
+        for (Opportunity oppToUpdate : opportunitiesToUpdate) {
+          if (oppToUpdate.PropostaAlterada__c == true) {
+            opportunityIdsWithUpdatedProposalValues.add(oppToUpdate.Id);
+          }
+        }
         OpportunityTriggerHandler.disableTrigger();
         try {
           update opportunitiesToUpdate;
@@ -448,6 +591,7 @@ public without sharing class KitInstalacaoBO {
       Utils.createLog(CLASS_NAME, 'SendKitUpdate', e);
       // @future should log and finish without rethrow to avoid unhandled async exception e-mails.
     }
+    return opportunityIdsWithUpdatedProposalValues;
   }
 
   /**
@@ -461,6 +605,7 @@ public without sharing class KitInstalacaoBO {
     IntegracaoNivelloContrato.EnviarKitRequest request = new IntegracaoNivelloContrato.EnviarKitRequest();
     request.Id = opp.IdVirtualOffice__c;
     request.ConsumoDesejado = opp.ConsumoInformadoB__c;
+    request.GeracaoDesejadaMinima = opp.GeracaoDesejadaMinima__c;
     request.PotenciaPicoSistema = opp.PotenciaPicoSistema__c;
     request.QtdModulos = (opp.NumeroModulos__c != null)
       ? (Integer) opp.NumeroModulos__c

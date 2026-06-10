@@ -2,11 +2,11 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 06-01-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, ExternalArchiveServiceTest
  **/
-public with sharing class ExternalArchiveService {
+public without sharing class ExternalArchiveService {
   public class UploadResult {
     @AuraEnabled
     public Boolean success;
@@ -131,6 +131,217 @@ public with sharing class ExternalArchiveService {
     );
     link.AttachmentURL__c = (String) responseBody.get('data');
     if (isRelatorio) {
+      link.ContentDocumentId__c = contentDocumentId;
+      link.InternalAttachmentURL__c = internalUrl;
+    }
+    insert link;
+
+    UploadResult ok = new UploadResult();
+    ok.success = true;
+    ok.attachmentId = link.Id;
+    ok.message = 'Arquivo enviado com sucesso.';
+    return ok;
+  }
+
+  /**
+   * Versão sem Opportunity — resolve IdProposal pelo IdVirtualOffice__c da Oportunidade do Case.
+   * Quando não há Oportunidade vinculada, envia IdProposal = null para a API.
+   * O AttachmentLink__c gerado é vinculado ao próprio Case (SObjectId__c = caseId).
+   */
+  @AuraEnabled
+  public static UploadResult uploadExternalArchiveForCase(
+    Id caseId,
+    String fileName,
+    String base64File,
+    String activityName,
+    String docRequiredName
+  ) {
+    return uploadExternalArchiveForCase(
+      caseId,
+      fileName,
+      base64File,
+      activityName,
+      docRequiredName,
+      caseId,
+      'Case'
+    );
+  }
+
+  /**
+   * Sobrecarga que permite vincular o AttachmentLink__c a um registro diferente do Case
+   * (ex.: a mensagem HelpDeskMessage__c que originou o anexo), via linkParentId/linkParentType.
+   */
+  public static UploadResult uploadExternalArchiveForCase(
+    Id caseId,
+    String fileName,
+    String base64File,
+    String activityName,
+    String docRequiredName,
+    Id linkParentId,
+    String linkParentType
+  ) {
+    if (String.isBlank(base64File)) {
+      throw new AuraHandledException('Arquivo inválido.');
+    }
+    if (caseId == null) {
+      throw new AuraHandledException('caseId é obrigatório.');
+    }
+
+    // Usa lista para não estourar QueryException quando o sharing do usuário
+    // (ex.: guest/community) não dá acesso de leitura ao Case.
+    List<Case> cases = [
+      SELECT Id, Oportunidade_Pai__c, Oportunidade_Pai__r.IdVirtualOffice__c
+      FROM Case
+      WHERE Id = :caseId
+      LIMIT 1
+    ];
+
+    Id opportunityId;
+    String virtualOfficeId;
+    if (!cases.isEmpty()) {
+      Case c = cases[0];
+      opportunityId = c.Oportunidade_Pai__c;
+      virtualOfficeId = c.Oportunidade_Pai__r != null
+        ? c.Oportunidade_Pai__r.IdVirtualOffice__c
+        : null;
+    }
+
+    // Sem Oportunidade vinculada, IdProposal vai null para a API.
+    String idProposal = String.isNotBlank(virtualOfficeId)
+      ? virtualOfficeId
+      : null;
+
+    return uploadExternalArchiveWithIdProposal(
+      idProposal,
+      opportunityId,
+      fileName,
+      base64File,
+      caseId,
+      activityName,
+      docRequiredName,
+      linkParentId,
+      linkParentType
+    );
+  }
+
+  private static UploadResult uploadExternalArchiveWithIdProposal(
+    String idProposal,
+    Id opportunityId,
+    String fileName,
+    String base64File,
+    Id sobjectId,
+    String activityName,
+    String docRequiredName,
+    Id linkParentId,
+    String linkParentType
+  ) {
+    Boolean isRelatorio = isRelatorioFinalDeObra(activityName);
+    String fileNameWithExtension = isRelatorio
+      ? normalizeFileName(fileName)
+      : ensureExtension(fileName);
+
+    Integrador__mdt integracao = [
+      SELECT URL__c
+      FROM Integrador__mdt
+      WHERE DeveloperName = 'ExternalArchive'
+      LIMIT 1
+    ];
+
+    Map<String, Object> body = new Map<String, Object>{
+      'IdProposal' => idProposal,
+      'FileBase64' => base64File,
+      'FileName' => fileNameWithExtension
+    };
+
+    // Log do body enviado (sem despejar o base64 inteiro, que pode estourar o log).
+    System.debug(
+      LoggingLevel.INFO,
+      'ExternalArchive >> Endpoint=' +
+        integracao.URL__c +
+        ' | IdProposal=[' +
+        idProposal +
+        '] | FileName=[' +
+        fileNameWithExtension +
+        '] | FileBase64.length=' +
+        (base64File != null ? base64File.length() : 0) +
+        ' | FileBase64.preview=' +
+        (base64File != null &&
+          base64File.length() > 60
+          ? base64File.substring(0, 60) + '...'
+          : base64File)
+    );
+
+    HttpRequest req = new HttpRequest();
+    req.setEndpoint(integracao.URL__c);
+    req.setMethod('POST');
+    req.setHeader('Content-Type', 'application/json');
+    req.setBody(JSON.serialize(body));
+
+    HttpResponse res = Utils.callIntegrationNivello(req);
+    System.debug(
+      LoggingLevel.INFO,
+      'ExternalArchive << StatusCode=' +
+        (res != null ? String.valueOf(res.getStatusCode()) : 'null') +
+        ' | Body=' +
+        (res != null ? res.getBody() : 'sem resposta')
+    );
+
+    if (
+      res == null ||
+      res.getStatusCode() < 200 ||
+      res.getStatusCode() >= 300
+    ) {
+      UploadResult result = new UploadResult();
+      result.success = false;
+      result.message =
+        'Erro ao enviar arquivo: ' +
+        (res != null
+          ? res.getStatusCode() + ' - ' + res.getBody()
+          : 'sem resposta');
+      return result;
+    }
+
+    String internalUrl;
+    String contentDocumentId;
+    if (isRelatorio && opportunityId != null) {
+      Blob fileBlob = decodeBase64File(base64File);
+      String title = stripExtension(fileNameWithExtension);
+      ContentVersion cv = new ContentVersion();
+      cv.ContentLocation = 'S';
+      cv.FirstPublishLocationId = (Id) sobjectId;
+      cv.VersionData = fileBlob;
+      cv.Title = title;
+      cv.PathOnClient = fileNameWithExtension;
+      cv.IsMajorVersion = true;
+      insert cv;
+      cv = [
+        SELECT Id, ContentDocumentId
+        FROM ContentVersion
+        WHERE Id = :cv.Id
+        LIMIT 1
+      ];
+      contentDocumentId = String.valueOf(cv.ContentDocumentId);
+      internalUrl =
+        '/sfc/servlet.shepherd/document/download/' + cv.ContentDocumentId;
+    }
+
+    Id parentId = linkParentId != null ? linkParentId : sobjectId;
+    AttachmentLink__c link = new AttachmentLink__c();
+    link.SObjectId__c = String.valueOf(parentId);
+    link.SObjectType__c = String.isNotBlank(linkParentType)
+      ? linkParentType
+      : 'Case';
+    link.FileName__c = fileNameWithExtension;
+    link.FileType__c = stripExtension(fileNameWithExtension) ==
+      fileNameWithExtension
+      ? null
+      : fileNameWithExtension.substringAfterLast('.').toLowerCase();
+    link.AttachmentDescription__c = fileNameWithExtension;
+    Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(
+      res.getBody()
+    );
+    link.AttachmentURL__c = (String) responseBody.get('data');
+    if (isRelatorio && String.isNotBlank(contentDocumentId)) {
       link.ContentDocumentId__c = contentDocumentId;
       link.InternalAttachmentURL__c = internalUrl;
     }

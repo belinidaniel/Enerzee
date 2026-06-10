@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 06-06-2026
+ * @last modified on  : 06-04-2026
  * @last modified by  : Daniel Belini
  * @test              : HelpDeskCaseDAOTest
  **/
@@ -14,10 +14,11 @@ public without sharing class HelpDeskCaseDAO {
   ) {
     String statusFilter = closed ? 'IsClosed = TRUE' : 'IsClosed = FALSE';
     String query =
-      'SELECT Id, CaseNumber, Subject, Status, LastModifiedDate, Contact.Name, ContactId ' +
-      'FROM Case WHERE ' +
+      'SELECT Id, CaseNumber, Subject, Status, StatusAprovacao__c, JiraStatus__c, ' +
+      'LastModifiedDate, Contact.Name, ContactId, CreatedBy.Name ' +
+      'FROM Case WHERE RecordType.DeveloperName = \'Help_Desk_Salesforce\' AND (' +
       ownershipFilter +
-      ' AND ' +
+      ') AND ' +
       statusFilter;
     if (String.isNotBlank(searchTerm)) {
       String pattern = '%' + String.escapeSingleQuotes(searchTerm.trim()) + '%';
@@ -34,12 +35,23 @@ public without sharing class HelpDeskCaseDAO {
         CaseNumber,
         Subject,
         Status,
+        StatusAprovacao__c,
+        Supervisor__c,
+        Gerente__c,
         CreatedDate,
         LastModifiedDate,
         Contact.Name,
         ContactId,
+        CreatedBy.Name,
+        CreatedById,
         Description,
-        Description_Rich__c
+        Description_Rich__c,
+        HelpDesk_Sistema__c,
+        JiraIssueKey__c,
+        JiraIssueUrl__c,
+        JiraStatus__c,
+        Oportunidade_Pai__c,
+        Oportunidade_Pai__r.IdVirtualOffice__c
       FROM Case
       WHERE Id = :caseId
     ];
@@ -106,6 +118,133 @@ public without sharing class HelpDeskCaseDAO {
       return;
     }
     insert links;
+  }
+
+  public static List<HelpDeskMessage__c> queryMessages(Id caseId) {
+    return [
+      SELECT
+        Id,
+        Name,
+        Body__c,
+        IsPublic__c,
+        AuthorName__c,
+        AuthorType__c,
+        CreatedDate,
+        CreatedById,
+        CreatedBy.Name,
+        (
+          SELECT
+            Id,
+            ContentDocumentId,
+            ContentDocument.LatestPublishedVersionId,
+            ContentDocument.Title,
+            ContentDocument.FileExtension,
+            ContentDocument.ContentSize
+          FROM ContentDocumentLinks
+          ORDER BY ContentDocument.CreatedDate ASC
+        )
+      FROM HelpDeskMessage__c
+      WHERE Case__c = :caseId AND IsPublic__c = TRUE
+      ORDER BY CreatedDate DESC
+    ];
+  }
+
+  public static List<HelpDeskMessage__c> queryAllMessages(Id caseId) {
+    return [
+      SELECT
+        Id,
+        Name,
+        Body__c,
+        IsPublic__c,
+        AuthorName__c,
+        AuthorType__c,
+        CreatedDate,
+        CreatedById,
+        CreatedBy.Name,
+        (
+          SELECT
+            Id,
+            ContentDocumentId,
+            ContentDocument.LatestPublishedVersionId,
+            ContentDocument.Title,
+            ContentDocument.FileExtension,
+            ContentDocument.ContentSize
+          FROM ContentDocumentLinks
+          ORDER BY ContentDocument.CreatedDate ASC
+        )
+      FROM HelpDeskMessage__c
+      WHERE Case__c = :caseId
+      ORDER BY CreatedDate DESC
+    ];
+  }
+
+  public static List<HelpDeskMessage__c> queryMessageByIdAndCase(
+    Id messageId,
+    Id caseId
+  ) {
+    return [
+      SELECT Id, Case__c, IsPublic__c
+      FROM HelpDeskMessage__c
+      WHERE Id = :messageId AND Case__c = :caseId
+      LIMIT 1
+    ];
+  }
+
+  public static Case queryApprovalDetail(Id caseId) {
+    return [
+      SELECT
+        Id,
+        StatusAprovacao__c,
+        ContactId,
+        Gerente__c,
+        GerenteNome__c,
+        CreatedBy.Name
+      FROM Case
+      WHERE Id = :caseId
+      LIMIT 1
+    ];
+  }
+
+  public static List<ProcessInstanceWorkitem> queryPendingApprovalWorkitems(
+    Id caseId
+  ) {
+    return [
+      SELECT Id, ActorId, Actor.Name, CreatedDate
+      FROM ProcessInstanceWorkitem
+      WHERE
+        ProcessInstance.TargetObjectId = :caseId
+        AND ProcessInstance.Status = 'Pending'
+      ORDER BY CreatedDate DESC
+      LIMIT 1
+    ];
+  }
+
+  public static HelpDeskMessage__c insertMessage(HelpDeskMessage__c msg) {
+    insert msg;
+    return msg;
+  }
+
+  public static List<AttachmentLink__c> queryAttachmentLinksByParents(
+    Set<Id> parentIds
+  ) {
+    Set<String> parentKeys = new Set<String>();
+    for (Id pid : parentIds) {
+      parentKeys.add(String.valueOf(pid));
+    }
+    return [
+      SELECT
+        Id,
+        SObjectId__c,
+        SObjectType__c,
+        AttachmentURL__c,
+        InternalAttachmentURL__c,
+        FileName__c,
+        FileType__c,
+        AttachmentDescription__c
+      FROM AttachmentLink__c
+      WHERE SObjectId__c IN :parentKeys
+      ORDER BY CreatedDate ASC
+    ];
   }
 
   public static Id resolveRecordTypeId(

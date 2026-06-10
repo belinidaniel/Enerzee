@@ -1,19 +1,28 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>ClickSignCreateButtomTemplate</members>
-        <name>LightningComponentBundle</name>
-    </types>
-    <types>
         <members>ClickSignVisibilityRuleService</members>
-        <name>ApexClass</name>
-    </types>
-    <types>
         <members>ClickSignTemplateController</members>
-        <name>ApexClass</name>
-    </types>
-    <types>
         <members>ClickSignUtils</members>
+        <members>ExternalArchiveService</members>
+        <members>HelpDeskCaseDAO</members>
+        <members>HelpDeskCaseService</members>
+        <members>KitInstalacaoBO</members>
+        <members>LeadDistributionSelector</members>
+        <members>LeadDistributionSelectorTest</members>
+        <members>LeadInteractionLeadSyncServiceTest</members>
+        <members>ModuloHelpDeskCaseController</members>
+        <members>OpportunityBO</members>
+        <members>OpportunityBOCoverageTest</members>
+        <members>OpportunityUtils</members>
+        <members>OpportunityUtilsTest</members>
+        <members>PDFControllerExtension</members>
+        <members>ProjetoBO</members>
+        <members>ProjetoBOCoverageTest</members>
+        <members>ProposalApiGenerationJob</members>
+        <members>ProposalService</members>
+        <members>TaskBO</members>
+        <members>TaskBOTest</members>
         <name>ApexClass</name>
     </types>
     <version>58.0</version>

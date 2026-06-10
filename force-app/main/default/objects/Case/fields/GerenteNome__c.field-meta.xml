@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GerenteNome__c</fullName>
+    <description>Snapshot do nome do gestor aprovador, gravado na criação do caso.</description>
+    <externalId>false</externalId>
+    <label>Gestor aprovador (Nome)</label>
+    <length>121</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

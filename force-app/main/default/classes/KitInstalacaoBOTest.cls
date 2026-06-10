@@ -186,6 +186,46 @@ private class KitInstalacaoBOTest {
   }
 
   @IsTest
+  static void shouldDispatchSendKitUpdateWhenGeracaoDesejadaMinimaChanges() {
+    OpportunityTriggerHandler.disableTrigger();
+    KitInstalacaoTriggerHandler.disableTrigger();
+
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        IdVirtualOffice__c = 'VO-GERACAO-MINIMA',
+        GeracaoDesejadaMinima__c = 400
+      ),
+      true
+    );
+    TestFactory.createSObject(
+      new Kit_Instalacao__c(Nome_da_Oportunidade__c = opp.Id),
+      true
+    );
+
+    OpportunityTriggerHandler.enableTrigger();
+    KitInstalacaoTriggerHandler.enableTrigger();
+
+    Test.setMock(HttpCalloutMock.class, new SendKitUpdateMock());
+
+    Test.startTest();
+    opp.GeracaoDesejadaMinima__c = 450;
+    update opp;
+    Test.stopTest();
+
+    Opportunity updated = [
+      SELECT PropostaAlterada__c
+      FROM Opportunity
+      WHERE Id = :opp.Id
+    ];
+    Assert.isTrue(
+      updated.PropostaAlterada__c,
+      'A alteração da geração desejada mínima deve disparar updateInfosKit.'
+    );
+  }
+
+  @IsTest
   static void shouldDispatchSendKitUpdateWhenEstruturaDeFIxacaoChanges() {
     OpportunityTriggerHandler.disableTrigger();
     KitInstalacaoTriggerHandler.disableTrigger();
@@ -356,12 +396,71 @@ private class KitInstalacaoBOTest {
     );
   }
 
+  @IsTest
+  static void shouldIncludeGeracaoDesejadaMinimaInKitRequest() {
+    KitInstalacaoTriggerHandler.disableTrigger();
+
+    Account acc = (Account) TestFactory.createSObject(new Account(), true);
+    Opportunity opp = (Opportunity) TestFactory.createSObject(
+      new Opportunity(
+        AccountId = acc.Id,
+        IdVirtualOffice__c = 'VO-GERACAO-MINIMA-REQUEST',
+        ConsumoInformadoB__c = 800,
+        GeracaoDesejadaMinima__c = 650.5
+      ),
+      true
+    );
+    Kit_Instalacao__c kit = (Kit_Instalacao__c) TestFactory.createSObject(
+      new Kit_Instalacao__c(Nome_da_Oportunidade__c = opp.Id),
+      true
+    );
+
+    KitInstalacaoTriggerHandler.enableTrigger();
+    Test.setMock(
+      HttpCalloutMock.class,
+      new GeracaoDesejadaMinimaRequestMock(650.5)
+    );
+
+    Test.startTest();
+    KitInstalacaoBO.SendKitUpdate(new Set<Id>{ kit.Id });
+    Test.stopTest();
+  }
+
   /**
    * Returns a valid KitResponseWrapper payload for /api/Proposal/updateInfosKit.
    * Also handles any other Nivello endpoint called in the same transaction.
    */
   public class SendKitUpdateMock implements HttpCalloutMock {
     public HTTPResponse respond(HTTPRequest req) {
+      HttpResponse res = new HttpResponse();
+      res.setHeader('Content-Type', 'application/json');
+      res.setStatusCode(200);
+      res.setStatus('OK');
+      res.setBody(
+        '{"success":true,"data":{"Direct":100.0,"Pontos":200.0,"Rede":50.0,' +
+        '"Bdi":10.0,"AdditionalFixedCost":5.0,"Installation":2000.0,"FinancialCostWeg":150.0}}'
+      );
+      return res;
+    }
+  }
+
+  public class GeracaoDesejadaMinimaRequestMock implements HttpCalloutMock {
+    private Decimal expectedValue;
+
+    public GeracaoDesejadaMinimaRequestMock(Decimal expectedValue) {
+      this.expectedValue = expectedValue;
+    }
+
+    public HTTPResponse respond(HTTPRequest req) {
+      Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(
+        req.getBody()
+      );
+      Assert.areEqual(
+        expectedValue,
+        Decimal.valueOf(String.valueOf(payload.get('GeracaoDesejadaMinima'))),
+        'O updateInfosKit deve receber GeracaoDesejadaMinima.'
+      );
+
       HttpResponse res = new HttpResponse();
       res.setHeader('Content-Type', 'application/json');
       res.setStatusCode(200);

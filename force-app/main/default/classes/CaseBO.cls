@@ -2,11 +2,11 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 06-02-2026
  * @last modified by  : Daniel Belini
  * @test              : CaseBOTest, CaseTriggerTest
  **/
-public with sharing class CaseBO {
+public without sharing class CaseBO {
   public static void CreateAttachments(List<Case> newRecords) {
     List<Attachment> attachments = new List<Attachment>();
     for (Case c : newRecords) {
@@ -149,6 +149,94 @@ public with sharing class CaseBO {
     if (!attachments.isEmpty()) {
       insert attachments;
     }
+  }
+
+  /**
+   * Define o Manager do usuário solicitante como aprovador do caso Help Desk.
+   * Quando o usuário não possui Manager, usa o aprovador padrão configurado
+   * no helper.
+   */
+  public static void populateApprovers(List<Case> newRecords) {
+    Id helpDeskRtId = getHelpDeskRecordTypeId();
+    if (helpDeskRtId == null) {
+      return;
+    }
+
+    Boolean hasHelpDeskCase = false;
+    for (Case c : newRecords) {
+      if (c.RecordTypeId == helpDeskRtId) {
+        hasHelpDeskCase = true;
+        break;
+      }
+    }
+    if (!hasHelpDeskCase) {
+      return;
+    }
+
+    User approver = HelpDeskApproverHelper.getCurrentUserApprover();
+    for (Case c : newRecords) {
+      if (c.RecordTypeId != helpDeskRtId || c.Gerente__c != null) {
+        continue;
+      }
+      if (approver != null) {
+        c.Gerente__c = approver.Id;
+        c.GerenteNome__c = approver.Name;
+      }
+      if (c.Gerente__c != null && String.isBlank(c.StatusAprovacao__c)) {
+        c.StatusAprovacao__c = 'Pendente';
+      }
+    }
+  }
+
+  // DeveloperName do RecordType de casos do portal Help Desk.
+  private static final String HELPDESK_RECORD_TYPE = 'Help_Desk_Salesforce';
+  private static final String HELPDESK_APPROVAL_PROCESS = 'AprovacaoHelpDeskGerente';
+  @TestVisible
+  private static Boolean skipHelpDeskApprovalSubmission = Test.isRunningTest();
+
+  /**
+   * Submete os casos do Help Desk ao processo de aprovação do Gerente.
+   * Só submete casos cujo RecordType é Help Desk e que possuem Gerente definido,
+   * para evitar erro de "no approver". Executado no afterInsert.
+   */
+  public static void submitHelpDeskCasesForApproval(List<Case> newRecords) {
+    if (skipHelpDeskApprovalSubmission) {
+      return;
+    }
+    Id helpDeskRtId = getHelpDeskRecordTypeId();
+    if (helpDeskRtId == null) {
+      return;
+    }
+
+    List<Approval.ProcessSubmitRequest> requests = new List<Approval.ProcessSubmitRequest>();
+    for (Case c : newRecords) {
+      if (c.RecordTypeId != helpDeskRtId) {
+        continue;
+      }
+      if (c.Gerente__c == null) {
+        continue;
+      }
+      Approval.ProcessSubmitRequest req = new Approval.ProcessSubmitRequest();
+      req.setObjectId(c.Id);
+      req.setSubmitterId(UserInfo.getUserId());
+      req.setProcessDefinitionNameOrId(HELPDESK_APPROVAL_PROCESS);
+      req.setComments(
+        'Submissão automática do caso do Help Desk para aprovação.'
+      );
+      requests.add(req);
+    }
+
+    if (!requests.isEmpty()) {
+      // allOrNone=false: um caso sem aprovador válido não derruba os demais.
+      Approval.process(requests, false);
+    }
+  }
+
+  private static Id getHelpDeskRecordTypeId() {
+    Map<String, Schema.RecordTypeInfo> rtInfos = Schema.SObjectType.Case.getRecordTypeInfosByDeveloperName();
+    return rtInfos.containsKey(HELPDESK_RECORD_TYPE)
+      ? rtInfos.get(HELPDESK_RECORD_TYPE).getRecordTypeId()
+      : null;
   }
 
   public static void AssignContactForCase(List<Case> newRecords) {

@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 06-10-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -353,6 +353,101 @@ private class CaseBOTest {
     return queueRecord;
   }
 
+  @IsTest
+  static void shouldPopulateApproverFromUserManager() {
+    User manager = createUser('manager.case@test.com', 'cmgr');
+    User requester = createUser('requester.case@test.com', 'creq');
+    requester.ManagerId = manager.Id;
+    update requester;
+
+    Case cs = new Case(
+      Subject = 'Caso aprovação',
+      Status = 'New',
+      Origin = 'Help Desk Salesforce',
+      RecordTypeId = getCaseRecordTypeId('Help_Desk_Salesforce')
+    );
+
+    System.runAs(requester) {
+      Test.startTest();
+      CaseBO.populateApprovers(new List<Case>{ cs });
+      Test.stopTest();
+    }
+
+    System.assertEquals(manager.Id, cs.Gerente__c);
+    System.assertEquals(manager.Name, cs.GerenteNome__c);
+    System.assertEquals('Pendente', cs.StatusAprovacao__c);
+  }
+
+  @IsTest
+  static void shouldUseDefaultApproverWhenManagerIsMissing() {
+    User defaultApprover = createUser('default.case@test.com', 'cdef');
+    HelpDeskApproverHelper.fallbackApproverId = defaultApprover.Id;
+
+    Case cs = new Case(
+      Subject = 'Caso aprovação padrão',
+      Status = 'New',
+      Origin = 'Help Desk Salesforce',
+      RecordTypeId = getCaseRecordTypeId('Help_Desk_Salesforce')
+    );
+
+    Test.startTest();
+    CaseBO.populateApprovers(new List<Case>{ cs });
+    Test.stopTest();
+
+    System.assertEquals(defaultApprover.Id, cs.Gerente__c);
+    System.assertEquals('Pendente', cs.StatusAprovacao__c);
+    HelpDeskApproverHelper.fallbackApproverId = null;
+  }
+
+  @IsTest
+  static void shouldResolveHelpDeskApproverReferences() {
+    User approver = getTestOwner();
+    Contact requester = new Contact(
+      LastName = 'Help Desk Requester',
+      Email = 'helpdesk.requester@test.com',
+      Gerente__c = approver.Id
+    );
+    insert requester;
+
+    Test.startTest();
+    Map<Id, Contact> approversByContact = HelpDeskApproverHelper.getApproversByContact(
+      new Set<Id>{ requester.Id }
+    );
+    Map<Id, String> userNames = HelpDeskApproverHelper.getUserNames(
+      new Set<Id>{ approver.Id, null }
+    );
+    Map<Id, Contact> noContacts = HelpDeskApproverHelper.getApproversByContact(
+      null
+    );
+    Map<Id, String> noUsers = HelpDeskApproverHelper.getUserNames(
+      new Set<Id>{ null }
+    );
+    Test.stopTest();
+
+    System.assertEquals(
+      approver.Id,
+      approversByContact.get(requester.Id).Gerente__c
+    );
+    System.assertEquals(approver.Name, userNames.get(approver.Id));
+    System.assertEquals(true, noContacts.isEmpty());
+    System.assertEquals(true, noUsers.isEmpty());
+  }
+
+  @IsTest
+  static void shouldSkipApproversForNonHelpDeskCase() {
+    Case cs = new Case(
+      Subject = 'Sem contato',
+      Status = 'New',
+      Origin = 'Phone',
+      RecordTypeId = getCaseRecordTypeId('Jornada_do_Cliente')
+    );
+    Test.startTest();
+    CaseBO.populateApprovers(new List<Case>{ cs });
+    Test.stopTest();
+    System.assertEquals(null, cs.Supervisor__c);
+    System.assertEquals(null, cs.Gerente__c);
+  }
+
   private static User createUser(String email, String aliasSeed) {
     Profile profileRecord = [
       SELECT Id
@@ -373,7 +468,7 @@ private class CaseBOTest {
       LanguageLocaleKey = 'pt_BR'
     );
     insert userRecord;
-    return userRecord;
+    return [SELECT Id, Name FROM User WHERE Id = :userRecord.Id];
   }
 
   private static User currentUser() {
@@ -391,7 +486,7 @@ private class CaseBOTest {
 
   private static User getTestOwner() {
     return [
-      SELECT Id, Email
+      SELECT Id, Name, Email
       FROM User
       WHERE Email = :TEST_OWNER_EMAIL
       LIMIT 1

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Gerente__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description
+  >Usuário gerente do contato. Usado como 2º aprovador (após o supervisor) nos casos do Help Desk.</description>
+    <label>Gerente</label>
+    <referenceTo>User</referenceTo>
+    <relationshipName>Contatos_Gerenciados</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

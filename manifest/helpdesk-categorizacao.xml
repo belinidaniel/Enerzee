@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>HelpDeskCaseService</members>
+        <members>HelpDeskCaseServiceTest</members>
+        <members>ModuloHelpDeskCaseControllerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Case.HelpDesk_Tipo__c</members>
+        <members>Case.HelpDesk_Subtipo__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Case-Help Desk Salesforce Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>Help_Desk_Guest</members>
+        <members>HelpDesk_Aprovacao_Admin</members>
+        <name>PermissionSet</name>
+    </types>
+    <version>64.0</version>
+</Package>

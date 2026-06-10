@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ExternalSource__c</fullName>
+    <description>Marcador de origem da mensagem quando criada pela ponte de comentários (ex.: CaseComment Id). Vazio = mensagem nativa do portal. Usado para evitar loop e duplicação na sincronização com CaseComment/Jira.</description>
+    <externalId>true</externalId>
+    <label>External Source</label>
+    <length>40</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

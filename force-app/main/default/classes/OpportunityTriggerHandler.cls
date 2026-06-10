@@ -41,6 +41,7 @@ public class OpportunityTriggerHandler extends TriggerHandler {
   }
 
   public override void beforeInsert() {
+    OpportunityBO.assignLeadOnCreate((List<Opportunity>) Trigger.new);
     OpportunityBO.assignDefaultOwner((List<Opportunity>) Trigger.new);
     OpportunityBO.setProposalFieldDefaults((List<Opportunity>) Trigger.new);
     OpportunityBO.calculateDataToProposalGraphic25Years(

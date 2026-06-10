@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 03-15-2026
+ * @last modified on  : 05-26-2026
  * @last modified by  : Daniel Belini
  * @test              : ModuloHelpDeskCaseControllerTest
  **/
@@ -27,6 +27,133 @@ public without sharing class ModuloHelpDeskCaseController {
   public static List<CaseComment> getCaseComments(Id caseId, Id contactId) {
     HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
     return HelpDeskCaseService.getCaseComments(caseId, contactId, ctx);
+  }
+
+  @AuraEnabled(cacheable=true)
+  public static List<HelpDeskMessage__c> getMessages(Id caseId, Id contactId) {
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    return HelpDeskCaseService.getMessages(caseId, contactId, ctx, false);
+  }
+
+  @AuraEnabled(cacheable=false)
+  public static List<HelpDeskMessage__c> getAllMessages(Id caseId) {
+    HelpDeskCaseService.enforceManagerAccess();
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    ctx.allowAllCases = true;
+    return HelpDeskCaseService.getMessages(caseId, null, ctx, true);
+  }
+
+  @AuraEnabled(cacheable=true)
+  public static HelpDeskCaseService.ApprovalStatusDTO getApprovalStatus(
+    Id caseId,
+    Id contactId
+  ) {
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    return HelpDeskCaseService.getApprovalStatus(caseId, contactId, ctx);
+  }
+
+  @AuraEnabled(cacheable=true)
+  public static List<AttachmentLink__c> getMessageAttachments(
+    Id caseId,
+    Id contactId
+  ) {
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    return HelpDeskCaseService.getCaseAttachmentLinks(
+      caseId,
+      contactId,
+      ctx,
+      false
+    );
+  }
+
+  // Visão interna (agente): inclui anexos de mensagens privadas também.
+  @AuraEnabled(cacheable=false)
+  public static List<AttachmentLink__c> getAllMessageAttachments(Id caseId) {
+    HelpDeskCaseService.enforceManagerAccess();
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    ctx.allowAllCases = true;
+    return HelpDeskCaseService.getCaseAttachmentLinks(caseId, null, ctx, true);
+  }
+
+  @AuraEnabled
+  public static Id addAgentMessage(
+    Id caseId,
+    String body,
+    String authorName,
+    Boolean isPublic
+  ) {
+    HelpDeskCaseService.enforceManagerAccess();
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    ctx.allowAllCases = true;
+    return HelpDeskCaseService.addMessage(
+      caseId,
+      body,
+      authorName,
+      'Agente',
+      isPublic,
+      null,
+      ctx
+    );
+  }
+
+  @AuraEnabled
+  public static Id addMessage(
+    Id caseId,
+    String body,
+    String authorName,
+    String authorType,
+    Boolean isPublic,
+    Id contactId
+  ) {
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    return HelpDeskCaseService.addMessage(
+      caseId,
+      body,
+      authorName,
+      authorType,
+      isPublic,
+      contactId,
+      ctx
+    );
+  }
+
+  @AuraEnabled
+  public static void uploadFilesToMessage(
+    Id caseId,
+    Id messageId,
+    List<HelpDeskFilePayload> files,
+    Id contactId
+  ) {
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    HelpDeskCaseService.uploadFilesToMessage(
+      caseId,
+      messageId,
+      files,
+      contactId,
+      ctx
+    );
+  }
+
+  @AuraEnabled
+  public static Id uploadMessageFileExternal(
+    Id caseId,
+    Id messageId,
+    String fileName,
+    String base64File,
+    Id contactId
+  ) {
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    if (contactId == null && ctx.isManager == true) {
+      ctx.allowAllCases = true;
+    }
+    return HelpDeskCaseService.uploadMessageFileExternal(
+      caseId,
+      messageId,
+      fileName,
+      base64File,
+      contactId,
+      ctx
+    );
   }
 
   @AuraEnabled(cacheable=true)
@@ -55,8 +182,6 @@ public without sharing class ModuloHelpDeskCaseController {
     String richDescription,
     String systemValue,
     String typeValue,
-    String subtypeValue,
-    String priorityValue,
     String suppliedEmail,
     String suppliedPhone,
     Id contactId,
@@ -68,8 +193,6 @@ public without sharing class ModuloHelpDeskCaseController {
       richDescription,
       systemValue,
       typeValue,
-      subtypeValue,
-      priorityValue,
       suppliedEmail,
       suppliedPhone,
       contactId,
@@ -90,6 +213,25 @@ public without sharing class ModuloHelpDeskCaseController {
   ) {
     HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
     HelpDeskCaseService.uploadFiles(caseId, files, contactId, ctx);
+  }
+
+  @AuraEnabled
+  public static void uploadCaseFile(
+    Id caseId,
+    String fileName,
+    String base64File
+  ) {
+    HelpDeskFilePayload file = new HelpDeskFilePayload();
+    file.fileName = fileName;
+    file.name = fileName;
+    file.base64Data = base64File;
+    HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    HelpDeskCaseService.uploadFiles(
+      caseId,
+      new List<HelpDeskFilePayload>{ file },
+      null,
+      ctx
+    );
   }
 
   @AuraEnabled

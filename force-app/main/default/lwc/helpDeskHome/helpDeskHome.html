@@ -1,169 +1,226 @@
 <template>
-    <template if:true={contactId}>
-        <div class="help-container">
-            <section class="hero">
-                <div class="hero-left">
-                    <div class="brand">
-                        <div class="brand-text">
-                            <img class="brand-cloud" src={cloudLogo} alt="Salesforce" />
-                            <p class="brand-name">Enerzeee</p>
-                            <p class="brand-plan">Standard Success Plan</p>
-                        </div>
-                    </div>
-                    <h1 class="hero-title">Suporte rápido para seus casos</h1>
-                    <p class="hero-subtitle">
-                        Acompanhe seus casos, leia atualizações e converse com o time de suporte em um painel limpo e focado.
-                    </p>
+  <template if:true={showCaseDetail}>
+    <div class="help-container">
+      <lightning-button
+        class="slds-m-bottom_medium"
+        variant="neutral"
+        label="Voltar para meus chamados"
+        icon-name="utility:back"
+        onclick={navigateToHome}
+      ></lightning-button>
+      <c-help-desk-case-detail
+        record-id={selectedCaseId}
+      ></c-help-desk-case-detail>
+    </div>
+  </template>
+  <template if:true={showHome}>
+    <template if:true={canCreate}>
+      <div class="help-container">
+        <section class="hero">
+          <div class="hero-left">
+            <div class="brand">
+              <div class="brand-text">
+                <img class="brand-cloud" src={cloudLogo} alt="Salesforce" />
+                <p class="brand-name">Enerzeee</p>
+                <p class="brand-plan">Standard Success Plan</p>
+              </div>
+            </div>
+            <h1 class="hero-title">Suporte rápido para seus casos</h1>
+            <p class="hero-subtitle">
+              Acompanhe seus casos, leia atualizações e converse com o time de
+              suporte em um painel limpo e focado.
+            </p>
+          </div>
+          <div class="hero-right">
+            <article class="agent-card">
+              <div class="agent-illustration">
+                <img class="agent-image" src={agentAstro} alt="Agentforce" />
+              </div>
+              <div class="agent-content">
+                <h2 class="agent-title">Create a Case with Agentforce</h2>
+                <p class="agent-text">
+                  Abrir chamado para o Salesforce Enerzeee. Entrar em contato
+                  com o suporte.
+                </p>
+                <div class="agent-actions">
+                  <lightning-button
+                    variant="brand"
+                    label="Abrir chamado"
+                    onclick={openModal}
+                  ></lightning-button>
                 </div>
-                <div class="hero-right">
-                    <article class="agent-card">
-                        <div class="agent-illustration">
-                            <img class="agent-image" src={agentAstro} alt="Agentforce" />
-                        </div>
-                        <div class="agent-content">
-                            <h2 class="agent-title">Create a Case with Agentforce</h2>
-                            <p class="agent-text">
-                                Abrir chamado para o Salesforce Enerzeee. Entrar em contato com o suporte.
-                            </p>
-                            <div class="agent-actions">
-                                <lightning-button variant="brand" label="Abrir chamado" onclick={openModal}></lightning-button>
-                            </div>
-                        </div>
-                    </article>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="cases">
+          <c-help-desk-case-list contact-id={contactId}></c-help-desk-case-list>
+        </section>
+
+        <template if:true={showModal}>
+          <section
+            role="dialog"
+            tabindex="-1"
+            class="slds-modal slds-fade-in-open"
+          >
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 class="slds-text-heading_medium">
+                  Criar caso - Help Desk Salesforce
+                </h2>
+              </header>
+              <div class="slds-modal__content slds-p-around_medium">
+                <div class="slds-grid slds-wrap slds-gutters">
+                  <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-combobox
+                      name="systemValue"
+                      label="Sistema"
+                      value={systemValue}
+                      placeholder="Selecione o sistema"
+                      options={systemOptions}
+                      onchange={handleInputChange}
+                    ></lightning-combobox>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-combobox
+                      name="typeValue"
+                      label="Tipo"
+                      value={typeValue}
+                      placeholder="Selecione o tipo"
+                      options={typeOptions}
+                      disabled={disableType}
+                      onchange={handleInputChange}
+                    ></lightning-combobox>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-input
+                      name="contactName"
+                      label="Solicitante"
+                      value={contactName}
+                      disabled
+                    ></lightning-input>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-input
+                      name="suppliedEmail"
+                      type="email"
+                      label="Email para contato"
+                      value={suppliedEmail}
+                      disabled
+                    ></lightning-input>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-input
+                      name="suppliedPhone"
+                      type="tel"
+                      label="Whatsapp/Telefone"
+                      value={suppliedPhone}
+                      disabled
+                    ></lightning-input>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1">
+                    <lightning-input
+                      name="subject"
+                      label="Assunto"
+                      value={subject}
+                      onchange={handleInputChange}
+                      required
+                    ></lightning-input>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1">
+                    <lightning-textarea
+                      name="description"
+                      label="Descrição"
+                      value={description}
+                      onchange={handleInputChange}
+                    ></lightning-textarea>
+                  </div>
                 </div>
-            </section>
 
-            <section class="cases">
-                <c-help-desk-case-list contact-id={contactId}></c-help-desk-case-list>
-            </section>
-
-            <template if:true={showModal}>
-                <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
-                    <div class="slds-modal__container">
-                        <header class="slds-modal__header">
-                            <h2 class="slds-text-heading_medium">Criar caso - Help Desk Salesforce</h2>
-                        </header>
-                        <div class="slds-modal__content slds-p-around_medium">
-                            <div class="slds-grid slds-wrap slds-gutters">
-                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
-                            <lightning-combobox
-                                name="systemValue"
-                                label="Sistema"
-                                value={systemValue}
-                                placeholder="Selecione o sistema"
-                                options={systemOptions}
-                                onchange={handleInputChange}
-                            ></lightning-combobox>
-                                </div>
-                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
-                            <lightning-combobox
-                                name="typeValue"
-                                label="Tipo"
-                                value={typeValue}
-                                placeholder="Selecione o tipo"
-                                options={typeOptions}
-                                disabled={disableType}
-                                onchange={handleInputChange}
-                            ></lightning-combobox>
-                                </div>
-                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
-                            <lightning-combobox
-                                name="subtypeValue"
-                                label="Subtipo"
-                                value={subtypeValue}
-                                placeholder="Selecione o subtipo"
-                                options={subtypeOptions}
-                                disabled={disableSubtype}
-                                onchange={handleInputChange}
-                            ></lightning-combobox>
-                                </div>
-                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
-                                    <lightning-input name="contactName" label="Contact Name" value={contactName} disabled></lightning-input>
-                                </div>
-                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
-                                    <lightning-input name="accountName" label="Account Name" value={accountName} disabled></lightning-input>
-                                </div>
-                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
-                                    <lightning-input name="suppliedEmail" type="email" label="Email para contato" value={suppliedEmail} disabled></lightning-input>
-                                </div>
-                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
-                                    <lightning-input name="suppliedPhone" type="tel" label="Whatsapp/Telefone" value={suppliedPhone} disabled></lightning-input>
-                                </div>
-                            <div class="slds-col slds-size_1-of-1">
-                                <lightning-combobox
-                                    name="priorityValue"
-                                    label="Prioridade"
-                                    value={priorityValue}
-                                    placeholder="Selecione a prioridade"
-                                    options={priorityOptions}
-                                    onchange={handleInputChange}
-                                ></lightning-combobox>
-                            </div>
-                            <div class="slds-col slds-size_1-of-1">
-                                <lightning-input name="subject" label="Assunto" value={subject} onchange={handleInputChange} required></lightning-input>
-                            </div>
-                            <div class="slds-col slds-size_1-of-1">
-                            <lightning-input-rich-text
-                                class="rich-input"
-                                name="richDescription"
-                                label="Descrição"
-                                value={richDescription}
-                                formats={richFormats}
-                                onchange={handleInputChange}
-                            ></lightning-input-rich-text>
-                            </div>
-                        </div>
-
-                        <div class="slds-m-top_medium">
-                            <p class="slds-text-title_caps slds-m-bottom_x-small">Anexos</p>
-                            <div class="slds-grid slds-grid_vertical-align-center">
-                                <lightning-input
-                                    type="file"
-                                    label="Adicionar arquivos"
-                                    multiple
-                                    accept={acceptedFormats}
-                                    onchange={handleFilesChange}
-                                ></lightning-input>
-                                <input class="replace-file-input slds-hide" type="file" accept={acceptedFormats} onchange={handleReplaceFileChange} />
-                            </div>
-                            <template if:true={hasFiles}>
-                                <ul class="file-list slds-m-top_small">
-                                    <template for:each={pendingFiles} for:item="file">
-                                        <li key={file.clientKey} class="file-item slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
-                                            <span>{file.name} ({file.humanSize})</span>
-                                            <div class="file-item-actions">
-                                                <lightning-button-icon
-                                                    icon-name="utility:edit"
-                                                    alternative-text="Editar"
-                                                    title="Editar arquivo"
-                                                    onclick={handleEditFile}
-                                                    data-key={file.clientKey}
-                                                ></lightning-button-icon>
-                                                <lightning-button-icon
-                                                    icon-name="utility:close"
-                                                    alternative-text="Remover"
-                                                    title="Remover arquivo"
-                                                    onclick={removeFile}
-                                                    data-key={file.clientKey}
-                                                ></lightning-button-icon>
-                                            </div>
-                                        </li>
-                                    </template>
-                                </ul>
-                            </template>
-                            <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">
-                                Os arquivos serão enviados junto com a criação do caso.
-                            </p>
-                        </div>
-                    </div>
-                    <footer class="slds-modal__footer">
-                        <lightning-button variant="neutral" label="Cancelar" onclick={closeModal}></lightning-button>
-                        <lightning-button variant="brand" class="slds-m-left_small" label="Criar caso" onclick={handleCreate} disabled={disableCreate}></lightning-button>
-                    </footer>
+                <div class="slds-m-top_medium">
+                  <p class="slds-text-title_caps slds-m-bottom_x-small">
+                    Anexos
+                  </p>
+                  <div class="slds-grid slds-grid_vertical-align-center">
+                    <lightning-input
+                      type="file"
+                      label="Adicionar arquivos"
+                      multiple
+                      accept={acceptedFormats}
+                      onchange={handleFilesChange}
+                    ></lightning-input>
+                    <input
+                      class="replace-file-input slds-hide"
+                      type="file"
+                      accept={acceptedFormats}
+                      onchange={handleReplaceFileChange}
+                    />
+                  </div>
+                  <template if:true={hasFiles}>
+                    <ul class="file-list slds-m-top_small">
+                      <template for:each={pendingFiles} for:item="file">
+                        <li
+                          key={file.clientKey}
+                          class="file-item slds-grid slds-grid_align-spread slds-grid_vertical-align-center"
+                        >
+                          <span>{file.name} ({file.humanSize})</span>
+                          <div class="file-item-actions">
+                            <lightning-button-icon
+                              icon-name="utility:edit"
+                              alternative-text="Editar"
+                              title="Editar arquivo"
+                              onclick={handleEditFile}
+                              data-key={file.clientKey}
+                            ></lightning-button-icon>
+                            <lightning-button-icon
+                              icon-name="utility:close"
+                              alternative-text="Remover"
+                              title="Remover arquivo"
+                              onclick={removeFile}
+                              data-key={file.clientKey}
+                            ></lightning-button-icon>
+                          </div>
+                        </li>
+                      </template>
+                    </ul>
+                  </template>
+                  <p
+                    class="slds-text-body_small slds-text-color_weak slds-m-top_x-small"
+                  >
+                    Os arquivos serão enviados junto com a criação do caso.
+                  </p>
                 </div>
-            </section>
-                <div class="slds-backdrop slds-backdrop_open"></div>
-            </template>
-        </div>
+              </div>
+              <footer class="slds-modal__footer">
+                <lightning-button
+                  variant="neutral"
+                  label="Cancelar"
+                  onclick={closeModal}
+                  disabled={isSaving}
+                ></lightning-button>
+                <lightning-button
+                  variant="brand"
+                  class="slds-m-left_small"
+                  label={createButtonLabel}
+                  onclick={handleCreate}
+                  disabled={disableCreate}
+                ></lightning-button>
+              </footer>
+              <template if:true={isSaving}>
+                <div class="modal-loading">
+                  <lightning-spinner
+                    alternative-text="Criando caso"
+                    size="medium"
+                  ></lightning-spinner>
+                  <span>Criando caso...</span>
+                </div>
+              </template>
+            </div>
+          </section>
+          <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+      </div>
     </template>
+  </template>
 </template>

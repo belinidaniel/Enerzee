@@ -60,4 +60,44 @@
         <protected>false</protected>
         <reevaluateOnChange>false</reevaluateOnChange>
     </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HelpDeskAprovacaoAprovado</fullName>
+        <field>StatusAprovacao__c</field>
+        <literalValue>Aprovado</literalValue>
+        <name>HelpDesk - Status Aprovado</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HelpDeskAprovacaoCasoEmAndamento</fullName>
+        <field>Status</field>
+        <literalValue>Em andamento</literalValue>
+        <name>HelpDesk - Caso Em andamento (aprovado)</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HelpDeskAprovacaoEmAprovacao</fullName>
+        <field>StatusAprovacao__c</field>
+        <literalValue>Em Aprovação</literalValue>
+        <name>HelpDesk - Status Em Aprovação</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>HelpDeskAprovacaoRejeitado</fullName>
+        <field>StatusAprovacao__c</field>
+        <literalValue>Rejeitado</literalValue>
+        <name>HelpDesk - Status Rejeitado</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
 </Workflow>
