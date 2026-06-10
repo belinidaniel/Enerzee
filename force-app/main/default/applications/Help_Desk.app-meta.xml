@@ -11,24 +11,6 @@
     <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
     <label>Help Desk</label>
     <navType>Standard</navType>
-    <profileActionOverrides>
-        <actionName>View</actionName>
-        <content>Case_Help_Desk_Salesforce</content>
-        <formFactor>Large</formFactor>
-        <pageOrSobjectType>Case</pageOrSobjectType>
-        <recordType>Case.Help_Desk_Salesforce</recordType>
-        <type>Flexipage</type>
-        <profile>Admin</profile>
-    </profileActionOverrides>
-    <profileActionOverrides>
-        <actionName>View</actionName>
-        <content>Case_Help_Desk_Salesforce</content>
-        <formFactor>Large</formFactor>
-        <pageOrSobjectType>Case</pageOrSobjectType>
-        <recordType>Case.Help_Desk_Salesforce</recordType>
-        <type>Flexipage</type>
-        <profile>Analista</profile>
-    </profileActionOverrides>
     <tabs>Help_Desk</tabs>
     <tabs>standard-Case</tabs>
     <uiType>Lightning</uiType>
