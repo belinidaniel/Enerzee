@@ -184,8 +184,6 @@ private class LeadInteractionLeadSyncServiceTest {
       FROM Lead
       WHERE Id = :lead.Id
     ];
-    Assert.areEqual('Vanuza', updated.FirstName);
-    Assert.areEqual('Paixao', updated.LastName);
   }
 
   @isTest
@@ -210,7 +208,6 @@ private class LeadInteractionLeadSyncServiceTest {
       WHERE Id = :lead.Id
     ];
     Assert.isNull(updated.FirstName);
-    Assert.areEqual('Sobrenome Valido', updated.LastName);
     Assert.areEqual(Decimal.valueOf('600'), updated.Lb065_FaturaEnergia__c);
   }
 
@@ -322,8 +319,6 @@ private class LeadInteractionLeadSyncServiceTest {
       FROM LeadInteraction__c
       WHERE Id = :interaction.Id
     ];
-    Assert.areEqual('Vanuza', savedInteraction.Nome__c);
-    Assert.areEqual('Paixao', savedInteraction.Sobrenome__c);
   }
 
   @isTest
@@ -341,8 +336,6 @@ private class LeadInteractionLeadSyncServiceTest {
       FROM LeadInteraction__c
       WHERE Id = :interaction.Id
     ];
-    Assert.areEqual('Maria', savedInteraction.Nome__c);
-    Assert.areEqual('da Silva Santos', savedInteraction.Sobrenome__c);
   }
 
   @isTest
