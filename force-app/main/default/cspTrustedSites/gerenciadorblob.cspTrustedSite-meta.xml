@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CspTrustedSite xmlns="http://soap.sforce.com/2006/04/metadata">
+    <canAccessCamera>false</canAccessCamera>
+    <canAccessMicrophone>false</canAccessMicrophone>
     <context>All</context>
-    <description
-  >Permite carregar imagens/anexos do Help Desk armazenados no Azure Blob (produção). Necessário para visualizar imagens dos anexos no portal e no Case.</description>
+    <description>Permite carregar imagens/anexos do Help Desk armazenados no Azure Blob (produção). Necessário para visualizar imagens dos anexos no portal e no Case.</description>
     <endpointUrl>https://gerenciadorblob.blob.core.windows.net</endpointUrl>
     <isActive>true</isActive>
     <isApplicableToConnectSrc>false</isApplicableToConnectSrc>
@@ -12,4 +13,3 @@
     <isApplicableToMediaSrc>false</isApplicableToMediaSrc>
     <isApplicableToStyleSrc>false</isApplicableToStyleSrc>
 </CspTrustedSite>
-  

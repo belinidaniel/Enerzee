@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Gerente__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
-    <description
-  >Gestor do usuário solicitante, copiado no momento da criação do caso e usado como aprovador do Help Desk.</description>
+    <description>Gestor do usuário solicitante, copiado no momento da criação do caso e usado como aprovador do Help Desk.</description>
     <label>Gestor aprovador</label>
     <referenceTo>User</referenceTo>
     <relationshipName>Casos_Gerente</relationshipName>

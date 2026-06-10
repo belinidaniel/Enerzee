@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 06-08-2026
+ * @last modified on  : 06-10-2026
  * @last modified by  : Daniel Belini
  * @test              : AdditionalCoverageNewClassesTest, InstalacaoBOTest, OpportunityBOAdditionalTest,
  *                       OpportunityBOCoverageTest, OpportunityBOEmailTest, OpportunityBOHighCoverageTest,
@@ -2465,32 +2465,18 @@ public class OpportunityBO {
         continue;
       }
       Boolean skippedGrupoA = opp.GrupoTarifario__c == 'Grupo A';
-      Boolean skippedRecordType =
-        opp.RecordTypeId != ezeeConnectRtId &&
-        opp.RecordTypeId != solarRtId;
-      Boolean SkipeedGeracaoProposta =
-        oldOpp != null &&
-        opp.PropostaGerada__c == true &&
-        opp.ProposalGenerationStatus__c !=
-        ProposalGenerationStateService.SUCCEEDED;
-      if (skippedGrupoA || skippedRecordType || SkipeedGeracaoProposta) {
+	  Boolean skippedRecordType = opp.RecordTypeId != ezeeConnectRtId && opp.RecordTypeId != solarRtId;
+	  Boolean SkipeedGeracaoProposta = oldOpp != null && opp.PropostaGerada__c == true && opp.ProposalGenerationStatus__c != ProposalGenerationStateService.SUCCEEDED;
+	  if (skippedGrupoA || skippedRecordType || SkipeedGeracaoProposta) {
         continue;
       }
 
-      Boolean propostaGeradaChanged =
-        opp.PropostaGerada__c !=
-        (oldOpp != null ? oldOpp.PropostaGerada__c : null);
-      Boolean aprovacaoChanged =
-        opp.StatusAprovacaoDesconto__c !=
-        (oldOpp != null ? oldOpp.StatusAprovacaoDesconto__c : null);
+      Boolean propostaGeradaChanged = opp.PropostaGerada__c != (oldOpp != null ? oldOpp.PropostaGerada__c : null);
+      Boolean aprovacaoChanged = opp.StatusAprovacaoDesconto__c != (oldOpp != null ? oldOpp.StatusAprovacaoDesconto__c : null);
       Boolean isEzeeConnect = opp.RecordTypeId == ezeeConnectRtId;
-      Boolean propostaGeradaStillFalse =
-        opp.PropostaGerada__c == false &&
-        (isEzeeConnect
-          ? areRequiredFieldsFilledConnect(opp)
-          : areRequiredFieldsFilled(opp));
-
-      if (
+      Boolean propostaGeradaStillFalse = opp.PropostaGerada__c == false && (isEzeeConnect ? areRequiredFieldsFilledConnect(opp) : areRequiredFieldsFilled(opp));
+      
+	  if (
         proposalGenerationRequestedByStage.contains(opp.Id) ||
         propostaGeradaChanged ||
         propostaGeradaStillFalse ||
@@ -2623,8 +2609,7 @@ public class OpportunityBO {
         continue;
       }
       Boolean isProposalRecordType =
-        opp.RecordTypeId == ezeeConnectRtId ||
-        opp.RecordTypeId == solarRtId;
+        opp.RecordTypeId == ezeeConnectRtId || opp.RecordTypeId == solarRtId;
       if (opp.GrupoTarifario__c == 'Grupo A' || !isProposalRecordType) {
         continue;
       }
@@ -3876,7 +3861,8 @@ public class OpportunityBO {
       Opportunity oldOpp = oldMap.get(newOpp.Id);
       if (
         newOpp.ConsumoInformadoB__c != oldOpp.ConsumoInformadoB__c ||
-        newOpp.GeracaoDesejadaMinima__c != oldOpp.GeracaoDesejadaMinima__c ||
+        newOpp.GeracaoDesejadaMinima__c !=
+        oldOpp.GeracaoDesejadaMinima__c ||
         newOpp.TipoTelhadoEstrutura__c != oldOpp.TipoTelhadoEstrutura__c ||
         newOpp.IsRSD__c != oldOpp.IsRSD__c
       ) {

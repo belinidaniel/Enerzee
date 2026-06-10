@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>CaseCommentId__c</fullName>
-    <description
-  >Id do CaseComment espelhado a partir desta mensagem (ponte HelpDeskMessage__c -> CaseComment/Jira). Usado para dar append das URLs de anexos no comentário sincronizado com o Jira.</description>
+    <description>Id do CaseComment espelhado a partir desta mensagem (ponte HelpDeskMessage__c -&gt; CaseComment/Jira). Usado para dar append das URLs de anexos no comentário sincronizado com o Jira.</description>
     <externalId>true</externalId>
     <label>Case Comment Id</label>
     <length>40</length>

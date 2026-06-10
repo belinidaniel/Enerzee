@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>JiraStatus__c</fullName>
-    <description
-  >Status atual da issue no Jira. Preenchido pelo sync (fase 2). Vazio nesta fase.</description>
+    <description>Status atual da issue no Jira. Preenchido pelo sync (fase 2). Vazio nesta fase.</description>
     <externalId>false</externalId>
     <label>Jira Status</label>
     <length>60</length>

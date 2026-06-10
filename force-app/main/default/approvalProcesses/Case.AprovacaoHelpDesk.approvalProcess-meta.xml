@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ApprovalProcess xmlns="http://soap.sforce.com/2006/04/metadata">
     <active>false</active>
     <allowRecall>true</allowRecall>
@@ -14,6 +14,7 @@
         <field>Contact</field>
         <field>Supervisor__c</field>
         <field>Gerente__c</field>
+        <field>Owner</field>
     </approvalPageFields>
     <approvalStep>
         <allowDelegate>false</allowDelegate>
@@ -30,8 +31,7 @@
             </approver>
             <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
         </assignedApprover>
-        <description
-    >1ª etapa: aprovação do Supervisor do contato do caso.</description>
+        <description>1ª etapa: aprovação do Supervisor do contato do caso.</description>
         <label>Aprovação do Supervisor</label>
         <name>Aprovacao_Supervisor</name>
     </approvalStep>
@@ -44,16 +44,14 @@
             </approver>
             <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
         </assignedApprover>
-        <description
-    >2ª etapa: aprovação do Gerente do contato do caso.</description>
+        <description>2ª etapa: aprovação do Gerente do contato do caso.</description>
         <label>Aprovação do Gerente</label>
         <name>Aprovacao_Gerente</name>
         <rejectBehavior>
             <type>RejectRequest</type>
         </rejectBehavior>
     </approvalStep>
-    <description
-  >Processo de aprovação dos casos do portal Help Desk: Supervisor e depois Gerente do contato.</description>
+    <description>Processo de aprovação dos casos do portal Help Desk: Supervisor e depois Gerente do contato.</description>
     <enableMobileDeviceAccess>false</enableMobileDeviceAccess>
     <entryCriteria>
         <booleanFilter>1</booleanFilter>

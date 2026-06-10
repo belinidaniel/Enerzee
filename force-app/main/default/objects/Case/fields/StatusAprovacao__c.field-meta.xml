@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>StatusAprovacao__c</fullName>
-    <description
-  >Status do processo de aprovação do caso no Help Desk, atualizado pelas ações do Approval Process.</description>
+    <description>Status do processo de aprovação do caso no Help Desk, atualizado pelas ações do Approval Process.</description>
     <label>Status da Aprovação</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>

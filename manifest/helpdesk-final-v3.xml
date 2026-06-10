@@ -36,10 +36,27 @@
         <members>Case.JiraIssueUrl__c</members>
         <members>Case.JiraStatus__c</members>
         <members>Case.StatusAprovacao__c</members>
+        <members>AttachmentLink__c.AttachmentDescription__c</members>
+        <members>AttachmentLink__c.AttachmentURL__c</members>
+        <members>AttachmentLink__c.ContentDocumentId__c</members>
+        <members>AttachmentLink__c.ExternalId__c</members>
+        <members>AttachmentLink__c.FileName__c</members>
+        <members>AttachmentLink__c.FileType__c</members>
+        <members>AttachmentLink__c.InternalAttachmentURL__c</members>
+        <members>AttachmentLink__c.SObjectId__c</members>
+        <members>AttachmentLink__c.SObjectType__c</members>
+        <members>HelpDeskMessage__c.AttachmentURL__c</members>
+        <members>HelpDeskMessage__c.AuthorName__c</members>
+        <members>HelpDeskMessage__c.AuthorType__c</members>
+        <members>HelpDeskMessage__c.Body__c</members>
         <members>HelpDeskMessage__c.CaseCommentId__c</members>
+        <members>HelpDeskMessage__c.Case__c</members>
+        <members>HelpDeskMessage__c.ExternalSource__c</members>
+        <members>HelpDeskMessage__c.IsPublic__c</members>
         <name>CustomField</name>
     </types>
     <types>
+        <members>AttachmentLink__c</members>
         <members>HelpDeskMessage__c</members>
         <name>CustomObject</name>
     </types>
