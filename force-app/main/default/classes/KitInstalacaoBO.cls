@@ -485,6 +485,7 @@ public without sharing class KitInstalacaoBO {
           Instalacao__c,
           CustoFinanceiroWeg__c,
           ConsumoInformadoB__c,
+          GeracaoDesejadaMinima__c,
           TipoTelhadoEstrutura__c,
           IsRSD__c,
           (
@@ -604,6 +605,7 @@ public without sharing class KitInstalacaoBO {
     IntegracaoNivelloContrato.EnviarKitRequest request = new IntegracaoNivelloContrato.EnviarKitRequest();
     request.Id = opp.IdVirtualOffice__c;
     request.ConsumoDesejado = opp.ConsumoInformadoB__c;
+    request.GeracaoDesejadaMinima = opp.GeracaoDesejadaMinima__c;
     request.PotenciaPicoSistema = opp.PotenciaPicoSistema__c;
     request.QtdModulos = (opp.NumeroModulos__c != null)
       ? (Integer) opp.NumeroModulos__c

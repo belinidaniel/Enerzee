@@ -1,6 +1,5 @@
 /**
- * @description       : Helper sem sharing para ler os aprovadores (Supervisor/Gerente) do Contato em contexto de sistema. Necessário porque o caso pode ser criado por usuário Guest do portal,
- *                       que não enxerga o Contact via sharing — então a leitura precisa ignorar o sharing do usuário.
+ * @description       : Resolve o gestor do usuário solicitante do Help Desk.
  * @author            : Daniel Belini
  * @group             :
  * @last modified on  : 06-02-2026
@@ -8,6 +7,45 @@
  * @test              : CaseBOTest, CaseTriggerTest, HelpDeskCaseServiceTest, ModuloHelpDeskCaseControllerTest
  **/
 public without sharing class HelpDeskApproverHelper {
+  private static final String DEFAULT_APPROVER_EMAIL = 'elenara.rodrigues@enerzee.com.br';
+  @TestVisible
+  private static Id fallbackApproverId;
+
+  public static User getCurrentUserApprover() {
+    User requester = [
+      SELECT Id, ManagerId, Manager.Name, Manager.IsActive
+      FROM User
+      WHERE Id = :UserInfo.getUserId()
+      LIMIT 1
+    ];
+    if (
+      requester.ManagerId != null &&
+      requester.Manager != null &&
+      requester.Manager.IsActive
+    ) {
+      return requester.Manager;
+    }
+
+    if (fallbackApproverId != null) {
+      List<User> testFallback = [
+        SELECT Id, Name
+        FROM User
+        WHERE Id = :fallbackApproverId
+        LIMIT 1
+      ];
+      return testFallback.isEmpty() ? null : testFallback[0];
+    }
+
+    List<User> fallbackUsers = [
+      SELECT Id, Name
+      FROM User
+      WHERE Email = :DEFAULT_APPROVER_EMAIL AND IsActive = TRUE
+      ORDER BY LastLoginDate DESC NULLS LAST
+      LIMIT 1
+    ];
+    return fallbackUsers.isEmpty() ? null : fallbackUsers[0];
+  }
+
   /**
    * Retorna um mapa de Contact Id -> Contact (com Supervisor__c/Gerente__c),
    * lido sem as restrições de sharing do usuário atual.

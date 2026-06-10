@@ -16,32 +16,23 @@
           <p class="value">{detail.createdDateDisplay}</p>
         </div>
         <div class="summary-item">
-          <p class="label">Status</p>
-          <p class="value">{detail.status}</p>
+          <p class="label">Status da aprovação</p>
+          <p class="value">{approvalStatusLabel}</p>
         </div>
         <div class="summary-item">
-          <p class="label">Contato</p>
+          <p class="label">Solicitante</p>
           <p class="value">{detail.contactName}</p>
         </div>
         <div class="summary-item">
           <p class="label">Última modificação</p>
           <p class="value">{detail.lastModifiedDisplay}</p>
         </div>
-        <div class="summary-item action">
-          <p class="label">Ações</p>
-          <lightning-button
-            variant="neutral"
-            label="Reabrir"
-            onclick={handleReopen}
-            disabled={isOpen}
-          ></lightning-button>
-        </div>
       </section>
 
       <template if:true={showApprovalPanel}>
         <section class={approvalCardClass}>
           <div>
-            <p class="label">Aprovação</p>
+            <p class="label">Status da aprovação</p>
             <lightning-badge
               label={approvalStatusLabel}
               variant={approvalBadgeVariant}
@@ -49,30 +40,22 @@
             ></lightning-badge>
           </div>
           <div>
-            <p class="label">Com quem está</p>
-            <p class="value">{currentApproverLabel}</p>
-          </div>
-          <div>
-            <p class="label">Fluxo</p>
-            <p class="value">{approvalRouteLabel}</p>
-          </div>
-          <template if:true={hasJiraActivity}>
-            <div>
-              <p class="label">Atividade Jira</p>
-              <p class="value jira-activity">
+            <p class="label">Status de execução</p>
+            <p class="value jira-activity">
+              <template if:true={hasJiraActivity}>
                 <a
                   href={detail.jiraIssueUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   >{detail.jiraIssueKey}</a
                 >
-                <lightning-badge
-                  label={jiraStatusLabel}
-                  class="approval-badge"
-                ></lightning-badge>
-              </p>
-            </div>
-          </template>
+              </template>
+              <lightning-badge
+                label={jiraStatusLabel}
+                class="approval-badge"
+              ></lightning-badge>
+            </p>
+          </div>
         </section>
       </template>
 
@@ -203,12 +186,28 @@
         </template>
       </section>
     </template>
-    <template if:false={detail}>
+    <template if:true={showLoading}>
       <div class="placeholder">
         <lightning-spinner
-          alternative-text="Loading case"
+          alternative-text="Carregando chamado"
           size="medium"
         ></lightning-spinner>
+      </div>
+    </template>
+    <template if:true={hasLoadError}>
+      <div class="placeholder error-state">
+        <lightning-icon
+          icon-name="utility:error"
+          alternative-text="Erro"
+          size="small"
+          variant="error"
+        ></lightning-icon>
+        <p class="error-title">Não foi possível carregar o chamado.</p>
+        <p class="error-message">{loadError}</p>
+        <lightning-button
+          label="Tentar novamente"
+          onclick={handleRetry}
+        ></lightning-button>
       </div>
     </template>
     <template if:true={isSaving}>

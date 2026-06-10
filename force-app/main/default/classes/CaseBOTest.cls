@@ -354,79 +354,92 @@ private class CaseBOTest {
   }
 
   @IsTest
-  static void shouldPopulateApproversFromContact() {
-    User supervisor = createUser('supervisor.case@test.com', 'csup');
-    User gerente = createUser('gerente.case@test.com', 'cger');
-
-    Account acc = new Account(Name = 'Conta Aprovadores');
-    insert acc;
-    Contact ct = new Contact(
-      LastName = 'Contato Aprovadores',
-      AccountId = acc.Id,
-      Supervisor__c = supervisor.Id,
-      Gerente__c = gerente.Id
-    );
-    insert ct;
+  static void shouldPopulateApproverFromUserManager() {
+    User manager = createUser('manager.case@test.com', 'cmgr');
+    User requester = createUser('requester.case@test.com', 'creq');
+    requester.ManagerId = manager.Id;
+    update requester;
 
     Case cs = new Case(
       Subject = 'Caso aprovação',
       Status = 'New',
-      Origin = 'Phone',
-      ContactId = ct.Id
+      Origin = 'Help Desk Salesforce',
+      RecordTypeId = getCaseRecordTypeId('Help_Desk_Salesforce')
     );
 
-    Test.startTest();
-    CaseBO.populateApprovers(new List<Case>{ cs });
-    Test.stopTest();
+    System.runAs(requester) {
+      Test.startTest();
+      CaseBO.populateApprovers(new List<Case>{ cs });
+      Test.stopTest();
+    }
 
-    // Name é campo calculado (FirstName + LastName): só vem preenchido via SOQL.
-    Map<Id, User> userNames = new Map<Id, User>(
-      [SELECT Id, Name FROM User WHERE Id IN (:supervisor.Id, :gerente.Id)]
-    );
-    System.assertEquals(supervisor.Id, cs.Supervisor__c);
-    System.assertEquals(gerente.Id, cs.Gerente__c);
-    System.assertEquals(
-      userNames.get(supervisor.Id).Name,
-      cs.SupervisorNome__c
-    );
-    System.assertEquals(userNames.get(gerente.Id).Name, cs.GerenteNome__c);
-  }
-
-  @IsTest
-  static void shouldMarkApprovalPendingWhenOnlyManagerExists() {
-    User gerente = createUser('gerente.unico.case@test.com', 'cgeru');
-
-    Account acc = new Account(Name = 'Conta Gerente Único');
-    insert acc;
-    Contact ct = new Contact(
-      LastName = 'Contato Gerente Único',
-      AccountId = acc.Id,
-      Gerente__c = gerente.Id
-    );
-    insert ct;
-
-    Case cs = new Case(
-      Subject = 'Caso aprovação gerente',
-      Status = 'New',
-      Origin = 'Phone',
-      ContactId = ct.Id
-    );
-
-    Test.startTest();
-    CaseBO.populateApprovers(new List<Case>{ cs });
-    Test.stopTest();
-
-    System.assertEquals(null, cs.Supervisor__c);
-    System.assertEquals(gerente.Id, cs.Gerente__c);
+    System.assertEquals(manager.Id, cs.Gerente__c);
+    System.assertEquals(manager.Name, cs.GerenteNome__c);
     System.assertEquals('Pendente', cs.StatusAprovacao__c);
   }
 
   @IsTest
-  static void shouldSkipApproversWhenNoContact() {
+  static void shouldUseDefaultApproverWhenManagerIsMissing() {
+    User defaultApprover = createUser('default.case@test.com', 'cdef');
+    HelpDeskApproverHelper.fallbackApproverId = defaultApprover.Id;
+
+    Case cs = new Case(
+      Subject = 'Caso aprovação padrão',
+      Status = 'New',
+      Origin = 'Help Desk Salesforce',
+      RecordTypeId = getCaseRecordTypeId('Help_Desk_Salesforce')
+    );
+
+    Test.startTest();
+    CaseBO.populateApprovers(new List<Case>{ cs });
+    Test.stopTest();
+
+    System.assertEquals(defaultApprover.Id, cs.Gerente__c);
+    System.assertEquals('Pendente', cs.StatusAprovacao__c);
+    HelpDeskApproverHelper.fallbackApproverId = null;
+  }
+
+  @IsTest
+  static void shouldResolveHelpDeskApproverReferences() {
+    User approver = getTestOwner();
+    Contact requester = new Contact(
+      LastName = 'Help Desk Requester',
+      Email = 'helpdesk.requester@test.com',
+      Gerente__c = approver.Id
+    );
+    insert requester;
+
+    Test.startTest();
+    Map<Id, Contact> approversByContact = HelpDeskApproverHelper.getApproversByContact(
+      new Set<Id>{ requester.Id }
+    );
+    Map<Id, String> userNames = HelpDeskApproverHelper.getUserNames(
+      new Set<Id>{ approver.Id, null }
+    );
+    Map<Id, Contact> noContacts = HelpDeskApproverHelper.getApproversByContact(
+      null
+    );
+    Map<Id, String> noUsers = HelpDeskApproverHelper.getUserNames(
+      new Set<Id>{ null }
+    );
+    Test.stopTest();
+
+    System.assertEquals(
+      approver.Id,
+      approversByContact.get(requester.Id).Gerente__c
+    );
+    System.assertEquals(approver.Name, userNames.get(approver.Id));
+    System.assertEquals(true, noContacts.isEmpty());
+    System.assertEquals(true, noUsers.isEmpty());
+  }
+
+  @IsTest
+  static void shouldSkipApproversForNonHelpDeskCase() {
     Case cs = new Case(
       Subject = 'Sem contato',
       Status = 'New',
-      Origin = 'Phone'
+      Origin = 'Phone',
+      RecordTypeId = getCaseRecordTypeId('Jornada_do_Cliente')
     );
     Test.startTest();
     CaseBO.populateApprovers(new List<Case>{ cs });
@@ -473,7 +486,7 @@ private class CaseBOTest {
 
   private static User getTestOwner() {
     return [
-      SELECT Id, Email
+      SELECT Id, Name, Email
       FROM User
       WHERE Email = :TEST_OWNER_EMAIL
       LIMIT 1

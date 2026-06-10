@@ -19,6 +19,7 @@ global with sharing class OpportunityRecordsTO {
     public String Origem;
     public Double ConsumptionAverage;
     public Double TargetConsume;
+    public Decimal GeracaoDesejadaMinima;
     public Double PercentageIncreaseInConsumption;
     public String PowerDistributionCompany;
     public String ZipCode;

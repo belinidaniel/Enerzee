@@ -23,15 +23,15 @@
             </approver>
             <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
         </assignedApprover>
-        <description>Aprovação do Gerente do contato do caso.</description>
-        <label>Aprovação do Gerente</label>
+        <description>Aprovação do gestor do usuário solicitante.</description>
+        <label>Aprovação do Gestor</label>
         <name>Aprovacao_Gerente</name>
         <rejectBehavior>
             <type>RejectRequest</type>
         </rejectBehavior>
     </approvalStep>
     <description
-  >Processo de aprovação dos casos do portal Help Desk pelo Gerente do contato.</description>
+  >Processo de aprovação dos casos internos do Help Desk pelo Manager do usuário solicitante.</description>
     <enableMobileDeviceAccess>false</enableMobileDeviceAccess>
     <entryCriteria>
         <booleanFilter>1</booleanFilter>
@@ -44,10 +44,6 @@
     <finalApprovalActions>
         <action>
             <name>HelpDeskAprovacaoAprovado</name>
-            <type>FieldUpdate</type>
-        </action>
-        <action>
-            <name>HelpDeskAprovacaoCasoEmAndamento</name>
             <type>FieldUpdate</type>
         </action>
     </finalApprovalActions>

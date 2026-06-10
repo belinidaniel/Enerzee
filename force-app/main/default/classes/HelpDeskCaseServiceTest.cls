@@ -24,6 +24,7 @@ private class HelpDeskCaseServiceTest {
       Subject = 'Ajuda',
       Status = 'New',
       Origin = 'Phone',
+      RecordTypeId = helpDeskRecordTypeId(),
       ContactId = c.Id,
       AccountId = acc.Id
     );
@@ -101,8 +102,6 @@ private class HelpDeskCaseServiceTest {
         null,
         'Salesforce',
         'Acesso',
-        'Login',
-        'Medium',
         c.Email,
         '1199',
         c.Id,
@@ -127,10 +126,7 @@ private class HelpDeskCaseServiceTest {
         if (typeValue != null) {
           System.assertEquals('Acesso', (String) typeValue);
         }
-        Object subtypeValue = createdCase.get('HelpDesk_Subtipo__c');
-        if (subtypeValue != null) {
-          System.assertEquals('Login', (String) subtypeValue);
-        }
+        System.assertEquals(null, createdCase.get('HelpDesk_Subtipo__c'));
       }
     }
   }
@@ -151,6 +147,7 @@ private class HelpDeskCaseServiceTest {
       Subject = 'Caso com mensagens',
       Status = 'New',
       Origin = 'Phone',
+      RecordTypeId = helpDeskRecordTypeId(),
       ContactId = c.Id,
       AccountId = acc.Id
     );
@@ -161,6 +158,7 @@ private class HelpDeskCaseServiceTest {
     ctx.contactId = c.Id;
     ctx.email = c.Email;
     ctx.name = 'Agente Teste';
+    ctx.isManager = true;
 
     Id publicMessageId = HelpDeskCaseService.addMessage(
       cs.Id,
@@ -184,13 +182,33 @@ private class HelpDeskCaseServiceTest {
     );
     System.assertNotEquals(null, privateMessageId);
 
+    ctx.isManager = false;
+    ctx.name = 'Funcionário Teste';
+    Id employeeMessageId = HelpDeskCaseService.addMessage(
+      cs.Id,
+      'Tentativa de mensagem privada',
+      'Nome informado pelo navegador',
+      'Agente',
+      false,
+      c.Id,
+      ctx
+    );
+    HelpDeskMessage__c employeeMessage = [
+      SELECT AuthorName__c, AuthorType__c, IsPublic__c
+      FROM HelpDeskMessage__c
+      WHERE Id = :employeeMessageId
+    ];
+    System.assertEquals('Funcionário Teste', employeeMessage.AuthorName__c);
+    System.assertEquals('Cliente', employeeMessage.AuthorType__c);
+    System.assertEquals(true, employeeMessage.IsPublic__c);
+
     List<HelpDeskMessage__c> publicMessages = HelpDeskCaseService.getMessages(
       cs.Id,
       c.Id,
       ctx,
       false
     );
-    System.assertEquals(1, publicMessages.size());
+    System.assertEquals(2, publicMessages.size());
 
     List<HelpDeskMessage__c> allMessages = HelpDeskCaseService.getMessages(
       cs.Id,
@@ -198,7 +216,7 @@ private class HelpDeskCaseServiceTest {
       ctx,
       true
     );
-    System.assertEquals(2, allMessages.size());
+    System.assertEquals(3, allMessages.size());
 
     List<AttachmentLink__c> links = HelpDeskCaseService.getCaseAttachmentLinks(
       cs.Id,
@@ -226,6 +244,7 @@ private class HelpDeskCaseServiceTest {
         Subject = 'Caso autorizado',
         Status = 'New',
         Origin = 'Phone',
+        RecordTypeId = helpDeskRecordTypeId(),
         ContactId = c.Id,
         AccountId = acc.Id
       ),
@@ -233,6 +252,7 @@ private class HelpDeskCaseServiceTest {
         Subject = 'Caso de outra mensagem',
         Status = 'New',
         Origin = 'Phone',
+        RecordTypeId = helpDeskRecordTypeId(),
         ContactId = c.Id,
         AccountId = acc.Id
       )
@@ -292,6 +312,7 @@ private class HelpDeskCaseServiceTest {
       Subject = 'Caso com snapshot mascarado',
       Status = 'New',
       Origin = 'Phone',
+      RecordTypeId = helpDeskRecordTypeId(),
       ContactId = c.Id,
       AccountId = acc.Id,
       Supervisor__c = approver.Id,
@@ -313,7 +334,6 @@ private class HelpDeskCaseServiceTest {
       ctx
     );
 
-    System.assertEquals(approver.Name, dto.supervisorName);
     System.assertEquals(approver.Name, dto.gerenteName);
   }
 
@@ -342,6 +362,7 @@ private class HelpDeskCaseServiceTest {
       Subject = 'Caso anexo',
       Status = 'New',
       Origin = 'Phone',
+      RecordTypeId = helpDeskRecordTypeId(),
       ContactId = c.Id,
       AccountId = acc.Id
     );
@@ -391,5 +412,11 @@ private class HelpDeskCaseServiceTest {
       false
     );
     System.assertEquals(1, links.size());
+  }
+
+  private static Id helpDeskRecordTypeId() {
+    return Schema.SObjectType.Case.getRecordTypeInfosByDeveloperName()
+      .get('Help_Desk_Salesforce')
+      .getRecordTypeId();
   }
 }

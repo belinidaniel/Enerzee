@@ -1,75 +1,106 @@
 <template>
-    <article class="case-card slds-card">
-        <header class="slds-card__header slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
-            <div class="controls slds-grid slds-grid_vertical-align-center">
-                <lightning-combobox
-                    class="filter"
-                    variant="label-hidden"
-                    options={filterOptions}
-                    value={filterType}
-                    onchange={handleFilterChange}
-                ></lightning-combobox>
-                <lightning-input
-                    class="search"
-                    type="search"
-                    variant="label-hidden"
-                    placeholder="Search"
-                    value={searchTerm}
-                    onchange={handleSearchChange}
-                ></lightning-input>
-            </div>
-            <div class="meta slds-grid slds-grid_vertical-align-center">
-                <span class="total">Total {caseCount}</span>
-                <lightning-button-icon icon-name="utility:refresh" variant="bare" alternative-text="Refresh" onclick={handleRefresh}></lightning-button-icon>
-            </div>
-        </header>
+  <article class="case-card slds-card">
+    <header
+      class="slds-card__header slds-grid slds-grid_align-spread slds-grid_vertical-align-center"
+    >
+      <div class="controls slds-grid slds-grid_vertical-align-center">
+        <lightning-combobox
+          class="filter"
+          variant="label-hidden"
+          options={filterOptions}
+          value={filterType}
+          onchange={handleFilterChange}
+        ></lightning-combobox>
+        <lightning-combobox
+          class="status-filter"
+          label="Status da aprovação"
+          variant="label-hidden"
+          options={approvalFilterOptions}
+          value={approvalFilter}
+          onchange={handleApprovalFilterChange}
+        ></lightning-combobox>
+        <lightning-combobox
+          class="status-filter"
+          label="Status de execução"
+          variant="label-hidden"
+          options={executionFilterOptions}
+          value={executionFilter}
+          onchange={handleExecutionFilterChange}
+        ></lightning-combobox>
+        <lightning-input
+          class="search"
+          type="search"
+          variant="label-hidden"
+          placeholder="Pesquisar"
+          value={searchTerm}
+          onchange={handleSearchChange}
+        ></lightning-input>
+      </div>
+      <div class="meta slds-grid slds-grid_vertical-align-center">
+        <span class="total">Total: {caseCount}</span>
+        <lightning-button-icon
+          icon-name="utility:refresh"
+          variant="bare"
+          alternative-text="Refresh"
+          onclick={handleRefresh}
+        ></lightning-button-icon>
+      </div>
+    </header>
 
-        <div class="slds-card__body">
-            <div class="table-wrapper">
-                <table class="slds-table slds-table_cell-buffer slds-table_bordered">
-                    <thead>
-                        <tr>
-                            <th scope="col">Case Number</th>
-                            <th scope="col">Subject</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Date/Time Modified</th>
-                            <th scope="col">Contact Full Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <template if:true={hasCases}>
-                            <template for:each={cases} for:item="caseItem">
-                                <tr key={caseItem.id}>
-                                    <td>
-                                        <a href={caseItem.url} class="case-link">{caseItem.caseNumber}</a>
-                                    </td>
-                                    <td>{caseItem.subject}</td>
-                                    <td>{caseItem.status}</td>
-                                    <td>{caseItem.lastModified}</td>
-                                    <td>{caseItem.contactName}</td>
-                                </tr>
-                            </template>
-                        </template>
-                        <template if:false={hasCases}>
-                            <tr>
-                                <td colspan="5">
-                                    <div class="empty-state">
-                                        <div class="empty-illustration"></div>
-                                        <p class="empty-title">Looks like you have no cases in the selected criteria</p>
-                                        <p class="empty-subtitle">Please select a different criteria</p>
-                                        <p class="empty-link">Still need help? <a href="https://trailhead.salesforce.com/help" target="_blank">Post your question</a></p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </template>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <template if:true={isLoading}>
-            <div class="backdrop">
-                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
-            </div>
-        </template>
-    </article>
+    <div class="slds-card__body">
+      <div class="table-wrapper">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+          <thead>
+            <tr>
+              <th scope="col">Número</th>
+              <th scope="col">Assunto</th>
+              <th scope="col">Status da aprovação</th>
+              <th scope="col">Status de execução</th>
+              <th scope="col">Última modificação</th>
+              <th scope="col">Solicitante</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template if:true={hasCases}>
+              <template for:each={cases} for:item="caseItem">
+                <tr key={caseItem.id}>
+                  <td>
+                    <a href={caseItem.url} class="case-link"
+                      >{caseItem.caseNumber}</a
+                    >
+                  </td>
+                  <td>{caseItem.subject}</td>
+                  <td>{caseItem.approvalStatus}</td>
+                  <td>{caseItem.executionStatus}</td>
+                  <td>{caseItem.lastModified}</td>
+                  <td>{caseItem.requesterName}</td>
+                </tr>
+              </template>
+            </template>
+            <template if:false={hasCases}>
+              <tr>
+                <td colspan="6">
+                  <div class="empty-state">
+                    <div class="empty-illustration"></div>
+                    <p class="empty-title">Nenhum chamado encontrado.</p>
+                    <p class="empty-subtitle">
+                      Altere o filtro ou abra um novo chamado.
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <template if:true={isLoading}>
+      <div class="backdrop">
+        <lightning-spinner
+          alternative-text="Loading"
+          size="small"
+        ></lightning-spinner>
+      </div>
+    </template>
+  </article>
 </template>

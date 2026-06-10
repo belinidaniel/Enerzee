@@ -3,8 +3,8 @@
     <fullName>Gerente__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
     <description
-  >Gerente do contato, copiado no momento da criação do caso. Usado como 2º aprovador no processo de aprovação do Help Desk.</description>
-    <label>Gerente</label>
+  >Gestor do usuário solicitante, copiado no momento da criação do caso e usado como aprovador do Help Desk.</description>
+    <label>Gestor aprovador</label>
     <referenceTo>User</referenceTo>
     <relationshipName>Casos_Gerente</relationshipName>
     <required>false</required>

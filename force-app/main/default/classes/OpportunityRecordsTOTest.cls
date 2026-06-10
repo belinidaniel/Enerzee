@@ -14,6 +14,7 @@ private class OpportunityRecordsTOTest {
     opp.Id = 'opp-1';
     opp.PartnerName = 'Parceiro';
     opp.StageName = 'Prospecting';
+    opp.GeracaoDesejadaMinima = 150.5;
     opp.Products = new List<OpportunityRecordsTO.Product>{};
     opp.Client = new OpportunityRecordsTO.Client();
     opp.Client.Email = 'cliente@teste.com';
@@ -26,5 +27,6 @@ private class OpportunityRecordsTOTest {
     String jsonBody = JSON.serialize(wrapper);
     System.assert(jsonBody.contains('PartnerName'));
     System.assert(jsonBody.contains('cliente@teste.com'));
+    System.assert(jsonBody.contains('"GeracaoDesejadaMinima":150.5'));
   }
 }

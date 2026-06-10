@@ -28,8 +28,6 @@ public without sharing class HelpDeskCaseService {
     @AuraEnabled
     public String typeValue;
     @AuraEnabled
-    public String subtypeValue;
-    @AuraEnabled
     public Integer sortOrder;
   }
 
@@ -41,8 +39,6 @@ public without sharing class HelpDeskCaseService {
     @AuraEnabled
     public String currentApproverId;
     @AuraEnabled
-    public String supervisorName;
-    @AuraEnabled
     public String gerenteName;
   }
 
@@ -52,7 +48,10 @@ public without sharing class HelpDeskCaseService {
     Id contactId,
     UserContext ctx
   ) {
-    String ownershipFilter = buildOwnershipFilter(ctx, contactId);
+    String ownershipFilter = buildOwnershipFilter(
+      ctx,
+      isInternalUser() ? null : contactId
+    );
     Boolean closed = (filterType != null &&
     filterType.toLowerCase() == 'closed');
     List<Case> raw = HelpDeskCaseDAO.queryCases(
@@ -141,20 +140,23 @@ public without sharing class HelpDeskCaseService {
       throw new AuraHandledException('O comentário não pode estar vazio.');
     }
     Boolean internalUser = isInternalUser();
+    Boolean manager = internalUser && ctx.isManager == true;
     HelpDeskMessage__c msg = new HelpDeskMessage__c();
     msg.Case__c = caseId;
     msg.Body__c = body;
-    String normalizedAuthorType = internalUser && String.isNotBlank(authorType)
+    String normalizedAuthorType = manager && String.isNotBlank(authorType)
       ? authorType
       : 'Cliente';
     msg.AuthorType__c = normalizedAuthorType;
-    msg.AuthorName__c = resolveMessageAuthorName(
-      authorName,
-      normalizedAuthorType,
-      contactId,
-      ctx
-    );
-    msg.IsPublic__c = internalUser && isPublic != null ? isPublic : true;
+    msg.AuthorName__c = internalUser && !manager
+      ? ctx.name
+      : resolveMessageAuthorName(
+          authorName,
+          normalizedAuthorType,
+          contactId,
+          ctx
+        );
+    msg.IsPublic__c = manager && isPublic != null ? isPublic : true;
     HelpDeskCaseDAO.insertMessage(msg);
     return msg.Id;
   }
@@ -190,42 +192,15 @@ public without sharing class HelpDeskCaseService {
       dto.currentApproverId = String.valueOf(currentApproverId);
     }
 
-    dto.supervisorName = resolveApprovalDisplayName(
-      detail.SupervisorNome__c,
-      detail.Contact != null &&
-        detail.Contact.Supervisor__r != null
-        ? detail.Contact.Supervisor__r.Name
-        : null
-    );
-    dto.gerenteName = resolveApprovalDisplayName(
-      detail.GerenteNome__c,
-      detail.Contact != null &&
-        detail.Contact.Gerente__r != null
-        ? detail.Contact.Gerente__r.Name
-        : null
-    );
-
-    // Fallback para casos antigos (criados antes do snapshot) ou usuários
-    // internos: resolve via helper, em contexto de sistema.
-    if (
-      isMaskedUserName(dto.supervisorName) || isMaskedUserName(dto.gerenteName)
-    ) {
+    dto.gerenteName = detail.GerenteNome__c;
+    if (isMaskedUserName(dto.gerenteName)) {
       Map<Id, String> userNames = HelpDeskApproverHelper.getUserNames(
-        new Set<Id>{ detail.Supervisor__c, detail.Gerente__c }
+        new Set<Id>{ detail.Gerente__c }
       );
-      if (isMaskedUserName(dto.supervisorName)) {
-        dto.supervisorName = userNames.get(detail.Supervisor__c);
-      }
-      if (isMaskedUserName(dto.gerenteName)) {
-        dto.gerenteName = userNames.get(detail.Gerente__c);
-      }
+      dto.gerenteName = userNames.get(detail.Gerente__c);
     }
 
-    // O aprovador atual é o Supervisor (etapa 1) ou o Gerente (etapa 2):
-    // resolve a partir do snapshot, comparando o ActorId do workitem pendente.
-    if (currentApproverId == detail.Supervisor__c) {
-      dto.currentApproverName = dto.supervisorName;
-    } else if (currentApproverId == detail.Gerente__c) {
+    if (currentApproverId == detail.Gerente__c) {
       dto.currentApproverName = dto.gerenteName;
     } else if (currentApproverId != null) {
       Map<Id, String> approverNames = HelpDeskApproverHelper.getUserNames(
@@ -234,20 +209,6 @@ public without sharing class HelpDeskCaseService {
       dto.currentApproverName = approverNames.get(currentApproverId);
     }
     return dto;
-  }
-
-  private static String resolveApprovalDisplayName(
-    String caseSnapshotName,
-    String contactLookupName
-  ) {
-    if (
-      String.isNotBlank(contactLookupName) && isMaskedUserName(caseSnapshotName)
-    ) {
-      return contactLookupName;
-    }
-    return String.isNotBlank(caseSnapshotName)
-      ? caseSnapshotName
-      : contactLookupName;
   }
 
   private static Boolean isMaskedUserName(String value) {
@@ -289,23 +250,31 @@ public without sharing class HelpDeskCaseService {
         Tipo__c ASC,
         Subtipo__c ASC
     ]) {
-      if (
-        String.isBlank(row.Sistema__c) ||
-        String.isBlank(row.Tipo__c) ||
-        String.isBlank(row.Subtipo__c)
-      ) {
+      if (String.isBlank(row.Sistema__c)) {
         continue;
       }
-      CaseCategoryOptionDTO dto = new CaseCategoryOptionDTO();
-      dto.systemValue = row.Sistema__c;
-      dto.typeValue = row.Tipo__c;
-      dto.subtypeValue = row.Subtipo__c;
-      dto.sortOrder = row.SortOrder__c == null
-        ? null
-        : Integer.valueOf(row.SortOrder__c);
-      options.add(dto);
+      for (
+        String allowedType : new List<String>{
+          'Acesso',
+          'Melhoria',
+          'Erro',
+          'Dúvida'
+        }
+      ) {
+        CaseCategoryOptionDTO dto = new CaseCategoryOptionDTO();
+        dto.systemValue = row.Sistema__c;
+        dto.typeValue = allowedType;
+        dto.sortOrder = row.SortOrder__c == null
+          ? null
+          : Integer.valueOf(row.SortOrder__c);
+        options.add(dto);
+      }
     }
-    return options;
+    Map<String, CaseCategoryOptionDTO> uniqueOptions = new Map<String, CaseCategoryOptionDTO>();
+    for (CaseCategoryOptionDTO option : options) {
+      uniqueOptions.put(option.systemValue + '|' + option.typeValue, option);
+    }
+    return uniqueOptions.values();
   }
 
   public static Id createCase(
@@ -314,8 +283,6 @@ public without sharing class HelpDeskCaseService {
     String richDescription,
     String systemValue,
     String typeValue,
-    String subtypeValue,
-    String priorityValue,
     String suppliedEmail,
     String suppliedPhone,
     Id contactId,
@@ -323,6 +290,12 @@ public without sharing class HelpDeskCaseService {
   ) {
     if (String.isBlank(subject)) {
       throw new AuraHandledException('Subject é obrigatório.');
+    }
+    if (
+      !new Set<String>{ 'Acesso', 'Melhoria', 'Erro', 'Dúvida' }
+        .contains(typeValue)
+    ) {
+      throw new AuraHandledException('Tipo de chamado inválido.');
     }
     Case newCase = new Case();
     newCase.Subject = subject;
@@ -341,15 +314,6 @@ public without sharing class HelpDeskCaseService {
       String.isNotBlank(typeValue) && caseFields.containsKey('HelpDesk_Tipo__c')
     ) {
       newCase.put('HelpDesk_Tipo__c', typeValue);
-    }
-    if (
-      String.isNotBlank(subtypeValue) &&
-      caseFields.containsKey('HelpDesk_Subtipo__c')
-    ) {
-      newCase.put('HelpDesk_Subtipo__c', subtypeValue);
-    }
-    if (String.isNotBlank(priorityValue)) {
-      newCase.Priority = priorityValue;
     }
     newCase.SuppliedEmail = suppliedEmail;
     newCase.SuppliedPhone = suppliedPhone;
@@ -577,6 +541,13 @@ public without sharing class HelpDeskCaseService {
 
   public static DefaultEntitiesDTO getDefaultEntities(Id contactId) {
     DefaultEntitiesDTO dto = new DefaultEntitiesDTO();
+    if (contactId == null && isInternalUser()) {
+      UserContext ctx = loadUserContext();
+      dto.contactName = ctx.name;
+      dto.contactEmail = ctx.email;
+      dto.contactPhone = ctx.phone;
+      return dto;
+    }
     Account a = HelpDeskContactDAO.findEnerzeeAccount();
     Contact c = HelpDeskContactDAO.findById(contactId);
     if (a != null) {
@@ -599,13 +570,23 @@ public without sharing class HelpDeskCaseService {
     public Id contactId;
     public String email;
     public String name;
+    public String phone;
+    public Boolean isManager;
+    public Boolean allowAllCases;
   }
 
   public static UserContext loadUserContext() {
     UserContext ctx = new UserContext();
     ctx.userId = UserInfo.getUserId();
     List<User> users = [
-      SELECT Id, ContactId, Email, Name
+      SELECT
+        Id,
+        ContactId,
+        Email,
+        Name,
+        Phone,
+        ManagerId,
+        Profile.PermissionsModifyAllData
       FROM User
       WHERE Id = :ctx.userId
       LIMIT 1
@@ -614,14 +595,18 @@ public without sharing class HelpDeskCaseService {
       ctx.contactId = users[0].ContactId;
       ctx.email = users[0].Email;
       ctx.name = users[0].Name;
+      ctx.phone = users[0].Phone;
+      ctx.isManager =
+        FeatureManagement.checkPermission('HelpDesk_Manager') ||
+        users[0].Profile.PermissionsModifyAllData;
     }
     return ctx;
   }
 
-  public static void enforceInternalAccess() {
-    if (!isInternalUser()) {
+  public static void enforceManagerAccess() {
+    if (!isHelpDeskManager()) {
       throw new AuraHandledException(
-        'Esta operação está disponível apenas para usuários internos.'
+        'Esta operação está disponível apenas para gestores do Help Desk.'
       );
     }
   }
@@ -649,26 +634,18 @@ public without sharing class HelpDeskCaseService {
     UserContext ctx,
     Id overrideContactId
   ) {
+    if (ctx.allowAllCases == true && ctx.isManager == true) {
+      return 'Id != NULL';
+    }
     if (overrideContactId != null) {
       return 'ContactId = \'' +
         String.escapeSingleQuotes(String.valueOf(overrideContactId)) +
         '\'';
     }
-    if (ctx.contactId != null) {
+    if (!isInternalUser() && ctx.contactId != null) {
       return 'ContactId = \'' +
         String.escapeSingleQuotes(String.valueOf(ctx.contactId)) +
         '\'';
-    }
-    if (String.isNotBlank(ctx.email)) {
-      String emailEscaped = String.escapeSingleQuotes(ctx.email);
-      String userIdEscaped = String.escapeSingleQuotes(
-        String.valueOf(ctx.userId)
-      );
-      return '(SuppliedEmail = \'' +
-        emailEscaped +
-        '\' OR CreatedById = \'' +
-        userIdEscaped +
-        '\')';
     }
     return 'CreatedById = \'' +
       String.escapeSingleQuotes(String.valueOf(ctx.userId)) +
@@ -703,7 +680,13 @@ public without sharing class HelpDeskCaseService {
     UserContext ctx
   ) {
     if (isInternalUser()) {
-      List<Case> rows = [SELECT Id FROM Case WHERE Id = :caseId LIMIT 1];
+      String ownershipFilter = buildOwnershipFilter(ctx, null);
+      String query =
+        'SELECT Id FROM Case WHERE Id = :caseId ' +
+        'AND RecordType.DeveloperName = \'Help_Desk_Salesforce\' AND (' +
+        ownershipFilter +
+        ') LIMIT 1';
+      List<Case> rows = Database.query(query);
       if (rows.isEmpty()) {
         throw new AuraHandledException(
           'Caso não encontrado ou sem permissão de acesso.'
@@ -746,5 +729,13 @@ public without sharing class HelpDeskCaseService {
     return !UserInfo.getUserType().equalsIgnoreCase('Guest') &&
       !UserInfo.getUserType().equalsIgnoreCase('PowerPartner') &&
       !UserInfo.getUserType().equalsIgnoreCase('CustomerSuccess');
+  }
+
+  private static Boolean isHelpDeskManager() {
+    if (!isInternalUser()) {
+      return false;
+    }
+    UserContext ctx = loadUserContext();
+    return ctx.isManager == true;
   }
 }

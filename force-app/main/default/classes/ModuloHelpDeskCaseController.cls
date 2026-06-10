@@ -37,8 +37,9 @@ public without sharing class ModuloHelpDeskCaseController {
 
   @AuraEnabled(cacheable=false)
   public static List<HelpDeskMessage__c> getAllMessages(Id caseId) {
-    HelpDeskCaseService.enforceInternalAccess();
+    HelpDeskCaseService.enforceManagerAccess();
     HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    ctx.allowAllCases = true;
     return HelpDeskCaseService.getMessages(caseId, null, ctx, true);
   }
 
@@ -68,8 +69,9 @@ public without sharing class ModuloHelpDeskCaseController {
   // Visão interna (agente): inclui anexos de mensagens privadas também.
   @AuraEnabled(cacheable=false)
   public static List<AttachmentLink__c> getAllMessageAttachments(Id caseId) {
-    HelpDeskCaseService.enforceInternalAccess();
+    HelpDeskCaseService.enforceManagerAccess();
     HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    ctx.allowAllCases = true;
     return HelpDeskCaseService.getCaseAttachmentLinks(caseId, null, ctx, true);
   }
 
@@ -80,8 +82,9 @@ public without sharing class ModuloHelpDeskCaseController {
     String authorName,
     Boolean isPublic
   ) {
-    HelpDeskCaseService.enforceInternalAccess();
+    HelpDeskCaseService.enforceManagerAccess();
     HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    ctx.allowAllCases = true;
     return HelpDeskCaseService.addMessage(
       caseId,
       body,
@@ -140,6 +143,9 @@ public without sharing class ModuloHelpDeskCaseController {
     Id contactId
   ) {
     HelpDeskCaseService.UserContext ctx = HelpDeskCaseService.loadUserContext();
+    if (contactId == null && ctx.isManager == true) {
+      ctx.allowAllCases = true;
+    }
     return HelpDeskCaseService.uploadMessageFileExternal(
       caseId,
       messageId,
@@ -176,8 +182,6 @@ public without sharing class ModuloHelpDeskCaseController {
     String richDescription,
     String systemValue,
     String typeValue,
-    String subtypeValue,
-    String priorityValue,
     String suppliedEmail,
     String suppliedPhone,
     Id contactId,
@@ -189,8 +193,6 @@ public without sharing class ModuloHelpDeskCaseController {
       richDescription,
       systemValue,
       typeValue,
-      subtypeValue,
-      priorityValue,
       suppliedEmail,
       suppliedPhone,
       contactId,

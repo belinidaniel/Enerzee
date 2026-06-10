@@ -56,6 +56,21 @@ private class ModuloHelpDeskCaseControllerTest {
     User u = createUser();
     insert u;
     Contact c = createContact();
+    Case otherUserCase = new Case(
+      Subject = 'Case de outro usuário',
+      Status = [
+        SELECT MasterLabel
+        FROM CaseStatus
+        WHERE IsClosed = FALSE
+        ORDER BY SortOrder ASC
+        LIMIT 1
+      ]
+      .MasterLabel,
+      Origin = 'Phone',
+      RecordTypeId = helpDeskRecordTypeId(),
+      ContactId = c.Id
+    );
+    insert otherUserCase;
     String openStatus = [
       SELECT MasterLabel
       FROM CaseStatus
@@ -80,6 +95,7 @@ private class ModuloHelpDeskCaseControllerTest {
         Subject = 'Open Case',
         Status = openStatus,
         Origin = 'Phone',
+        RecordTypeId = helpDeskRecordTypeId(),
         ContactId = c.Id
       );
       insert openCase;
@@ -89,6 +105,7 @@ private class ModuloHelpDeskCaseControllerTest {
           Subject = 'Closed Case',
           Status = closedStatus,
           Origin = 'Phone',
+          RecordTypeId = helpDeskRecordTypeId(),
           ContactId = c.Id
         );
         insert closedCase;
@@ -113,6 +130,10 @@ private class ModuloHelpDeskCaseControllerTest {
       Test.stopTest();
 
       System.assert(new Map<Id, Case>(openCases).containsKey(openCase.Id));
+      System.assert(
+        !new Map<Id, Case>(openCases).containsKey(otherUserCase.Id),
+        'Usuário interno não deve listar casos criados por outro usuário.'
+      );
       if (closedCaseId != null) {
         System.assert(new Map<Id, Case>(closedCases).containsKey(closedCaseId));
       } else {
@@ -123,6 +144,17 @@ private class ModuloHelpDeskCaseControllerTest {
         );
       }
       System.assertEquals(openCase.Id, detail.Id);
+
+      Boolean denied = false;
+      try {
+        ModuloHelpDeskCaseController.getCaseDetail(otherUserCase.Id, c.Id);
+      } catch (AuraHandledException expected) {
+        denied = true;
+      }
+      System.assert(
+        denied,
+        'Usuário interno não deve abrir caso de outro usuário.'
+      );
     }
   }
 
@@ -131,15 +163,15 @@ private class ModuloHelpDeskCaseControllerTest {
     User u = createUser();
     insert u;
     Contact c = createContact();
-    Case cs = new Case(
-      Subject = 'Case with files',
-      Status = 'Novo',
-      Origin = 'Email',
-      ContactId = c.Id
-    );
-    insert cs;
-
     System.runAs(u) {
+      Case cs = new Case(
+        Subject = 'Case with files',
+        Status = 'Novo',
+        Origin = 'Email',
+        RecordTypeId = helpDeskRecordTypeId(),
+        ContactId = c.Id
+      );
+      insert cs;
       CaseComment existing = new CaseComment(
         ParentId = cs.Id,
         CommentBody = 'Existing',
@@ -253,10 +285,8 @@ private class ModuloHelpDeskCaseControllerTest {
           'HelpDesk Subject',
           'Descricao simples',
           '<p>Descricao rica</p>',
-          null,
-          null,
-          null,
-          'Medium',
+          'Salesforce',
+          'Acesso',
           c.Email,
           c.Phone,
           c.Id,
@@ -302,16 +332,27 @@ private class ModuloHelpDeskCaseControllerTest {
   static void testMessageAttachmentsWrappers() {
     User u = createUser();
     insert u;
-    Contact c = createContact();
-    Case cs = new Case(
-      Subject = 'Case message attachments',
-      Status = 'Novo',
-      Origin = 'Email',
-      ContactId = c.Id
+    PermissionSet managerPermission = [
+      SELECT Id
+      FROM PermissionSet
+      WHERE Name = 'HelpDesk_Aprovacao_Admin'
+      LIMIT 1
+    ];
+    insert new PermissionSetAssignment(
+      AssigneeId = u.Id,
+      PermissionSetId = managerPermission.Id
     );
-    insert cs;
+    Contact c = createContact();
 
     System.runAs(u) {
+      Case cs = new Case(
+        Subject = 'Case message attachments',
+        Status = 'Novo',
+        Origin = 'Email',
+        RecordTypeId = helpDeskRecordTypeId(),
+        ContactId = c.Id
+      );
+      insert cs;
       Id messageId = ModuloHelpDeskCaseController.addMessage(
         cs.Id,
         'Comentário com anexo',
@@ -384,5 +425,11 @@ private class ModuloHelpDeskCaseControllerTest {
         'A URL do anexo deve constar numerada no CaseComment espelhado'
       );
     }
+  }
+
+  private static Id helpDeskRecordTypeId() {
+    return Schema.SObjectType.Case.getRecordTypeInfosByDeveloperName()
+      .get('Help_Desk_Salesforce')
+      .getRecordTypeId();
   }
 }

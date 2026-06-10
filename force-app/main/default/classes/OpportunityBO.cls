@@ -265,6 +265,9 @@ public class OpportunityBO {
       opportunity.ConsumoAlvo__c = singleOpportunity.TargetConsume;
       opportunity.ConsumoInformadoB__c = singleOpportunity.TargetConsume;
     }
+    if (singleOpportunity.GeracaoDesejadaMinima != null) {
+      opportunity.GeracaoDesejadaMinima__c = singleOpportunity.GeracaoDesejadaMinima;
+    }
     if (singleOpportunity.PercentageIncreaseInConsumption != null) {
       opportunity.PorcentagemAumentoConsumo__c = singleOpportunity.PercentageIncreaseInConsumption;
     }
@@ -3634,7 +3637,8 @@ public class OpportunityBO {
 
   /**
    * @description Triggers SendKitUpdate to Nivello when any proposal parameter changes.
-   *              Currently watches: ConsumoInformadoB__c, TipoTelhadoEstrutura__c, IsRSD__c.
+   *              Currently watches: ConsumoInformadoB__c, GeracaoDesejadaMinima__c,
+   *              TipoTelhadoEstrutura__c, IsRSD__c.
    *              Collects all affected Opportunity IDs, queries their related Kit_Instalacao__c
    *              records and dispatches a single async callout to /api/Proposal/updateInfosKit.
    * @param newList Updated Opportunity records
@@ -3650,6 +3654,8 @@ public class OpportunityBO {
       Opportunity oldOpp = oldMap.get(newOpp.Id);
       if (
         newOpp.ConsumoInformadoB__c != oldOpp.ConsumoInformadoB__c ||
+        newOpp.GeracaoDesejadaMinima__c !=
+        oldOpp.GeracaoDesejadaMinima__c ||
         newOpp.TipoTelhadoEstrutura__c != oldOpp.TipoTelhadoEstrutura__c ||
         newOpp.IsRSD__c != oldOpp.IsRSD__c
       ) {

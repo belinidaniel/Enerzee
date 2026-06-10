@@ -152,60 +152,35 @@ public without sharing class CaseBO {
   }
 
   /**
-   * Copia Supervisor__c/Gerente__c do Contato do caso para o próprio Case,
-   * permitindo que o Approval Process roteie via relatedUserField.
-   * Bulkificado e executado no beforeInsert.
+   * Define o Manager do usuário solicitante como aprovador do caso Help Desk.
+   * Quando o usuário não possui Manager, usa o aprovador padrão configurado
+   * no helper.
    */
   public static void populateApprovers(List<Case> newRecords) {
-    Set<Id> contactIds = new Set<Id>();
-    for (Case c : newRecords) {
-      if (c.ContactId != null) {
-        contactIds.add(c.ContactId);
-      }
-    }
-    if (contactIds.isEmpty()) {
+    Id helpDeskRtId = getHelpDeskRecordTypeId();
+    if (helpDeskRtId == null) {
       return;
     }
 
-    // Leitura sem sharing: o caso pode ser criado por Guest do portal, que não
-    // enxerga o Contact via sharing. O helper roda em contexto de sistema.
-    Map<Id, Contact> contactsById = HelpDeskApproverHelper.getApproversByContact(
-      contactIds
-    );
-
-    // Fallback para quando o relacionamento do Contact não trouxer o label.
-    Set<Id> approverIds = new Set<Id>();
-    for (Contact ct : contactsById.values()) {
-      approverIds.add(ct.Supervisor__c);
-      approverIds.add(ct.Gerente__c);
-    }
-    Map<Id, String> approverNames = HelpDeskApproverHelper.getUserNames(
-      approverIds
-    );
-
+    Boolean hasHelpDeskCase = false;
     for (Case c : newRecords) {
-      if (c.ContactId == null) {
+      if (c.RecordTypeId == helpDeskRtId) {
+        hasHelpDeskCase = true;
+        break;
+      }
+    }
+    if (!hasHelpDeskCase) {
+      return;
+    }
+
+    User approver = HelpDeskApproverHelper.getCurrentUserApprover();
+    for (Case c : newRecords) {
+      if (c.RecordTypeId != helpDeskRtId || c.Gerente__c != null) {
         continue;
       }
-      Contact ct = contactsById.get(c.ContactId);
-      if (ct == null) {
-        continue;
-      }
-      if (c.Supervisor__c == null) {
-        c.Supervisor__c = ct.Supervisor__c;
-      }
-      if (c.Gerente__c == null) {
-        c.Gerente__c = ct.Gerente__c;
-      }
-      if (c.Supervisor__c != null) {
-        c.SupervisorNome__c = ct.Supervisor__r != null
-          ? ct.Supervisor__r.Name
-          : approverNames.get(c.Supervisor__c);
-      }
-      if (c.Gerente__c != null) {
-        c.GerenteNome__c = ct.Gerente__r != null
-          ? ct.Gerente__r.Name
-          : approverNames.get(c.Gerente__c);
+      if (approver != null) {
+        c.Gerente__c = approver.Id;
+        c.GerenteNome__c = approver.Name;
       }
       if (c.Gerente__c != null && String.isBlank(c.StatusAprovacao__c)) {
         c.StatusAprovacao__c = 'Pendente';
@@ -228,11 +203,7 @@ public without sharing class CaseBO {
     if (skipHelpDeskApprovalSubmission) {
       return;
     }
-    Id helpDeskRtId;
-    Map<String, Schema.RecordTypeInfo> rtInfos = Schema.SObjectType.Case.getRecordTypeInfosByDeveloperName();
-    if (rtInfos.containsKey(HELPDESK_RECORD_TYPE)) {
-      helpDeskRtId = rtInfos.get(HELPDESK_RECORD_TYPE).getRecordTypeId();
-    }
+    Id helpDeskRtId = getHelpDeskRecordTypeId();
     if (helpDeskRtId == null) {
       return;
     }
@@ -259,6 +230,13 @@ public without sharing class CaseBO {
       // allOrNone=false: um caso sem aprovador válido não derruba os demais.
       Approval.process(requests, false);
     }
+  }
+
+  private static Id getHelpDeskRecordTypeId() {
+    Map<String, Schema.RecordTypeInfo> rtInfos = Schema.SObjectType.Case.getRecordTypeInfosByDeveloperName();
+    return rtInfos.containsKey(HELPDESK_RECORD_TYPE)
+      ? rtInfos.get(HELPDESK_RECORD_TYPE).getRecordTypeId()
+      : null;
   }
 
   public static void AssignContactForCase(List<Case> newRecords) {

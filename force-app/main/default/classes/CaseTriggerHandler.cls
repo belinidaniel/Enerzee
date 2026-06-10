@@ -55,6 +55,10 @@ public class CaseTriggerHandler extends TriggerHandler {
       (List<Case>) newRecordList,
       (Map<Id, Case>) oldMap
     );
+    HelpDeskCaseNotificationService.notifyStatusChanges(
+      (List<Case>) newRecordList,
+      (Map<Id, Case>) oldMap
+    );
   }
 
   public override void beforeDelete() {

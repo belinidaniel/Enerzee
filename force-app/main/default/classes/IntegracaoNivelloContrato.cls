@@ -294,6 +294,7 @@ public without sharing class IntegracaoNivelloContrato {
     public String Id;
     public Decimal PotenciaPicoSistema;
     public Decimal ConsumoDesejado;
+    public Decimal GeracaoDesejadaMinima;
     public Integer QtdModulos;
     public Integer StructureType;
     public Boolean IsRSD;

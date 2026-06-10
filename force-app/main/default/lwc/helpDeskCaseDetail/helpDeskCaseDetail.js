@@ -28,9 +28,11 @@ export default class HelpDeskCaseDetail extends LightningElement {
       this.resolvedRecordId = value;
     }
   }
-  @track resolvedRecordId;
-  contactId;
+  @track resolvedRecordId = null;
+  contactId = null;
   detail;
+  isLoading = true;
+  loadError;
   wiredDetail;
   wiredMessages;
   wiredAttachments;
@@ -74,7 +76,12 @@ export default class HelpDeskCaseDetail extends LightningElement {
     const { data, error } = result;
     if (data) {
       this.detail = this.normalizeDetail(data);
+      this.loadError = null;
+      this.isLoading = false;
     } else if (error) {
+      this.detail = null;
+      this.loadError = this.normalizeError(error);
+      this.isLoading = false;
       this.handleError("Erro ao carregar caso", error);
     }
   }
@@ -137,6 +144,26 @@ export default class HelpDeskCaseDetail extends LightningElement {
     return this.detail && this.detail.status !== "Fechado";
   }
 
+  get showLoading() {
+    return this.isLoading && !this.detail;
+  }
+
+  get hasLoadError() {
+    return !this.isLoading && !this.detail && !!this.loadError;
+  }
+
+  handleRetry() {
+    if (!this.wiredDetail) {
+      return;
+    }
+    this.isLoading = true;
+    this.loadError = null;
+    refreshApex(this.wiredDetail).catch((error) => {
+      this.loadError = this.normalizeError(error);
+      this.isLoading = false;
+    });
+  }
+
   get isBlank() {
     return !this.newComment || !this.newComment.trim();
   }
@@ -162,11 +189,7 @@ export default class HelpDeskCaseDetail extends LightningElement {
   }
 
   get showApprovalPanel() {
-    return (
-      this.hasApprovalStatus ||
-      !!this.approvalInfo?.currentApproverName ||
-      !!this.approvalInfo?.gerenteName
-    );
+    return !!this.detail;
   }
 
   get approvalStatusLabel() {
@@ -204,35 +227,15 @@ export default class HelpDeskCaseDetail extends LightningElement {
     return "warning";
   }
 
-  get currentApproverLabel() {
-    if (this.isApproved) {
-      return "Aprovado";
-    }
-    if (this.isRejected) {
-      return "Rejeitado";
-    }
-    if (this.approvalInfo?.currentApproverName) {
-      return this.approvalInfo.currentApproverName;
-    }
-    if (
-      this.approvalInfo?.gerenteName &&
-      this.approvalStatusLabel === "Em Aprovação"
-    ) {
-      return this.approvalInfo.gerenteName;
-    }
-    return "Aguardando envio para aprovação";
-  }
-
-  get approvalRouteLabel() {
-    return this.approvalInfo?.gerenteName || "Gerente não definido";
-  }
-
   get hasJiraActivity() {
     return !!this.detail?.jiraIssueKey;
   }
 
   get jiraStatusLabel() {
-    return this.detail?.jiraStatus || "Aguardando atualização";
+    if (!this.isApproved && !this.detail?.jiraStatus) {
+      return "Aguardando aprovação";
+    }
+    return this.detail?.jiraStatus || "Aguardando atualização do Jira";
   }
 
   handleCommentChange(event) {
@@ -364,14 +367,6 @@ export default class HelpDeskCaseDetail extends LightningElement {
     }
   }
 
-  handleReopen() {
-    this.showToast(
-      "Ação futura",
-      "Fluxo de reabertura pode ser adicionado aqui.",
-      "info"
-    );
-  }
-
   normalizeDetail(data) {
     const hasRich = !!data.Description_Rich__c;
     return {
@@ -384,7 +379,7 @@ export default class HelpDeskCaseDetail extends LightningElement {
       jiraIssueUrl: data.JiraIssueUrl__c || "",
       jiraStatus: data.JiraStatus__c || "",
       system: data.HelpDesk_Sistema__c || "",
-      contactName: data.Contact ? data.Contact.Name : "",
+      contactName: data.Contact?.Name || data.CreatedBy?.Name || "",
       createdDateDisplay: this.formatDate(data.CreatedDate),
       lastModifiedDisplay: this.formatDate(data.LastModifiedDate),
       // Rich text vai como HTML; o fallback (Description em texto puro) é

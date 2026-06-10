@@ -4,12 +4,17 @@
         <members>CaseBO</members>
         <members>CaseBOTest</members>
         <members>HelpDeskCaseDAO</members>
+        <members>HelpDeskCaseDAOTest</members>
+        <members>HelpDeskCaseNotificationService</members>
+        <members>HelpDeskCaseNotificationServiceTest</members>
         <members>HelpDeskCaseService</members>
         <members>HelpDeskCaseServiceTest</members>
+        <members>HelpDeskApproverHelper</members>
         <members>HelpDeskMessageBO</members>
         <members>HelpDeskMessageBOTest</members>
         <members>ModuloHelpDeskCaseController</members>
         <members>ModuloHelpDeskCaseControllerTest</members>
+        <members>CaseTriggerHandler</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -24,25 +29,69 @@
     <types>
         <members>Case.HelpDesk_Sistema__c</members>
         <members>Case.HelpDesk_Tipo__c</members>
-        <members>Case.HelpDesk_Subtipo__c</members>
+        <members>Case.Gerente__c</members>
+        <members>Case.GerenteNome__c</members>
+        <members>Case.HelpDesk_Status__c</members>
+        <members>Case.JiraIssueKey__c</members>
+        <members>Case.JiraIssueUrl__c</members>
+        <members>Case.JiraStatus__c</members>
+        <members>Case.StatusAprovacao__c</members>
         <members>HelpDeskMessage__c.CaseCommentId__c</members>
         <name>CustomField</name>
+    </types>
+    <types>
+        <members>HelpDeskMessage__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>HelpDesk_Manager</members>
+        <name>CustomPermission</name>
+    </types>
+    <types>
+        <members>HelpDesk_Managers</members>
+        <name>Group</name>
     </types>
     <types>
         <members>Case-Help Desk Salesforce Layout</members>
         <name>Layout</name>
     </types>
     <types>
+        <members>Case.Help_Desk_Salesforce</members>
+        <name>RecordType</name>
+    </types>
+    <types>
+        <members>Case.Help_Desk</members>
+        <name>BusinessProcess</name>
+    </types>
+    <types>
         <members>helpDeskAttachmentUtils</members>
         <members>helpDeskCaseDetail</members>
         <members>helpDeskCaseFeed</members>
+        <members>helpDeskCaseList</members>
         <members>helpDeskHome</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
         <members>HelpDesk_Aprovacao_Admin</members>
+        <members>HelpDesk_Usuario_Interno</members>
         <members>Help_Desk_Guest</members>
         <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>Case</members>
+        <name>SharingRules</name>
+    </types>
+    <types>
+        <members>Case</members>
+        <name>Workflow</name>
+    </types>
+    <types>
+        <members>Help_Desk</members>
+        <name>CustomApplication</name>
+    </types>
+    <types>
+        <members>Help_Desk</members>
+        <name>CustomTab</name>
     </types>
     <version>64.0</version>
 </Package>

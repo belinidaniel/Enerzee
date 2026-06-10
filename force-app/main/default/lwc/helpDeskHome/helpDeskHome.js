@@ -1,8 +1,10 @@
-import { api, LightningElement, track } from "lwc";
+import { api, LightningElement, track, wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import { CurrentPageReference } from "lightning/navigation";
 import createCase from "@salesforce/apex/ModuloHelpDeskCaseController.createCase";
 import getDefaultEntities from "@salesforce/apex/ModuloHelpDeskCaseController.getDefaultEntities";
 import addMessage from "@salesforce/apex/ModuloHelpDeskCaseController.addMessage";
+import uploadFiles from "@salesforce/apex/ModuloHelpDeskCaseController.uploadFiles";
 import uploadMessageFileExternal from "@salesforce/apex/ModuloHelpDeskCaseController.uploadMessageFileExternal";
 import getCaseCategoryOptions from "@salesforce/apex/ModuloHelpDeskCaseController.getCaseCategoryOptions";
 import cloudLogo from "@salesforce/resourceUrl/salesforceCloudV3";
@@ -10,7 +12,7 @@ import agentAstro from "@salesforce/resourceUrl/agentforceAgentAstro";
 import { formatFileSize } from "c/helpDeskAttachmentUtils";
 
 export default class HelpDeskHome extends LightningElement {
-  _contactId;
+  _contactId = null;
   @api
   get contactId() {
     return this._contactId;
@@ -24,6 +26,8 @@ export default class HelpDeskHome extends LightningElement {
   @track showModal = false;
   @track isSaving = false;
   @track createdCaseId;
+  @track selectedCaseId;
+  @track defaultsLoaded = false;
   @track contactName;
   @track accountName;
   accountId;
@@ -34,8 +38,6 @@ export default class HelpDeskHome extends LightningElement {
   @track description = "";
   @track systemValue = "";
   @track typeValue = "";
-  @track subtypeValue = "";
-  @track priorityValue = "Medium";
   @track suppliedEmail = "";
   @track suppliedPhone = "";
   @track pendingFiles = [];
@@ -43,74 +45,19 @@ export default class HelpDeskHome extends LightningElement {
   @track categoryOptions = [];
   @track systemOptions = [];
   @track typeOptions = [];
-  @track subtypeOptions = [];
   cloudLogo = cloudLogo;
   agentAstro = agentAstro;
   fileSequence = 0;
   fileToReplaceKey;
 
-  fallbackCategoryOptions = [
-    {
-      systemValue: "Salesforce",
-      typeValue: "Acesso",
-      subtypeValue: "Login",
-      sortOrder: 10
-    },
-    {
-      systemValue: "Salesforce",
-      typeValue: "Acesso",
-      subtypeValue: "Permissao",
-      sortOrder: 20
-    },
-    {
-      systemValue: "Salesforce",
-      typeValue: "Erro",
-      subtypeValue: "Performance",
-      sortOrder: 30
-    },
-    {
-      systemValue: "VO",
-      typeValue: "Integracao",
-      subtypeValue: "Falha de API",
-      sortOrder: 40
-    },
-    {
-      systemValue: "VO",
-      typeValue: "Integracao",
-      subtypeValue: "Timeout",
-      sortOrder: 50
-    },
-    {
-      systemValue: "App",
-      typeValue: "Acesso",
-      subtypeValue: "Login",
-      sortOrder: 60
-    },
-    {
-      systemValue: "App",
-      typeValue: "Funcionalidade",
-      subtypeValue: "Notificacao",
-      sortOrder: 70
-    },
-    {
-      systemValue: "Site",
-      typeValue: "Formulario",
-      subtypeValue: "Erro de validacao",
-      sortOrder: 80
-    },
-    {
-      systemValue: "Site",
-      typeValue: "Conteudo",
-      subtypeValue: "Texto incorreto",
-      sortOrder: 90
-    }
+  allowedTypes = [
+    { label: "Acesso", value: "Acesso" },
+    { label: "Melhoria", value: "Melhoria" },
+    { label: "Erro", value: "Erro" },
+    { label: "Dúvida", value: "Dúvida" }
   ];
 
-  priorityOptions = [
-    { label: "Alta", value: "High" },
-    { label: "Média", value: "Medium" },
-    { label: "Baixa", value: "Low" }
-  ];
+  fallbackSystems = ["Salesforce", "VO", "App", "Site"];
 
   get disableCreate() {
     return (
@@ -119,17 +66,12 @@ export default class HelpDeskHome extends LightningElement {
       !this.subject ||
       !this.subject.trim() ||
       !this.systemValue ||
-      !this.typeValue ||
-      !this.subtypeValue
+      !this.typeValue
     );
   }
 
   get disableType() {
     return !this.systemValue || !this.typeOptions.length;
-  }
-
-  get disableSubtype() {
-    return !this.systemValue || !this.typeValue || !this.subtypeOptions.length;
   }
 
   get hasFiles() {
@@ -141,22 +83,35 @@ export default class HelpDeskHome extends LightningElement {
   }
 
   get canCreate() {
-    return !!this.contactId;
+    return this.defaultsLoaded;
   }
 
   get createButtonLabel() {
     return this.isSaving ? "Criando caso..." : "Criar caso";
   }
 
+  @wire(CurrentPageReference)
+  wiredPageReference(pageReference) {
+    this.selectedCaseId =
+      pageReference?.state?.c__recordId ||
+      pageReference?.state?.recordId ||
+      null;
+  }
+
+  get showHome() {
+    return !this.selectedCaseId;
+  }
+
+  get showCaseDetail() {
+    return !!this.selectedCaseId;
+  }
+
   connectedCallback() {
-    this.loadDefaults(this.contactId);
+    this.loadDefaults(this.contactId || null);
     this.loadCaseCategoryOptions();
   }
 
   loadDefaults(contactIdParam) {
-    if (!contactIdParam) {
-      return;
-    }
     getDefaultEntities({ contactId: contactIdParam })
       .then((result) => {
         this.accountId = result.accountId;
@@ -169,8 +124,10 @@ export default class HelpDeskHome extends LightningElement {
         this.defaultSuppliedPhone = result.contactPhone || "";
         this.suppliedEmail = result.contactEmail || "";
         this.suppliedPhone = result.contactPhone || "";
+        this.defaultsLoaded = true;
       })
       .catch((error) => {
+        this.defaultsLoaded = true;
         this.showToast("Aviso", this.normalizeError(error), "warning");
       });
   }
@@ -178,15 +135,12 @@ export default class HelpDeskHome extends LightningElement {
   loadCaseCategoryOptions() {
     getCaseCategoryOptions()
       .then((result) => {
-        const options =
-          result && result.length ? result : this.fallbackCategoryOptions;
+        const options = result && result.length ? result : [];
         this.categoryOptions = options.map((item) => ({ ...item }));
         this.refreshSystemOptions();
       })
       .catch(() => {
-        this.categoryOptions = this.fallbackCategoryOptions.map((item) => ({
-          ...item
-        }));
+        this.categoryOptions = [];
         this.refreshSystemOptions();
       });
   }
@@ -208,21 +162,14 @@ export default class HelpDeskHome extends LightningElement {
     if (name === "systemValue") {
       this.systemValue = value;
       this.typeValue = "";
-      this.subtypeValue = "";
       this.refreshTypeOptions();
-      return;
-    }
-    if (name === "typeValue") {
-      this.typeValue = value;
-      this.subtypeValue = "";
-      this.refreshSubtypeOptions();
       return;
     }
     this[name] = value;
   }
 
   handleCreate() {
-    if (this.disableCreate || this.createdCaseId || !this.contactId) {
+    if (this.disableCreate || this.createdCaseId) {
       return;
     }
     this.isSaving = true;
@@ -233,8 +180,6 @@ export default class HelpDeskHome extends LightningElement {
       richDescription: null,
       systemValue: this.systemValue,
       typeValue: this.typeValue,
-      subtypeValue: this.subtypeValue,
-      priorityValue: this.priorityValue,
       suppliedEmail: this.suppliedEmail,
       suppliedPhone: this.suppliedPhone,
       contactId: this.contactId,
@@ -264,14 +209,22 @@ export default class HelpDeskHome extends LightningElement {
       });
   }
 
-  // Anexos da criação seguem o mesmo fluxo das mensagens: cria uma mensagem
-  // inicial "Evidências:" (visível ao cliente) e sobe os arquivos via upload
-  // externo (Azure/AttachmentLink__c) vinculados a ela. Assim aparecem no
-  // portal, no feed interno e chegam ao Jira com os links quebrando linha.
   uploadEvidence(caseId) {
     if (!this.hasFiles) {
       return Promise.resolve(null);
     }
+    if (!this.contactId) {
+      const files = this.pendingFiles.map((file) => ({
+        fileName: file.fileName || file.name,
+        contentType: file.contentType,
+        base64Data: file.base64Data,
+        humanSize: file.humanSize,
+        name: file.name
+      }));
+      return uploadFiles({ caseId, files, contactId: null });
+    }
+
+    // No site, mantém o armazenamento externo vinculado à mensagem pública.
     return addMessage({
       caseId,
       body: "Evidências:",
@@ -296,9 +249,14 @@ export default class HelpDeskHome extends LightningElement {
 
   navigateToCase(caseId) {
     if (!caseId) return;
-    // Redireciona para a rota do case no site (preserva cId para uso nos detalhes)
-    const url = `/helpdesk/case/${caseId}${this.contactId ? `?cId=${this.contactId}` : ""}`;
+    const url = this.contactId
+      ? `/helpdesk/case/${caseId}?cId=${this.contactId}`
+      : `/lightning/n/Help_Desk?c__recordId=${caseId}`;
     window.location.assign(url);
+  }
+
+  navigateToHome() {
+    window.location.assign("/lightning/n/Help_Desk");
   }
 
   resetForm() {
@@ -308,8 +266,6 @@ export default class HelpDeskHome extends LightningElement {
     this.description = "";
     this.systemValue = "";
     this.typeValue = "";
-    this.subtypeValue = "";
-    this.priorityValue = "Medium";
     this.suppliedEmail = this.defaultSuppliedEmail || "";
     this.suppliedPhone = this.defaultSuppliedPhone || "";
     this.pendingFiles = [];
@@ -429,39 +385,19 @@ export default class HelpDeskHome extends LightningElement {
     const systems = this.uniqueValues(
       this.categoryOptions.map((item) => item.systemValue)
     );
-    this.systemOptions = this.toPicklistOptions(systems);
-    if (!systems.includes(this.systemValue)) {
+    const availableSystems = systems.length ? systems : this.fallbackSystems;
+    this.systemOptions = this.toPicklistOptions(availableSystems);
+    if (!availableSystems.includes(this.systemValue)) {
       this.systemValue = "";
     }
     this.refreshTypeOptions();
   }
 
   refreshTypeOptions() {
-    const types = this.uniqueValues(
-      this.categoryOptions
-        .filter((item) => item.systemValue === this.systemValue)
-        .map((item) => item.typeValue)
-    );
-    this.typeOptions = this.toPicklistOptions(types);
-    if (!types.includes(this.typeValue)) {
+    this.typeOptions = this.systemValue ? [...this.allowedTypes] : [];
+    const typeValues = this.allowedTypes.map((item) => item.value);
+    if (!typeValues.includes(this.typeValue)) {
       this.typeValue = "";
-    }
-    this.refreshSubtypeOptions();
-  }
-
-  refreshSubtypeOptions() {
-    const subtypes = this.uniqueValues(
-      this.categoryOptions
-        .filter(
-          (item) =>
-            item.systemValue === this.systemValue &&
-            item.typeValue === this.typeValue
-        )
-        .map((item) => item.subtypeValue)
-    );
-    this.subtypeOptions = this.toPicklistOptions(subtypes);
-    if (!subtypes.includes(this.subtypeValue)) {
-      this.subtypeValue = "";
     }
   }
 

@@ -14,6 +14,7 @@ private class OpportunityBOCoverageTest {
     single.Origem = 'API';
     single.ConsumptionAverage = 10.0;
     single.TargetConsume = 12.0;
+    single.GeracaoDesejadaMinima = 9.5;
     single.PercentageIncreaseInConsumption = 2.5;
     single.PowerDistributionCompany = 'Utility';
     single.ZipCode = '02925130';
@@ -170,6 +171,12 @@ private class OpportunityBOCoverageTest {
 
     OpportunityBO.mapOpportunityFieldsRest(single, opp);
     OpportunityBO.mapOpportunityFieldsRest(null, opp); // null guard coverage
+
+    Assert.areEqual(
+      9.5,
+      opp.GeracaoDesejadaMinima__c,
+      'A geração desejada mínima recebida deve ser mapeada na oportunidade.'
+    );
   }
 
   @isTest

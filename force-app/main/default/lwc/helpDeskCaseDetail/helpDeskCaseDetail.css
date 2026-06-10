@@ -218,6 +218,24 @@
   justify-content: center;
 }
 
+.error-state {
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+}
+
+.error-title {
+  color: #1e2b3c;
+  font-weight: 700;
+  margin: 0;
+}
+
+.error-message {
+  color: #6b7280;
+  margin: 0;
+  max-width: 640px;
+}
+
 .backdrop {
   position: absolute;
   inset: 0;

@@ -612,6 +612,16 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.GeracaoDesejadaMinima__c</fieldItem>
+                <identifier>RecordGeracaoDesejadaMinima_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.UF_Concessionaria__c</fieldItem>
                 <identifier>RecordUF_Concessionaria_cField</identifier>
             </fieldInstance>

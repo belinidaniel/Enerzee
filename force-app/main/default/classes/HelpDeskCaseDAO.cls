@@ -14,10 +14,11 @@ public without sharing class HelpDeskCaseDAO {
   ) {
     String statusFilter = closed ? 'IsClosed = TRUE' : 'IsClosed = FALSE';
     String query =
-      'SELECT Id, CaseNumber, Subject, Status, LastModifiedDate, Contact.Name, ContactId ' +
-      'FROM Case WHERE ' +
+      'SELECT Id, CaseNumber, Subject, Status, StatusAprovacao__c, JiraStatus__c, ' +
+      'LastModifiedDate, Contact.Name, ContactId, CreatedBy.Name ' +
+      'FROM Case WHERE RecordType.DeveloperName = \'Help_Desk_Salesforce\' AND (' +
       ownershipFilter +
-      ' AND ' +
+      ') AND ' +
       statusFilter;
     if (String.isNotBlank(searchTerm)) {
       String pattern = '%' + String.escapeSingleQuotes(searchTerm.trim()) + '%';
@@ -37,11 +38,12 @@ public without sharing class HelpDeskCaseDAO {
         StatusAprovacao__c,
         Supervisor__c,
         Gerente__c,
-        HelpDesk_Status__c,
         CreatedDate,
         LastModifiedDate,
         Contact.Name,
         ContactId,
+        CreatedBy.Name,
+        CreatedById,
         Description,
         Description_Rich__c,
         HelpDesk_Sistema__c,
@@ -194,14 +196,9 @@ public without sharing class HelpDeskCaseDAO {
         Id,
         StatusAprovacao__c,
         ContactId,
-        Supervisor__c,
         Gerente__c,
-        SupervisorNome__c,
         GerenteNome__c,
-        Contact.Supervisor__c,
-        Contact.Supervisor__r.Name,
-        Contact.Gerente__c,
-        Contact.Gerente__r.Name
+        CreatedBy.Name
       FROM Case
       WHERE Id = :caseId
       LIMIT 1

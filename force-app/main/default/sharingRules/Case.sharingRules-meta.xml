@@ -1,5 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <SharingRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sharingCriteriaRules>
+        <fullName>Help_Desk_Gestores</fullName>
+        <accessLevel>Edit</accessLevel>
+        <label>Help Desk - Gestores</label>
+        <sharedTo>
+            <group>HelpDesk_Managers</group>
+        </sharedTo>
+        <criteriaItems>
+            <field>RecordTypeId</field>
+            <operation>equals</operation>
+            <value>Help Desk Salesforce</value>
+        </criteriaItems>
+        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>
+    </sharingCriteriaRules>
     <sharingCriteriaRules>
         <fullName>Case_Qualificacao_Integradores</fullName>
         <accessLevel>Read</accessLevel>
@@ -15,9 +29,11 @@
         <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>
     </sharingCriteriaRules>
     <sharingCriteriaRules>
-        <fullName>Compartilhamento_de_Casos_Engenharia_para_Cordenador_de_Engenharia</fullName>
+        <fullName
+    >Compartilhamento_de_Casos_Engenharia_para_Cordenador_de_Engenharia</fullName>
         <accessLevel>Edit</accessLevel>
-        <label>Compartilhamento de Casos - Engenharia para Cordenador de Engenharia</label>
+        <label
+    >Compartilhamento de Casos - Engenharia para Cordenador de Engenharia</label>
         <sharedTo>
             <role>CoordenadorEngenharia</role>
         </sharedTo>
@@ -36,7 +52,7 @@
             <role>Gerente_Administrativo</role>
         </sharedTo>
         <sharedFrom>
-            <allInternalUsers></allInternalUsers>
+            <allInternalUsers />
         </sharedFrom>
     </sharingOwnerRules>
     <sharingOwnerRules>
@@ -47,18 +63,22 @@
             <roleAndSubordinatesInternal>CSO</roleAndSubordinatesInternal>
         </sharedTo>
         <sharedFrom>
-            <roleAndSubordinatesInternal>GerenteEngenharia</roleAndSubordinatesInternal>
+            <roleAndSubordinatesInternal
+      >GerenteEngenharia</roleAndSubordinatesInternal>
         </sharedFrom>
     </sharingOwnerRules>
     <sharingOwnerRules>
-        <fullName>Compartilhamento_de_Casos_Engenharia_para_Supervisor_Comercial</fullName>
+        <fullName
+    >Compartilhamento_de_Casos_Engenharia_para_Supervisor_Comercial</fullName>
         <accessLevel>Read</accessLevel>
-        <label>Compartilhamento de Casos - Engenharia para Supervisor Comercial</label>
+        <label
+    >Compartilhamento de Casos - Engenharia para Supervisor Comercial</label>
         <sharedTo>
             <role>Supervisor_Comercial</role>
         </sharedTo>
         <sharedFrom>
-            <roleAndSubordinatesInternal>GerenteEngenharia</roleAndSubordinatesInternal>
+            <roleAndSubordinatesInternal
+      >GerenteEngenharia</roleAndSubordinatesInternal>
         </sharedFrom>
     </sharingOwnerRules>
 </SharingRules>
