@@ -8,10 +8,6 @@
         <default>false</default>
     </values>
     <values>
-        <fullName>Escalado</fullName>
-        <default>false</default>
-    </values>
-    <values>
         <fullName>Finalizado</fullName>
         <default>false</default>
     </values>
