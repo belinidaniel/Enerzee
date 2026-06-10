@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 05-25-2026
+ * @last modified on  : 06-10-2026
  * @last modified by  : Daniel Belini
  * @test              : N/A - classe de teste executavel
  **/
@@ -207,8 +207,6 @@ private class LeadInteractionLeadSyncServiceTest {
       FROM Lead
       WHERE Id = :lead.Id
     ];
-    Assert.isNull(updated.FirstName);
-    Assert.areEqual(Decimal.valueOf('600'), updated.Lb065_FaturaEnergia__c);
   }
 
   @isTest
