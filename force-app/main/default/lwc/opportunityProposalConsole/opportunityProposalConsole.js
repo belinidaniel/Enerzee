@@ -22,6 +22,10 @@ export default class OpportunityProposalConsole extends LightningElement {
   isLoading = true;
   isProcessing = false;
   isPreviewLoading = false;
+  // True só enquanto o servidor está gerando o preview da capa (callout
+  // generatePreview). Diferente de isPreviewLoading, que também cobre o
+  // tempo de pintura do iframe — o envio não deve esperar o iframe pintar.
+  isPreviewGenerating = false;
   proposalVisibleCount = 0;
   otherVisibleCount = 0;
   activeTab = "proposal";
@@ -155,7 +159,28 @@ export default class OpportunityProposalConsole extends LightningElement {
   }
 
   get disablePrimaryAction() {
-    return !this.selectedTemplateId || this.isProcessing;
+    // Bloqueia o envio enquanto o servidor ainda gera o preview da capa,
+    // evitando gerar a proposta com a capa em estado inconsistente. Usamos
+    // isPreviewGenerating (servidor), não isPreviewLoading (pintura do iframe),
+    // para não travar o botão caso o iframe nunca dispare onload.
+    return (
+      !this.selectedTemplateId || this.isProcessing || this.isPreviewGenerating
+    );
+  }
+
+  get showPrimaryActionSpinner() {
+    // Spinner no botão tanto ao gerar o preview da capa quanto ao enviar.
+    return this.isProcessing || this.isPreviewGenerating;
+  }
+
+  get primaryActionLabel() {
+    if (this.isProcessing) {
+      return "Enviando...";
+    }
+    if (this.isPreviewGenerating) {
+      return "Carregando...";
+    }
+    return "Enviar proposta";
   }
 
   get isViabilityMode() {
@@ -264,6 +289,7 @@ export default class OpportunityProposalConsole extends LightningElement {
     const requestSequence = ++this.previewRequestSequence;
     this.previewUrl = null;
     this.isPreviewLoading = true;
+    this.isPreviewGenerating = true;
 
     return generatePreview({
       opportunityId: this.recordId,
@@ -308,6 +334,9 @@ export default class OpportunityProposalConsole extends LightningElement {
       })
       .finally(() => {
         if (requestSequence === this.previewRequestSequence) {
+          // O servidor terminou: libera o envio. O iframe ainda pode estar
+          // pintando (isPreviewLoading), mas o arquivo da capa já existe.
+          this.isPreviewGenerating = false;
           this.isPreviewLoading = !this.previewUrl;
         }
       });
@@ -388,6 +417,13 @@ export default class OpportunityProposalConsole extends LightningElement {
   }
 
   handleSendProposal() {
+    // Guarda síncrona contra duplo-clique: o atributo disabled do botão só
+    // repinta no próximo render, então um segundo clique no mesmo tick ainda
+    // dispararia este handler e geraria um segundo arquivo.
+    if (this.isProcessing) {
+      return;
+    }
+
     if (!this.selectedTemplateId) {
       this.dispatchEvent(
         new ShowToastEvent({
@@ -402,8 +438,7 @@ export default class OpportunityProposalConsole extends LightningElement {
     this.isProcessing = true;
     this.isLoading = true;
 
-    // Oculta modal mas mantém estado para reabrir em caso de falha.
-    this.isModalOpen = false;
+    // Mantém o modal aberto com o spinner no botão; só fecha após o sucesso.
 
     sendProposal({
       opportunityId: this.recordId,
@@ -412,6 +447,10 @@ export default class OpportunityProposalConsole extends LightningElement {
       .then((result) => {
         const success = result?.success !== false;
         const variant = success ? "success" : "error";
+        // Só fecha o modal quando o envio concluiu com sucesso.
+        if (success) {
+          this.isModalOpen = false;
+        }
         this.dispatchEvent(
           new ShowToastEvent({
             title: success ? "Sucesso" : "Falha ao enviar",
@@ -424,9 +463,7 @@ export default class OpportunityProposalConsole extends LightningElement {
         return refreshApex(this.wiredResult);
       })
       .catch((error) => {
-        // Reabre a modal em caso de falha.
-        this.isModalOpen = true;
-        this.isSendMode = true;
+        // O modal permanece aberto em caso de falha.
         const message = this.reduceError(error);
         this.dispatchEvent(
           new ShowToastEvent({

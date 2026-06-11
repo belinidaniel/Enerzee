@@ -24,6 +24,30 @@ public without sharing class PaymentSimulationBO {
   @TestVisible
   private static final String PIX_PROPOSAL_LABEL = 'PIX';
   @TestVisible
+  private static final String CARD_PAYMENT_METHOD = 'REC CARTAO';
+  @TestVisible
+  private static final String CARD_PAYMENT_TYPE = 'Card';
+  @TestVisible
+  private static final String CARD_PROPOSAL_LABEL = 'Cartão de Crédito';
+  // CondicaoPagamento2__c → número de parcelas do cartão (ver picklist do campo).
+  // 74 = à vista (1x), 75 = 2x, ... 85 = 12x, 86 = 21x.
+  @TestVisible
+  private static final Map<String, Integer> CARD_CONDITION_TO_INSTALLMENTS = new Map<String, Integer>{
+    '74' => 1,
+    '75' => 2,
+    '76' => 3,
+    '77' => 4,
+    '78' => 5,
+    '79' => 6,
+    '80' => 7,
+    '81' => 8,
+    '82' => 9,
+    '83' => 10,
+    '84' => 11,
+    '85' => 12,
+    '86' => 21
+  };
+  @TestVisible
   private static final Decimal PF_RENTAL_LIMIT = 70000;
   @TestVisible
   private static final Decimal PJ_RENTAL_LIMIT = 250000;
@@ -53,6 +77,274 @@ public without sharing class PaymentSimulationBO {
     // Resync every eligible opportunity on each update so that plain saves
     // backfill missing simulations and normalize legacy rows.
     syncSimulationsForOpportunities(newList);
+  }
+
+  /**
+   * Cria e seleciona a simulação de Cartão de Crédito quando o app define a
+   * forma de pagamento como cartão (FormaPagamento__c = 'REC CARTAO') e o
+   * parcelamento em CondicaoPagamento2__c. As demais simulações são mantidas
+   * (apenas a marcação Selected__c muda). Escopo: Solar Grupo B.
+   *
+   * Cenários Pix e Financiamento/Aluguel já são tratados em buildSyncPlan;
+   * apenas o cartão não tinha caminho de criação a partir da seleção do app.
+   */
+  public static void selectCardSimulationOnFormaPagamentoChange(
+    List<Opportunity> newList,
+    Map<Id, Opportunity> oldMap
+  ) {
+    if (newList == null || newList.isEmpty()) {
+      return;
+    }
+
+    Id targetRecordTypeId = getSolarRecordTypeId();
+    if (targetRecordTypeId == null) {
+      return;
+    }
+
+    Set<Id> opportunityIds = new Set<Id>();
+    for (Opportunity opportunityRecord : newList) {
+      Opportunity oldOpportunity = oldMap == null
+        ? null
+        : oldMap.get(opportunityRecord.Id);
+      if (
+        opportunityRecord.RecordTypeId != targetRecordTypeId ||
+        opportunityRecord.GrupoTarifario__c != GROUP_B_VALUE ||
+        !CARD_PAYMENT_METHOD.equals(opportunityRecord.FormaPagamento__c)
+      ) {
+        continue;
+      }
+
+      // Dispara quando a forma vira cartão ou quando o parcelamento muda.
+      Boolean formaChanged =
+        oldOpportunity == null ||
+        oldOpportunity.FormaPagamento__c != opportunityRecord.FormaPagamento__c;
+      Boolean conditionChanged =
+        oldOpportunity == null ||
+        oldOpportunity.CondicaoPagamento2__c !=
+        opportunityRecord.CondicaoPagamento2__c;
+      if (formaChanged || conditionChanged) {
+        opportunityIds.add(opportunityRecord.Id);
+      }
+    }
+
+    if (opportunityIds.isEmpty()) {
+      return;
+    }
+
+    createCardSimulations(opportunityIds);
+  }
+
+  private static void createCardSimulations(Set<Id> opportunityIds) {
+    Map<Id, Opportunity> opportunitiesById = new Map<Id, Opportunity>(
+      [
+        SELECT
+          Id,
+          ValorTotalProposta__c,
+          Amount,
+          CondicaoPagamento2__c
+        FROM Opportunity
+        WHERE Id IN :opportunityIds
+      ]
+    );
+    if (opportunitiesById.isEmpty()) {
+      return;
+    }
+
+    FinancingRate__c cardRate = getActiveCardFinancingRate();
+    if (cardRate == null) {
+      return;
+    }
+
+    Map<Id, List<PaymentSimulation__c>> simulationsByOpportunityId = groupSimulationsByOpportunityId(
+      PaymentSimulationDAO.getByOpportunityIds(opportunitiesById.keySet())
+    );
+
+    List<PaymentSimulation__c> simulationsToInsert = new List<PaymentSimulation__c>();
+    List<PaymentSimulation__c> simulationsToUpdate = new List<PaymentSimulation__c>();
+    Set<Id> opportunityIdsToRegenerate = new Set<Id>();
+
+    for (Opportunity opportunityRecord : opportunitiesById.values()) {
+      Integer installments = CARD_CONDITION_TO_INSTALLMENTS.get(
+        opportunityRecord.CondicaoPagamento2__c
+      );
+      if (installments == null) {
+        continue;
+      }
+
+      Decimal principalValue = opportunityRecord.ValorTotalProposta__c != null &&
+        opportunityRecord.ValorTotalProposta__c > 0
+        ? opportunityRecord.ValorTotalProposta__c
+        : opportunityRecord.Amount;
+      Decimal installmentAmount = calculateCardInstallmentAmount(
+        principalValue,
+        cardRate.InstallmentRate1__c,
+        installments,
+        cardRate.AnticipationRate__c
+      );
+      if (installmentAmount == null) {
+        continue;
+      }
+
+      // Desmarca a simulação selecionada anterior (qualquer tipo).
+      List<PaymentSimulation__c> existing = simulationsByOpportunityId.containsKey(
+          opportunityRecord.Id
+        )
+        ? simulationsByOpportunityId.get(opportunityRecord.Id)
+        : new List<PaymentSimulation__c>();
+      PaymentSimulation__c existingCard = null;
+      for (PaymentSimulation__c simulationRecord : existing) {
+        if (
+          CARD_PAYMENT_TYPE.equalsIgnoreCase(simulationRecord.PaymentType__c) &&
+          simulationRecord.InstallmentCount__c == installments
+        ) {
+          existingCard = simulationRecord;
+        } else if (simulationRecord.Selected__c == true) {
+          simulationsToUpdate.add(
+            new PaymentSimulation__c(
+              Id = simulationRecord.Id,
+              Selected__c = false
+            )
+          );
+        }
+      }
+
+      if (existingCard != null) {
+        // Reaproveita a simulação de cartão existente, atualizando o valor.
+        simulationsToUpdate.add(
+          new PaymentSimulation__c(
+            Id = existingCard.Id,
+            InstallmentAmount__c = installmentAmount,
+            Selected__c = true
+          )
+        );
+      } else {
+        simulationsToInsert.add(
+          new PaymentSimulation__c(
+            Opportunity__c = opportunityRecord.Id,
+            FinancingRate__c = cardRate.Id,
+            PaymentType__c = CARD_PAYMENT_TYPE,
+            ProposalLabel__c = CARD_PROPOSAL_LABEL,
+            InstallmentCount__c = installments,
+            InterestRate__c = cardRate.InstallmentRate1__c,
+            InstallmentAmount__c = installmentAmount,
+            Selected__c = true
+          )
+        );
+      }
+      opportunityIdsToRegenerate.add(opportunityRecord.Id);
+    }
+
+    if (!simulationsToUpdate.isEmpty()) {
+      update simulationsToUpdate;
+    }
+    if (!simulationsToInsert.isEmpty()) {
+      insert simulationsToInsert;
+    }
+    // O PaymentSimulationTrigger (afterInsert/afterUpdate) sincroniza
+    // Opportunity.SelectedSimulation__c via syncSelectedToOpportunity.
+
+    // Selecionar o cartão regenera a proposta para refletir a forma de pagamento
+    // no PDF automático (mesmo padrão da seleção via LWC).
+    for (Id opportunityId : opportunityIdsToRegenerate) {
+      ProposalGenerationStateService.reset(opportunityId);
+      ApprovalProcessService.enqueueProposalSavePdfJobIfAbsent(
+        opportunityId,
+        true,
+        true
+      );
+    }
+  }
+
+  private static FinancingRate__c getActiveCardFinancingRate() {
+    for (
+      FinancingRate__c financingRate : PaymentSimulationDAO.getActiveFinancingRates()
+    ) {
+      if (CARD_PAYMENT_TYPE.equalsIgnoreCase(financingRate.PaymentType__c)) {
+        return financingRate;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Força a regeração das simulações de financiamento (Solar Grupo B) após a
+   * troca de kit. Como a opp já tem SimulacaoCriada__c = true, o sync automático
+   * não roda mais; aqui resetamos a flag e re-sincronizamos com os novos valores
+   * (BDI/Rede/Pontos/Direct) calculados pela integração Nivello.
+   */
+  public static void regenerateSimulationsForOpportunityIds(
+    Set<Id> opportunityIds
+  ) {
+    if (opportunityIds == null || opportunityIds.isEmpty()) {
+      return;
+    }
+
+    List<Opportunity> opportunities = [
+      SELECT
+        Id,
+        AccountId,
+        RecordTypeId,
+        GrupoTarifario__c,
+        SimulacaoCriada__c,
+        Amount,
+        ValorTotalProposta__c,
+        BDI__c,
+        Rede3750__c,
+        Pontos__c,
+        Direct__c,
+        CustoAdicionalFixo__c,
+        ValorInstalacao__c,
+        CustoFinanceiroWeg__c
+      FROM Opportunity
+      WHERE Id IN :opportunityIds
+    ];
+    if (opportunities.isEmpty()) {
+      return;
+    }
+
+    resetSimulationCreatedFlag(opportunities);
+    syncSimulationsForOpportunities(opportunities);
+  }
+
+  private static void resetSimulationCreatedFlag(
+    List<Opportunity> opportunities
+  ) {
+    Id targetRecordTypeId = getSolarRecordTypeId();
+    if (targetRecordTypeId == null) {
+      return;
+    }
+
+    List<Opportunity> opportunitiesToReset = new List<Opportunity>();
+    for (Opportunity opportunityRecord : opportunities) {
+      if (
+        opportunityRecord.RecordTypeId == targetRecordTypeId &&
+        opportunityRecord.GrupoTarifario__c == GROUP_B_VALUE &&
+        opportunityRecord.SimulacaoCriada__c == true
+      ) {
+        opportunityRecord.SimulacaoCriada__c = false;
+        opportunitiesToReset.add(
+          new Opportunity(
+            Id = opportunityRecord.Id,
+            SimulacaoCriada__c = false
+          )
+        );
+      }
+    }
+    if (opportunitiesToReset.isEmpty()) {
+      return;
+    }
+
+    Boolean triggerWasEnabled = OpportunityTriggerHandler.isTriggerEnabled();
+    if (triggerWasEnabled) {
+      OpportunityTriggerHandler.disableTrigger();
+    }
+    try {
+      update opportunitiesToReset;
+    } finally {
+      if (triggerWasEnabled) {
+        OpportunityTriggerHandler.enableTrigger();
+      }
+    }
   }
 
   public static void normalizeSelectionDetails(

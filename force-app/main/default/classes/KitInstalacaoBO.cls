@@ -584,6 +584,16 @@ public without sharing class KitInstalacaoBO {
         System.debug(
           opportunitiesToUpdate.size() + ' opportunities updated successfully.'
         );
+
+        // Kit trocado: os valores da proposta mudaram, então as simulações de
+        // financiamento (Solar Grupo B) ficaram desatualizadas. Força a regeração
+        // com os novos valores (a opp já tem SimulacaoCriada__c = true, então o
+        // sync automático não rodaria sozinho).
+        if (!opportunityIdsWithUpdatedProposalValues.isEmpty()) {
+          PaymentSimulationBO.regenerateSimulationsForOpportunityIds(
+            opportunityIdsWithUpdatedProposalValues
+          );
+        }
       } else {
         System.debug('No opportunities were updated.');
       }
