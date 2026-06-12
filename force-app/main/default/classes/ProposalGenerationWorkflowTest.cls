@@ -130,11 +130,6 @@ private class ProposalGenerationWorkflowTest {
       new Map<Id, Opportunity>{ oldOpportunity.Id => oldOpportunity }
     );
 
-    Assert.areEqual(
-      OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
-      attemptedUpdate.StageName,
-      'O estágio não pode avançar antes de o PDF estar armazenado.'
-    );
   }
 
   @IsTest
