@@ -225,12 +225,20 @@
             onclick={closeModal}
           ></lightning-button>
           <template if:true={isSendMode}>
-            <lightning-button
-              label="Enviar proposta"
-              variant="brand"
+            <button
+              class="slds-button slds-button_brand send-proposal-button"
               onclick={handleSendProposal}
               disabled={disablePrimaryAction}
-            ></lightning-button>
+            >
+              <template if:true={showPrimaryActionSpinner}>
+                <lightning-spinner
+                  alternative-text="Carregando"
+                  size="x-small"
+                  class="send-proposal-spinner"
+                ></lightning-spinner>
+              </template>
+              {primaryActionLabel}
+            </button>
           </template>
         </footer>
       </div>

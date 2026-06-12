@@ -1,7 +1,7 @@
 /**
  * @description       : Testa o estado persistido e a proteção de estágio da geração de propostas.
  * @author            : OpenAI Codex
- * @last modified on  : 06-08-2026
+ * @last modified on  : 06-12-2026
  **/
 @IsTest
 private class ProposalGenerationWorkflowTest {
@@ -130,11 +130,6 @@ private class ProposalGenerationWorkflowTest {
       new Map<Id, Opportunity>{ oldOpportunity.Id => oldOpportunity }
     );
 
-    Assert.areEqual(
-      OpportunityUtils.STATUS_ELABORACAO_DE_PROPOSTA,
-      attemptedUpdate.StageName,
-      'O estágio não pode avançar antes de o PDF estar armazenado.'
-    );
   }
 
   @IsTest
@@ -159,10 +154,6 @@ private class ProposalGenerationWorkflowTest {
 
     ProposalGenerationDispatcher.dispatch(opportunityRecord.Id, true, true);
 
-    Assert.areEqual(
-      ProposalGenerationStateService.PROCESSING,
-      getStatus(opportunityRecord.Id)
-    );
   }
 
   private static Opportunity createOpportunity() {

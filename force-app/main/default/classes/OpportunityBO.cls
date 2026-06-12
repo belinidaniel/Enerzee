@@ -277,7 +277,12 @@ public class OpportunityBO {
         Boolean comingFromReadjustment = OpportunityUtils.STATUS_READEQUACAO_DE_PROPOSTA.equalsIgnoreCase(
           oldMap.get(opportunityRecord.Id).StageName
         );
-        if (!comingFromReadjustment) {
+        // RecordType Solar + Grupo A: a fase pode avançar para "Proposta Gerada"
+        // mesmo sem arquivo armazenado — não revertemos o StageName.
+        Boolean isSolarGrupoA =
+          OpportunityUtils.isRecordTypeSolar(opportunityRecord) &&
+          opportunityRecord.GrupoTarifario__c == 'Grupo A';
+        if (!comingFromReadjustment && !isSolarGrupoA) {
           opportunityRecord.StageName = oldMap.get(opportunityRecord.Id)
             .StageName;
         }
