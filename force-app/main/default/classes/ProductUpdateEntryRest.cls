@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Daniel Belini
  * @group             :
- * @last modified on  : 04-07-2026
+ * @last modified on  : 06-13-2026
  * @last modified by  : Daniel Belini
  * @test              : ProductUpdateEntryRestTest
  **/
@@ -62,7 +62,7 @@ global with sharing class ProductUpdateEntryRest {
       Id standardPricebookId = getStandardPricebookId();
 
       Set<String> requestedExternalIds = new Set<String>();
-      Set<String> requestedProductCodes = new Set<String>();
+      Set<String> requestedProductExternalIds = new Set<String>();
       Map<String, Integer> firstItemIndexByExternalId = new Map<String, Integer>();
 
       for (Integer idx = 0; idx < updates.size(); idx++) {
@@ -72,43 +72,21 @@ global with sharing class ProductUpdateEntryRest {
         }
 
         String normalizedExternalId = normalize(updatePayload.externalId);
-        String normalizedProductCode = normalize(updatePayload.productCode);
-
         if (!String.isBlank(normalizedExternalId)) {
           requestedExternalIds.add(normalizedExternalId);
           if (!firstItemIndexByExternalId.containsKey(normalizedExternalId)) {
             firstItemIndexByExternalId.put(normalizedExternalId, idx);
           }
         }
-        if (!String.isBlank(normalizedProductCode)) {
-          requestedProductCodes.add(normalizedProductCode);
+        if (!String.isBlank(normalizedExternalId)) {
+          requestedProductExternalIds.add(normalizedExternalId);
         }
       }
 
-      Map<String, PricebookEntry> externalIdToPricebookEntry = new Map<String, PricebookEntry>();
-      Set<Id> productIdsFromExistingPrices = new Set<Id>();
-      if (!requestedExternalIds.isEmpty()) {
-        for (PricebookEntry pricebookEntry : [
-          SELECT Id, Product2Id, UnitPrice, IsActive, ExternalId__c
-          FROM PricebookEntry
-          WHERE
-            Pricebook2Id = :standardPricebookId
-            AND ExternalId__c IN :requestedExternalIds
-        ]) {
-          externalIdToPricebookEntry.put(
-            normalize(pricebookEntry.ExternalId__c),
-            pricebookEntry
-          );
-          productIdsFromExistingPrices.add(pricebookEntry.Product2Id);
-        }
-      }
-
-      Map<String, Product2> productCodeToProduct = new Map<String, Product2>();
+      Map<String, Product2> externalIdToProduct = new Map<String, Product2>();
       Map<Id, Product2> productIdToProduct = new Map<Id, Product2>();
-      if (
-        !requestedProductCodes.isEmpty() ||
-        !productIdsFromExistingPrices.isEmpty()
-      ) {
+      Set<Id> existingProductIds = new Set<Id>();
+      if (!requestedProductExternalIds.isEmpty()) {
         for (Product2 productRecord : [
           SELECT
             Id,
@@ -123,15 +101,108 @@ global with sharing class ProductUpdateEntryRest {
             Preco_Unitario__c
           FROM Product2
           WHERE
-            Id IN :productIdsFromExistingPrices
-            OR ProductCode IN :requestedProductCodes
+            ExternalId__c IN :requestedProductExternalIds
+            OR Id_Externo__c IN :requestedProductExternalIds
         ]) {
           productIdToProduct.put(productRecord.Id, productRecord);
+          existingProductIds.add(productRecord.Id);
           if (
-            !String.isBlank(productRecord.ProductCode) &&
-            !productCodeToProduct.containsKey(productRecord.ProductCode)
+            !String.isBlank(productRecord.ExternalId__c) &&
+            requestedProductExternalIds.contains(productRecord.ExternalId__c)
           ) {
-            productCodeToProduct.put(productRecord.ProductCode, productRecord);
+            externalIdToProduct.put(productRecord.ExternalId__c, productRecord);
+          }
+          if (
+            !String.isBlank(productRecord.Id_Externo__c) &&
+            requestedProductExternalIds.contains(productRecord.Id_Externo__c) &&
+            !externalIdToProduct.containsKey(productRecord.Id_Externo__c)
+          ) {
+            externalIdToProduct.put(productRecord.Id_Externo__c, productRecord);
+          }
+        }
+      }
+
+      Map<Id, List<PricebookEntry>> initialProductIdToPricebookEntries = new Map<Id, List<PricebookEntry>>();
+      Map<String, PricebookEntry> requestedExternalIdToPricebookEntry = new Map<String, PricebookEntry>();
+      Set<Id> queriedPricebookEntryIds = new Set<Id>();
+      if (!existingProductIds.isEmpty() || !requestedExternalIds.isEmpty()) {
+        for (PricebookEntry pricebookEntry : [
+          SELECT Id, Product2Id, UnitPrice, IsActive, ExternalId__c
+          FROM PricebookEntry
+          WHERE
+            Pricebook2Id = :standardPricebookId
+            AND (Product2Id IN :existingProductIds
+            OR ExternalId__c IN :requestedExternalIds)
+        ]) {
+          queriedPricebookEntryIds.add(pricebookEntry.Id);
+          if (
+            !initialProductIdToPricebookEntries.containsKey(
+              pricebookEntry.Product2Id
+            )
+          ) {
+            initialProductIdToPricebookEntries.put(
+              pricebookEntry.Product2Id,
+              new List<PricebookEntry>()
+            );
+          }
+          initialProductIdToPricebookEntries.get(pricebookEntry.Product2Id)
+            .add(pricebookEntry);
+
+          String pricebookEntryExternalId = normalize(
+            pricebookEntry.ExternalId__c
+          );
+          if (!String.isBlank(pricebookEntryExternalId)) {
+            requestedExternalIdToPricebookEntry.put(
+              pricebookEntryExternalId,
+              pricebookEntry
+            );
+          }
+        }
+      }
+
+      Set<Id> legacyProductIds = new Set<Id>(
+        initialProductIdToPricebookEntries.keySet()
+      );
+      legacyProductIds.removeAll(existingProductIds);
+      if (!legacyProductIds.isEmpty()) {
+        for (Product2 productRecord : [
+          SELECT
+            Id,
+            Name,
+            Family,
+            ProductCode,
+            IsActive,
+            Category__c,
+            Description,
+            ExternalId__c,
+            Id_Externo__c,
+            Preco_Unitario__c
+          FROM Product2
+          WHERE Id IN :legacyProductIds
+        ]) {
+          productIdToProduct.put(productRecord.Id, productRecord);
+        }
+
+        for (PricebookEntry pricebookEntry : [
+          SELECT Id, Product2Id, UnitPrice, IsActive, ExternalId__c
+          FROM PricebookEntry
+          WHERE
+            Pricebook2Id = :standardPricebookId
+            AND Product2Id IN :legacyProductIds
+        ]) {
+          if (queriedPricebookEntryIds.contains(pricebookEntry.Id)) {
+            continue;
+          }
+          initialProductIdToPricebookEntries.get(pricebookEntry.Product2Id)
+            .add(pricebookEntry);
+          String pricebookEntryExternalId = normalize(
+            pricebookEntry.ExternalId__c
+          );
+          if (!String.isBlank(pricebookEntryExternalId)) {
+            requestedExternalIdToPricebookEntry.put(
+              pricebookEntryExternalId,
+              pricebookEntry
+            );
           }
         }
       }
@@ -142,10 +213,9 @@ global with sharing class ProductUpdateEntryRest {
       Map<Id, Product2> existingProductsToUpdateById = new Map<Id, Product2>();
       List<Product2> existingProductsToUpdate = new List<Product2>();
       List<String> existingProductKeys = new List<String>();
-      Map<String, Product2> pendingNewProductsByProductCode = new Map<String, Product2>();
+      Map<String, Product2> pendingNewProductsByExternalId = new Map<String, Product2>();
       List<Product2> newProductsToInsert = new List<Product2>();
       List<String> newProductKeys = new List<String>();
-      Integer generatedSequence = 0;
 
       for (Integer idx = 0; idx < updates.size(); idx++) {
         ProductPriceUpdate updatePayload = updates[idx];
@@ -182,40 +252,69 @@ global with sharing class ProductUpdateEntryRest {
         }
 
         Product2 resolvedProduct;
-        PricebookEntry existingPricebookEntry = externalIdToPricebookEntry.get(
+        if (pendingNewProductsByExternalId.containsKey(item.externalId)) {
+          resolvedProduct = pendingNewProductsByExternalId.get(item.externalId);
+        } else {
+          resolvedProduct = externalIdToProduct.get(item.externalId);
+        }
+
+        PricebookEntry requestedPricebookEntry = requestedExternalIdToPricebookEntry.get(
           item.externalId
         );
-        if (existingPricebookEntry != null) {
-          item.pricebookEntryId = existingPricebookEntry.Id;
+        if (resolvedProduct == null && requestedPricebookEntry != null) {
           resolvedProduct = productIdToProduct.get(
-            existingPricebookEntry.Product2Id
+            requestedPricebookEntry.Product2Id
           );
-        } else if (!String.isBlank(item.productCode)) {
-          if (pendingNewProductsByProductCode.containsKey(item.productCode)) {
-            resolvedProduct = pendingNewProductsByProductCode.get(
-              item.productCode
+        }
+        if (resolvedProduct != null && resolvedProduct.Id != null) {
+          PricebookEntry activePricebookEntry = findActivePricebookEntry(
+            initialProductIdToPricebookEntries.get(resolvedProduct.Id),
+            null
+          );
+          if (activePricebookEntry != null) {
+            markItemError(
+              item,
+              'Conflict',
+              'There is already an active PricebookEntry for the product.'
             );
-          } else {
-            resolvedProduct = productCodeToProduct.get(item.productCode);
+            item.productId = resolvedProduct.Id;
+            item.pricebookEntryId = activePricebookEntry.Id;
+            continue;
           }
+          if (
+            requestedPricebookEntry != null &&
+            requestedPricebookEntry.Product2Id != resolvedProduct.Id
+          ) {
+            markItemError(
+              item,
+              'Conflict',
+              'The externalId is already assigned to another product.'
+            );
+            item.productId = resolvedProduct.Id;
+            item.pricebookEntryId = requestedPricebookEntry.Id;
+            continue;
+          }
+        } else if (requestedPricebookEntry != null) {
+          markItemError(
+            item,
+            'Conflict',
+            'The externalId is already assigned to another product.'
+          );
+          item.pricebookEntryId = requestedPricebookEntry.Id;
+          continue;
         }
 
         if (resolvedProduct == null) {
-          Product2 newProduct = buildNewProduct(
-            updatePayload,
-            item.productCode,
-            generatedSequence
-          );
-          generatedSequence++;
-          item.productKey = String.isBlank(item.productCode)
+          Product2 newProduct = buildNewProduct(updatePayload, item.externalId);
+          item.productKey = String.isBlank(item.externalId)
             ? buildNewProductKey(item.index)
-            : buildPendingProductKey(item.productCode);
+            : buildPendingProductKey(item.externalId);
           if (!productKeyToProduct.containsKey(item.productKey)) {
             productKeyToProduct.put(item.productKey, newProduct);
             newProductsToInsert.add(newProduct);
             newProductKeys.add(item.productKey);
-            if (!String.isBlank(item.productCode)) {
-              pendingNewProductsByProductCode.put(item.productCode, newProduct);
+            if (!String.isBlank(item.externalId)) {
+              pendingNewProductsByExternalId.put(item.externalId, newProduct);
             }
           }
           resolvedProduct = productKeyToProduct.get(item.productKey);
@@ -226,7 +325,7 @@ global with sharing class ProductUpdateEntryRest {
           }
         }
 
-        applyProductFields(resolvedProduct, updatePayload);
+        applyProductFields(resolvedProduct, updatePayload, item.externalId);
         if (
           resolvedProduct.Id != null &&
           !existingProductsToUpdateById.containsKey(resolvedProduct.Id)
@@ -302,24 +401,15 @@ global with sharing class ProductUpdateEntryRest {
         productIdToProduct.put(productRecord.Id, productRecord);
       }
 
-      Map<String, PricebookEntry> refreshedExternalIdToPricebookEntry = new Map<String, PricebookEntry>();
       Map<Id, List<PricebookEntry>> productIdToPricebookEntries = new Map<Id, List<PricebookEntry>>();
-      if (!resolvedProductIds.isEmpty() || !requestedExternalIds.isEmpty()) {
+      if (!resolvedProductIds.isEmpty()) {
         for (PricebookEntry pricebookEntry : [
           SELECT Id, Product2Id, UnitPrice, IsActive, ExternalId__c
           FROM PricebookEntry
           WHERE
             Pricebook2Id = :standardPricebookId
-            AND (Product2Id IN :resolvedProductIds
-            OR ExternalId__c IN :requestedExternalIds)
+            AND Product2Id IN :resolvedProductIds
         ]) {
-          String refreshedExternalId = normalize(pricebookEntry.ExternalId__c);
-          if (!String.isBlank(refreshedExternalId)) {
-            refreshedExternalIdToPricebookEntry.put(
-              refreshedExternalId,
-              pricebookEntry
-            );
-          }
           if (
             !productIdToPricebookEntries.containsKey(pricebookEntry.Product2Id)
           ) {
@@ -360,77 +450,33 @@ global with sharing class ProductUpdateEntryRest {
           continue;
         }
 
-        PricebookEntry matchingEntry = refreshedExternalIdToPricebookEntry.get(
-          item.externalId
-        );
         List<PricebookEntry> candidateEntries = productIdToPricebookEntries.get(
           item.productId
         );
         PricebookEntry activeEntry = findActivePricebookEntry(
           candidateEntries,
-          matchingEntry != null ? matchingEntry.Id : null
+          null
         );
         PricebookEntry inactiveEntry = findInactivePricebookEntry(
           candidateEntries,
-          matchingEntry != null ? matchingEntry.Id : null
+          null
         );
 
-        if (matchingEntry != null) {
-          if (activeEntry != null && activeEntry.Id != matchingEntry.Id) {
-            markItemError(
-              item,
-              'Conflict',
-              'There is already another active PricebookEntry for the product.'
-            );
-            continue;
-          }
-          matchingEntry.UnitPrice = item.payload.price;
-          matchingEntry.IsActive = true;
-          item.pricebookEntryId = matchingEntry.Id;
-          entriesToUpdate.add(
-            buildPricebookEntryAction(item.index, 'Updated', matchingEntry)
-          );
-          plannedExternalIdByProductId.put(item.productId, item.externalId);
-          continue;
-        }
-
         if (activeEntry != null) {
-          if (String.isBlank(normalize(activeEntry.ExternalId__c))) {
-            activeEntry.ExternalId__c = item.externalId;
-            activeEntry.UnitPrice = item.payload.price;
-            activeEntry.IsActive = true;
-            item.pricebookEntryId = activeEntry.Id;
-            refreshedExternalIdToPricebookEntry.put(
-              item.externalId,
-              activeEntry
-            );
-            entriesToUpdate.add(
-              buildPricebookEntryAction(item.index, 'Updated', activeEntry)
-            );
-            plannedExternalIdByProductId.put(item.productId, item.externalId);
-          } else {
-            markItemError(
-              item,
-              'Conflict',
-              'There is already an active PricebookEntry for the product.'
-            );
-          }
+          markItemError(
+            item,
+            'Conflict',
+            'There is already an active PricebookEntry for the product.'
+          );
+          item.pricebookEntryId = activeEntry.Id;
           continue;
         }
 
         if (inactiveEntry != null) {
-          String previousExternalId = normalize(inactiveEntry.ExternalId__c);
-          if (!String.isBlank(previousExternalId)) {
-            refreshedExternalIdToPricebookEntry.remove(previousExternalId);
-          }
           inactiveEntry.ExternalId__c = item.externalId;
           inactiveEntry.UnitPrice = item.payload.price;
           inactiveEntry.IsActive = true;
           item.pricebookEntryId = inactiveEntry.Id;
-          refreshedExternalIdToPricebookEntry.put(
-            item.externalId,
-            inactiveEntry
-          );
           entriesToUpdate.add(
             buildPricebookEntryAction(item.index, 'Updated', inactiveEntry)
           );
@@ -571,7 +617,8 @@ global with sharing class ProductUpdateEntryRest {
 
   private static void applyProductFields(
     Product2 productRecord,
-    ProductPriceUpdate payload
+    ProductPriceUpdate payload,
+    String externalId
   ) {
     if (payload == null || productRecord == null) {
       return;
@@ -585,8 +632,9 @@ global with sharing class ProductUpdateEntryRest {
         : buildFallbackProductName(payload.externalId);
     }
 
-    if (productRecord.Id == null && !String.isBlank(payload.productCode)) {
-      productRecord.ProductCode = payload.productCode.trim();
+    if (!String.isBlank(externalId)) {
+      productRecord.ExternalId__c = externalId;
+      productRecord.Id_Externo__c = externalId;
     }
 
     productRecord.Family = payload.productFamily;
@@ -598,48 +646,26 @@ global with sharing class ProductUpdateEntryRest {
 
   private static Product2 buildNewProduct(
     ProductPriceUpdate payload,
-    String normalizedProductCode,
-    Integer generatedSequence
+    String normalizedExternalId
   ) {
-    String legacyProductExternalId = buildLegacyProductExternalId(
-      normalizedProductCode,
-      payload != null ? payload.externalId : null,
-      generatedSequence
-    );
-
     Product2 productRecord = new Product2(
-      ProductCode = normalizedProductCode,
+      ProductCode = normalize(payload != null ? payload.productCode : null),
       Name = !String.isBlank(payload != null ? payload.name : null)
         ? payload.name.trim()
-        : (!String.isBlank(normalizedProductCode)
-            ? normalizedProductCode
+        : (!String.isBlank(normalizedExternalId)
+            ? normalizedExternalId
             : buildFallbackProductName(
                 payload != null ? payload.externalId : null
               )),
       Family = payload != null ? payload.productFamily : null,
       IsActive = true,
-      ExternalId__c = legacyProductExternalId,
-      Id_Externo__c = legacyProductExternalId,
+      ExternalId__c = normalizedExternalId,
+      Id_Externo__c = normalizedExternalId,
       Description = payload != null ? payload.description : null,
       Category__c = payload != null ? payload.categoryValue : null,
       Preco_Unitario__c = payload != null ? payload.price : null
     );
     return productRecord;
-  }
-
-  private static String buildLegacyProductExternalId(
-    String normalizedProductCode,
-    String rawExternalId,
-    Integer generatedSequence
-  ) {
-    if (!String.isBlank(normalizedProductCode)) {
-      return normalizedProductCode;
-    }
-    String normalizedExternalId = normalize(rawExternalId);
-    return 'LEGACY-PRODUCT-' +
-      (String.isBlank(normalizedExternalId)
-        ? String.valueOf(generatedSequence)
-        : normalizedExternalId + '-' + String.valueOf(generatedSequence));
   }
 
   private static String buildFallbackProductName(String rawExternalId) {
@@ -801,7 +827,11 @@ global with sharing class ProductUpdateEntryRest {
     payload.name = stringOrNull(rawItem.get('name'));
     payload.price = decimalOrNull(rawItem.get('price'));
     payload.productFamily = stringOrNull(rawItem.get('productFamily'));
-    payload.description = stringOrNull(rawItem.get('description'));
+    payload.description = stringOrNull(
+      rawItem.containsKey('description')
+        ? rawItem.get('description')
+        : rawItem.get('Description')
+    );
     payload.categoryValue = stringOrNull(rawItem.get('Category__c'));
     return payload;
   }

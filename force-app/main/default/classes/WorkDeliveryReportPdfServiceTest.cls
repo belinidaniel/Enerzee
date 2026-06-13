@@ -56,7 +56,10 @@ private class WorkDeliveryReportPdfServiceTest {
       WorkDeliveryReportPdfService.generatePdfBase64(null, 'Atividade');
       Assert.fail('Deveria lançar exceção para sobjectId nulo.');
     } catch (AuraHandledException ex) {
-      Assert.isNotNull(ex, 'Deve lancar AuraHandledException para sobjectId nulo.');
+      Assert.isNotNull(
+        ex,
+        'Deve lancar AuraHandledException para sobjectId nulo.'
+      );
     }
   }
 
@@ -69,7 +72,10 @@ private class WorkDeliveryReportPdfServiceTest {
       WorkDeliveryReportPdfService.generatePdfBase64(acc.Id, null);
       Assert.fail('Deveria lançar exceção para atividade nula.');
     } catch (AuraHandledException ex) {
-      Assert.isNotNull(ex, 'Deve lancar AuraHandledException para atividade nula.');
+      Assert.isNotNull(
+        ex,
+        'Deve lancar AuraHandledException para atividade nula.'
+      );
     }
   }
 
@@ -82,7 +88,10 @@ private class WorkDeliveryReportPdfServiceTest {
       WorkDeliveryReportPdfService.generatePdfBase64(acc.Id, '   ');
       Assert.fail('Deveria lançar exceção para atividade em branco.');
     } catch (AuraHandledException ex) {
-      Assert.isNotNull(ex, 'Deve lancar AuraHandledException para atividade em branco.');
+      Assert.isNotNull(
+        ex,
+        'Deve lancar AuraHandledException para atividade em branco.'
+      );
     }
   }
 
@@ -174,7 +183,12 @@ private class WorkDeliveryReportPdfServiceTest {
     cv.PathOnClient = 'caption-fallback.png';
     cv.VersionData = Blob.valueOf('DATA');
     insert cv;
-    cv = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1];
+    cv = [
+      SELECT Id, ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :cv.Id
+      LIMIT 1
+    ];
 
     OpportunityAttachmentLink__c link = new OpportunityAttachmentLink__c(
       Name = 'Caption Fallback Link',
@@ -193,7 +207,10 @@ private class WorkDeliveryReportPdfServiceTest {
     );
     Test.stopTest();
 
-    Assert.isNotNull(result, 'Deve retornar base64 usando descricao como caption.');
+    Assert.isNotNull(
+      result,
+      'Deve retornar base64 usando descricao como caption.'
+    );
     Assert.isTrue(result.length() > 0, 'Base64 nao deve ser vazio.');
   }
 
@@ -213,7 +230,12 @@ private class WorkDeliveryReportPdfServiceTest {
     cv.PathOnClient = 'trim-subject.jpg';
     cv.VersionData = Blob.valueOf('DATA');
     insert cv;
-    cv = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1];
+    cv = [
+      SELECT Id, ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :cv.Id
+      LIMIT 1
+    ];
 
     OpportunityAttachmentLink__c link = new OpportunityAttachmentLink__c(
       Name = 'Trim Subject Link',
@@ -254,7 +276,12 @@ private class WorkDeliveryReportPdfServiceTest {
     cv.PathOnClient = 'valid-doc.png';
     cv.VersionData = Blob.valueOf('VALID');
     insert cv;
-    cv = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1];
+    cv = [
+      SELECT Id, ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :cv.Id
+      LIMIT 1
+    ];
 
     OpportunityAttachmentLink__c validLink = new OpportunityAttachmentLink__c(
       Name = 'Valid Link',
@@ -280,7 +307,10 @@ private class WorkDeliveryReportPdfServiceTest {
     );
     Test.stopTest();
 
-    Assert.isNotNull(result, 'Deve ignorar ContentDocumentId invalido e gerar PDF.');
+    Assert.isNotNull(
+      result,
+      'Deve ignorar ContentDocumentId invalido e gerar PDF.'
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -302,16 +332,23 @@ private class WorkDeliveryReportPdfServiceTest {
       cv.PathOnClient = 'multi-file-' + i + '.jpg';
       cv.VersionData = Blob.valueOf('DATA' + i);
       insert cv;
-      cv = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1];
+      cv = [
+        SELECT Id, ContentDocumentId
+        FROM ContentVersion
+        WHERE Id = :cv.Id
+        LIMIT 1
+      ];
 
-      links.add(new OpportunityAttachmentLink__c(
-        Name = 'Multi Link ' + i,
-        SObjectId__c = acc.Id,
-        ActivityName__c = TaskUtils.SUBJECT_RELATORIO_FINAL_DE_OBRA,
-        AttachmentDescription__c = 'foto-' + i,
-        DocRequiredName__c = 'Foto ' + i,
-        ContentDocumentId__c = String.valueOf(cv.ContentDocumentId)
-      ));
+      links.add(
+        new OpportunityAttachmentLink__c(
+          Name = 'Multi Link ' + i,
+          SObjectId__c = acc.Id,
+          ActivityName__c = TaskUtils.SUBJECT_RELATORIO_FINAL_DE_OBRA,
+          AttachmentDescription__c = 'foto-' + i,
+          DocRequiredName__c = 'Foto ' + i,
+          ContentDocumentId__c = String.valueOf(cv.ContentDocumentId)
+        )
+      );
     }
     insert links;
 
@@ -323,7 +360,10 @@ private class WorkDeliveryReportPdfServiceTest {
     Test.stopTest();
 
     Assert.isNotNull(result, 'Deve gerar PDF com multiplos anexos.');
-    Assert.isTrue(result.length() > 0, 'Base64 nao deve ser vazio com multiplos anexos.');
+    Assert.isTrue(
+      result.length() > 0,
+      'Base64 nao deve ser vazio com multiplos anexos.'
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -344,7 +384,12 @@ private class WorkDeliveryReportPdfServiceTest {
     cv.PathOnClient = 'to-delete.png';
     cv.VersionData = Blob.valueOf('DEL');
     insert cv;
-    cv = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1];
+    cv = [
+      SELECT Id, ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :cv.Id
+      LIMIT 1
+    ];
     Id docId = cv.ContentDocumentId;
 
     OpportunityAttachmentLink__c link = new OpportunityAttachmentLink__c(
@@ -365,7 +410,9 @@ private class WorkDeliveryReportPdfServiceTest {
         acc.Id,
         TaskUtils.SUBJECT_RELATORIO_FINAL_DE_OBRA
       );
-      Assert.fail('Deveria lançar AuraHandledException quando versao inexistente.');
+      Assert.fail(
+        'Deveria lançar AuraHandledException quando versao inexistente.'
+      );
     } catch (AuraHandledException ex) {
       Assert.isNotNull(ex, 'Deve lançar excecao para versao ausente.');
     }
@@ -391,7 +438,12 @@ private class WorkDeliveryReportPdfServiceTest {
     cv.PathOnClient = 'special-chars.png';
     cv.VersionData = Blob.valueOf('SPEC');
     insert cv;
-    cv = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1];
+    cv = [
+      SELECT Id, ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :cv.Id
+      LIMIT 1
+    ];
 
     // Use the same activity name but with HTML special chars that must be escaped
     String specialSubject = TaskUtils.SUBJECT_RELATORIO_FINAL_DE_OBRA;
@@ -412,7 +464,10 @@ private class WorkDeliveryReportPdfServiceTest {
     );
     Test.stopTest();
 
-    Assert.isNotNull(result, 'Deve gerar PDF com caracteres especiais no nome da atividade.');
+    Assert.isNotNull(
+      result,
+      'Deve gerar PDF com caracteres especiais no nome da atividade.'
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -430,7 +485,12 @@ private class WorkDeliveryReportPdfServiceTest {
     cv.PathOnClient = 'null-caption.png';
     cv.VersionData = Blob.valueOf('DATA');
     insert cv;
-    cv = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1];
+    cv = [
+      SELECT Id, ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :cv.Id
+      LIMIT 1
+    ];
 
     // Both DocRequiredName__c and AttachmentDescription__c are null → caption = null
     OpportunityAttachmentLink__c link = new OpportunityAttachmentLink__c(
@@ -468,7 +528,12 @@ private class WorkDeliveryReportPdfServiceTest {
     cv.PathOnClient = 'gif-attachment.gif';
     cv.VersionData = Blob.valueOf('GIF89a');
     insert cv;
-    cv = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1];
+    cv = [
+      SELECT Id, ContentDocumentId
+      FROM ContentVersion
+      WHERE Id = :cv.Id
+      LIMIT 1
+    ];
 
     OpportunityAttachmentLink__c link = new OpportunityAttachmentLink__c(
       Name = 'Gif Link',

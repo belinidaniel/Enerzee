@@ -195,7 +195,6 @@ public class PaymentSimulationBOTest {
         financingCount++;
       }
     }
-
   }
 
   @IsTest

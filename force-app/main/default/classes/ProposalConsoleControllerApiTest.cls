@@ -575,7 +575,7 @@ private class ProposalConsoleControllerApiTest {
     ProposalApiClient.testIntegrationUrl = null;
   }
 
-  private static void resetCalloutCounters() { 
+  private static void resetCalloutCounters() {
     proposalCallCount = 0;
     nivelloCallCount = 0;
   }

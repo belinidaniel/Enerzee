@@ -254,7 +254,8 @@ private class InstalacaoFinalReportServiceTest {
       Name = 'LinkByAttachUrl',
       SObjectId__c = String.valueOf(anchor.Id),
       ActivityName__c = TaskUtils.SUBJECT_RELATORIO_DE_EXECUCAO_DE_OBRA,
-      AttachmentURL__c = '/sfc/servlet.shepherd/version/download/' + oldVersion.Id,
+      AttachmentURL__c = '/sfc/servlet.shepherd/version/download/' +
+        oldVersion.Id,
       AttachmentDescription__c = 'attach-url'
     );
     insert linkByAttachUrl;
@@ -317,8 +318,9 @@ private class InstalacaoFinalReportServiceTest {
   @IsTest
   static void finalReportJobExecuteWithEmptyIdsReturnsGracefully() {
     Test.startTest();
-    InstalacaoFinalReportService.FinalReportJob job =
-      new InstalacaoFinalReportService.FinalReportJob(null);
+    InstalacaoFinalReportService.FinalReportJob job = new InstalacaoFinalReportService.FinalReportJob(
+      null
+    );
     // Cannot call execute directly (needs QueueableContext), so enqueue and let
     // the framework run it — validates no uncaught exception on empty list.
     System.enqueueJob(job);
@@ -342,7 +344,10 @@ private class InstalacaoFinalReportServiceTest {
     System.enqueueJob(new InstalacaoFinalReportService.FinalReportJob(ids));
     Test.stopTest();
 
-    Assert.isTrue(true, 'FinalReportJob com MAX_PER_RUN ids nao deve lançar erro.');
+    Assert.isTrue(
+      true,
+      'FinalReportJob com MAX_PER_RUN ids nao deve lançar erro.'
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -377,7 +382,10 @@ private class InstalacaoFinalReportServiceTest {
         FirstPublishLocationId = :anchor.Id
         AND Title LIKE 'Relatorio de Execucao de Obra%'
     ];
-    Assert.isTrue(!generated.isEmpty(), 'Deve gerar PDF mesmo sem doc/url nos links.');
+    Assert.isTrue(
+      !generated.isEmpty(),
+      'Deve gerar PDF mesmo sem doc/url nos links.'
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -400,7 +408,8 @@ private class InstalacaoFinalReportServiceTest {
       SObjectId__c = String.valueOf(anchor.Id),
       ActivityName__c = TaskUtils.SUBJECT_RELATORIO_DE_EXECUCAO_DE_OBRA,
       AttachmentURL__c = '/sfc/servlet.shepherd/version/download/' +
-        oldVersion.Id + '?operationContext=CHATTER',
+        oldVersion.Id +
+        '?operationContext=CHATTER',
       AttachmentDescription__c = 'qs'
     );
     insert link;
@@ -418,7 +427,10 @@ private class InstalacaoFinalReportServiceTest {
         FirstPublishLocationId = :anchor.Id
         AND Title LIKE 'Relatorio de Execucao de Obra%'
     ];
-    Assert.isTrue(!generated.isEmpty(), 'Deve gerar PDF para URL com query string.');
+    Assert.isTrue(
+      !generated.isEmpty(),
+      'Deve gerar PDF para URL com query string.'
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -460,7 +472,10 @@ private class InstalacaoFinalReportServiceTest {
         FirstPublishLocationId = :anchor.Id
         AND Title LIKE 'Relatorio de Execucao de Obra%'
     ];
-    Assert.isTrue(!generated.isEmpty(), 'Deve gerar PDF e resolver versao por URL interna.');
+    Assert.isTrue(
+      !generated.isEmpty(),
+      'Deve gerar PDF e resolver versao por URL interna.'
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -501,7 +516,10 @@ private class InstalacaoFinalReportServiceTest {
         FirstPublishLocationId = :anchor.Id
         AND Title LIKE 'Relatorio de Execucao de Obra%'
     ];
-    Assert.isTrue(!generated.isEmpty(), 'Deve gerar PDF com subject legacy como fallback.');
+    Assert.isTrue(
+      !generated.isEmpty(),
+      'Deve gerar PDF com subject legacy como fallback.'
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -513,7 +531,11 @@ private class InstalacaoFinalReportServiceTest {
     Account anchor = new Account(Name = 'Anchor PrimaryWins');
     insert anchor;
 
-    ContentVersion v1 = createContentVersion(anchor.Id, 'prim-file', 'prim.png');
+    ContentVersion v1 = createContentVersion(
+      anchor.Id,
+      'prim-file',
+      'prim.png'
+    );
     ContentVersion v2 = createContentVersion(anchor.Id, 'leg-file', 'leg.png');
 
     OpportunityAttachmentLink__c legacyLink = new OpportunityAttachmentLink__c(
@@ -545,7 +567,10 @@ private class InstalacaoFinalReportServiceTest {
         FirstPublishLocationId = :anchor.Id
         AND Title LIKE 'Relatorio de Execucao de Obra%'
     ];
-    Assert.isTrue(!generated.isEmpty(), 'Deve gerar PDF com subject primario prioritario.');
+    Assert.isTrue(
+      !generated.isEmpty(),
+      'Deve gerar PDF com subject primario prioritario.'
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -554,7 +579,11 @@ private class InstalacaoFinalReportServiceTest {
   // ---------------------------------------------------------------------------
   @IsTest
   static void enqueueIfNeededSkipsNonConcluidaStatus() {
-    Integer before = [SELECT COUNT() FROM AsyncApexJob WHERE JobType = 'Queueable'];
+    Integer before = [
+      SELECT COUNT()
+      FROM AsyncApexJob
+      WHERE JobType = 'Queueable'
+    ];
 
     Id syntheticId = buildSyntheticInstalacaoId('020');
 
@@ -574,8 +603,16 @@ private class InstalacaoFinalReportServiceTest {
     );
     Test.stopTest();
 
-    Integer after = [SELECT COUNT() FROM AsyncApexJob WHERE JobType = 'Queueable'];
-    Assert.areEqual(before, after, 'Status diferente de concluida nao deve enfileirar.');
+    Integer after = [
+      SELECT COUNT()
+      FROM AsyncApexJob
+      WHERE JobType = 'Queueable'
+    ];
+    Assert.areEqual(
+      before,
+      after,
+      'Status diferente de concluida nao deve enfileirar.'
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -583,7 +620,11 @@ private class InstalacaoFinalReportServiceTest {
   // ---------------------------------------------------------------------------
   @IsTest
   static void enqueueIfNeededSkipsBlankStatus() {
-    Integer before = [SELECT COUNT() FROM AsyncApexJob WHERE JobType = 'Queueable'];
+    Integer before = [
+      SELECT COUNT()
+      FROM AsyncApexJob
+      WHERE JobType = 'Queueable'
+    ];
 
     Id syntheticId = buildSyntheticInstalacaoId('021');
 
@@ -591,10 +632,7 @@ private class InstalacaoFinalReportServiceTest {
       Id = syntheticId,
       Status__c = ProjetoUtils.STATUS_OBRA_EM_EXECUCAO
     );
-    Instalacao__c newInst = new Instalacao__c(
-      Id = syntheticId,
-      Status__c = ''
-    );
+    Instalacao__c newInst = new Instalacao__c(Id = syntheticId, Status__c = '');
 
     Test.startTest();
     InstalacaoFinalReportService.enqueueIfNeeded(
@@ -603,7 +641,11 @@ private class InstalacaoFinalReportServiceTest {
     );
     Test.stopTest();
 
-    Integer after = [SELECT COUNT() FROM AsyncApexJob WHERE JobType = 'Queueable'];
+    Integer after = [
+      SELECT COUNT()
+      FROM AsyncApexJob
+      WHERE JobType = 'Queueable'
+    ];
     Assert.areEqual(before, after, 'Status em branco nao deve enfileirar.');
   }
 
@@ -645,8 +687,16 @@ private class InstalacaoFinalReportServiceTest {
       WHERE Id = :link.Id
       LIMIT 1
     ];
-    Assert.areEqual(null, refreshed.ContentDocumentId__c, 'ContentDocumentId__c deve ser nulo.');
-    Assert.areEqual(null, refreshed.InternalAttachmentURL__c, 'InternalAttachmentURL__c deve ser nulo.');
+    Assert.areEqual(
+      null,
+      refreshed.ContentDocumentId__c,
+      'ContentDocumentId__c deve ser nulo.'
+    );
+    Assert.areEqual(
+      null,
+      refreshed.InternalAttachmentURL__c,
+      'InternalAttachmentURL__c deve ser nulo.'
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -659,7 +709,11 @@ private class InstalacaoFinalReportServiceTest {
     Account anchorNoLinks = new Account(Name = 'Anchor WithoutLinks');
     insert new List<Account>{ anchorWithLinks, anchorNoLinks };
 
-    ContentVersion cv = createContentVersion(anchorWithLinks.Id, 'multi-file', 'multi.png');
+    ContentVersion cv = createContentVersion(
+      anchorWithLinks.Id,
+      'multi-file',
+      'multi.png'
+    );
 
     OpportunityAttachmentLink__c link = new OpportunityAttachmentLink__c(
       Name = 'MultiLink',
@@ -683,6 +737,9 @@ private class InstalacaoFinalReportServiceTest {
         FirstPublishLocationId = :anchorWithLinks.Id
         AND Title LIKE 'Relatorio de Execucao de Obra%'
     ];
-    Assert.isTrue(!generated.isEmpty(), 'Instalacao com links deve ter PDF gerado.');
+    Assert.isTrue(
+      !generated.isEmpty(),
+      'Instalacao com links deve ter PDF gerado.'
+    );
   }
 }

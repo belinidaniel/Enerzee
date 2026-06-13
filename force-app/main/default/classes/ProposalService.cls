@@ -106,8 +106,12 @@ public class ProposalService {
       if (opportunity.IsClosed && !opportunity.IsWon) {
         substatusId = StatusEnumMap.getSubstatusEnum(statusEnum, 'Perdido');
         request.SubStatus = substatusId;
-        Integer lossReasonInt = getLossReasonAsInteger(opportunity.Loss_Reason__c);
-        if (lossReasonInt == null && !String.isBlank(opportunity.Loss_Reason__c)) {
+        Integer lossReasonInt = getLossReasonAsInteger(
+          opportunity.Loss_Reason__c
+        );
+        if (
+          lossReasonInt == null && !String.isBlank(opportunity.Loss_Reason__c)
+        ) {
           Utils.LogDTO lossLog = new Utils.LogDTO();
           lossLog.className = 'ProposalService';
           lossLog.methodName = 'updateOpportunityPhase';
@@ -157,7 +161,12 @@ public class ProposalService {
           response.getBody();
       } catch (Exception e) {
         pendingLogs.add(
-          Utils.createLogNoInsert('ProposalService', 'updateOpportunityPhase', e, opportunity.Id)
+          Utils.createLogNoInsert(
+            'ProposalService',
+            'updateOpportunityPhase',
+            e,
+            opportunity.Id
+          )
         );
 
         opportunity.SucessoIntegracaoNivello__c = false;

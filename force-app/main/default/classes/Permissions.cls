@@ -7,9 +7,9 @@
  * @test              : NO_TESTS_MAPPED
  **/
 public class Permissions {
-    public static Boolean EnableNewOpportunityFlow {
-        get {
-            return FeatureManagement.checkPermission('EnableNewOpportunityFlow');
-        }
+  public static Boolean EnableNewOpportunityFlow {
+    get {
+      return FeatureManagement.checkPermission('EnableNewOpportunityFlow');
     }
+  }
 }

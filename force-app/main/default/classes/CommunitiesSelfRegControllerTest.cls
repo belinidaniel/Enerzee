@@ -109,7 +109,10 @@ public with sharing class CommunitiesSelfRegControllerTest {
 
     PageReference result = controller.registerUser();
 
-    Assert.isNull(result, 'Null passwords devem retornar null (passwords match = both null).');
+    Assert.isNull(
+      result,
+      'Null passwords devem retornar null (passwords match = both null).'
+    );
   }
 
   @IsTest(SeeAllData=true)
@@ -123,7 +126,10 @@ public with sharing class CommunitiesSelfRegControllerTest {
     } catch (Exception e) {
       // Site.setExperienceId throws RequiredFeatureMissingException outside community
     }
-    Assert.isTrue(true, 'Constructor with expid deve ser tratado sem erro fatal.');
+    Assert.isTrue(
+      true,
+      'Constructor with expid deve ser tratado sem erro fatal.'
+    );
   }
 
   @IsTest(SeeAllData=true)
@@ -186,6 +192,9 @@ public with sharing class CommunitiesSelfRegControllerTest {
     }
 
     CommunitiesSelfRegController.mockExternalUserId = null;
-    Assert.isTrue(true, 'userId != null com password null deve redirecionar para SelfRegConfirm.');
+    Assert.isTrue(
+      true,
+      'userId != null com password null deve redirecionar para SelfRegConfirm.'
+    );
   }
 }

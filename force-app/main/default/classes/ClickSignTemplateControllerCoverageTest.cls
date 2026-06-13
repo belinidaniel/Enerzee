@@ -106,7 +106,10 @@ private class ClickSignTemplateControllerCoverageTest {
     List<Map<String, String>> picklistFields = ClickSignTemplateController.getPicklistFields(
       'Opportunity'
     );
-    Assert.isTrue(picklistFields.size() > 0, 'Opportunity deve ter campos picklist.');
+    Assert.isTrue(
+      picklistFields.size() > 0,
+      'Opportunity deve ter campos picklist.'
+    );
 
     List<String> values = ClickSignTemplateController.getPicklistValues(
       'Opportunity',
@@ -129,7 +132,9 @@ private class ClickSignTemplateControllerCoverageTest {
       LIMIT 1
     ];
 
-    List<String> errors = ClickSignTemplateController.validateVisibilityRules('[]');
+    List<String> errors = ClickSignTemplateController.validateVisibilityRules(
+      '[]'
+    );
     Assert.isNotNull(errors, 'validateVisibilityRules nao deve ser nulo.');
 
     try {
@@ -161,13 +166,24 @@ private class ClickSignTemplateControllerCoverageTest {
       template.Id
     );
 
-    List<ContentDocument> docs = ClickSignTemplateController.getDocuments(template.Id);
-    Assert.isTrue(docs.size() >= 1, 'Deve haver ao menos 1 documento apos upload.');
+    List<ContentDocument> docs = ClickSignTemplateController.getDocuments(
+      template.Id
+    );
+    Assert.isTrue(
+      docs.size() >= 1,
+      'Deve haver ao menos 1 documento apos upload.'
+    );
 
     ClickSignTemplateController.deleteDocument(template.Id);
 
-    List<ContentDocument> afterDelete = ClickSignTemplateController.getDocuments(template.Id);
-    Assert.areEqual(0, afterDelete.size(), 'Documentos devem ser removidos apos delete.');
+    List<ContentDocument> afterDelete = ClickSignTemplateController.getDocuments(
+      template.Id
+    );
+    Assert.areEqual(
+      0,
+      afterDelete.size(),
+      'Documentos devem ser removidos apos delete.'
+    );
   }
 
   @IsTest
@@ -242,7 +258,10 @@ private class ClickSignTemplateControllerCoverageTest {
     String populatedResult = ClickSignTemplateController.getContentDocumentDownloadUrl(
       acc.Id
     );
-    Assert.isNotNull(populatedResult, 'Deve retornar versionId quando ha documento.');
+    Assert.isNotNull(
+      populatedResult,
+      'Deve retornar versionId quando ha documento.'
+    );
   }
 
   @IsTest
@@ -257,7 +276,11 @@ private class ClickSignTemplateControllerCoverageTest {
     String noMappingResult = ClickSignTemplateController.generateTemplateFromMappings(
       templateNoMap.Id
     );
-    Assert.areEqual('no-mappings', noMappingResult, 'Sem mapeamentos deve retornar no-mappings.');
+    Assert.areEqual(
+      'no-mappings',
+      noMappingResult,
+      'Sem mapeamentos deve retornar no-mappings.'
+    );
 
     // Template with document but no ObjectMappings__c → no-document path
     ClickSignTemplate__c templateWithDoc = new ClickSignTemplate__c(
@@ -270,7 +293,11 @@ private class ClickSignTemplateControllerCoverageTest {
     String noDocResult = ClickSignTemplateController.generateTemplateFromMappings(
       templateWithDoc.Id
     );
-    Assert.areEqual('no-mappings', noDocResult, 'Template sem mapeamentos deve retornar no-mappings.');
+    Assert.areEqual(
+      'no-mappings',
+      noDocResult,
+      'Template sem mapeamentos deve retornar no-mappings.'
+    );
   }
 
   @IsTest
@@ -282,8 +309,12 @@ private class ClickSignTemplateControllerCoverageTest {
       LIMIT 1
     ];
 
-    ApexPages.StandardController sc = new ApexPages.StandardController(template);
-    ClickSignTemplateController controller = new ClickSignTemplateController(sc);
+    ApexPages.StandardController sc = new ApexPages.StandardController(
+      template
+    );
+    ClickSignTemplateController controller = new ClickSignTemplateController(
+      sc
+    );
 
     PageReference emptyPage = new PageReference('/apex/template');
     Test.setCurrentPage(emptyPage);
@@ -296,7 +327,10 @@ private class ClickSignTemplateControllerCoverageTest {
 
     // redirectOnFinish returns objectHomeUrl (not null) when templateId is absent
     PageReference finishResult = controller.redirectOnFinish();
-    Assert.isNotNull(finishResult, 'Sem templateId deve retornar URL base no redirectOnFinish.');
+    Assert.isNotNull(
+      finishResult,
+      'Sem templateId deve retornar URL base no redirectOnFinish.'
+    );
   }
 
   @IsTest

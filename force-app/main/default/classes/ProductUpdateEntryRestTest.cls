@@ -1,8 +1,8 @@
 /**
- * @description       : Tests for ProductUpdateEntryRest using PricebookEntry externalId.
+ * @description       : Tests for ProductUpdateEntryRest using externalId as the unique product and price entry key.
  * @author            : Codex
  * @group             :
- * @last modified on  : 04-06-2026
+ * @last modified on  : 06-13-2026
  * @last modified by  : Codex
  * @test              : N/A - classe de teste executavel
  **/
@@ -60,11 +60,11 @@ public with sharing class ProductUpdateEntryRestTest {
   }
 
   @IsTest
-  static void testUpdatePrice_ByPricebookEntryExternalId() {
+  static void testRejectsUpdate_WhenProductHasActivePricebookEntry() {
     Product2 productRecord = createProduct(
       'KIT 5,0 kWp',
       'PC-001',
-      'LEG-001',
+      'PBE-001',
       100
     );
     updatePbeExternalId(productRecord.Id, 'PBE-001', true);
@@ -82,52 +82,69 @@ public with sharing class ProductUpdateEntryRestTest {
       WHERE Id = :productRecord.Id
     ];
 
-    System.assertNotEquals(null, pricebookEntry);
-    System.assertEquals('PBE-001', pricebookEntry.ExternalId__c);
-    System.assertEquals(1234.56, pricebookEntry.UnitPrice);
-    System.assertEquals(true, pricebookEntry.IsActive);
-    System.assertEquals('KIT Atualizado', updatedProduct.Name);
-    System.assertEquals('SUL', updatedProduct.Family);
-    System.assertEquals('3', updatedProduct.Category__c);
+    Assert.isNotNull(pricebookEntry);
+    Assert.areEqual('PBE-001', pricebookEntry.ExternalId__c);
+    Assert.areEqual(100, pricebookEntry.UnitPrice);
+    Assert.isTrue(pricebookEntry.IsActive);
+    Assert.areEqual('KIT 5,0 kWp', updatedProduct.Name);
+    Assert.isNull(updatedProduct.Family);
+    Assert.isNull(updatedProduct.Category__c);
     String responseBody = RestContext.response.responseBody.toString();
-    System.assert(responseBody.contains('"Id"'));
-    System.assert(responseBody.contains(String.valueOf(pricebookEntry.Id)));
-    System.assert(responseBody.contains('"ProposalNumber"'));
-    System.assert(responseBody.contains('"Success" : true'));
+    Assert.isTrue(responseBody.contains('"Success" : false'));
+    Assert.isTrue(
+      responseBody.contains(
+        'There is already an active PricebookEntry for the product.'
+      )
+    );
   }
 
   @IsTest
-  static void testAdoptsLegacyActivePricebookEntry_WhenProductCodeMatches() {
+  static void testCreatesPricebookEntry_WhenProductExistsWithoutEntry() {
     Product2 productRecord = createProduct(
-      'Produto legado',
-      'PC-LEGACY',
-      'LEG-LEGACY',
-      50
+      'Produto sem entrada',
+      'PC-NO-PBE',
+      'PBE-NEW-001',
+      null
     );
 
     Test.startTest();
     ProductUpdateEntryRest.testUpdateProductPrices(
-      '[{"productCode":"PC-LEGACY","externalId":"PBE-LEGACY-001","name":"Produto legado atualizado","price":200,"productFamily":"Solar"}]'
+      '[{"productCode":"PC-NO-PBE","externalId":"PBE-NEW-001","name":"Produto atualizado","price":200,"productFamily":"Solar","Description":"Descricao atualizada"}]'
     );
     Test.stopTest();
 
     List<PricebookEntry> pricebookEntries = getStdPbes(productRecord.Id);
     Product2 updatedProduct = [
-      SELECT Name, Family
+      SELECT
+        Name,
+        Family,
+        Description,
+        Preco_Unitario__c,
+        ProductCode,
+        ExternalId__c,
+        Id_Externo__c
       FROM Product2
       WHERE Id = :productRecord.Id
     ];
 
-    System.assertEquals(1, pricebookEntries.size());
-    System.assertEquals('PBE-LEGACY-001', pricebookEntries[0].ExternalId__c);
-    System.assertEquals(200, pricebookEntries[0].UnitPrice);
-    System.assertEquals(true, pricebookEntries[0].IsActive);
-    System.assertEquals('Produto legado atualizado', updatedProduct.Name);
-    System.assertEquals('Solar', updatedProduct.Family);
+    Assert.areEqual(1, pricebookEntries.size());
+    Assert.areEqual('PBE-NEW-001', pricebookEntries[0].ExternalId__c);
+    Assert.areEqual(200, pricebookEntries[0].UnitPrice);
+    Assert.isTrue(pricebookEntries[0].IsActive);
+    Assert.areEqual('Produto atualizado', updatedProduct.Name);
+    Assert.areEqual('Solar', updatedProduct.Family);
+    Assert.areEqual('Descricao atualizada', updatedProduct.Description);
+    Assert.areEqual(200, updatedProduct.Preco_Unitario__c);
+    Assert.areEqual('PC-NO-PBE', updatedProduct.ProductCode);
+    Assert.areEqual('PBE-NEW-001', updatedProduct.ExternalId__c);
+    Assert.areEqual('PBE-NEW-001', updatedProduct.Id_Externo__c);
+    Assert.isTrue(
+      RestContext.response.responseBody.toString().contains('"Success" : true')
+    );
   }
 
   @IsTest
-  static void testCreateProductAndPricebookEntry_WhenProductCodeMissing() {
+  static void testCreatesProduct_WhenProductCodeMissing() {
     Test.startTest();
     ProductUpdateEntryRest.testUpdateProductPrices(
       '[{"externalId":"PBE-777","name":"KIT Fallback","price":2222.00,"productFamily":"Fibrocimento - NORTE","Category__c":"1"}]'
@@ -136,58 +153,21 @@ public with sharing class ProductUpdateEntryRestTest {
 
     PricebookEntry createdEntry = [
       SELECT
-        Id,
-        Product2Id,
-        UnitPrice,
-        IsActive,
         ExternalId__c,
-        Product2.Name,
         Product2.ProductCode,
-        Product2.Category__c
+        Product2.ExternalId__c,
+        Product2.Id_Externo__c
       FROM PricebookEntry
-      WHERE
-        Pricebook2Id = :Test.getStandardPricebookId()
-        AND ExternalId__c = 'PBE-777'
+      WHERE ExternalId__c = 'PBE-777'
       LIMIT 1
     ];
-
-    System.assertNotEquals(null, createdEntry);
-    System.assertEquals('PBE-777', createdEntry.ExternalId__c);
-    System.assertEquals(2222.00, createdEntry.UnitPrice);
-    System.assertEquals(true, createdEntry.IsActive);
-    System.assertEquals('KIT Fallback', createdEntry.Product2.Name);
-    System.assertEquals(null, createdEntry.Product2.ProductCode);
-    System.assertEquals('1', createdEntry.Product2.Category__c);
-  }
-
-  @IsTest
-  static void testRejectsNewExternalId_WhenAnotherActiveEntryExists() {
-    Product2 productRecord = createProduct(
-      'Produto conflito',
-      'PC-CONFLICT',
-      'LEG-CONFLICT',
-      80
+    Assert.areEqual('PBE-777', createdEntry.ExternalId__c);
+    Assert.isNull(createdEntry.Product2.ProductCode);
+    Assert.areEqual('PBE-777', createdEntry.Product2.ExternalId__c);
+    Assert.areEqual('PBE-777', createdEntry.Product2.Id_Externo__c);
+    Assert.isTrue(
+      RestContext.response.responseBody.toString().contains('"Success" : true')
     );
-    updatePbeExternalId(productRecord.Id, 'PBE-ACTIVE', true);
-
-    Test.startTest();
-    ProductUpdateEntryRest.testUpdateProductPrices(
-      '[{"productCode":"PC-CONFLICT","externalId":"PBE-NEW","name":"Produto conflito","price":300}]'
-    );
-    Test.stopTest();
-
-    String responseBody = RestContext.response.responseBody.toString();
-    List<PricebookEntry> pricebookEntries = getStdPbes(productRecord.Id);
-
-    System.assert(responseBody.contains('"Success" : false'));
-    System.assert(
-      responseBody.contains(
-        'There is already an active PricebookEntry for the product.'
-      )
-    );
-    System.assertEquals(1, pricebookEntries.size());
-    System.assertEquals('PBE-ACTIVE', pricebookEntries[0].ExternalId__c);
-    System.assertEquals(80, pricebookEntries[0].UnitPrice);
   }
 
   @IsTest
@@ -195,7 +175,7 @@ public with sharing class ProductUpdateEntryRestTest {
     Product2 productRecord = createProduct(
       'Produto inativo',
       'PC-INACTIVE',
-      'LEG-INACTIVE',
+      'PBE-NEW-INACTIVE',
       120
     );
     updatePbeExternalId(productRecord.Id, 'PBE-OLD-INACTIVE', false);
@@ -209,22 +189,25 @@ public with sharing class ProductUpdateEntryRestTest {
     String responseBody = RestContext.response.responseBody.toString();
     List<PricebookEntry> pricebookEntries = getStdPbes(productRecord.Id);
     Product2 updatedProduct = [
-      SELECT Name, Family
+      SELECT Name, Family, ProductCode, ExternalId__c, Id_Externo__c
       FROM Product2
       WHERE Id = :productRecord.Id
     ];
 
-    System.assert(responseBody.contains('"Success" : true'));
-    System.assert(responseBody.contains('"Id"'));
-    System.assert(
+    Assert.isTrue(responseBody.contains('"Success" : true'));
+    Assert.isTrue(responseBody.contains('"Id"'));
+    Assert.isTrue(
       responseBody.contains(String.valueOf(pricebookEntries[0].Id))
     );
-    System.assertEquals(1, pricebookEntries.size());
-    System.assertEquals('PBE-NEW-INACTIVE', pricebookEntries[0].ExternalId__c);
-    System.assertEquals(321.45, pricebookEntries[0].UnitPrice);
-    System.assertEquals(true, pricebookEntries[0].IsActive);
-    System.assertEquals('Produto inativo atualizado', updatedProduct.Name);
-    System.assertEquals('Solar', updatedProduct.Family);
+    Assert.areEqual(1, pricebookEntries.size());
+    Assert.areEqual('PBE-NEW-INACTIVE', pricebookEntries[0].ExternalId__c);
+    Assert.areEqual(321.45, pricebookEntries[0].UnitPrice);
+    Assert.isTrue(pricebookEntries[0].IsActive);
+    Assert.areEqual('Produto inativo atualizado', updatedProduct.Name);
+    Assert.areEqual('Solar', updatedProduct.Family);
+    Assert.areEqual('PC-INACTIVE', updatedProduct.ProductCode);
+    Assert.areEqual('PBE-NEW-INACTIVE', updatedProduct.ExternalId__c);
+    Assert.areEqual('PBE-NEW-INACTIVE', updatedProduct.Id_Externo__c);
   }
 
   @IsTest
@@ -236,7 +219,13 @@ public with sharing class ProductUpdateEntryRestTest {
     Test.stopTest();
 
     PricebookEntry createdEntry = [
-      SELECT Id, Product2Id, ExternalId__c, Product2.ProductCode
+      SELECT
+        Id,
+        Product2Id,
+        ExternalId__c,
+        Product2.ProductCode,
+        Product2.ExternalId__c,
+        Product2.Id_Externo__c
       FROM PricebookEntry
       WHERE
         Pricebook2Id = :Test.getStandardPricebookId()
@@ -244,8 +233,79 @@ public with sharing class ProductUpdateEntryRestTest {
       LIMIT 1
     ];
 
-    System.assertEquals('PBE-ONE-1', createdEntry.ExternalId__c);
-    System.assertEquals('ONE-1', createdEntry.Product2.ProductCode);
+    Assert.areEqual('PBE-ONE-1', createdEntry.ExternalId__c);
+    Assert.areEqual('ONE-1', createdEntry.Product2.ProductCode);
+    Assert.areEqual('PBE-ONE-1', createdEntry.Product2.ExternalId__c);
+    Assert.areEqual('PBE-ONE-1', createdEntry.Product2.Id_Externo__c);
+    Assert.isTrue(
+      RestContext.response.responseBody.toString().contains('"Success" : true')
+    );
+  }
+
+  @IsTest
+  static void testMigratesLegacyProductCode_WhenExternalIdMatchesInactiveEntry() {
+    Product2 productRecord = createProduct(
+      '635 Wp - LONGI',
+      'ITM10663NORTE',
+      'LEG-LONGI',
+      500
+    );
+    updatePbeExternalId(productRecord.Id, '58825NORTE', false);
+
+    Test.startTest();
+    ProductUpdateEntryRest.testUpdateProductPrices(
+      '{"productCode":"ITM10663NORTE","externalId":"58825NORTE","name":"635 Wp - LONGI","price":625.03,"productFamily":"NORTE"}'
+    );
+    Test.stopTest();
+
+    Product2 updatedProduct = [
+      SELECT ProductCode, Name, Family, ExternalId__c, Id_Externo__c
+      FROM Product2
+      WHERE Id = :productRecord.Id
+    ];
+    PricebookEntry updatedEntry = getStdPbe(productRecord.Id);
+
+    Assert.areEqual('ITM10663NORTE', updatedProduct.ProductCode);
+    Assert.areEqual('58825NORTE', updatedProduct.ExternalId__c);
+    Assert.areEqual('58825NORTE', updatedProduct.Id_Externo__c);
+    Assert.areEqual('635 Wp - LONGI', updatedProduct.Name);
+    Assert.areEqual('NORTE', updatedProduct.Family);
+    Assert.areEqual('58825NORTE', updatedEntry.ExternalId__c);
+    Assert.areEqual(625.03, updatedEntry.UnitPrice);
+    Assert.isTrue(updatedEntry.IsActive);
+  }
+
+  @IsTest
+  static void testCreatesDistinctProducts_WhenItmIsRepeated() {
+    Test.startTest();
+    ProductUpdateEntryRest.testUpdateProductPrices(
+      '[{"productCode":"ITM10663NORTE","externalId":"58824NORTE","name":"710 Wp - ASTRONERGY BIFACIAL","price":714.48,"productFamily":"NORTE"},{"productCode":"ITM10663NORTE","externalId":"58825NORTE","name":"635 Wp - LONGI","price":625.03,"productFamily":"NORTE"}]'
+    );
+    Test.stopTest();
+
+    List<Product2> products = [
+      SELECT Id, Name, ProductCode, ExternalId__c, Id_Externo__c
+      FROM Product2
+      WHERE
+        ExternalId__c IN ('58824NORTE', '58825NORTE')
+        OR Id_Externo__c IN ('58824NORTE', '58825NORTE')
+    ];
+    List<PricebookEntry> entries = [
+      SELECT Id, ExternalId__c, Product2.ProductCode
+      FROM PricebookEntry
+      WHERE ExternalId__c IN ('58824NORTE', '58825NORTE')
+    ];
+
+    Assert.areEqual(2, products.size());
+    Assert.areEqual(2, entries.size());
+    for (Product2 productRecord : products) {
+      Assert.areEqual('ITM10663NORTE', productRecord.ProductCode);
+      Assert.areEqual(productRecord.ExternalId__c, productRecord.Id_Externo__c);
+    }
+    Assert.isTrue(
+      RestContext.response.responseBody.toString()
+        .contains('"productCode" : "ITM10663NORTE"')
+    );
   }
 
   @IsTest
@@ -255,7 +315,7 @@ public with sharing class ProductUpdateEntryRestTest {
     Test.stopTest();
 
     String responseBody = RestContext.response.responseBody.toString();
-    System.assert(responseBody.contains('"Success" : false'));
-    System.assert(responseBody.contains('No products provided.'));
+    Assert.isTrue(responseBody.contains('"Success" : false'));
+    Assert.isTrue(responseBody.contains('No products provided.'));
   }
 }

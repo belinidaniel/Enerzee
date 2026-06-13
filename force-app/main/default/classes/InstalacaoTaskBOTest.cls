@@ -61,7 +61,10 @@ private class InstalacaoTaskBOTest {
       true
     );
     Projeto__c project = buildProject(acc, opp);
-    Instalacao__c inst = insertInstalacao(project.Id, ProjetoUtils.STATUS_OBRA_EM_EXECUCAO);
+    Instalacao__c inst = insertInstalacao(
+      project.Id,
+      ProjetoUtils.STATUS_OBRA_EM_EXECUCAO
+    );
 
     Test.startTest();
     InstalacaoTaskBO.createTasks(
@@ -81,13 +84,19 @@ private class InstalacaoTaskBOTest {
       true
     );
     Projeto__c project = buildProject(acc, opp);
-    Instalacao__c inst = insertInstalacao(project.Id, ProjetoUtils.STATUS_PLANEJAMENTO_DE_OBRA);
+    Instalacao__c inst = insertInstalacao(
+      project.Id,
+      ProjetoUtils.STATUS_PLANEJAMENTO_DE_OBRA
+    );
 
     Test.startTest();
     InstalacaoTaskBO.createPlanningTasksAfterDelegar(inst.Id);
     Test.stopTest();
 
-    Assert.isTrue(true, 'createPlanningTasksAfterDelegar com dados reais nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'createPlanningTasksAfterDelegar com dados reais nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -98,7 +107,10 @@ private class InstalacaoTaskBOTest {
       true
     );
     Projeto__c project = buildProject(acc, opp);
-    Instalacao__c instOld = insertInstalacao(project.Id, ProjetoUtils.STATUS_OBRA_EM_EXECUCAO);
+    Instalacao__c instOld = insertInstalacao(
+      project.Id,
+      ProjetoUtils.STATUS_OBRA_EM_EXECUCAO
+    );
     Instalacao__c instNew = new Instalacao__c(
       Id = instOld.Id,
       Projeto__c = project.Id,
@@ -112,7 +124,10 @@ private class InstalacaoTaskBOTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'createTasks com mudanca de status nao deve lancar erro.');
+    Assert.isTrue(
+      true,
+      'createTasks com mudanca de status nao deve lancar erro.'
+    );
   }
 
   @IsTest
@@ -123,7 +138,10 @@ private class InstalacaoTaskBOTest {
       true
     );
     Projeto__c project = buildProject(acc, opp);
-    Instalacao__c inst = insertInstalacao(project.Id, ProjetoUtils.STATUS_OBRA_EM_EXECUCAO);
+    Instalacao__c inst = insertInstalacao(
+      project.Id,
+      ProjetoUtils.STATUS_OBRA_EM_EXECUCAO
+    );
 
     // Same status in old and new → isStatusChanging returns false → no tasks
     Instalacao__c instOld = inst.clone(true, true, true, true);
@@ -139,7 +157,11 @@ private class InstalacaoTaskBOTest {
     Test.stopTest();
 
     Integer tasksAfter = [SELECT COUNT() FROM Task WHERE WhatId = :inst.Id];
-    Assert.areEqual(tasksBefore, tasksAfter, 'Status não alterado não deve gerar novas tarefas.');
+    Assert.areEqual(
+      tasksBefore,
+      tasksAfter,
+      'Status não alterado não deve gerar novas tarefas.'
+    );
   }
 
   @IsTest
@@ -168,7 +190,11 @@ private class InstalacaoTaskBOTest {
     Test.stopTest();
 
     Integer tasksAfter = [SELECT COUNT() FROM Task WHERE WhatId = :inst.Id];
-    Assert.areEqual(tasksBefore, tasksAfter, 'Status sem templates não deve gerar tarefas.');
+    Assert.areEqual(
+      tasksBefore,
+      tasksAfter,
+      'Status sem templates não deve gerar tarefas.'
+    );
   }
 
   @IsTest
@@ -180,7 +206,10 @@ private class InstalacaoTaskBOTest {
     );
     Projeto__c project = buildProject(acc, opp);
     // Status diferente de PLANEJAMENTO_DE_OBRA → método retorna cedo sem criar tarefas
-    Instalacao__c inst = insertInstalacao(project.Id, ProjetoUtils.STATUS_OBRA_EM_EXECUCAO);
+    Instalacao__c inst = insertInstalacao(
+      project.Id,
+      ProjetoUtils.STATUS_OBRA_EM_EXECUCAO
+    );
 
     Integer tasksBefore = [SELECT COUNT() FROM Task WHERE WhatId = :inst.Id];
 
@@ -189,13 +218,22 @@ private class InstalacaoTaskBOTest {
     Test.stopTest();
 
     Integer tasksAfter = [SELECT COUNT() FROM Task WHERE WhatId = :inst.Id];
-    Assert.areEqual(tasksBefore, tasksAfter, 'Status diferente de Planejamento de Obra não deve criar tarefas de planejamento.');
+    Assert.areEqual(
+      tasksBefore,
+      tasksAfter,
+      'Status diferente de Planejamento de Obra não deve criar tarefas de planejamento.'
+    );
   }
 
   @IsTest
   static void shouldCreatePlanningTasksWhenGestorObraIsSet() {
     // Covers lines 397-462 in createPlanningTasksAfterDelegar (unreachable when GestorObra__c is null)
-    Profile profile = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
+    Profile profile = [
+      SELECT Id
+      FROM Profile
+      WHERE Name = 'Standard User'
+      LIMIT 1
+    ];
     User gestor = new User(
       FirstName = 'Gestor',
       LastName = 'Obra Test',
@@ -228,7 +266,10 @@ private class InstalacaoTaskBOTest {
     InstalacaoTaskBO.createPlanningTasksAfterDelegar(inst.Id);
     Test.stopTest();
 
-    Assert.isTrue(true, 'createPlanningTasksAfterDelegar com GestorObra definido deve executar sem erro.');
+    Assert.isTrue(
+      true,
+      'createPlanningTasksAfterDelegar com GestorObra definido deve executar sem erro.'
+    );
   }
 
   @IsTest
@@ -241,7 +282,10 @@ private class InstalacaoTaskBOTest {
     );
     Projeto__c project = buildProject(acc, opp);
 
-    Instalacao__c instOld = insertInstalacao(project.Id, ProjetoUtils.STATUS_OBRA_EM_EXECUCAO);
+    Instalacao__c instOld = insertInstalacao(
+      project.Id,
+      ProjetoUtils.STATUS_OBRA_EM_EXECUCAO
+    );
     // New status = PLANEJAMENTO_DE_OBRA, GestorObra__c = null
     // Non-delegar templates will be skipped; only DELEGAR GESTOR DE OBRAS template survives
     Instalacao__c instNew = new Instalacao__c(
@@ -257,6 +301,9 @@ private class InstalacaoTaskBOTest {
     );
     Test.stopTest();
 
-    Assert.isTrue(true, 'Templates não-delegar devem ser ignorados quando GestorObra é null em Planejamento de Obra.');
+    Assert.isTrue(
+      true,
+      'Templates não-delegar devem ser ignorados quando GestorObra é null em Planejamento de Obra.'
+    );
   }
 }

@@ -42,7 +42,11 @@ private class TaskTemplateUtilsTest {
   static void shouldCalculateDueDateWithBothNull() {
     Date base = Date.newInstance(2025, 6, 2);
     Date result = TaskTemplateUtils.calculateDueDate(base, null, null);
-    Assert.areEqual(base, result, 'Com workingDays=0 deve retornar a data base.');
+    Assert.areEqual(
+      base,
+      result,
+      'Com workingDays=0 deve retornar a data base.'
+    );
   }
 
   @IsTest
@@ -60,7 +64,10 @@ private class TaskTemplateUtilsTest {
 
   @IsTest
   static void shouldReturnNullWhenActivityDateIsNull() {
-    DateTime result = TaskTemplateUtils.combineDateAndTime(null, Time.newInstance(10, 0, 0, 0));
+    DateTime result = TaskTemplateUtils.combineDateAndTime(
+      null,
+      Time.newInstance(10, 0, 0, 0)
+    );
     Assert.isNull(result, 'Deve retornar null quando activityDate for nulo.');
   }
 
@@ -76,14 +83,24 @@ private class TaskTemplateUtilsTest {
   @IsTest
   static void shouldFallbackToDefaultTimeForNonTimeInput() {
     Date d = Date.newInstance(2025, 3, 15);
-    DateTime result = TaskTemplateUtils.combineDateAndTime(d, 'not a time value');
-    Assert.areEqual(17, result.hour(), 'Deve usar hora padrao 17h como fallback.');
+    DateTime result = TaskTemplateUtils.combineDateAndTime(
+      d,
+      'not a time value'
+    );
+    Assert.areEqual(
+      17,
+      result.hour(),
+      'Deve usar hora padrao 17h como fallback.'
+    );
   }
 
   @IsTest
   static void shouldResolveOwnerReturnsNullForNullLine() {
     Id result = TaskTemplateUtils.resolveOwner(null, null, null, null);
-    Assert.isNull(result, 'Deve retornar null quando line for nulo e nao ha mapa.');
+    Assert.isNull(
+      result,
+      'Deve retornar null quando line for nulo e nao ha mapa.'
+    );
   }
 
   @IsTest
@@ -95,7 +112,9 @@ private class TaskTemplateUtilsTest {
     line.TipoDeProprietario = 'QUEUE';
     line.Responsavel = 'TTUtils Queue';
 
-    Map<String, Group> queueMap = new Map<String, Group>{ 'TTUTILS_QUEUE' => testQueue };
+    Map<String, Group> queueMap = new Map<String, Group>{
+      'TTUTILS_QUEUE' => testQueue
+    };
 
     Id result = TaskTemplateUtils.resolveOwner(line, null, queueMap, null);
     Assert.areEqual(testQueue.Id, result, 'Deve retornar o Id da fila.');
@@ -107,13 +126,23 @@ private class TaskTemplateUtilsTest {
     line.TipoDeProprietario = 'ROLE';
     line.Responsavel = 'RoleNaoExistente_XYZ';
 
-    Id result = TaskTemplateUtils.resolveOwner(line, new Map<String, User>(), null, null);
+    Id result = TaskTemplateUtils.resolveOwner(
+      line,
+      new Map<String, User>(),
+      null,
+      null
+    );
     Assert.isNull(result, 'Deve retornar null quando role nao encontrada.');
   }
 
   @IsTest
   static void shouldResolveOwnerWithRoleTypeFromMap() {
-    User u = [SELECT Id, Name, IsActive FROM User WHERE IsActive = TRUE LIMIT 1];
+    User u = [
+      SELECT Id, Name, IsActive
+      FROM User
+      WHERE IsActive = TRUE
+      LIMIT 1
+    ];
 
     ProjetoBO.TaskProjectTableLine line = new ProjetoBO.TaskProjectTableLine();
     line.TipoDeProprietario = 'ROLE';
@@ -141,13 +170,23 @@ private class TaskTemplateUtilsTest {
 
   @IsTest
   static void shouldResolveOwnerWithUsuarioEmailFallback() {
-    User u = [SELECT Id, Email, IsActive FROM User WHERE IsActive = TRUE AND Email != NULL LIMIT 1];
+    User u = [
+      SELECT Id, Email, IsActive
+      FROM User
+      WHERE IsActive = TRUE AND Email != NULL
+      LIMIT 1
+    ];
 
     ProjetoBO.TaskProjectTableLine line = new ProjetoBO.TaskProjectTableLine();
     line.TipoDeProprietario = 'USUARIO';
     line.Responsavel = u.Email;
 
-    Id result = TaskTemplateUtils.resolveOwner(line, new Map<String, User>(), null, null);
+    Id result = TaskTemplateUtils.resolveOwner(
+      line,
+      new Map<String, User>(),
+      null,
+      null
+    );
     Assert.isNotNull(result, 'Deve encontrar usuario por email.');
   }
 

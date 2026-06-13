@@ -137,11 +137,7 @@ public without sharing class PaymentSimulationBO {
   private static void createCardSimulations(Set<Id> opportunityIds) {
     Map<Id, Opportunity> opportunitiesById = new Map<Id, Opportunity>(
       [
-        SELECT
-          Id,
-          ValorTotalProposta__c,
-          Amount,
-          CondicaoPagamento2__c
+        SELECT Id, ValorTotalProposta__c, Amount, CondicaoPagamento2__c
         FROM Opportunity
         WHERE Id IN :opportunityIds
       ]
@@ -171,7 +167,8 @@ public without sharing class PaymentSimulationBO {
         continue;
       }
 
-      Decimal principalValue = opportunityRecord.ValorTotalProposta__c != null &&
+      Decimal principalValue = opportunityRecord.ValorTotalProposta__c !=
+        null &&
         opportunityRecord.ValorTotalProposta__c > 0
         ? opportunityRecord.ValorTotalProposta__c
         : opportunityRecord.Amount;
@@ -323,10 +320,7 @@ public without sharing class PaymentSimulationBO {
       ) {
         opportunityRecord.SimulacaoCriada__c = false;
         opportunitiesToReset.add(
-          new Opportunity(
-            Id = opportunityRecord.Id,
-            SimulacaoCriada__c = false
-          )
+          new Opportunity(Id = opportunityRecord.Id, SimulacaoCriada__c = false)
         );
       }
     }
@@ -517,7 +511,9 @@ public without sharing class PaymentSimulationBO {
     Set<Id> createdOpportunityIds = new Set<Id>();
     if (!syncPlan.simulationsToInsert.isEmpty()) {
       insert syncPlan.simulationsToInsert;
-      for (PaymentSimulation__c createdSimulation : syncPlan.simulationsToInsert) {
+      for (
+        PaymentSimulation__c createdSimulation : syncPlan.simulationsToInsert
+      ) {
         if (createdSimulation.Opportunity__c != null) {
           createdOpportunityIds.add(createdSimulation.Opportunity__c);
         }
@@ -666,10 +662,10 @@ public without sharing class PaymentSimulationBO {
       selectedSimulationKeys.clear();
     }
 
-    // As simulações de financiamento/aluguel são sempre mantidas, mesmo quando a
-    // forma de pagamento selecionada é PIX. Selecionar uma simulação não deve
-    // apagar as demais — apenas a marcação Selected__c muda.
     {
+      // As simulações de financiamento/aluguel são sempre mantidas, mesmo quando a
+      // forma de pagamento selecionada é PIX. Selecionar uma simulação não deve
+      // apagar as demais — apenas a marcação Selected__c muda.
       for (FinancingRate__c financingRate : activeFinancingRates) {
         if (String.isBlank(financingRate.PaymentType__c)) {
           continue;

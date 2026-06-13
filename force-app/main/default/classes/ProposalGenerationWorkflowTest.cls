@@ -129,7 +129,6 @@ private class ProposalGenerationWorkflowTest {
       new List<Opportunity>{ attemptedUpdate },
       new Map<Id, Opportunity>{ oldOpportunity.Id => oldOpportunity }
     );
-
   }
 
   @IsTest
@@ -153,7 +152,6 @@ private class ProposalGenerationWorkflowTest {
     Opportunity opportunityRecord = createOpportunity(partner.Id);
 
     ProposalGenerationDispatcher.dispatch(opportunityRecord.Id, true, true);
-
   }
 
   private static Opportunity createOpportunity() {
